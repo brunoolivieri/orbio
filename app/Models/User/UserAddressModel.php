@@ -36,8 +36,6 @@ class UserAddressModel extends Model
 
         }catch(\Exception $e){
 
-            echo $e;
-
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
 

@@ -4,13 +4,15 @@ namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use  App\Events\UserSuccessfulLoginEvent;
 
 // Model utilizado para os procedimentos
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
 
-use Illuminate\Support\Facades\DB;
+
 
 class UserAuthenticationOperationsModel extends Model
 {
@@ -34,10 +36,12 @@ class UserAuthenticationOperationsModel extends Model
         if(UserModel::where('email', $request->email)->exists()){
 
             // Query Builder para buscar o usuário e seus dados básicos para validar o login
-            $userAccountData = DB::table('users')
+            /*$userAccountData = DB::table('users')
             ->where('users.email', '=', $request->email)
             ->select('users.id', 'users.nome', 'users.email', 'users.senha', 'users.status', 'users.dh_ultimo_acesso')
-            ->get();
+            ->get();*/
+
+            $userAccountData = UserModel::where('users.email', '=', $request->email)->get();
 
             // Se a senha informada for compátivel com a do registro
             if(password_verify($request->password, $userAccountData[0]->senha)){
@@ -45,8 +49,8 @@ class UserAuthenticationOperationsModel extends Model
                 // Se o status dele for true e se já tiver acessado a conta alguma vez
                 if($userAccountData[0]->status == true && $userAccountData[0]->dh_ultimo_acesso != NULL){
 
-                    // Se o campo do último acesso for atualizado
-                    if(UserModel::where('id', $userAccountData[0]->id)->update(['dh_ultimo_acesso' => date("Y-m-d H:i:s")])){
+                    // Registrar um acesso com a classe de Evento
+                    if(UserSuccessfulLoginEvent::dispatch($userAccountData[0])){
 
                         if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $request->email)){
 
@@ -75,9 +79,8 @@ class UserAuthenticationOperationsModel extends Model
                     // Se a ativação for um sucesso
                     if($this->accountActivation((int) $userAccountData[0]->id, (string) $userAccountData[0]->email)){
 
-                        // Registrar um acesso
-                        // Se o campo do último acesso for atualizado
-                        if(UserModel::where('id', $userAccountData[0]->id)->update(['dh_ultimo_acesso' => date("Y-m-d H:i:s")])){
+                        // Registrar um acesso com a classe de Evento
+                        if(UserSuccessfulLoginEvent::dispatch($userAccountData[0])){
 
                             if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $userAccountData[0]->email)){
 
@@ -360,8 +363,6 @@ class UserAuthenticationOperationsModel extends Model
 
             }
             
-            
-
         }catch(\Exception $e){
 
             //dd($e);

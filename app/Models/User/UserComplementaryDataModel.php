@@ -54,8 +54,6 @@ class UserComplementaryDataModel extends Model
 
         }catch(\Exception $e){
 
-            echo $e;
-
             DB::rollBack();
 
             return ["status" => false, "error" => true];

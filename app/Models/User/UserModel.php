@@ -72,8 +72,6 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            echo $e;
-
             // Log do erro
             Log::channel("registration")->error("Falha no registro de usuário. Erro: ".$e);
 
@@ -153,7 +151,10 @@ class UserModel extends Model
     function loadSpecificUsers(string $value_searched, int $offset, int $limit) : array {
 
         $total_search_compatible_records = UserModel::select('id', 'nome', 'email', 'id_perfil', 'status', 'dh_criacao', 'dh_atualizacao', 'dh_ultimo_acesso')
-        ->where('id', $value_searched)->orWhere('nome', 'LIKE', '%'.$value_searched.'%')->orWhere('email', 'LIKE', '%'.$value_searched.'%')->offset($offset)->limit($limit)->count();
+        ->where('id', $value_searched)
+        ->orWhere('nome', 'LIKE', '%'.$value_searched.'%')
+        ->orWhere('email', 'LIKE', '%'.$value_searched.'%')
+        ->offset($offset)->limit($limit)->count();
 
         try{
 
