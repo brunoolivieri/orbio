@@ -24,7 +24,7 @@ class SuperAdminSeeder extends Seeder
     {
 
         DB::table("users")->insert([
-            "nome" => "Super Admin",
+            "nome" => "Master",
             "email" => strtolower(env("APP_NAME"))."@gmail.com",
             "senha" => password_hash(env("SUPER_ADMIN_PASS"), PASSWORD_DEFAULT),
             "status" => true,

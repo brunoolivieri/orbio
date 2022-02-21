@@ -11,7 +11,6 @@ import {ScreenDarkFilter} from "../../../structures/screenDarkFilter/ScreenDarkF
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -38,14 +37,6 @@ export function ForgotPassword(){
     // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
     // Neste caso, a operação é envio do código e alteração da senha
     const [operationStatus, setOperationStatus] = useState({type: null, status: null, tittle:null, message: null});
-
-    // ==== State do Tema - Light ou Dark ==== //
-    const [actualTheme, setActualTheme] = useState("light"); 
-    const theme = createTheme({
-        palette: {
-          mode: actualTheme,
-        },
-      });
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
     
@@ -325,111 +316,106 @@ export function ForgotPassword(){
     return(
 
         <>
-            <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+            <Box
+            sx={{
+                marginTop: 8,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+            }}
+            >
+            <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50]}}>
+                <ManageAccountsIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+                Recuperar a conta
+            </Typography>
+            <Box component="form" onSubmit={handleCodeSubmit} noValidate sx={{ mt: 1 }}>
 
-                <Container component="main" maxWidth="xs">
-                    <CssBaseline />
-                    <Box
-                    sx={{
-                        marginTop: 8,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                    >
-                    <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50]}}>
-                        <ManageAccountsIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Recuperar a conta
-                    </Typography>
-                    <Box component="form" onSubmit={handleCodeSubmit} noValidate sx={{ mt: 1 }}>
+                {/* Renderização condicional do componente ScreenDarkFilter */}
+                {operationStatus.type != null && <ScreenDarkFilter {...operationStatus} />}
 
-                        {/* Renderização condicional do componente ScreenDarkFilter */}
-                        {operationStatus.type != null && <ScreenDarkFilter {...operationStatus} />}
-
-                        <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="forgotpass_email_input"
-                        label="Informe o seu endereço de email"
-                        name="forgotpass_email_input"
-                        autoFocus
-                        disabled = {codeTimer > 0 ? true : false}
-                        error = {errorDetected.email}
-                        helperText = {errorMessage.email}
-                        />
-                        <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        disabled = {codeTimer > 0 ? true : false}
-                        >
-                        {codeTimer === 0 ? "Receber código": codeTimer}
-                        </Button>    
-                    </Box>
-                    <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
-                        <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="code_received_input"
-                        label="Código recebido"
-                        type="text"
-                        id="code_received_input"
-                        disabled = {!codeSent} // Disabled recebe a negação do state codeSent
-                        error = {errorDetected.code}
-                        helperText = {errorMessage.code}
-                        />
-                        <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="new_password_input"
-                        label="Nova senha"
-                        name="new_password_input"
-                        type = "password"
-                        autoFocus
-                        disabled = {!codeSent} // Disabled recebe a negação do state codeSent
-                        helperText = {errorMessage.password}
-                        error = {errorDetected.password}
-                        />
-                         <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="new_password_confirmation_input"
-                        label="Confirmação da senha"
-                        name="new_password_confirmation_input"
-                        type = "password"
-                        autoFocus
-                        disabled = {!codeSent} // Disabled recebe a negação do state codeSent
-                        helperText = {errorMessage.confirm_password}
-                        error = {errorDetected.confirm_password}
-                        />
-                        <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
-                        disabled = {!codeSent}
-                        >
-                        Alterar a senha
-                        </Button>
-                        <Grid container justifyContent="flex-end">
-                            <Grid item>
-                                <Link to ="/acessar">
-                                    Voltar para a página de acesso 
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                    </Box>
-                </Container>
-
-            </ThemeProvider>
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="forgotpass_email_input"
+                label="Informe o seu endereço de email"
+                name="forgotpass_email_input"
+                autoFocus
+                disabled = {codeTimer > 0 ? true : false}
+                error = {errorDetected.email}
+                helperText = {errorMessage.email}
+                />
+                <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled = {codeTimer > 0 ? true : false}
+                >
+                {codeTimer === 0 ? "Receber código": codeTimer}
+                </Button>    
+            </Box>
+            <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="code_received_input"
+                label="Código recebido"
+                type="text"
+                id="code_received_input"
+                disabled = {!codeSent} // Disabled recebe a negação do state codeSent
+                error = {errorDetected.code}
+                helperText = {errorMessage.code}
+                />
+                <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="new_password_input"
+                label="Nova senha"
+                name="new_password_input"
+                type = "password"
+                autoFocus
+                disabled = {!codeSent} // Disabled recebe a negação do state codeSent
+                helperText = {errorMessage.password}
+                error = {errorDetected.password}
+                />
+                    <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="new_password_confirmation_input"
+                label="Confirmação da senha"
+                name="new_password_confirmation_input"
+                type = "password"
+                autoFocus
+                disabled = {!codeSent} // Disabled recebe a negação do state codeSent
+                helperText = {errorMessage.confirm_password}
+                error = {errorDetected.confirm_password}
+                />
+                <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                disabled = {!codeSent}
+                >
+                Alterar a senha
+                </Button>
+                <Grid container justifyContent="flex-end">
+                    <Grid item>
+                        <Link to ="/acessar">
+                            Voltar para a página de acesso 
+                        </Link>
+                    </Grid>
+                </Grid>
+            </Box>
+            </Box>
+        </Container>    
         </>
     )
 }

@@ -10,7 +10,6 @@ import { FormValidation } from '../../../../services/FormValidation';
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -18,7 +17,6 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { blue } from '@mui/material/colors';
@@ -31,17 +29,8 @@ export function Login(){
     const [errorDetected, setErrorDetected] = useState({email: false, password: false}); // State para o efeito de erro - true ou false
     const [errorMessage, setErrorMessage] = useState({email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-    // State do Tema - Light ou Dark 
-    const [themeValue, setThemeValue] = useState(false);
-
     // State do alerta
     const [displayAlert, setDisplayAlert]= useState({display: false, message: ""});
-
-    const theme = createTheme({
-        palette: {
-          mode: themeValue === true ? "dark" : "light",
-        },
-    });
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -177,94 +166,88 @@ export function Login(){
 
     return(
 
-        <>
-            <ThemeProvider theme={theme}>
-                {/* <ThemeButton /> */} 
-               
-                <Grid container component="main" sx={{ height: '100vh' }}>
-                    <CssBaseline />
-                    <Grid
-                    item
-                    xs={false}
-                    sm={4}
-                    md={7}
-                    sx={{
-                        backgroundImage: 'url(https://news.microsoft.com/wp-content/uploads/prod/sites/42/2018/05/DJI_Hero-1920x1080.jpg)',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundColor: (t) =>
-                        t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
-                    }}
-                    />
-                    <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square> 
-                    <Box
-                        sx={{
-                        my: 8,
-                        mx: 4,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        }}
-                    > 
-                        <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50], border: "black"}}>
-                            <LockOutlinedIcon />
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                        Acessar
-                        </Typography>
-                        <Box component="form" noValidate onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="login_email_input"
-                            label="Digite o seu email"
-                            name="login_email_input"
-                            autoFocus
-                            helperText = {errorMessage.email}
-                            error = {errorDetected.email}
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="login_password_input"
-                            label="Digite a sua senha"
-                            type="password"
-                            id="login_password_input"
-                            helperText = {errorMessage.password}
-                            error = {errorDetected.password}
-                        />
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Lembrar"
-                        />
-                        
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Acessar
-                        </Button>
-                        <Grid container sx={{mb: 2}}>
-                            <Grid item xs >
-                            <Link to ="/recuperarsenha">
-                                Esqueceu a senha?
-                            </Link>
-                            </Grid>
-                        </Grid>
-                        {displayAlert.display && 
-                        <Alert severity="error" fullWidth>{displayAlert.message}</Alert> 
-                        }
-                        </Box>
-                    </Box>
+        <>     
+        <Grid container component="main" sx={{ height: '100vh' }}>
+            <Grid
+            item
+            xs={false}
+            sm={4}
+            md={7}
+            sx={{
+                backgroundImage: 'url(https://news.microsoft.com/wp-content/uploads/prod/sites/42/2018/05/DJI_Hero-1920x1080.jpg)',
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: (t) =>
+                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
+            />
+            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square> 
+            <Box
+                sx={{
+                my: 8,
+                mx: 4,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                }}
+            > 
+                <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50], border: "black"}}>
+                    <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                Acessar
+                </Typography>
+                <Box component="form" noValidate onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="login_email_input"
+                    label="Digite o seu email"
+                    name="login_email_input"
+                    autoFocus
+                    helperText = {errorMessage.email}
+                    error = {errorDetected.email}
+                />
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="login_password_input"
+                    label="Digite a sua senha"
+                    type="password"
+                    id="login_password_input"
+                    helperText = {errorMessage.password}
+                    error = {errorDetected.password}
+                />
+                <FormControlLabel
+                    control={<Checkbox value="remember" color="primary" />}
+                    label="Lembrar"
+                />
+                
+                <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                >
+                    Acessar
+                </Button>
+                <Grid container sx={{mb: 2}}>
+                    <Grid item xs >
+                    <Link to ="/recuperarsenha">
+                        Esqueceu a senha?
+                    </Link>
                     </Grid>
                 </Grid>
-
-            </ThemeProvider>
+                {displayAlert.display && 
+                <Alert severity="error" fullWidth>{displayAlert.message}</Alert> 
+                }
+                </Box>
+            </Box>
+            </Grid>
+        </Grid>
         </>
     )
 }

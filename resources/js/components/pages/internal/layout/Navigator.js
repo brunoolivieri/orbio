@@ -81,7 +81,7 @@ export default function Navigator(props) {
   */
 
   return (
-    <Drawer variant="permanent" {...other}>
+    <Drawer {...other}>
       <List disablePadding>
         <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
           NOME DO SISTEMA
