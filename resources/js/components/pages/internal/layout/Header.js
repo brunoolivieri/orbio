@@ -1,6 +1,7 @@
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { usePagination } from '../../../context/Pagination/PaginationContext';
 import {HeaderMenu} from "../../../structures/header_menu/HeaderMenu";
+import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
@@ -39,7 +40,7 @@ function Header(props) {
             </Grid>
             <Grid item xs />
             <Grid item>
-              {/* outro ícone */}
+              <ColorModeToggle />
             </Grid>
             <Grid item>
               <HeaderMenu />

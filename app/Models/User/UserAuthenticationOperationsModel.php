@@ -35,13 +35,7 @@ class UserAuthenticationOperationsModel extends Model
         // Se o usuário existir 
         if(UserModel::where('email', $request->email)->exists()){
 
-            // Query Builder para buscar o usuário e seus dados básicos para validar o login
-            /*$userAccountData = DB::table('users')
-            ->where('users.email', '=', $request->email)
-            ->select('users.id', 'users.nome', 'users.email', 'users.senha', 'users.status', 'users.dh_ultimo_acesso')
-            ->get();*/
-
-            $userAccountData = UserModel::where('users.email', '=', $request->email)->get();
+            $userAccountData = UserModel::where('email', '=', $request->email)->get();
 
             // Se a senha informada for compátivel com a do registro
             if(password_verify($request->password, $userAccountData[0]->senha)){
@@ -136,7 +130,7 @@ class UserAuthenticationOperationsModel extends Model
 
     }catch(\Exception $e){
 
-        //dd($e);
+        dd($e);
 
     }
 

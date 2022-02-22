@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../services/FormValidation';
+import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
@@ -104,8 +105,6 @@ export function Login(){
           })
           .then(function (response) {
 
-            console.log(response)
-
             // Tratamento da resposta do servidor
             serverResponseTreatment(response);
 
@@ -183,6 +182,7 @@ export function Login(){
             }}
             />
             <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square> 
+            <ColorModeToggle />
             <Box
                 sx={{
                 my: 8,
@@ -231,6 +231,7 @@ export function Login(){
                     fullWidth
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
+                    color="primary"
                 >
                     Acessar
                 </Button>

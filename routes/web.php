@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // CONTROLADORES DE AUTENTICAÇÃO
-use App\Http\Controllers\Auth\LoginController; // Controlador do Login
+use App\Http\Controllers\Auth\LoginController; // Controlador do Login 
 use App\Http\Controllers\Auth\RegistrationController; // Controlador do Registro
 use App\Http\Controllers\Auth\ForgotPasswordController; // Controlador da recuperação da senha
 
