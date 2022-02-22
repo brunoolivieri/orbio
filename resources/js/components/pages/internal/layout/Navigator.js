@@ -1,6 +1,6 @@
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { Link } from 'react-router-dom';
 import layoutStyle from "./layout.module.css";
+import { Link } from 'react-router-dom';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -21,6 +21,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import { makeStyles } from "@mui/styles";
 
 const categories = [
   {
@@ -63,11 +64,20 @@ const itemCategory = {
   px: 3,
 };
 
+const useStyles = makeStyles((theme) => ({
+  nav_background: {
+    backgroundColor: '#081627'
+  }
+}))
+
 export default function Navigator(props) {
   const { ...other } = props;
 
   // Utilizador do contexto/state global de Autenticação
   const {AuthData, setAuthData} = useAuthentication();
+
+  // Classes do objeto makeStyles
+  const classes = useStyles();
 
   /*
 
@@ -82,7 +92,9 @@ export default function Navigator(props) {
 
   return (
     <Drawer {...other}>
-      <List disablePadding>
+
+      <List disablePadding className={classes.nav_background}>
+        
         <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
           NOME DO SISTEMA
         </ListItem>
@@ -91,7 +103,7 @@ export default function Navigator(props) {
         </ListItem>
 
         {categories.map(({ id, children }) => ( 
-          <Box key={id} sx={{ bgcolor: '#101F33' }}>
+          <Box key={id} sx={{ bgcolor: '#101F33'}} >
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
             </ListItem>
@@ -104,8 +116,8 @@ export default function Navigator(props) {
                   {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
                 <Link to = {childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className = {layoutStyle.navigator_navlink}>
                   <ListItemButton selected={active} sx={item}>
-                    <ListItemIcon>{icon}</ListItemIcon>
-                    <ListItemText>{childId}</ListItemText>
+                    <ListItemIcon sx={{color: "#fff"}}>{icon}</ListItemIcon>
+                    <ListItemText sx={{color: "#fff"}}>{childId}</ListItemText>
                   </ListItemButton>
                 </Link>
               </ListItem> : ""
@@ -115,7 +127,11 @@ export default function Navigator(props) {
           </Box>
         ))}
 
+        <Box height={"480px"} backgroundColor="#081627">
+        </Box>
+
       </List>
+
     </Drawer>
   );
 }

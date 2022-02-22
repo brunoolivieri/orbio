@@ -48,7 +48,6 @@ let theme = createTheme({
 theme = {
   ...theme,
   components: {
-    // Barra lateral esquerda
     MuiDrawer: {
       styleOverrides: {
         paper: {
@@ -60,7 +59,6 @@ theme = {
       styleOverrides: {
         root: {
           textTransform: 'none',
-          backgroundColor: "#233143"
         },
         contained: {
           boxShadow: 'none',
@@ -100,7 +98,7 @@ theme = {
     MuiIconButton: {
       styleOverrides: {
         root: {
-          padding: theme.spacing(1)
+          padding: theme.spacing(1),
         },
       },
     },

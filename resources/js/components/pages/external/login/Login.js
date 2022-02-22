@@ -21,6 +21,16 @@ import Typography from '@mui/material/Typography';
 import { Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { blue } from '@mui/material/colors';
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        backgroundColor: '#121212'
+    },
+    hiperlink: {
+        color: theme.palette.mode == 'light' ? "#222" : "#fff",
+    },
+}))
 
 export function Login(){
 
@@ -32,6 +42,9 @@ export function Login(){
 
     // State do alerta
     const [displayAlert, setDisplayAlert]= useState({display: false, message: ""});
+
+    // Classes do objeto makeStyles
+    const classes = useStyles();
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -166,7 +179,10 @@ export function Login(){
     return(
 
         <>     
-        <Grid container component="main" sx={{ height: '100vh' }}>
+        <Box sx={{position: 'absolute', right: '10px', top: '10px'}}>
+            <ColorModeToggle />
+        </Box>
+        <Grid container component="main" sx={{ height: '100vh'}}>
             <Grid
             item
             xs={false}
@@ -175,14 +191,11 @@ export function Login(){
             sx={{
                 backgroundImage: 'url(https://news.microsoft.com/wp-content/uploads/prod/sites/42/2018/05/DJI_Hero-1920x1080.jpg)',
                 backgroundRepeat: 'no-repeat',
-                backgroundColor: (t) =>
-                t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
             }}
             />
-            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square> 
-            <ColorModeToggle />
+            <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
             <Box
                 sx={{
                 my: 8,
@@ -191,6 +204,7 @@ export function Login(){
                 flexDirection: 'column',
                 alignItems: 'center',
                 }}
+
             > 
                 <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50], border: "black"}}>
                     <LockOutlinedIcon />
@@ -237,7 +251,7 @@ export function Login(){
                 </Button>
                 <Grid container sx={{mb: 2}}>
                     <Grid item xs >
-                    <Link to ="/recuperarsenha">
+                    <Link to ="/recuperarsenha" className={classes.hiperlink}>
                         Esqueceu a senha?
                     </Link>
                     </Grid>

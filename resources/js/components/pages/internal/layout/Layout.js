@@ -15,6 +15,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { useTheme } from "@emotion/react";
+import { makeStyles } from "@mui/styles";
 
 function Copyright() {
   return (
@@ -27,9 +28,17 @@ function Copyright() {
   );
 }
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919'
+  }
+}))
+
 const drawerWidth = 256;
 
 export function Layout() {
+
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
       const theme = useTheme();
 
@@ -42,6 +51,11 @@ export function Layout() {
       // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
       // Neste caso, a operação é a verificação do token JWT
       const [operationStatus, setOperationStatus] = useState({type: null, status: null, tittle:null, message: null});
+
+      // Classes do objeto makeStyles
+      const classes = useStyles();
+
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
       useEffect(() => {
 
@@ -112,24 +126,26 @@ export function Layout() {
       <Box sx={{ display: 'flex', minHeight: '100vh' }}>
         <Box
           component="nav"
-          sx={{flexShrink: { sm: 0 } }}
+          sx={{flexShrink: { sm: 0 }}}
         >
+          
           <Navigator
             PaperProps={{ style: { width: drawerWidth } }}
             variant="temporary"
             open={menuOpen}
             onClose={handleDrawerToggle}
           />
+
         </Box>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <Header onDrawerToggle={handleDrawerToggle} />
-          <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
+          <Box component="main" sx={{ flex: 1, py: 6, px: 4 }} className={classes.root}>
 
             {/* Conteúdo variável de cada página */}
             <InternalRoutes /> 
 
           </Box>
-          <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
+          <Box component="footer" sx={{ p: 2, bgcolor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919' }}>
             <Copyright />
           </Box>
         </Box>

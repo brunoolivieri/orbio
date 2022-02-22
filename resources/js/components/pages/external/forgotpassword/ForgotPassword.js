@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { FormValidation } from '../../../../services/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import {ScreenDarkFilter} from "../../../structures/screenDarkFilter/ScreenDarkFilter";
+import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
@@ -16,9 +17,18 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { blue } from '@mui/material/colors';
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+    root: {
+        backgroundColor: theme.palette.mode == 'light' ? "#fff" : '#2C2C2C'
+    },
+    hiperlink: {
+        color: theme.palette.mode == 'light' ? "#222" : "#fff",
+    }
+}))
 
 export function ForgotPassword(){
 
@@ -37,6 +47,9 @@ export function ForgotPassword(){
     // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
     // Neste caso, a operação é envio do código e alteração da senha
     const [operationStatus, setOperationStatus] = useState({type: null, status: null, tittle:null, message: null});
+
+    // Classes do objeto makeStyles
+    const classes = useStyles();
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
     
@@ -316,7 +329,12 @@ export function ForgotPassword(){
     return(
 
         <>
+        <Box sx={{position: 'absolute', right: '10px', top: '10px'}}>
+            <ColorModeToggle />
+        </Box>
+        
         <Container component="main" maxWidth="xs">
+            
             <Box
             sx={{
                 marginTop: 8,
@@ -408,7 +426,7 @@ export function ForgotPassword(){
                 </Button>
                 <Grid container justifyContent="flex-end">
                     <Grid item>
-                        <Link to ="/acessar">
+                        <Link to ="/acessar" className={classes.hiperlink}>
                             Voltar para a página de acesso 
                         </Link>
                     </Grid>

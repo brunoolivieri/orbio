@@ -14,8 +14,18 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { makeStyles } from "@mui/styles";
 
-const lightColor = 'rgba(255, 255, 255, 0.7)';
+const useStyles = makeStyles((theme) => ({
+  header_top: {
+    background: theme.palette.mode == 'light' ? '#1976D2' : '#121212',
+    boxShadow: '1px -1px 11px 0px rgba(0,0,0,0.75)',
+  },
+  header_bottom: {
+    background: theme.palette.mode == 'light' ? '#1976D2' : '#1E1E1E',
+    boxShadow: '1px -1px 11px 0px rgba(0,0,0,0.75)',
+  }
+}));
 
 function Header(props) {
 
@@ -23,10 +33,13 @@ function Header(props) {
 
   const {actualPage}= usePagination();
 
+  // Classes do objeto makeStyles
+  const classes = useStyles();
+
   return (
-    <React.Fragment>
-      <AppBar color="primary" position="sticky" elevation={0}>
-        <Toolbar>
+    <>
+      <AppBar position="sticky" elevation={0}>
+        <Toolbar className={classes.header_top}>
           <Grid container spacing={1} alignItems="center">
             <Grid item>
               <IconButton
@@ -55,7 +68,7 @@ function Header(props) {
         elevation={0}
         sx={{ zIndex: 0 }}
       >
-        <Toolbar>
+        <Toolbar className={classes.header_bottom}>
           <Grid container alignItems="center" spacing={1}>
             <Grid item xs>
               <Typography color="inherit" variant="h5" component="h1">
@@ -65,15 +78,7 @@ function Header(props) {
           </Grid>
         </Toolbar>
       </AppBar>
-      { /* <AppBar component="div" position="static" elevation={0} sx={{ zIndex: 0 }}>
-        <Tabs value={0} textColor="inherit">
-          <Tab label="Users" />
-          <Tab label="Sign-in method" />
-          <Tab label="Templates" />
-          <Tab label="Usage" />
-        </Tabs>
-      </AppBar> */}
-    </React.Fragment>
+    </>
   );
 }
 
