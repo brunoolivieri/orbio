@@ -51,7 +51,7 @@ export function InternalRoutes(){
             <Route exact path = "relatorios" element = {<Reports />} />
             <Route exact path = "conta" element = {<Account />} />
             <Route exact path = "configuracoes" element = {<Configurations />} />
-            <Route exact path = "administrador" element = {<AdministrationPanel />} />
+            <Route exact path = "administracao" element = {<AdministrationPanel />} />
             <Route exact path = "suporte" element = {<Support />} />
             <Route exact path = "ordens" element = {<ServiceOrders />} />
         </Routes>

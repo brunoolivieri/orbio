@@ -1,3 +1,6 @@
+// IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
+import { useRef } from "react";
+
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import layoutStyle from "./layout.module.css";
 import { Link } from 'react-router-dom';
@@ -31,20 +34,20 @@ const categories = [
         id: 'Dashboard',
         icon: <DashboardIcon />,
         active: false,
-        allowed_profiles: [1, 4, 3, 4]
+        default_allowed_profiles: [1, 4, 3, 4]
       },
-      { id: 'Administrador', icon: <AdminPanelSettingsIcon />, allowed_profiles: [1, 2]},
-      { id: 'Ordens', icon: <AssignmentIcon />, allowed_profiles: [1, 2, 3]},
-      { id: 'Planos', icon: <MapIcon />, allowed_profiles: [1, 2, 3]},
-      { id: 'Relatórios', icon: <AssessmentIcon />, allowed_profiles: [1, 2]}
+      { id: 'Administração', icon: <AdminPanelSettingsIcon />, default_allowed_profiles: [1, 2]},
+      { id: 'Ordens', icon: <AssignmentIcon />, default_allowed_profiles: [1, 2, 3]},
+      { id: 'Planos', icon: <MapIcon />, default_allowed_profiles: [1, 2, 3]},
+      { id: 'Relatórios', icon: <AssessmentIcon />, default_allowed_profiles: [1, 2]}
     ],
   },
   {
     id: 'Outros',
     children: [
-      { id: 'Conta', icon: <AccountCircleIcon />, allowed_profiles: [2, 3, 4] },
-      { id: 'Configurações', icon: <SettingsIcon />, allowed_profiles: [1, 4, 3, 4] },
-      { id: 'Suporte', icon: <HelpIcon />, allowed_profiles: [1, 4, 3, 4] },
+      { id: 'Conta', icon: <AccountCircleIcon />, default_allowed_profiles: [2, 3, 4] },
+      { id: 'Configurações', icon: <SettingsIcon />, default_allowed_profiles: [1, 4, 3, 4] },
+      { id: 'Suporte', icon: <HelpIcon />, default_allowed_profiles: [1, 4, 3, 4] },
     ],
   },
 ];
@@ -75,6 +78,19 @@ export default function Navigator(props) {
 
   // Utilizador do contexto/state global de Autenticação
   const {AuthData, setAuthData} = useAuthentication();
+
+  // Organização dos valores dos poderes do usuário
+  // Estrutura previamente adaptada à lógica da renderização do menu
+  // Cada um desses atributos será acessado a partir do valor do ID do item do menu recuperado na função .map() com "childID" 
+  // Por exemplo, quando "childID" for "Administração" o valor recuperado será refUserPowers["administracao"] - a codificação é alterada para coincidir um com outro
+  const refUserPowers = useRef({
+    administracao: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false,
+    ordens: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
+    planos: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
+    relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false
+  });
+
+  //console.log(refUserPowers.current[`${"Administração".toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])
 
   // Classes do objeto makeStyles
   const classes = useStyles();
@@ -109,8 +125,8 @@ export default function Navigator(props) {
             </ListItem>
 
             {/* Geração do menu de opções com base no perfil do usuário (nível de acesso) */}
-            {children.map(({ id: childId, icon, active, allowed_profiles }) => (
-                allowed_profiles.includes(AuthData.data.general_access) ?
+            {children.map(({ id: childId, icon, active, default_allowed_profiles }) => (
+                default_allowed_profiles.includes(AuthData.data.general_access) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) ?
                 <ListItem disablePadding key={childId}>
 
                   {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
