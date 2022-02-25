@@ -20,6 +20,7 @@ use App\Mail\UserRegisteredEmail;
 
 class AdministrationModuleController extends Controller
 {
+
     /**
      * Carrega e retorna os dados para compor o painel
      * O painel pode ser de administração de usuários

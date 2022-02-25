@@ -63,7 +63,10 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'check.user.access' => \App\Http\Middleware\CheckUserAccessMiddleware::class, // Verificar o nível de acesso do usuário
-        'session.auth' => \App\Http\Middleware\SessionAuthMiddleware::class // Verificar se o usuário está autenticado
+        'administration.module.authorization' => \App\Http\Middleware\Custom\Modules\AdministrationMiddleware::class, // Middleware para as ações no módulo "administração"
+        'reports.module.authorization' => \App\Http\Middleware\Custom\Modules\ReportsMiddleware::class, // Middleware para as ações no módulo "relatórios"
+        'orders.module.authorization' => \App\Http\Middleware\Custom\Modules\ServicesOrdersMiddleware::class, // Middleware para as ações no módulo "ordens de serviço"
+        'plans.module.authorization' => \App\Http\Middleware\Custom\Modules\FlightPlansMiddleware::class, // Middleware para as ações no módulo "planos de vôo"
+        'session.auth' => \App\Http\Middleware\Custom\Auth\SessionAuthMiddleware::class // Middleware para validar a sessão do usuário
     ];
 }

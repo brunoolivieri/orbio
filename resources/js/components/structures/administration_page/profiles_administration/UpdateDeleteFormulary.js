@@ -281,11 +281,16 @@ export function UpdateDeleteFormulary({data, operation}) {
     */
     function requestServerOperation(data){
 
-      // console.log(modulePowers)
+      let user_id = AuthData.data.id;
+      let module_id = 1;
+      let action = "escrever";
+
+      let auth = `${user_id}/${module_id}/${action}`;
 
       if(operation === "update"){
 
         AxiosApi.patch("/api/admin-module/profiles_panel", {
+          auth: auth,
           action: "escrever", // Verificação do Middleware
           module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
           id: data.get("id_input"),
@@ -309,7 +314,9 @@ export function UpdateDeleteFormulary({data, operation}) {
 
         let param = `profiles_panel|${data.get("id_input")}`;
 
-        AxiosApi.delete(`/api/admin-module/${param}`)
+        AxiosApi.delete(`/api/admin-module/${param}`, {
+          auth: auth,
+        })
         .then(function (response) {
   
             // Tratamento da resposta do servidor

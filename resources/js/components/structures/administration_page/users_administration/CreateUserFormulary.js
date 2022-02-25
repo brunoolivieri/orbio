@@ -131,9 +131,14 @@ export function CreateUserFormulary({...props}) {
 
       let randomPass = "User"+ (Math.floor(Math.random() * 100000000) + 99999999);
 
-      AxiosApi.post("/api/admin-module?panel=users_panel", {
-        action: "escrever", // Verificação do Middleware
-        module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
+      let user_id = AuthData.data.id;
+      let module_id = 1;
+      let action = "escrever";
+
+      let auth = `${user_id}/${module_id}/${action}`;
+
+      AxiosApi.post(`/api/admin-module?panel=users_panel`, {
+        auth: auth,
         email: data.get("registration_email_input"),
         name: data.get("registration_name_input"),
         profile: data.get("select_item_input"),
@@ -248,8 +253,7 @@ export function CreateUserFormulary({...props}) {
                 error = {errorDetected.email}
               />
               
-               <InputSelect data_source = {"/api/admin-module/create?panel=users_panel"} error = {errorDetected.profile} default = {0
-              } />
+               <InputSelect data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {0} />
               
           </DialogContent>
 

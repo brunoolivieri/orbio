@@ -131,11 +131,16 @@ export function UpdateDeleteFormulary({data, operation}) {
 
     function requestServerOperation(data){
 
+      let user_id = AuthData.data.id;
+      let module_id = 1;
+      let action = "escrever";
+
+      let auth = `${user_id}/${module_id}/${action}`;
+
       if(operation === "update"){
 
         AxiosApi.patch("/api/admin-module/users_panel", {
-          action: "escrever", // Verificação do Middleware
-          module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
+          auth: auth,
           id: data.get("id_input"),
           name: data.get("name_input"),
           email: data.get("email_input"),
@@ -159,7 +164,9 @@ export function UpdateDeleteFormulary({data, operation}) {
 
         let param = `users_panel|${data.get("id_input")}`;
 
-        AxiosApi.delete(`/api/admin-module/${param}`)
+        AxiosApi.delete(`/api/admin-module/${param}`, {
+          auth: auth,
+        })
         .then(function (response) {
   
             // Tratamento da resposta do servidor
@@ -300,6 +307,7 @@ export function UpdateDeleteFormulary({data, operation}) {
               helperText = {errorMessage.email}
               error = {errorDetected.email}
             />
+
             <TextField
               margin="dense"
               id="status_input"
@@ -308,14 +316,14 @@ export function UpdateDeleteFormulary({data, operation}) {
               type="number"
               fullWidth
               variant="outlined"
-              defaultValue={data.status}
+              defaultValue={data.status[0] == "Ativo" ? 1 : 0}
               InputProps={{
                   readOnly: operation == "delete" ? true : false,
                   inputProps: { min: 0, max: 1 }
               }}
             />
 
-          <InputSelect data_source = {"/api/admin-module/create?panel=users_panel"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
+          <InputSelect data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
 
           </DialogContent>
 
