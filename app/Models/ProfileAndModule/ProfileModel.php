@@ -125,7 +125,7 @@ class ProfileModel extends Model
 
     }
 
-    function updateProfile(int $id, array $profile_table_data, array $profile_module_table_data) : array {
+    function updateProfile(int $id, string $profile_name, array $profile_module_table_data) : array {
 
         try{
 
@@ -133,14 +133,14 @@ class ProfileModel extends Model
             DB::beginTransaction();
 
             // Se existe um Perfil com o nome informado
-            if(ProfileModel::where('nome', $profile_table_data["nome"])->where('id', '!=', $id)->exists()){
+            if(ProfileModel::where('nome', $profile_name)->where('id', '!=', $id)->exists()){
 
                 // Erro do tipo "nome"
                 return ["status" => false, "error" => "name_already_exists"];
 
             }else{
 
-                $profile_update = ProfileModel::where('id', $id)->update($profile_table_data);
+                $profile_update = ProfileModel::where('id', $id)->update(["nome" => $profile_name]);
 
                 if($profile_update){
 

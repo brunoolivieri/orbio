@@ -48,8 +48,8 @@ export function UpdateDeleteFormulary({data, operation}) {
     const [formOperation, setOperation] = useState(operation);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({name: false, access: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: null, access: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({name: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({name: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -78,8 +78,8 @@ export function UpdateDeleteFormulary({data, operation}) {
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({name: false, access: false});
-      setErrorMessage({name: null, access: null});
+      setErrorDetected({name: false});
+      setErrorMessage({name: null});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -135,14 +135,13 @@ export function UpdateDeleteFormulary({data, operation}) {
       // Se utilizada a função FormValidation é retornado um objeto com dois atributos: "erro" e "message"
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
-      const accessValidate = Number(formData.get("access_input")) === 0 ? {error: true, message: "Selecione um nível de acesso"} : {error: false, message: ""};
 
       // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({name: nameValidate.error, access: accessValidate.error});
-      setErrorMessage({name: nameValidate.message, access: accessValidate.message});
+      setErrorDetected({name: nameValidate.error});
+      setErrorMessage({name: nameValidate.message});
 
       // Se o email ou a senha estiverem errados
-      if(nameValidate.error === true || accessValidate.error === true){
+      if(nameValidate.error === true){
 
           return false;
 
@@ -163,7 +162,6 @@ export function UpdateDeleteFormulary({data, operation}) {
 
       // O retorno será um array com os valores [id_modulo, poder]
       let checkboxIdentifiers = module_and_power.split("|");
-
       let checkboxModule = checkboxIdentifiers[0];
       let checkboxPower = checkboxIdentifiers[1];
 
@@ -291,8 +289,6 @@ export function UpdateDeleteFormulary({data, operation}) {
 
         AxiosApi.patch("/api/admin-module/profiles_panel", {
           auth: auth,
-          action: "escrever", // Verificação do Middleware
-          module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
           id: data.get("id_input"),
           name: data.get("name_input"),
           powers: modulePowers
@@ -442,20 +438,7 @@ export function UpdateDeleteFormulary({data, operation}) {
                 readOnly: operation == "delete" ? true : false,
             }}
           />
-          <TextField
-            type = "number"
-            margin="dense"
-            id="access_input"
-            name = "access_input"
-            label="Acesso geral"
-            defaultValue={data.profile_access}
-            fullWidth
-            variant="outlined"
-            InputProps={{ inputProps: { min: 1, max: 4 } }}
-            InputProps={{
-                readOnly: operation == "delete" ? true : false,
-            }}
-          />
+
           </DialogContent>
 
 

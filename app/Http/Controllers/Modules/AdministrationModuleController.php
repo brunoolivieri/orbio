@@ -434,16 +434,10 @@ class AdministrationModuleController extends Controller
 
             $model = new ProfileModel();
 
-            // Dados para atualizar o registro da tabela "profile"
-            $data_profile_table_update = [
-                "nome" => $request->name,
-                "acesso_geral" => $request->access
-            ];
-
-            // Dados para atualizar os registros da tabela "profile_has_module"
-            $data_profile_module_table_update = $request->powers;
-
-            $update = $model->updateProfile($request->id, $data_profile_table_update, $data_profile_module_table_update);
+            // Envia o ID do usuário para o WHERE
+            // Envia o nome do perfil
+            // Envia um array com os dados da relação do perfil com os módulos
+            $update = $model->updateProfile($request->id, $request->name, $request->powers);
 
             if($update["status"] && !$update["error"]){
 
