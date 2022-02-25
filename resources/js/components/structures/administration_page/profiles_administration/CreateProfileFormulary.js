@@ -129,6 +129,8 @@ export function CreateProfileFormulary() {
     function requestServerOperation(data){
 
       AxiosApi.post("/api/admin-module?panel=profiles_panel", {
+        action: "escrever", // Verificação do Middleware
+        module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
         name: data.get("registration_name_input"),
         access: data.get("registration_access_input")
       })

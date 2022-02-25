@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 class SessionAuthMiddleware
 {
     /**
-     * Handle an incoming request.
+     * Resgata a requisição para a rota
+     * Realiza a verificação da existência de uma sessão
+     * Realiza a verificação da validade da sessão
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
@@ -17,7 +19,7 @@ class SessionAuthMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        if (!$request->session()->has("user_authenticated")) {
+        if (!$request->session()->has("user_authenticated") || !$request->session()->get("user_authenticated")) {
 
             return redirect("/acessar");
 

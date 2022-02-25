@@ -17,7 +17,7 @@ class UserSuccessfulLoginEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user; // 
+    public $user; 
 
     /**
      * Create a new event instance.

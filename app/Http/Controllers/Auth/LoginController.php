@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
-// Model utilizado
+// Models utilizados
 use App\Models\User\UserAuthenticationOperationsModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
+
+// Eventos utilizados
+use  App\Events\GenerateTokenAndSessionEvent;
 
 // ==== Token JWT ==== https://github.com/firebase/php-jwt ==== https://www.youtube.com/watch?v=B-7e-ZpIWAs ==== //
 use Firebase\JWT\JWT;
@@ -36,13 +39,11 @@ class LoginController extends Controller
             // $userData recebe o array dos dados do usuário logado
             $userData = $response["data"];
 
-            // Geração da sessão
-            $this->generateSession($userData);
+            if($token_jwt = $this->generateTokenAndSession($userData)){
 
-            // Geração do Token JWT
-            if($tokenGenerated = $this->generateTokenJWT($userData)){
+                //dd($token_jwt);
 
-                return response(["userid"=>$userData["id"], "token" => $tokenGenerated], 200);
+                return response(["userid"=>$userData["id"], "token" => $token_jwt], 200);
 
             }else{
 
@@ -54,47 +55,37 @@ class LoginController extends Controller
 
             return response(["error" => $response["error"]], 500);
 
-
         }
 
     }
 
     /**
-     * Método para gerar a sessão após a autenticação bem sucedida
+     * Método para inicialização da geração da sessão e do token JWT
+     * A sessão é criada apenas, não precisa ser retornada
+     * O token JWT precisa ser retornado para o frontend, e por isso é retornado
      * 
      * @param array $userData
+     * @return JWT 
      */
-    private function generateSession(array $userData) : void {
-
-        Session::put("user_authenticated", true);
-        Session::put("id", $userData["id"]);
-        Session::put("access", $userData["general_access"]);
-
-    }
-
-    /**
-     * Método para gerar o conteúdo do Token JWT após a autenticação do usuário
-     * 
-     * @param array $userData
-     * @return array
-     */
-    private function generateTokenJWT(array $userData) {
+    private function generateTokenAndSession(array $user_data) {
 
         $model = new ProfileHasModuleModel();
 
-        $response = $model->loadProfileModuleRelationshipExact($userData["profile_id"], NULL);
+        // Carrega os dados da relação do perfil do usuário com os módulos
+        $response = $model->loadProfileModuleRelationshipExact($user_data["profile_id"], NULL);
 
         if($response["status"] && !$response["error"]){
 
-            $dataFormated = $this->profileModuleFormatData($response["data"], $userData);
+            // Recebimento dos dados perfil-módulo re-organizados em um array
+            $profile_module_data = $this->profileModuleFormatData($response["data"], $user_data);
 
-            $userData["user_powers"] = $dataFormated;
+            // Geração da sessão
+            $this->generateSession($user_data, $profile_module_data);
 
-            $key = env('JWT_TOKEN_KEY');
+            // Geração e retorno do token JWT
+            $token_jwt = $this->generateTokenJWT($user_data, $profile_module_data);
 
-            $jwt_token = JWT::encode($userData, $key, 'HS256');
-
-            return $jwt_token;
+            return $token_jwt;
 
         }else if(!$response["status"] && $response["error"]){
 
@@ -104,9 +95,47 @@ class LoginController extends Controller
 
     }
 
-    // Essa é a mesma função usada pra formatar os dados do painel de perfis
-    // Ela diverge parcialmente da original porque é adaptada pra esse outro contexto
-    // Nesse caso ela cria a estrutura com os dados sobre a relação do perfil do usuário logado com os módulos
+    /**
+     * Método para gerar a sessão após a autenticação bem sucedida
+     * 
+     * @param array $user_data
+     */
+    private function generateSession(array $user_data, array $profile_module_data) : void {
+
+        Session::put("user_authenticated", true);
+        Session::put("id", $user_data["id"]);
+        Session::put("modules_access", $profile_module_data);
+
+    }
+
+    /**
+     * Método para gerar o conteúdo do Token JWT após a autenticação do usuário
+     * 
+     * @param array $userData
+     * @return array
+     */
+    private function generateTokenJWT(array $user_data, array $profile_module_data) : string {
+
+        $user_data["user_powers"] = $profile_module_data;
+
+        $key = env('JWT_TOKEN_KEY');
+
+        // Retorno do token gerado
+        $token_generated = JWT::encode($user_data, $key, 'HS256');  
+
+        return $token_generated;
+
+    }
+
+    /**
+     * Método para para alocar os dados em uma estrutura de dados planejada
+     * Possui a mesma lógica do método usado para formatar os dados do painel de perfis
+     * Ela diverge parcialmente da original porque é adaptada para esse outro contexto
+     * Nesse caso ela cria a estrutura com os dados sobre a relação especifica do perfil do usuário logado com os módulos 
+     * 
+     * @param array $profileData
+     * @param array $userData
+     */
     private function profileModuleFormatData(object $profileData, array $userData) : array {
 
         $arrData = [];

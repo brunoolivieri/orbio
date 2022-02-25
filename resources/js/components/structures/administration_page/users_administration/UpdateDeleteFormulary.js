@@ -134,6 +134,8 @@ export function UpdateDeleteFormulary({data, operation}) {
       if(operation === "update"){
 
         AxiosApi.patch("/api/admin-module/users_panel", {
+          action: "escrever", // Verificação do Middleware
+          module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
           id: data.get("id_input"),
           name: data.get("name_input"),
           email: data.get("email_input"),

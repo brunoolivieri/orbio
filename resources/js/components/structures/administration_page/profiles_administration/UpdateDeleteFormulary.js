@@ -286,9 +286,10 @@ export function UpdateDeleteFormulary({data, operation}) {
       if(operation === "update"){
 
         AxiosApi.patch("/api/admin-module/profiles_panel", {
+          action: "escrever", // Verificação do Middleware
+          module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
           id: data.get("id_input"),
           name: data.get("name_input"),
-          access: data.get("access_input"),
           powers: modulePowers
         })
         .then(function (response) {

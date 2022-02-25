@@ -77,6 +77,10 @@ export function UsersPanel(){
      */
      useEffect(() => {
 
+      let user_id = AuthData.data.id;
+      let module_id = 1;
+      let action = "ler";
+
       switch(paginationParams.where[0]){
 
         // Carregamento de todos os dados considerando o offset e limit
@@ -87,8 +91,7 @@ export function UsersPanel(){
 
           // Comunicação com o backend
           // Para recuperação dos dados que formam o painel de gerenciamento de usuários
-          AxiosApi.get(`/api/admin-module?panel=users_panel&args=${pagination_params}`, {
-            access: AuthData.data.access
+          AxiosApi.get(`/api/admin-module?panel=users_panel&args=${pagination_params}&auth=${user_id}/${module_id}/${action}`, {
             })
             .then(function (response) {
     
@@ -118,7 +121,7 @@ export function UsersPanel(){
           let query_arguments = `${'users_panel'}|${paginationParams.where[1]}|${paginationParams.offset}|${paginationParams.limit}`;
 
           // Comunicação com o backend
-          AxiosApi.get(`/api/admin-module/${query_arguments}`, {
+          AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${user_id}/${module_id}/${action}`, {
             access: AuthData.data.access
             })
             .then(function (response) {
@@ -197,6 +200,7 @@ export function UsersPanel(){
 
           <Grid item>
             {/* Formulário de criação de usuário */}
+            
             <CreateUserFormulary />
           </Grid>
 

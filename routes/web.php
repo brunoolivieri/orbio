@@ -51,7 +51,7 @@ Route::get('/api/user-account-data', [GeneralUserController::class, "loadUserAcc
 Route::post('/api/user-update-data', [GeneralUserController::class, "userUpdatesHisData"]); // Requisição para atualização dos dados da conta do usuário logado
 
 // ==== ROTAS DE REQUISIÇÕES API - MÓDULOS ==== //
-Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "check.user.access:2"]);
+Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "check.user.access"]);
 
 
 

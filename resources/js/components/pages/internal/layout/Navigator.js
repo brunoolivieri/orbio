@@ -111,7 +111,7 @@ export default function Navigator(props) {
 
       <List disablePadding className={classes.nav_background}>
         
-        <ListItem sx={{ ...item, ...itemCategory, fontSize: 22, color: '#fff' }}>
+        <ListItem sx={{ ...item, ...itemCategory, fontSize: 20, color: '#fff' }}>
           NOME DO SISTEMA
         </ListItem>
         <ListItem sx={{ ...item, ...itemCategory }}>
@@ -126,7 +126,7 @@ export default function Navigator(props) {
 
             {/* Geração do menu de opções com base no perfil do usuário (nível de acesso) */}
             {children.map(({ id: childId, icon, active, default_allowed_profiles }) => (
-                default_allowed_profiles.includes(AuthData.data.general_access) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) ?
+                (default_allowed_profiles.includes(AuthData.data.general_access) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])) ?
                 <ListItem disablePadding key={childId}>
 
                   {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}

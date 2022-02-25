@@ -132,6 +132,8 @@ export function CreateUserFormulary({...props}) {
       let randomPass = "User"+ (Math.floor(Math.random() * 100000000) + 99999999);
 
       AxiosApi.post("/api/admin-module?panel=users_panel", {
+        action: "escrever", // Verificação do Middleware
+        module_actions_access: AuthData.data.user_powers["1"], // Verificação do Middleware
         email: data.get("registration_email_input"),
         name: data.get("registration_name_input"),
         profile: data.get("select_item_input"),
