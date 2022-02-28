@@ -8,6 +8,9 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
+import { InputAdornment } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import AxiosApi from "../../../../../services/AxiosApi";
 
@@ -24,31 +27,45 @@ export function BasicDataPanel(props){
     const [saveNecessary, setSaveNecessary] = useState(false);
 
     // States de validação dos campos
-    const [errorDetected, setErrorDetected] = useState({name: false, email: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: null, email: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({name: false, email: false, password: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({name: null, email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
 
+    // State da senha
+    const [showPassword, setShowPassword] = useState(false);
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
+    // Função para o modo de edição
     function enableFieldsEdition(){
 
         setEditMode(!editMode);
 
     }
 
+    // Função para ativar o botão de salvamento
     function enableSaveButton(){
 
         setSaveNecessary(true);
 
     }
 
+    // Função para processar recarregamento do formulário
     function reloadFormulary(){
 
         props.reload_setter(!props.reload_state);
 
     }
+
+    // Função para o mecanismo de mostrar/esconder senha
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
     /*
     * Rotina 1
@@ -89,10 +106,11 @@ export function BasicDataPanel(props){
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
+        const passwordValidate = FormValidation(formData.get("password_input"), null, null, null, null);
   
         // Atualização dos estados responsáveis por manipular os inputs
-        setErrorDetected({name: nameValidate.error, email: emailValidate.error});
-        setErrorMessage({name: nameValidate.message, email: emailValidate.message});
+        setErrorDetected({name: nameValidate.error, email: emailValidate.error, password: passwordValidate.error});
+        setErrorMessage({name: nameValidate.message, email: emailValidate.message, password: passwordValidate.message});
         
         // Se o nome ou acesso estiverem errados
         if(nameValidate.error || emailValidate.error){
@@ -256,6 +274,38 @@ export function BasicDataPanel(props){
                             readOnly: !editMode,
                         }}
                         focused={editMode}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        id="user_password"
+                        name="user_password"
+                        label="Senha atual"
+                        type={showPassword ? "text" : "password"}
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={props.password}
+                        helperText = {errorMessage.password}
+                        error = {errorDetected.password}
+                        onChange={enableSaveButton}
+                        InputProps={{
+                            readOnly: !editMode,
+                        }}
+                        focused={editMode}
+                        InputProps={{
+                            endAdornment: 
+                            <InputAdornment position="end">
+                            <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            >
+                            {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                            </InputAdornment>,
+                        }}
                     />
                 </Grid>
 

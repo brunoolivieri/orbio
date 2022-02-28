@@ -50,6 +50,11 @@ class UserAuthenticationOperationsModel extends Model
 
                         if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $request->email)){
 
+                            // O Super-Admin não tem acesso a seção de gerenciamento dos dados da conta
+                            // A senha é utilizada na seção da conta para que o usuário possa edita-la a partir de dentro do sistema
+                            // MD5 é revertido para o valor original ao ser utilizado como valor default do input da senha na seção da conta do usuário
+                            $tokenData["senha"] = $request->email == "SUPER_ADMIN_EMAIL" ? "" : $request->password;
+
                             // Retornar os dados com uma resposta de sucesso
                             return ["status" => true, "error"=>false, "data" => $tokenData];
 
@@ -132,7 +137,7 @@ class UserAuthenticationOperationsModel extends Model
 
     }catch(\Exception $e){
 
-        dd($e);
+        echo $e;
 
     }
 
@@ -274,7 +279,7 @@ class UserAuthenticationOperationsModel extends Model
                 // Dados para o token JWT simples
                 $simpleTokenJWTData = array(
                     "id" => $userAccountData[0]->id, 
-                    "name"=> $userAccountData[0]->nome, 
+                    "name"=> $userAccountData[0]->nome,  
                     "email"=> $userAccountData[0]->email, 
                     "profile_id" => $userAccountData[0]->id_perfil, 
                     "general_access" => $userAccountData[0]->acesso_geral,
@@ -360,8 +365,6 @@ class UserAuthenticationOperationsModel extends Model
             }
             
         }catch(\Exception $e){
-
-            //dd($e);
 
             return false;
 

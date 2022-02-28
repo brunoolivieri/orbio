@@ -66,6 +66,7 @@ export function Account(){
                 address_id: AuthData.data.user_address_data.user_address_id,
                 name: response.data.data["0"].nome, 
                 email: response.data.data["0"].email,
+                password: AuthData.data.senha,
                 profile: AuthData.data.profile,
                 last_access: AuthData.data.last_access,
                 last_update: AuthData.data.last_update,

@@ -41,8 +41,6 @@ class LoginController extends Controller
 
             if($token_jwt = $this->generateTokenAndSession($userData)){
 
-                //dd($token_jwt);
-
                 return response(["userid"=>$userData["id"], "token" => $token_jwt], 200);
 
             }else{
