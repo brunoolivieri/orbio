@@ -275,6 +275,7 @@ class UserModel extends Model
                 
             }else{
 
+
                 $update = UserModel::where('id', $id)->update($data);
 
                 if($update){

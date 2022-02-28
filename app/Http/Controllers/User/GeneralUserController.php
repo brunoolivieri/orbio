@@ -64,7 +64,8 @@ class GeneralUserController extends Controller
 
             $data = [
                 "nome" => $request->name,
-                "email" => $request->email
+                "email" => $request->email,
+                "senha" => password_hash($request->password, PASSWORD_DEFAULT)
             ];
 
             $update = $model->updateUserData($request->id, $data);

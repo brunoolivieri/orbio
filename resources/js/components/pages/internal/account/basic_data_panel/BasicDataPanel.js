@@ -106,14 +106,14 @@ export function BasicDataPanel(props){
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
-        const passwordValidate = FormValidation(formData.get("password_input"), null, null, null, null);
+        const passwordValidate = FormValidation(formData.get("user_password"), null, null, null, null);
   
         // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, password: passwordValidate.error});
         setErrorMessage({name: nameValidate.message, email: emailValidate.message, password: passwordValidate.message});
         
         // Se o nome ou acesso estiverem errados
-        if(nameValidate.error || emailValidate.error){
+        if(nameValidate.error || emailValidate.error || passwordValidate.error){
   
           return false;
   
@@ -135,7 +135,8 @@ export function BasicDataPanel(props){
         AxiosApi.post("/api/user-update-data?panel=basic_data", {
           id: props.userid,
           email: data.get("user_email"),
-          name: data.get("user_fullname")
+          name: data.get("user_fullname"),
+          password: data.get("user_password"),
         })
         .then(function (response) {
   
