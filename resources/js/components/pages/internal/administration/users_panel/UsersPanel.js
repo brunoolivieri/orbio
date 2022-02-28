@@ -25,6 +25,7 @@ import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
+import { Badge } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -62,6 +63,10 @@ export function UsersPanel(){
 
     // State dos parâmetros de paginação - define como os dados serão carregados de acordo com a página
     const [paginationParams, setPaginationParams] = useState({offset: 0, limit: 10, where: [false, ""]});
+
+    // State que serve de dependência para o useEffect do AXIOS
+    // Serve para recarregar o painel
+    const [refreshPanel, setRefreshPanel] = useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -208,7 +213,15 @@ export function UsersPanel(){
             <Tooltip title="Reload">
               <IconButton onClick = {reloadTable}>
                 {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}
-                <RefreshIcon color="inherit" sx={{ display: 'block' }} />         
+
+                {refreshPanel == true ? 
+                <Badge color="primary" variant="dot">
+                  <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
+                </Badge>
+                : 
+                <RefreshIcon color="inherit" sx={{ display: 'block' }} />
+                }
+      
               </IconButton>
             </Tooltip>  
           </Grid>
@@ -274,8 +287,8 @@ export function UsersPanel(){
                             <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                             <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
                             <StyledTableCell align="center">{row.last_access}</StyledTableCell>
-                            <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} /></StyledTableCell>
-                            <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} /></StyledTableCell>
+                            <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                            <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                           </StyledTableRow>
                         ))
                     } 

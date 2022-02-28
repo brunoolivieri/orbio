@@ -34,7 +34,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 
 */
 
-export function UpdateDeleteFormulary({data, operation}) {
+export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -279,13 +279,15 @@ export function UpdateDeleteFormulary({data, operation}) {
     */
     function requestServerOperation(data){
 
-      let user_id = AuthData.data.id;
-      let module_id = 1;
-      let action = "escrever";
-
-      let auth = `${user_id}/${module_id}/${action}`;
+      // Dados para o middleware de autenticação
+      let logged_user_id = AuthData.data.id; // ID do usuário logado
+      let module_id = 1; // ID do módulo
+      let action = "escrever"; // Tipo de ação realizada
 
       if(operation === "update"){
+
+        // Reunião dos dados de autenticação em uma string para enviar no corpo da requisição PATCH
+        let auth = `${logged_user_id}/${module_id}/${action}`;
 
         AxiosApi.patch("/api/admin-module/profiles_panel", {
           auth: auth,
@@ -310,9 +312,7 @@ export function UpdateDeleteFormulary({data, operation}) {
 
         let param = `profiles_panel|${data.get("id_input")}`;
 
-        AxiosApi.delete(`/api/admin-module/${param}`, {
-          auth: auth,
-        })
+        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}/${module_id}/${action}`)
         .then(function (response) {
   
             // Tratamento da resposta do servidor
@@ -341,10 +341,16 @@ export function UpdateDeleteFormulary({data, operation}) {
 
         if(operation === "update"){
 
+          // Altera o state "refreshPanel" para true
+          refresh_setter(true);
+
           // Alerta sucesso
           setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
 
         }else if(operation === "delete"){
+
+          // Altera o state "refreshPanel" para true
+          refresh_setter(true);
 
           // Alerta sucesso
           setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});

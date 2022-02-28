@@ -28,6 +28,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { Badge } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -68,10 +69,7 @@ export function ProfilesPanel(){
 
     // State que serve de dependência para o useEffect do AXIOS
     // Serve para recarregar o painel
-    const [refreshPanel, setRefreshPanel] = useState(true);
-
-    // State para persistir os campos alterados
-    const [pageProfiles, setPageProfiles] = useState([]);
+    const [refreshPanel, setRefreshPanel] = useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -216,7 +214,13 @@ export function ProfilesPanel(){
               <IconButton onClick = {reloadTable}>
 
                 {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição com AXIOS */}
-                <RefreshIcon color="inherit" sx={{ display: 'block' }} /> 
+                {refreshPanel == true ? 
+                <Badge color="primary" variant="dot">
+                  <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
+                </Badge>
+                : 
+                <RefreshIcon color="inherit" sx={{ display: 'block' }} />
+                } 
                 
               </IconButton>
             </Tooltip>  
@@ -302,8 +306,8 @@ export function ProfilesPanel(){
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
                                 </StyledTableCell>
-                                <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} /></StyledTableCell>
-                                <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} /></StyledTableCell>
+                                <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                                <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                               </StyledTableRow>
                             ))
                         }
