@@ -143,8 +143,8 @@ export default function Navigator(props) {
           </Box>
         ))}
 
-        <Box height={"480px"} backgroundColor="#081627">
-        </Box>
+        {/* <Box height={"480px"} backgroundColor="#081627">
+        </Box> */}
 
       </List>
 

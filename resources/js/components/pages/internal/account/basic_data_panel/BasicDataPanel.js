@@ -7,7 +7,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
-import { Alert } from '@mui/material';
+import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
 
 import AxiosApi from "../../../../../services/AxiosApi";
 
@@ -214,7 +214,7 @@ export function BasicDataPanel(props){
         </Grid>
 
         {displayAlert.display && 
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+            <CloseableAlert severity={displayAlert.type} message = {displayAlert.message} /> 
         } 
        
         <Box component="form" id = "user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
