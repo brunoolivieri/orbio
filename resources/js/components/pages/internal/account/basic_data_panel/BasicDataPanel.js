@@ -16,7 +16,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 
 import { FormValidation } from '../../../../../services/FormValidation';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 export function BasicDataPanel(props){
 

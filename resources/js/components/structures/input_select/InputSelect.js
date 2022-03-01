@@ -13,7 +13,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import AxiosApi from "../../../services/AxiosApi";
 import { useAuthentication } from "../../context/InternalRoutesAuth/AuthenticationContext";
    
-export function InputSelect(props){
+// React Memo para ganho de performance - memoriza o componente enquanto passados os mesmos props
+export const InputSelect = React.memo((props) => {
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -106,5 +107,4 @@ export function InputSelect(props){
 
     )
 
-
-}
+})

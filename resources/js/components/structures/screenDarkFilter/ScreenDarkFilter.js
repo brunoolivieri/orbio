@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress'; // Spinner de loa
 // ==== Importação do Modal informativo ==== //
 import { InformativeModal } from "../informative_modal/InformativeModal";
 
-export function ScreenDarkFilter({...operation}) {
+export const ScreenDarkFilter = React.memo(({...operation}) => {
 
   const [open, setOpen] = React.useState(false);
   const handleClose = () => {
@@ -27,4 +27,5 @@ export function ScreenDarkFilter({...operation}) {
       </Backdrop>
     </div>
   );
-}
+
+})

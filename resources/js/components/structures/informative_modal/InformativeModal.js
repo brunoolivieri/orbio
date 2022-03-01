@@ -11,7 +11,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 
-export function InformativeModal({...operation}){
+export const InformativeModal = React.memo(({...operation}) => {
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
@@ -79,4 +79,4 @@ export function InformativeModal({...operation}){
       </div>  
     )
 
-}
+})

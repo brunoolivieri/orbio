@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 
 // ==== Importação do componente que unifica o sistema de roteamento ==== //
@@ -167,14 +167,14 @@ export default function Index() {
 
     return (
         <>
-            <React.StrictMode>
+            <StrictMode>
                 <AuthProvider>      
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <ReactRoutes/>
+                      <ReactRoutes/>
                   </ThemeProvider>    
                 </AuthProvider>
-            </React.StrictMode>
+            </StrictMode>
         </>
     );
 }

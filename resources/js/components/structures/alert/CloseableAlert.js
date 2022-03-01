@@ -1,3 +1,4 @@
+import React from 'react';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
@@ -6,7 +7,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { useState } from 'react';
 
-export function CloseableAlert(props) {
+export const CloseableAlert = React.memo((props) => {
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -32,4 +33,5 @@ export function CloseableAlert(props) {
       </Collapse>
     </Box>
   );
-}
+  
+})

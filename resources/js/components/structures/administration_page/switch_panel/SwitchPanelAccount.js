@@ -39,7 +39,8 @@ function a11yProps(index) {
   };
 }
 
-export function SwitchPanelAccount(props) {
+// React Memo para ganho de performance - memoriza o componente enquanto passados os mesmos props
+ export const SwitchPanelAccount = React.memo((props) => {
 
   const [value, setValue] = React.useState(0);
 
@@ -69,4 +70,5 @@ export function SwitchPanelAccount(props) {
       </Box>
     </Box>
   );
-}
+
+})
