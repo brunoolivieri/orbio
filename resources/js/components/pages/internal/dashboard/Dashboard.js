@@ -6,7 +6,6 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
-import { makeStyles } from "@mui/styles";
 
 // IMPORTAÇÃO DOS COMPONENTES PERSONALIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";

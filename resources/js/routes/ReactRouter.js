@@ -20,6 +20,9 @@ import {Configurations} from "../components/pages/internal/configurations/Config
 import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
 
+// ==== Importação do provider do state global de paginação ==== //
+import { PaginationProvider } from "../components/context/Pagination/PaginationContext";
+
 
 
 export function ReactRoutes(){
@@ -30,7 +33,7 @@ export function ReactRoutes(){
             <Routes>
                 <Route path="/acessar" element={<Login />} />
                 <Route path="/recuperarsenha" element={<ForgotPassword />} />
-                <Route exact path="/sistema/*" element={<Layout />} /> 
+                <Route exact path="/sistema/*" element={<PaginationProvider><Layout/></PaginationProvider>} /> 
                 <Route path="*" element={<NotFound />} />
             </Routes> 
         </BrowserRouter>
@@ -54,7 +57,7 @@ export function InternalRoutes(){
             <Route exact path = "administracao" element = {<AdministrationPanel />} />
             <Route exact path = "suporte" element = {<Support />} />
             <Route exact path = "ordens" element = {<ServiceOrders />} />
-        </Routes>
+        </Routes>     
         
     )
 }

@@ -18,6 +18,7 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import HelpIcon from '@mui/icons-material/Help';
 
 export function Support(){
 
@@ -31,7 +32,7 @@ export function Support(){
     * Atualização do state global da página atual
     */
     useEffect(() => {
-
+      
       setActualPage("SUPORTE AO USUÁRIO");
 
       // AXIOS PARA RECUPERAR RELATÓRIOS VINCULADOS AO USUÁRIOS

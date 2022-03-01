@@ -30,9 +30,13 @@ function Copyright() {
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    backgroundColor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919'
+    backgroundColor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919',
+    "& .MuiDrawer-paper": {
+      backgroundColor: "#333"
+    }
   }
 }))
+
 
 const drawerWidth = 256;
 

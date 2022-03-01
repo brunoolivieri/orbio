@@ -22,6 +22,7 @@ import { Box } from "@mui/system";
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 
 export function Reports(){
 
@@ -35,7 +36,7 @@ export function Reports(){
     * Atualização do state global da página atual
     */
     useEffect(() => {
-
+      
       setActualPage("RELATÓRIOS");
 
       // AXIOS PARA RECUPERAR RELATÓRIOS VINCULADOS AO USUÁRIOS

@@ -13,6 +13,7 @@ import { Toolbar } from "@mui/material";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { SwitchPanelAdmin } from "../../../structures/administration_page/switch_panel/SwitchPanelAdmin";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export function AdministrationPanel(){
 
@@ -26,7 +27,7 @@ export function AdministrationPanel(){
     * Atualização do state global da página atual
     */
     useEffect(() => {
-
+      
       setActualPage("PAINEL DO ADMINISTRADOR");
 
     }, [])

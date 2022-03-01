@@ -261,16 +261,16 @@ export function UsersPanel(){
                 <Table sx={{ minWidth: 500 }} aria-label="customized table">
                     <TableHead>
                     <TableRow>
-                        <StyledTableCell>ID</StyledTableCell>
-                        <StyledTableCell align="center">Nome</StyledTableCell>
-                        <StyledTableCell align="center">Email</StyledTableCell>
-                        <StyledTableCell align="center">Status</StyledTableCell>
-                        <StyledTableCell align="center">Acesso</StyledTableCell>
-                        <StyledTableCell align="center">Criação da conta</StyledTableCell>
-                        <StyledTableCell align="center">Última atualização</StyledTableCell>
-                        <StyledTableCell align="center">Último acesso</StyledTableCell>
-                        <StyledTableCell align="center">Editar</StyledTableCell>
-                        <StyledTableCell align="center">Excluir</StyledTableCell>
+                      <StyledTableCell>ID</StyledTableCell>
+                      <StyledTableCell align="center">Nome</StyledTableCell>
+                      <StyledTableCell align="center">Email</StyledTableCell>
+                      <StyledTableCell align="center">Status</StyledTableCell>
+                      <StyledTableCell align="center">Acesso</StyledTableCell>
+                      <StyledTableCell align="center">Criação da conta</StyledTableCell>
+                      <StyledTableCell align="center">Última atualização</StyledTableCell>
+                      <StyledTableCell align="center">Último acesso</StyledTableCell>
+                      <StyledTableCell align="center">Editar</StyledTableCell>
+                      <StyledTableCell align="center">Excluir</StyledTableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody className = "tbody">
@@ -290,8 +290,7 @@ export function UsersPanel(){
                             <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                           </StyledTableRow>
-                        ))
-                    } 
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

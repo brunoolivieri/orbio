@@ -16,7 +16,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 
 import { FormValidation } from '../../../../../services/FormValidation';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function BasicDataPanel(props){
 
@@ -31,10 +31,13 @@ export function BasicDataPanel(props){
     const [errorMessage, setErrorMessage] = useState({name: null, email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = useState({open: false, type: "", message: ""});
 
     // State da senha
     const [showPassword, setShowPassword] = useState(false);
+
+    // Password Ref
+    const passwordRef = useRef(props.password);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -142,6 +145,9 @@ export function BasicDataPanel(props){
   
             // Tratamento da resposta do servidor
             serverResponseTreatment(response);
+
+            // A senha mostrada no input se torna a nova senha
+            passwordRef.current = password;
   
         })
         .catch(function (error) {
@@ -163,7 +169,7 @@ export function BasicDataPanel(props){
         if(response.status === 200){
    
            // Alerta sucesso
-           setDisplayAlert({display: true, type: "success", message: "Dados atualizados com sucesso!"});
+           setDisplayAlert({open: true, type: "success", message: "Dados atualizados com sucesso!"});
 
            // Recarregar os dados do usuário
            props.reload_setter(!props.reload_state);
@@ -180,7 +186,7 @@ export function BasicDataPanel(props){
              setErrorMessage({name: null, email: "Esse email já existe"});
    
              // Alerta erro
-             setDisplayAlert({display: true, type: "error", message: "O email informado já está cadastrado no sistema"});
+             setDisplayAlert({open: true, type: "error", message: "O email informado já está cadastrado no sistema"});
    
              // Habilitar botão de envio
              setDisabledButton(false);
@@ -188,14 +194,14 @@ export function BasicDataPanel(props){
            }else{
    
              // Alerta
-             setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+             setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
    
              // Habilitar botão de envio
              setDisabledButton(false);
    
            } 
    
-         }
+        }
    
        }
 
@@ -232,10 +238,8 @@ export function BasicDataPanel(props){
 
         </Grid>
 
-        {displayAlert.display && 
-            <CloseableAlert severity={displayAlert.type} message = {displayAlert.message} /> 
-        } 
-       
+        <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} /> 
+    
         <Box component="form" id = "user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
 
             <Grid container spacing={5}>
@@ -287,7 +291,7 @@ export function BasicDataPanel(props){
                         type={showPassword ? "text" : "password"}
                         fullWidth
                         variant="outlined"
-                        defaultValue={props.password}
+                        defaultValue={passwordRef.current}
                         helperText = {errorMessage.password}
                         error = {errorDetected.password}
                         onChange={enableSaveButton}

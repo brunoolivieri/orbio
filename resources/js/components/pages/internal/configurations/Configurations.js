@@ -8,6 +8,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";
@@ -21,7 +22,7 @@ export function Configurations(){
     * Atualização do state global da página atual
     */
     useEffect(() => {
-
+      
       setActualPage("CONFIGURAÇÕES");
   
     })

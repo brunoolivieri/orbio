@@ -30,7 +30,7 @@ export function ComplementaryDataPanel(props){
     const [errorMessage, setErrorMessage] = useState({habANAC: null, cpf: null, cnpj: null, telephone: null, cellphone: null,  razaoSocial: null, nomeFantasia: null, logradouro: null, numero: null, cep: null, cidade: null, estado: null, complemento: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = useState({open: false, type: "", message: ""});
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -207,7 +207,7 @@ export function ComplementaryDataPanel(props){
         if(response.status === 200){
    
            // Alerta sucesso
-           setDisplayAlert({display: true, type: "success", message: "Dados atualizados com sucesso!"});
+           setDisplayAlert({open: true, type: "success", message: "Dados atualizados com sucesso!"});
 
            // Recarregar os dados do usuário
            props.reload_setter(!props.reload_state);
@@ -252,7 +252,7 @@ export function ComplementaryDataPanel(props){
             );
 
             // Alerta erro
-            setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+            setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
    
          }
    
@@ -290,11 +290,9 @@ export function ComplementaryDataPanel(props){
             </Grid>
 
         </Grid>
-
-        {displayAlert.display && 
-            <CloseableAlert severity={displayAlert.type} message = {displayAlert.message} />  
-        } 
-
+        
+        <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} />  
+         
         <Box component="form" id = "user_account_complementary_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
 
             <Grid container spacing={5}>

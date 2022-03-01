@@ -222,6 +222,7 @@ class UserModel extends Model
             ->select(
                 'users.nome', 
                 'users.email', 
+                'users.senha',
                 'user_complementary_data.habANAC',
                 'user_complementary_data.CPF',
                 'user_complementary_data.CNPJ',

@@ -8,11 +8,9 @@ import { useState } from 'react';
 
 export function CloseableAlert(props) {
 
-  const [open, setOpen] = useState(true);
-
   return (
     <Box sx={{ width: '100%' }}>
-      <Collapse in={open}>
+      <Collapse in={props.open}>
         <Alert
           severity={props.severity}
           action={
@@ -21,7 +19,7 @@ export function CloseableAlert(props) {
               color="inherit"
               size="small"
               onClick={() => {
-                setOpen(false);
+                props.alert_setter(false);
               }}
             >
               <CloseIcon fontSize="inherit" />

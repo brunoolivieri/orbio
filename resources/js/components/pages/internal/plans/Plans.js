@@ -21,6 +21,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { Box } from "@mui/system";
+import MapIcon from '@mui/icons-material/Map';
 
 export function Plans(){
 
@@ -36,7 +37,7 @@ export function Plans(){
     * Atualização do state global da página atual
     */
     useEffect(() => {
-
+      
       setActualPage("PLANOS DE VÔO");
   
     })

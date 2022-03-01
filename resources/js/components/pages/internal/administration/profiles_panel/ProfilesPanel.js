@@ -266,13 +266,13 @@ export function ProfilesPanel(){
                 <Table sx={{ minWidth: 500 }} aria-label="customized table">
                     <TableHead>
                       <TableRow>
-                          <StyledTableCell align="center">Nome</StyledTableCell>
-                          <StyledTableCell align="center">Administração</StyledTableCell>
-                          <StyledTableCell align="center">Planos de voo</StyledTableCell>
-                          <StyledTableCell align="center">Ordens de serviço</StyledTableCell>
-                          <StyledTableCell align="center">Relatórios</StyledTableCell>
-                          <StyledTableCell align="center">Editar</StyledTableCell>
-                          <StyledTableCell align="center">Excluir</StyledTableCell>
+                        <StyledTableCell align="center">Nome</StyledTableCell>
+                        <StyledTableCell align="center">Administração</StyledTableCell>
+                        <StyledTableCell align="center">Planos de voo</StyledTableCell>
+                        <StyledTableCell align="center">Ordens de serviço</StyledTableCell>
+                        <StyledTableCell align="center">Relatórios</StyledTableCell>
+                        <StyledTableCell align="center">Editar</StyledTableCell>
+                        <StyledTableCell align="center">Excluir</StyledTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody className = "tbody">
@@ -309,8 +309,7 @@ export function ProfilesPanel(){
                                 <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                                 <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                               </StyledTableRow>
-                            ))
-                        }
+                            ))}
                     </TableBody>
                 </Table>
             </TableContainer>

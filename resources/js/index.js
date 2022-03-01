@@ -7,9 +7,6 @@ import { ReactRoutes } from "./routes/ReactRouter";
 // ==== Importação do provider do state global AuthenticationContext ==== //
 import { AuthProvider } from './components/context/InternalRoutesAuth/AuthenticationContext';
 
-// ==== IMportação do provider do state global de paginação ==== //
-import { PaginationProvider } from "./components/context/Pagination/PaginationContext";
-
 import { createTheme, ThemeProvider } from '@mui/material/styles'; // Para criar e injetar o objeto do Tema 
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -171,13 +168,11 @@ export default function Index() {
     return (
         <>
             <React.StrictMode>
-                <AuthProvider>
-                    <PaginationProvider> 
-                        <ThemeProvider theme={theme}>
-                          <CssBaseline />
-                          <ReactRoutes/>
-                        </ThemeProvider>
-                    </PaginationProvider>
+                <AuthProvider>      
+                  <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <ReactRoutes/>
+                  </ThemeProvider>    
                 </AuthProvider>
             </React.StrictMode>
         </>
