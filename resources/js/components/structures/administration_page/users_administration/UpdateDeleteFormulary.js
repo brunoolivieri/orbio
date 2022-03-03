@@ -329,7 +329,7 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
               }}
             />
 
-          <InputSelect data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
+          <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
 
           </DialogContent>
 

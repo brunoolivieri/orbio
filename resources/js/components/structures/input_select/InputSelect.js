@@ -7,7 +7,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import FormHelperText from '@mui/material/FormHelperText';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../services/AxiosApi";
@@ -39,32 +38,31 @@ export const InputSelect = React.memo((props) => {
 
     useEffect(() => {
 
-        // Comunicação com o backend
-        // Para recuperação dos dados que formam o input de seleção de perfis no formulário de registro
-        AxiosApi.get(axiosURL, {
-          access: AuthData.data.access
-          })
-          .then(function (response) {
-
-            if(response.status === 200){
-
-                //console.log(response)
-
-              setSelectionInputData({status: true, data: {error: {load: false, submit: false}, records: response.data, default_option: "Escolha uma opção", label_text: "Perfil"}});
+            // Comunicação com o backend
+            // Para recuperação dos dados que formam o input de seleção de perfis no formulário de registro
+            AxiosApi.get(axiosURL, {
+                access: AuthData.data.access
+                })
+                .then(function (response) {
     
-            }else{
+                if(response.status === 200){
     
-              setSelectionInputData({status: true, data: {error: {load: true, submit: false}, default_option: "Erro", label_text: "Perfil"}});
+                    //console.log(response)
     
-            }
-
-          })
-          .catch(function (error) {
-
-            setSelectionInputData({status: true, data: {error: {load: true, submit: false}, default_option: "Erro", label_text: "Perfil"}});
-
-        });
-      
+                    setSelectionInputData({status: true, data: {error: {load: false, submit: false}, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text}});
+        
+                }else{
+        
+                    setSelectionInputData({status: true, data: {error: {load: true, submit: false}, default_option: "Erro", label_text: props.label_text}});
+        
+                }
+    
+                })
+                .catch(function (error) {
+    
+                setSelectionInputData({status: true, data: {error: {load: true, submit: false}, default_option: "Erro", label_text: "Perfil"}});
+    
+            });
 
     },[open]);
 

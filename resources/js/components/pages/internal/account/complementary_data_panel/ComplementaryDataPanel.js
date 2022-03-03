@@ -15,6 +15,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../services/FormValidation';
 
 import { useState, useEffect } from 'react';
+import { WindowRounded } from '@mui/icons-material';
 
 export function ComplementaryDataPanel(props){
 
@@ -30,7 +31,10 @@ export function ComplementaryDataPanel(props){
     const [errorMessage, setErrorMessage] = useState({habANAC: null, cpf: null, cnpj: null, telephone: null, cellphone: null,  razaoSocial: null, nomeFantasia: null, logradouro: null, numero: null, cep: null, cidade: null, estado: null, complemento: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({open: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
+
+    // State key Down
+    const [keyPressed, setKeyPressed] = useState();
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -49,6 +53,72 @@ export function ComplementaryDataPanel(props){
     function reloadFormulary(){
 
         props.reload_setter(!props.reload_state);
+
+    }
+
+
+    function inputSetMask(event, input){
+
+        if(keyPressed != "Backspace"){
+
+            if(input == "HAB_ANAC"){
+
+                console.log(event.currentTarget.value.length)
+    
+            }else if(input == "CNPJ"){
+    
+                if(event.currentTarget.value.length == 2 || event.currentTarget.value.length == 6){
+    
+                    event.currentTarget.value = `${event.currentTarget.value}.`;
+    
+                }else if(event.currentTarget.value.length == 10){
+    
+                    event.currentTarget.value = event.currentTarget.value + "/";
+    
+                }else if(event.currentTarget.value.length == 15){
+    
+                    event.currentTarget.value = event.currentTarget.value + "-";
+    
+                }
+    
+            }else if(input == "CPF"){
+    
+                if(event.currentTarget.value.length == 3 || event.currentTarget.value.length == 7){ 
+    
+                    event.currentTarget.value = `${event.currentTarget.value}.`;
+    
+                }else if(event.currentTarget.value.length == 11){
+    
+                    event.currentTarget.value = event.currentTarget.value + "-";
+    
+                }
+    
+            }else if(input == "PHONE"){
+    
+                if(event.currentTarget.value.length == 1){ 
+    
+                    event.currentTarget.value = `(${event.currentTarget.value}`;
+    
+                }else if(event.currentTarget.value.length == 3){
+                    
+                    event.currentTarget.value = event.currentTarget.value + ")";
+    
+                }else if(event.currentTarget.value.length == 9){
+    
+                    event.currentTarget.value = event.currentTarget.value + "-";
+                }
+    
+            }else if(input == "CEP"){
+    
+                if(event.currentTarget.value.length == 5){ 
+    
+                    event.currentTarget.value = event.currentTarget.value + "-";
+    
+                }
+    
+            }
+
+        }   
 
     }
 
@@ -86,9 +156,9 @@ export function ComplementaryDataPanel(props){
         // Padrões válidos
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
-        const phonePattern = /^[0-9]{11}$/;
+        const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}\-\d{4})/;
         const adressNumberPattern = /^\d+$/;
-        const cepPattern = /[0-9]{8}/;
+        const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
         // Validação dos dados - true para presença de erro e false para ausência
         // O valor final é um objeto com dois atributos: "erro" e "message"
@@ -104,7 +174,7 @@ export function ComplementaryDataPanel(props){
         const numeroValidate = FormValidation(formData.get("user_numero"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
         const cepValidate = FormValidation(formData.get("user_cep"), null, null, cepPattern, "CEP");
         const cidadeValidate = FormValidation(formData.get("user_cidade"), 3, null, null);
-        const estadoValidate = FormValidation(formData.get("user_estado"), null, null, null);
+        const estadoValidate = FormValidation(formData.get("user_estado"), 2, 2, null);
         const complementoValidate = FormValidation(formData.get("user_complemento"), null, null, null);
   
         // Atualização dos estados responsáveis por manipular os inputs
@@ -295,7 +365,7 @@ export function ComplementaryDataPanel(props){
          
         <Box component="form" id = "user_account_complementary_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
 
-            <Grid container spacing={5}>
+            <Grid container spacing={3}>
         
                 <Grid item xs={12} sm={6}>
                     <TextField
@@ -308,7 +378,7 @@ export function ComplementaryDataPanel(props){
                         defaultValue={props.habANAC}
                         helperText = {errorMessage.habANAC}
                         error = {errorDetected.habANAC}
-                        onChange={enableSaveButton}
+                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "HAB_ANAC");}}
                         InputProps={{
                             readOnly: !editMode,
                         }}
@@ -327,9 +397,11 @@ export function ComplementaryDataPanel(props){
                         defaultValue={props.cpf}
                         helperText = {errorMessage.cpf}
                         error = {errorDetected.cpf}
-                        onChange={enableSaveButton}
+                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "CPF");}}
+                        onKeyDown={(event) => { setKeyPressed(event.key) }}
                         InputProps={{
                             readOnly: !editMode,
+                            maxLength: 14
                         }}
                         focused={editMode}
                     />
@@ -346,9 +418,11 @@ export function ComplementaryDataPanel(props){
                         defaultValue={props.cnpj}
                         helperText = {errorMessage.cnpj}
                         error = {errorDetected.cnpj}
-                        onChange={enableSaveButton}
+                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "CNPJ");}}
+                        onKeyDown={(event) => { setKeyPressed(event.key) }}
                         InputProps={{
                             readOnly: !editMode,
+                            maxLength: 18
                         }}
                         focused={editMode}
                     />
@@ -359,15 +433,17 @@ export function ComplementaryDataPanel(props){
                         required
                         id="user_telephone"
                         name="user_telephone"
-                        label="Telefone"
+                        label="Telefone (com DDD)"
                         fullWidth
                         variant="outlined"
                         defaultValue={props.telephone}
                         helperText = {errorMessage.telephone}
                         error = {errorDetected.telephone}
-                        onChange={enableSaveButton}
+                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "PHONE");}}
+                        onKeyDown={(event) => { setKeyPressed(event.key) }}
                         InputProps={{
                             readOnly: !editMode,
+                            maxLength: 14
                         }}
                         focused={editMode}
                     />
@@ -378,15 +454,17 @@ export function ComplementaryDataPanel(props){
                         required
                         id="user_cellphone"
                         name="user_cellphone"
-                        label="Celular"
+                        label="Celular (com DDD)"
                         fullWidth
                         variant="outlined"
                         defaultValue={props.cellphone}
                         helperText = {errorMessage.cellphone}
                         error = {errorDetected.cellphone}
-                        onChange={enableSaveButton}
+                        onChange={(event, ) => {enableSaveButton(); inputSetMask(event, "PHONE");}}
+                        onKeyDown={(event) => { setKeyPressed(event.key) }}
                         InputProps={{
                             readOnly: !editMode,
+                            maxLength: 14
                         }}
                         focused={editMode}
                     />
@@ -479,9 +557,11 @@ export function ComplementaryDataPanel(props){
                         defaultValue={props.cep}
                         helperText = {errorMessage.cep}
                         error = {errorDetected.cep}
-                        onChange={enableSaveButton}
+                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "CEP");}}
+                        onKeyDown={(event) => { setKeyPressed(event.key) }}
                         InputProps={{
                             readOnly: !editMode,
+                            maxLength: 9
                         }}
                         focused={editMode}
                     />
@@ -520,6 +600,7 @@ export function ComplementaryDataPanel(props){
                         onChange={enableSaveButton}
                         InputProps={{
                             readOnly: !editMode,
+                            maxLength: 2
                         }}
                         focused={editMode}
                     />

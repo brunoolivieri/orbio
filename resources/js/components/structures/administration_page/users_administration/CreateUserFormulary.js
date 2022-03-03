@@ -253,7 +253,7 @@ export function CreateUserFormulary({...props}) {
                 error = {errorDetected.email}
               />
               
-               <InputSelect data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {0} />
+               <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {0} />
               
           </DialogContent>
 

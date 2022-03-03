@@ -31,7 +31,7 @@ export function BasicDataPanel(props){
     const [errorMessage, setErrorMessage] = useState({name: null, email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({open: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
 
     // State da senha
     const [showPassword, setShowPassword] = useState(false);
@@ -242,7 +242,7 @@ export function BasicDataPanel(props){
     
         <Box component="form" id = "user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
 
-            <Grid container spacing={5}>
+            <Grid container spacing={3}>
         
                 <Grid item xs={12} sm={6}>
                     <TextField
