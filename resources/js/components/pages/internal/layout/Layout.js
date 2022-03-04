@@ -31,8 +31,8 @@ function Copyright() {
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919',
-    "& .MuiDrawer-paper": {
-      backgroundColor: "#333"
+    "&.MuiPaper-root":{
+      backgroundColor:"#333" // Teste
     }
   }
 }))
@@ -138,6 +138,7 @@ export function Layout() {
             variant="temporary"
             open={menuOpen}
             onClose={handleDrawerToggle}
+            id = "xablaus"
           />
 
         </Box>

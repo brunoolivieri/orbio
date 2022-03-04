@@ -107,7 +107,9 @@ export default function Navigator(props) {
   */
 
   return (
-    <Drawer {...other}>
+    <Drawer {...other}
+    PaperProps={{ sx: { backgroundColor: "#081627" }}}
+    >
 
       <List disablePadding className={classes.nav_background}>
         

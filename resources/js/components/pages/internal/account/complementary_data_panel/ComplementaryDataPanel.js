@@ -154,6 +154,7 @@ export function ComplementaryDataPanel(props){
     function dataValidate(formData){
 
         // Padrões válidos
+        const habAnacPattern = /^\d{6}$/;
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
         const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}\-\d{4})/;
@@ -163,7 +164,7 @@ export function ComplementaryDataPanel(props){
         // Validação dos dados - true para presença de erro e false para ausência
         // O valor final é um objeto com dois atributos: "erro" e "message"
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-        const habanacValidate = FormValidation(formData.get("user_habanac"), 3, null, null, null);
+        const habanacValidate = FormValidation(formData.get("user_habanac"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
         const cpfValidate = FormValidation(formData.get("user_cpf"), null, null, cpfPattern, "CPF");
         const cnpjValidate = FormValidation(formData.get("user_cnpj"), null, null, cnpjPattern, "CNPJ");
         const telephoneValidate = FormValidation(formData.get("user_telephone"), null, null, phonePattern, "NÚMERO DE TELEFONE");

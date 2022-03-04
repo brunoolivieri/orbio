@@ -42,7 +42,7 @@ export function FormValidation(value, minLength = null, maxLength = null, patter
     
                 }else{
 
-                    return {error: true, message: `${regexSpecificField.toLowerCase()} inválido`}
+                    return {error: true, message: `${regexSpecificField.toLowerCase()} inválido(a)`}
 
                 }
 
