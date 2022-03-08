@@ -1,3 +1,6 @@
+// IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
+import { useState, useEffect } from 'react';
+
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
@@ -9,13 +12,13 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
-
-import AxiosApi from "../../../../../services/AxiosApi";
-
-import { FormValidation } from '../../../../../services/FormValidation';
-
-import { useState, useEffect } from 'react';
 import { WindowRounded } from '@mui/icons-material';
+
+// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+import AxiosApi from "../../../../../services/AxiosApi";
+import { FormValidation } from '../../../../../services/FormValidation';
+import { SelectStates } from '../../../../structures/input_select/InputSelectStates';
+import { SelectCities } from '../../../../structures/input_select/SelectCities';
 
 export function ComplementaryDataPanel(props){
 
@@ -35,6 +38,10 @@ export function ComplementaryDataPanel(props){
 
     // State key Down
     const [keyPressed, setKeyPressed] = useState();
+
+    // State do input de estado e de cidade
+    const [inputState, setInputState] = useState(props.estado);
+    const [inputCity, setInputCity] = useState(props.cidade);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -115,11 +122,8 @@ export function ComplementaryDataPanel(props){
                     event.currentTarget.value = event.currentTarget.value + "-";
     
                 }
-    
             }
-
         }   
-
     }
 
     /*
@@ -174,8 +178,8 @@ export function ComplementaryDataPanel(props){
         const logradouroValidate = FormValidation(formData.get("user_logradouro"), 3, null, null);
         const numeroValidate = FormValidation(formData.get("user_numero"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
         const cepValidate = FormValidation(formData.get("user_cep"), null, null, cepPattern, "CEP");
-        const cidadeValidate = FormValidation(formData.get("user_cidade"), 3, null, null);
-        const estadoValidate = FormValidation(formData.get("user_estado"), 2, 2, null);
+        const cidadeValidate = formData.get("select_city_input") != 0 ? {error: false, message: ""} : {error: true, message: "Selecione uma cidade"};
+        const estadoValidate = formData.get("select_state_input") != 0 ? {error: false, message: ""} : {error: true, message: "Selecione um estado"};
         const complementoValidate = FormValidation(formData.get("user_complemento"), null, null, null);
   
         // Atualização dos estados responsáveis por manipular os inputs
@@ -272,8 +276,6 @@ export function ComplementaryDataPanel(props){
     * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
     */
     function serverResponseTreatment(response){
-
-        console.log(response)
 
         if(response.status === 200){
    
@@ -509,6 +511,40 @@ export function ComplementaryDataPanel(props){
                     />
                 </Grid>
 
+            </Grid>
+
+            <Box >
+                <p>Preenchimento dos dados de localização.</p>
+            </Box>
+
+            <Grid container spacing={3}>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        id="user_cep"
+                        name="user_cep"
+                        label="CEP"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={props.cep}
+                        helperText = {errorMessage.cep}
+                        error = {errorDetected.cep}
+                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "CEP");}}
+                        onKeyDown={(event) => { setKeyPressed(event.key) }}
+                        InputProps={{
+                            readOnly: !editMode,
+                            maxLength: 9
+                        }}
+                        focused={editMode}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <SelectStates default = {props.estado} state_input_setter = {setInputState} error = {errorDetected.estado} error_message = {errorMessage.estado} edit_mode={editMode} />
+                    <SelectCities default = {props.cidade} choosen_state = {inputState} error = {errorDetected.cidade} error_message = {errorMessage.cidade} edit_mode={editMode} /> 
+                </Grid>
+
                 <Grid item xs={12} sm={6}>
                     <TextField
                         required
@@ -550,66 +586,6 @@ export function ComplementaryDataPanel(props){
                 <Grid item xs={12} sm={6}>
                     <TextField
                         required
-                        id="user_cep"
-                        name="user_cep"
-                        label="CEP"
-                        fullWidth
-                        variant="outlined"
-                        defaultValue={props.cep}
-                        helperText = {errorMessage.cep}
-                        error = {errorDetected.cep}
-                        onChange={(event) => {enableSaveButton(); inputSetMask(event, "CEP");}}
-                        onKeyDown={(event) => { setKeyPressed(event.key) }}
-                        InputProps={{
-                            readOnly: !editMode,
-                            maxLength: 9
-                        }}
-                        focused={editMode}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        id="user_cidade"
-                        name="user_cidade"
-                        label="Cidade"
-                        fullWidth
-                        variant="outlined"
-                        defaultValue={props.cidade}
-                        helperText = {errorMessage.cidade}
-                        error = {errorDetected.cidade}
-                        onChange={enableSaveButton}
-                        InputProps={{
-                            readOnly: !editMode,
-                        }}
-                        focused={editMode}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        id="user_estado"
-                        name="user_estado"
-                        label="Estado"
-                        fullWidth
-                        variant="outlined"
-                        defaultValue={props.estado}
-                        helperText = {errorMessage.estado}
-                        error = {errorDetected.estado}
-                        onChange={enableSaveButton}
-                        InputProps={{
-                            readOnly: !editMode,
-                            maxLength: 2
-                        }}
-                        focused={editMode}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
                         id="user_complemento"
                         name="user_complemento"
                         label="Complemento"
@@ -625,7 +601,7 @@ export function ComplementaryDataPanel(props){
                         focused={editMode}
                     />
                 </Grid>
-        
+
             </Grid>
 
         </Box>
