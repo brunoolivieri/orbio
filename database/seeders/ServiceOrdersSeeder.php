@@ -1,13 +1,5 @@
 <?php
 
-
-/*
-
-- Rotina para criar orderns de serviço
-- Executando o comando para executar o seeder, serão criados os registros do array $data
-
-*/
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -24,12 +16,11 @@ class ServiceOrdersSeeder extends Seeder
     public function run()
     {
         
-        $data = [
-            ["numOS" => "AABB10", "dh_alteracao" => NULL, "dh_inicio" => date('d-m-Y h:i'), "dh_fim" => '01-05-2022 00:00:00', "situacao" => true, "observacoes" => "Nenhuma", "nome_criador" => "Mario do Armário", "nome_piloto" => "Leticia Silva", "nome_cliente" => "Umbrela_Corp"]
+        $records = [
+            ["id_plano_voo" => 1,"numOS" => "AABB0", "dh_atualizacao" => null, "dh_criacao" => date("Y-m-d H:i:s"), "dh_inicio" => date("2022-05-10", strtotime('+1 months')), "dh_fim" => date("Y-m-d", strtotime('+2 months')), "status" => true, "observacao" => "Nenhuma", "nome_criador" => "Usuário A", "nome_piloto" => "Usuário B", "nome_cliente" => "Umbrela_Corp"]
         ];
 
-
-        DB::table("service_orders")->insert($data);
+        DB::table("service_orders")->insert($records);
 
     }
 }

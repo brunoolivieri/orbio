@@ -18,7 +18,7 @@ class CreateReportsTable extends Migration
             $table->dateTime("dh_criacao")->useCurrent();
             $table->dateTime("dh_inicio_voo");
             $table->dateTime("dh_fim_voo");
-            $table->text("log_voo");
+            $table->mediumText("log_voo");
             $table->text("observacao");
         });
     }

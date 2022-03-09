@@ -16,7 +16,7 @@ class CreateFlightPlansTable extends Migration
         Schema::create('flight_plans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger("id_relatorio");
-            $table->unsignedBigInteger("id_incidente");
+            $table->unsignedBigInteger("id_incidente")->nullable(true);
             $table->text("arquivo");
             $table->text("descricao");
             $table->boolean("status")->default(false);

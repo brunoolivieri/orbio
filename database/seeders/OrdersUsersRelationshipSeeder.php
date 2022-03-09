@@ -15,6 +15,12 @@ class OrdersUsersRelationshipSeeder extends Seeder
      */
     public function run()
     {
-        //
+        
+        $records = [
+            ["id_ordem_servico" => 1, "id_usuario" => 1]
+        ];
+
+        DB::table("service_order_has_user")->insert($records);
+
     }
 }
