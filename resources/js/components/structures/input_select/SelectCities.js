@@ -13,6 +13,9 @@ export function SelectCities(props){
 
     useEffect(() => {
 
+         //  Aqui as cidades são recuperadas do JSON "brazil_states"
+        // As cidades recuperadas são as do objeto cuja sigla é igual ao do estado já selecionado
+
         brazil_cities.estados.map((row) => {
 
             // Se o estado já escolhido for igual ao da estrutura de dados
@@ -35,6 +38,7 @@ export function SelectCities(props){
     const handleSelectChange = (event) => {
 
         setSelectedItem(event.target.value);
+        props.save_necessary_setter(true);
         props.state_input_setter(event.target.value);
 
     };
@@ -46,20 +50,23 @@ export function SelectCities(props){
                 <Select
                 labelId="demo-simple-select-helper-label"
                 id={"select_city_input"}
-                value={selectedItemValue}
+                value={selectedItemValue} // O valor inicial é 0 ou o valor do atributo "cidade" no Token JWT
                 label={"Cidade"}
                 onChange={handleSelectChange}
                 name={"select_city_input"}
                 error = {props.error}
                 disabled={props.edit_mode == false ? true : (props.choosen_state != null ? false : true)}
                 >
-
+                
+                {/* GERAÇÃO DOS ITENS DO SELECT */}
                 <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
 
                     {selectData.status && 
 
                         selectData.data.map((element, index) => 
-                                                                    
+                        
+                        // O valor de cada item é igual ao nome da cidade para que possa haver a correspondência com o Token JWT
+                        // O valor da cidade no Token JWT é o seu nome
                         <MenuItem value={element} key={index}>{element}</MenuItem>
 
                         )

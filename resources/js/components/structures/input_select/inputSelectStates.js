@@ -5,7 +5,7 @@ import Select from '@mui/material/Select';
 
 import brazil_cities from "../../../services/brazil_geo_data.json";
 
-import { useState, useEffect } from "react";
+import { useState} from "react";
 
 export function SelectStates(props){
 
@@ -17,6 +17,7 @@ export function SelectStates(props){
     const handleSelectChange = (event) => {
 
         setSelectedItem(event.target.value);
+        props.save_necessary_setter(true);
         props.state_input_setter(event.target.value);
 
     };
@@ -36,12 +37,15 @@ export function SelectStates(props){
                 error = {props.error}
                 disabled = {!props.edit_mode}
                 >
-
+                
+                {/* GERAÇÃO DOS ITENS DO SELECT */}
                 <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
 
                     {
                     selectData.data.map((row, index) => 
-                                            
+                        
+                        // O valor de cada item é igual à sigla do estado para que possa haver a correspondência com o Token JWT
+                        // O valor do estado no Token JWT é a sua sigla
                         <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
 
                     )

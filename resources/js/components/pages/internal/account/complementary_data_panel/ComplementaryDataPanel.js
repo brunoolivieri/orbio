@@ -251,8 +251,8 @@ export function ComplementaryDataPanel(props){
           logradouro: data.get("user_logradouro"),
           address_number: data.get("user_numero"),
           cep: data.get("user_cep"),
-          city: data.get("user_cidade"),
-          state: data.get("user_estado"),
+          city: data.get("select_city_input"),
+          state: data.get("select_state_input"),
           complemento: data.get("user_complemento")
         })
         .then(function (response) {
@@ -541,8 +541,8 @@ export function ComplementaryDataPanel(props){
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
-                    <SelectStates default = {props.estado} state_input_setter = {setInputState} error = {errorDetected.estado} error_message = {errorMessage.estado} edit_mode={editMode} />
-                    <SelectCities default = {props.cidade} choosen_state = {inputState} error = {errorDetected.cidade} error_message = {errorMessage.cidade} edit_mode={editMode} /> 
+                    <SelectStates default = {props.estado} state_input_setter = {setInputState} error = {errorDetected.estado} error_message = {errorMessage.estado} edit_mode={editMode} save_necessary_setter = {setSaveNecessary} />
+                    <SelectCities default = {props.cidade} choosen_state = {inputState} error = {errorDetected.cidade} error_message = {errorMessage.cidade} edit_mode={editMode} save_necessary_setter = {setSaveNecessary} /> 
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
