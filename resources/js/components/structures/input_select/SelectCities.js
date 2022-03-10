@@ -7,9 +7,11 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 
-export function SelectCities(props){
+import * as React from 'react';
+
+export const SelectCities = React.memo((props) => {
 
     useEffect(() => {
 
@@ -79,4 +81,4 @@ export function SelectCities(props){
         </>
     )
     
-}
+})

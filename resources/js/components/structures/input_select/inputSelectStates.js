@@ -7,6 +7,8 @@ import brazil_cities from "../../../services/brazil_geo_data.json";
 
 import { useState} from "react";
 
+import * as React from 'react';
+
 export function SelectStates(props){
 
     const [selectedItemValue, setSelectedItem] = useState(props.default != null ? props.default : "0");

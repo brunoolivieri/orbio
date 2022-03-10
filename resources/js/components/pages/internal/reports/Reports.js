@@ -4,6 +4,7 @@ import { useEffect } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
+import { ReportsPanel } from "./reports_panel/ReportsPanel";
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
@@ -92,7 +93,7 @@ export function Reports(){
       </AppBar>
       <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
 
-      PAINEL DE RELATÓRIOS
+        <ReportsPanel />
 
       </Box>
     </Paper>

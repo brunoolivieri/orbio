@@ -28,9 +28,11 @@ class AdministrationModuleController extends Controller
      * Para determinar o caso a rota é acessada enviando uma query string de nome "panel"
      * Para os argumentos do SELECT, é enviada uma query string de nome "args"
      * 
+     * MÉTODO: GET
+     * 
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
 
         $panel = request()->panel;
@@ -95,7 +97,7 @@ class AdministrationModuleController extends Controller
      * @param string $limit
      * @return array
      */
-    private function usersPanelDataFormat(array $data, int $limit) :array {
+    private function usersPanelDataFormat(array $data, int $limit) : array {
 
         $arrData = [];
         $badgeStatus = [];
@@ -220,6 +222,8 @@ class AdministrationModuleController extends Controller
     /**
      * Função para composição do formulário de criação de registro
      * Pode ser para o formulário de criação de usuário ou de criação de perfil
+     * 
+     * MÉTODO: GET
      *
      * @return \Illuminate\Http\Response
      */
@@ -254,6 +258,8 @@ class AdministrationModuleController extends Controller
      * Esse registro pode ser um novo usuário
      * Esse registro pode ser um novo perfil
      * Para determinar o caso a rota é acessada enviando uma query string de nome "panel"
+     * 
+     * MÉTODO: POST
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -323,11 +329,13 @@ class AdministrationModuleController extends Controller
 
     /**
      * Função para mostrar um ou mais registros pesquisados
+     * 
+     * MÉTODO: GET
      *
      * @param string $request
      * @return array
      */
-    public function show($request) {
+    public function show($request) : array {
         
         // Os valores da string enviada via URL são obtidos
         $request_values = explode("|", $request);
@@ -400,6 +408,8 @@ class AdministrationModuleController extends Controller
 
     /**
      * Função para processar a edição de um registro
+     * 
+     * MÉTODO: PATCH
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -455,6 +465,8 @@ class AdministrationModuleController extends Controller
     
     /**
      * Função para processar a remoção de um registro
+     * 
+     * MÉTODO: DELETE
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(ModulesSeeder::class); // Geração dos módulos 
         $this->call(ProfilesSeeder::class); // Geração dos perfis 
-        $this->call(ProfilesModulesRelationship::class); // Geração da relação Perfis-Módulos 
+        $this->call(ProfilesModulesRelationshipSeeder::class); // Geração da relação Perfis-Módulos 
         $this->call(SuperAdminSeeder::class); // Geração do Super-Admin 
         $this->call(ReportsSeeder::class); // Geração dos relatórios
         $this->call(IncidentsSeeder::class); // Geração dos Incidentes

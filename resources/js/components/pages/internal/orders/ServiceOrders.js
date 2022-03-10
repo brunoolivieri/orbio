@@ -11,7 +11,6 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 // IMPORTAÇÃO DOS COMPONENTES PERSONALIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useEffect } from "react";
-import { OrdersTable } from './orders_table/OrdersTable';
 
 export function ServiceOrders(){
 

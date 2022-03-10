@@ -13,7 +13,7 @@ import AxiosApi from "../../../services/AxiosApi";
 import { useAuthentication } from "../../context/InternalRoutesAuth/AuthenticationContext";
    
 // React Memo para ganho de performance - memoriza o componente enquanto passados os mesmos props
-export const InputSelect = React.memo((props) => {
+export function InputSelect(props){
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -105,4 +105,4 @@ export const InputSelect = React.memo((props) => {
 
     )
 
-})
+}

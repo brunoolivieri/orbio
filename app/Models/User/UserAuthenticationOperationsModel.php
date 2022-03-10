@@ -137,7 +137,7 @@ class UserAuthenticationOperationsModel extends Model
 
     }catch(\Exception $e){
 
-        echo $e;
+        dd($e);
 
     }
 
