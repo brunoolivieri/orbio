@@ -16,6 +16,7 @@ use App\Http\Controllers\User\GeneralUserController; // Controlador do usuário 
 
 // CONTROLADORES DAS FUNÇÕES DOS MÓDULOS DO SISTEMA
 use App\Http\Controllers\Modules\AdministrationModuleController;
+use App\Http\Controllers\Modules\ReportsModuleController;
 
 
 /*
@@ -52,7 +53,7 @@ Route::post('/api/user-update-data', [GeneralUserController::class, "userUpdates
 
 // ==== ROTAS DE REQUISIÇÕES API - MÓDULOS ==== //
 Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "administration.module.authorization"]);
-
+Route::resource("/api/reports-module", ReportsModuleController::class)->middleware(["session.auth", "reports.module.authorization"]);
 
 
 

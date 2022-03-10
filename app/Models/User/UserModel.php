@@ -49,9 +49,6 @@ class UserModel extends Model
                 // Se a inserção na tabela "users" for bem sucedida
                 if($insert = $this->save()){
 
-                    // Log da operação realizada
-                    Log::channel("registration")->info("Registro de usuário realizado com sucesso. Dados: [ID do Novo Usuário: {$this->id}]");
-
                     // Se a operação for bem sucedida, confirmar
                     DB::commit();
 
@@ -71,9 +68,6 @@ class UserModel extends Model
             }  
 
         }catch(\Exception $e){
-
-            // Log do erro
-            Log::channel("registration")->error("Falha no registro de usuário. Erro: ".$e);
 
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
@@ -127,9 +121,6 @@ class UserModel extends Model
             }
 
         }catch(\Exception $e){
-
-            // Log do erro
-            Log::channel("internal")->error("Falha no carregamento dos usuários. Erro: ".$e);
 
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
@@ -187,9 +178,6 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha no carregamento do usuário. Erro: ".$e);
-
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
@@ -243,9 +231,6 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha no carregamento dos dados da conta do usuário. Dados: [ID do Usuário: $user_id]. Erro: ".$e);
-
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
@@ -281,9 +266,6 @@ class UserModel extends Model
 
                 if($update){
 
-                    // Log da operação realizada
-                    Log::channel("internal")->info("Atualização de usuário realizada com sucesso. Dados: [ID do Usuário: $id]");
-
                     // Se a operação for bem sucedida, confirmar
                     DB::commit();
 
@@ -302,9 +284,6 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha na atualização do usuário. Dados: [ID do Usuário: $id]. Erro: ".$e);
-
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
@@ -315,7 +294,7 @@ class UserModel extends Model
     }
 
     /**
-     * Método realizar um UPDATE em um registro especifico da tabela "users"
+     * Método realizar um DELETE em um registro especifico da tabela "users"
      *
      * @param int $userID
      * @return array
@@ -330,9 +309,6 @@ class UserModel extends Model
             $delete = UserModel::where('id', $userID)->delete();
 
             if($delete){
-
-                // Log da operação realizada
-                Log::channel("internal")->info("Deleção de usuário realizada com sucesso. Dados: [ID do Usuário: $userID]");
 
                 // Se a operação for bem sucedida, confirmar
                 DB::commit();
@@ -349,9 +325,6 @@ class UserModel extends Model
             }
 
         }catch(\Exception $e){
-
-            // Log do erro
-            Log::channel("internal")->error("Falha na deleção do usuário. Dados: [ID do Usuário: $userID]. Erro: ".$e);
 
             // Se a operação falhar, desfazer as transações
             DB::rollBack();

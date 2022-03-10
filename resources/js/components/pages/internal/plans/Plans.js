@@ -93,7 +93,7 @@ export function Plans(){
       </AppBar>
       <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
 
-         PAINEL DE PLANOS
+         PLANS TABLE
 
      </Box>
     </Paper>

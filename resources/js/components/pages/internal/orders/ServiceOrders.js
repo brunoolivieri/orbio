@@ -66,7 +66,7 @@ export function ServiceOrders(){
         </AppBar>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          <OrdersTable />
+          ORDERS TABLE
         
         </Box>
     </Paper>

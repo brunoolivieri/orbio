@@ -24,7 +24,9 @@ class ReportsModuleController extends Controller
 
         $model = new ReportsModel();
 
-        $request_values = explode("|", request()->args);
+        dd("INDEX - REPORT");
+
+        $request_values = explode("/", request()->args);
 
         $offset = $request_values[0];
         $limit = $request_values[1];
@@ -88,10 +90,10 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $registrationData = [
-            "dh_inicio_voo" => $request->flight_start_date,
-            "dh_fim_voo" => $request->flight_end_date,
-            "log_voo" => $request->flight_log,
-            "observacao" => $request->flight_note
+            "flight_start_date" => $request->flight_start_date,
+            "flight_end_date" => $request->flight_end_date,
+            "flight_log" => $request->flight_log,
+            "flight_note" => $request->flight_note
         ];
 
         $response = $model->newReport($registrationData);
@@ -126,10 +128,9 @@ class ReportsModuleController extends Controller
         $request_values = explode("|", $request);
 
         // Isolamento dos valores da requisição em variáveis
-        $panel = $request_values[0];
-        $value_searched = $request_values[1];
-        $offset = $request_values[2];
-        $limit = $request_values[3];
+        $value_searched = $request_values[0];
+        $offset = $request_values[1];
+        $limit = $request_values[2];
 
         $response = $model->loadSpecificReports($value_searched, (int) $offset, (int) $limit);
     
@@ -209,7 +210,7 @@ class ReportsModuleController extends Controller
 
         $id = $param;
 
-        $delete = $model->deleteReport($id);
+        $delete = $model->deleteReport((int) $id);
 
         if($delete["status"]){
 

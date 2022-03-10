@@ -83,7 +83,7 @@ export function ReportsPanel(){
      useEffect(() => {
 
       let user_id = AuthData.data.id;
-      let module_id = 1;
+      let module_id = 4;
       let action = "ler";
 
       switch(paginationParams.where[0]){
@@ -92,11 +92,11 @@ export function ReportsPanel(){
         case false:
 
           // Parâmetros do caso de carregamento
-          let pagination_params = `${paginationParams.offset}|${paginationParams.limit}`;
+          let pagination_params = `${paginationParams.offset}/${paginationParams.limit}`;
 
           // Comunicação com o backend
           // Para recuperação dos dados que formam o painel de gerenciamento de usuários
-          AxiosApi.get(`/api/admin-module?panel=users_panel&args=${pagination_params}&auth=${user_id}/${module_id}/${action}`, {
+          AxiosApi.get(`/api/reports-module?args=${pagination_params}&auth=${user_id}/${module_id}/${action}`, {
             })
             .then(function (response) {
     
@@ -113,7 +113,7 @@ export function ReportsPanel(){
             })
             .catch(function (error) {
     
-              setPanelData({status: true, error: true, response: "ERRO NO CARREGAMENTO DOS REGISTROS DE USUÁRIOS."});
+              setPanelData({status: true, error: true, response: "ERRO NO CARREGAMENTO DOS REGISTROS DE RELATÓRIOS."});
     
           });
 
@@ -126,7 +126,7 @@ export function ReportsPanel(){
           let query_arguments = `${'users_panel'}|${paginationParams.where[1]}|${paginationParams.offset}|${paginationParams.limit}`;
 
           // Comunicação com o backend
-          AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${user_id}/${module_id}/${action}`, {
+          AxiosApi.get(`/api/reports-module/${query_arguments}?auth=${user_id}/${module_id}/${action}`, {
             access: AuthData.data.access
             })
             .then(function (response) {
@@ -180,7 +180,7 @@ export function ReportsPanel(){
     function handleSearchSubmit(event, offset){
       event.preventDefault();
 
-        let value_searched = window.document.getElementById("users_panel_search_input").value;
+        let value_searched = window.document.getElementById("reports_panel_search_input").value;
 
         setPage(1);
         setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});
@@ -241,7 +241,7 @@ export function ReportsPanel(){
                 sx: { fontSize: 'default' },
               }}
               variant="standard"
-              id = "users_panel_search_input"
+              id = "reports_panel_search_input"
             />
           </Grid>
           
