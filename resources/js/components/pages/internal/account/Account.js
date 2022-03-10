@@ -6,7 +6,7 @@ import { useState } from "react";
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { BasicDataPanel } from "./basic_data_panel/BasicDataPanel";
 import { ComplementaryDataPanel } from "./complementary_data_panel/ComplementaryDataPanel";
-import { SwitchPanelAccount } from "../../../structures/administration_page/switch_panel/SwitchPanelAccount";
+import { SwitchPanelAccount } from "../../../structures/modules/account/SwitchPanelAccount";
 import AxiosApi from "../../../../services/AxiosApi";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
 

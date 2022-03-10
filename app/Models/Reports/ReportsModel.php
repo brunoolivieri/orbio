@@ -30,7 +30,7 @@ class ReportsModel extends Model
             $this->dh_inicio_voo = $data["flight_start_date"];
             $this->dh_fim_voo = $data["flight_end_date"];
             $this->log_voo = $data["flight_log"];
-            $this->observacao = $data["flight_note"];
+            $this->observacao = $data["report_note"];
 
             // Se a inserção na tabela "users" for bem sucedida
             if($insert = $this->save()){
@@ -81,10 +81,8 @@ class ReportsModel extends Model
 
             // Query Builder para fazer o relacionamento
             $allReports = DB::table('reports')
-            ->select('id', 'dh_criacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
+            ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
             ->offset($offset)->limit($limit)->get();
-
-            dd($allReports);
 
             if($allReports){
 

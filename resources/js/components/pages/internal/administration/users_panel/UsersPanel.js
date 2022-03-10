@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import {UpdateDeleteFormulary} from "../../../../structures/administration_page/users_administration/UpdateDeleteFormulary";
-import { CreateUserFormulary } from "../../../../structures/administration_page/users_administration/CreateUserFormulary";
+import { UpdateDeleteFormulary } from "../../../../structures/modules/administration/users_administration/UpdateDeleteFormulary";
+import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -205,7 +205,6 @@ export function UsersPanel(){
 
           <Grid item>
             {/* Formulário de criação de usuário */}
-            
             <CreateUserFormulary />
           </Grid>
 

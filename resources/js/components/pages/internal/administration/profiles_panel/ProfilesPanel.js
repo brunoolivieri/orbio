@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { CreateProfileFormulary } from "../../../../structures/administration_page/profiles_administration/CreateProfileFormulary";
-import { UpdateDeleteFormulary } from "../../../../structures/administration_page/profiles_administration/UpdateDeleteFormulary";
+import { UpdateDeleteFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateDeleteFormulary";
+import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";

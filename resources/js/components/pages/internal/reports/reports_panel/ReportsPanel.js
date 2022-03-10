@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import {UpdateDeleteFormulary} from "../../../../structures/administration_page/users_administration/UpdateDeleteFormulary";
-import { CreateUserFormulary } from "../../../../structures/administration_page/users_administration/CreateUserFormulary";
+import { UpdateDeleteReportFormulary } from "../../../../structures/modules/reports/UpdateDeleteReportFormulary";
+import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -26,6 +26,7 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { Badge } from "@mui/material";
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -205,8 +206,7 @@ export function ReportsPanel(){
 
           <Grid item>
             {/* Formulário de criação de usuário */}
-            
-            <CreateUserFormulary />
+            <CreateReportFormulary />
           </Grid>
 
           <Grid item>
@@ -235,7 +235,7 @@ export function ReportsPanel(){
           <Grid item xs>
             <TextField
               fullWidth
-              placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
+              placeholder={"Pesquisar relatório por ID"}
               InputProps={{
                 disableUnderline: true,
                 sx: { fontSize: 'default' },
@@ -262,15 +262,15 @@ export function ReportsPanel(){
                     <TableHead>
                     <TableRow>
                       <StyledTableCell>ID</StyledTableCell>
-                      <StyledTableCell align="center">Nome</StyledTableCell>
-                      <StyledTableCell align="center">Email</StyledTableCell>
-                      <StyledTableCell align="center">Status</StyledTableCell>
-                      <StyledTableCell align="center">Acesso</StyledTableCell>
-                      <StyledTableCell align="center">Criação da conta</StyledTableCell>
+                      <StyledTableCell align="center">Criação do relatório</StyledTableCell>
                       <StyledTableCell align="center">Última atualização</StyledTableCell>
-                      <StyledTableCell align="center">Último acesso</StyledTableCell>
+                      <StyledTableCell align="center">Inicio do vôo</StyledTableCell>
+                      <StyledTableCell align="center">Fim do vôo</StyledTableCell>
+                      <StyledTableCell align="center">Log do vôo</StyledTableCell>
+                      <StyledTableCell align="center">Observação</StyledTableCell>
                       <StyledTableCell align="center">Editar</StyledTableCell>
                       <StyledTableCell align="center">Excluir</StyledTableCell>
+                      <StyledTableCell align="center">Exportar</StyledTableCell>
                     </TableRow>
                     </TableHead>
                     <TableBody className = "tbody">
@@ -278,17 +278,17 @@ export function ReportsPanel(){
                     {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                     {(panelData.status && !panelData.error) && 
                         panelData.response.map((row) => (
-                          <StyledTableRow key={row.user_id}>
-                            <StyledTableCell component="th" scope="row">{row.user_id}</StyledTableCell>
-                            <StyledTableCell align="center">{row.name}</StyledTableCell>
-                            <StyledTableCell align="center">{row.email}</StyledTableCell> {}
-                            <StyledTableCell align="center">{<Chip label={row.status[0]} color={row.status[1]} variant="outlined" />}</StyledTableCell>
-                            <StyledTableCell align="center">{row.nome_perfil}</StyledTableCell>
+                          <StyledTableRow key={row.report_id}>
+                            <StyledTableCell component="th" scope="row">{row.report_id}</StyledTableCell>
                             <StyledTableCell align="center">{row.created_at}</StyledTableCell>
-                            <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
-                            <StyledTableCell align="center">{row.last_access}</StyledTableCell>
-                            <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                            <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                            <StyledTableCell align="center">{row.updated_at}</StyledTableCell> {}
+                            <StyledTableCell align="center">{row.flight_start_date}</StyledTableCell>
+                            <StyledTableCell align="center">{row.flight_end_date}</StyledTableCell>
+                            <StyledTableCell align="center">{row.flight_log}</StyledTableCell>
+                            <StyledTableCell align="center">{row.report_note}</StyledTableCell>
+                            <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                            <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                            <StyledTableCell align="center"><GetAppIcon /></StyledTableCell>
                           </StyledTableRow>
                         ))}
                     </TableBody>

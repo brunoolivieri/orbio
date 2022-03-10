@@ -12,8 +12,7 @@ import { AppBar } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { SwitchPanelAdmin } from "../../../structures/administration_page/switch_panel/SwitchPanelAdmin";
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { SwitchPanelAdmin } from "../../../structures/modules/administration/switch_panel/SwitchPanelAdmin";
 
 export function AdministrationPanel(){
 

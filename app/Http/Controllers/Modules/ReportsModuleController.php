@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 // Model utilizado
-use Models\Reports\ReportsModel;
+use App\Models\Reports\ReportsModel;
 
 class ReportsModuleController extends Controller
 {
@@ -23,8 +23,6 @@ class ReportsModuleController extends Controller
     {
 
         $model = new ReportsModel();
-
-        dd("INDEX - REPORT");
 
         $request_values = explode("/", request()->args);
 
@@ -55,9 +53,39 @@ class ReportsModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function reportsTableFormat(object $data, int $limit) : array {
+    private function reportsTableFormat(array $data, int $limit) : array {
 
-        return [];
+        $arrData = [];
+
+        foreach($data["selectedRecords"] as $row => $object){
+
+            // Formatação dos dados do tipo DATETIME
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
+            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
+            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_inicio_voo));
+            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_fim_voo));
+            
+            // Geração da estrutura com os dados preparados para uso no front-end
+            $arrData[$row] = array(
+                "report_id" => $object->id,
+                "flight_log" => $object->log_voo,
+                "report_note" => $object->observacao,
+                "created_at" => $created_at_formated,
+                "updated_at" => $updated_at_formated,
+                "flight_start_date" => $flight_start_date,
+                "flight_end_date" => $flight_end_date
+            );
+
+        }
+
+        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
+        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
+        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
+        $totalPages = $data["referencialValueForCalcPages"] <= $limit ? 1 : ($data["referencialValueForCalcPages"] % $limit === 0 ? $data["referencialValueForCalcPages"] / $limit : ceil($data["referencialValueForCalcPages"] / $limit));
+
+        $ret = [(int) $totalPages, $arrData];
+
+        return $ret;
 
     }
 
@@ -93,7 +121,7 @@ class ReportsModuleController extends Controller
             "flight_start_date" => $request->flight_start_date,
             "flight_end_date" => $request->flight_end_date,
             "flight_log" => $request->flight_log,
-            "flight_note" => $request->flight_note
+            "report_note" => $request->report_note
         ];
 
         $response = $model->newReport($registrationData);
@@ -178,7 +206,7 @@ class ReportsModuleController extends Controller
             "dh_inicio_voo" => $request->flight_start_date,
             "dh_fim_voo" => $request->flight_end_date,
             "log_voo" => $request->flight_log,
-            "observacao" => $request->flight_note
+            "observacao" => $request->report_note
         ];
 
         $update = $model->updateReportData((int) $request->id,  $updateData);

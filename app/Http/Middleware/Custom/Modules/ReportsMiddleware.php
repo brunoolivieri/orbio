@@ -16,6 +16,8 @@ class ReportsMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+
+        //dd("REPORTS - MIDDLEWARE");
         
         // As operações que não necessitam de autenticação enviam "auth" com valor "none"
         if(request()->auth != "none" || $request->auth != "none"){
@@ -55,6 +57,6 @@ class ReportsMiddleware
 
         // Continuar requisição
         return $next($request);
-        
+
     }
 }

@@ -21,7 +21,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Box } from "@mui/system";
 import PostAddIcon from '@mui/icons-material/PostAdd';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 
@@ -77,16 +76,6 @@ export function Reports(){
                 </IconButton>
               </Tooltip>
                : ""}
-               <Tooltip title="Baixar relatório">
-                <IconButton variant="contained" sx={{ mr: 1 }}>
-                  <GetAppIcon />
-                </IconButton>
-               </Tooltip>
-              <Tooltip title="Reload">
-                <IconButton>
-                  <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                </IconButton>
-              </Tooltip> 
             </Grid>
           </Grid>
         </Toolbar>
