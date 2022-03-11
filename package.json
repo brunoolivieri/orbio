@@ -24,15 +24,21 @@
         "sass-loader": "^11.0.1"
     },
     "dependencies": {
+        "@date-io/date-fns": "^2.13.1",
         "@emotion/react": "^11.7.0",
         "@emotion/styled": "^11.6.0",
         "@material-ui/data-grid": "^4.0.0-alpha.37",
         "@mui/icons-material": "^5.2.1",
+        "@mui/lab": "^5.0.0-alpha.72",
         "@mui/material": "^5.2.3",
         "@mui/styles": "^5.4.2",
         "@mui/x-data-grid": "^5.2.1",
+        "@types/date-fns": "^2.6.0",
         "lottie-web": "^5.8.1",
+        "moment": "^2.29.1",
+        "moment-timezone": "^0.5.34",
         "react-bootstrap": "^2.0.4",
+        "react-moment": "^1.1.1",
         "react-router-dom": "^6.0.2"
     }
 }

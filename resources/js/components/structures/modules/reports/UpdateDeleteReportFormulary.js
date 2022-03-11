@@ -30,7 +30,7 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States do formulário
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
     // State da operação a ser realizada
     const [formOperation, setOperation] = useState(operation);
@@ -55,8 +55,8 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({email: false, name: false});
-      setErrorMessage({email: false, name: false});
+      setErrorDetected({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false});
+      setErrorMessage({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 

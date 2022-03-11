@@ -124,6 +124,8 @@ class ReportsModuleController extends Controller
             "report_note" => $request->report_note
         ];
 
+        dd($registrationData);
+
         $response = $model->newReport($registrationData);
 
          // Se o registro foi realizado com sucesso

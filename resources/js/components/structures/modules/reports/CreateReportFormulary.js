@@ -10,15 +10,18 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
+import { Input, Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { DateTimeInput } from '../../date_picker/DateTimeInput';
+
+
+import moment from 'moment';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
-import { InputSelect } from '../../input_select/InputSelect';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../services/FormValidation';
 
@@ -36,8 +39,8 @@ export function CreateReportFormulary({...props}) {
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({name: false, email: false, profile: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: null, email: null, profile: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -48,6 +51,10 @@ export function CreateReportFormulary({...props}) {
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
+    // States dos inputs de data
+    const [startDate, setStartDate] = useState();
+    const [endDate, setEndDate] = useState();
+
     // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
@@ -56,8 +63,8 @@ export function CreateReportFormulary({...props}) {
     // Função para fechar o modal
     const handleClose = () => {
 
-        setErrorDetected({name: false, email: false, profile: false});
-        setErrorMessage({name: null, email: null, profile: null});
+        setErrorDetected({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false});
+        setErrorMessage({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""});
         setDisplayAlert({display: false, type: "", message: ""});
         setDisabledButton(false);
 
@@ -81,13 +88,50 @@ export function CreateReportFormulary({...props}) {
         // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-          // Botão é desabilitado
-          setDisabledButton(true);
+          if(formatDateValue()){
 
-          // Inicialização da requisição para o servidor
-          requestServerOperation(data);
+            // Botão é desabilitado
+            setDisabledButton(true);
+
+            // Inicialização da requisição para o servidor
+            requestServerOperation(data);
+
+          }else{
+            
+            setDisplayAlert({display: false, type: "", message: "Erro! A data inicial não pode anteceder a final."});
+
+          }
 
         }
+
+    }
+
+    /*
+    * Rotina 3
+    * As datas retornadas do componente DateTimePicker do Material UI são formatadas
+    * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
+    * Também ocorre a verificação da diferença entre as datas
+    * 
+    */ 
+    function formatDateValue(){
+
+      // Formatação das datas com a lib "moment.js"
+      const start_date = moment(startDate).format('DD-MM-YYYY HH:mm');
+      const end_date = moment(endDate).format('DD-MM-YYYY HH:mm')
+
+      // Verificação da diferença das datas
+      if(start_date < end_date){
+
+        setStartDate(start_date);
+        setEndDate(end_date);
+
+        return true;
+        
+      }else{
+        
+        return false;
+
+      }
 
     }
 
@@ -99,22 +143,22 @@ export function CreateReportFormulary({...props}) {
     */
     function dataValidate(formData){
 
-        // Padrão de um email válido
-        const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        // Padrão de um log válido
+        const logPattern = "";
 
         // Validação dos dados - true para presença de erro e false para ausência
         // O valor final é um objeto com dois atributos: "erro" e "message"
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-        const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
-        const emailValidate = FormValidation(formData.get("registration_email_input"), null, null, emailPattern, "EMAIL");
-        const profileValidate = Number(formData.get("select_item_input")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
+        const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+        const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
+        const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
 
         // Atualização dos estados responsáveis por manipular os inputs
-        setErrorDetected({name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error});
-        setErrorMessage({name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message});
+        setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
+        setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
         
         // Se o nome, email ou perfil estiverem errados
-        if(nameValidate.error || emailValidate.error || profileValidate.error){
+        if(startDateValidate.error || endDateValidate.error || noteValidate.error){
 
           return false;
 
@@ -127,26 +171,26 @@ export function CreateReportFormulary({...props}) {
     }
 
     /*
-    * Rotina 3
+    * Rotina 4
     * Comunicação AJAX com o Laravel utilizando AXIOS
     * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
     function requestServerOperation(data){
 
-      let randomPass = "User"+ (Math.floor(Math.random() * 100000000) + 99999999);
-
       let user_id = AuthData.data.id;
-      let module_id = 1;
+      let module_id = 4;
       let action = "escrever";
 
       let auth = `${user_id}/${module_id}/${action}`;
 
-      AxiosApi.post(`/api/admin-module?panel=users_panel`, {
+      let randomLogTest = "[Log_"+ (Math.floor(Math.random() * 100000000) + 99999999) + "_]";
+
+      AxiosApi.post(`/api/reports-module?`, {
         auth: auth,
-        email: data.get("registration_email_input"),
-        name: data.get("registration_name_input"),
-        profile: data.get("select_item_input"),
-        password: randomPass
+        flight_start: startDate,
+        flight_end: endDate,
+        flight_log: randomLogTest,
+        report_note: data.get("report_note")
       })
       .then(function (response) {
 
@@ -164,7 +208,7 @@ export function CreateReportFormulary({...props}) {
     }
 
     /*
-    * Rotina 4
+    * Rotina 5
     * Tratamento da resposta do servidor
     * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
     */
@@ -185,27 +229,11 @@ export function CreateReportFormulary({...props}) {
 
       }else{
 
-        if(response.data.error === "email_already_exists"){
+        // Alerta erro
+        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
 
-          // Atualização do input
-          setErrorDetected({name: false, email: true, profile: false});
-          setErrorMessage({name: null, email: "Esse email já existe", profile: null});
-
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "O email informado já está cadastrado no sistema"});
-
-          // Habilitar botão de envio
-          setDisabledButton(false);
-
-        }else{
-
-          // Alerta
-          setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-
-          // Habilitar botão de envio
-          setDisabledButton(false);
-
-        } 
+        // Habilitar botão de envio
+        setDisabledButton(false);
 
       }
 
@@ -228,35 +256,50 @@ export function CreateReportFormulary({...props}) {
 
           <DialogContent>
         
-            <DialogContentText>
-              Quando confirmada e executada a criação do usuário no sistema, o email cadastrado receberá uma orientação para realizar a ativação da conta.
+            <DialogContentText sx={{mb: 3}}>
+              Os dados de um registro de relatório são utilizados para a geração de documentos de relatório.
             </DialogContentText>
-            
-              <TextField
-                margin="dense"
-                label="Nome completo"
-                fullWidth
-                variant="outlined"
-                required
-                id="registration_name_input"
-                name="registration_name_input"
-                helperText = {errorMessage.name}
-                error = {errorDetected.name}
+
+
+            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+              <DateTimeInput 
+                event = {setStartDate}
+                label = {"Inicio do vôo"} 
+                helperText = {errorMessage.flight_start_date} 
+                error = {errorDetected.flight_start_date} 
+                />
+                <DateTimeInput
+                event = {setEndDate}
+                name = {"report_end_flight"} 
+                label = {"Fim do vôo"} 
+                helperText = {errorMessage.flight_end_date} 
+                error = {errorDetected.flight_end_date} 
               />
-              <TextField
-                type = "email"
-                margin="dense"
-                label="Endereço de email"
-                fullWidth
-                variant="outlined"
-                required
-                id="registration_email_input"
-                name="registration_email_input"
-                helperText = {errorMessage.email}
-                error = {errorDetected.email}
-              />
+            </Box>
+
+            <TextField
+              type = "text"
+              margin="dense"
+              label="Observação"
+              fullWidth
+              variant="outlined"
+              required
+              id="report_note"
+              name="report_note"
+              helperText = {errorMessage.report_note}
+              error = {errorDetected.report_note}
+            />
+
+            <Box sx={{ display: 'flex', justifyContent: "flex-start", mt: 1 }}>
+              <label htmlFor="contained-button-file">
+                <Input accept="image/*" id="contained-button-file" multiple type="file" sx={{display: "none"}} name= {"report_log_flight"} />
+                <Button variant="contained" component="span">
+                  Upload
+                </Button>
+              </label>
+            </Box>
               
-               <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {0} />
+            {/* FUTURO: INPUT DO TIPO DE RELATÓRIO - IRÁ DEFINIR O TIPO DO DOCUMENTO */}
               
           </DialogContent>
 
@@ -266,7 +309,7 @@ export function CreateReportFormulary({...props}) {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Confirmar e enviar email</Button>
+            <Button type="submit" disabled={disabledButton}>Criar relatório</Button>
           </DialogActions>
 
         </Box>
