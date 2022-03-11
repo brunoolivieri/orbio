@@ -118,13 +118,11 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $registrationData = [
-            "flight_start_date" => $request->flight_start_date,
-            "flight_end_date" => $request->flight_end_date,
+            "flight_start_date" => $request->flight_start,
+            "flight_end_date" => $request->flight_end,
             "flight_log" => $request->flight_log,
             "report_note" => $request->report_note
         ];
-
-        dd($registrationData);
 
         $response = $model->newReport($registrationData);
 

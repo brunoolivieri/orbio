@@ -88,13 +88,15 @@ export function CreateReportFormulary({...props}) {
         // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-          if(formatDateValue()){
+          let ret = [];
+
+          if(ret = formatDateValue()){
 
             // Botão é desabilitado
             setDisabledButton(true);
 
             // Inicialização da requisição para o servidor
-            requestServerOperation(data);
+            requestServerOperation(data, ret);
 
           }else{
             
@@ -116,16 +118,13 @@ export function CreateReportFormulary({...props}) {
     function formatDateValue(){
 
       // Formatação das datas com a lib "moment.js"
-      const start_date = moment(startDate).format('DD-MM-YYYY HH:mm');
-      const end_date = moment(endDate).format('DD-MM-YYYY HH:mm')
+      const start_date = moment(startDate).format('YYYY-MM-DD HH:MM');
+      const end_date = moment(endDate).format('YYYY-MM-DD HH:MM')
 
       // Verificação da diferença das datas
       if(start_date < end_date){
 
-        setStartDate(start_date);
-        setEndDate(end_date);
-
-        return true;
+        return [start_date, end_date];
         
       }else{
         
@@ -175,7 +174,7 @@ export function CreateReportFormulary({...props}) {
     * Comunicação AJAX com o Laravel utilizando AXIOS
     * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
-    function requestServerOperation(data){
+    function requestServerOperation(data, formated_dates){
 
       let user_id = AuthData.data.id;
       let module_id = 4;
@@ -187,8 +186,8 @@ export function CreateReportFormulary({...props}) {
 
       AxiosApi.post(`/api/reports-module?`, {
         auth: auth,
-        flight_start: startDate,
-        flight_end: endDate,
+        flight_start: formated_dates[0],
+        flight_end: formated_dates[1],
         flight_log: randomLogTest,
         report_note: data.get("report_note")
       })

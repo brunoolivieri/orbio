@@ -53,6 +53,8 @@ class ReportsModel extends Model
 
         }catch(\Exception $e){
 
+            dd($e);
+
             // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
