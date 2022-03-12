@@ -115,17 +115,13 @@ export function CreateReportFormulary({...props}) {
     */ 
     function verifyDateInterval(){
 
-      // Formatação das datas com a lib "moment.js"
-      const start_date = moment(startDate).format('YYYY-MM-DD HH:MM:SS');
-      const end_date = moment(endDate).format('YYYY-MM-DD HH:MM:SS');
-
       // Verificação da diferença das datas
-      if(startDate <= endDate){
+      if(moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')){
 
-        return true
+        return true;
         
       }else{
-        
+
         return false;
 
       }

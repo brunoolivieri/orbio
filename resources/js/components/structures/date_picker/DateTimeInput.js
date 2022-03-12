@@ -8,8 +8,6 @@ import moment from 'moment';
 
 export function DateTimeInput({...props}) {
 
-  console.log(props.defaultValue)
-
   const [value, setValue] = React.useState(new Date(props.defaultValue));
 
   function updateDateValue(newValue){

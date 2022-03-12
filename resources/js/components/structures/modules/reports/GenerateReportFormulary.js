@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import * as React from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -13,8 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -22,7 +21,7 @@ import { FormValidation } from '../../../../services/FormValidation';
 import { InputSelect } from '../../input_select/InputSelect';
 import AxiosApi from '../../../../services/AxiosApi';
 
-export function GenerateReportFormulary({data, operation, refresh_setter}){
+export function GenerateReportFormulary({...props}){
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -32,8 +31,8 @@ export function GenerateReportFormulary({data, operation, refresh_setter}){
     // States do formulário
     const [open, setOpen] = useState(false);
 
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
+    // State do tipo de relatório
+    const [reportType, setReportType] = useState("BASIC");
 
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
@@ -225,115 +224,28 @@ export function GenerateReportFormulary({data, operation, refresh_setter}){
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    /* Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso  */
-    /* Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc */
-    const deleteButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
-    value = {data.id} onClick={handleClickOpen}
-    ><DeleteIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
-    /></IconButton>
-
-    const updateButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} 
-    value = {data.id} onClick={handleClickOpen}
-    ><EditIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
-    /></IconButton>
-
   return (
     <div>
 
-      {/* Botão que abre o Modal - pode ser o de atualização ou de deleção, depende da operação */}
-      {operation === "update" ? updateButton : deleteButton}
+      {/* Botão que abre o Modal de geração de relatório */}
+      <IconButton
+      disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true} 
+      value = {props.data.report_id} onClick={handleClickOpen}
+      >
+        <GetAppIcon />
+      </IconButton>
+      
+
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"}</DialogTitle>
+        <DialogTitle>RELATÓRIO {reportType == "BASIC" ? "BÁSICO" : "AVANÇADO"}</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleSubmitOperation} sx={{ mt: 1 }} >
 
           <DialogContent>
             <DialogContentText>
-              Formulário para {operation === "update" ? "atualização" : "deleção"} do registro do usuário de ID igual a {data.user_id} e nome {data.name}.
+              Formulário para geração do documento do relatório de ID {props.data.report_id}.
             </DialogContentText>
-            <TextField
-              margin="dense"
-              id="id_input"
-              name="id_input"
-              label="ID"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.report_id}
-              InputProps={{
-                  readOnly: true,
-              }}
-            />
-            <TextField
-              margin="dense"
-              id="name_input"
-              name="name_input"
-              label="Nome completo"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.flight_start_date}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
-              helperText = {errorMessage.flight_start_date}
-              error = {errorDetected.flight_start_date}
-            />
-            <TextField
-              margin="dense"
-              id="email_input"
-              name="email_input"
-              label="Endereço de email"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.flight_end_date} 
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
-              helperText = {errorMessage.flight_end_date}
-              error = {errorDetected.flight_end_date}
-            />
-
-            <TextField
-              margin="dense"
-              id="status_input"
-              name="status_input"
-              label="Status da conta"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.flight_log}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-                  inputProps: { min: 0, max: 1 }
-              }}
-              helperText = {errorMessage.flight_log}
-              error = {errorDetected.flight_log}
-            />
-
-            <TextField
-              margin="dense"
-              id="status_input"
-              name="status_input"
-              label="Status da conta"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.report_note}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false
-              }}
-              helperText = {errorMessage.report_note}
-              error = {errorDetected.report_note}
-            />
-
-          <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
 
           </DialogContent>
 
@@ -343,7 +255,7 @@ export function GenerateReportFormulary({data, operation, refresh_setter}){
           
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Confirmar {operation === "update" ? "atualização" : "deleção"}</Button>
+            <Button type="submit" disabled={disabledButton}>Gerar documento</Button>
           </DialogActions>
 
         </Box>

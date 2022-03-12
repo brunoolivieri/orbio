@@ -6,6 +6,7 @@ import { useAuthentication } from "../../../../context/InternalRoutesAuth/Authen
 import AxiosApi from "../../../../../services/AxiosApi";
 import { UpdateDeleteReportFormulary } from "../../../../structures/modules/reports/UpdateDeleteReportFormulary";
 import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
+import {GenerateReportFormulary} from "../../../../structures/modules/reports/GenerateReportFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -26,7 +27,6 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { Badge } from "@mui/material";
-import GetAppIcon from '@mui/icons-material/GetApp';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -288,7 +288,7 @@ export function ReportsPanel(){
                             <StyledTableCell align="center">{row.report_note}</StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                            <StyledTableCell align="center"><GetAppIcon /></StyledTableCell>
+                            <StyledTableCell align="center"><GenerateReportFormulary  data = {row} /></StyledTableCell>
                           </StyledTableRow>
                         ))}
                     </TableBody>

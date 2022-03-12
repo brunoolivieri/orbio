@@ -84,15 +84,13 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
         // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-          let ret = [];
-
           if(verifyDateInterval()){
 
             // Botão é desabilitado
             setDisabledButton(true);
 
             // Inicialização da requisição para o servidor
-            requestServerOperation(data, ret);
+            requestServerOperation(data);
 
           }else{
             
@@ -123,12 +121,12 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
      function verifyDateInterval(){
 
       // Verificação da diferença das datas
-      if(startDate < endDate){
+      if(moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')){
 
         return true;
         
       }else{
-        
+
         return false;
 
       }
@@ -170,7 +168,7 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     }
 
-    function requestServerOperation(data, formated_dates){
+    function requestServerOperation(data){
 
       // Dados para o middleware de autenticação
       let logged_user_id = AuthData.data.id; // ID do usuário logado
@@ -185,8 +183,8 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
         AxiosApi.patch(`/api/reports-module/update`, {
           auth: auth,
           id: data.get("id_input"),
-          flight_start: formated_dates[0],
-          flight_end: formated_dates[1],
+          flight_start: startDate,
+          flight_end: endDate,
           flight_log: data.get("flight_log"),
           report_note: data.get("report_note")
         })

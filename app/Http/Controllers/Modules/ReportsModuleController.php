@@ -203,8 +203,8 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $updateData = [
-            "dh_inicio_voo" => $request->flight_start,
-            "dh_fim_voo" => $request->flight_end,
+            "dh_inicio_voo" => date( 'Y-m-d h:i:s', strtotime($request->flight_start)),
+            "dh_fim_voo" => date( 'Y-m-d h:i:s', strtotime($request->flight_end)),
             "log_voo" => $request->flight_log,
             "observacao" => $request->report_note
         ];
