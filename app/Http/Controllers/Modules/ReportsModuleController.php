@@ -118,8 +118,8 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $registrationData = [
-            "flight_start_date" => $request->flight_start,
-            "flight_end_date" => $request->flight_end,
+            "flight_start_date" => date( 'Y-m-d h:i:s', strtotime($request->flight_start)),
+            "flight_end_date" => date( 'Y-m-d h:i:s', strtotime($request->flight_end)),
             "flight_log" => $request->flight_log,
             "report_note" => $request->report_note
         ];
@@ -203,13 +203,13 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $updateData = [
-            "dh_inicio_voo" => $request->flight_start_date,
-            "dh_fim_voo" => $request->flight_end_date,
+            "dh_inicio_voo" => $request->flight_start,
+            "dh_fim_voo" => $request->flight_end,
             "log_voo" => $request->flight_log,
             "observacao" => $request->report_note
         ];
 
-        $update = $model->updateReportData((int) $request->id,  $updateData);
+        $update = $model->updateReport((int) $request->id, $updateData);
 
         if($update["status"] && !$update["error"]){
 

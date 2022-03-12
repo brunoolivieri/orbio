@@ -88,15 +88,13 @@ export function CreateReportFormulary({...props}) {
         // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-          let ret = [];
-
-          if(ret = formatDateValue()){
+          if(verifyDateInterval()){
 
             // Botão é desabilitado
             setDisabledButton(true);
 
             // Inicialização da requisição para o servidor
-            requestServerOperation(data, ret);
+            requestServerOperation(data);
 
           }else{
             
@@ -115,16 +113,16 @@ export function CreateReportFormulary({...props}) {
     * Também ocorre a verificação da diferença entre as datas
     * 
     */ 
-    function formatDateValue(){
+    function verifyDateInterval(){
 
       // Formatação das datas com a lib "moment.js"
-      const start_date = moment(startDate).format('YYYY-MM-DD HH:MM');
-      const end_date = moment(endDate).format('YYYY-MM-DD HH:MM')
+      const start_date = moment(startDate).format('YYYY-MM-DD HH:MM:SS');
+      const end_date = moment(endDate).format('YYYY-MM-DD HH:MM:SS');
 
       // Verificação da diferença das datas
-      if(start_date < end_date){
+      if(startDate <= endDate){
 
-        return [start_date, end_date];
+        return true
         
       }else{
         
@@ -186,8 +184,8 @@ export function CreateReportFormulary({...props}) {
 
       AxiosApi.post(`/api/reports-module?`, {
         auth: auth,
-        flight_start: formated_dates[0],
-        flight_end: formated_dates[1],
+        flight_start: startDate,
+        flight_end: endDate,
         flight_log: randomLogTest,
         report_note: data.get("report_note")
       })
@@ -266,6 +264,8 @@ export function CreateReportFormulary({...props}) {
                 label = {"Inicio do vôo"} 
                 helperText = {errorMessage.flight_start_date} 
                 error = {errorDetected.flight_start_date} 
+                defaultValue = {null}
+                operation = {"create"}
                 />
                 <DateTimeInput
                 event = {setEndDate}
@@ -273,6 +273,8 @@ export function CreateReportFormulary({...props}) {
                 label = {"Fim do vôo"} 
                 helperText = {errorMessage.flight_end_date} 
                 error = {errorDetected.flight_end_date} 
+                defaultValue = {null}
+                operation = {"create"}
               />
             </Box>
 

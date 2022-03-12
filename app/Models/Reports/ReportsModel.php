@@ -149,7 +149,7 @@ class ReportsModel extends Model
      * @param array $data
      * @return array
      */
-    function updateReportData(int $report_id, array $data) : array {
+    function updateReport(int $report_id, array $data) : array {
 
         try{
 
@@ -175,6 +175,8 @@ class ReportsModel extends Model
             }
 
         }catch(\Exception $e){
+
+            dd($e);
 
             // Se a operação falhar, desfazer as transações
             DB::rollBack();

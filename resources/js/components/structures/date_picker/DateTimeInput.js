@@ -4,9 +4,13 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 
+import moment from 'moment';
+
 export function DateTimeInput({...props}) {
 
-  const [value, setValue] = React.useState(new Date());
+  console.log(props.defaultValue)
+
+  const [value, setValue] = React.useState(new Date(props.defaultValue));
 
   function updateDateValue(newValue){
 
@@ -24,6 +28,7 @@ export function DateTimeInput({...props}) {
         value={value}
         onChange={(newValue) => {updateDateValue(newValue)}}
         inputFormat="dd/MM/yyyy hh:mm"
+        readOnly = {props.operation == "delete" ? true : false}
       />
       </LocalizationProvider>
     </>

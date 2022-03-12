@@ -21,6 +21,9 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../services/FormValidation';
 import { InputSelect } from '../../input_select/InputSelect';
 import AxiosApi from '../../../../services/AxiosApi';
+import { DateTimeInput } from '../../date_picker/DateTimeInput';
+
+import moment from 'moment';
 
 export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
@@ -44,6 +47,10 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
+
+    // States dos inputs de data
+    const [startDate, setStartDate] = useState(data.flight_start_date);
+    const [endDate, setEndDate] = useState(data.flight_end_date);
 
      // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -73,14 +80,25 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
       if(operation === "update"){
 
-          // Validação dos dados do formulário
-          // A comunicação com o backend só é realizada se o retorno for true
-          if(dataValidate(data)){
+        // Validação dos dados do formulário
+        // A comunicação com o backend só é realizada se o retorno for true
+        if(dataValidate(data)){
 
+          let ret = [];
+
+          if(verifyDateInterval()){
+
+            // Botão é desabilitado
             setDisabledButton(true);
 
             // Inicialização da requisição para o servidor
-            requestServerOperation(data, operation);
+            requestServerOperation(data, ret);
+
+          }else{
+            
+            setDisplayAlert({display: false, type: "", message: "Erro! A data inicial não pode anteceder a final."});
+
+          }
 
         }
 
@@ -95,26 +113,54 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     }
 
+     /*
+    * Rotina 3
+    * As datas retornadas do componente DateTimePicker do Material UI são formatadas
+    * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
+    * Também ocorre a verificação da diferença entre as datas
+    * 
+    */ 
+     function verifyDateInterval(){
+
+      // Verificação da diferença das datas
+      if(startDate < endDate){
+
+        return true;
+        
+      }else{
+        
+        return false;
+
+      }
+
+    }
+
+    /*
+    * Rotina 2
+    * Validação dos dados no frontend
+    * Recebe o objeto da classe FormData criado na rotina 1
+    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
+    */
     function dataValidate(formData){
 
-      // Padrão de um email válido
-      const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      // Padrão de um log válido
+      const logPattern = "";
 
       // Validação dos dados - true para presença de erro e false para ausência
-      // Se utilizada a função FormValidation é retornado um objeto com dois atributos: "erro" e "message"
+      // O valor final é um objeto com dois atributos: "erro" e "message"
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-      const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
-      const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
-      const profileValidate = Number(formData.get("select_item_input")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
+      const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+      const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
+      const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
 
       // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({email: emailValidate.error, name: nameValidate.error});
-      setErrorMessage({email: emailValidate.message, name: nameValidate.message});
+      setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
+      setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
+      
+      // Se o nome, email ou perfil estiverem errados
+      if(startDateValidate.error || endDateValidate.error || noteValidate.error){
 
-      // Se o email ou a senha estiverem errados
-      if(emailValidate.error === true || nameValidate.error === true || profileValidate.error){
-
-          return false;
+        return false;
 
       }else{
 
@@ -124,11 +170,11 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     }
 
-    function requestServerOperation(data){
+    function requestServerOperation(data, formated_dates){
 
       // Dados para o middleware de autenticação
       let logged_user_id = AuthData.data.id; // ID do usuário logado
-      let module_id = 1; // ID do módulo
+      let module_id = 4; // ID do módulo
       let action = "escrever"; // Tipo de ação realizada
 
       if(operation === "update"){
@@ -136,13 +182,13 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
         // Reunião dos dados de autenticação em uma string para enviar no corpo da requisição PATCH
         let auth = `${logged_user_id}/${module_id}/${action}`;
 
-        AxiosApi.patch("/api/admin-module/users_panel", {
+        AxiosApi.patch(`/api/reports-module/update`, {
           auth: auth,
           id: data.get("id_input"),
-          name: data.get("name_input"),
-          email: data.get("email_input"),
-          status: data.get("status_input"),
-          profile: data.get("select_item_input")
+          flight_start: formated_dates[0],
+          flight_end: formated_dates[1],
+          flight_log: data.get("flight_log"),
+          report_note: data.get("report_note")
         })
         .then(function (response) {
   
@@ -159,9 +205,7 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
       }else if(operation === "delete"){
 
-        let param = `users_panel|${data.get("id_input")}`;
-
-        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}/${module_id}/${action}`)
+        AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}/${module_id}/${action}`)
         .then(function (response) {
   
             // Tratamento da resposta do servidor
@@ -213,21 +257,8 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
         setDisabledButton(false);
 
-        if(operation === "update" && response.data.error === "email_already_exists"){
-
-          // Atualização dos estados responsáveis por manipular os inputs
-          setErrorDetected({email: true, name: false});
-          setErrorMessage({email: "Esse email já existe", name: null});
-
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "Erro! Já existe um usuário com esse email."});
-
-        }else{
-
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-
-        }
+        // Alerta erro
+        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
 
       }
 
@@ -279,42 +310,31 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
                   readOnly: true,
               }}
             />
-            <TextField
-              margin="dense"
-              id="name_input"
-              name="name_input"
-              label="Nome completo"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.flight_start_date}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
-              helperText = {errorMessage.flight_start_date}
-              error = {errorDetected.flight_start_date}
-            />
-            <TextField
-              margin="dense"
-              id="email_input"
-              name="email_input"
-              label="Endereço de email"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.flight_end_date} 
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
-              helperText = {errorMessage.flight_end_date}
-              error = {errorDetected.flight_end_date}
-            />
+            
+            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+              <DateTimeInput 
+                event = {setStartDate}
+                label = {"Inicio do vôo"} 
+                helperText = {errorMessage.flight_start_date} 
+                error = {errorDetected.flight_start_date} 
+                defaultValue = {data.flight_start_date}
+                operation = {operation}
+                />
+                <DateTimeInput
+                event = {setEndDate}
+                label = {"Fim do vôo"} 
+                helperText = {errorMessage.flight_end_date} 
+                error = {errorDetected.flight_end_date} 
+                defaultValue = {data.flight_end_date}
+                operation = {operation}
+              />
+            </Box>
 
             <TextField
               margin="dense"
-              id="status_input"
-              name="status_input"
-              label="Status da conta"
+              id="flight_log"
+              name="flight_log"
+              label="Log do vôo"
               type="text"
               fullWidth
               variant="outlined"
@@ -329,9 +349,9 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
             <TextField
               margin="dense"
-              id="status_input"
-              name="status_input"
-              label="Status da conta"
+              id="report_note"
+              name="report_note"
+              label="Observação"
               type="text"
               fullWidth
               variant="outlined"
@@ -342,8 +362,6 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
               helperText = {errorMessage.report_note}
               error = {errorDetected.report_note}
             />
-
-          <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
 
           </DialogContent>
 
