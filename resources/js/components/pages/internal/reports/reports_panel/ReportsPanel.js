@@ -123,10 +123,9 @@ export function ReportsPanel(){
         case true:
 
           // Parâmetros do SELECT
-          let query_arguments = `reports/${paginationParams.where[1]}/${paginationParams.offset}/${paginationParams.limit}`;
+          let query_arguments = `${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
-          // Comunicação com o backend
-          AxiosApi.get(`/api/reports-module/${query_arguments}?auth=${logged_user_id}.${module_id}.${module_action}`, {
+          AxiosApi.get(`/api/reports-module/reports?args=${query_arguments}&auth=${logged_user_id}.${module_id}.${module_action}`, {
             access: AuthData.data.access
             })
             .then(function (response) {
@@ -157,47 +156,46 @@ export function ReportsPanel(){
 
   },[paginationParams]);
 
-    /**
-     * Função para processar a alteração da página da tabela
-     * 
-     */
-    const handleTablePageChange = (event, value) => {
+  /**
+   * Função para processar a alteração da página da tabela
+   * 
+   */
+  const handleTablePageChange = (event, value) => {
 
-      // Varia a página selecionada no mecanismo
-      setPage(value);
+    // Varia a página selecionada no mecanismo
+    setPage(value);
 
-      let newOffset = value === 1 ? 0 : value*paginationParams.limit - paginationParams.limit;
+    let newOffset = value === 1 ? 0 : value*paginationParams.limit - paginationParams.limit;
 
-      // Variam os dados da tabela 
-      setPaginationParams({offset: newOffset, limit: paginationParams.limit, where: [paginationParams.where[0],paginationParams.where[1]]});
+    // Variam os dados da tabela 
+    setPaginationParams({offset: newOffset, limit: paginationParams.limit, where: [paginationParams.where[0],paginationParams.where[1]]});
 
-    };
+  };
 
-    /**
-     * Função para processar a pesquisa de usuários no input de pesquisa
-     * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
-     * 
-     */
-    function handleSearchSubmit(event, offset){
-      event.preventDefault();
+  /**
+   * Função para processar a pesquisa de usuários no input de pesquisa
+   * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
+   * 
+   */
+  function handleSearchSubmit(event, offset){
+    event.preventDefault();
 
-        let value_searched = window.document.getElementById("reports_panel_search_input").value;
-
-        setPage(1);
-        setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});
-
-    }
-
-    function reloadTable(){
+      let value_searched = window.document.getElementById("reports_panel_search_input").value;
 
       setPage(1);
-      setPaginationParams({offset: 0, limit: paginationParams.limit, where: [false, ""]});
-      setPanelData({status: false, response: "", total_pages: 0});
+      setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});
 
-    }
-  
+  }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  function reloadTable(){
+
+    setPage(1);
+    setPaginationParams({offset: 0, limit: paginationParams.limit, where: [false, ""]});
+    setPanelData({status: false, response: "", total_pages: 0});
+
+  }
+
+  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
     return(
 
@@ -290,7 +288,7 @@ export function ReportsPanel(){
                             <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                             <StyledTableCell align="center"><GenerateReportFormulary  data = {row} /></StyledTableCell>
                           </StyledTableRow>
-                        ))}
+                        ))}      
                     </TableBody>
                 </Table>
             </TableContainer>

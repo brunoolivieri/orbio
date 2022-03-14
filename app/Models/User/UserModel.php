@@ -141,12 +141,6 @@ class UserModel extends Model
      */
     function loadSpecificUsers(string $value_searched, int $offset, int $limit) : array {
 
-        $total_search_compatible_records = UserModel::select('id', 'nome', 'email', 'id_perfil', 'status', 'dh_criacao', 'dh_atualizacao', 'dh_ultimo_acesso')
-        ->where('id', $value_searched)
-        ->orWhere('nome', 'LIKE', '%'.$value_searched.'%')
-        ->orWhere('email', 'LIKE', '%'.$value_searched.'%')
-        ->offset($offset)->limit($limit)->count();
-
         try{
 
             // Inicialização da transação
@@ -164,7 +158,7 @@ class UserModel extends Model
             if($searchedUsers){
 
                 $response = [
-                    "referencialValueForCalcPages" => $total_search_compatible_records,
+                    "referencialValueForCalcPages" => count($searchedUsers),
                     "selectedRecords" => $searchedUsers
                 ];
 

@@ -150,12 +150,10 @@ class ReportsModuleController extends Controller
     public function show($request) : array
     {
 
-        dd($request);
-
         $model = new ReportsModel();
 
         // Os valores da string enviada via URL são obtidos
-        $request_values = explode(".", $request);
+        $request_values = explode(".", request()->args);
 
         // Isolamento dos valores da requisição em variáveis
         $value_searched = $request_values[0];

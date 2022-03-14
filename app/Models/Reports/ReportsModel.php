@@ -88,12 +88,8 @@ class ReportsModel extends Model
 
             if($allReports){
 
-                // A paginação é criada com base no total de registros por página. Com LIMIT 10 e 30 registros, serão 3 páginas com 10 registros cada.
-                // Portanto esse valor, do total de registros existentes, é necessário.
-                $totalTableRecords = ReportsModel::all()->count();
-
                 $response = [
-                    "referencialValueForCalcPages" => $totalTableRecords,
+                    "referencialValueForCalcPages" => count($allReports),
                     "selectedRecords" => $allReports
                 ];
 
@@ -127,8 +123,21 @@ class ReportsModel extends Model
 
         try{
 
+            $searchedReports = DB::table('reports')
+            ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
+            ->where('reports.id', $value_searched)
+            ->offset($offset)->limit($limit)->get();
+
+            $response = [
+                "referencialValueForCalcPages" => count($searchedReports),
+                "selectedRecords" => $searchedReports
+            ];
+
             // Inicialização da transação
             DB::beginTransaction();
+
+            // Erro do tipo "email já existe"
+            return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
 

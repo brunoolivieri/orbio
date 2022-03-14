@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
 import style from "./plans.module.css";
+import { PlansPanel } from "./plans_panel/PlansPanel";
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
@@ -21,7 +22,6 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { Box } from "@mui/system";
-import MapIcon from '@mui/icons-material/Map';
 
 export function Plans(){
 
@@ -43,59 +43,20 @@ export function Plans(){
     })
 
     return(
-        <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden' }}>
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-      >
-        <Toolbar>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item>
-              <SearchIcon color="inherit" sx={{ display: 'block' }} />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                fullWidth
-                placeholder="Pesquisar plano"
-                InputProps={{
-                  disableUnderline: true,
-                  sx: { fontSize: 'default' },
-                }}
-                variant="standard"
-              />
-            </Grid>
-            <Grid item>
-            <Tooltip title="Novo plano">
-              <IconButton variant="contained" sx={{ mr: 1 }}>
-                <a href = "/sistema/mapa/novo-plano" className={style.new_map_link}><AddCircleOutlineIcon /></a>
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Importar plano">
-              <IconButton variant="contained" sx={{ mr: 1 }}>
-                <FileUploadIcon />
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="Baixar plano">
-              <IconButton variant="contained" sx={{ mr: 1 }}>
-                <GetAppIcon />
-              </IconButton>
-            </Tooltip>
-              <Tooltip title="Reload">
-                <IconButton>
-                  <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                </IconButton>
-              </Tooltip>
-            </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
-      <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden' }}>
+        <AppBar
+          position="static"
+          color="default"
+          elevation={0}
+          sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+        >
+          <Toolbar />
+        </AppBar>
+        <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
 
-         PLANS TABLE
+          <PlansPanel />
 
-     </Box>
+      </Box>
     </Paper>
     )
 }
