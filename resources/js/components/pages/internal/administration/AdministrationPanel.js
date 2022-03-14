@@ -32,7 +32,7 @@ export function AdministrationPanel(){
     }, [])
     
     return(
-      <Paper sx={{ maxWidth: 2000, margin: 'auto', overflow: 'hidden' }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden' }}>
       <AppBar
         position="static"
         color="default"

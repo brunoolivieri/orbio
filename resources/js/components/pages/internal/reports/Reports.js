@@ -45,7 +45,7 @@ export function Reports(){
 
     return(
 
-        <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden' }}>
+        <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden' }}>
       <AppBar
         position="static"
         color="default"
