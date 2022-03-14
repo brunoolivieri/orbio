@@ -19,7 +19,6 @@ import EditIcon from '@mui/icons-material/Edit';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../services/FormValidation';
-import { InputSelect } from '../../input_select/InputSelect';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
@@ -71,7 +70,11 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     };
 
-    // Função para atualizar o registro
+     /*
+    * Rotina 1
+    * Captura do envio do formulário
+    * 
+    */ 
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
@@ -112,10 +115,40 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
     }
 
      /*
+    * Rotina 2
+    * Validação dos dados no frontend
+    * Recebe o objeto da classe FormData criado na rotina 1
+    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
+    */
+     function dataValidate(formData){
+
+      const logPattern = "";
+
+      // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
+      const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+      const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
+      const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
+
+      setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
+      setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
+      
+      if(startDateValidate.error || endDateValidate.error || noteValidate.error){
+
+        return false;
+
+      }else{
+
+          return true;
+
+      }
+
+    }
+
+     /*
     * Rotina 3
+    * Ocorre a verificação do intervalo de tempo entre as datas
     * As datas retornadas do componente DateTimePicker do Material UI são formatadas
     * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
-    * Também ocorre a verificação da diferença entre as datas
     * 
     */ 
      function verifyDateInterval(){
@@ -133,86 +166,50 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     }
 
-    /*
-    * Rotina 2
-    * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
-    */
-    function dataValidate(formData){
-
-      // Padrão de um log válido
-      const logPattern = "";
-
-      // Validação dos dados - true para presença de erro e false para ausência
-      // O valor final é um objeto com dois atributos: "erro" e "message"
-      // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-      const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
-      const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-      const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
-
-      // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
-      setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
-      
-      // Se o nome, email ou perfil estiverem errados
-      if(startDateValidate.error || endDateValidate.error || noteValidate.error){
-
-        return false;
-
-      }else{
-
-          return true;
-
-      }
-
-    }
-
+     /*
+    * Rotina 4
+    * Realização da requisição AXIOS
+    * Possui dois casos: o Update e o Delete
+    * 
+    */ 
     function requestServerOperation(data){
 
-      // Dados para o middleware de autenticação
-      let logged_user_id = AuthData.data.id; // ID do usuário logado
-      let module_id = 4; // ID do módulo
-      let action = "escrever"; // Tipo de ação realizada
+      // Dados para o middleware de autenticação 
+      let logged_user_id = AuthData.data.id;
+      let module_id = 4;
+      let module_action = "escrever";
 
       if(operation === "update"){
 
-        // Reunião dos dados de autenticação em uma string para enviar no corpo da requisição PATCH
-        let auth = `${logged_user_id}/${module_id}/${action}`;
-
         AxiosApi.patch(`/api/reports-module/update`, {
-          auth: auth,
+          auth: `${logged_user_id}.${module_id}.${module_action}`,
           id: data.get("id_input"),
-          flight_start: startDate,
-          flight_end: endDate,
+          flight_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          flight_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
           flight_log: data.get("flight_log"),
           report_note: data.get("report_note")
         })
         .then(function (response) {
   
-            // Tratamento da resposta do servidor
             serverResponseTreatment(response);
   
         })
         .catch(function (error) {
           
-          // Tratamento da resposta do servidor
           serverResponseTreatment(error.response);
   
         });
 
       }else if(operation === "delete"){
 
-        AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}/${module_id}/${action}`)
+        AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
-            // Tratamento da resposta do servidor
             serverResponseTreatment(response);
   
         })
         .catch(function (error) {
           
-          // Tratamento da resposta do servidor
           serverResponseTreatment(error.response);
   
         });
@@ -221,24 +218,26 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     }
 
+     /*
+    * Rotina 5
+    * Tratamento da resposta da requisição AXIOS
+    * Possui dois casos: o Update e o Delete
+    * 
+    */
     function serverResponseTreatment(response){
 
       if(response.status === 200){
 
         if(operation === "update"){
 
-          // Altera o state "refreshPanel" para true
           refresh_setter(true);
 
-          // Alerta sucesso
           setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
 
         }else{
 
-          // Altera o state "refreshPanel" para true
           refresh_setter(true);
 
-          // Alerta sucesso
           setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});
 
         }
@@ -255,7 +254,6 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
         setDisabledButton(false);
 
-        // Alerta erro
         setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
 
       }
@@ -264,8 +262,8 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    /* Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso  */
-    /* Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc */
+    // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso 
+    // Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc 
     const deleteButton = <IconButton 
     disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
     value = {data.id} onClick={handleClickOpen}

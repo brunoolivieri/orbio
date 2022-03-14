@@ -286,11 +286,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
 
       if(operation === "update"){
 
-        // Reunião dos dados de autenticação em uma string para enviar no corpo da requisição PATCH
-        let auth = `${logged_user_id}/${module_id}/${action}`;
-
         AxiosApi.patch("/api/admin-module/profiles_panel", {
-          auth: auth,
+          auth: `${logged_user_id}.${module_id}.${action}`,
           id: data.get("id_input"),
           name: data.get("name_input"),
           powers: modulePowers

@@ -25,8 +25,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
 import { Badge } from "@mui/material";
+
+// IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
+import moment from 'moment';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -83,21 +85,19 @@ export function ReportsPanel(){
      */
      useEffect(() => {
 
-      let user_id = AuthData.data.id;
-      let module_id = 4;
-      let action = "ler";
+       // Dados para o middleware de autenticação 
+       let logged_user_id = AuthData.data.id;
+       let module_id = 4;
+       let module_action = "ler";
 
       switch(paginationParams.where[0]){
 
-        // Carregamento de todos os dados considerando o offset e limit
         case false:
 
-          // Parâmetros do caso de carregamento
+         // Parâmetros do SELECT
           let pagination_params = `${paginationParams.offset}/${paginationParams.limit}`;
 
-          // Comunicação com o backend
-          // Para recuperação dos dados que formam o painel de gerenciamento de usuários
-          AxiosApi.get(`/api/reports-module?args=${pagination_params}&auth=${user_id}/${module_id}/${action}`, {
+          AxiosApi.get(`/api/reports-module?args=${pagination_params}&auth=${logged_user_id}.${module_id}.${module_action}`, {
             })
             .then(function (response) {
     
@@ -119,15 +119,14 @@ export function ReportsPanel(){
           });
 
         break;
-        
-        // Carregamento dos dados pesquisados considerando o offset e limit
+      
         case true:
 
-          // Parâmetros do caso de carregamento
-          let query_arguments = `${'users_panel'}|${paginationParams.where[1]}|${paginationParams.offset}|${paginationParams.limit}`;
+          // Parâmetros do SELECT
+          let query_arguments = `reports/${paginationParams.where[1]}/${paginationParams.offset}/${paginationParams.limit}`;
 
           // Comunicação com o backend
-          AxiosApi.get(`/api/reports-module/${query_arguments}?auth=${user_id}/${module_id}/${action}`, {
+          AxiosApi.get(`/api/reports-module/${query_arguments}?auth=${logged_user_id}.${module_id}.${module_action}`, {
             access: AuthData.data.access
             })
             .then(function (response) {
@@ -176,6 +175,7 @@ export function ReportsPanel(){
 
     /**
      * Função para processar a pesquisa de usuários no input de pesquisa
+     * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
      * 
      */
     function handleSearchSubmit(event, offset){
@@ -282,8 +282,8 @@ export function ReportsPanel(){
                             <StyledTableCell component="th" scope="row">{row.report_id}</StyledTableCell>
                             <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                             <StyledTableCell align="center">{row.updated_at}</StyledTableCell> {}
-                            <StyledTableCell align="center">{row.flight_start_date}</StyledTableCell>
-                            <StyledTableCell align="center">{row.flight_end_date}</StyledTableCell>
+                            <StyledTableCell align="center">{moment(row.flight_start_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
+                            <StyledTableCell align="center">{moment(row.flight_end_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
                             <StyledTableCell align="center">{row.flight_log}</StyledTableCell>
                             <StyledTableCell align="center">{row.report_note}</StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>

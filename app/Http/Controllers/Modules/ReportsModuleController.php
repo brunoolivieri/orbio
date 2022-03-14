@@ -59,11 +59,11 @@ class ReportsModuleController extends Controller
 
         foreach($data["selectedRecords"] as $row => $object){
 
-            // Formatação dos dados do tipo DATETIME
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
-            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_inicio_voo));
-            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_fim_voo));
+            // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
+            $created_at_formated = $object->dh_criacao;
+            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : $object->dh_atualizacao;
+            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
+            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
             
             // Geração da estrutura com os dados preparados para uso no front-end
             $arrData[$row] = array(
@@ -118,8 +118,8 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $registrationData = [
-            "flight_start_date" => date( 'Y-m-d h:i:s', strtotime($request->flight_start)),
-            "flight_end_date" => date( 'Y-m-d h:i:s', strtotime($request->flight_end)),
+            "flight_start_date" => $request->flight_start,
+            "flight_end_date" => $request->flight_end,
             "flight_log" => $request->flight_log,
             "report_note" => $request->report_note
         ];
@@ -150,10 +150,12 @@ class ReportsModuleController extends Controller
     public function show($request) : array
     {
 
+        dd($request);
+
         $model = new ReportsModel();
 
         // Os valores da string enviada via URL são obtidos
-        $request_values = explode("|", $request);
+        $request_values = explode(".", $request);
 
         // Isolamento dos valores da requisição em variáveis
         $value_searched = $request_values[0];
@@ -203,8 +205,8 @@ class ReportsModuleController extends Controller
         $model = new ReportsModel();
 
         $updateData = [
-            "dh_inicio_voo" => date( 'Y-m-d h:i:s', strtotime($request->flight_start)),
-            "dh_fim_voo" => date( 'Y-m-d h:i:s', strtotime($request->flight_end)),
+            "dh_inicio_voo" => $request->flight_start,
+            "dh_fim_voo" => $request->flight_end,
             "log_voo" => $request->flight_log,
             "observacao" => $request->report_note
         ];

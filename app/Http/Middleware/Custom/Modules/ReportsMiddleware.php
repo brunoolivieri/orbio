@@ -17,20 +17,18 @@ class ReportsMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        //dd("REPORTS - MIDDLEWARE");
-        
         // As operações que não necessitam de autenticação enviam "auth" com valor "none"
         if(request()->auth != "none" || $request->auth != "none"){
 
             // Se o método for "GET" OU "DELETE" o parâmetro "auth" é uma query string
             if($request->method() == "GET" || $request->method() == "DELETE"){
 
-                $array_params = explode("/", request()->auth);
+                $array_params = explode(".", request()->auth);
             
             // Se o método não for "GET" o parâmetro "auth" é incluso no corpo da requisição
             }else if($request->method() == "POST" || $request->method() == "PATCH"){
 
-                $array_params = explode("/", $request->auth);
+                $array_params = explode(".", $request->auth);
 
             }
 

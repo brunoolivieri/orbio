@@ -139,10 +139,8 @@ export function CreateUserFormulary({...props}) {
       let module_id = 1;
       let action = "escrever";
 
-      let auth = `${user_id}/${module_id}/${action}`;
-
       AxiosApi.post(`/api/admin-module?panel=users_panel`, {
-        auth: auth,
+        auth: `${user_id}.${module_id}.${action}`,
         email: data.get("registration_email_input"),
         name: data.get("registration_name_input"),
         profile: data.get("select_item_input"),

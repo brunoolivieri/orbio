@@ -17,13 +17,13 @@ import { Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
-
-import moment from 'moment';
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../services/FormValidation';
+
+// IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
+import moment from 'moment';
 
 /*
 
@@ -76,35 +76,60 @@ export function CreateReportFormulary({...props}) {
     * Rotina 1
     * Ponto inicial do processamento do envio do formulário de registro
     * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */ 
     function handleRegistrationSubmit(event){
       event.preventDefault();
 
-      // Instância da classe JS FormData - para trabalhar os dados do formulário
       const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
           if(verifyDateInterval()){
 
-            // Botão é desabilitado
             setDisabledButton(true);
 
-            // Inicialização da requisição para o servidor
             requestServerOperation(data);
 
           }else{
             
-            setDisplayAlert({display: false, type: "", message: "Erro! A data inicial não pode anteceder a final."});
+            setDisplayAlert({display: true, type: "error", message: "Erro! A data inicial deve anteceder a final."});
 
           }
 
         }
 
     }
+
+    /*
+    * Rotina 2
+    * Validação dos dados no frontend
+    * Recebe o objeto da classe FormData criado na rotina 1
+    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
+    */
+    function dataValidate(formData){
+
+      const logPattern = "";
+
+      // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
+      const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+      const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
+      const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
+
+      // Atualização dos estados responsáveis por manipular os inputs
+      setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
+      setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
+    
+      if(startDateValidate.error || endDateValidate.error || noteValidate.error){
+
+        return false;
+
+      }else{
+
+          return true;
+
+      }
+
+  }
 
     /*
     * Rotina 3
@@ -129,71 +154,33 @@ export function CreateReportFormulary({...props}) {
     }
 
     /*
-    * Rotina 2
-    * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
-    */
-    function dataValidate(formData){
-
-        // Padrão de um log válido
-        const logPattern = "";
-
-        // Validação dos dados - true para presença de erro e false para ausência
-        // O valor final é um objeto com dois atributos: "erro" e "message"
-        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-        const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
-        const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-        const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
-
-        // Atualização dos estados responsáveis por manipular os inputs
-        setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
-        setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
-        
-        // Se o nome, email ou perfil estiverem errados
-        if(startDateValidate.error || endDateValidate.error || noteValidate.error){
-
-          return false;
-
-        }else{
-
-            return true;
-
-        }
-
-    }
-
-    /*
     * Rotina 4
     * Comunicação AJAX com o Laravel utilizando AXIOS
     * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
     function requestServerOperation(data, formated_dates){
 
-      let user_id = AuthData.data.id;
+      // Dados para o middleware de autenticação 
+      let logged_user_id = AuthData.data.id;
       let module_id = 4;
-      let action = "escrever";
-
-      let auth = `${user_id}/${module_id}/${action}`;
+      let module_action = "escrever";
 
       let randomLogTest = "[Log_"+ (Math.floor(Math.random() * 100000000) + 99999999) + "_]";
 
       AxiosApi.post(`/api/reports-module?`, {
-        auth: auth,
-        flight_start: startDate,
-        flight_end: endDate,
+        auth: `${logged_user_id}.${module_id}.${module_action}`,
+        flight_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+        flight_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
         flight_log: randomLogTest,
         report_note: data.get("report_note")
       })
       .then(function (response) {
 
-          // Tratamento da resposta do servidor
           serverResponseTreatment(response);
 
       })
       .catch(function (error) {
         
-        // Tratamento da resposta do servidor
         serverResponseTreatment(error.response);
 
       });
@@ -209,7 +196,6 @@ export function CreateReportFormulary({...props}) {
 
      if(response.status === 200){
 
-        // Alerta sucesso
         setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
 
         setTimeout(() => {
@@ -222,10 +208,8 @@ export function CreateReportFormulary({...props}) {
 
       }else{
 
-        // Alerta erro
         setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
 
-        // Habilitar botão de envio
         setDisabledButton(false);
 
       }
