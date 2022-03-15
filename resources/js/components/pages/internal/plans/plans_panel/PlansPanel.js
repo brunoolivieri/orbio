@@ -197,6 +197,7 @@ export function PlansPanel(){
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
+  
     return (
         <>
         <Grid container spacing={1} alignItems="center">

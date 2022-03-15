@@ -17,12 +17,13 @@ import { Icon } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   header_top: {
-    background: theme.palette.mode == 'light' ? '#1976D2' : '#121212',
+    background: theme.palette.mode == 'light' ? '#101F33' : '#121212',
     boxShadow: '1px -1px 11px 0px rgba(0,0,0,0.75)',
   },
   header_bottom: {
-    background: theme.palette.mode == 'light' ? '#1976D2' : '#1E1E1E',
+    background: theme.palette.mode == 'light' ? '#fff' : '#1E1E1E',
     boxShadow: '1px -1px 11px 0px rgba(0,0,0,0.75)',
+    color: theme.palette.mode == 'light' ? '#121212' : '#fff',
   }
 }));
 

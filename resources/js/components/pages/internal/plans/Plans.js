@@ -43,20 +43,30 @@ export function Plans(){
     })
 
     return(
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden' }}>
-        <AppBar
-          position="static"
-          color="default"
-          elevation={0}
-          sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-        >
-          <Toolbar />
-        </AppBar>
-        <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
+        <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
+      <AppBar
+        position="static"
+        color="default"
+        elevation={0}
+        sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
+      >
+        <Toolbar>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item>
+              <Tooltip title="Novo plano">
+                <IconButton variant="contained" sx={{ mr: 1 }}>
+                  <a href = "/sistema/mapa/novo-plano" className={style.new_map_link}><AddCircleOutlineIcon /></a>
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
 
-          <PlansPanel />
+         <PlansPanel />
 
-      </Box>
+     </Box>
     </Paper>
     )
 }

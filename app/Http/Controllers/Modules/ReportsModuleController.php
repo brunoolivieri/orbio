@@ -65,7 +65,6 @@ class ReportsModuleController extends Controller
             $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
             $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
             
-            // Geração da estrutura com os dados preparados para uso no front-end
             $arrData[$row] = array(
                 "report_id" => $object->id,
                 "flight_log" => $object->log_voo,
@@ -126,7 +125,6 @@ class ReportsModuleController extends Controller
 
         $response = $model->newReport($registrationData);
 
-         // Se o registro foi realizado com sucesso
          if($response["status"]){
 
             return response(["status" => $response["status"], "error" => $response["error"]], 200);
@@ -152,10 +150,8 @@ class ReportsModuleController extends Controller
 
         $model = new ReportsModel();
 
-        // Os valores da string enviada via URL são obtidos
         $request_values = explode(".", request()->args);
 
-        // Isolamento dos valores da requisição em variáveis
         $value_searched = $request_values[0];
         $offset = $request_values[1];
         $limit = $request_values[2];
