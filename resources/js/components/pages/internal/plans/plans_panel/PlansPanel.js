@@ -290,7 +290,7 @@ export function PlansPanel(){
                             <StyledTableCell align="center">Editar</StyledTableCell>
                             <StyledTableCell align="center">Excluir</StyledTableCell>     
                           </StyledTableRow>
-                    ))}    
+                        ))}    
                 </TableBody>
             </Table>
         </TableContainer> 

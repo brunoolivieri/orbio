@@ -37,7 +37,6 @@
         "@mui/x-data-grid": "^5.2.1",
         "@turf/turf": "^6.5.0",
         "@types/date-fns": "^2.6.0",
-        "mapbox-gl": "^2.7.0",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.34",
         "react-bootstrap": "^2.0.4",

@@ -12,10 +12,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgyd
 
 export function Map(){
 
-    console.log(turf)
-
     const mapContainer = useRef(null);
-    const map = useRef(null);
+
     const [lng, setLng] = useState(-47.926063);
     const [lat, setLat] = useState(-15.841060);
     const [zoom, setZoom] = useState(15);
@@ -33,62 +31,47 @@ export function Map(){
  
     useEffect(() => {
 
-        if (map.current) return; // initialize map only once
+        const map = new mapboxgl.Map({
+            container: "map-container",
+            style: 'mapbox://styles/mapbox/satellite-v9',
+            center: [lng, lat],
+            zoom: zoom,
+        });
 
-        map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/satellite-v9',
-        center: [lng, lat],
-        zoom: zoom,
-        })
-
-        map.current.addControl(new MapboxGeocoder({
+        map.addControl(new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
 		    mapboxgl: mapboxgl
         }));
 
-        map.current.addControl(new mapboxgl.FullscreenControl());
+        map.addControl(new mapboxgl.FullscreenControl());
 
-        map.current.addControl(new mapboxgl.NavigationControl());
+        map.addControl(new mapboxgl.NavigationControl());
 
-        map.current.addControl(draw);
+        map.addControl(draw);
 
-        map.current = new mapboxgl.Marker({color: "#333"}).setLngLat([lng, lat]).addTo(map.current);
+        //mapBuild = new mapboxgl.Marker({color: "#333"}).setLngLat([lng, lat]).addTo(mapBuild);
 
-    },[]);
+        map.on('move', () => {
+            setLng(map.getCenter().lng.toFixed(4));
+            setLat(map.getCenter().lat.toFixed(4));
+            setZoom(map.getZoom().toFixed(2));
+        })
 
-    useEffect(() => {
+        map.on('draw.create', updateArea);
+        map.on('draw.delete', updateArea);
+        map.on('draw.update', updateArea);
 
-    },[draw])
-    
-    useEffect(() => {
+        map.on('click', selectInitialPosition);
+        map.on('touchstart', selectInitialPosition);
 
-        if (!map.current) return; // wait for map to initialize
-
-        map.current.on('move', () => {
-        setLng(map.current.getCenter().lng.toFixed(4));
-        setLat(map.current.getCenter().lat.toFixed(4));
-        setZoom(map.current.getZoom().toFixed(2));
-        });
+        // clean up on unmount
+        return () => map.remove();
 
     });
 
     function updateArea(event){
 
         console.log("UPDATE_AREA")
-
-        const data = draw.getAll();
-        const answer = document.getElementById('calculated-area');
-        if (data.features.length > 0) {
-        const area = turf.area(data);
-        // Restrict the area to 2 decimal points.
-        const rounded_area = Math.round(area * 100) / 100;
-        answer.innerHTML = `<p><strong>${rounded_area}</strong></p><p>square meters</p>`;
-        } else {
-        answer.innerHTML = '';
-        if (e.type !== 'draw.delete')
-        alert('Click the map to draw a polygon.');
-        }
 
     }
 
@@ -103,10 +86,9 @@ export function Map(){
         
         <div 
         ref={mapContainer} 
+        id="map-container" 
         className="map-container" 
         style={{width: "100%", height: "100%"}}
-        onClick={selectInitialPosition}
-        onTouchStart={selectInitialPosition}
         />
     </>
     );
