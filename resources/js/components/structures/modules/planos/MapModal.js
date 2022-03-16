@@ -18,7 +18,6 @@ import { Modal } from '@mui/material';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { Map } from './MapBoxGL/Map';
-import { Map_ } from './MapBoxGL/Map_';
 
 const style = {
   position: 'absolute',
