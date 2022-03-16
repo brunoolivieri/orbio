@@ -75,10 +75,8 @@ class FlightPlansModel extends Model
             DB::beginTransaction();
 
             $allFlightPlans = DB::table('flight_plans')
-            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status')
+            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao')
             ->offset($offset)->limit($limit)->get();
-
-            dd($allFlightPlans);
 
             if($allFlightPlans){
 

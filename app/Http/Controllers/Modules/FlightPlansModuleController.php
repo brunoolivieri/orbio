@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 // Model utilizado
-use App\Models\Reports\FlightPlansModel;
+use App\Models\Plans\FlightPlansModel;
 
 class FlightPlansModuleController extends Controller
 {
@@ -33,7 +33,7 @@ class FlightPlansModuleController extends Controller
 
         if($response["status"] && !$response["error"]){
     
-            $dataFormated = $this->reportsTableFormat($response["data"], $limit);
+            $dataFormated = $this->plansTableFormat($response["data"], $limit);
 
             return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
@@ -53,27 +53,22 @@ class FlightPlansModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function reportsTableFormat(array $data, int $limit) : array {
+    private function plansTableFormat(array $data, int $limit) : array {
 
         $arrData = [];
 
         foreach($data["selectedRecords"] as $row => $object){
-
-            // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $created_at_formated = $object->dh_criacao;
-            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : $object->dh_atualizacao;
-            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
-            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
             
             // Geração da estrutura com os dados preparados para uso no front-end
             $arrData[$row] = array(
-                "report_id" => $object->id,
-                "flight_log" => $object->log_voo,
-                "report_note" => $object->observacao,
-                "created_at" => $created_at_formated,
-                "updated_at" => $updated_at_formated,
-                "flight_start_date" => $flight_start_date,
-                "flight_end_date" => $flight_end_date
+                "plan_id" => $object->id,
+                "report_id" => $object->id_relatorio,
+                "incident_id" => $object->id_incidente,
+                "plan_file" => $object->arquivo,
+                "plan_description" => $object->descricao,
+                "plan_status" => $object->status,
+                "created_at" => $object->dh_criacao,
+                "updated_at" => $object->dh_atualizacao
             );
 
         }

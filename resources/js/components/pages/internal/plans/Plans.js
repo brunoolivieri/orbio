@@ -13,14 +13,9 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
 import { Box } from "@mui/system";
 
 export function Plans(){

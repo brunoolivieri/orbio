@@ -24,7 +24,7 @@ import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
 import moment from 'moment';
 
-export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
+export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh_setter}) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -378,4 +378,4 @@ export function UpdateDeleteReportFormulary({data, operation, refresh_setter}){
 
   );
 
-}
+});

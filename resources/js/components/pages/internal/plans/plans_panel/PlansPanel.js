@@ -6,7 +6,7 @@ import { useAuthentication } from "../../../../context/InternalRoutesAuth/Authen
 import AxiosApi from "../../../../../services/AxiosApi";
 import { UpdateDeleteReportFormulary } from "../../../../structures/modules/reports/UpdateDeleteReportFormulary";
 import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
-import {GenerateReportFormulary} from "../../../../structures/modules/reports/GenerateReportFormulary";
+import { MapModal } from "../../../../structures/modules/planos/MapModal";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -87,7 +87,7 @@ export function PlansPanel(){
 
         // Dados para o middleware de autenticação 
         let logged_user_id = AuthData.data.id;
-        let module_id = 4;
+        let module_id = 2;
         let module_action = "ler";
  
        switch(paginationParams.where[0]){
@@ -97,7 +97,7 @@ export function PlansPanel(){
           // Parâmetros do SELECT
            let pagination_params = `${paginationParams.offset}/${paginationParams.limit}`;
  
-           AxiosApi.get(`/api/reports-module?args=${pagination_params}&auth=${logged_user_id}.${module_id}.${module_action}`, {
+           AxiosApi.get(`/api/plans-module?args=${pagination_params}&auth=${logged_user_id}.${module_id}.${module_action}`, {
              })
              .then(function (response) {
      
@@ -125,7 +125,7 @@ export function PlansPanel(){
            // Parâmetros do SELECT
            let query_arguments = `${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
  
-           AxiosApi.get(`/api/reports-module/reports?args=${query_arguments}&auth=${logged_user_id}.${module_id}.${module_action}`, {
+           AxiosApi.get(`/api/plans-module/plans?args=${query_arguments}&auth=${logged_user_id}.${module_id}.${module_action}`, {
              access: AuthData.data.access
              })
              .then(function (response) {
@@ -262,15 +262,35 @@ export function PlansPanel(){
                     <StyledTableCell>ID</StyledTableCell>
                     <StyledTableCell align="center">Relatório</StyledTableCell>
                     <StyledTableCell align="center">Incidente</StyledTableCell>
-                    <StyledTableCell align="center">Arquivo de log</StyledTableCell>
-                    <StyledTableCell align="center">Descrição</StyledTableCell>
                     <StyledTableCell align="center">Status</StyledTableCell>
+                    <StyledTableCell align="center">Arquivo</StyledTableCell>
+                    <StyledTableCell align="center">Descrição</StyledTableCell>
+                    <StyledTableCell align="center">Data criação</StyledTableCell>
+                    <StyledTableCell align="center">Última atualização</StyledTableCell>
+                    <StyledTableCell align="center">Visualizar</StyledTableCell>
                     <StyledTableCell align="center">Editar</StyledTableCell>
                     <StyledTableCell align="center">Excluir</StyledTableCell>
                 </TableRow>
                 </TableHead>
                 <TableBody className = "tbody">
-                    {/* DADOS */}
+                    {/* Geração das linhas da tabela de usuários - depende dos dados retornados pelo servidor */}
+                    {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
+                    {(panelData.status && !panelData.error) && 
+                        panelData.response.map((row) => (
+                          <StyledTableRow key={row.plan_id}>
+                            <StyledTableCell>{row.plan_id}</StyledTableCell>
+                            <StyledTableCell align="center">{row.report_id}</StyledTableCell>
+                            <StyledTableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</StyledTableCell>
+                            <StyledTableCell align="center">{row.plan_status}</StyledTableCell> 
+                            <StyledTableCell align="center">{row.plan_file}</StyledTableCell>
+                            <StyledTableCell align="center">{row.plan_description}</StyledTableCell>
+                            <StyledTableCell align="center">{moment(row.created_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
+                            <StyledTableCell align="center">{row.updated_at == null ? "Sem dados" : moment(row.updated_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
+                            <StyledTableCell align="center"><MapModal data = {row} /></StyledTableCell>
+                            <StyledTableCell align="center">Editar</StyledTableCell>
+                            <StyledTableCell align="center">Excluir</StyledTableCell>     
+                          </StyledTableRow>
+                    ))}    
                 </TableBody>
             </Table>
         </TableContainer> 

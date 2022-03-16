@@ -33,7 +33,7 @@ import moment from 'moment';
 
 */
 
-export function CreateReportFormulary({...props}) {
+export const CreateReportFormulary = React.memo(({...props}) => {
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -298,4 +298,4 @@ export function CreateReportFormulary({...props}) {
       </Dialog>
     </div>
   );
-}
+});
