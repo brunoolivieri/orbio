@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { IconButton } from '@mui/material';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import MapIcon from '@mui/icons-material/Map';
 import { Stack } from '@mui/material';
 import { Typography } from '@mui/material';
 
@@ -24,11 +24,11 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: "80vw",
-  height: "80vh",
+  width: "98vw",
+  height: "90vh",
   background: '#fff',
   borderRadius: "5px",
-  padding: "10px",
+  padding: "3px",
 };
 
 export function MapModal({...props}){
@@ -53,12 +53,16 @@ export function MapModal({...props}){
       setOpen(false);
     };
 
+    const handlePlanGenerate = () => {
+
+    }
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   return (
     <>
       <IconButton onClick={handleClickOpen}>
-        <RemoveRedEyeIcon />
+        <MapIcon />
       </IconButton>
 
       <Modal
@@ -68,12 +72,7 @@ export function MapModal({...props}){
 
         <Box style={style}>
 
-          <Map />
-
-          <DialogActions sx={{position: "absolute", right: "0px"}}>
-            <Button onClick={handleClose} sx={{background: "#fff"}}>Cancelar</Button>
-            <Button sx={{background: "#fff"}}>Gerar plano</Button>
-          </DialogActions>
+          <Map close_modal = {setOpen} generate_plan = {handlePlanGenerate} />
 
         </Box>
 

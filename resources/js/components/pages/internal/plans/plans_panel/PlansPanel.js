@@ -208,6 +208,11 @@ export function PlansPanel(){
           </Grid>
 
           <Grid item>
+            {/* Formulário de criação de usuário */}
+            <MapModal />
+          </Grid>
+
+          <Grid item>
             <Tooltip title="Reload">
               <IconButton onClick = {reloadTable}>
                 {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}

@@ -47,13 +47,13 @@ export function Plans(){
       >
         <Toolbar>
           <Grid container spacing={2} alignItems="center">
-            <Grid item>
+            {/* <Grid item>
               <Tooltip title="Novo plano">
                 <IconButton variant="contained" sx={{ mr: 1 }}>
                   <a href = "/sistema/mapa/novo-plano" className={style.new_map_link}><AddCircleOutlineIcon /></a>
                 </IconButton>
               </Tooltip>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Toolbar>
       </AppBar>
