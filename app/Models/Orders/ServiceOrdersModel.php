@@ -176,13 +176,13 @@ class ServiceOrdersModel extends Model
      * @param int $report_id
      * @return array
      */
-    function deleteServiceOrder(int $plan_id) : array {
+    function deleteServiceOrder(int $order_id) : array {
 
         try{
 
             DB::beginTransaction();
 
-            $delete = FlightPlansModel::where('id', $plan_id)->delete();
+            $delete = ServiceOrdersModel::where('id', $order_id)->delete();
 
             if($delete){
 

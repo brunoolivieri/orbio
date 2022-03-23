@@ -203,8 +203,6 @@ class ServiceOrdersModuleController extends Controller
             "nome_cliente" => $request->client_name,
             "observacao" => $request->order_note,   
         ];
-        
-        dd($updateData);
 
         $update = $model->updateServiceOrder((int) $request->id, $updateData);
 

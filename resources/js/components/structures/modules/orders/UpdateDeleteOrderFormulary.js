@@ -210,7 +210,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
       }else if(operation === "delete"){
 
-        AxiosApi.delete(`/api/orders-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+        AxiosApi.delete(`/api/orders-module/${data.get("order_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
             serverResponseTreatment(response);
