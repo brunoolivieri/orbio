@@ -104,6 +104,8 @@ export function OrdersPanel(){
                if(response.status === 200){
  
                  setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
+
+                 console.log(response.data.records);
        
                }else{
        
@@ -288,10 +290,10 @@ export function OrdersPanel(){
                         <StyledTableCell align="center">{row.pilot_name}</StyledTableCell>
                         <StyledTableCell align="center">{row.client_name}</StyledTableCell>
                         <StyledTableCell align="center">{row.order_note}</StyledTableCell>
+                        <StyledTableCell align="center">{row.created_at}</StyledTableCell>
+                        <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
                         <StyledTableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
                         <StyledTableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                        <StyledTableCell align="center">{row.created_at}</StyledTableCell>
-                        <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                         <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                         <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
                         </StyledTableRow>

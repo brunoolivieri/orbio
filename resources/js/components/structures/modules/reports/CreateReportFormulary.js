@@ -52,8 +52,8 @@ export const CreateReportFormulary = React.memo(({...props}) => {
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState(moment());
+    const [endDate, setEndDate] = useState(moment());
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -243,7 +243,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
                 label = {"Inicio do vôo"} 
                 helperText = {errorMessage.flight_start_date} 
                 error = {errorDetected.flight_start_date} 
-                defaultValue = {null}
+                defaultValue = {moment()}
                 operation = {"create"}
                 />
                 <DateTimeInput
@@ -252,7 +252,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
                 label = {"Fim do vôo"} 
                 helperText = {errorMessage.flight_end_date} 
                 error = {errorDetected.flight_end_date} 
-                defaultValue = {null}
+                defaultValue = {moment()}
                 operation = {"create"}
               />
             </Box>

@@ -193,11 +193,18 @@ class ServiceOrdersModuleController extends Controller
         $model = new ServiceOrdersModel();
 
         $updateData = [
-            "dh_inicio_voo" => $request->flight_start,
-            "dh_fim_voo" => $request->flight_end,
-            "log_voo" => $request->flight_log,
-            "observacao" => $request->report_note
+            "id_plano_voo" => $request->flight_plan,
+            "numOS" => $request->order_numos,
+            "dh_inicio" => $request->order_start,
+            "dh_fim" => $request->order_end,
+            "status" => $request->order_status,
+            "nome_criador" => $request->creator_name,
+            "nome_piloto" => $request->pilot_name,
+            "nome_cliente" => $request->client_name,
+            "observacao" => $request->order_note,   
         ];
+        
+        dd($updateData);
 
         $update = $model->updateServiceOrder((int) $request->id, $updateData);
 

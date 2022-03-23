@@ -44,10 +44,6 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
 
-    // States dos inputs de data
-    const [startDate, setStartDate] = useState(data.flight_start_date);
-    const [endDate, setEndDate] = useState(data.flight_end_date);
-
      // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal

@@ -136,13 +136,13 @@ class ServiceOrdersModel extends Model
      * @param array $data
      * @return array
      */
-    function updateServiceOrder(int $plan_id, array $data) : array {
+    function updateServiceOrder(int $order_id, array $data) : array {
 
         try{
 
             DB::beginTransaction();
 
-            $update = FlightPlansModel::where('id', $plan_id)->update($data);
+            $update = ServiceOrdersModel::where('id', $order_id)->update($data);
 
             if($update){
 

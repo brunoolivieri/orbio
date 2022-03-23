@@ -48,8 +48,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     const [disabledButton, setDisabledButton] = useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState(data.flight_start_date);
-    const [endDate, setEndDate] = useState(data.flight_end_date);
+    const [startDate, setStartDate] = useState(data.order_start_date);
+    const [endDate, setEndDate] = useState(data.order_end_date);
 
      // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -186,6 +186,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
         AxiosApi.patch(`/api/orders-module/update`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
+          id: data.get("order_id"),
           order_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
           order_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
           order_numos: data.get("order_numos"),
