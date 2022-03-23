@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { FormValidation } from '../../../../services/FormValidation';
+import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import {ScreenDarkFilter} from "../../../structures/screenDarkFilter/ScreenDarkFilter";
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';

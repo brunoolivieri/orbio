@@ -108,7 +108,7 @@ class FlightPlansModel extends Model
      * @param int $limit
      * @return array
      */
-    function loadSpecificUsers(string $value_searched, int $offset, int $limit) : array {
+    function loadSpecificFlightPlans(string $value_searched, int $offset, int $limit) : array {
 
         try{
 
@@ -143,7 +143,7 @@ class FlightPlansModel extends Model
      * @param array $data
      * @return array
      */
-    function updateFlightPlans(int $plan_id, array $data) : array {
+    function updateFlightPlan(int $plan_id, array $data) : array {
 
         try{
 
@@ -183,7 +183,7 @@ class FlightPlansModel extends Model
      * @param int $report_id
      * @return array
      */
-    function deleteReport(int $plan_id) : array {
+    function deleteFlightPlan(int $plan_id) : array {
 
         try{
 

@@ -18,7 +18,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { FormValidation } from '../../../../services/FormValidation';
+import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 

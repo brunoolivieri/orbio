@@ -95,7 +95,7 @@ class FlightPlansModuleController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Função para processar a requisição da criação de um registro de plano
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -129,14 +129,36 @@ class FlightPlansModuleController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Função para buscar um ou mais registros de planos pesquisados
      *
-     * @param  int  $id
+     * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($request) : \Illuminate\Http\Response
     {
-        //
+        
+        $model = new FlightPlansModel();
+
+        $request_values = explode(".", request()->args);
+
+        $value_searched = $request_values[0];
+        $offset = $request_values[1];
+        $limit = $request_values[2];
+
+        $response = $model->loadSpecificFlightPlans($value_searched, (int) $offset, (int) $limit);
+    
+        if($response["status"] && !$response["error"]){
+
+            $dataFormated = $this->plansTableFormat($response["data"], $limit);
+
+            return array("status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]);
+
+        }else if(!$response["status"] && $response["error"]){
+
+            return array("status" => false, "error" => $response["error"]);
+
+        }  
+
     }
 
     /**
@@ -151,7 +173,9 @@ class FlightPlansModuleController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Função para processar a atualização de um registro de plano
+     * 
+     * MÉTODO: PATCH
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -159,17 +183,53 @@ class FlightPlansModuleController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
-        //
+        
+        $model = new FlightPlansModel();
+
+        $updateData = [
+            "id_relatorio" => $request->report,
+            "id_incidente" => $request->incident,
+            "descricao" => $request->description,
+            "status" => $request->status,
+        ];
+
+        $update = $model->updateFlightPlan((int) $request->id, $updateData);
+
+        if($update["status"] && !$update["error"]){
+
+            return response("", 200);
+
+        }else if(!$update["status"] && $update["error"]){
+
+            return response(["error" => $update["error"]], 500);
+
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Função para processar a remoção de um registro de plano
+     * 
+     * MÉTODO: DELETE
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
-        //
+
+        $model = new FlightPlansModel();
+
+        $delete = $model->deleteFlightPlan((int) $id);
+
+        if($delete["status"]){
+
+            return response("", 200);
+
+        }else{
+
+            return response("", 500);
+
+        }
+
     }
 }

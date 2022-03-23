@@ -23,7 +23,7 @@ import FormLabel from '@mui/material/FormLabel';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import { FormValidation } from '../../../../../services/FormValidation';
+import { FormValidation } from '../../../../../utils/FormValidation';
 import AxiosApi from '../../../../../services/AxiosApi';
 
 /*

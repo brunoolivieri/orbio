@@ -14,7 +14,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 import AxiosApi from "../../../../../services/AxiosApi";
 
-import { FormValidation } from '../../../../../services/FormValidation';
+import { FormValidation } from '../../../../../utils/FormValidation';
 
 import { useState, useRef } from 'react';
 

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
-import { FormValidation } from '../../../../services/FormValidation';
+import { FormValidation } from '../../../../utils/FormValidation';
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI

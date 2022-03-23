@@ -5,7 +5,7 @@ import React from 'react';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
-import { FormValidation } from '../../../../../services/FormValidation';
+import { FormValidation } from '../../../../../utils/FormValidation';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';

@@ -142,7 +142,7 @@ class ReportsModuleController extends Controller
      * 
      * MÉTODO: GET
      *
-     * @param string $request
+     * @param $request
      * @return array
      */
     public function show($request) : array
@@ -227,12 +227,10 @@ class ReportsModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $param) : \Illuminate\Http\Response
+    public function destroy($id) : \Illuminate\Http\Response
     {
         
         $model = new ReportsModel();
-
-        $id = $param;
 
         $delete = $model->deleteReport((int) $id);
 

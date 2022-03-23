@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdateDeleteReportFormulary } from "../../../../structures/modules/reports/UpdateDeleteReportFormulary";
-import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
-import { MapModal } from "../../../../structures/modules/planos/MapModal";
+import { UpdateDeletePlanFormulary } from "../../../../structures/modules/plans/UpdateDeletePlanFormulary";
+import { CreatePlanConfiguration } from "../../../../structures/modules/plans/CreatePlanConfiguration";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -26,6 +25,10 @@ import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Badge } from "@mui/material";
+import Chip from '@mui/material/Chip';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import MapIcon from '@mui/icons-material/Map';
+import { Link } from "@mui/material";
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
@@ -203,13 +206,14 @@ export function PlansPanel(){
         <Grid container spacing={1} alignItems="center">
 
           <Grid item>
-            {/* Formulário de criação de usuário */}
-            <CreateReportFormulary />
-          </Grid>
-
-          <Grid item>
-            {/* Formulário de criação de usuário */}
-            <MapModal />
+            {/* Botão para abrir o formulário */}
+            <Tooltip title="Novo Plano">
+              <Link href={`/sistema/mapa`} target="_blank">
+                <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
+                  <MapIcon />
+                </IconButton>
+              </Link>
+            </Tooltip>
           </Grid>
 
           <Grid item>
@@ -286,14 +290,14 @@ export function PlansPanel(){
                             <StyledTableCell>{row.plan_id}</StyledTableCell>
                             <StyledTableCell align="center">{row.report_id}</StyledTableCell>
                             <StyledTableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</StyledTableCell>
-                            <StyledTableCell align="center">{row.plan_status}</StyledTableCell> 
+                            <StyledTableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell> 
                             <StyledTableCell align="center">{row.plan_file}</StyledTableCell>
                             <StyledTableCell align="center">{row.plan_description}</StyledTableCell>
                             <StyledTableCell align="center">{moment(row.created_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
                             <StyledTableCell align="center">{row.updated_at == null ? "Sem dados" : moment(row.updated_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                            <StyledTableCell align="center"><MapModal data = {row} /></StyledTableCell>
-                            <StyledTableCell align="center">Editar</StyledTableCell>
-                            <StyledTableCell align="center">Excluir</StyledTableCell>     
+                            <StyledTableCell align="center"><Link href={`/sistema/mapa`} target="_blank"><IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}><MapIcon /></IconButton></Link></StyledTableCell>
+                            <StyledTableCell align="center"><UpdateDeletePlanFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                            <StyledTableCell align="center"><UpdateDeletePlanFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
                           </StyledTableRow>
                         ))}    
                 </TableBody>

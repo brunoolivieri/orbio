@@ -16,7 +16,7 @@ import { WindowRounded } from '@mui/icons-material';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../../../services/AxiosApi";
-import { FormValidation } from '../../../../../services/FormValidation';
+import { FormValidation } from '../../../../../utils/FormValidation';
 import { SelectStates } from '../../../../structures/input_select/InputSelectStates';
 import { SelectCities } from '../../../../structures/input_select/SelectCities';
 

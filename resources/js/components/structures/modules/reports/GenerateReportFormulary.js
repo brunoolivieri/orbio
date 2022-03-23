@@ -17,7 +17,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { FormValidation } from '../../../../services/FormValidation';
+import { FormValidation } from '../../../../utils/FormValidation';
 import { InputSelect } from '../../input_select/InputSelect';
 import AxiosApi from '../../../../services/AxiosApi';
 

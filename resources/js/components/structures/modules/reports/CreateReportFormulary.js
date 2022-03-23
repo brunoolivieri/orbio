@@ -20,7 +20,7 @@ import { DateTimeInput } from '../../date_picker/DateTimeInput';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { FormValidation } from '../../../../services/FormValidation';
+import { FormValidation } from '../../../../utils/FormValidation';
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
@@ -217,8 +217,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
     }
 
   return (
-    <div>
-
+    <>
       {/* Botão para abrir o formulário */}
       <Tooltip title="Novo Relatório">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
@@ -296,6 +295,6 @@ export const CreateReportFormulary = React.memo(({...props}) => {
         </Box>
       
       </Dialog>
-    </div>
+    </>
   );
 });
