@@ -95,7 +95,7 @@ class ServiceOrdersModel extends Model
     }
 
     /**
-     * Método realizar um SELECT COM WHERE na tabela "flight_plans"
+     * Método realizar um SELECT COM WHERE na tabela "service_orders"
      *
      * @param int $offset
      * @param int $limit
@@ -105,14 +105,13 @@ class ServiceOrdersModel extends Model
 
         try{
 
-            $searchedReports = DB::table('flight_plans')
-            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status')
-            ->where('plans.id', $value_searched)
+            $searchedServiceOrders = DB::table('service_orders')
+            ->where('service_orders.id', $value_searched)
             ->offset($offset)->limit($limit)->get();
 
             $response = [
-                "referencialValueForCalcPages" => count($searchedReports),
-                "selectedRecords" => $searchedReports
+                "referencialValueForCalcPages" => count($searchedServiceOrders),
+                "selectedRecords" => $searchedServiceOrders
             ];
 
             DB::beginTransaction();

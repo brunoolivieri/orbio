@@ -19,6 +19,7 @@ use App\Http\Controllers\Modules\AdministrationModuleController;
 use App\Http\Controllers\Modules\ReportsModuleController;
 use App\Http\Controllers\Modules\FlightPlansModuleController;
 use App\Http\Controllers\Modules\ServiceOrdersModuleController;
+use App\Http\Controllers\Modules\IncidentsModuleController;
 
 /*
 
@@ -57,5 +58,5 @@ Route::resource("/api/admin-module", AdministrationModuleController::class)->mid
 Route::resource("/api/reports-module", ReportsModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/plans-module", FlightPlansModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/orders-module", ServiceOrdersModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
-
+Route::resource("/api/incidents-module", IncidentsModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 

@@ -182,7 +182,7 @@ export function OrdersPanel(){
    function handleSearchSubmit(event, offset){
     event.preventDefault();
 
-      let value_searched = window.document.getElementById("orders_panel_search_input").value;
+      let value_searched = window.document.getElementById("order_panel_search_input").value;
 
       setPage(1);
       setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});

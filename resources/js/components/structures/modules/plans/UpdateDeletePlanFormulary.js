@@ -20,6 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
+import { InputSelect } from '../../input_select/InputSelect';
 
 export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_setter}) => {
 
@@ -145,8 +146,8 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
         AxiosApi.patch(`/api/plans-module/update`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
           id: data.get("plan_id"),
-          report: data.get("report"),
-          incident: data.get("incident"),
+          report: data.get("select_report"),
+          incident: data.get("select_incident"),
           status: data.get("status"),
           description: data.get("description"),
         })
@@ -265,7 +266,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               }}
             />
 
-            <TextField
+            {/* <TextField
               margin="dense"
               id="report"
               name="report"
@@ -277,7 +278,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               InputProps={{
                   readOnly: operation == "delete" ? true : false,
               }}
-            />
+            /> 
 
             <TextField
               margin="dense"
@@ -292,7 +293,12 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
                   readOnly: operation == "delete" ? true : false,
                   inputProps: { min: 0, max: 1 }
               }}
-            />
+            /> */}
+
+            <Box>
+              <InputSelect label_text = {"Relatório"} data_source = {"/api/reports-module"} error = {null} default = {0} name = {"select_report"} />
+              <InputSelect label_text = {"Incidente"} data_source = {"/api/incidents-module"} error = {null} default = {0} name = {"select_incident"} />
+            </Box>
 
             <TextField
               margin="dense"
@@ -317,7 +323,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               type="text"
               fullWidth
               variant="outlined"
-              defaultValue={data.description}
+              defaultValue={data.plan_description}
               InputProps={{
                   readOnly: operation == "delete" ? true : false
               }}

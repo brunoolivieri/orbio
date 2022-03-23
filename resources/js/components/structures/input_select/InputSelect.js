@@ -47,8 +47,6 @@ export function InputSelect(props){
     
                 if(response.status === 200){
     
-                    //console.log(response)
-    
                     setSelectionInputData({status: true, data: {error: {load: false, submit: false}, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text}});
         
                 }else{
@@ -71,7 +69,7 @@ export function InputSelect(props){
         <>
 
             {selectConfig.status ?
-                <FormControl sx={{ mt: 3, minWidth: 120 }}>
+                <FormControl sx={{ margin: "5px 5px 0 0", minWidth: 120 }}>
                     <InputLabel id="demo-simple-select-helper-label">{selectConfig.data.label_text}</InputLabel>
                     <Select
                     labelId="demo-simple-select-helper-label"
