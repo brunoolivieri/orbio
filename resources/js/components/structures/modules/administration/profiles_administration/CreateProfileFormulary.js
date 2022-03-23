@@ -216,12 +216,14 @@ export function CreateProfileFormulary() {
         <DialogTitle>CADASTRO DE PERFIL</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-        <Box component="form" noValidate onSubmit={handleRegistrationProfile} sx={{ mt: 1 }} >
+        <Box component="form" noValidate onSubmit={handleRegistrationProfile} >
 
           <DialogContent>
+
             <DialogContentText>
               Perfis criados são diferentes dos perfis nativos do sistema. Um novo perfil deve ser criado apenas sob demanda, e, com a mesma condição, editado e excluído.
             </DialogContentText>
+
             <TextField
               margin="dense"
               id="registration_name_input"

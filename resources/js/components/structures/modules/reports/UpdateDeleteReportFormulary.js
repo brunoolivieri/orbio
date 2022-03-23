@@ -284,15 +284,13 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
       {/* Botão que abre o Modal - pode ser o de atualização ou de deleção, depende da operação */}
       {operation === "update" ? updateButton : deleteButton}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"}</DialogTitle>
+        <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"} | RELATÓRIO (ID: {data.report_id})</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} sx={{ mt: 1 }} >
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
           <DialogContent>
-            <DialogContentText>
-              Formulário para {operation === "update" ? "atualização" : "deleção"} do registro do relatório de ID igual a {data.report_id}.
-            </DialogContentText>
+            
             <TextField
               margin="dense"
               id="id_input"

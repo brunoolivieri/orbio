@@ -222,7 +222,7 @@ export function CreateUserFormulary({...props}) {
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-        <Box component="form" noValidate onSubmit={handleRegistrationSubmit} sx={{ mt: 1 }} >
+        <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
 
           <DialogContent>
         

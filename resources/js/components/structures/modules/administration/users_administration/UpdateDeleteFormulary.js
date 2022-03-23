@@ -262,15 +262,13 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
       {/* Botão que abre o Modal - pode ser o de atualização ou de deleção, depende da operação */}
       {operation === "update" ? updateButton : deleteButton}
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"}</DialogTitle>
+        <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"} | USUÁRIO (ID: {data.user_id})</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} sx={{ mt: 1 }} >
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
           <DialogContent>
-            <DialogContentText>
-              Formulário para {operation === "update" ? "atualização" : "deleção"} do registro do usuário de ID igual a {data.user_id} e nome {data.name}.
-            </DialogContentText>
+            
             <TextField
               margin="dense"
               id="id_input"

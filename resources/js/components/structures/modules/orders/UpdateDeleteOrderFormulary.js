@@ -38,8 +38,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     const [formOperation, setOperation] = useState(operation);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
+    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -61,8 +61,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false});
-      setErrorMessage({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""});
+      setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false});
+      setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -122,17 +122,20 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     */
      function dataValidate(formData){
 
-      const logPattern = "";
-
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
       const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-      const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
+      const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
+      const creatorNameValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
+      const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
+      const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
+      const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
 
-      setErrorDetected({flight_start_date: startDateValidate.error, flight_end_date: endDateValidate.error, flight_log: false, report_note: noteValidate.error});
-      setErrorMessage({flight_start_date: startDateValidate.message, flight_end_date: endDateValidate.message, flight_log: "", report_note: noteValidate.message});
+      // Atualização dos estados responsáveis por manipular os inputs
+      setErrorDetected({order_start_date: startDateValidate.error, order_end_date: endDateValidate.error, numOS: numOsValidate.error, creator_name: creatorNameValidate.error, pilot_name: pilotNameValidate.error, client_name: clientNameValidate.error, order_note: orderNoteValidate.error});
+      setErrorMessage({order_start_date: startDateValidate.message, order_end_date: endDateValidate.message, numOS: numOsValidate.message, creator_name: creatorNameValidate.message, pilot_name: pilotNameValidate.message, client_name: clientNameValidate.message, order_note: orderNoteValidate.message});
       
-      if(startDateValidate.error || endDateValidate.error || noteValidate.error){
+      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error){
 
         return false;
 
@@ -176,12 +179,12 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
       // Dados para o middleware de autenticação 
       let logged_user_id = AuthData.data.id;
-      let module_id = 4;
+      let module_id = 3;
       let module_action = "escrever";
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/reports-module/update`, {
+        AxiosApi.patch(`/api/orders-module/update`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
           id: data.get("id_input"),
           flight_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
@@ -202,7 +205,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
       }else if(operation === "delete"){
 
-        AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+        AxiosApi.delete(`/api/orders-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
             serverResponseTreatment(response);
@@ -265,17 +268,17 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso 
     // Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc 
     const deleteButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
+    disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
     value = {data.id} onClick={handleClickOpen}
     ><DeleteIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
     /></IconButton>
 
     const updateButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} 
+    disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} 
     value = {data.id} onClick={handleClickOpen}
     ><EditIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
     /></IconButton>
 
     return (
@@ -284,79 +287,147 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
           {/* Botão que abre o Modal - pode ser o de atualização ou de deleção, depende da operação */}
           {operation === "update" ? updateButton : deleteButton}
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"}</DialogTitle>
+            <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"} | ORDEM DE SERVIÇO (ID: {data.order_id})</DialogTitle>
     
             {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-            <Box component="form" noValidate onSubmit={handleSubmitOperation} sx={{ mt: 1 }} >
+            <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
               <DialogContent>
-                <DialogContentText>
-                  Formulário para {operation === "update" ? "atualização" : "deleção"} do registro da ordem de serviço de ID igual a {data.order_id}.
-                </DialogContentText>
-                <TextField
-                  margin="dense"
-                  id="id_input"
-                  name="id_input"
-                  label="ID"
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={data.report_id}
-                  InputProps={{
-                      readOnly: true,
-                  }}
-                />
-                
+
                 <Box sx={{display: "flex", justifyContent: "space-between"}}>
                   <DateTimeInput 
                     event = {setStartDate}
-                    label = {"Inicio do vôo"} 
+                    label = {"Inicio da ordem de serviço"} 
                     helperText = {errorMessage.flight_start_date} 
                     error = {errorDetected.flight_start_date} 
-                    defaultValue = {data.flight_start_date}
+                    defaultValue = {data.order_start_date}
                     operation = {operation}
                     />
                     <DateTimeInput
                     event = {setEndDate}
-                    label = {"Fim do vôo"} 
+                    label = {"Fim da ordem de serviço"} 
                     helperText = {errorMessage.flight_end_date} 
                     error = {errorDetected.flight_end_date} 
-                    defaultValue = {data.flight_end_date}
+                    defaultValue = {data.order_start_date}
                     operation = {operation}
                   />
                 </Box>
-    
+
                 <TextField
+                  type = "text"
                   margin="dense"
-                  id="flight_log"
-                  name="flight_log"
-                  label="Log do vôo"
-                  type="text"
+                  label="numOS"
                   fullWidth
                   variant="outlined"
-                  defaultValue={data.flight_log}
+                  required
+                  id="order_numos"
+                  name="order_numos"
+                  helperText = {errorMessage.numOS}
+                  error = {errorDetected.numOS}
+                  defaultValue = {data.numOS}
                   InputProps={{
-                      readOnly: operation == "delete" ? true : false,
-                      inputProps: { min: 0, max: 1 }
+                    readOnly: operation == "delete" ? true : false
                   }}
-                  helperText = {errorMessage.flight_log}
-                  error = {errorDetected.flight_log}
                 />
-    
+
                 <TextField
+                  type = "text"
                   margin="dense"
-                  id="report_note"
-                  name="report_note"
-                  label="Observação"
-                  type="text"
+                  label="Nome do criador"
                   fullWidth
                   variant="outlined"
-                  defaultValue={data.report_note}
+                  required
+                  id="creator_name"
+                  name="creator_name"
+                  helperText = {errorMessage.creator_name}
+                  error = {errorDetected.creator_name}
+                  defaultValue = {data.creator_name}
                   InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Nome do piloto"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="pilot_name"
+                  name="pilot_name"
+                  helperText = {errorMessage.pilot_name}
+                  error = {errorDetected.pilot_name}
+                  defaultValue = {data.pilot_name}
+                  InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Nome do cliente"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="client_name"
+                  name="client_name"
+                  helperText = {errorMessage.client_name}
+                  error = {errorDetected.client_name}
+                  defaultValue = {data.client_name}
+                  InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Plano de vôo vinculado"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="flight_plan"
+                  name="flight_plan"
+                  helperText = {errorMessage.flight_id}
+                  error = {errorDetected.flight_id}
+                  defaultValue = {data.flight_plan_id}
+                  InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Observação"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="order_note"
+                  name="order_note"
+                  helperText = {errorMessage.order_note}
+                  error = {errorDetected.order_note}
+                  defaultValue = {data.order_note}
+                  InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
+
+                <TextField
+                  margin="dense"
+                  id="status"
+                  name="status"
+                  label="Status"
+                  type="number"
+                  fullWidth
+                  variant="outlined"
+                  defaultValue={data.order_status}
+                  InputProps={{
+                      inputProps: { min: 0, max: 1 },
                       readOnly: operation == "delete" ? true : false
                   }}
-                  helperText = {errorMessage.report_note}
-                  error = {errorDetected.report_note}
                 />
     
               </DialogContent>

@@ -25,6 +25,5 @@
         </div>
         
     </body>
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     <script src = "js/app.js"></script>
 </html>

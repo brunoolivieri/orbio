@@ -279,9 +279,9 @@ export function OrdersPanel(){
                 {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                 {(panelData.status && !panelData.error) && 
                     panelData.response.map((row) => (
-                        <StyledTableRow key={row.plan_id}>
+                        <StyledTableRow key={row.order_id}>
                         <StyledTableCell>{row.order_id}</StyledTableCell>
-                        <StyledTableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell>
+                        <StyledTableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell>
                         <StyledTableCell align="center">{row.flight_plan_id}</StyledTableCell>
                         <StyledTableCell align="center">{row.numOS}</StyledTableCell> 
                         <StyledTableCell align="center">{row.creator_name}</StyledTableCell>

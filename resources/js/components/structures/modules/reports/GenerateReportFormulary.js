@@ -240,7 +240,7 @@ export function GenerateReportFormulary({...props}){
         <DialogTitle>RELATÓRIO {reportType == "BASIC" ? "BÁSICO" : "AVANÇADO"}</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} sx={{ mt: 1 }} >
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
           <DialogContent>
             <DialogContentText>
