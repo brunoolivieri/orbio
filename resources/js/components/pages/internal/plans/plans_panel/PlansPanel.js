@@ -183,7 +183,7 @@ export function PlansPanel(){
    function handleSearchSubmit(event, offset){
     event.preventDefault();
 
-      let value_searched = window.document.getElementById("reports_panel_search_input").value;
+      let value_searched = window.document.getElementById("plans_panel_search_input").value;
 
       setPage(1);
       setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});
@@ -248,7 +248,7 @@ export function PlansPanel(){
                 sx: { fontSize: 'default' },
               }}
               variant="standard"
-              id = "reports_panel_search_input"
+              id = "plans_panel_search_input"
             />
           </Grid>
           
@@ -269,9 +269,9 @@ export function PlansPanel(){
                 <TableHead>
                 <TableRow>
                     <StyledTableCell>ID</StyledTableCell>
+                    <StyledTableCell align="center">Status</StyledTableCell>
                     <StyledTableCell align="center">Relatório</StyledTableCell>
                     <StyledTableCell align="center">Incidente</StyledTableCell>
-                    <StyledTableCell align="center">Status</StyledTableCell>
                     <StyledTableCell align="center">Arquivo</StyledTableCell>
                     <StyledTableCell align="center">Descrição</StyledTableCell>
                     <StyledTableCell align="center">Data criação</StyledTableCell>
@@ -288,9 +288,9 @@ export function PlansPanel(){
                         panelData.response.map((row) => (
                           <StyledTableRow key={row.plan_id}>
                             <StyledTableCell>{row.plan_id}</StyledTableCell>
+                            <StyledTableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell> 
                             <StyledTableCell align="center">{row.report_id}</StyledTableCell>
                             <StyledTableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</StyledTableCell>
-                            <StyledTableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell> 
                             <StyledTableCell align="center">{row.plan_file}</StyledTableCell>
                             <StyledTableCell align="center">{row.plan_description}</StyledTableCell>
                             <StyledTableCell align="center">{moment(row.created_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>

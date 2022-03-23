@@ -60,8 +60,8 @@ class ReportsModuleController extends Controller
         foreach($data["selectedRecords"] as $row => $object){
 
             // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $created_at_formated = $object->dh_criacao;
-            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : $object->dh_atualizacao;
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
+            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
             $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
             $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
             

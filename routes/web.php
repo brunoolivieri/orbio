@@ -18,7 +18,7 @@ use App\Http\Controllers\User\GeneralUserController; // Controlador do usuário 
 use App\Http\Controllers\Modules\AdministrationModuleController;
 use App\Http\Controllers\Modules\ReportsModuleController;
 use App\Http\Controllers\Modules\FlightPlansModuleController;
-
+use App\Http\Controllers\Modules\ServiceOrdersModuleController;
 
 /*
 
@@ -56,6 +56,6 @@ Route::post('/api/user-update-data', [GeneralUserController::class, "userUpdates
 Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/reports-module", ReportsModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/plans-module", FlightPlansModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
-
+Route::resource("/api/orders-module", ServiceOrdersModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 
 

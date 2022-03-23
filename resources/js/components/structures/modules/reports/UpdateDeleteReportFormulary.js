@@ -291,7 +291,7 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
 
           <DialogContent>
             <DialogContentText>
-              Formulário para {operation === "update" ? "atualização" : "deleção"} do registro do usuário de ID igual a {data.user_id} e nome {data.name}.
+              Formulário para {operation === "update" ? "atualização" : "deleção"} do registro do relatório de ID igual a {data.report_id}.
             </DialogContentText>
             <TextField
               margin="dense"

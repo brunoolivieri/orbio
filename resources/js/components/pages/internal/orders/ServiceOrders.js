@@ -11,6 +11,7 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 // IMPORTAÇÃO DOS COMPONENTES PERSONALIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useEffect } from "react";
+import { OrdersPanel } from './orders_panel/OrdersPanel';
 
 export function ServiceOrders(){
 
@@ -26,8 +27,6 @@ export function ServiceOrders(){
 
     })
 
-
-
     return(
 
         <>
@@ -38,35 +37,11 @@ export function ServiceOrders(){
           elevation={0}
           sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
         >
-          <Toolbar>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item>
-                <SearchIcon color="inherit" sx={{ display: 'block' }} />
-              </Grid>
-              <Grid item xs>
-                <TextField
-                  fullWidth
-                  placeholder="Pesquisar"
-                  InputProps={{
-                    disableUnderline: true,
-                    sx: { fontSize: 'default' },
-                  }}
-                  variant="standard"
-                />
-              </Grid>
-              <Grid item>
-                { /* <Tooltip title="Reload">
-                  <IconButton>
-                    <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                  </IconButton>
-                </Tooltip> */}
-              </Grid>
-            </Grid>
-          </Toolbar>
+          <Toolbar />
         </AppBar>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          ORDERS TABLE
+          <OrdersPanel />
         
         </Box>
     </Paper>
