@@ -134,7 +134,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
       // Atualização dos estados responsáveis por manipular os inputs
       setErrorDetected({order_start_date: startDateValidate.error, order_end_date: endDateValidate.error, numOS: numOsValidate.error, creator_name: creatorNameValidate.error, pilot_name: pilotNameValidate.error, client_name: clientNameValidate.error, order_note: orderNoteValidate.error});
       setErrorMessage({order_start_date: startDateValidate.message, order_end_date: endDateValidate.message, numOS: numOsValidate.message, creator_name: creatorNameValidate.message, pilot_name: pilotNameValidate.message, client_name: clientNameValidate.message, order_note: orderNoteValidate.message});
-      
+    
       if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error){
 
         return false;
@@ -186,11 +186,15 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
         AxiosApi.patch(`/api/orders-module/update`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          id: data.get("id_input"),
-          flight_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          flight_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          flight_log: data.get("flight_log"),
-          report_note: data.get("report_note")
+          order_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          order_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+          order_numos: data.get("order_numos"),
+          creator_name: data.get("creator_name"),
+          pilot_name: data.get("pilot_name"),
+          client_name: data.get("client_name"),
+          order_note: data.get("order_note"),
+          order_status: data.get("status"),
+          flight_plan: data.get("flight_plan")
         })
         .then(function (response) {
   
@@ -298,20 +302,35 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   <DateTimeInput 
                     event = {setStartDate}
                     label = {"Inicio da ordem de serviço"} 
-                    helperText = {errorMessage.flight_start_date} 
-                    error = {errorDetected.flight_start_date} 
+                    helperText = {errorMessage.order_start_date} 
+                    error = {errorDetected.order_start_date} 
                     defaultValue = {data.order_start_date}
                     operation = {operation}
                     />
                     <DateTimeInput
                     event = {setEndDate}
                     label = {"Fim da ordem de serviço"} 
-                    helperText = {errorMessage.flight_end_date} 
-                    error = {errorDetected.flight_end_date} 
-                    defaultValue = {data.order_start_date}
+                    helperText = {errorMessage.order_start_date} 
+                    error = {errorDetected.order_start_date} 
+                    defaultValue = {data.order_end_date}
                     operation = {operation}
                   />
                 </Box>
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="ID da ordem de serviço"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="order_id"
+                  name="order_id"
+                  defaultValue = {data.order_id}
+                  InputProps={{
+                    readOnly: true 
+                  }}
+                />
 
                 <TextField
                   type = "text"

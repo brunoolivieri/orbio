@@ -13,6 +13,7 @@ class ServiceOrdersModel extends Model
     protected $table = "service_orders";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
+    protected $guarded = []; 
 
     /**
      * Método realizar um INSERT na tabela "flight_plans"
@@ -26,13 +27,7 @@ class ServiceOrdersModel extends Model
 
             DB::beginTransaction();
 
-            $this->id_relatorio = $data["report_id"];
-            $this->id_incidente = $data["incident_id"];
-            $this->arquivo = $data["plan_file"];
-            $this->descricao = $data["description"];
-            $this->status = $data["status"];
-
-            if($insert = $this->save()){
+            if($insert = ServiceOrdersModel::create($data)){
 
                 DB::commit();
 

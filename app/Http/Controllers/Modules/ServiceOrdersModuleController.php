@@ -111,13 +111,18 @@ class ServiceOrdersModuleController extends Controller
         $model = new ServiceOrdersModel();
 
         $registrationData = [
-            "flight_start_date" => $request->flight_start,
-            "flight_end_date" => $request->flight_end,
-            "flight_log" => $request->flight_log,
-            "report_note" => $request->report_note
+            "id_plano_voo" => $request->flight_plan,
+            "numOS" => $request->order_numos,
+            "dh_inicio" => $request->order_start,
+            "dh_fim" => $request->order_end,
+            "status" => $request->order_status,
+            "nome_criador" => $request->creator_name,
+            "nome_piloto" => $request->pilot_name,
+            "nome_cliente" => $request->client_name,
+            "observacao" => $request->order_note,   
         ];
 
-        $response = $model->newOrder($registrationData);
+        $response = $model->newServiceOrder($registrationData);
 
          if($response["status"]){
 
