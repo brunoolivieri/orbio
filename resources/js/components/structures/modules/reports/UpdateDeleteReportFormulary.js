@@ -265,17 +265,17 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
     // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso 
     // Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc 
     const deleteButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
+    disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
     value = {data.id} onClick={handleClickOpen}
     ><DeleteIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
     /></IconButton>
 
     const updateButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} 
+    disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true} 
     value = {data.id} onClick={handleClickOpen}
     ><EditIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
     /></IconButton>
 
   return (

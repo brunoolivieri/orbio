@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Log;
 
 // Model utilizado
 use App\Models\User\UserModel;
-use App\Models\User\UserAuthenticationOperationsModel;
+use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 
@@ -39,8 +39,8 @@ class AdministrationModuleController extends Controller
 
         $request_values = explode("|", request()->args);
 
-        $offset = $request_values[0];
-        $limit = $request_values[1];
+        $offset = isset($request_values[0]) ? $request_values[0] : 0;
+        $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
         // Se o procedimento estiver sendo realizado no painel de usuários...
         if($panel === "users_panel"){
@@ -53,11 +53,11 @@ class AdministrationModuleController extends Controller
     
                 $dataFormated = $this->usersPanelDataFormat($response["data"], $limit);
 
-                return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+                return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
     
             }else if(!$response["status"] && $response["error"]){
 
-                return response(["status" => false, "error" => $response->content()], 500);
+                return response(["error" => $response->content()], 500);
     
             }  
 
@@ -220,8 +220,7 @@ class AdministrationModuleController extends Controller
     }
 
     /**
-     * Função para composição do formulário de criação de registro
-     * Pode ser para o formulário de criação de usuário ou de criação de perfil
+     * Função para composição do formulário de criação de registro de usuário
      * 
      * MÉTODO: GET
      *
@@ -229,26 +228,15 @@ class AdministrationModuleController extends Controller
      */
     public function create() : \Illuminate\Http\Response {
 
-        $panel = request()->panel;
+        if($data = ProfileModel::all()){
 
-        // Se o procedimento estiver sendo realizado no painel de usuários...
-        if($panel === "users_panel"){
+            return response($data, 200);
 
-            $model = new ProfileModel();
+        }else{
 
-            $response = $model->loadAllProfiles();
+            return response("", 500);
 
-            if($response["status"] && !$response["error"]){
-
-                return response($response["data"], 200);
-
-            }else if(!$response["status"] && $response["error"]){
-
-                return response("", 500);
-
-            } 
-
-        }
+        } 
  
     }
     
@@ -335,7 +323,7 @@ class AdministrationModuleController extends Controller
      * @param string $request
      * @return array
      */
-    public function show($request) : array {
+    public function show($request) : \Illuminate\Http\Response {
         
         // Os valores da string enviada via URL são obtidos
         $request_values = explode("|", $request);
@@ -356,11 +344,11 @@ class AdministrationModuleController extends Controller
     
                 $dataFormated = $this->usersPanelDataFormat($response["data"], $limit);
 
-                return array("status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]);
+                return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
     
             }else if(!$response["status"] && $response["error"]){
-    
-                return array("status" => false, "error" => $response["error"]);
+
+                return response("", 500);
     
             }  
 
@@ -381,11 +369,11 @@ class AdministrationModuleController extends Controller
                 // Recebe os registros pesquisados, a quantidade total de registros, e o LIMIT original
                 $dataFormated = $this->profilesPanelDataFormat($response["data"]["selectedRecords"], (int) $response["data"]["referencialValueForCalcPages"], $limit);
 
-                return array("status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]);
+                return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
     
             }else if(!$response["status"] && $response["error"]){
-    
-                return array("status" => false, "error" => $response["error"]);
+                
+                return response("", 500);
     
             } 
 

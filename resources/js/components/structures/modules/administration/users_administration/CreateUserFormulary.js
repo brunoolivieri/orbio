@@ -18,7 +18,7 @@ import { Alert } from '@mui/material';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../../services/AxiosApi';
-import { InputSelect } from '../../../input_select/InputSelect';
+import { GenericSelect } from '../../../input_select/GenericSelect';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 
@@ -107,7 +107,7 @@ export function CreateUserFormulary({...props}) {
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("registration_email_input"), null, null, emailPattern, "EMAIL");
-        const profileValidate = Number(formData.get("select_item_input")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
+        const profileValidate = Number(formData.get("select_profile")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
 
         // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error});
@@ -143,7 +143,7 @@ export function CreateUserFormulary({...props}) {
         auth: `${user_id}.${module_id}.${action}`,
         email: data.get("registration_email_input"),
         name: data.get("registration_name_input"),
-        profile: data.get("select_item_input"),
+        profile: data.get("select_profile"),
         password: randomPass
       })
       .then(function (response) {
@@ -254,7 +254,15 @@ export function CreateUserFormulary({...props}) {
                 error = {errorDetected.email}
               />
               
-               <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {0} />
+               <GenericSelect 
+               label_text = {"Perfil"} 
+               data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} 
+               primary_key={"id"} 
+               key_content={"nome"} 
+               error = {errorDetected.profile} 
+               default = {0}  
+               name = {"select_profile"} 
+               />
               
           </DialogContent>
 

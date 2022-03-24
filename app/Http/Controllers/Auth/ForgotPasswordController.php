@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 // Model utilizado
-use App\Models\User\UserAuthenticationOperationsModel;
+use App\Models\Auth\AuthenticationModel;
 
 // Envio de email
 use Illuminate\Support\Facades\Mail;
@@ -25,7 +25,7 @@ class ForgotPasswordController extends Controller
      */
     function index(Request $request) : array {
 
-        $model = new UserAuthenticationOperationsModel();
+        $model = new AuthenticationModel();
 
         $response = $model->userSendCodeForChangePassword($request);
 
@@ -52,7 +52,7 @@ class ForgotPasswordController extends Controller
      */
     function changePassword(Request $request) : array {
 
-        $model = new UserAuthenticationOperationsModel();
+        $model = new AuthenticationModel();
 
         $response = $model->userChangePassword($request);
 

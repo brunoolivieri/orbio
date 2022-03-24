@@ -95,7 +95,7 @@ export function ReportsPanel(){
         case false:
 
          // Parâmetros do SELECT
-          let pagination_params = `${paginationParams.offset}/${paginationParams.limit}`;
+          let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
 
           AxiosApi.get(`/api/reports-module?args=${pagination_params}&auth=${logged_user_id}.${module_id}.${module_action}`, {
             })

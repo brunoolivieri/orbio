@@ -19,7 +19,7 @@ import EditIcon from '@mui/icons-material/Edit';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { InputSelect } from '../../../input_select/InputSelect';
+import { GenericSelect } from '../../../input_select/GenericSelect';
 import AxiosApi from '../../../../../services/AxiosApi';
 
 /*
@@ -113,7 +113,7 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
       const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
-      const profileValidate = Number(formData.get("select_item_input")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
+      const profileValidate = Number(formData.get("select_profile")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
 
       // Atualização dos estados responsáveis por manipular os inputs
       setErrorDetected({email: emailValidate.error, name: nameValidate.error});
@@ -147,7 +147,7 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
           name: data.get("name_input"),
           email: data.get("email_input"),
           status: data.get("status_input"),
-          profile: data.get("select_item_input")
+          profile: data.get("select_profile")
         })
         .then(function (response) {
   
@@ -327,7 +327,16 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
               }}
             />
 
-          <InputSelect label_text = {"Perfil"} data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} error = {errorDetected.profile} default = {data.access} disabled = {operation === "update" ? false : true} />
+            <GenericSelect 
+            label_text = {"Perfil"} 
+            data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} 
+            primary_key={"id"} 
+            key_content={"nome"} 
+            error = {errorDetected.profile} 
+            default = {data.access} 
+            disabled = {operation === "update" ? false : true} 
+            name = {"select_profile"} 
+            />
 
           </DialogContent>
 

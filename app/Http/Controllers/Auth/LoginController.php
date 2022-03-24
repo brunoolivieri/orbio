@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 // Models utilizados
-use App\Models\User\UserAuthenticationOperationsModel;
+use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 
 // Eventos utilizados
@@ -29,7 +29,7 @@ class LoginController extends Controller
      */
     function index(Request $request) : \Illuminate\Http\Response {
 
-        $model = new UserAuthenticationOperationsModel();
+        $model = new AuthenticationModel();
 
         $response = $model->userAuthentication($request);
 

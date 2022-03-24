@@ -22,8 +22,8 @@ class ServiceOrdersModuleController extends Controller
 
         $request_values = explode("/", request()->args);
 
-        $offset = $request_values[0];
-        $limit = $request_values[1];
+        $offset = isset($request_values[0]) ? $request_values[0] : 0;
+        $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
         $response = $model->loadAllServiceOrders((int) $offset, (int) $limit);
 

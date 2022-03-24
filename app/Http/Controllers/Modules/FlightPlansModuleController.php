@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 // Model utilizado
 use App\Models\Plans\FlightPlansModel;
+use App\Models\Incidents\IncidentsModel;
+use App\Models\Reports\ReportsModel;
 
 class FlightPlansModuleController extends Controller
 {
@@ -26,8 +28,8 @@ class FlightPlansModuleController extends Controller
 
         $request_values = explode("/", request()->args);
 
-        $offset = $request_values[0];
-        $limit = $request_values[1];
+        $offset = isset($request_values[0]) ? $request_values[0] : 0;
+        $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
         $response = $model->loadAllFlightPlans((int) $offset, (int) $limit);
 
@@ -85,13 +87,35 @@ class FlightPlansModuleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Função para processar rotinas que complementam os formulários do plano de vôo
      *
      * @return \Illuminate\Http\Response
      */
     public function create() : \Illuminate\Http\Response
     {
-        //
+        
+        $data_source = request()->data_source;
+
+        if($data_source == "reports"){
+
+            $data = ReportsModel::all();  
+
+        }else if($data_source == "incidents"){
+
+            $data = IncidentsModel::all();
+
+        }
+
+        if($data){
+
+            return response($data, 200);
+
+        }else{
+
+            return response("", 500);
+
+        }  
+
     }
 
     /**

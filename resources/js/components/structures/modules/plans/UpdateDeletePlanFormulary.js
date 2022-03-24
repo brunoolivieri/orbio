@@ -20,7 +20,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { InputSelect } from '../../input_select/InputSelect';
+import { GenericSelect } from '../../input_select/GenericSelect';
 
 export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_setter}) => {
 
@@ -266,38 +266,27 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               }}
             />
 
-            {/* <TextField
-              margin="dense"
-              id="report"
-              name="report"
-              label="Relatório"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.report_id}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
-            /> 
-
-            <TextField
-              margin="dense"
-              id="incident"
-              name="incident"
-              label="Incidente"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={data.incident_id}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-                  inputProps: { min: 0, max: 1 }
-              }}
-            /> */}
-
             <Box>
-              <InputSelect label_text = {"Relatório"} data_source = {"/api/reports-module"} error = {null} default = {0} name = {"select_report"} />
-              <InputSelect label_text = {"Incidente"} data_source = {"/api/incidents-module"} error = {null} default = {0} name = {"select_incident"} />
+              <GenericSelect 
+              label_text = {"Relatório"} 
+              data_source = {"/api/plans-module/create?data_source=reports&auth=none"} 
+              primary_key={"id"} 
+              key_content={"id"} 
+              error = {null} 
+              default = {0} 
+              name = {"select_report"}  
+              disabled = {operation === "update" ? false : true} 
+              />
+              <GenericSelect 
+              label_text = {"Incidente"} 
+              data_source = {"/api/plans-module/create?data_source=incidents&auth=none"} 
+              primary_key={"id"} 
+              key_content={"id"} 
+              error = {null} 
+              default = {0} 
+              name = {"select_incident"} 
+              disabled = {operation === "update" ? false : true} 
+              />
             </Box>
 
             <TextField
