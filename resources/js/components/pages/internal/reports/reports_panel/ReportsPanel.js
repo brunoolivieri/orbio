@@ -286,7 +286,7 @@ export function ReportsPanel(){
                             <StyledTableCell align="center">{row.report_note}</StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                            <StyledTableCell align="center"><GenerateReportFormulary  data = {row} /></StyledTableCell>
+                            <StyledTableCell align="center"><GenerateReportFormulary data = {row} /></StyledTableCell>
                           </StyledTableRow>
                         ))}      
                     </TableBody>

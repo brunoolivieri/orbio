@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Session;
 class GeneralUserController extends Controller
 {
 
-
     /**
      * Método para processar a requisição dos dados do usuário
      * 

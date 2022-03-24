@@ -3,7 +3,6 @@ import { useState, useEffect, memo } from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -12,7 +11,7 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
-import { WindowRounded } from '@mui/icons-material';
+import { Typography } from '@mui/material';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -514,7 +513,7 @@ export const ComplementaryDataPanel = ((props) => {
             </Grid>
 
             <Box >
-                <p>Preenchimento dos dados de localização.</p>
+                <Typography variant="inherit" sx={{m: "10px 0px 10px 0px"}}>Preenchimento dos dados de localização.</Typography>
             </Box>
 
             <Grid container spacing={3}>

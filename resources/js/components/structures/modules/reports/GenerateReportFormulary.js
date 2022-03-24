@@ -229,7 +229,7 @@ export function GenerateReportFormulary({...props}){
 
       {/* Botão que abre o Modal de geração de relatório */}
       <IconButton
-      disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true} 
+      disabled={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? false : true} 
       value = {props.data.report_id} onClick={handleClickOpen}
       >
         <GetAppIcon />

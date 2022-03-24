@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdateDeleteFormulary } from "../../../../structures/modules/administration/users_administration/UpdateDeleteFormulary";
+import { UpdateDeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateDeleteUserFormulary";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
@@ -277,8 +277,8 @@ export function UsersPanel(){
                           <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                           <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
                           <StyledTableCell align="center">{row.last_access}</StyledTableCell>
-                          <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                          <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                          <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                          <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                         </StyledTableRow>
                       ))}
                   </TableBody>

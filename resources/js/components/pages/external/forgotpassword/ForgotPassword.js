@@ -129,7 +129,7 @@ export function ForgotPassword(){
 
         }else if(formulary === "CHANGE_PASSWORD_FORMULARY_VALIDATION"){
 
-            // Padrões válidos do código e senha
+            // Regex para validação
             const codePattern = /^[0-9]{4}$/;
             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 

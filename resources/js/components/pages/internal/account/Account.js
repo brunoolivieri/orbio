@@ -103,7 +103,7 @@ export function Account(){
 
     return(
       <>
-        <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden' }}>
+        <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
           <AppBar
             position="static"
             color="default"

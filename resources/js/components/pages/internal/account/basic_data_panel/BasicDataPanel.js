@@ -8,15 +8,16 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import EditIcon from '@mui/icons-material/Edit';
 import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
-import { InputAdornment } from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { Button } from '@mui/material';
+import { Typography } from '@mui/material';
 
 import AxiosApi from "../../../../../services/AxiosApi";
 
 import { FormValidation } from '../../../../../utils/FormValidation';
 
 import { useState, useRef, memo } from 'react';
+
+import moment from 'moment';
 
 export const BasicDataPanel = memo((props) => {
 
@@ -56,6 +57,11 @@ export const BasicDataPanel = memo((props) => {
 
     }
 
+    function deactivateAccount(){
+
+
+    }
+
     /*
     * Rotina 1
     * Ponto inicial do processamento do envio do formulário 
@@ -87,22 +93,24 @@ export const BasicDataPanel = memo((props) => {
     */
     function dataValidate(formData){
 
-        // Padrão de um email válido
+        // Regex para validação
         const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
         // Validação dos dados - true para presença de erro e false para ausência
         // O valor final é um objeto com dois atributos: "erro" e "message"
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
-        const passwordValidate = FormValidation(formData.get("user_password"), null, null, null, null);
+        const actualPasswordValidate = formData.get("actual_password") != null ? FormValidation(formData.get("actual_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
+        const newPasswordValidate = formData.get("new_password") != null ? FormValidation(formData.get("actual_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
   
         // Atualização dos estados responsáveis por manipular os inputs
-        setErrorDetected({name: nameValidate.error, email: emailValidate.error, password: passwordValidate.error});
-        setErrorMessage({name: nameValidate.message, email: emailValidate.message, password: passwordValidate.message});
+        setErrorDetected({name: nameValidate.error, email: emailValidate.error, actual_password: actualPasswordValidate.error, new_password: newPasswordValidate.error});
+        setErrorMessage({name: nameValidate.message, email: emailValidate.message, actual_password: actualPasswordValidate.message, new_password: newPasswordValidate.message});
         
         // Se o nome ou acesso estiverem errados
-        if(nameValidate.error || emailValidate.error || passwordValidate.error){
+        if(nameValidate.error || emailValidate.error || actualPasswordValidate.error || newPasswordValidate.error){
   
           return false;
   
@@ -224,9 +232,7 @@ export const BasicDataPanel = memo((props) => {
         <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} /> 
     
         <Box component="form" id = "user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
-
             <Grid container spacing={3}>
-        
                 <Grid item xs={12} sm={6}>
                     <TextField
                         required
@@ -268,6 +274,57 @@ export const BasicDataPanel = memo((props) => {
                 <Grid item xs={12} sm={6}>
                     <TextField
                         required
+                        id="profile_type"
+                        name="profile_type"
+                        label="Perfil de usuário"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={props.profile}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        id="user_last_access"
+                        name="user_last_access"
+                        label="Data do último acesso"
+                        fullWidth
+                        variant="outlined"
+                        defaultValue={moment(props.last_access).format('DD-MM-YYYY hh:mm')}
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        id="user_last_update"
+                        name="user_last_update"
+                        label="Data da última atualização"
+                        fullWidth
+                        defaultValue={moment(props.last_update).format('DD-MM-YYYY hh:mm')}
+                        variant="outlined"
+                        InputProps={{
+                            readOnly: true,
+                        }}
+                    />
+                </Grid>
+            </Grid>
+
+            <Box >
+                <Typography variant="inherit" sx={{m: "10px 0px 10px 0px"}}>Alteração da senha.</Typography >
+            </Box>
+
+            <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
                         id="actual_password"
                         name="actual_password"
                         label="Senha atual"
@@ -302,55 +359,21 @@ export const BasicDataPanel = memo((props) => {
                         focused={editMode}
                     />
                 </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        id="profile_type"
-                        name="profile_type"
-                        label="Perfil de usuário"
-                        fullWidth
-                        variant="outlined"
-                        defaultValue={props.profile}
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        id="user_last_access"
-                        name="user_last_access"
-                        label="Data do último acesso"
-                        fullWidth
-                        variant="outlined"
-                        defaultValue={props.last_access}
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                    />
-                </Grid>
-
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                        required
-                        id="user_last_update"
-                        name="user_last_update"
-                        label="Data da última atualização"
-                        fullWidth
-                        defaultValue={props.last_update}
-                        variant="outlined"
-                        InputProps={{
-                            readOnly: true,
-                        }}
-                    />
-                </Grid>
-                
             </Grid>
+        </Box>
 
-        </Box> 
+        <Box >
+            <Typography variant="inherit" sx={{m: "10px 0px 10px 0px"}}>Desativação da conta.</Typography >
+        </Box>
+
+        <Grid container spacing={3}>
+            <Grid item>
+                <Button variant="contained" color="error" onClick={deactivateAccount}>
+                    Desativar conta temporariamente
+                </Button> 
+            </Grid>
+        </Grid>
+        
         </>
     );
   

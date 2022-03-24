@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdateDeleteFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateDeleteFormulary";
+import { UpdateDeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateDeleteProfileFormulary";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
@@ -313,8 +313,8 @@ export function ProfilesPanel(){
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
                                 </StyledTableCell>
-                                <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                                <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                                <StyledTableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                                <StyledTableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                               </StyledTableRow>
                             ))}
                     </TableBody>

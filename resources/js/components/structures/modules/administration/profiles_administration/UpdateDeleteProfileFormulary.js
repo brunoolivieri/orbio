@@ -34,7 +34,7 @@ import AxiosApi from '../../../../../services/AxiosApi';
 
 */
 
-export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
+export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
