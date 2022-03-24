@@ -23,7 +23,7 @@ class ForgotPasswordController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function index(Request $request) : array {
+    function index(Request $request) : \Illuminate\Http\Response {
 
         $model = new AuthenticationModel();
 
@@ -34,11 +34,11 @@ class ForgotPasswordController extends Controller
             // Construção e envio do email do código para alteração da senha
             Mail::to($request->email)->send(new UserChangePasswordEmail($response->content()));
             
-            return array("status" => true);
+            return response("", 200);
 
         }else{
 
-            return array("status" => false, "error" => $response->content());
+            return response($response->content(), 500);
 
         }
 
@@ -58,11 +58,11 @@ class ForgotPasswordController extends Controller
 
         if($response->status() === 200){
             
-            return array("status" => true);
+            return response("", 200);
 
         }else{
 
-            return array("status" => false, "error" => $response->content());
+            return response($response->content(), 500);
 
         }
 

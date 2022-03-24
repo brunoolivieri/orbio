@@ -219,7 +219,7 @@ export function ForgotPassword(){
 
         if(operation === "SEND_CODE"){
 
-            if(response.data.status){
+            if(response.status === 200){
 
                 // Libera os campos para alteração da senha
                 // Desabilita o botão para envio de um novo código por 60 segundos
@@ -260,7 +260,7 @@ export function ForgotPassword(){
 
         }else if(operation === "CHANGE_PASSWORD"){
 
-            if(response.data.status){
+            if(response.status === 200){
 
                 // Modal com mensagem de sucesso
                 setOperationStatus({type: "change_password", status: true, tittle: "Sucesso!", message: "A sua senha foi alterada."});

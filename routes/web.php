@@ -50,8 +50,8 @@ Route::post('/api/alterar-senha', [ForgotPasswordController::class, "changePassw
 Route::post('/api/get-token-data', [GeneralDashboardController::class, "getDataFromTokenJwt"]); // Requisição para decodificação do token JWT
 
 // ==== ROTAS DE API - OPERAÇÕES DO USUÁRIO LOGADO ==== //
-Route::get('/api/user-account-data', [GeneralUserController::class, "loadUserAccountData"]); // Requisição para recuperação dos dados do usuário (básicos ou complementares)
-Route::post('/api/user-update-data', [GeneralUserController::class, "userUpdatesHisData"]); // Requisição para atualização dos dados da conta do usuário logado
+Route::get('/api/user-account-data', [GeneralUserController::class, "loadUserAccountData"])->middleware("session.auth"); // Requisição para recuperação dos dados do usuário (básicos ou complementares)
+Route::post('/api/user-update-data', [GeneralUserController::class, "userUpdatesHisData"])->middleware("session.auth"); // Requisição para atualização dos dados da conta do usuário logado
 
 // ==== ROTAS DE REQUISIÇÕES API - MÓDULOS ==== //
 Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);

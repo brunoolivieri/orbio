@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
@@ -20,7 +20,7 @@ import { FormValidation } from '../../../../../utils/FormValidation';
 import { SelectStates } from '../../../../structures/input_select/InputSelectStates';
 import { SelectCities } from '../../../../structures/input_select/SelectCities';
 
-export function ComplementaryDataPanel(props){
+export const ComplementaryDataPanel = ((props) => {
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -609,4 +609,4 @@ export function ComplementaryDataPanel(props){
         
     );
     
-}
+});

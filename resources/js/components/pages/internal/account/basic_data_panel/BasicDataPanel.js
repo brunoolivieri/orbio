@@ -16,9 +16,9 @@ import AxiosApi from "../../../../../services/AxiosApi";
 
 import { FormValidation } from '../../../../../utils/FormValidation';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, memo } from 'react';
 
-export function BasicDataPanel(props){
+export const BasicDataPanel = memo((props) => {
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -297,9 +297,6 @@ export function BasicDataPanel(props){
                         onChange={enableSaveButton}
                         InputProps={{
                             readOnly: !editMode,
-                        }}
-                        focused={editMode}
-                        InputProps={{
                             endAdornment: 
                             <InputAdornment position="end">
                             <IconButton
@@ -311,6 +308,7 @@ export function BasicDataPanel(props){
                             </IconButton>
                             </InputAdornment>,
                         }}
+                        focused={editMode}
                     />
                 </Grid>
 
@@ -365,4 +363,4 @@ export function BasicDataPanel(props){
         </>
     );
   
-}
+});
