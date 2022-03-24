@@ -1,28 +1,18 @@
 <?php
 
-/*
-
-- Operações que o próprio usuário genérico realiza
-- As operações ORM são realizadas no próprio controller
-
-*/
-
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 // Model utilizado
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
 
-use Illuminate\Support\Facades\Session;
-
-class GeneralUserController extends Controller
+class CommonUserController extends Controller
 {
-
+    
     /**
      * Método para processar a requisição dos dados do usuário
      * 
@@ -240,5 +230,5 @@ class GeneralUserController extends Controller
 
 
     }
-
+    
 }
