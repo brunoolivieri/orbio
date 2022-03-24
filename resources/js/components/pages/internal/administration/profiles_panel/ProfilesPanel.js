@@ -271,6 +271,7 @@ export function ProfilesPanel(){
                         <StyledTableCell align="center">Planos de voo</StyledTableCell>
                         <StyledTableCell align="center">Ordens de serviço</StyledTableCell>
                         <StyledTableCell align="center">Relatórios</StyledTableCell>
+                        <StyledTableCell align="center">Incidentes</StyledTableCell>
                         <StyledTableCell align="center">Editar</StyledTableCell>
                         <StyledTableCell align="center">Excluir</StyledTableCell>
                       </TableRow>
@@ -304,6 +305,12 @@ export function ProfilesPanel(){
                                   <FormGroup>
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
+                                  </FormGroup>
+                                </StyledTableCell>
+                                <StyledTableCell align="center">   
+                                  <FormGroup>
+                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
+                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
                                 </StyledTableCell>
                                 <StyledTableCell align="center"><UpdateDeleteFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>

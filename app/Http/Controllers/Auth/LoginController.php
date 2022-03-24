@@ -145,10 +145,10 @@ class LoginController extends Controller
            
             $profile_name = $userData["profile"];
 
-            $module_name = $profileData[$row]->id_modulo === 1 ? "Administração" : ($profileData[$row]->id_modulo === 2 ? "Planos" : ($profileData[$row]->id_modulo === 3 ? "Ordens" : "Relatorios"));
+            $module_name = $profileData[$row]->id_modulo === 1 ? "Administração" : ($profileData[$row]->id_modulo === 2 ? "Planos" : ($profileData[$row]->id_modulo === 3 ? "Ordens" : ($profileData[$row]->id_modulo === 4 ? "Relatórios" : "Incidentes")));
             $modulesCurrentProfile[$profileData[$row]->id_modulo] = ["module" => $module_name, "profile_powers" => ["ler" => $profileData[$row]->ler, "escrever" => $profileData[$row]->escrever]];
        
-            if($profileData[$row]->id_modulo === 4){
+            if($profileData[$row]->id_modulo === 5){
 
                 $arrData = $modulesCurrentProfile;
 

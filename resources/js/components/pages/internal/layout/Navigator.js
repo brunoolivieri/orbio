@@ -90,10 +90,8 @@ export default function Navigator(props) {
     ordens: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
     planos: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
     relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false,
-    incidentes: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false
+    incidentes: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false
   });
-
-  //console.log(refUserPowers.current[`${"Administração".toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])
 
   // Classes do objeto makeStyles
   const classes = useStyles();

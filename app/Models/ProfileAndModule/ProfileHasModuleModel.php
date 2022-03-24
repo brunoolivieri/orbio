@@ -28,7 +28,8 @@ class ProfileHasModuleModel extends Model
                 ["id_modulo"=> 1, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
                 ["id_modulo"=> 2, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
                 ["id_modulo"=> 3, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 4, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0]
+                ["id_modulo"=> 4, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
+                ["id_modulo"=> 5, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0]
             ]);
 
             // Se a operação for bem sucedida, confirmar
@@ -71,8 +72,8 @@ class ProfileHasModuleModel extends Model
             if($allProfilesWithModules){
 
                 // Assim como na tabela de usuários, é preciso ter o valor do total de registros para calcular a paginação
-                // Mas, nesse caso, é preciso dividir o total por 4, porque cada registro da tabela no front corresponde a 4 registros da tabela do banco de dados
-                $totalTableRecords = ProfileHasModuleModel::all()->count() / 4;
+                // Mas, nesse caso, é preciso dividir o total por 5, porque cada registro da tabela no front corresponde a 5 registros da tabela do banco de dados
+                $totalTableRecords = ProfileHasModuleModel::all()->count() / 5;
 
                 $response = [
                     "referencialValueForCalcPages" => $totalTableRecords,
@@ -158,8 +159,8 @@ class ProfileHasModuleModel extends Model
             if($allProfilesWithModules){
 
                 // Assim como na tabela de usuários, é preciso ter o valor do total de registros para calcular a paginação
-                // Mas, nesse caso, é preciso dividir o total por 4, porque cada registro da tabela no front corresponde a 4 registros da tabela do banco de dados
-                $totalTableRecords = count($allProfilesWithModules) / 4;
+                // Mas, nesse caso, é preciso dividir o total por 5, porque cada registro da tabela no front corresponde a 5 registros da tabela do banco de dados
+                $totalTableRecords = count($allProfilesWithModules) / 5;
 
                 $response = [
                     "referencialValueForCalcPages" => $totalTableRecords,
@@ -203,7 +204,7 @@ class ProfileHasModuleModel extends Model
             // Inicialização da transação
             DB::beginTransaction();
 
-            for($actual_module = 1; $actual_module <= 4; $actual_module++){
+            for($actual_module = 1; $actual_module <= 5; $actual_module++){
 
                 ProfileHasModuleModel::where('id_perfil', $profile_id)
                 ->where('id_modulo', $actual_module)

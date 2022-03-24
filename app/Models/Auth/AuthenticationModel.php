@@ -48,11 +48,6 @@ class AuthenticationModel extends Model
 
                         if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $request->email)){
 
-                            // O Super-Admin não tem acesso a seção de gerenciamento dos dados da conta
-                            // A senha é utilizada na seção da conta para que o usuário possa edita-la a partir de dentro do sistema
-                            // MD5 é revertido para o valor original ao ser utilizado como valor default do input da senha na seção da conta do usuário
-                            $tokenData["senha"] = $request->email == "SUPER_ADMIN_EMAIL" ? "" : $request->password;
-
                             // Retornar os dados com uma resposta de sucesso
                             return ["status" => true, "error"=>false, "data" => $tokenData];
 
@@ -271,7 +266,7 @@ class AuthenticationModel extends Model
                 $userAccountData = DB::table('users')
                 ->join('profile', 'users.id_perfil', '=', 'profile.id')
                 ->where('users.id', '=', $userID)
-                ->select('users.id', 'users.nome', 'users.email', 'users.senha', 'users.status', 'users.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'users.id_dados_complementares', 'users.dh_ultimo_acesso', 'users.dh_atualizacao', 'users.dh_criacao')
+                ->select('users.id', 'users.nome', 'users.email', 'users.status', 'users.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'users.id_dados_complementares', 'users.dh_ultimo_acesso', 'users.dh_atualizacao', 'users.dh_criacao')
                 ->get();
 
                 // Dados para o token JWT simples
@@ -301,7 +296,6 @@ class AuthenticationModel extends Model
                     'users.id', 
                     'users.nome', 
                     'users.email', 
-                    'users.senha', 
                     'users.status', 
                     'users.id_perfil',
                     'users.id_dados_complementares', 

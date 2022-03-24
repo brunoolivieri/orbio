@@ -177,7 +177,7 @@ export function CreateIncidentFormulary(){
         <>
         {/* Botão para abrir o formulário */}
         <Tooltip title="Nova Ordem">
-            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true}>
+            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
               <AddCircleIcon />
             </IconButton>
           </Tooltip>

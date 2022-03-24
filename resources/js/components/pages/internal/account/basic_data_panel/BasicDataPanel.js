@@ -27,17 +27,11 @@ export const BasicDataPanel = memo((props) => {
     const [saveNecessary, setSaveNecessary] = useState(false);
 
     // States de validação dos campos
-    const [errorDetected, setErrorDetected] = useState({name: false, email: false, password: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: null, email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({name: false, email: false, actual_password: false, new_password: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({name: "", email: "", actual_password: "", new_password: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
-
-    // State da senha
-    const [showPassword, setShowPassword] = useState(false);
-
-    // Password Ref
-    const passwordRef = useRef(props.password);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -61,14 +55,6 @@ export const BasicDataPanel = memo((props) => {
         props.reload_setter(!props.reload_state);
 
     }
-
-    // Função para o mecanismo de mostrar/esconder senha
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
-    const handleMouseDownPassword = (event) => {
-        event.preventDefault();
-    };
 
     /*
     * Rotina 1
@@ -145,9 +131,6 @@ export const BasicDataPanel = memo((props) => {
   
             // Tratamento da resposta do servidor
             serverResponseTreatment(response);
-
-            // A senha mostrada no input se torna a nova senha
-            passwordRef.current = password;
   
         })
         .catch(function (error) {
@@ -285,28 +268,36 @@ export const BasicDataPanel = memo((props) => {
                 <Grid item xs={12} sm={6}>
                     <TextField
                         required
-                        id="user_password"
-                        name="user_password"
+                        id="actual_password"
+                        name="actual_password"
                         label="Senha atual"
-                        type={showPassword ? "text" : "password"}
+                        type="password"
                         fullWidth
                         variant="outlined"
-                        defaultValue={passwordRef.current}
-                        helperText = {errorMessage.password}
-                        error = {errorDetected.password}
+                        helperText = {errorMessage.actual_password}
+                        error = {errorDetected.actual_password}
                         onChange={enableSaveButton}
                         InputProps={{
                             readOnly: !editMode,
-                            endAdornment: 
-                            <InputAdornment position="end">
-                            <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            >
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                            </IconButton>
-                            </InputAdornment>,
+                        }}
+                        focused={editMode}
+                    />
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                    <TextField
+                        required
+                        id="new_password"
+                        name="new_password"
+                        label="Nova senha"
+                        type="password"
+                        fullWidth
+                        variant="outlined"
+                        helperText = {errorMessage.new_password}
+                        error = {errorDetected.new_password}
+                        onChange={enableSaveButton}
+                        InputProps={{
+                            readOnly: !editMode,
                         }}
                         focused={editMode}
                     />

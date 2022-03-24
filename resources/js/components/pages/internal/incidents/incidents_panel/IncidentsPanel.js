@@ -25,10 +25,6 @@ import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Badge } from "@mui/material";
-import Chip from '@mui/material/Chip';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import MapIcon from '@mui/icons-material/Map';
-import { Link } from "@mui/material";
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';

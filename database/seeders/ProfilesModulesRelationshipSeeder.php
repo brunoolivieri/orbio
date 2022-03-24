@@ -29,6 +29,7 @@ class ProfilesModulesRelationshipSeeder extends Seeder
         - Módulo 2: Planos de voo
         - Módulo 3: Ordens de serviço
         - Módulo 4: Relatórios pós-voo
+        - Módulo 5: Incidentes
 
         */
 
@@ -36,7 +37,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 1, "id_perfil" => 1, "ler" => true, "escrever" => true],
             ["id_modulo" => 2, "id_perfil" => 1, "ler" => true, "escrever" => true],
             ["id_modulo" => 3, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 4, "id_perfil" => 1, "ler" => true, "escrever" => true]  
+            ["id_modulo" => 4, "id_perfil" => 1, "ler" => true, "escrever" => true],
+            ["id_modulo" => 5, "id_perfil" => 1, "ler" => true, "escrever" => true]  
         ];
 
         DB::table("profile_has_module")->insert($superAdminModulesRelationship);
@@ -45,7 +47,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 1, "id_perfil" => 2, "ler" => true, "escrever" => true],
             ["id_modulo" => 2, "id_perfil" => 2, "ler" => true, "escrever" => true],
             ["id_modulo" => 3, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 4, "id_perfil" => 2, "ler" => true, "escrever" => true]   
+            ["id_modulo" => 4, "id_perfil" => 2, "ler" => true, "escrever" => true],
+            ["id_modulo" => 5, "id_perfil" => 2, "ler" => true, "escrever" => true]    
         ];
 
         DB::table("profile_has_module")->insert($subAdminModulesRelationship);
@@ -54,7 +57,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 1, "id_perfil" => 3, "ler" => false, "escrever" => false],
             ["id_modulo" => 2, "id_perfil" => 3, "ler" => true, "escrever" => false],
             ["id_modulo" => 3, "id_perfil" => 3, "ler" => false, "escrever" => false],
-            ["id_modulo" => 4, "id_perfil" => 3, "ler" => false, "escrever" => false] 
+            ["id_modulo" => 4, "id_perfil" => 3, "ler" => false, "escrever" => false],
+            ["id_modulo" => 5, "id_perfil" => 3, "ler" => true, "escrever" => true]   
         ];
 
         DB::table("profile_has_module")->insert($pilotModulesRelationship);
@@ -63,7 +67,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 1, "id_perfil" => 4, "ler" => false, "escrever" => false],
             ["id_modulo" => 2, "id_perfil" => 4, "ler" => false, "escrever" => false],
             ["id_modulo" => 3, "id_perfil" => 4, "ler" => false, "escrever" => false],
-            ["id_modulo" => 4, "id_perfil" => 4, "ler" => true, "escrever" => false] 
+            ["id_modulo" => 4, "id_perfil" => 4, "ler" => true, "escrever" => false],
+            ["id_modulo" => 5, "id_perfil" => 4, "ler" => false, "escrever" => false]  
         ];
 
         DB::table("profile_has_module")->insert($clientModulesRelationship);

@@ -64,7 +64,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
       "1": {read: data.modules["1"].profile_powers.ler == 1 ? true : false, write: data.modules["1"].profile_powers.escrever == 1 ? true : false}, 
       "2": {read: data.modules["2"].profile_powers.ler == 1 ? true : false, write: data.modules["2"].profile_powers.escrever == 1 ? true : false}, 
       "3": {read: data.modules["3"].profile_powers.ler == 1 ? true : false, write: data.modules["3"].profile_powers.escrever == 1 ? true : false}, 
-      "4":{read: data.modules["4"].profile_powers.ler == 1 ? true : false, write: data.modules["4"].profile_powers.escrever == 1 ? true : false}
+      "4":{read: data.modules["4"].profile_powers.ler == 1 ? true : false, write: data.modules["4"].profile_powers.escrever == 1 ? true : false},
+      "5":{read: data.modules["5"].profile_powers.ler == 1 ? true : false, write: data.modules["5"].profile_powers.escrever == 1 ? true : false}
       }
     );
 
@@ -180,7 +181,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: new_value, write: modulePowers["1"].write}, 
             "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
             "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write}
+            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write},
+            "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
             }
           );
 
@@ -190,7 +192,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: new_value}, 
             "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
             "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write}
+            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write},
+            "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
             }
           );
 
@@ -204,7 +207,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
             "2": {read: new_value, write: modulePowers["2"].write}, 
             "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write}
+            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write},
+            "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
             }
           );
 
@@ -214,7 +218,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
             "2": {read: modulePowers["2"].read, write: new_value}, 
             "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-            "4":{read: modulePowers["4"].read, write: modulePowers["3"].write}
+            "4":{read: modulePowers["4"].read, write: modulePowers["3"].write},
+            "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
             }
           );
           
@@ -228,7 +233,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
             "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
             "3": {read: new_value, write: modulePowers["3"].write}, 
-            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write}
+            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write},
+            "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
             }
           );
 
@@ -238,7 +244,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
             "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
             "3": {read: modulePowers["3"].read, write: new_value}, 
-            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write}
+            "4":{read: modulePowers["4"].read, write: modulePowers["4"].write},
+            "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
             }
           );
           
@@ -252,7 +259,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
             "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
             "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-            "4":{read: new_value, write: modulePowers["4"].write}
+            "4":{read: new_value, write: modulePowers["4"].write},
+            "5":{read: new_value, write: modulePowers["5"].write}
             }
           );
 
@@ -262,7 +270,8 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
             "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
             "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
             "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-            "4":{read: modulePowers["4"].read, write: new_value}
+            "4":{read: modulePowers["4"].read, write: new_value},
+            "5":{read: modulePowers["5"].read, write: new_value}
             }
           );
           
@@ -478,6 +487,14 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
                 <FormGroup>
                   <FormControlLabel control={<Checkbox defaultChecked={data.modules["4"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "4|read") }} />} label="Ler" />
                   <FormControlLabel control={<Checkbox defaultChecked={data.modules["4"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "4|write") }} />} label="Escrever" />
+                </FormGroup>
+              </Grid>
+
+              <Grid item>
+                <FormLabel component="legend">Incidentes</FormLabel>
+                <FormGroup>
+                  <FormControlLabel control={<Checkbox defaultChecked={data.modules["5"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "5|read") }} />} label="Ler" />
+                  <FormControlLabel control={<Checkbox defaultChecked={data.modules["5"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "5|write") }} />} label="Escrever" />
                 </FormGroup>
               </Grid>
 

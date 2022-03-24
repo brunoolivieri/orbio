@@ -27,7 +27,9 @@ export function Dashboard(){
 
     setActualPage("DASHBOARD");
 
-  })
+    console.log(AuthData)
+
+  }, [])
 
   return(
         <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>

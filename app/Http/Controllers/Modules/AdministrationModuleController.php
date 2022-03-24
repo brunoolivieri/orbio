@@ -66,10 +66,10 @@ class AdministrationModuleController extends Controller
 
             $model = new ProfileHasModuleModel();
 
-            // O LIMIT e o OFFSET originais devem ser multiplicados por 4
-            // Isso ocorre porque cada grupo de quatro registros da tabela do BD serão agrupados em um
-            $up_limit = $limit*4;
-            $up_offset = $offset*4;
+            // O LIMIT e o OFFSET originais devem ser multiplicados por 5
+            // Isso ocorre porque cada grupo de cinco registros da tabela do BD serão agrupados em um
+            $up_limit = $limit*5;
+            $up_offset = $offset*5;
 
             $response = $model->loadProfilesModulesRelationship((int) $up_offset, (int) $up_limit);
 
@@ -170,9 +170,9 @@ class AdministrationModuleController extends Controller
         $modulesCurrentProfile = array();
         $profileCounter = 0;
 
-        // O Do While deve reunir em uma só linha cada conjunto de 4 registros em que o campo id_perfil se repete
+        // O Do While deve reunir em uma só linha cada conjunto de 5 registros em que o campo id_perfil se repete
         // Cada perfil tem quatro linhas na tabela, e em cada uma dessas linhas o valor do campo "id_modulo" varia
-        // Ou seja: cada linha com o mesmo "id_perfil" representa uma relação desse perfil com um determinado módulo (1,2,3 ou 4)
+        // Ou seja: cada linha com o mesmo "id_perfil" representa uma relação desse perfil com um determinado módulo (1,2,3, 4 ou 5)
 
         do{
            
@@ -182,22 +182,22 @@ class AdministrationModuleController extends Controller
             $arrData[(int) $profileCounter] = ["profile_id" => $data[$row]->id_perfil, "profile_name" =>  $profile_name, "profile_access" => $data[$row]->acesso_geral, "modules" => array()]; 
 
             // O array $modulesCurrentProfile recebe os valores dos poderes CRUD do atual perfil
-            // São empurrados novos array enquanto o id do módulo não for igual a 4
-            // A linha, $row, varia a cada loop, também o valor do campo "id_modulo", mas o campo "id_perfil" se mantém o mesmo por 4 loops (porque existem 4 módulos relacionados)
+            // São empurrados novos array enquanto o id do módulo não for igual a 5
+            // A linha, $row, varia a cada loop, também o valor do campo "id_modulo", mas o campo "id_perfil" se mantém o mesmo por 5 loops (porque existem 5 módulos relacionados)
             // Ou seja, enquanto o id do perfil for X entre os registros percorridos, o array abaixo receberá, a cada variação de $row, novos valores CRUD referente a relação com outro módulo
-            $module_name = $data[$row]->id_modulo === 1 ? "Administração" : ($data[$row]->id_modulo === 2 ? "Planos" : ($data[$row]->id_modulo === 3 ? "Ordens" : "Relatorios"));
+            $module_name = $data[$row]->id_modulo === 1 ? "Administração" : ($data[$row]->id_modulo === 2 ? "Planos" : ($data[$row]->id_modulo === 3 ? "Ordens" : ($data[$row]->id_modulo === 4 ? "Relatorios" : "Incidentes")));
             $modulesCurrentProfile[$data[$row]->id_modulo] = ["mod_name" => $module_name, "profile_powers" => ["ler" => $data[$row]->ler, "escrever" => $data[$row]->escrever]];
             
-            // Se o ID do módulo atual for igual a 4
-            if($data[$row]->id_modulo === 4){
+            // Se o ID do módulo atual for igual a 5
+            if($data[$row]->id_modulo === 5){
 
-                // Então agora existem 4 arrays armazenados no array: $modulesCurrentProfile = [[...], [...], [...], [...]]
+                // Então agora existem 5 arrays armazenados no array: $modulesCurrentProfile = [[...], [...], [...], [...], [...]]
                 // Em cada posição tem as relações de poder do atual perfil, "id_perfil", com cada um dos quatro módulos existentes
                 // Agora essa estrutura é jogada para dentro do $arrData na posição cujo valor é igual ao id do atual perfil
                 $arrData[$profileCounter]["modules"] = $modulesCurrentProfile;
 
-                // Ou seja, se existe um perfil com ID 1, o $arrData terá uma posição [1] com 4 arrays
-                // Essa posição [1] terá as relações do perfil de ID 1 com os 4 módulos existentes
+                // Ou seja, se existe um perfil com ID 1, o $arrData terá uma posição [1] com 5 arrays
+                // Essa posição [1] terá as relações do perfil de ID 1 com os 5 módulos existentes
 
                 $profileCounter += 1;
 
@@ -356,10 +356,10 @@ class AdministrationModuleController extends Controller
 
             $model = new ProfileHasModuleModel();
 
-            // O LIMIT e o OFFSET originais devem ser multiplicados por 4
-            // Isso ocorre porque cada grupo de quatro registros da tabela do BD serão agrupados em um
-            $up_limit = $limit*4;
-            $up_offset = $offset*4;
+            // O LIMIT e o OFFSET originais devem ser multiplicados por 5
+            // Isso ocorre porque cada grupo de cinco registros da tabela do BD serão agrupados em um
+            $up_limit = $limit*5;
+            $up_offset = $offset*5;
 
             $response = $model->loadProfileModuleRelationshipApproximate($value_searched, (int) $up_offset, (int) $up_limit);
 
