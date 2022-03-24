@@ -3,7 +3,7 @@
 /*
 
 - Operações que o próprio usuário genérico realiza
-- Por exemplo, é o próprio usuário que ativa a sua conta
+- As operações ORM são realizadas no próprio controller
 
 */
 
@@ -11,6 +11,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 // Model utilizado
 use App\Models\User\UserModel;
@@ -53,79 +54,179 @@ class GeneralUserController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    function userUpdatesHisData(Request $request) : \Illuminate\Http\Response {
+    function userAccountDataUpdate(Request $request) : \Illuminate\Http\Response {
         
         $account_panel = request()->panel;
 
-        $model = new UserModel();
-
         if($account_panel === "basic_data"){
 
-            $data = [
-                "nome" => $request->name,
-                "email" => $request->email,
-                "senha" => password_hash($request->password, PASSWORD_DEFAULT)
-            ];
-
-            $update = $model->updateUserData($request->id, $data);
-
-            if($update["status"] && !$update["error"]){
+            if($this->userBasicDataUpdate($request)){
 
                 return response("", 200);
 
-            }else if(!$update["status"] && $update["error"]){
+            }else{
 
-                return response(["error" => $update["error"]], 500);
+                return response("", 500);
 
             }
 
         }else if($account_panel === "complementary_data"){
 
-            $complementary_data_table = [
-                "habANAC" => $request->habAnac,
-                "cpf" => $request->cpf,
-                "cnpj" => $request->cnpj,
-                "telefone" => $request->telephone,
-                "celular" => $request->cellphone,
-                "razaoSocial" => $request->rSocial,
-                "nomeFantasia" => $request->nFantasia,
-            ];
+            if($this->userComplementaryDataUpdate($request)){
 
-            $model = new UserComplementaryDataModel();
+                return response("", 200);
 
-            $update_cp = $model->updateUserComplementaryData((int) $request->complementary_data_id, $complementary_data_table);
+            }else{
 
-            if($update_cp["status"] && !$update_cp["error"]){
-
-                $address_table = [
-                    "logradouro" => $request->logradouro,
-                    "numero" => $request->address_number,
-                    "cep" => $request->cep,
-                    "cidade" => $request->city,
-                    "estado" => $request->state,
-                    "complemento" => $request->complemento
-                ];
-
-                $model = new UserAddressModel();
-
-                $update_ad = $model->updateUserAddress((int) $request->address_id, $address_table);
-
-                if($update_ad["status"] && !$update_ad["error"]){
-
-                    return response("", 200);
-
-                }else if(!$update_ad["status"] && $update_ad["error"]){
-
-                    return response(["error" => $update_ad["error"]], 500);
-
-                }
-
-            }else if(!$update_cp["status"] && $update_cp["error"]){
-
-                return response(["error" => $update_cp["error"]], 500);
+                return response("", 500);
 
             }
+
         }
+    }
+
+    private function userBasicDataUpdate(Request $request) : array {
+
+        $checkDataResponse = $this->checkBasicDataRepetition($request);
+
+        if($checkDataResponse["status"] && !$checkDataResponse["error"]){
+
+            try{
+
+                DB::beginTransaction();
+    
+                $old_password = UserModel::select('senha')->where('id', $request->id)->get();
+    
+                if(password_verify($request->actual_password, $old_password)){
+    
+                    $data = [
+                        "nome" => $request->name,
+                        "email" => $request->email,
+                        "senha" => password_hash($request->new_password, PASSWORD_DEFAULT)
+                    ];
+    
+                    $update = UserModel::where('id', $request->id)->update($data);
+    
+                    DB::commit();
+    
+                    return ["status" => true];
+    
+                }
+    
+            }catch(\Exception $e){
+    
+                DB::rollBack();
+    
+                dd($e);
+    
+                return ["status" => false];
+    
+            }
+
+        }else if(!$checkDataResponse["status"] && $checkDataResponse["error"]){
+
+            return $checkDataResponse;
+
+        }
+
+
+    }
+
+    private function userComplementaryDataUpdate(Request $request) : array {
+
+        $checkDataResponse = $this->checkComplementaryDataRepetition($request);
+
+        if($checkDataResponse["status"] && !$checkDataResponse["error"]){
+
+            try{
+
+                DB::beginTransaction();
+    
+                UserComplementaryDataModel::where('id', $request->complementary_data_id)->update(
+                    [
+                        "habANAC" => $request->habAnac,
+                        "cpf" => $request->cpf,
+                        "cnpj" => $request->cnpj,
+                        "telefone" => $request->telephone,
+                        "celular" => $request->cellphone,
+                        "razaoSocial" => $request->rSocial,
+                        "nomeFantasia" => $request->nFantasia,
+                    ]
+                );
+
+                UserAddressModel::where('id', $request->address_id)->update(
+                    [
+                        "logradouro" => $request->logradouro,
+                        "numero" => $request->address_number,
+                        "cep" => $request->cep,
+                        "cidade" => $request->city,
+                        "estado" => $request->state,
+                        "complemento" => $request->complemento
+                    ]
+                );
+
+                DB::commit();
+
+                return ["status" => true, "error" => false];
+    
+            }catch(\Exception $e){
+    
+                DB::rollBack();
+
+                dd($e);
+    
+                return ["status" => false, "error" => true];
+    
+            }
+
+        }else if(!$checkDataResponse["status"] && $checkDataResponse["error"]){
+
+            return $checkDataResponse;
+
+        }
+
+    }
+
+    private function checkBasicDataRepetition(Request $request) : array {
+
+        $check = [];
+        
+        $check["email"] = UserModel::where('id', '!=', $request->id)->where('email', $request->email)->exists() ? "Esse email já existe" : false;
+
+        if($check["email"]){
+
+            return ["status" => false, "error" => $check];
+
+        }else{
+
+            return ["status" => true, "error" => false];
+
+        }
+
+    }
+
+    private function checkComplementaryDataRepetition(Request $request) : array {
+
+        $check = [];
+
+        $check["habAnac"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('habANAC', $request->habAnac)->exists() ? "Essa habilitação já existe" : false;
+        $check["cpf"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('cpf', $request->cpf)->exists() ? "Esse CPF já existe" : false;
+        $check["cnpj"] =  UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('cnpj', $request->cnpj)->exists() ? "Esse CNPJ já existe" : false;
+        $check["cellphone"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('celular', $request->cellphone)->exists() ? "Esse número de celular já existe" : false;
+        $check["telephone"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('telefone', $request->telephone)->exists() ? "Esse número de telefone já existe" : false;
+        $check["rSocial"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('razaoSocial', $request->rSocial)->exists() ? "Essa razão social já existe" : false;
+        $check["nFantasia"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('nomeFantasia', $request->nFantasia)->exists() ? "Esse nome fantasia já existe" : false;
+
+        if($check["cpf"] || $check["cnpj"] || $check["habAnac"] || $check["cellphone"] || $check["telephone"] || $check["rSocial"] || $check["nFantasia"]){
+
+            return ["status" => false, "error" => $check];
+
+        }else{
+
+            return ["status" => true, "error" => false];
+
+        }
+
     }
 
     /**
@@ -134,7 +235,7 @@ class GeneralUserController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    function userDisactivatesHisAccount(Request $request) : \Illuminate\Http\Response {
+    function userAccountDesactivation(Request $request) : \Illuminate\Http\Response {
 
 
 

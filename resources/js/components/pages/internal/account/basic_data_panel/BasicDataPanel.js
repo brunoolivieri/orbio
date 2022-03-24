@@ -97,13 +97,15 @@ export const BasicDataPanel = memo((props) => {
         const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
+        console.log(formData.get("actual_password"))
+
         // Validação dos dados - true para presença de erro e false para ausência
         // O valor final é um objeto com dois atributos: "erro" e "message"
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
         const actualPasswordValidate = formData.get("actual_password") != null ? FormValidation(formData.get("actual_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
-        const newPasswordValidate = formData.get("new_password") != null ? FormValidation(formData.get("actual_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
+        const newPasswordValidate = formData.get("new_password") != null ? FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
   
         // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, actual_password: actualPasswordValidate.error, new_password: newPasswordValidate.error});
@@ -333,6 +335,7 @@ export const BasicDataPanel = memo((props) => {
                         variant="outlined"
                         helperText = {errorMessage.actual_password}
                         error = {errorDetected.actual_password}
+                        defaultValue={""}
                         onChange={enableSaveButton}
                         InputProps={{
                             readOnly: !editMode,
@@ -352,6 +355,7 @@ export const BasicDataPanel = memo((props) => {
                         variant="outlined"
                         helperText = {errorMessage.new_password}
                         error = {errorDetected.new_password}
+                        defaultValue={""}
                         onChange={enableSaveButton}
                         InputProps={{
                             readOnly: !editMode,

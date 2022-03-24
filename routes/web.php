@@ -51,7 +51,7 @@ Route::post('/api/get-token-data', [GeneralDashboardController::class, "getDataF
 
 // ==== ROTAS DE API - OPERAÇÕES DO USUÁRIO LOGADO ==== //
 Route::get('/api/user-account-data', [GeneralUserController::class, "loadUserAccountData"])->middleware("session.auth"); // Requisição para recuperação dos dados do usuário (básicos ou complementares)
-Route::post('/api/user-update-data', [GeneralUserController::class, "userUpdatesHisData"])->middleware("session.auth"); // Requisição para atualização dos dados da conta do usuário logado
+Route::post('/api/user-update-data', [GeneralUserController::class, "userAccountDataUpdate"])->middleware("session.auth"); // Requisição para atualização dos dados da conta do usuário logado
 
 // ==== ROTAS DE REQUISIÇÕES API - MÓDULOS ==== //
 Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
