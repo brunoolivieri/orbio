@@ -19,6 +19,7 @@ import { AdministrationPanel } from "../components/pages/internal/administration
 import {Configurations} from "../components/pages/internal/configurations/Configurations";
 import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
+import { Incidents } from "../components/pages/internal/incidents/Incidents";
 
 // ==== Importação do provider do state global de paginação ==== //
 import { PaginationProvider } from "../components/context/Pagination/PaginationContext";
@@ -57,6 +58,7 @@ export function InternalRoutes(){
             <Route exact path = "administracao" element = {<AdministrationPanel />} />
             <Route exact path = "suporte" element = {<Support />} />
             <Route exact path = "ordens" element = {<ServiceOrders />} />
+            <Route exact path = "incidentes" element = {<Incidents />} />
         </Routes>     
         
     )

@@ -27,6 +27,8 @@ import moment from 'moment';
 
 export function CreateOrderFormulary({...props}){
 
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
@@ -46,6 +48,8 @@ export function CreateOrderFormulary({...props}){
     // States dos inputs de data
     const [startDate, setStartDate] = useState(moment());
     const [endDate, setEndDate] = useState(moment());
+
+    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {

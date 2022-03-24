@@ -25,6 +25,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { makeStyles } from "@mui/styles";
+import ReportIcon from '@mui/icons-material/Report';
 
 const categories = [
   {
@@ -39,7 +40,8 @@ const categories = [
       { id: 'Administração', icon: <AdminPanelSettingsIcon />, default_allowed_profiles: [1, 2]},
       { id: 'Ordens', icon: <AssignmentIcon />, default_allowed_profiles: [1, 2, 3]},
       { id: 'Planos', icon: <MapIcon />, default_allowed_profiles: [1, 2, 3]},
-      { id: 'Relatórios', icon: <AssessmentIcon />, default_allowed_profiles: [1, 2]}
+      { id: 'Relatórios', icon: <AssessmentIcon />, default_allowed_profiles: [1, 2]},
+      {id: 'Incidentes', icon: <ReportIcon />, default_allowed_profiles: [1, 2, 3]}
     ],
   },
   {
@@ -87,7 +89,8 @@ export default function Navigator(props) {
     administracao: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false,
     ordens: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
     planos: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
-    relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false
+    relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false,
+    incidentes: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false
   });
 
   //console.log(refUserPowers.current[`${"Administração".toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])
