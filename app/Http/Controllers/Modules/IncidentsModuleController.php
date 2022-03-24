@@ -56,15 +56,12 @@ class IncidentsModuleController extends Controller
         $arrData = [];
 
         foreach($data["selectedRecords"] as $row => $object){
-
-            // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $incident_date_formated = date( 'd-m-Y h:i', strtotime($object->dh_incidente));
             
             $arrData[$row] = array(
                 "incident_id" => $object->id,
                 "incident_type" => $object->tipo_incidente,
                 "description" => $object->descricao,
-                "incident_date" => $incident_date_formated
+                "incident_date" => $object->dh_incidente
             );
 
         }

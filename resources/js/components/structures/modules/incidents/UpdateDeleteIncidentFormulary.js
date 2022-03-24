@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
@@ -86,19 +85,11 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
         // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-          if(verifyDateInterval()){
-
             // Botão é desabilitado
             setDisabledButton(true);
 
             // Inicialização da requisição para o servidor
             requestServerOperation(data);
-
-          }else{
-            
-            setDisplayAlert({display: false, type: "", message: "Erro! A data inicial não pode anteceder a final."});
-
-          }
 
         }
 
@@ -121,48 +112,22 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     */
      function dataValidate(formData){
 
-      // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-      const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
-      const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-      const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
-      const creatorNameValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
-      const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
-      const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
-      const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
-
-      // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({order_start_date: startDateValidate.error, order_end_date: endDateValidate.error, numOS: numOsValidate.error, creator_name: creatorNameValidate.error, pilot_name: pilotNameValidate.error, client_name: clientNameValidate.error, order_note: orderNoteValidate.error});
-      setErrorMessage({order_start_date: startDateValidate.message, order_end_date: endDateValidate.message, numOS: numOsValidate.message, creator_name: creatorNameValidate.message, pilot_name: pilotNameValidate.message, client_name: clientNameValidate.message, order_note: orderNoteValidate.message});
+       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
+       const incidentDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+       const incidentTypeValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
+       const incidentNoteValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
+ 
+       // Atualização dos estados responsáveis por manipular os inputs
+       setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, incident_note: incidentNoteValidate.error});
+       setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, incident_note: incidentNoteValidate.message});
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error){
+      if(incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error){
 
         return false;
 
       }else{
 
           return true;
-
-      }
-
-    }
-
-     /*
-    * Rotina 3
-    * Ocorre a verificação do intervalo de tempo entre as datas
-    * As datas retornadas do componente DateTimePicker do Material UI são formatadas
-    * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
-    * 
-    */ 
-     function verifyDateInterval(){
-
-      // Verificação da diferença das datas
-      if(moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')){
-
-        return true;
-        
-      }else{
-
-        return false;
 
       }
 
@@ -177,24 +142,17 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     function requestServerOperation(data){
 
       // Dados para o middleware de autenticação 
-      let logged_user_id = AuthData.data.id;
-      let module_id = 3;
-      let module_action = "escrever";
+        let logged_user_id = AuthData.data.id;
+        let module_id = 5;
+        let module_action = "escrever";
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/orders-module/update`, {
-          auth: `${logged_user_id}.${module_id}.${module_action}`,
-          id: data.get("order_id"),
-          order_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          order_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          order_numos: data.get("order_numos"),
-          creator_name: data.get("creator_name"),
-          pilot_name: data.get("pilot_name"),
-          client_name: data.get("client_name"),
-          order_note: data.get("order_note"),
-          order_status: data.get("status"),
-          flight_plan: data.get("flight_plan")
+        AxiosApi.patch(`/api/incidents-module/update`, {
+            auth: `${logged_user_id}.${module_id}.${module_action}`,
+            incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+            incident_type: data.get("incident_type"),
+            incident_note: data.get("incident_note"),
         })
         .then(function (response) {
   
@@ -209,7 +167,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
 
       }else if(operation === "delete"){
 
-        AxiosApi.delete(`/api/orders-module/${data.get("order_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+        AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
             serverResponseTreatment(response);
@@ -272,17 +230,17 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso 
     // Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc 
     const deleteButton = <IconButton 
-    disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
+    disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
     value = {data.id} onClick={handleClickOpen}
     ><DeleteIcon 
-    style={{ fill: AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
     /></IconButton>
 
     const updateButton = <IconButton 
-    disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} 
+    disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true} 
     value = {data.id} onClick={handleClickOpen}
     ><EditIcon 
-    style={{ fill: AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
     /></IconButton>
 
     return(
@@ -290,14 +248,73 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
         {/* Botão que abre o Modal - pode ser o de atualização ou de deleção, depende da operação */}
         {operation === "update" ? updateButton : deleteButton}
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"} | ORDEM DE INCIDENTE (ID: {data.incident_id})</DialogTitle>
+            <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"} | INCIDENTE (ID: {data.incident_id})</DialogTitle>
     
             {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
               <DialogContent>
+
+              <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                  <DateTimeInput 
+                    event = {setIncidentDate}
+                    label = {"Data do incidente"} 
+                    helperText = {errorMessage.incident_date} 
+                    error = {errorDetected.incident_date} 
+                    defaultValue = {data.incident_date}
+                    operation = {"create"}
+                    />
+                </Box>
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="ID do incidente"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="incident_id"
+                  name="incident_id"
+                  InputProps={{
+                    readOnly: true 
+                  }}
+                  defaultValue = {data.incident_id}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Tipo do incidente"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="incident_type"
+                  name="incident_type"
+                  helperText = {errorMessage.incident_type}
+                  error = {errorDetected.incident_type}
+                  defaultValue = {data.incident_type}
+                  InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Descrição"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="incident_note"
+                  name="incident_note"
+                  helperText = {errorMessage.incident_note}
+                  error = {errorDetected.incident_note}
+                  defaultValue = {data.description}
+                  InputProps={{
+                    readOnly: operation == "delete" ? true : false
+                  }}
+                />
                   
-    
               </DialogContent>
     
               {displayAlert.display && 

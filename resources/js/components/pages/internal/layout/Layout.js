@@ -138,7 +138,6 @@ export function Layout() {
             variant="temporary"
             open={menuOpen}
             onClose={handleDrawerToggle}
-            id = "xablaus"
           />
 
         </Box>
@@ -147,8 +146,10 @@ export function Layout() {
           <Box component="main" sx={{ flex: 1, py: 6, px: 4 }} className={classes.root}>
 
             {/* Conteúdo variável de cada página */}
-            <InternalRoutes /> 
-
+            {AuthData.status && 
+              <InternalRoutes /> 
+            }
+  
           </Box>
           <Box component="footer" sx={{ p: 2, bgcolor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919' }}>
             <Copyright />

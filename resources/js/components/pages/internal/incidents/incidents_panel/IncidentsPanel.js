@@ -279,7 +279,7 @@ export function IncidentsPanel(){
                             <StyledTableCell>{row.incident_id}</StyledTableCell>
                             <StyledTableCell align="center">{row.incident_type}</StyledTableCell>
                             <StyledTableCell align="center">{row.description}</StyledTableCell> 
-                            <StyledTableCell align="center">{row.incident_date}</StyledTableCell>
+                            <StyledTableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
                             </StyledTableRow>

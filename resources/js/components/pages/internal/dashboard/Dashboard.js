@@ -10,8 +10,12 @@ import SearchIcon from '@mui/icons-material/Search';
 // IMPORTAÇÃO DOS COMPONENTES PERSONALIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useEffect } from "react";
+import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 
 export function Dashboard(){
+
+  // Utilizador do state global de autenticação
+  const {AuthData, setAuthData} = useAuthentication();
 
   // Atualização do state global da páginação 
   const {actualPage, setActualPage}= usePagination();

@@ -31,8 +31,8 @@ export function CreateIncidentFormulary(){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 
+    const [errorDetected, setErrorDetected] = useState({incident_date: false, incident_type: false, incident_note: false}); 
+    const [errorMessage, setErrorMessage] = useState({incident_date: "", incident_type: "", incident_note: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -44,8 +44,7 @@ export function CreateIncidentFormulary(){
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState(moment());
-    const [endDate, setEndDate] = useState(moment());
+    const [incidentDate, setIncidentDate] = useState(moment());
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -55,8 +54,8 @@ export function CreateIncidentFormulary(){
     // Função para fechar o modal
     const handleClose = () => {
 
-        setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false});
-        setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""});
+        setErrorDetected({incident_date: false, incident_type: false, incident_note: false});
+        setErrorMessage({incident_date: "", incident_type: "", incident_note: ""});
         setDisplayAlert({display: false, type: "", message: ""});
         setDisabledButton(false);
 
@@ -76,17 +75,9 @@ export function CreateIncidentFormulary(){
   
           if(dataValidate(data)){
   
-            if(verifyDateInterval()){
-  
-              setDisabledButton(true);
-  
-              requestServerOperation(data);
-  
-            }else{
-              
-              setDisplayAlert({display: true, type: "error", message: "Erro! A data inicial deve anteceder a final."});
-  
-            }
+            setDisabledButton(true);
+
+            requestServerOperation(data);
   
           }
   
@@ -101,19 +92,15 @@ export function CreateIncidentFormulary(){
       function dataValidate(formData){
   
         // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-        const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
-        const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-        const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
-        const creatorNameValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
-        const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
-        const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
-        const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
+        const incidentDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+        const incidentTypeValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
+        const incidentNoteValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
   
         // Atualização dos estados responsáveis por manipular os inputs
-        setErrorDetected({order_start_date: startDateValidate.error, order_end_date: endDateValidate.error, numOS: numOsValidate.error, creator_name: creatorNameValidate.error, pilot_name: pilotNameValidate.error, client_name: clientNameValidate.error, order_note: orderNoteValidate.error});
-        setErrorMessage({order_start_date: startDateValidate.message, order_end_date: endDateValidate.message, numOS: numOsValidate.message, creator_name: creatorNameValidate.message, pilot_name: pilotNameValidate.message, client_name: clientNameValidate.message, order_note: orderNoteValidate.message});
+        setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, incident_note: incidentNoteValidate.error});
+        setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, incident_note: incidentNoteValidate.message});
       
-        if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error){
+        if(incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error){
   
           return false;
   
@@ -125,93 +112,66 @@ export function CreateIncidentFormulary(){
   
     }
   
-      /*
-      * Rotina 3
-      * As datas retornadas do componente DateTimePicker do Material UI são formatadas
-      * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
-      * Também ocorre a verificação da diferença entre as datas
-      * 
-      */ 
-      function verifyDateInterval(){
   
-        // Verificação da diferença das datas
-        if(moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')){
-  
-          return true;
-          
-        }else{
-  
-          return false;
-  
-        }
-  
-      }
-  
-      /*
-      * Rotina 4
-      * Comunicação AJAX com o Laravel utilizando AXIOS
-      * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
-      */
-      function requestServerOperation(data){
-  
-        // Dados para o middleware de autenticação 
-        let logged_user_id = AuthData.data.id;
-        let module_id = 3;
-        let module_action = "escrever";
-  
-        AxiosApi.post(`/api/orders-module`, {
-          auth: `${logged_user_id}.${module_id}.${module_action}`,
-          order_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          order_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          order_numos: data.get("order_numos"),
-          creator_name: data.get("creator_name"),
-          pilot_name: data.get("pilot_name"),
-          client_name: data.get("client_name"),
-          order_note: data.get("order_note"),
-          order_status: data.get("status"),
-          flight_plan: data.get("flight_plan")
-        })
-        .then(function (response) {
-  
-            serverResponseTreatment(response);
-  
-        })
-        .catch(function (error) {
-          
-          serverResponseTreatment(error.response);
-  
-        });
-  
-      }
-  
-      /*
-      * Rotina 5
-      * Tratamento da resposta do servidor
-      * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
-      */
-      function serverResponseTreatment(response){
-  
-       if(response.status === 200){
-  
-          setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
-  
-          setTimeout(() => {
-            
-            setDisabledButton(false);
-            
-            handleClose();
-  
-          }, 2000);
-  
-        }else{
-  
-          setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-  
-          setDisabledButton(false);
-  
-        }
-  
-      }
+    /*
+    * Rotina 4
+    * Comunicação AJAX com o Laravel utilizando AXIOS
+    * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
+    */
+    function requestServerOperation(data){
+
+    // Dados para o middleware de autenticação 
+    let logged_user_id = AuthData.data.id;
+    let module_id = 5;
+    let module_action = "escrever";
+
+    AxiosApi.post(`/api/incidents-module`, {
+        auth: `${logged_user_id}.${module_id}.${module_action}`,
+        incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+        incident_type: data.get("incident_type"),
+        incident_note: data.get("incident_note"),
+    })
+    .then(function (response) {
+
+        serverResponseTreatment(response);
+
+    })
+    .catch(function (error) {
+        
+        serverResponseTreatment(error.response);
+
+    });
+
+    }
+
+    /*
+    * Rotina 5
+    * Tratamento da resposta do servidor
+    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
+    */
+    function serverResponseTreatment(response){
+
+    if(response.status === 200){
+
+        setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
+
+        setTimeout(() => {
+        
+        setDisabledButton(false);
+        
+        handleClose();
+
+        }, 2000);
+
+    }else{
+
+        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+
+        setDisabledButton(false);
+
+    }
+
+    }
     
     return(
         <>
@@ -232,6 +192,43 @@ export function CreateIncidentFormulary(){
                 <DialogContentText sx={{mb: 3}}>
                   Formulário para criação de um registro de incidente.
                 </DialogContentText>
+
+                <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                  <DateTimeInput 
+                    event = {setIncidentDate}
+                    label = {"Data do incidente"} 
+                    helperText = {errorMessage.incident_date} 
+                    error = {errorDetected.incident_date} 
+                    defaultValue = {moment()}
+                    operation = {"create"}
+                    />
+                </Box>
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Tipo do incidente"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="incident_type"
+                  name="incident_type"
+                  helperText = {errorMessage.incident_type}
+                  error = {errorDetected.incident_type}
+                />
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Descrição"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="incident_note"
+                  name="incident_note"
+                  helperText = {errorMessage.incident_note}
+                  error = {errorDetected.incident_note}
+                />
                   
               </DialogContent>
     
