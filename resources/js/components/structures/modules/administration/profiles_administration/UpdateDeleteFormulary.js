@@ -297,9 +297,9 @@ export function UpdateDeleteFormulary({data, operation, refresh_setter}) {
 
         AxiosApi.patch("/api/admin-module/profiles_panel", {
           auth: `${logged_user_id}.${module_id}.${action}`,
-          id: data.get("id_input"),
-          name: data.get("name_input"),
-          powers: modulePowers
+          profile_id: data.get("id_input"),
+          profile_name: data.get("name_input"),
+          profile_modules_relationship: modulePowers
         })
         .then(function (response) {
   

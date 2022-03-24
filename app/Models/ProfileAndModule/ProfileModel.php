@@ -125,7 +125,7 @@ class ProfileModel extends Model
 
     }
 
-    function updateProfile(int $id, string $profile_name, array $profile_module_table_data) : array {
+    function updateProfile(int $profile_id, string $profile_name, array $profile_modules_relationship) : array {
 
         try{
 
@@ -133,35 +133,33 @@ class ProfileModel extends Model
             DB::beginTransaction();
 
             // Se existe um Perfil com o nome informado
-            if(ProfileModel::where('nome', $profile_name)->where('id', '!=', $id)->exists()){
+            if(ProfileModel::where('nome', $profile_name)->where('id', '!=', $profile_id)->exists()){
 
                 // Erro do tipo "nome"
                 return ["status" => false, "error" => "name_already_exists"];
 
             }else{
 
-                $profile_update = ProfileModel::where('id', $id)->update(["nome" => $profile_name]);
-
-                if($profile_update){
+                if($profile_update = ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name])){
 
                     // O perfil teve seus dados básicos atualizados (tabela 'profile')
                     // Agora é preciso atualizar a relação dele com os módulos (tabela 'profile_has_module')
 
                     $model = new ProfileHasModuleModel();
 
-                    $profile_module_update = $model->updateProfileModuleRelationship($id, $profile_module_table_data);
+                    $profile_modules_relationship_update = $model->updateProfileModuleRelationship($profile_id, $profile_modules_relationship);
 
-                    if($profile_module_update["status"] && !$profile_module_update["error"]){
+                    if($profile_modules_relationship_update["status"] && !$profile_modules_relationship_update["error"]){
 
                         // Log da operação realizada
-                        Log::channel("internal")->info("Atualização de perfil realizada com sucesso. Dados: [ID do Perfil: $id]");
+                        Log::channel("internal")->info("Atualização de perfil realizada com sucesso. Dados: [ID do Perfil: $profile_id]");
 
                         // Se a operação for bem sucedida, confirmar
                         DB::commit();
 
                         return ["status" => true, "error" => false];
 
-                    }else if(!$profile_module_update["status"] && $profile_module_update["error"]){
+                    }else if(!$profile_modules_relationship_update["status"] && $profile_modules_relationship_update["error"]){
 
                         // Se a operação falhar, desfazer as transações
                         DB::rollBack();
