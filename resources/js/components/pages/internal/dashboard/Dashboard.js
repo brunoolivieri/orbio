@@ -27,8 +27,6 @@ export function Dashboard(){
 
     setActualPage("DASHBOARD");
 
-    console.log(AuthData)
-
   }, [])
 
   return(

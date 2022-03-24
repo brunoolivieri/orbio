@@ -101,7 +101,9 @@ class IncidentsModuleController extends Controller
         $model = new IncidentsModel();
 
         $registrationData = [
-    
+            "tipo_incidente" => $request->incident_type,
+            "descricao" => $request->incident_note,
+            "dh_incidente" => $request->incident_date
         ];
 
         $response = $model->newIncident($registrationData);
@@ -175,7 +177,9 @@ class IncidentsModuleController extends Controller
         $model = new IncidentsModel();
 
         $updateData = [
-            
+            "tipo_incidente" => $request->incident_type,
+            "descricao" => $request->incident_note,
+            "dh_incidente" => $request->incident_date
         ];
 
         $update = $model->updateIncident((int) $request->id, $updateData);
@@ -202,6 +206,18 @@ class IncidentsModuleController extends Controller
     {
         
         $model = new IncidentsModel();
+
+        $delete = $model->deleteIncident((int) $id);
+
+        if($delete["status"]){
+
+            return response("", 200);
+
+        }else{
+
+            return response("", 500);
+
+        }
 
     }
 }

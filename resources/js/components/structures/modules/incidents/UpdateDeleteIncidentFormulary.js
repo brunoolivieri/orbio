@@ -113,9 +113,9 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
      function dataValidate(formData){
 
        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-       const incidentDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
-       const incidentTypeValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
-       const incidentNoteValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
+       const incidentDateValidate = incidentDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+       const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
+       const incidentNoteValidate = FormValidation(formData.get("incident_note"), 3, null, null, null);
  
        // Atualização dos estados responsáveis por manipular os inputs
        setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, incident_note: incidentNoteValidate.error});
@@ -150,6 +150,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
 
         AxiosApi.patch(`/api/incidents-module/update`, {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
+            id: data.get("incident_id"),
             incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
             incident_type: data.get("incident_type"),
             incident_note: data.get("incident_note"),

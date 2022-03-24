@@ -11,8 +11,8 @@ class IncidentsModel extends Model
     use HasFactory;
 
     protected $table = "incidents";
-    const CREATED_AT = false;
-    const UPDATED_AT = false;
+    public $timestamps = false;
+    protected $guarded = [];
 
     /**
      * Método realizar um INSERT na tabela "incidents"
