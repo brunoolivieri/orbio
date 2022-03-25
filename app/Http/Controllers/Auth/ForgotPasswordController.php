@@ -6,10 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 // Model utilizado
-use App\Models\Auth\AuthenticationModel;
-
-// Envio de email
-use Illuminate\Support\Facades\Mail;
+use App\Models\Auth\RecoveryAccount;
+use App\Models\User\UserModel;
 
 // Classe de Email
 use App\Mail\UserChangePasswordEmail;
@@ -25,22 +23,37 @@ class ForgotPasswordController extends Controller
      */
     function index(Request $request) : \Illuminate\Http\Response {
 
-        $model = new AuthenticationModel();
+        $model = new RecoveryAccount();
 
-        $response = $model->userSendCodeForChangePassword($request);
+        if(UserModel::where('email', $request->email)->where('status', true)->exists()){
 
-        if($response->status() === 200){
+            $tokenGenerated = $model->generateTokenForChangePassword();
 
-            // Construção e envio do email do código para alteração da senha
-            Mail::to($request->email)->send(new UserChangePasswordEmail($response->content()));
-            
-            return response("", 200);
+            $response = $model->insertTokenIntoUserRegistry($request->email, (int) $tokenGenerated);
+
+            if($response["status"] && !$response["error"]){
+
+                if($model->sendTokenToUserEmail($request->email, (int) $tokenGenerated)){
+    
+                    return response("", 200);
+    
+                }else{
+    
+                    return response("", 500);
+                }
+                
+            }else if(!$response["status"] && $response["error"]){
+    
+                return response($response["error"], 500);
+    
+            }
 
         }else{
 
-            return response($response->content(), 500);
+            return response("email", 500);
 
         }
+        
 
     }
 
@@ -50,19 +63,19 @@ class ForgotPasswordController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function changePassword(Request $request) : array {
+    function passwordChangeProcessing(Request $request) : \Illuminate\Http\Response {
 
-        $model = new AuthenticationModel();
+        $model = new RecoveryAccount();
 
-        $response = $model->userChangePassword($request);
+        $response = $model->passwordChangeFromTokenReceivedByEmail($request->new_password, $request->token);
 
-        if($response->status() === 200){
+        if($response["status"] && !$response["error"]){
             
             return response("", 200);
 
-        }else{
+        }else if(!$response["status"] && $response["error"]){
 
-            return response($response->content(), 500);
+            return response($response["error"], 500);
 
         }
 
