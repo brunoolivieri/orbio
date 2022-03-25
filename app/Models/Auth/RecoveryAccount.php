@@ -15,7 +15,6 @@ class RecoveryAccount extends Model
 {
     use HasFactory;
 
-
     function generateTokenForChangePassword(){
 
         return random_int(1000, 9999);
@@ -41,8 +40,6 @@ class RecoveryAccount extends Model
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            // INSERIR NO ARQUIVO DE LOG
 
             DB::rollBack();
 

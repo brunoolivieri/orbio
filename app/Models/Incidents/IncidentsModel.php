@@ -26,23 +26,13 @@ class IncidentsModel extends Model
 
             DB::beginTransaction();
 
-            if($insert = IncidentsModel::create($data)){
+            IncidentsModel::create($data);
 
-                DB::commit();
+            DB::commit();
 
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
-
+            return ["status" => true, "error" => false];
+            
         }catch(\Exception $e){
-
-            dd($e);
 
             DB::rollBack();
 
@@ -140,25 +130,15 @@ class IncidentsModel extends Model
 
             DB::beginTransaction();
 
-            $update = IncidentsModel::where('id', $incident_id)->update($data);
+            IncidentsModel::where('id', $incident_id)->update($data);
 
-            if($update){
+            DB::commit();
 
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            dd($e);
+            
 
             DB::rollBack();
 
@@ -180,21 +160,9 @@ class IncidentsModel extends Model
 
             DB::beginTransaction();
 
-            $delete = IncidentsModel::where('id', $incident_id)->delete();
+            IncidentsModel::where('id', $incident_id)->delete();
 
-            if($delete){
-
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 

@@ -24,7 +24,7 @@ class ReportsModel extends Model
 
         try{
 
-            // Inicialização da transação
+            
             DB::beginTransaction();
 
             $this->dh_inicio_voo = $data["flight_start_date"];
@@ -35,30 +35,22 @@ class ReportsModel extends Model
             // Se a inserção na tabela "users" for bem sucedida
             if($insert = $this->save()){
 
-                // Se a operação for bem sucedida, confirmar
                 DB::commit();
 
-                // Retornar Status 200 com o ID da inserção
                 return ["status" => true, "error" => false];
 
             }else{
 
-                // Se a operação falhar, desfazer as transações
                 DB::rollBack();
 
-                // Retornar resposta com erro do tipo "genérico"
                 return ["status" => false, "error" => true];
 
             }
 
         }catch(\Exception $e){
-
-            dd($e);
-
-            // Se a operação falhar, desfazer as transações
+            
             DB::rollBack();
-
-            // Retornar resposta com erro do tipo "genérico"
+            
             return ["status" => false, "error" => true];
 
         }
@@ -78,10 +70,8 @@ class ReportsModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
-            // Query Builder para fazer o relacionamento
             $allReports = DB::table('reports')
             ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
             ->offset($offset)->limit($limit)->get();
@@ -93,7 +83,6 @@ class ReportsModel extends Model
                     "selectedRecords" => $allReports
                 ];
 
-                // Se a operação for bem sucedida, confirmar
                 DB::commit();
 
                 return ["status" => true, "error" => false, "data" => $response];
@@ -102,10 +91,8 @@ class ReportsModel extends Model
 
         }catch(\Exception $e){
 
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
-            // Retornar resposta com erro do tipo "genérico"
             return ["status" => false, "error" => true];
 
         }
@@ -133,18 +120,14 @@ class ReportsModel extends Model
                 "selectedRecords" => $searchedReports
             ];
 
-            // Inicialização da transação
             DB::beginTransaction();
 
-            // Erro do tipo "email já existe"
             return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
 
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
-            // Retornar resposta com erro do tipo "genérico"
             return ["status" => false, "error" => true];
 
         }
@@ -162,35 +145,19 @@ class ReportsModel extends Model
 
         try{
 
-            // Inicialização da transação
+            
             DB::beginTransaction();
 
-            $update = ReportsModel::where('id', $report_id)->update($data);
+            ReportsModel::where('id', $report_id)->update($data);
 
-            if($update){
+            DB::commit();
 
-                // Se a operação for bem sucedida, confirmar
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                // Se a operação falhar, desfazer as transações
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            dd($e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
-            // Retornar resposta com erro do tipo "genérico"
             return ["status" => false, "error" => true];
 
         }
@@ -207,38 +174,23 @@ class ReportsModel extends Model
 
         try{
 
-            // Inicialização da transação
+            
             DB::beginTransaction();
 
-            $delete = ReportsModel::where('id', $report_id)->delete();
+            ReportsModel::where('id', $report_id)->delete();
 
-            if($delete){
+            DB::commit();
 
-                // Se a operação for bem sucedida, confirmar
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                // Se a operação falhar, desfazer as transações
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            // Se a operação falhar, desfazer as transações
+            
             DB::rollBack();
-
-            // Retornar resposta com erro do tipo "genérico"
+         
             return ["status" => false, "error" => true];
 
         }
 
     }
-
 
 }

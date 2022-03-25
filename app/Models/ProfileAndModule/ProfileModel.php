@@ -22,18 +22,12 @@ class ProfileModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
-            // Contador: verificar se o email já existe no banco de dados
-            $checkIfExists = ProfileModel::where('nome', $data["profile_name"])->exists();
+            if(ProfileModel::where('nome', $data["profile_name"])->exists()){
 
-            if($checkIfExists){
-
-                // Se a operação falhar, desfazer as transações
                 DB::rollBack();
 
-                // Erro do tipo "email já existe"
                 return ["status" => false, "error" => "name"];
 
             }else{
@@ -41,7 +35,6 @@ class ProfileModel extends Model
                 $this->nome = $data["profile_name"];
                 $this->acesso_geral = $data["access"];
 
-                // Se a inserção na tabela "users" for bem sucedida
                 if($insert = $this->save()){
 
                     $createdProfileID = $this->id;
@@ -50,21 +43,14 @@ class ProfileModel extends Model
 
                     $newRelationship = $model->newProfileRelationship($createdProfileID);
 
-                    // Log da operação realizada
-                    Log::channel("internal")->info("Registro de perfil realizado com sucesso. Dados: [ID do Novo Perfil: {$createdProfileID}]");
-
-                    // Se a operação for bem sucedida, confirmar
                     DB::commit();
 
-                    // Retornar Status 200 com o ID da inserção
                     return ["status" => true, "error" => false];
 
                 }else{
 
-                    // Se a operação falhar, desfazer as transações
                     DB::rollBack();
 
-                    // Retornar resposta com erro do tipo "genérico"
                     return ["status" => false, "error" => "generic"];
 
                 }
@@ -73,13 +59,8 @@ class ProfileModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha no registro de perfil. Erro: ".$e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
-            // Retornar resposta com erro do tipo "genérico"
             return ["status" => false, "error" => "generic"];
 
         }
@@ -90,19 +71,16 @@ class ProfileModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
             if($returnedRecords = ProfileModel::all()){
 
-                 // Se a operação for bem sucedida, confirmar
                  DB::commit();
 
                  return ["status" => true, "error" => false, "data" => $returnedRecords];
 
             }else{
 
-                // Se a operação falhar, desfazer as transações
                 DB::rollBack();
 
                 return ["status" => false, "error" => true];
@@ -112,10 +90,6 @@ class ProfileModel extends Model
                 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha no carregamento dos perfis. Erro: ".$e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
             return ["status" => false, "error" => true];
@@ -129,48 +103,32 @@ class ProfileModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
-            // Se existe um Perfil com o nome informado
             if(ProfileModel::where('nome', $profile_name)->where('id', '!=', $profile_id)->exists()){
 
-                // Erro do tipo "nome"
                 return ["status" => false, "error" => "name_already_exists"];
 
             }else{
 
-                if($profile_update = ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name])){
+                ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name]);
 
-                    // O perfil teve seus dados básicos atualizados (tabela 'profile')
-                    // Agora é preciso atualizar a relação dele com os módulos (tabela 'profile_has_module')
+                // O perfil teve seus dados básicos atualizados (tabela 'profile')
+                // Agora é preciso atualizar a relação dele com os módulos (tabela 'profile_has_module')
 
-                    $model = new ProfileHasModuleModel();
+                $model = new ProfileHasModuleModel();
 
-                    $profile_modules_relationship_update = $model->updateProfileModuleRelationship($profile_id, $profile_modules_relationship);
+                $profile_modules_relationship_update = $model->updateProfileModuleRelationship($profile_id, $profile_modules_relationship);
 
-                    if($profile_modules_relationship_update["status"] && !$profile_modules_relationship_update["error"]){
+                if($profile_modules_relationship_update["status"] && !$profile_modules_relationship_update["error"]){
 
-                        // Log da operação realizada
-                        Log::channel("internal")->info("Atualização de perfil realizada com sucesso. Dados: [ID do Perfil: $profile_id]");
+                    DB::commit();
 
-                        // Se a operação for bem sucedida, confirmar
-                        DB::commit();
+                    return ["status" => true, "error" => false];
 
-                        return ["status" => true, "error" => false];
+                }else if(!$profile_modules_relationship_update["status"] && $profile_modules_relationship_update["error"]){
 
-                    }else if(!$profile_modules_relationship_update["status"] && $profile_modules_relationship_update["error"]){
-
-                        // Se a operação falhar, desfazer as transações
-                        DB::rollBack();
-
-                        return ["status" => false, "error" => true];
-
-                    }
-
-                }else{
-
-                    // Se a operação falhar, desfazer as transações
+                    
                     DB::rollBack();
 
                     return ["status" => false, "error" => true];
@@ -181,10 +139,7 @@ class ProfileModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha na atualização do perfil. Dados: [ID do Perfil: $id]. Erro: ".$e);
-
-            // Se a operação falhar, desfazer as transações
+            
             DB::rollBack();
 
             return ["status" => false, "error" => true];
@@ -203,24 +158,18 @@ class ProfileModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
             $delete = ProfileModel::where('id', $profileID)->delete();
 
             if($delete){
 
-                // Log da operação realizada
-                Log::channel("internal")->info("Deleção de perfil realizada com sucesso. Dados: [ID do Perfil: $profileID]");
-
-                // Se a operação for bem sucedida, confirmar
                 DB::commit();
 
                 return ["status" => true, "error" => false];
 
             }else{
 
-                // Se a operação falhar, desfazer as transações
                 DB::rollBack();
 
                 return ["status" => false, "error" => true];
@@ -229,10 +178,6 @@ class ProfileModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha na deleção do perfil. Dados: [ID do Perfil: $profileID]. Erro: ".$e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
             return ["status" => false, "error" => true];

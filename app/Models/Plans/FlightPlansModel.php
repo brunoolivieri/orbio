@@ -49,8 +49,6 @@ class FlightPlansModel extends Model
 
         }catch(\Exception $e){
 
-            dd($e);
-
             DB::rollBack();
 
             return ["status" => false, "error" => true];
@@ -149,25 +147,13 @@ class FlightPlansModel extends Model
 
             DB::beginTransaction();
 
-            $update = FlightPlansModel::where('id', $plan_id)->update($data);
+            FlightPlansModel::where('id', $plan_id)->update($data);
 
-            if($update){
+            DB::commit();
 
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            dd($e);
 
             DB::rollBack();
 
@@ -189,21 +175,11 @@ class FlightPlansModel extends Model
 
             DB::beginTransaction();
 
-            $delete = FlightPlansModel::where('id', $plan_id)->delete();
+            FlightPlansModel::where('id', $plan_id)->delete();
 
-            if($delete){
+            DB::commit();
 
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
@@ -214,6 +190,5 @@ class FlightPlansModel extends Model
         }
 
     }
-
 
 }

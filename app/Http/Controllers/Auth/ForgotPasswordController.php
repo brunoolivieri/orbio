@@ -54,7 +54,6 @@ class ForgotPasswordController extends Controller
 
         }
         
-
     }
 
     /**

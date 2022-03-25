@@ -27,23 +27,13 @@ class ServiceOrdersModel extends Model
 
             DB::beginTransaction();
 
-            if($insert = ServiceOrdersModel::create($data)){
+            ServiceOrdersModel::create($data);
 
-                DB::commit();
+            DB::commit();
 
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            dd($e);
 
             DB::rollBack();
 
@@ -141,25 +131,13 @@ class ServiceOrdersModel extends Model
 
             DB::beginTransaction();
 
-            $update = ServiceOrdersModel::where('id', $order_id)->update($data);
+            ServiceOrdersModel::where('id', $order_id)->update($data);
 
-            if($update){
+            DB::commit();
 
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            dd($e);
 
             DB::rollBack();
 
@@ -181,21 +159,11 @@ class ServiceOrdersModel extends Model
 
             DB::beginTransaction();
 
-            $delete = ServiceOrdersModel::where('id', $order_id)->delete();
+            ServiceOrdersModel::where('id', $order_id)->delete();
 
-            if($delete){
+            DB::commit();
 
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 

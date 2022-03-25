@@ -21,7 +21,6 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
             ProfileHasModuleModel::insert([
@@ -39,10 +38,6 @@ class ProfileHasModuleModel extends Model
             
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error($e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
             return false;
@@ -55,12 +50,8 @@ class ProfileHasModuleModel extends Model
     // Método para trazer todos os perfis e seus relacionamentos com todos os módulos
     function loadProfilesModulesRelationship($offset, $limit) : array {
 
-        //echo $offset;
-        //echo $limit; 
-
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
             // Query Builder para fazer o relacionamento
@@ -80,14 +71,12 @@ class ProfileHasModuleModel extends Model
                     "selectedRecords" => $allProfilesWithModules
                 ];
 
-                 // Se a operação for bem sucedida, confirmar
                  DB::commit();
 
                  return ["status" => true, "error" => false, "data" => $response];
 
             }else{
 
-                // Se a operação falhar, desfazer as transações
                 DB::rollBack();
 
                 return ["status" => false, "error" => true];
@@ -96,10 +85,6 @@ class ProfileHasModuleModel extends Model
                          
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error($e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
             return ["status" => false, "error" => true];
@@ -112,10 +97,8 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
-            // Query Builder para fazer o relacionamento
             $profilePowers = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->where('profile_has_module.id_perfil', '=', $profile_id)
@@ -128,9 +111,6 @@ class ProfileHasModuleModel extends Model
 
         }catch(\Exception $e){
 
-            // INSERIR NO ARQUIVO DE LOG
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
             return ["status" => false, "error" => true];
@@ -144,10 +124,8 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
-            // Query Builder para fazer o relacionamento
             $allProfilesWithModules = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->join('module', 'profile_has_module.id_modulo', '=', 'module.id')
@@ -167,14 +145,12 @@ class ProfileHasModuleModel extends Model
                     "selectedRecords" => $allProfilesWithModules
                 ];
 
-                 // Se a operação for bem sucedida, confirmar
                  DB::commit();
 
                  return ["status" => true, "error" => false, "data" => $response];
 
             }else{
 
-                // Se a operação falhar, desfazer as transações
                 DB::rollBack();
 
                 return ["status" => false, "error" => true];
@@ -184,10 +160,6 @@ class ProfileHasModuleModel extends Model
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error($e);
-
-            // Se a operação falhar, desfazer as transações
             DB::rollBack();
 
             return ["status" => false, "error" => true];
@@ -201,7 +173,6 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            // Inicialização da transação
             DB::beginTransaction();
 
             for($actual_module = 1; $actual_module <= 5; $actual_module++){
@@ -217,21 +188,15 @@ class ProfileHasModuleModel extends Model
 
             }
 
-            // Se a operação for bem sucedida, confirmar
             DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            // Log do erro
-            Log::channel("internal")->error("Falha na atualização do perfil. Dados: [ID do Perfil: $id]. Erro: ".$e);
-
             DB::rollBack();
 
         }
-
-
 
     }
 

@@ -122,7 +122,7 @@ class AuthenticationModel extends Model
 
         }catch(\Exception $e){
 
-            dd($e);
+            
 
         }
 
@@ -173,36 +173,26 @@ class AuthenticationModel extends Model
 
             if($count === 1){
     
-                if(UserModel::where('id', $userID)->update(['status' => true])){
+                UserModel::where('id', $userID)->update(['status' => true]);
 
-                    if($this->linkNewUserToSupplementalDataTables($userID, $user_email)){
+                if($this->linkNewUserToSupplementalDataTables($userID, $user_email)){
 
-                        // Se a operação for bem sucedida, confirmar
-                        DB::commit();
-        
-                        return true;
-
-                    }else{
-
-                        
-                        DB::rollBack();
-
-                        return false;
-
-                    }
+                    // Se a operação for bem sucedida, confirmar
+                    DB::commit();
+    
+                    return true;
 
                 }else{
 
                     
                     DB::rollBack();
-    
+
                     return false;
-    
-                }      
-    
+
+                }
+
             }else{
 
-                
                 DB::rollBack();
     
                 return false;
@@ -211,9 +201,6 @@ class AuthenticationModel extends Model
 
         }catch(\Exception $e){
 
-            // INSERIR NO ARQUIVO DE LOG
-
-            
             DB::rollBack();
     
             return false;
