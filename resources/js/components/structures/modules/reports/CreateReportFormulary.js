@@ -169,10 +169,10 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
       AxiosApi.post(`/api/reports-module?`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
-        flight_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-        flight_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-        flight_log: randomLogTest,
-        report_note: data.get("report_note")
+        dh_inicio_voo: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+        dh_fim_voo: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+        log_voo: randomLogTest,
+        observacao: data.get("report_note")
       })
       .then(function (response) {
 

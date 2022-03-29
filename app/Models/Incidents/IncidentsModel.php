@@ -24,19 +24,13 @@ class IncidentsModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             IncidentsModel::create($data);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
             
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -71,7 +65,7 @@ class IncidentsModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -118,21 +112,13 @@ class IncidentsModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             IncidentsModel::where('id', $incident_id)->update($data);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            
-
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

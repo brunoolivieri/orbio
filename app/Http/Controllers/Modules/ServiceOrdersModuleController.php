@@ -15,7 +15,7 @@ class ServiceOrdersModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
         
         $model = new ServiceOrdersModel();
@@ -95,7 +95,7 @@ class ServiceOrdersModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) : \Illuminate\Http\Response
     {
         
         $model = new ServiceOrdersModel();
@@ -132,7 +132,7 @@ class ServiceOrdersModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : \Illuminate\Http\Response
     {
         
         $model = new ServiceOrdersModel();
@@ -177,7 +177,7 @@ class ServiceOrdersModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) : \Illuminate\Http\Response
     {
         
         $model = new ServiceOrdersModel();
@@ -214,7 +214,7 @@ class ServiceOrdersModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : \Illuminate\Http\Response
     {
         
         $model = new ServiceOrdersModel();

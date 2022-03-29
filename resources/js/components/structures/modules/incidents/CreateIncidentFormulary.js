@@ -127,9 +127,9 @@ export function CreateIncidentFormulary(){
 
     AxiosApi.post(`/api/incidents-module`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
-        incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-        incident_type: data.get("incident_type"),
-        incident_note: data.get("incident_note"),
+        dh_incidente: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+        tipo_incidente: data.get("incident_type"),
+        descricao: data.get("incident_note"),
     })
     .then(function (response) {
 

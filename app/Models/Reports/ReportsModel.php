@@ -13,6 +13,8 @@ class ReportsModel extends Model
     protected $table = "reports";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
+    protected $fillable = ["*"];
+
 
      /**
      * Método realizar um INSERT na tabela "reports"
@@ -24,34 +26,13 @@ class ReportsModel extends Model
 
         try{
 
+            ReportsModel::insert($data);
+
+            return ["status" => true, "error" => false];
             
-            DB::beginTransaction();
-
-            $this->dh_inicio_voo = $data["flight_start_date"];
-            $this->dh_fim_voo = $data["flight_end_date"];
-            $this->log_voo = $data["flight_log"];
-            $this->observacao = $data["report_note"];
-
-            // Se a inserção na tabela "users" for bem sucedida
-            if($insert = $this->save()){
-
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
-
         }catch(\Exception $e){
             
-            DB::rollBack();
-            
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -87,7 +68,7 @@ class ReportsModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -118,7 +99,7 @@ class ReportsModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -141,7 +122,7 @@ class ReportsModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -163,7 +144,7 @@ class ReportsModel extends Model
 
         }catch(\Exception $e){
          
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

@@ -181,13 +181,12 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/reports-module/update`, {
+        AxiosApi.patch(`/api/reports-module/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          id: data.get("id_input"),
-          flight_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          flight_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          flight_log: data.get("flight_log"),
-          report_note: data.get("report_note")
+          dh_inicio_voo: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          dh_fim_voo: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+          log_voo: data.get("flight_log"),
+          observacao: data.get("report_note")
         })
         .then(function (response) {
   

@@ -134,20 +134,9 @@ export function IncidentsPanel(){
                  // Os dados do painel são atualizados, recebendo o retorno da pesquisa realizada
                  setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
        
-               }else{
-                 
-                 // Se a pesquisa falhar
-                 //setSearchError({error: true});
-       
                }
      
              })
-             .catch(function (error) {
-               
-               // Se a pesquisa falhar
-               //setSearchError({error: true}); 
-     
-           });
  
          break;
  

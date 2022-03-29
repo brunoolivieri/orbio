@@ -29,19 +29,17 @@ class ReportsModuleController extends Controller
         $offset = isset($request_values[0]) ? $request_values[0] : 0;
         $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
-        $response = $model->loadAllReports((int) $offset, (int) $limit);
+        $model_response = $model->loadAllReports((int) $offset, (int) $limit);
 
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->reportsTableFormat($response["data"], $limit);
+            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
 
-            //dd($dataFormated);
+            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-            return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-        }else if(!$response["status"] && $response["error"]){
-
-            return response(["status" => false, "error" => $response->content()], 500);
+            return response(["error" => $model_response->content()], 500);
 
         }  
 
@@ -91,20 +89,6 @@ class ReportsModuleController extends Controller
     }
 
     /**
-     * Função para composição do formulário de criação de registro de relatório
-     * 
-     * MÉTODO: GET
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-
-        //$panel = request()->panel;
-
-    }
-
-    /**
      * Função para processar a requisição da criação de um registro de relatório
      * Esse registro será um novo relatório
      * 
@@ -118,22 +102,15 @@ class ReportsModuleController extends Controller
         
         $model = new ReportsModel();
 
-        $registrationData = [
-            "flight_start_date" => $request->flight_start,
-            "flight_end_date" => $request->flight_end,
-            "flight_log" => $request->flight_log,
-            "report_note" => $request->report_note
-        ];
+        $model_response = $model->newReport($request->except('auth'));
 
-        $response = $model->newReport($registrationData);
+         if($model_response["status"] && !$model_response["error"]){
 
-         if($response["status"]){
+            return response(["error" => $model_response["error"]], 200);
 
-            return response(["status" => $response["status"], "error" => $response["error"]], 200);
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-        }else{
-
-            return response(["status" => $response["status"], "error" => $response["error"]], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
 
@@ -145,9 +122,9 @@ class ReportsModuleController extends Controller
      * MÉTODO: GET
      *
      * @param $request
-     * @return array
+     * @return \Illuminate\Http\Response
      */
-    public function show($request) : array
+    public function show($request) : \Illuminate\Http\Response
     {
 
         $model = new ReportsModel();
@@ -158,32 +135,19 @@ class ReportsModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $response = $model->loadSpecificReports($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificReports($value_searched, (int) $offset, (int) $limit);
     
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->reportsTableFormat($response["data"], $limit);
+            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
 
-            return array("status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]);
+            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-        }else if(!$response["status"] && $response["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return array("status" => false, "error" => $response["error"]);
+            return response(["error" => $model_response["error"]], 500);
 
         }  
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * 
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        
-
     }
 
     /**
@@ -200,22 +164,15 @@ class ReportsModuleController extends Controller
         
         $model = new ReportsModel();
 
-        $updateData = [
-            "dh_inicio_voo" => $request->flight_start,
-            "dh_fim_voo" => $request->flight_end,
-            "log_voo" => $request->flight_log,
-            "observacao" => $request->report_note
-        ];
+        $model_response = $model->updateReport((int) $id, $request->except('auth'));
 
-        $update = $model->updateReport((int) $request->id, $updateData);
-
-        if($update["status"] && !$update["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else if(!$update["status"] && $update["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $update["error"]], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
 
@@ -234,15 +191,15 @@ class ReportsModuleController extends Controller
         
         $model = new ReportsModel();
 
-        $delete = $model->deleteReport((int) $id);
+        $model_response = $model->deleteReport((int) $id);
 
-        if($delete["status"]){
+        if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else{
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response("", 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
  

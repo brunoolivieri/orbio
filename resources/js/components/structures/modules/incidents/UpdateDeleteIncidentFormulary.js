@@ -148,12 +148,11 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/incidents-module/update`, {
+        AxiosApi.patch(`/api/incidents-module/${data.get("incident_id")}`, {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
-            id: data.get("incident_id"),
-            incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-            incident_type: data.get("incident_type"),
-            incident_note: data.get("incident_note"),
+            dh_incidente: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+            tipo_incidente: data.get("incident_type"),
+            descricao: data.get("incident_note"),
         })
         .then(function (response) {
   
