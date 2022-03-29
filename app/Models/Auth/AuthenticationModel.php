@@ -48,7 +48,7 @@ class AuthenticationModel extends Model
                         // Registrar um acesso com a classe de Evento
                         if(UserSuccessfulLoginEvent::dispatch($userAccountData[0])){
 
-                            if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $request->email)){
+                            if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $request->email, $userAccountData[0]->id_perfil)){
 
                                 // Retornar os dados com uma resposta de sucesso
                                 return ["status" => true, "error"=>false, "data" => $tokenData];
@@ -257,18 +257,18 @@ class AuthenticationModel extends Model
      * @param int $userID
      * @return bool
      */
-    private function generateTokenJWTData(int $userID, string $user_email) : array|bool {
+    private function generateTokenJWTData(int $userID, string $user_email, int $user_profile) : array|bool {
 
         try{
 
             // Se o usuário que estiver logando for o "Super-Admin"
-            if($user_email == env("SUPER_ADMIN_EMAIL")){
+            if($user_email == env("SUPER_ADMIN_EMAIL") || $user_profile == 5){
 
-                $tokenData = $this->generateTokenWithBasicDataForSuperAdmin((int) $userID);
+                $tokenData = $this->generateTokenWithBasicData((int) $userID);
 
             }else{
 
-                $tokenData = $this->generateTokenWithAllDataForUser((int) $userID);
+                $tokenData = $this->generateTokenWithAllData((int) $userID);
 
             }
 
@@ -282,7 +282,7 @@ class AuthenticationModel extends Model
 
     }
 
-    private function generateTokenWithBasicDataForSuperAdmin(int $userID) : array {
+    private function generateTokenWithBasicData(int $userID) : array {
 
         // Query Builder para buscar os dados do usuário e do seu perfil
         $userAccountData = DB::table('users')
@@ -309,7 +309,7 @@ class AuthenticationModel extends Model
 
     }
     
-    private function generateTokenWithAllDataForUser(int $userID) : array {
+    private function generateTokenWithAllData(int $userID) : array {
 
         // Query Builder para buscar os dados do usuário e do seu perfil
         $userAccountData = DB::table('users')

@@ -35,7 +35,7 @@ const categories = [
         id: 'Dashboard',
         icon: <DashboardIcon />,
         active: false,
-        default_allowed_profiles: [1, 4, 3, 4]
+        default_allowed_profiles: [1, 4, 3, 4, 5]
       },
       { id: 'Administração', icon: <AdminPanelSettingsIcon />, default_allowed_profiles: [1, 2]},
       { id: 'Ordens', icon: <AssignmentIcon />, default_allowed_profiles: [1, 2, 3]},
@@ -48,8 +48,8 @@ const categories = [
     id: 'Outros',
     children: [
       { id: 'Conta', icon: <AccountCircleIcon />, default_allowed_profiles: [2, 3, 4] },
-      { id: 'Configurações', icon: <SettingsIcon />, default_allowed_profiles: [1, 4, 3, 4] },
-      { id: 'Suporte', icon: <HelpIcon />, default_allowed_profiles: [1, 4, 3, 4] },
+      { id: 'Configurações', icon: <SettingsIcon />, default_allowed_profiles: [1, 2, 3, 4] },
+      { id: 'Suporte', icon: <HelpIcon />, default_allowed_profiles: [1, 4, 3, 4, 5] },
     ],
   },
 ];
@@ -127,9 +127,9 @@ export default function Navigator(props) {
               <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
             </ListItem>
 
-            {/* Geração do menu de opções com base no perfil do usuário (nível de acesso) */}
+            {/* Geração do menu de opções com base no id do perfil do usuário */}
             {children.map(({ id: childId, icon, active, default_allowed_profiles }) => (
-                (default_allowed_profiles.includes(AuthData.data.general_access) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])) ?
+                (default_allowed_profiles.includes(AuthData.data.profile_id) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])) ?
                 <ListItem disablePadding key={childId}>
 
                   {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
