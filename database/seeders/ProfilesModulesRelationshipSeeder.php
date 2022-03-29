@@ -73,6 +73,16 @@ class ProfilesModulesRelationshipSeeder extends Seeder
 
         DB::table("profile_has_module")->insert($clientModulesRelationship);
 
+        $visitorModulesRelationship = [
+            ["id_modulo" => 1, "id_perfil" => 5, "ler" => false, "escrever" => false],
+            ["id_modulo" => 2, "id_perfil" => 5, "ler" => false, "escrever" => false],
+            ["id_modulo" => 3, "id_perfil" => 5, "ler" => false, "escrever" => false],
+            ["id_modulo" => 4, "id_perfil" => 5, "ler" => false, "escrever" => false],
+            ["id_modulo" => 5, "id_perfil" => 5, "ler" => false, "escrever" => false]    
+        ];
+
+        DB::table("profile_has_module")->insert($visitorModulesRelationship);
+
 
 
     }
