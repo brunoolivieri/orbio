@@ -12,6 +12,7 @@ class FlightPlansModel extends Model
     protected $table = "flight_plans";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
+    protected $guarded = [];
 
     use HasFactory;
 
@@ -25,33 +26,19 @@ class FlightPlansModel extends Model
 
         try{
 
-            DB::beginTransaction();
+            FlightPlansModel::create([
+                "id_relatorio" => $data["report_id"],
+                "id_incidente" => $data["incident_id"],
+                "arquivo" => $data["plan_file"],
+                "descricao" => $data["description"],
+                "status" => $data["status"]
+            ]);
 
-            $this->id_relatorio = $data["report_id"];
-            $this->id_incidente = $data["incident_id"];
-            $this->arquivo = $data["plan_file"];
-            $this->descricao = $data["description"];
-            $this->status = $data["status"];
-
-            if($insert = $this->save()){
-
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -70,8 +57,6 @@ class FlightPlansModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             $allFlightPlans = DB::table('flight_plans')
             ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao')
             ->offset($offset)->limit($limit)->get();
@@ -83,17 +68,13 @@ class FlightPlansModel extends Model
                     "selectedRecords" => $allFlightPlans
                 ];
 
-                DB::commit();
-
                 return ["status" => true, "error" => false, "data" => $response];
 
             }
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -120,15 +101,11 @@ class FlightPlansModel extends Model
                 "selectedRecords" => $searchedReports
             ];
 
-            DB::beginTransaction();
-
             return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -145,19 +122,13 @@ class FlightPlansModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             FlightPlansModel::where('id', $plan_id)->update($data);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -173,19 +144,13 @@ class FlightPlansModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             FlightPlansModel::where('id', $plan_id)->delete();
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

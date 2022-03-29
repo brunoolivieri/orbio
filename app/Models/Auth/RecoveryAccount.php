@@ -31,19 +31,13 @@ class RecoveryAccount extends Model
 
         try{
 
-            DB::beginTransaction();
-
             UserModel::where('email', $user_email)->update(['token' => $token]);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -76,31 +70,23 @@ class RecoveryAccount extends Model
 
         try{
 
-            DB::beginTransaction();
-
             if(UserModel::where('token', $token)->exists()){
 
                 $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
 
                 UserModel::where('token', $token)->update(['senha' => $new_password_hash]);
 
-                DB::commit();
-
                 return ["status" => true, "error" => false];
 
             }else{
- 
-                DB::rollBack();
 
                 return ["status" => false, "error" => "code"];
 
             }
 
         }catch(\Exception $e){
- 
-            DB::rollBack();
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

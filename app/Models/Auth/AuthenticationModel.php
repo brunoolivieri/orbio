@@ -122,8 +122,8 @@ class AuthenticationModel extends Model
 
         }catch(\Exception $e){
 
+            return ["status" => false, "error" => $e->getMessage()];
             
-
         }
 
     }
@@ -165,13 +165,10 @@ class AuthenticationModel extends Model
     private function activateInactiveAccount(int $userID, string $user_email) : bool {
 
         try{
-
             
             DB::beginTransaction();
-    
-            $count = UserModel::where('id', $userID)->count();
 
-            if($count === 1){
+            if(UserModel::where('id', $userID)->exists()){
     
                 UserModel::where('id', $userID)->update(['status' => true]);
 
@@ -184,7 +181,6 @@ class AuthenticationModel extends Model
 
                 }else{
 
-                    
                     DB::rollBack();
 
                     return false;

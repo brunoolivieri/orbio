@@ -55,8 +55,6 @@ class IncidentsModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             $allIncidents = DB::table('incidents')
             ->offset($offset)->limit($limit)->get();
 
@@ -67,15 +65,11 @@ class IncidentsModel extends Model
                     "selectedRecords" => $allIncidents
                 ];
 
-                DB::commit();
-
                 return ["status" => true, "error" => false, "data" => $response];
 
             }
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 
@@ -103,13 +97,9 @@ class IncidentsModel extends Model
                 "selectedRecords" => $searchedIncidents
             ];
 
-            DB::beginTransaction();
-
             return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 
@@ -158,17 +148,13 @@ class IncidentsModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             IncidentsModel::where('id', $incident_id)->delete();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

@@ -13,7 +13,7 @@ class ProfileHasModuleModel extends Model
 
     protected $table = "profile_has_module";
     public $incrementing = false;
-    protected $fillable = ["id_modulo", "id_perfil", "ler", "escrever"];
+    protected $fillable = ["*"];
     public $timestamps = false;
 
     // Método para criar um novo relacionamento perfil-módulo
@@ -23,7 +23,7 @@ class ProfileHasModuleModel extends Model
 
             DB::beginTransaction();
 
-            ProfileHasModuleModel::insert([
+            ProfileHasModuleModel::create([
                 ["id_modulo"=> 1, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
                 ["id_modulo"=> 2, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
                 ["id_modulo"=> 3, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
@@ -87,7 +87,7 @@ class ProfileHasModuleModel extends Model
 
             DB::rollBack();
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -113,7 +113,7 @@ class ProfileHasModuleModel extends Model
 
             DB::rollBack();
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -162,7 +162,7 @@ class ProfileHasModuleModel extends Model
 
             DB::rollBack();
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -195,6 +195,8 @@ class ProfileHasModuleModel extends Model
         }catch(\Exception $e){
 
             DB::rollBack();
+
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

@@ -77,7 +77,7 @@ class CommonUserController extends Controller
 
     private function userBasicDataUpdate(Request $request) : array {
 
-        $checkDataResponse = $this->checkBasicDataRepetition($request);
+        $checkDataResponse = $this->checkIfBasicDataAlreadyExists($request);
 
         if($checkDataResponse["status"] && !$checkDataResponse["error"]){
 
@@ -107,9 +107,7 @@ class CommonUserController extends Controller
     
                 DB::rollBack();
     
-                dd($e);
-    
-                return ["status" => false];
+                return ["status" => false, "error" => $e->getMessage()];
     
             }
 
@@ -124,7 +122,7 @@ class CommonUserController extends Controller
 
     private function userComplementaryDataUpdate(Request $request) : array {
 
-        $checkDataResponse = $this->checkComplementaryDataRepetition($request);
+        $checkDataResponse = $this->checkIfComplementaryDataAlreadyExists($request);
 
         if($checkDataResponse["status"] && !$checkDataResponse["error"]){
 
@@ -162,10 +160,8 @@ class CommonUserController extends Controller
             }catch(\Exception $e){
     
                 DB::rollBack();
-
-                dd($e);
     
-                return ["status" => false, "error" => true];
+                return ["status" => false, "error" => $e->getMessage()];
     
             }
 
@@ -177,7 +173,7 @@ class CommonUserController extends Controller
 
     }
 
-    private function checkBasicDataRepetition(Request $request) : array {
+    private function checkIfBasicDataAlreadyExists(Request $request) : array {
 
         $check = [];
         
@@ -195,7 +191,7 @@ class CommonUserController extends Controller
 
     }
 
-    private function checkComplementaryDataRepetition(Request $request) : array {
+    private function checkIfComplementaryDataAlreadyExists(Request $request) : array {
 
         $check = [];
 

@@ -14,6 +14,7 @@ class UserModel extends Model
     protected $table = "users";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
+    protected $fillable = ["*"];
 
     /**
      * Método realizar um INSERT na tabela "users"
@@ -25,54 +26,25 @@ class UserModel extends Model
 
         try{
 
-            // Inicialização da transação
-            DB::beginTransaction();
+            if(UserModel::where('email', $data["email"])->exists()){
 
-            // Contador: verificar se o email já existe no banco de dados
-            $checkIfExists = UserModel::where('email', $data["email"])->exists();
-
-            if($checkIfExists){
-
-                // Se a operação falhar, desfazer as transações
-                DB::rollBack();
-
-                // Erro do tipo "email já existe"
                 return ["status" => false, "error" => "email_already_exists"];
 
             }else{
 
-                $this->nome = $data["name"];
-                $this->email = $data["email"];
-                $this->senha = $data["password"];
-                $this->id_perfil = $data["profile_type"];
+                UserModel::create([
+                    "nome" => $data["name"],
+                    "email" => $data["email"],
+                    "senha" => $data["password"],
+                    "id_perfil" => $data["profile_type"]
+                ]);
 
-                // Se a inserção na tabela "users" for bem sucedida
-                if($insert = $this->save()){
-
-                    // Se a operação for bem sucedida, confirmar
-                    DB::commit();
-
-                    // Retornar Status 200 com o ID da inserção
-                    return ["status" => true, "error" => false];
-
-                }else{
-
-                    // Se a operação falhar, desfazer as transações
-                    DB::rollBack();
-
-                    // Retornar resposta com erro do tipo "genérico"
-                    return ["status" => false, "error" => true];
-
-                }
+                return ["status" => true, "error" => false];
 
             }  
 
         }catch(\Exception $e){
 
-            // Se a operação falhar, desfazer as transações
-            DB::rollBack();
-
-            // Retornar resposta com erro do tipo "genérico"
             return ["status" => false, "error" => true];
 
         }
@@ -92,9 +64,6 @@ class UserModel extends Model
 
         try{
 
-            // Inicialização da transação
-            DB::beginTransaction();
-
             // Query Builder para fazer o relacionamento
             $allUsers = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
@@ -103,8 +72,7 @@ class UserModel extends Model
 
             if($allUsers){
 
-                // Os registros serão usados para preencher a tabela de usuários, certo?
-                // Certo. E a paginação é criada com base no total de registros por página. Com LIMIT 10 e 30 registros, serão 3 páginas com 10 registros cada.
+                // A paginação é criada com base no total de registros por página. Com LIMIT 10 e 30 registros, serão 3 páginas com 10 registros cada.
                 // Portanto esse valor, do total de registros existentes, é necessário
                 $totalTableRecords = UserModel::all()->count();
 
@@ -113,19 +81,12 @@ class UserModel extends Model
                     "selectedRecords" => $allUsers
                 ];
 
-                // Se a operação for bem sucedida, confirmar
-                DB::commit();
-
                 return ["status" => true, "error" => false, "data" => $response];
 
             }
 
         }catch(\Exception $e){
 
-            // Se a operação falhar, desfazer as transações
-            DB::rollBack();
-
-            // Erro do tipo "email já existe"
             return ["status" => false, "error" => true];
 
         }
@@ -143,10 +104,6 @@ class UserModel extends Model
 
         try{
 
-            // Inicialização da transação
-            DB::beginTransaction();
-
-            // Query Builder para fazer o relacionamento
             $searchedUsers = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
@@ -162,20 +119,12 @@ class UserModel extends Model
                     "selectedRecords" => $searchedUsers
                 ];
 
-                // Se a operação for bem sucedida, confirmar
-                DB::commit();
-
-                // Erro do tipo "email já existe"
                 return ["status" => true, "error" => false, "data" => $response];
 
             }
 
         }catch(\Exception $e){
 
-            // Se a operação falhar, desfazer as transações
-            DB::rollBack();
-
-            // Erro do tipo "email já existe"
             return ["status" => false, "error" => true];
 
         }
@@ -193,9 +142,6 @@ class UserModel extends Model
     function loadAllUserData(int $user_id) : array {
 
         try{
-
-            // Inicialização da transação
-            DB::beginTransaction();
 
             $data = DB::table('users')
             ->join('user_complementary_data', 'users.id_dados_complementares', '=', 'user_complementary_data.id')
@@ -225,9 +171,6 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            // Se a operação falhar, desfazer as transações
-            DB::rollBack();
-
             return ["status" => false, "error" => true];
 
         }
@@ -244,42 +187,19 @@ class UserModel extends Model
 
         try{
 
-            // Inicialização da transação
-            DB::beginTransaction();
-
-            // Se já existe um Usuário com o email informado
             if(UserModel::where('email', $data["email"])->where('id', '!=', $id)->exists()){
 
-                // Erro do tipo "email já existe"
                 return ["status" => false, "error" => "email_already_exists"];
                 
             }else{
 
+                UserModel::where('id', $id)->update($data);
 
-                $update = UserModel::where('id', $id)->update($data);
-
-                if($update){
-
-                    // Se a operação for bem sucedida, confirmar
-                    DB::commit();
-
-                    return ["status" => true, "error" => false];
-
-                }else{
-
-                    // Se a operação falhar, desfazer as transações
-                    DB::rollBack();
-
-                    return ["status" => false, "error" => true];
-
-                }
+                return ["status" => true, "error" => false];
 
             }
 
         }catch(\Exception $e){
-
-            // Se a operação falhar, desfazer as transações
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 
@@ -297,31 +217,11 @@ class UserModel extends Model
 
         try{
 
-            // Inicialização da transação
-            DB::beginTransaction();
+            UserModel::where('id', $userID)->delete();
 
-            $delete = UserModel::where('id', $userID)->delete();
-
-            if($delete){
-
-                // Se a operação for bem sucedida, confirmar
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                // Se a operação falhar, desfazer as transações
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            // Se a operação falhar, desfazer as transações
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 

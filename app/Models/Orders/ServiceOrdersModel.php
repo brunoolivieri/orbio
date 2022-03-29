@@ -25,19 +25,13 @@ class ServiceOrdersModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             ServiceOrdersModel::create($data);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -56,8 +50,6 @@ class ServiceOrdersModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             $allServiceOrders = DB::table('service_orders')
             ->offset($offset)->limit($limit)->get();
 
@@ -68,17 +60,13 @@ class ServiceOrdersModel extends Model
                     "selectedRecords" => $allServiceOrders
                 ];
 
-                DB::commit();
-
                 return ["status" => true, "error" => false, "data" => $response];
 
             }
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -104,15 +92,11 @@ class ServiceOrdersModel extends Model
                 "selectedRecords" => $searchedServiceOrders
             ];
 
-            DB::beginTransaction();
-
             return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -129,19 +113,13 @@ class ServiceOrdersModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             ServiceOrdersModel::where('id', $order_id)->update($data);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -157,19 +135,13 @@ class ServiceOrdersModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             ServiceOrdersModel::where('id', $order_id)->delete();
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

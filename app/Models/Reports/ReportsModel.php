@@ -70,8 +70,6 @@ class ReportsModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             $allReports = DB::table('reports')
             ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
             ->offset($offset)->limit($limit)->get();
@@ -83,15 +81,11 @@ class ReportsModel extends Model
                     "selectedRecords" => $allReports
                 ];
 
-                DB::commit();
-
                 return ["status" => true, "error" => false, "data" => $response];
 
             }
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 
@@ -120,13 +114,9 @@ class ReportsModel extends Model
                 "selectedRecords" => $searchedReports
             ];
 
-            DB::beginTransaction();
-
             return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 
@@ -145,18 +135,11 @@ class ReportsModel extends Model
 
         try{
 
-            
-            DB::beginTransaction();
-
             ReportsModel::where('id', $report_id)->update($data);
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => true];
 
@@ -174,18 +157,11 @@ class ReportsModel extends Model
 
         try{
 
-            
-            DB::beginTransaction();
-
             ReportsModel::where('id', $report_id)->delete();
-
-            DB::commit();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-            
-            DB::rollBack();
          
             return ["status" => false, "error" => true];
 

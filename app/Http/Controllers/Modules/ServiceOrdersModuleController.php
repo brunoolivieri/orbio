@@ -25,17 +25,17 @@ class ServiceOrdersModuleController extends Controller
         $offset = isset($request_values[0]) ? $request_values[0] : 0;
         $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
-        $response = $model->loadAllServiceOrders((int) $offset, (int) $limit);
+        $model_response = $model->loadAllServiceOrders((int) $offset, (int) $limit);
 
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->ordersTableFormat($response["data"], $limit);
+            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
 
-            return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-        }else if(!$response["status"] && $response["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["status" => false, "error" => $response->content()], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }  
 
@@ -90,16 +90,6 @@ class ServiceOrdersModuleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -122,15 +112,15 @@ class ServiceOrdersModuleController extends Controller
             "observacao" => $request->order_note,   
         ];
 
-        $response = $model->newServiceOrder($registrationData);
+        $model_response = $model->newServiceOrder($registrationData);
 
-         if($response["status"]){
+         if($model_response["status"] && !$model_response["error"]){
 
-            return response(["status" => $response["status"], "error" => $response["error"]], 200);
+            return response(["error" => $model_response["error"]], 200);
 
-        }else{
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["status" => $response["status"], "error" => $response["error"]], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
 
@@ -153,17 +143,17 @@ class ServiceOrdersModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $response = $model->loadSpecificServiceOrders($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificServiceOrders($value_searched, (int) $offset, (int) $limit);
     
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->ordersTableFormat($response["data"], $limit);
+            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
 
-            return array("status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]);
+            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-        }else if(!$response["status"] && $response["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return array("status" => false, "error" => $response["error"]);
+            return response(["error" => $model_response["error"]], 500);
 
         }  
 
@@ -204,13 +194,13 @@ class ServiceOrdersModuleController extends Controller
             "observacao" => $request->order_note,   
         ];
 
-        $update = $model->updateServiceOrder((int) $request->id, $updateData);
+        $model_response = $model->updateServiceOrder((int) $request->id, $updateData);
 
-        if($update["status"] && !$update["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else if(!$update["status"] && $update["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $update["error"]], 500);
 
@@ -229,15 +219,15 @@ class ServiceOrdersModuleController extends Controller
         
         $model = new ServiceOrdersModel();
 
-        $delete = $model->deleteServiceOrder((int) $id);
+        $model_response = $model->deleteServiceOrder((int) $id);
 
-        if($delete["status"]){
+        if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else{
+        }else if($model_response["status"] && !$model_response["error"]){
 
-            return response("", 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
 
