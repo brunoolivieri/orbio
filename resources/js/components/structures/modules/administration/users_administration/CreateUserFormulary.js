@@ -133,18 +133,17 @@ export function CreateUserFormulary({...props}) {
     */
     function requestServerOperation(data){
 
-      let randomPass = "User"+ (Math.floor(Math.random() * 100000000) + 99999999);
-
       let user_id = AuthData.data.id;
       let module_id = 1;
       let action = "escrever";
 
-      AxiosApi.post(`/api/admin-module?panel=users_panel`, {
+      AxiosApi.post(`/api/admin-module`, {
+        panel: "users_panel",
         auth: `${user_id}.${module_id}.${action}`,
         email: data.get("registration_email_input"),
-        name: data.get("registration_name_input"),
-        profile: data.get("select_profile"),
-        password: randomPass
+        nome: data.get("registration_name_input"),
+        id_perfil: data.get("select_profile"),
+        senha: `User${(Math.floor(Math.random() * 100000000) + 99999999)}`
       })
       .then(function (response) {
 

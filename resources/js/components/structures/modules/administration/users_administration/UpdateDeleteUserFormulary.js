@@ -34,13 +34,10 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+    const {AuthData} = useAuthentication();
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
-
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
 
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({email: false, name: false}); // State para o efeito de erro - true ou false
@@ -140,13 +137,13 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
 
       if(operation === "update"){
 
-        AxiosApi.patch("/api/admin-module/users_panel", {
+        AxiosApi.patch(`/api/admin-module/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${action}`,
-          id: data.get("id_input"),
-          name: data.get("name_input"),
+          panel: "users_panel",
+          nome: data.get("name_input"),
           email: data.get("email_input"),
           status: data.get("status_input"),
-          profile: data.get("select_profile")
+          id_perfil: data.get("select_profile")
         })
         .then(function (response) {
   
@@ -163,9 +160,9 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
 
       }else if(operation === "delete"){
 
-        let param = `users_panel|${data.get("id_input")}`;
+        let param = `users_panel.${data.get("id_input")}`;
 
-        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}/${module_id}/${action}`)
+        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}.${module_id}.${action}`)
         .then(function (response) {
   
             // Tratamento da resposta do servidor

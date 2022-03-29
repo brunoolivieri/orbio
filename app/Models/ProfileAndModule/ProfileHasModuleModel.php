@@ -13,34 +13,34 @@ class ProfileHasModuleModel extends Model
 
     protected $table = "profile_has_module";
     public $incrementing = false;
-    protected $fillable = ["*"];
     public $timestamps = false;
+    protected $guarded = [];
 
     // Método para criar um novo relacionamento perfil-módulo
-    function newProfileRelationship($profileID) : bool{
+    function newProfileRelationship(int $new_profile_id) : array {
 
         try{
 
             DB::beginTransaction();
 
-            ProfileHasModuleModel::create([
-                ["id_modulo"=> 1, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 2, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 3, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 4, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 5, "id_perfil"=> $profileID, "ler"=> 0, "escrever"=> 0]
+            ProfileHasModuleModel::insert([
+                ["id_modulo"=> 1, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
+                ["id_modulo"=> 2, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
+                ["id_modulo"=> 3, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
+                ["id_modulo"=> 4, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
+                ["id_modulo"=> 5, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0]
             ]);
 
             // Se a operação for bem sucedida, confirmar
             DB::commit();
 
-            return true;
+            return ["status" => true, "error" => false];
             
         }catch(\Exception $e){
 
             DB::rollBack();
 
-            return false;
+            return ["status" => true, "error" => $e->getMessage()];
 
         }
 
@@ -169,7 +169,7 @@ class ProfileHasModuleModel extends Model
 
     }
 
-    function updateProfileModuleRelationship($profile_id, $data) : array {
+    function updateProfileModuleRelationship(int $profile_id, $data) : array {
 
         try{
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\modules;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 // Model utilizado
 use App\Models\Plans\FlightPlansModel;
@@ -88,33 +89,26 @@ class FlightPlansModuleController extends Controller
 
     /**
      * Função para processar rotinas que complementam os formulários do plano de vôo
+     * A variável $wich_table pode ser "incidents" ou "reports"
      *
      * @return \Illuminate\Http\Response
      */
     public function create() : \Illuminate\Http\Response
     {
-        
-        $data_source = request()->data_source;
 
-        if($data_source == "reports"){
+        try{
 
-            $data = ReportsModel::all();  
+            $table = request()->data_source;
 
-        }else if($data_source == "incidents"){
-
-            $data = IncidentsModel::all();
-
-        }
-
-        if($data){
+            $data = DB::table($table)->get();
 
             return response($data, 200);
 
-        }else{
+        }catch(\Exception $e){
 
-            return response("", 500);
+            return response(["error" => $e->getMessage()]);
 
-        }  
+        }
 
     }
 
@@ -129,24 +123,15 @@ class FlightPlansModuleController extends Controller
         
         $model = new FlightPlansModel();
 
-        $registrationData = [
-            "report_id" => $request->report_id,
-            "incident_id" => $request->incident_id,
-            "plan_file" => $request->plan_file,
-            "description" => $request->plan_description,
-            "status" => $request->plan_status 
-        ];
+        $model_response = $model->newFlightPlan($request->except("auth"));
 
-        $response = $model->newFlightPlan($registrationData);
+        if($model_response["status"] && !$model_response["error"]){
 
-         // Se o registro foi realizado com sucesso
-         if($response["status"]){
+            return response(["error" => $response["error"]], 200);
 
-            return response(["status" => $response["status"], "error" => $response["error"]], 200);
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-        }else{
-
-            return response(["status" => $response["status"], "error" => $response["error"]], 500);
+            return response(["error" => $response["error"]], 500);
 
         }
 
@@ -169,31 +154,20 @@ class FlightPlansModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $response = $model->loadSpecificFlightPlans($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificFlightPlans($value_searched, (int) $offset, (int) $limit);
     
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->plansTableFormat($response["data"], $limit);
+            $dataFormated = $this->plansTableFormat($model_response["data"], $limit);
 
-            return array("status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]);
+            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-        }else if(!$response["status"] && $response["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return array("status" => false, "error" => $response["error"]);
+            return response(["error" => $model_response["error"]], 500);
 
         }  
 
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id) : \Illuminate\Http\Response
-    {
-        //
     }
 
     /**
@@ -210,22 +184,15 @@ class FlightPlansModuleController extends Controller
         
         $model = new FlightPlansModel();
 
-        $updateData = [
-            "id_relatorio" => $request->report,
-            "id_incidente" => $request->incident,
-            "descricao" => $request->description,
-            "status" => $request->status,
-        ];
+        $model_response = $model->updateFlightPlan((int) $id, $request->except("auth"));
 
-        $update = $model->updateFlightPlan((int) $request->id, $updateData);
-
-        if($update["status"] && !$update["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else if(!$update["status"] && $update["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $update["error"]], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
     }
@@ -243,15 +210,15 @@ class FlightPlansModuleController extends Controller
 
         $model = new FlightPlansModel();
 
-        $delete = $model->deleteFlightPlan((int) $id);
+        $model_response = $model->deleteFlightPlan((int) $id);
 
-        if($delete["status"]){
+        if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else{
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response("", 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
 

@@ -33,9 +33,6 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     // States do formulário
     const [open, setOpen] = useState(false);
 
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
-
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
     const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 

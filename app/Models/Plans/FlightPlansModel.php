@@ -26,13 +26,7 @@ class FlightPlansModel extends Model
 
         try{
 
-            FlightPlansModel::create([
-                "id_relatorio" => $data["report_id"],
-                "id_incidente" => $data["incident_id"],
-                "arquivo" => $data["plan_file"],
-                "descricao" => $data["description"],
-                "status" => $data["status"]
-            ]);
+            FlightPlansModel::create($data);
 
             return ["status" => true, "error" => false];
 

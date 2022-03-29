@@ -165,15 +165,15 @@ export function CreateOrderFormulary({...props}){
 
       AxiosApi.post(`/api/orders-module`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
-        order_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-        order_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-        order_numos: data.get("order_numos"),
-        creator_name: data.get("creator_name"),
-        pilot_name: data.get("pilot_name"),
-        client_name: data.get("client_name"),
-        order_note: data.get("order_note"),
-        order_status: data.get("status"),
-        flight_plan: data.get("flight_plan")
+        dh_inicio: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+        dh_fim: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+        numOS: data.get("order_numos"),
+        nome_criador: data.get("creator_name"),
+        nome_piloto: data.get("pilot_name"),
+        nome_cliente: data.get("client_name"),
+        observacao: data.get("order_note"),
+        status: data.get("status"),
+        id_plano_voo: data.get("flight_plan")
       })
       .then(function (response) {
 

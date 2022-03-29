@@ -117,7 +117,7 @@ export function UsersPanel(){
       // Carregamento dos dados pesquisados considerando o offset e limit
       case true:
 
-        let query_arguments = `users_panel|${paginationParams.where[1]}|${paginationParams.offset}|${paginationParams.limit}`;
+        let query_arguments = `users_panel.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
         AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${user_id}.${module_id}.${action}`, {
           access: AuthData.data.access
@@ -128,20 +128,9 @@ export function UsersPanel(){
 
               setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
     
-            }else{
-              
-              // Se a pesquisa falhar
-              //setSearchError({error: true});
-    
             }
   
-          })
-          .catch(function (error) {
-            
-            // Se a pesquisa falhar
-            //setSearchError({error: true}); 
-  
-        });
+          });
 
       break;
 
@@ -273,7 +262,7 @@ export function UsersPanel(){
                           <StyledTableCell align="center">{row.name}</StyledTableCell>
                           <StyledTableCell align="center">{row.email}</StyledTableCell> {}
                           <StyledTableCell align="center">{<Chip label={row.status[0]} color={row.status[1]} variant="outlined" />}</StyledTableCell>
-                          <StyledTableCell align="center">{row.nome_perfil}</StyledTableCell>
+                          <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
                           <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                           <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
                           <StyledTableCell align="center">{row.last_access}</StyledTableCell>

@@ -168,7 +168,7 @@ export function ProfilesPanel(){
         case true:
 
           // Parâmetros do caso de carregamento
-          let query_arguments = `${'profiles_panel'}|${paginationParams.where[1]}|${paginationParams.offset}|${paginationParams.limit}`;
+          let query_arguments = `${'profiles_panel'}.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
           // Comunicação com o backend
           AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${userid}.${module_id}.${action}`, {
@@ -182,13 +182,7 @@ export function ProfilesPanel(){
       
               }
     
-            })
-            .catch(function (error) {
-              
-              // Se a pesquisa falhar
-              //setSearchError({error: true}); 
-    
-          });
+            });
 
         break;
 

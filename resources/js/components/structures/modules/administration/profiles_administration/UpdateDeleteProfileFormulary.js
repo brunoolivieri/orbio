@@ -44,9 +44,6 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
-
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({name: false}); // State para o efeito de erro - true ou false
     const [errorMessage, setErrorMessage] = useState({name: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
@@ -56,9 +53,6 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
-
-    // State que serve para contar as alterações realizadas nos poderes do perfil
-    const [alterationsCounter, setAlterationsCounter] = useState(0);
 
     const [modulePowers, setModulePowers] = useState({
       "1": {read: data.modules["1"].profile_powers.ler == 1 ? true : false, write: data.modules["1"].profile_powers.escrever == 1 ? true : false}, 
@@ -173,8 +167,10 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
       let new_value = event.currentTarget.checked;
 
+      // Se for o checkbox do módulo 1...
       if(checkboxModule === "1"){
 
+        // Se for o poder "read"...
         if(checkboxPower === "read"){
 
           setModulePowers({
@@ -295,9 +291,9 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
       if(operation === "update"){
 
-        AxiosApi.patch("/api/admin-module/profiles_panel", {
+        AxiosApi.patch(`/api/admin-module/${data.get("id_input")}`, {
+          panel: "profiles_panel",
           auth: `${logged_user_id}.${module_id}.${action}`,
-          profile_id: data.get("id_input"),
           profile_name: data.get("name_input"),
           profile_modules_relationship: modulePowers
         })
@@ -316,9 +312,9 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
       }else if(operation === "delete"){
 
-        let param = `profiles_panel|${data.get("id_input")}`;
+        let param = `profiles_panel.${data.get("id_input")}`;
 
-        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}/${module_id}/${action}`)
+        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}.${module_id}.${action}`)
         .then(function (response) {
   
             // Tratamento da resposta do servidor

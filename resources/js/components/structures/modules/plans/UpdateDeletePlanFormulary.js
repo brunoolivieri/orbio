@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
@@ -31,9 +30,6 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
 
     // States do formulário
     const [open, setOpen] = useState(false);
-
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
 
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({description: false}); // State para o efeito de erro - true ou false
@@ -143,13 +139,12 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/plans-module/update`, {
+        AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          id: data.get("plan_id"),
-          report: data.get("select_report"),
-          incident: data.get("select_incident"),
+          id_relatorio: data.get("select_report"),
+          id_incidente: data.get("select_incident"),
           status: data.get("status"),
-          description: data.get("description"),
+          descricao: data.get("description"),
         })
         .then(function (response) {
   
@@ -273,7 +268,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               primary_key={"id"} 
               key_content={"id"} 
               error = {null} 
-              default = {0} 
+              default = {data.report_id != null ? data.report_id : 0} 
               name = {"select_report"}  
               disabled = {operation === "update" ? false : true} 
               />
@@ -283,7 +278,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               primary_key={"id"} 
               key_content={"id"} 
               error = {null} 
-              default = {0} 
+              default = {data.incident_id != null ? data.incident_id : 0} 
               name = {"select_incident"} 
               disabled = {operation === "update" ? false : true} 
               />

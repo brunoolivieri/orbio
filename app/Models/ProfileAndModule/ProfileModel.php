@@ -17,41 +17,37 @@ class ProfileModel extends Model
     protected $table = "profile";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
+    protected $guarded = [];
 
     function newProfile(array $data) : array {
 
         try{
 
-            DB::beginTransaction();
-
-            if(ProfileModel::where('nome', $data["profile_name"])->exists()){
-
-                DB::rollBack();
+            if(ProfileModel::where('nome', $data["nome"])->exists()){
 
                 return ["status" => false, "error" => "name"];
 
             }else{
 
-                $this->nome = $data["profile_name"];
-                $this->acesso_geral = $data["access"];
+                DB::beginTransaction();
 
-                if($insert = $this->save()){
+                $new_profile_id = DB::table("profile")->insertGetId($data);
 
-                    $createdProfileID = $this->id;
+                $model = new ProfileHasModuleModel();
 
-                    $model = new ProfileHasModuleModel();
+                $model_response = $model->newProfileRelationship((int) $new_profile_id);
 
-                    $newRelationship = $model->newProfileRelationship($createdProfileID);
+                if($model_response["status"] && !$model_response["error"]){
 
                     DB::commit();
 
                     return ["status" => true, "error" => false];
 
-                }else{
+                }else if(!$model_response["status"] && $model_response["error"]){
 
                     DB::rollBack();
 
-                    return ["status" => false, "error" => "generic"];
+                    return ["status" => false, "error" => $model_response["error"]];
 
                 }
 
@@ -61,7 +57,7 @@ class ProfileModel extends Model
 
             DB::rollBack();
 
-            return ["status" => false, "error" => "generic"];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -71,31 +67,15 @@ class ProfileModel extends Model
 
         try{
 
-            DB::beginTransaction();
+            $data = ProfileModel::all();
 
-            if($returnedRecords = ProfileModel::all()){
-
-                 DB::commit();
-
-                 return ["status" => true, "error" => false, "data" => $returnedRecords];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
-                
+            return ["status" => true, "error" => false, "data" => $data];      
                 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
-
 
     }
 
@@ -103,13 +83,13 @@ class ProfileModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             if(ProfileModel::where('nome', $profile_name)->where('id', '!=', $profile_id)->exists()){
 
                 return ["status" => false, "error" => "name_already_exists"];
 
             }else{
+
+                DB::beginTransaction();
 
                 ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name]);
 
@@ -118,31 +98,29 @@ class ProfileModel extends Model
 
                 $model = new ProfileHasModuleModel();
 
-                $profile_modules_relationship_update = $model->updateProfileModuleRelationship($profile_id, $profile_modules_relationship);
+                $model_response = $model->updateProfileModuleRelationship((int) $profile_id, $profile_modules_relationship);
 
-                if($profile_modules_relationship_update["status"] && !$profile_modules_relationship_update["error"]){
+                if($model_response["status"] && !$model_response["error"]){
 
                     DB::commit();
 
                     return ["status" => true, "error" => false];
 
-                }else if(!$profile_modules_relationship_update["status"] && $profile_modules_relationship_update["error"]){
+                }else if(!$model_response["status"] && $model_response["error"]){
 
-                    
                     DB::rollBack();
 
-                    return ["status" => false, "error" => true];
+                    return ["status" => false, "error" => $model_response["error"]];
 
                 }
 
             }
 
         }catch(\Exception $e){
-
             
             DB::rollBack();
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -154,33 +132,17 @@ class ProfileModel extends Model
      * @param int $userid
      * @return array
      */
-    function deleteProfile(int $profileID) : array {
+    function deleteProfile(int $profile_id) : array {
 
         try{
 
-            DB::beginTransaction();
+            ProfileModel::where('id', $profile_id)->delete();
 
-            $delete = ProfileModel::where('id', $profileID)->delete();
-
-            if($delete){
-
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            DB::rollBack();
-
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

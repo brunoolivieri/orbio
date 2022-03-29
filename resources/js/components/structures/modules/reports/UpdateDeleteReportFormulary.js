@@ -34,9 +34,6 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
     // States do formulário
     const [open, setOpen] = useState(false);
 
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
-
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
     const [errorMessage, setErrorMessage] = useState({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo

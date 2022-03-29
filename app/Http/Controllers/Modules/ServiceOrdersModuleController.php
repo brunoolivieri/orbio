@@ -100,19 +100,7 @@ class ServiceOrdersModuleController extends Controller
         
         $model = new ServiceOrdersModel();
 
-        $registrationData = [
-            "id_plano_voo" => $request->flight_plan,
-            "numOS" => $request->order_numos,
-            "dh_inicio" => $request->order_start,
-            "dh_fim" => $request->order_end,
-            "status" => $request->order_status,
-            "nome_criador" => $request->creator_name,
-            "nome_piloto" => $request->pilot_name,
-            "nome_cliente" => $request->client_name,
-            "observacao" => $request->order_note,   
-        ];
-
-        $model_response = $model->newServiceOrder($registrationData);
+        $model_response = $model->newServiceOrder($request->except("auth"));
 
          if($model_response["status"] && !$model_response["error"]){
 
@@ -160,17 +148,6 @@ class ServiceOrdersModuleController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -182,19 +159,7 @@ class ServiceOrdersModuleController extends Controller
         
         $model = new ServiceOrdersModel();
 
-        $updateData = [
-            "id_plano_voo" => $request->flight_plan,
-            "numOS" => $request->order_numos,
-            "dh_inicio" => $request->order_start,
-            "dh_fim" => $request->order_end,
-            "status" => $request->order_status,
-            "nome_criador" => $request->creator_name,
-            "nome_piloto" => $request->pilot_name,
-            "nome_cliente" => $request->client_name,
-            "observacao" => $request->order_note,   
-        ];
-
-        $model_response = $model->updateServiceOrder((int) $request->id, $updateData);
+        $model_response = $model->updateServiceOrder((int) $id, $request->except("auth"));
 
         if($model_response["status"] && !$model_response["error"]){
 

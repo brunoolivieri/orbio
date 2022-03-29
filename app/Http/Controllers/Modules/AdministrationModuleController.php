@@ -6,17 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-// Model utilizado
+// Models
 use App\Models\User\UserModel;
 use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 
-// Envio de email
-use Illuminate\Support\Facades\Mail;
 
-// Classe de Email
-use App\Mail\UserRegisteredEmail;
 
 class AdministrationModuleController extends Controller
 {
@@ -71,15 +67,15 @@ class AdministrationModuleController extends Controller
             $up_limit = $limit*5;
             $up_offset = $offset*5;
 
-            $response = $model->loadProfilesModulesRelationship((int) $up_offset, (int) $up_limit);
+            $model_response = $model->loadProfilesModulesRelationship((int) $up_offset, (int) $up_limit);
 
-            if($response["status"] && !$response["error"]){
+            if($model_response["status"] && !$model_response["error"]){
 
-                $dataFormated = $this->profilesPanelDataFormat($response["data"]["selectedRecords"], $response["data"]["referencialValueForCalcPages"], $limit);
+                $dataFormated = $this->profilesPanelDataFormat($model_response["data"]["selectedRecords"], $model_response["data"]["referencialValueForCalcPages"], $limit);
 
                 return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-            }else if(!$response["status"] && $response["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
 
                 return response(["status" => false, "error" => $response["error"]], 500);
 
@@ -136,7 +132,7 @@ class AdministrationModuleController extends Controller
                     "email" => $object->email,
                     "status" => $badgeStatus,
                     "access" => $object->id_perfil,
-                    "nome_perfil" => $object->nome_perfil,
+                    "profile_name" => $object->nome_perfil,
                     "created_at" => $created_at_formated,
                     "updated_at" => $updated_at_formated,
                     "last_access" => $last_access_formated
@@ -228,19 +224,20 @@ class AdministrationModuleController extends Controller
      */
     public function create() : \Illuminate\Http\Response {
 
-        if($data = ProfileModel::all()){
+        try{
+
+            $data = ProfileModel::all();
 
             return response($data, 200);
+    
+        }catch(\Exception $e){
 
-        }else{
+            return response(["error" => $e->getMessage()], 500);
 
-            return response("", 500);
-
-        } 
+        }
  
     }
     
-
     /**
      * Função para processar a requisição da criação de um registro
      * Esse registro pode ser um novo usuário
@@ -254,59 +251,41 @@ class AdministrationModuleController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response {
 
-        // Se o procedimento estiver sendo realizado no painel de usuários...
-        if(request()->panel === "users_panel"){
+        if($request->panel === "users_panel"){
 
             $model = new UserModel();
 
-            $registrationData = [
-                "name" => $request->name,
+            // A senha não criptografada será utilizada no conteúdo do email
+            $model_response = $model->createUserAndSendAccessData([
+                "nome" => $request->nome,
                 "email" => $request->email,
-                "password" => password_hash("User{$request->password}", PASSWORD_DEFAULT),
-                "profile_type" => $request->profile
-            ];
+                "senha" => password_hash($request->senha, PASSWORD_DEFAULT),
+                "id_perfil" => $request->id_perfil
+            ], $request->senha);
 
-            $response = $model->newUser($registrationData);
+            if($model_response["status"] && !$model_response["error"]){
 
-            // Se o registro foi realizado com sucesso
-            if($response["status"]){
+                return response("", 200);
 
-                $emailData = [
-                    "name" => $request->name,
-                    "email" => $request->email,
-                    "password" => "User{$request->password}"
-                ];
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                // Construção e envio do email para ativação da conta
-                Mail::to($request->email)->send(new UserRegisteredEmail($emailData));
-
-                return response(["status" => $response["status"], "error" => $response["error"]], 200);
-
-            }else{
-
-                return response(["status" => $response["status"], "error" => $response["error"]], 500);
+                return response(["error" => $model_response["error"]], 500);
 
             }
-        
-        // Se o procedimento estiver sendo realizado no painel de perfis
-        }else if(request()->panel === "profiles_panel"){
+    
+        }else if($request->panel === "profiles_panel"){
 
             $model = new ProfileModel();
 
-            $registrationData = [
-                "profile_name" => $request->name,
-                "access" => $request->access
-            ];
+            $model_response = $model->newProfile($request->except("auth", "panel"));
 
-            $response = $model->newProfile($registrationData);
+            if($model_response["status"] === true && !$model_response["error"]){
 
-            if($response["status"] === true && !$response["error"]){
+                return response(["error" => $model_response["error"]], 200);
 
-                return response(["status" => $response["status"], "error" => $response["error"]], 200);
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-            }else if(!$response["status"] && $response["error"]){
-
-                return response(["status" => false, "error" => $response["error"]], 500);
+                return response(["error" => $model_response["error"]], 500);
 
             }
 
@@ -323,10 +302,10 @@ class AdministrationModuleController extends Controller
      * @param string $request
      * @return array
      */
-    public function show($request) : \Illuminate\Http\Response {
+    public function show($param) : \Illuminate\Http\Response {
         
         // Os valores da string enviada via URL são obtidos
-        $request_values = explode("|", $request);
+        $request_values = explode(".", $param);
 
         // Isolamento dos valores da requisição em variáveis
         $panel = $request_values[0];
@@ -338,17 +317,17 @@ class AdministrationModuleController extends Controller
 
             $model = new UserModel();
             
-            $response = $model->loadSpecificUsers($value_searched, (int) $offset, (int) $limit);
+            $model_response = $model->loadSpecificUsers($value_searched, (int) $offset, (int) $limit);
     
-            if($response["status"] && !$response["error"]){
+            if($model_response["status"] && !$model_response["error"]){
     
-                $dataFormated = $this->usersPanelDataFormat($response["data"], $limit);
+                $dataFormated = $this->usersPanelDataFormat($model_response["data"], $limit);
 
-                return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+                return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
     
-            }else if(!$response["status"] && $response["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                return response("", 500);
+                return response(["error" => $model_response["error"]], 500);
     
             }  
 
@@ -361,38 +340,25 @@ class AdministrationModuleController extends Controller
             $up_limit = $limit*5;
             $up_offset = $offset*5;
 
-            $response = $model->loadProfileModuleRelationshipApproximate($value_searched, (int) $up_offset, (int) $up_limit);
+            $model_response = $model->loadProfileModuleRelationshipApproximate($value_searched, (int) $up_offset, (int) $up_limit);
 
-            if($response["status"] && !$response["error"]){
+            if($model_response["status"] && !$model_response["error"]){
                 
                 // Formatação dos dados para que se adequem ao format da tabela construída no frontend
                 // Recebe os registros pesquisados, a quantidade total de registros, e o LIMIT original
-                $dataFormated = $this->profilesPanelDataFormat($response["data"]["selectedRecords"], (int) $response["data"]["referencialValueForCalcPages"], $limit);
+                $dataFormated = $this->profilesPanelDataFormat($model_response["data"]["selectedRecords"], (int) $model_response["data"]["referencialValueForCalcPages"], $limit);
 
                 return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
     
-            }else if(!$response["status"] && $response["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
                 
-                return response("", 500);
+                return response(["error" => $model_response["error"]], 500);
     
             } 
 
         }
 
     }
-    
-
-    /**
-     * Função para mostrar o formulário de edição
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($panel) : \Illuminate\Http\Response {
-        
-
-    }
-    
 
     /**
      * Função para processar a edição de um registro
@@ -403,44 +369,37 @@ class AdministrationModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $panel) : \Illuminate\Http\Response {
+    public function update(Request $request, $id) : \Illuminate\Http\Response {
 
-        if($panel === "users_panel"){
+        if($request->panel === "users_panel"){
 
             $model = new UserModel();
 
-            $data = [
-                "nome" => $request->name,
-                "email" => $request->email, 
-                "status" => $request->status,
-                "id_perfil" => $request->profile
-            ];
+            $model_response = $model->updateUserDataAndSendNotificationEmail((int) $id, $request->except("auth", "panel"));
 
-            $update = $model->updateUserData($request->id, $data);
-
-            if($update["status"] && !$update["error"]){
+            if($model_response["status"] && !$model_response["error"]){
 
                 return response("", 200);
 
-            }else if(!$update["status"] && $update["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                return response(["error" => $update["error"]], 500);
+                return response(["error" => $model_response["error"]], 500);
 
             }
 
-        }else if("profiles_panel"){
+        }else if($request->panel === "profiles_panel"){
 
             $model = new ProfileModel();
 
-            $update = $model->updateProfile($request->profile_id, $request->profile_name, $request->profile_modules_relationship);
+            $model_response = $model->updateProfile((int) $id, $request->profile_name, $request->profile_modules_relationship);
 
-            if($update["status"] && !$update["error"]){
+            if($model_response["status"] && !$model_response["error"]){
 
                 return response("", 200);
 
-            }else if(!$update["status"] && $update["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                return response(["error" => $update["error"]], 500);
+                return response(["error" => $model_response["error"]], 500);
 
             }
 
@@ -456,9 +415,9 @@ class AdministrationModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $param) : \Illuminate\Http\Response {
+    public function destroy($param) : \Illuminate\Http\Response {
 
-        $query_params = explode("|", $param);
+        $query_params = explode(".", $param);
         $panel = $query_params[0];
         $id = $query_params[1];
 
@@ -466,9 +425,9 @@ class AdministrationModuleController extends Controller
 
             $model = new UserModel();
 
-            $delete = $model->deleteUser($id);
+            $model_response = $model->deleteUser($id);
 
-            if($delete["status"]){
+            if($model_response["status"]){
 
                 return response("", 200);
 
@@ -482,15 +441,15 @@ class AdministrationModuleController extends Controller
 
             $model = new ProfileModel();
 
-            $delete = $model->deleteProfile($id);
+            $model_response = $model->deleteProfile($id);
 
-            if($delete["status"] && !$delete["error"]){
+            if($model_response["status"] && !$model_response["error"]){
 
                 return response("", 200);
 
-            }else if(!$delete["status"] && $delete["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                return response("", 500);
+                return response(["error" => $model_response["error"]], 500);
 
             }
 

@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+
+// Email
+use App\Mail\UserRegisteredEmail;
 
 class UserModel extends Model
 {
@@ -22,7 +26,7 @@ class UserModel extends Model
      * @param array $data
      * @return array
      */
-    function newUser(array $data) : array {
+    function createUserAndSendAccessData(array $data, string $unencrypted_password) : array {
 
         try{
 
@@ -32,12 +36,18 @@ class UserModel extends Model
 
             }else{
 
-                UserModel::create([
-                    "nome" => $data["name"],
+                DB::beginTransaction();
+
+                UserModel::insert($data);
+
+                // Envio do email com os dados de acesso para o novo usuário
+                Mail::to($data["email"])->send(new UserRegisteredEmail([
+                    "name" => $data["nome"],
                     "email" => $data["email"],
-                    "senha" => $data["password"],
-                    "id_perfil" => $data["profile_type"]
-                ]);
+                    "password" => $unencrypted_password
+                ]));
+
+                DB::Commit();
 
                 return ["status" => true, "error" => false];
 
@@ -45,7 +55,9 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            DB::rollBack();
+
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -68,7 +80,7 @@ class UserModel extends Model
             $allUsers = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
-            ->offset($offset)->limit($limit)->get();
+            ->offset($offset)->limit($limit)->orderBy('users.id')->get();
 
             if($allUsers){
 
@@ -87,7 +99,7 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -110,7 +122,7 @@ class UserModel extends Model
             ->where('users.id', $value_searched)
             ->orWhere('users.nome', 'LIKE', '%'.$value_searched.'%')
             ->orWhere('users.email', 'LIKE', '%'.$value_searched.'%')
-            ->offset($offset)->limit($limit)->get();
+            ->offset($offset)->limit($limit)->orderBy('users.id')->get();
 
             if($searchedUsers){
 
@@ -125,7 +137,7 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -171,7 +183,7 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -183,17 +195,24 @@ class UserModel extends Model
      * @param int $userid
      * @return array
      */
-    function updateUserData(int $id, array $data) : array {
+    function updateUserDataAndSendNotificationEmail(int $user_id, array $data) : array {
 
         try{
 
-            if(UserModel::where('email', $data["email"])->where('id', '!=', $id)->exists()){
+            if(UserModel::where('email', $data["email"])->where('id', '!=', $user_id)->exists()){
 
                 return ["status" => false, "error" => "email_already_exists"];
                 
             }else{
 
-                UserModel::where('id', $id)->update($data);
+                UserModel::where('id', $user_id)->update($data);
+
+                // Notificar usuário
+                /*Mail::to($data["email"])->send(new UserRegisteredEmail([
+                    "name" => $data["nome"],
+                    "email" => $data["email"],
+                    "password" => $unencrypted_password
+                ]));*/
 
                 return ["status" => true, "error" => false];
 
@@ -201,7 +220,7 @@ class UserModel extends Model
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -213,17 +232,17 @@ class UserModel extends Model
      * @param int $userID
      * @return array
      */
-    function deleteUser(int $userID) : array {
+    function deleteUser(int $user_id) : array {
 
         try{
 
-            UserModel::where('id', $userID)->delete();
+            UserModel::where('id', $user_id)->delete();
 
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => true];
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

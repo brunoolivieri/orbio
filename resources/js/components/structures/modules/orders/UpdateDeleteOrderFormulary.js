@@ -33,9 +33,6 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     // States do formulário
     const [open, setOpen] = useState(false);
 
-    // State da operação a ser realizada
-    const [formOperation, setOperation] = useState(operation);
-
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
     const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 
@@ -183,18 +180,17 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/orders-module/update`, {
+        AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          id: data.get("order_id"),
-          order_start: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          order_end: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          order_numos: data.get("order_numos"),
-          creator_name: data.get("creator_name"),
-          pilot_name: data.get("pilot_name"),
-          client_name: data.get("client_name"),
-          order_note: data.get("order_note"),
-          order_status: data.get("status"),
-          flight_plan: data.get("flight_plan")
+          dh_inicio: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          dh_fim: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+          numOS: data.get("order_numos"),
+          nome_criador: data.get("creator_name"),
+          nome_piloto: data.get("pilot_name"),
+          nome_cliente: data.get("client_name"),
+          observacao: data.get("order_note"),
+          status: data.get("status"),
+          id_plano_voo: data.get("flight_plan")
         })
         .then(function (response) {
   
