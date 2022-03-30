@@ -69,8 +69,7 @@ class LoginController extends Controller
 
         $model = new ProfileHasModuleModel();
 
-        // Carrega os dados da relação do perfil do usuário com os módulos
-        $response = $model->loadProfileModuleRelationshipExact($user_data["profile_id"], NULL);
+        $response = $model->loadRecordThatMatchesExactlyTheParameters($user_data["profile_id"], NULL);
 
         if($response["status"] && !$response["error"]){
 

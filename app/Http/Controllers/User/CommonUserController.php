@@ -223,6 +223,7 @@ class CommonUserController extends Controller
      */
     function userAccountDesactivation(Request $request) : \Illuminate\Http\Response {
 
+        
 
 
     }

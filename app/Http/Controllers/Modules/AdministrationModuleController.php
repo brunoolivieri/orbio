@@ -67,7 +67,7 @@ class AdministrationModuleController extends Controller
             $up_limit = $limit*5;
             $up_offset = $offset*5;
 
-            $model_response = $model->loadProfilesModulesRelationship((int) $up_offset, (int) $up_limit);
+            $model_response = $model->loadAllRecords((int) $up_offset, (int) $up_limit);
 
             if($model_response["status"] && !$model_response["error"]){
 
@@ -304,10 +304,8 @@ class AdministrationModuleController extends Controller
      */
     public function show($param) : \Illuminate\Http\Response {
         
-        // Os valores da string enviada via URL são obtidos
         $request_values = explode(".", $param);
 
-        // Isolamento dos valores da requisição em variáveis
         $panel = $request_values[0];
         $value_searched = $request_values[1];
         $offset = $request_values[2];
@@ -340,7 +338,7 @@ class AdministrationModuleController extends Controller
             $up_limit = $limit*5;
             $up_offset = $offset*5;
 
-            $model_response = $model->loadProfileModuleRelationshipApproximate($value_searched, (int) $up_offset, (int) $up_limit);
+            $model_response = $model->loadRecordCompatibleWithTheSearchedValue($value_searched, (int) $up_offset, (int) $up_limit);
 
             if($model_response["status"] && !$model_response["error"]){
                 

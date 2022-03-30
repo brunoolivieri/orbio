@@ -393,17 +393,17 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
     {/* Se o acesso do registro for 1, ou se o acesso do registro for igual ao do usuário logado, que estará vendo a tabela, os botões serão desabilitados e a cor dos ícones será mudada para cinza */}
     {/* Isso significa que o usuário Super-Admin não pode editar a si mesmo, e os usuários Sub-Admin, de acesso 2, não podem remover ou editar outros usuários Sub-Admin - apenas o Super-Admin pode editar usuários admin */}
     const deleteButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 4 ? true : false) : true} 
+    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 5 ? true : false) : true} 
     value = {data.profile_id} onClick={handleClickOpen}
     ><DeleteIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 4 ? "#808991" : "#D4353B") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 5 ? "#808991" : "#D4353B") : "#808991"}} 
     /></IconButton>
 
     const updateButton = <IconButton 
-    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 4 ? true : false) : true} 
+    disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 5 ? true : false) : true} 
     value = {data.profile_id} onClick={handleClickOpen}
     ><EditIcon 
-    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 4 ? "#808991" : "#009BE5") : "#808991"}} 
+    style={{ fill: AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? (data.profile_id <= 5 ? "#808991" : "#009BE5") : "#808991"}} 
     /></IconButton>
     
   return (

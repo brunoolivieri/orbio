@@ -85,7 +85,6 @@ export function ReportsPanel(){
      */
      useEffect(() => {
 
-       // Dados para o middleware de autenticação 
        let logged_user_id = AuthData.data.id;
        let module_id = 4;
        let module_action = "ler";
@@ -94,7 +93,6 @@ export function ReportsPanel(){
 
         case false:
 
-         // Parâmetros do SELECT
           let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
 
           AxiosApi.get(`/api/reports-module?args=${pagination_params}&auth=${logged_user_id}.${module_id}.${module_action}`, {
@@ -122,7 +120,6 @@ export function ReportsPanel(){
       
         case true:
 
-          // Parâmetros do SELECT
           let query_arguments = `${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
           AxiosApi.get(`/api/reports-module/reports?args=${query_arguments}&auth=${logged_user_id}.${module_id}.${module_action}`, {
@@ -132,23 +129,11 @@ export function ReportsPanel(){
     
               if(response.status === 200){
 
-                // Os dados do painel são atualizados, recebendo o retorno da pesquisa realizada
                 setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
-      
-              }else{
-                
-                // Se a pesquisa falhar
-                //setSearchError({error: true});
       
               }
     
             })
-            .catch(function (error) {
-              
-              // Se a pesquisa falhar
-              //setSearchError({error: true}); 
-    
-          });
 
         break;
 
@@ -162,12 +147,10 @@ export function ReportsPanel(){
    */
   const handleTablePageChange = (event, value) => {
 
-    // Varia a página selecionada no mecanismo
     setPage(value);
 
     let newOffset = value === 1 ? 0 : value*paginationParams.limit - paginationParams.limit;
-
-    // Variam os dados da tabela 
+ 
     setPaginationParams({offset: newOffset, limit: paginationParams.limit, where: [paginationParams.where[0],paginationParams.where[1]]});
 
   };

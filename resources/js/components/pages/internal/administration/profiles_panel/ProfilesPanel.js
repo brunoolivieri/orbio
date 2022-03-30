@@ -132,14 +132,10 @@ export function ProfilesPanel(){
 
       switch(paginationParams.where[0]){
 
-        // Carregamento de todos os dados considerando o offset e limit
         case false:
 
-          // Parâmetros do caso de carregamento
           let pagination_params = `${paginationParams.offset}|${paginationParams.limit}`;
 
-          // Comunicação com o backend
-          // Para recuperação dos dados que formam o painel de gerenciamento de perfis
           AxiosApi.get(`/api/admin-module?panel=profiles_panel&args=${pagination_params}&auth=${userid}.${module_id}.${action}`, {
             access: AuthData.data.access
             })
@@ -164,20 +160,16 @@ export function ProfilesPanel(){
 
         break;
         
-        // Carregamento dos dados pesquisados considerando o offset e limit
         case true:
 
-          // Parâmetros do caso de carregamento
           let query_arguments = `${'profiles_panel'}.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
-          // Comunicação com o backend
           AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${userid}.${module_id}.${action}`, {
             })
             .then(function (response) {
     
-              if(response.data.status){
+              if(response.status === 200){
 
-                // Os dados do painel são atualizados, recebendo o retorno da pesquisa realizada
                 setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
       
               }
@@ -231,7 +223,7 @@ export function ProfilesPanel(){
           <Grid item xs>
             <TextField
               fullWidth
-              placeholder={"Pesquisar por nome do perfil"}
+              placeholder={"Pesquisar por id ou nome do perfil"}
               InputProps={{
                 disableUnderline: true,
                 sx: { fontSize: 'default' },
@@ -260,6 +252,7 @@ export function ProfilesPanel(){
                 <Table sx={{ minWidth: 500 }} aria-label="customized table">
                     <TableHead>
                       <TableRow>
+                      <StyledTableCell align="center">ID</StyledTableCell>
                         <StyledTableCell align="center">Nome</StyledTableCell>
                         <StyledTableCell align="center">Administração</StyledTableCell>
                         <StyledTableCell align="center">Planos de voo</StyledTableCell>
@@ -276,6 +269,7 @@ export function ProfilesPanel(){
                         {(panelData.status && !panelData.error) && 
                             panelData.response.map((row) => ( 
                               <StyledTableRow key={row.profile_id}>
+                                 <StyledTableCell align="center">{row.profile_id}</StyledTableCell>
                                 <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
                                 <StyledTableCell align="center">
                                   <FormGroup>

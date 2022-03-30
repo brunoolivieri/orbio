@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
-import { useState, useEffect, memo } from 'react';
+import { useState } from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
@@ -134,14 +134,10 @@ export const ComplementaryDataPanel = ((props) => {
     function handleSubmitForm(event){
         event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
   
-            // Inicialização da requisição para o servidor
             requestServerOperation(data);
   
         }
@@ -156,7 +152,6 @@ export const ComplementaryDataPanel = ((props) => {
     */
     function dataValidate(formData){
 
-        // Padrões válidos
         const habAnacPattern = /^\d{6}$/;
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
@@ -164,9 +159,6 @@ export const ComplementaryDataPanel = ((props) => {
         const adressNumberPattern = /^\d+$/;
         const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
-        // Validação dos dados - true para presença de erro e false para ausência
-        // O valor final é um objeto com dois atributos: "erro" e "message"
-        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const habanacValidate = FormValidation(formData.get("user_habanac"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
         const cpfValidate = FormValidation(formData.get("user_cpf"), null, null, cpfPattern, "CPF");
         const cnpjValidate = FormValidation(formData.get("user_cnpj"), null, null, cnpjPattern, "CNPJ");
@@ -181,7 +173,6 @@ export const ComplementaryDataPanel = ((props) => {
         const estadoValidate = formData.get("select_state_input") != 0 ? {error: false, message: ""} : {error: true, message: "Selecione um estado"};
         const complementoValidate = FormValidation(formData.get("user_complemento"), null, null, null);
   
-        // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected(
             {
                 habANAC: habanacValidate.error, 
@@ -216,7 +207,6 @@ export const ComplementaryDataPanel = ((props) => {
             complemento: complementoValidate.message
         });
         
-        // Se o nome ou acesso estiverem errados
         if(habanacValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || rsocialValidate.error || nfantasiaValidate.error || logradouroValidate.error || numeroValidate.error || cepValidate.error || cidadeValidate.error || estadoValidate.error || complementoValidate.error){
 
             return false;
@@ -256,13 +246,11 @@ export const ComplementaryDataPanel = ((props) => {
         })
         .then(function (response) {
   
-            // Tratamento da resposta do servidor
             serverResponseTreatment(response);
   
         })
         .catch(function (error) {
           
-          // Tratamento da resposta do servidor
           serverResponseTreatment(error.response);
   
         });
@@ -278,13 +266,10 @@ export const ComplementaryDataPanel = ((props) => {
 
         if(response.status === 200){
    
-           // Alerta sucesso
            setDisplayAlert({open: true, type: "success", message: "Dados atualizados com sucesso!"});
 
-           // Recarregar os dados do usuário
            props.reload_setter(!props.reload_state);
 
-           // Desabilitar modo de edição
            setEditMode(false);
    
          }else{
@@ -323,7 +308,6 @@ export const ComplementaryDataPanel = ((props) => {
                 }
             );
 
-            // Alerta erro
             setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
    
          }

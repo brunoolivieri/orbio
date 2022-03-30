@@ -1,3 +1,6 @@
+// IMPORTAÇÃO DOS COMPONENTES NATIVOS 
+import { useState, memo } from 'react';
+
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -11,12 +14,11 @@ import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 
+// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../../../services/AxiosApi";
-
 import { FormValidation } from '../../../../../utils/FormValidation';
 
-import { useState, useRef, memo } from 'react';
-
+// OUTROS COMPONENTES
 import moment from 'moment';
 
 export const BasicDataPanel = memo((props) => {
@@ -36,21 +38,18 @@ export const BasicDataPanel = memo((props) => {
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para o modo de edição
     function enableFieldsEdition(){
 
         setEditMode(!editMode);
 
     }
 
-    // Função para ativar o botão de salvamento
     function enableSaveButton(){
 
         setSaveNecessary(true);
 
     }
 
-    // Função para processar recarregamento do formulário
     function reloadFormulary(){
 
         props.reload_setter(!props.reload_state);
@@ -71,14 +70,10 @@ export const BasicDataPanel = memo((props) => {
     function handleSubmitForm(event){
         event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
   
-            // Inicialização da requisição para o servidor
             requestServerOperation(data);
   
         }
@@ -97,21 +92,14 @@ export const BasicDataPanel = memo((props) => {
         const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-        console.log(formData.get("actual_password"))
-
-        // Validação dos dados - true para presença de erro e false para ausência
-        // O valor final é um objeto com dois atributos: "erro" e "message"
-        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
         const actualPasswordValidate = formData.get("actual_password") != null ? FormValidation(formData.get("actual_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
         const newPasswordValidate = formData.get("new_password") != null ? FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
   
-        // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, actual_password: actualPasswordValidate.error, new_password: newPasswordValidate.error});
         setErrorMessage({name: nameValidate.message, email: emailValidate.message, actual_password: actualPasswordValidate.message, new_password: newPasswordValidate.message});
         
-        // Se o nome ou acesso estiverem errados
         if(nameValidate.error || emailValidate.error || actualPasswordValidate.error || newPasswordValidate.error){
   
           return false;
@@ -124,7 +112,7 @@ export const BasicDataPanel = memo((props) => {
   
       }
 
-      /*
+    /*
     * Rotina 3
     * Comunicação AJAX com o Laravel utilizando AXIOS
     * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
@@ -139,13 +127,11 @@ export const BasicDataPanel = memo((props) => {
         })
         .then(function (response) {
   
-            // Tratamento da resposta do servidor
             serverResponseTreatment(response);
   
         })
         .catch(function (error) {
           
-          // Tratamento da resposta do servidor
           serverResponseTreatment(error.response);
   
         });
@@ -161,35 +147,27 @@ export const BasicDataPanel = memo((props) => {
 
         if(response.status === 200){
    
-           // Alerta sucesso
            setDisplayAlert({open: true, type: "success", message: "Dados atualizados com sucesso!"});
 
-           // Recarregar os dados do usuário
            props.reload_setter(!props.reload_state);
 
-           // Desabilitar modo de edição
            setEditMode(false);
    
          }else{
    
            if(response.data.error === "email_already_exists"){
    
-             // Atualização do input
              setErrorDetected({name: false, email: true});
              setErrorMessage({name: null, email: "Esse email já existe"});
    
-             // Alerta erro
              setDisplayAlert({open: true, type: "error", message: "O email informado já está cadastrado no sistema"});
    
-             // Habilitar botão de envio
              setDisabledButton(false);
    
            }else{
    
-             // Alerta
              setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
    
-             // Habilitar botão de envio
              setDisabledButton(false);
    
            } 

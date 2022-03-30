@@ -21,8 +21,6 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            DB::beginTransaction();
-
             ProfileHasModuleModel::insert([
                 ["id_modulo"=> 1, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
                 ["id_modulo"=> 2, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
@@ -31,61 +29,33 @@ class ProfileHasModuleModel extends Model
                 ["id_modulo"=> 5, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0]
             ]);
 
-            // Se a operação for bem sucedida, confirmar
-            DB::commit();
-
             return ["status" => true, "error" => false];
             
         }catch(\Exception $e){
 
-            DB::rollBack();
-
             return ["status" => true, "error" => $e->getMessage()];
 
         }
-
         
     }
 
-    // Método para trazer todos os perfis e seus relacionamentos com todos os módulos
-    function loadProfilesModulesRelationship($offset, $limit) : array {
+    function loadAllRecords($offset, $limit) : array {
 
         try{
 
-            DB::beginTransaction();
-
-            // Query Builder para fazer o relacionamento
-            $allProfilesWithModules = DB::table('profile_has_module')
+            $all_records = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
             ->offset($offset)->limit($limit)->get();
 
-            if($allProfilesWithModules){
+            $response = [
+                "referencialValueForCalcPages" => ProfileHasModuleModel::all()->count() / 5,
+                "selectedRecords" => $all_records
+            ];
 
-                // Assim como na tabela de usuários, é preciso ter o valor do total de registros para calcular a paginação
-                // Mas, nesse caso, é preciso dividir o total por 5, porque cada registro da tabela no front corresponde a 5 registros da tabela do banco de dados
-                $totalTableRecords = ProfileHasModuleModel::all()->count() / 5;
-
-                $response = [
-                    "referencialValueForCalcPages" => $totalTableRecords,
-                    "selectedRecords" => $allProfilesWithModules
-                ];
-
-                 DB::commit();
-
-                 return ["status" => true, "error" => false, "data" => $response];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
+            return ["status" => true, "error" => false, "data" => $response];
                          
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => $e->getMessage()];
 
@@ -93,25 +63,20 @@ class ProfileHasModuleModel extends Model
 
     }
 
-    function loadProfileModuleRelationshipExact($profile_id, $profile_name) : array {
+    function loadRecordThatMatchesExactlyTheParameters($profile_id, $profile_name) : array {
 
         try{
 
-            DB::beginTransaction();
-
-            $profilePowers = DB::table('profile_has_module')
+            $compatible_record = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->where('profile_has_module.id_perfil', '=', $profile_id)
             ->orWhere('profile.nome', '=', $profile_name)
             ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
             ->get();
 
-            return ["status" => true, "error" => false, "data" => $profilePowers];
-
+            return ["status" => true, "error" => false, "data" => $compatible_record];
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => $e->getMessage()];
 
@@ -119,14 +84,11 @@ class ProfileHasModuleModel extends Model
 
     }
 
-    // Método para trazer o relacionamento de um perfil com todos os módulos
-    function loadProfileModuleRelationshipApproximate($value_searched, $offset, $limit) : array {
+    function loadRecordCompatibleWithTheSearchedValue($value_searched, int $offset, int $limit) : array {
 
         try{
 
-            DB::beginTransaction();
-
-            $allProfilesWithModules = DB::table('profile_has_module')
+            $all_compatible_records = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->join('module', 'profile_has_module.id_modulo', '=', 'module.id')
             ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
@@ -134,33 +96,14 @@ class ProfileHasModuleModel extends Model
             ->orWhere('profile.nome', 'LIKE', '%'.$value_searched.'%')
             ->offset($offset)->limit($limit)->get();
 
-            if($allProfilesWithModules){
+            $response = [
+                "referencialValueForCalcPages" => count($all_compatible_records)/5,
+                "selectedRecords" => $all_compatible_records
+            ];
 
-                // Assim como na tabela de usuários, é preciso ter o valor do total de registros para calcular a paginação
-                // Mas, nesse caso, é preciso dividir o total por 5, porque cada registro da tabela no front corresponde a 5 registros da tabela do banco de dados
-                $totalTableRecords = count($allProfilesWithModules) / 5;
-
-                $response = [
-                    "referencialValueForCalcPages" => $totalTableRecords,
-                    "selectedRecords" => $allProfilesWithModules
-                ];
-
-                 DB::commit();
-
-                 return ["status" => true, "error" => false, "data" => $response];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => true];
-
-            }
-
+            return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => $e->getMessage()];
 

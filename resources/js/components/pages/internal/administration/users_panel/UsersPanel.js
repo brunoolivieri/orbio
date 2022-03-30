@@ -84,7 +84,7 @@ export function UsersPanel(){
     let user_id = AuthData.data.id;
     let module_id = 1;
     let action = "ler";
-
+      
     switch(paginationParams.where[0]){
 
       case false:
@@ -114,7 +114,6 @@ export function UsersPanel(){
 
       break;
       
-      // Carregamento dos dados pesquisados considerando o offset e limit
       case true:
 
         let query_arguments = `users_panel.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;

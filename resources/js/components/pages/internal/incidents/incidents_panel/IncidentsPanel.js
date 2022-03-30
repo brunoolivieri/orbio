@@ -84,7 +84,6 @@ export function IncidentsPanel(){
      */
      useEffect(() => {
 
-        // Dados para o middleware de autenticação 
         let logged_user_id = AuthData.data.id;
         let module_id = 5;
         let module_action = "ler";
@@ -93,7 +92,6 @@ export function IncidentsPanel(){
  
          case false:
  
-          // Parâmetros do SELECT
            let pagination_params = `${paginationParams.offset}/${paginationParams.limit}`;
  
            AxiosApi.get(`/api/incidents-module?args=${pagination_params}&auth=none`, {
@@ -121,7 +119,6 @@ export function IncidentsPanel(){
        
          case true:
  
-           // Parâmetros do SELECT
            let query_arguments = `${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
  
            AxiosApi.get(`/api/incidents-module/incidents?args=${query_arguments}&auth=none`, {
@@ -130,8 +127,7 @@ export function IncidentsPanel(){
              .then(function (response) {
      
                if(response.status === 200){
- 
-                 // Os dados do painel são atualizados, recebendo o retorno da pesquisa realizada
+
                  setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
        
                }
@@ -150,12 +146,10 @@ export function IncidentsPanel(){
    */
   const handleTablePageChange = (event, value) => {
 
-    // Varia a página selecionada no mecanismo
     setPage(value);
 
     let newOffset = value === 1 ? 0 : value*paginationParams.limit - paginationParams.limit;
 
-    // Variam os dados da tabela 
     setPaginationParams({offset: newOffset, limit: paginationParams.limit, where: [paginationParams.where[0],paginationParams.where[1]]});
 
   };
