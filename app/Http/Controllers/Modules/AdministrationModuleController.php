@@ -31,15 +31,11 @@ class AdministrationModuleController extends Controller
     public function index() : \Illuminate\Http\Response
     {
 
-        $panel = request()->panel;
+        $request_values = explode(".", request()->args);
+        $offset = $request_values[0];
+        $limit = $request_values[1];
 
-        $request_values = explode("|", request()->args);
-
-        $offset = isset($request_values[0]) ? $request_values[0] : 0;
-        $limit = isset($request_values[1]) ? $request_values[1] : 100;
-
-        // Se o procedimento estiver sendo realizado no painel de usuários...
-        if($panel === "users_panel"){
+        if(request()->panel === "users_panel"){
 
             $model = new UserModel();
             
@@ -57,8 +53,7 @@ class AdministrationModuleController extends Controller
     
             }  
 
-        // Se o procedimento estiver sendo realizado no painel de usuários...
-        }else if($panel === "profiles_panel"){
+        }else if(request()->panel === "profiles_panel"){
 
             $model = new ProfileHasModuleModel();
 
@@ -96,41 +91,34 @@ class AdministrationModuleController extends Controller
     private function usersPanelDataFormat(array $data, int $limit) : array {
 
         $arrData = [];
-        $badgeStatus = [];
+        $badge_status = [];
 
         foreach($data["selectedRecords"] as $row => $object){
 
-                // Formatação dos dados do tipo DATETIME
                 $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
-                $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-                $last_access_formated = $object->dh_ultimo_acesso === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_ultimo_acesso));
+                $updated_at_formated = $object->dh_atualizacao == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
+                $last_access_formated = $object->dh_ultimo_acesso == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_ultimo_acesso));
                 
-                // Se o status for 1 e tiver registro de acesso
-                if($object->status === 1 && $last_access_formated != "Sem dados"){
+                if($object->status == 1){
 
-                    // Valores para uma badge com texto "Ativo", e do tipo "success"
-                    $badgeStatus = ["Ativo", "success"];
+                    $badge_status = ["Ativo", "success"];
                 
-                // Se o status for 0 e não existir registro de acesso
-                }else if($object->status === 0 && $last_access_formated === "Sem dados"){
+                }else if($object->status == 0 && $object->dh_ultimo_acesso == null){
 
-                    // Valores para uma badge com texto "Inativo", e do tipo "error"
-                    $badgeStatus = ["Inativo", "error"];
+                    $badge_status = ["Inativo", "error"];
                 
-                // Se o status for 0 e existir registro de acesso
-                }else if($object->status === 0 && $last_access_formated != "Sem dados"){
+                }else if($object->status == 0 && $object->dh_ultimo_acesso != null){
 
-                    // Valores para uma badge com texto "Desativado", e do tipo "error"
-                    $badgeStatus = ["Desativado", "error"];
+                    $badge_status = ["Desativado", "error"];
 
                 }
 
-                // Geração da estrutura com os dados preparados para uso no front-end
                 $arrData[$row] = array(
                     "user_id" => $object->id,
                     "name" => $object->nome,
                     "email" => $object->email,
-                    "status" => $badgeStatus,
+                    "status_badge" => $badge_status,
+                    "status" => $object->status,
                     "access" => $object->id_perfil,
                     "profile_name" => $object->nome_perfil,
                     "created_at" => $created_at_formated,
@@ -181,11 +169,11 @@ class AdministrationModuleController extends Controller
             // São empurrados novos array enquanto o id do módulo não for igual a 5
             // A linha, $row, varia a cada loop, também o valor do campo "id_modulo", mas o campo "id_perfil" se mantém o mesmo por 5 loops (porque existem 5 módulos relacionados)
             // Ou seja, enquanto o id do perfil for X entre os registros percorridos, o array abaixo receberá, a cada variação de $row, novos valores CRUD referente a relação com outro módulo
-            $module_name = $data[$row]->id_modulo === 1 ? "Administração" : ($data[$row]->id_modulo === 2 ? "Planos" : ($data[$row]->id_modulo === 3 ? "Ordens" : ($data[$row]->id_modulo === 4 ? "Relatorios" : "Incidentes")));
+            $module_name = $data[$row]->id_modulo == 1 ? "Administração" : ($data[$row]->id_modulo === 2 ? "Planos" : ($data[$row]->id_modulo === 3 ? "Ordens" : ($data[$row]->id_modulo === 4 ? "Relatorios" : "Incidentes")));
             $modulesCurrentProfile[$data[$row]->id_modulo] = ["mod_name" => $module_name, "profile_powers" => ["ler" => $data[$row]->ler, "escrever" => $data[$row]->escrever]];
             
             // Se o ID do módulo atual for igual a 5
-            if($data[$row]->id_modulo === 5){
+            if($data[$row]->id_modulo == 5){
 
                 // Então agora existem 5 arrays armazenados no array: $modulesCurrentProfile = [[...], [...], [...], [...], [...]]
                 // Em cada posição tem as relações de poder do atual perfil, "id_perfil", com cada um dos quatro módulos existentes
@@ -305,7 +293,6 @@ class AdministrationModuleController extends Controller
     public function show($param) : \Illuminate\Http\Response {
         
         $request_values = explode(".", $param);
-
         $panel = $request_values[0];
         $value_searched = $request_values[1];
         $offset = $request_values[2];
@@ -342,8 +329,6 @@ class AdministrationModuleController extends Controller
 
             if($model_response["status"] && !$model_response["error"]){
                 
-                // Formatação dos dados para que se adequem ao format da tabela construída no frontend
-                // Recebe os registros pesquisados, a quantidade total de registros, e o LIMIT original
                 $dataFormated = $this->profilesPanelDataFormat($model_response["data"]["selectedRecords"], (int) $model_response["data"]["referencialValueForCalcPages"], $limit);
 
                 return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);

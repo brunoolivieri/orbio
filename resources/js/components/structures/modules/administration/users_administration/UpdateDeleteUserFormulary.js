@@ -316,7 +316,7 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
               type="number"
               fullWidth
               variant="outlined"
-              defaultValue={data.status[0] == "Ativo" ? 1 : 0}
+              defaultValue={data.status}
               InputProps={{
                   readOnly: operation == "delete" ? true : false,
                   inputProps: { min: 0, max: 1 }

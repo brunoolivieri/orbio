@@ -89,7 +89,7 @@ export function UsersPanel(){
 
       case false:
 
-        let pagination_params = `${paginationParams.offset}|${paginationParams.limit}`;
+        let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
 
         AxiosApi.get(`/api/admin-module?panel=users_panel&args=${pagination_params}&auth=${user_id}.${module_id}.${action}`, {
           })
@@ -260,7 +260,7 @@ export function UsersPanel(){
                           <StyledTableCell component="th" scope="row">{row.user_id}</StyledTableCell>
                           <StyledTableCell align="center">{row.name}</StyledTableCell>
                           <StyledTableCell align="center">{row.email}</StyledTableCell> {}
-                          <StyledTableCell align="center">{<Chip label={row.status[0]} color={row.status[1]} variant="outlined" />}</StyledTableCell>
+                          <StyledTableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</StyledTableCell>
                           <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
                           <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                           <StyledTableCell align="center">{row.updated_at}</StyledTableCell>

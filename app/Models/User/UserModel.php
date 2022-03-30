@@ -77,25 +77,17 @@ class UserModel extends Model
         try{
 
             // Query Builder para fazer o relacionamento
-            $allUsers = DB::table('users')
+            $all_records = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
             ->offset($offset)->limit($limit)->orderBy('users.id')->get();
 
-            if($allUsers){
+            $response = [
+                "referencialValueForCalcPages" => UserModel::all()->count(),
+                "selectedRecords" => $all_records
+            ];
 
-                // A paginação é criada com base no total de registros por página. Com LIMIT 10 e 30 registros, serão 3 páginas com 10 registros cada.
-                // Portanto esse valor, do total de registros existentes, é necessário
-                $totalTableRecords = UserModel::all()->count();
-
-                $response = [
-                    "referencialValueForCalcPages" => $totalTableRecords,
-                    "selectedRecords" => $allUsers
-                ];
-
-                return ["status" => true, "error" => false, "data" => $response];
-
-            }
+            return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
 
@@ -116,7 +108,7 @@ class UserModel extends Model
 
         try{
 
-            $searchedUsers = DB::table('users')
+            $all_compatible_records = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
             ->where('users.id', $value_searched)
@@ -124,16 +116,12 @@ class UserModel extends Model
             ->orWhere('users.email', 'LIKE', '%'.$value_searched.'%')
             ->offset($offset)->limit($limit)->orderBy('users.id')->get();
 
-            if($searchedUsers){
+            $response = [
+                "referencialValueForCalcPages" => count($all_compatible_records),
+                "selectedRecords" => $all_compatible_records
+            ];
 
-                $response = [
-                    "referencialValueForCalcPages" => count($searchedUsers),
-                    "selectedRecords" => $searchedUsers
-                ];
-
-                return ["status" => true, "error" => false, "data" => $response];
-
-            }
+            return ["status" => true, "error" => false, "data" => $response];
 
         }catch(\Exception $e){
 
