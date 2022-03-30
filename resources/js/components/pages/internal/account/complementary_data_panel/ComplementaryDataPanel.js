@@ -226,8 +226,7 @@ export const ComplementaryDataPanel = ((props) => {
     */
     function requestServerOperation(data){
 
-        AxiosApi.post("/api/user-update-data?panel=complementary_data", {
-          id: props.userid,
+        AxiosApi.patch(`/api/update-complementary-data/${props.userid}`, {
           complementary_data_id: props.complementary_data_id,
           address_id: props.address_id,
           habAnac: data.get("user_habanac"),

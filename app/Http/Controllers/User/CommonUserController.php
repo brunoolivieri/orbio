@@ -38,89 +38,49 @@ class CommonUserController extends Controller
 
     }
 
-    /**
-     * Método para processar a atualização dos dados do usuário
-     * Utilizado no caso em que o próprio usuário atualiza o seus dados
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    function userAccountDataUpdate(Request $request) : \Illuminate\Http\Response {
-        
-        $account_panel = request()->panel;
+    function userBasicDataUpdate(Request $request, $id) : \Illuminate\Http\Response {
 
-        if($account_panel === "basic_data"){
+        $check_data_response = $this->checkIfBasicDataAlreadyExists($request);
 
-            if($this->userBasicDataUpdate($request)){
-
-                return response("", 200);
-
-            }else{
-
-                return response("", 500);
-
-            }
-
-        }else if($account_panel === "complementary_data"){
-
-            if($this->userComplementaryDataUpdate($request)){
-
-                return response("", 200);
-
-            }else{
-
-                return response("", 500);
-
-            }
-
-        }
-    }
-
-    private function userBasicDataUpdate(Request $request) : array {
-
-        $checkDataResponse = $this->checkIfBasicDataAlreadyExists($request);
-
-        if($checkDataResponse["status"] && !$checkDataResponse["error"]){
+        if($check_data_response["status"] && !$check_data_response["error"]){
 
             try{
-
-                DB::beginTransaction();
     
-                $old_password = UserModel::select('senha')->where('id', $request->id)->get();
+                $user_record = UserModel::select('senha')->where('id', $id)->get();
     
-                if(password_verify($request->actual_password, $old_password)){
+                if(password_verify($request->actual_password, $user_record[0]->senha)){
     
-                    $data = [
+                    $update = UserModel::where('id', $id)->update([
                         "nome" => $request->name,
                         "email" => $request->email,
                         "senha" => password_hash($request->new_password, PASSWORD_DEFAULT)
-                    ];
+                    ]);
     
-                    $update = UserModel::where('id', $request->id)->update($data);
+                    return response("", 200);
     
-                    DB::commit();
-    
-                    return ["status" => true];
-    
+                }else{
+
+                    return response(["error" => "wrong_password"], 500);
                 }
     
             }catch(\Exception $e){
-    
-                DB::rollBack();
-    
-                return ["status" => false, "error" => $e->getMessage()];
+
+                return response(["error" => $e->getMessage()], 200);
     
             }
 
-        }else if(!$checkDataResponse["status"] && $checkDataResponse["error"]){
+        }else if(!$check_data_response["status"] && $check_data_response["error"]){
 
-            return $checkDataResponse;
+            return $check_data_response;
 
         }
 
 
     }
 
-    private function userComplementaryDataUpdate(Request $request) : array {
+    function userComplementaryDataUpdate(Request $request, $id) : \Illuminate\Http\Response {
+
+        dd($request->all());
 
         $checkDataResponse = $this->checkIfComplementaryDataAlreadyExists($request);
 
@@ -155,13 +115,13 @@ class CommonUserController extends Controller
 
                 DB::commit();
 
-                return ["status" => true, "error" => false];
+                return response("", 200);
     
             }catch(\Exception $e){
     
                 DB::rollBack();
-    
-                return ["status" => false, "error" => $e->getMessage()];
+
+                return response(["error" => $e->getMessage()], 500);
     
             }
 
@@ -223,7 +183,7 @@ class CommonUserController extends Controller
      */
     function userAccountDesactivation(Request $request) : \Illuminate\Http\Response {
 
-        
+
 
 
     }

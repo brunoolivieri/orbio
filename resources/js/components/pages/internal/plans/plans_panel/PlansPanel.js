@@ -26,8 +26,9 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Badge } from "@mui/material";
 import Chip from '@mui/material/Chip';
-import MapIcon from '@mui/icons-material/Map';
 import { Link } from "@mui/material";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
@@ -192,7 +193,7 @@ export function PlansPanel(){
             <Tooltip title="Novo Plano">
               <Link href={`/sistema/mapa`} target="_blank">
                 <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                  <MapIcon />
+                  <AddCircleIcon />
                 </IconButton>
               </Link>
             </Tooltip>
@@ -277,7 +278,7 @@ export function PlansPanel(){
                             <StyledTableCell align="center">{row.plan_description}</StyledTableCell>
                             <StyledTableCell align="center">{moment(row.created_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
                             <StyledTableCell align="center">{row.updated_at == null ? "Sem dados" : moment(row.updated_at).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                            <StyledTableCell align="center"><Link href={`/sistema/mapa`} target="_blank"><IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}><MapIcon /></IconButton></Link></StyledTableCell>
+                            <StyledTableCell align="center"><Link href={`/sistema/mapa`} target="_blank"><IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}><RemoveRedEyeIcon /></IconButton></Link></StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeletePlanFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                             <StyledTableCell align="center"><UpdateDeletePlanFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
                           </StyledTableRow>

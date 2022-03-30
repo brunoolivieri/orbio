@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES NATIVOS 
-import { useState, memo } from 'react';
+import { useState, memo, useRef } from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
@@ -35,6 +35,10 @@ export const BasicDataPanel = memo((props) => {
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
+
+    // States dos inputs de senha
+    const [actualPassword, setActualPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -94,23 +98,45 @@ export const BasicDataPanel = memo((props) => {
 
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
-        const actualPasswordValidate = formData.get("actual_password") != null ? FormValidation(formData.get("actual_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
-        const newPasswordValidate = formData.get("new_password") != null ? FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
+        const actualPasswordValidate = actualPassword != null ? FormValidation(actualPassword, 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
+        const newPasswordValidate = newPassword != null ? FormValidation(newPassword, 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
   
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, actual_password: actualPasswordValidate.error, new_password: newPasswordValidate.error});
         setErrorMessage({name: nameValidate.message, email: emailValidate.message, actual_password: actualPasswordValidate.message, new_password: newPasswordValidate.message});
         
-        if(nameValidate.error || emailValidate.error || actualPasswordValidate.error || newPasswordValidate.error){
+        if(nameValidate.error || emailValidate.error || actualPasswordValidate.error || newPasswordValidate.error || passwordsAreEqual()){
   
           return false;
   
         }else{
-  
+
             return true;
   
         }
   
-      }
+    }
+
+    /*
+    * Subrotina da rotina 2
+    * Verifica se a nova senha e a anterior são iguais 
+    * O retorno true configura um erro
+    * 
+    */
+    function passwordsAreEqual(){
+
+        if(actualPassword == newPassword){
+
+            setDisplayAlert({open: true, type: "error", message: "Erro! A nova senha não pode ser igual à atual."});
+
+            return true;
+
+        }else{
+
+            return false;
+
+        }
+
+    }
 
     /*
     * Rotina 3
@@ -119,11 +145,11 @@ export const BasicDataPanel = memo((props) => {
     */
     function requestServerOperation(data){
 
-        AxiosApi.post("/api/user-update-data?panel=basic_data", {
-          id: props.userid,
+        AxiosApi.patch(`/api/update-basic-data/${props.userid}`, {
           email: data.get("user_email"),
           name: data.get("user_fullname"),
-          password: data.get("user_password"),
+          actual_password: actualPassword,
+          new_password: newPassword
         })
         .then(function (response) {
   
@@ -152,25 +178,34 @@ export const BasicDataPanel = memo((props) => {
            props.reload_setter(!props.reload_state);
 
            setEditMode(false);
+
+           setNewPassword(null);
+           setActualPassword(null);
    
          }else{
    
            if(response.data.error === "email_already_exists"){
    
-             setErrorDetected({name: false, email: true});
-             setErrorMessage({name: null, email: "Esse email já existe"});
+            setErrorDetected({name: false, email: true});
+            setErrorMessage({name: null, email: "Esse email já existe"});
+
+            setDisplayAlert({open: true, type: "error", message: "O email informado já está cadastrado no sistema"});
+
+            setDisabledButton(false);
    
-             setDisplayAlert({open: true, type: "error", message: "O email informado já está cadastrado no sistema"});
+           }else if(response.data.error === "wrong_password"){
    
-             setDisabledButton(false);
+            setDisplayAlert({open: true, type: "error", message: "Erro! Senha incorreta."});
+   
+            setDisabledButton(false);
    
            }else{
+
+            setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
    
-             setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
-   
-             setDisabledButton(false);
-   
-           } 
+            setDisabledButton(false);
+
+           }
    
         }
    
@@ -306,15 +341,14 @@ export const BasicDataPanel = memo((props) => {
                     <TextField
                         required
                         id="actual_password"
-                        name="actual_password"
                         label="Senha atual"
                         type="password"
                         fullWidth
+                        value={actualPassword}
                         variant="outlined"
                         helperText = {errorMessage.actual_password}
                         error = {errorDetected.actual_password}
-                        defaultValue={""}
-                        onChange={enableSaveButton}
+                        onChange={(e) => { enableSaveButton(); setActualPassword(e.currentTarget.value); }}
                         InputProps={{
                             readOnly: !editMode,
                         }}
@@ -326,15 +360,14 @@ export const BasicDataPanel = memo((props) => {
                     <TextField
                         required
                         id="new_password"
-                        name="new_password"
                         label="Nova senha"
                         type="password"
                         fullWidth
+                        value={newPassword}
                         variant="outlined"
                         helperText = {errorMessage.new_password}
                         error = {errorDetected.new_password}
-                        defaultValue={""}
-                        onChange={enableSaveButton}
+                        onChange={(e) => { enableSaveButton(); setNewPassword(e.currentTarget.value); }}
                         InputProps={{
                             readOnly: !editMode,
                         }}
