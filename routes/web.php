@@ -36,9 +36,9 @@ Route::view('/recuperarsenha', "react_main_root"); // Rota da recuperação da s
 
 // ==== ROTAS INTERNAS, ROTA DO MAPA E ROTA DE SAÍDA DO SISTEMA ==== //
 Route::get('/sistema', [CommonInternalPagesController::class, "index"])->middleware(["session.auth"]); // Realizar verificações e retornar a view na rota "/sistema"
-Route::get('/sistema/{internalpage?}', function(){ return redirect("/sistema"); })->where(["internalpage" => "^((?!sair).)*$"]); // Qualquer requisição para uma subrota de "/sistema" redirecionar para "/sistema"
+Route::get('/sistema/{internalpage?}', function(){ return redirect("/sistema"); })->where(["internalpage" => "/^(sair|mapa)$/i"]); // Qualquer requisição para uma subrota de "/sistema" redirecionar para "/sistema"
 Route::get('/sistema/sair', [CommonInternalPagesController::class, "logout"]); // Rota acessada quando o usuário sai do sistema - sessão é terminada e o usuário é enviado para o login
-//Route::view('/sistema/mapa', "map_root")->middleware(["session.auth"]); // Rota acessada quando o usuário pretende acessar o mapa
+Route::view('/sistema/mapa', "map_root")->middleware(["session.auth"]); // Rota acessada quando o usuário pretende acessar o mapa
 
 // ==== ROTA DO LINK ENVIADO POR EMAIL ==== //
 Route::get('/registrar/ativar', [CommonUserController::class, "userAccountActivation"]); // Rota acessada pelo usuário via e-mail - sempre possui o query parameter do ID do usuário

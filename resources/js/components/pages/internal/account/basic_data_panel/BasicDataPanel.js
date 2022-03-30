@@ -70,7 +70,7 @@ export const BasicDataPanel = memo((props) => {
 
     function temporarilyDisableAccount(){
         
-        console.log("yes")
+        console.log("DESATIVAÇÃO DA CONTA")
         
 
 
