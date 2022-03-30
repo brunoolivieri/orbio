@@ -50,9 +50,10 @@ Route::post('/api/alterar-senha', [ForgotPasswordController::class, "passwordCha
 Route::post('/api/get-token-data', [CommonInternalPagesController::class, "getDataFromTokenJwt"]); // Requisição para decodificação do token JWT
 
 // ==== ROTAS DE API - OPERAÇÕES DO USUÁRIO LOGADO ==== //
-Route::get('/api/user-account-data', [CommonUserController::class, "loadUserAccountData"])->middleware("session.auth"); // Requisição para recuperação dos dados do usuário (básicos ou complementares)
+Route::get('/api/user-account-data', [CommonUserController::class, "loadUserAccountData"])->middleware("session.auth"); // Requisição para recuperação dos dados do usuário (básicos e complementares)
 Route::patch('/api/update-basic-data/{id}', [CommonUserController::class, "userBasicDataUpdate"])->middleware("session.auth"); 
 Route::patch('/api/update-complementary-data/{id}', [CommonUserController::class, "userComplementaryDataUpdate"])->middleware("session.auth"); 
+Route::post("/api/desactivate-account", [CommonUserController::class, "userAccountDesactivation"])->middleware("session.auth"); 
 
 // ==== ROTAS DE REQUISIÇÕES API - MÓDULOS ==== //
 Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);

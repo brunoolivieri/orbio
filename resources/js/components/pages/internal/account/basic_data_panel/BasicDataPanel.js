@@ -17,6 +17,11 @@ import { Typography } from '@mui/material';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
+import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
+
+// IMPORTAÇÃO DOS ASSETS
+import successImage from "../../../../assets/images/Success/success.png";
+import dangerImage from "../../../../assets/images/Error/error.png";
 
 // OUTROS COMPONENTES
 import moment from 'moment';
@@ -40,6 +45,9 @@ export const BasicDataPanel = memo((props) => {
     const [actualPassword, setActualPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
+    // State do formulário de desativação da conta
+    const [openModal, setOpenModal] = useState(false);
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     function enableFieldsEdition(){
@@ -60,7 +68,10 @@ export const BasicDataPanel = memo((props) => {
 
     }
 
-    function deactivateAccount(){
+    function temporarilyDisableAccount(){
+        
+        console.log("yes")
+        
 
 
     }
@@ -179,8 +190,8 @@ export const BasicDataPanel = memo((props) => {
 
            setEditMode(false);
 
-           setNewPassword(null);
-           setActualPassword(null);
+           setNewPassword("");
+           setActualPassword("");
    
          }else{
    
@@ -240,6 +251,27 @@ export const BasicDataPanel = memo((props) => {
                     <RefreshIcon color="inherit" sx={{ display: 'block' }} />         
                     </IconButton>
                 </Tooltip>  
+            </Grid>
+
+            <Grid item>
+                <GenericModalDialog 
+                modal_controller = {{state: openModal, setModalState: setOpenModal}}
+                title = {{top: {required: false}, middle: {required: false}}}
+                image = {{required: true, src: dangerImage}}
+                content_text = {"A desativação é imediata. O login ainda será possível, mas a conta terá acesso mínimo ao sistema."}
+                actions = {{
+                    required: true, 
+                    close_button_text: "Cancelar", 
+                    confirmation_default_button: {
+                        required: true, 
+                        text: "Desativar a conta", 
+                        event: temporarilyDisableAccount
+                    },
+                    confirmation_button_with_link:{
+                        required: false
+                    }
+                }}
+                />
             </Grid>
 
         </Grid>
@@ -383,7 +415,7 @@ export const BasicDataPanel = memo((props) => {
 
         <Grid container spacing={3}>
             <Grid item>
-                <Button variant="contained" color="error" onClick={deactivateAccount}>
+                <Button variant="contained" color="error" onClick = {() => {setOpenModal(!openModal)}}>
                     Desativar conta temporariamente
                 </Button> 
             </Grid>

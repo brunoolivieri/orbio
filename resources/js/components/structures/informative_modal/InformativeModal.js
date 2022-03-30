@@ -26,8 +26,6 @@ export const InformativeModal = React.memo(({...operation}) => {
         setOpen(false);
     };
 
-    //console.log(operation)
-
     let modalImage = "";
 
     if(operation.type === "registration" && operation.status){
