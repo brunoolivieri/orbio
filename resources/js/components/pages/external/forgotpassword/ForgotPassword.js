@@ -1,15 +1,15 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// REACT
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// CUSTOM
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 import { BackdropLoading } from '../../../structures/backdrop_loading/BackdropLoading';
 import { GenericModalDialog } from '../../../structures/generic_modal_dialog/GenericModalDialog';
 
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// MATERIAL UI
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -22,7 +22,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
 
-// IMPORTAÇÃO DOS ASSETS
+// ASSETS
 import success_image from "../../../assets/images/success/success.png";
 import email_image from "../../../assets/images/email/email.png";
 import error_image from "../../../assets/images/error/error.png";

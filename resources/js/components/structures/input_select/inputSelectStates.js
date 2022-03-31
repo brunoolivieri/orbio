@@ -1,20 +1,22 @@
+// MATERIAL UI
+import * as React from 'react';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+// REACT
+import { memo,useState} from "react";
+
+// CUSTOM
 import brazil_cities from "../../../services/brazil_geo_data.json";
 
-import { useState} from "react";
-
-import * as React from 'react';
-
-export function SelectStates(props){
+export const SelectStates = memo((props) => {
 
     const [selectedItemValue, setSelectedItem] = useState(props.default != null ? props.default : "0");
 
     // State do carregamento dos dados do input de select
-    const [selectData, setSelectionData] = useState({status: false, data: brazil_cities.estados});
+    const [selectData] = useState({status: false, data: brazil_cities.estados});
 
     const handleSelectChange = (event) => {
 
@@ -60,4 +62,4 @@ export function SelectStates(props){
 
     )
     
-}
+});

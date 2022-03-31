@@ -1,8 +1,8 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+// REACT
+import { memo, useEffect } from 'react';
 import React from 'react';
 
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// MATERIAL UI
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,7 +11,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 
-export function GenericModalDialog({...props}) {
+export const GenericModalDialog = memo(({...props}) => {
 
     const handleClickOpen = () => {
         props.modal_controller.setModalState(true);
@@ -96,4 +96,5 @@ export function GenericModalDialog({...props}) {
     </Dialog>
     </>
   );
-}
+
+});

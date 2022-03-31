@@ -1,7 +1,7 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// REACT
 import { useEffect, useState } from "react"; // Hook useEffect
 
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// CUSTOM
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext"; // State global de autenticação
 import AxiosApi from "../../../../services/AxiosApi"; // Axios para comunicação com o backend via AJAX
 import Navigator from './Navigator';
@@ -10,7 +10,7 @@ import { InternalRoutes } from "../../../../routes/ReactRouter";
 import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
 import { GenericModalDialog } from "../../../structures/generic_modal_dialog/GenericModalDialog";
 
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// MATERIALUI
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -18,7 +18,7 @@ import Link from '@mui/material/Link';
 import { useTheme } from "@emotion/react";
 import { makeStyles } from "@mui/styles";
 
-// IMPORTAÇÃO DOS ASSETS
+// ASSETS
 import error_image from "../../../assets/images/error/error.png";
 
 function Copyright() {
