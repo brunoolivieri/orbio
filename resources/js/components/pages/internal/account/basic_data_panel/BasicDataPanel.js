@@ -20,7 +20,6 @@ import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
 
 // IMPORTAÇÃO DOS ASSETS
-import successImage from "../../../../assets/images/Success/success.png";
 import dangerImage from "../../../../assets/images/Error/error.png";
 
 // OUTROS COMPONENTES
@@ -45,8 +44,8 @@ export const BasicDataPanel = memo((props) => {
     const [actualPassword, setActualPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
 
-    // State do formulário de desativação da conta
-    const [openModal, setOpenModal] = useState(false);
+    // State do modal informativo acerca da desativação da conta
+    const [openGenericModal, setOpenGenericModal] = useState(false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -255,13 +254,16 @@ export const BasicDataPanel = memo((props) => {
 
             <Grid item>
                 <GenericModalDialog 
-                modal_controller = {{state: openModal, setModalState: setOpenModal}}
+                modal_controller = {{state: openGenericModal, setModalState: setOpenGenericModal, counter: {required: false}}}
                 title = {{top: {required: false}, middle: {required: false}}}
                 image = {{required: true, src: dangerImage}}
                 content_text = {"A desativação é imediata. O login ainda será possível, mas a conta terá acesso mínimo ao sistema."}
                 actions = {{
                     required: true, 
-                    close_button_text: "Cancelar", 
+                    close_button_text: {
+                        required: true,
+                        text: "Cancelar"
+                    }, 
                     confirmation_default_button: {
                         required: true, 
                         text: "Desativar a conta", 

@@ -9,7 +9,6 @@ use App\Http\Controllers\Auth\ForgotPasswordController; // Controlador da recupe
 
 // CONTROLADORES DAS PÁGINAS INTERNAS DO SISTEMA
 use App\Http\Controllers\Pages\CommonInternalPagesController; // Controlador geral do sistema interno
-use App\Http\Controllers\Pages\AdministrationPageController; // Controlador da página de administrador
 
 // CONTROLADORES DAS FUNÇÕES DE USUÁRIO
 use App\Http\Controllers\User\CommonUserController; // Controlador do usuário geral
@@ -34,9 +33,9 @@ Route::get('/', function(){ return redirect("/acessar"); }); // Redirecionar de 
 Route::view('/acessar', "react_main_root"); // Rota do login - retornar a view 
 Route::view('/recuperarsenha', "react_main_root"); // Rota da recuperação da senha - retornar a view 
 
-// ==== ROTAS INTERNAS, ROTA DO MAPA E ROTA DE SAÍDA DO SISTEMA ==== //
+// ==== ROTAS DAS SEÇÕES INTERNAS, DO MAPA E DE SAÍDA  ==== //
 Route::get('/sistema', [CommonInternalPagesController::class, "index"])->middleware(["session.auth"]); // Realizar verificações e retornar a view na rota "/sistema"
-Route::get('/sistema/{internalpage?}', function(){ return redirect("/sistema"); })->where(["internalpage" => "/^(sair|mapa)$/i"]); // Qualquer requisição para uma subrota de "/sistema" redirecionar para "/sistema"
+Route::get('/sistema/{internalpage?}', function(){ return redirect("/sistema"); })->where(["internalpage" => "^(?!sair|mapa).*$"]); // Qualquer requisição para uma subrota de "/sistema" redirecionar para "/sistema"
 Route::get('/sistema/sair', [CommonInternalPagesController::class, "logout"]); // Rota acessada quando o usuário sai do sistema - sessão é terminada e o usuário é enviado para o login
 Route::view('/sistema/mapa', "map_root")->middleware(["session.auth"]); // Rota acessada quando o usuário pretende acessar o mapa
 

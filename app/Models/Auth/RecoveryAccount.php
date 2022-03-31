@@ -43,18 +43,18 @@ class RecoveryAccount extends Model
 
     }
 
-    function sendTokenToUserEmail(string $user_email, int $token) : bool {
+    function sendTokenToUserEmail(string $user_email, int $token) : array {
 
         try{
 
             // Construção e envio do email do código para alteração da senha
             Mail::to($user_email)->send(new UserChangePasswordEmail($token));
 
-            return true;
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 
-            return false;
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 

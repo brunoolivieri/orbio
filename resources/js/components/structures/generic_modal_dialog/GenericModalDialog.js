@@ -10,15 +10,6 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
-import { IconButton, Tooltip } from '@mui/material';
-
-/*
-
-- Esse modal é utilizado para construir formulários para a página de administração
-- Ele recebe os dados e o tipo de operação, e é construído de acordo com esses dados
-- Por enquanto é utilizado apenas para a operação de DELETE e UPDATE de usuários
-
-*/
 
 export function GenericModalDialog({...props}) {
 
@@ -31,6 +22,20 @@ export function GenericModalDialog({...props}) {
         props.modal_controller.setModalState(false);
 
     };
+
+    useEffect(() => {
+
+        if(props.modal_controller.counter.required){
+
+            setTimeout(() => {
+
+                props.modal_controller.setModalState(false);
+
+            }, 5000);
+
+        }
+
+    },[])
 
   return (
     <>
@@ -74,7 +79,9 @@ export function GenericModalDialog({...props}) {
 
     {props.actions.required &&
         <DialogActions>
-        <Button onClick={handleClose}>{props.actions.close_button_text}</Button>
+        {props.actions.close_button_text.required &&
+        <Button onClick={handleClose}>{props.actions.close_button_text.text}</Button>
+        }
         {props.actions.confirmation_default_button.required &&
         <Button onClick={props.actions.confirmation_default_button.event}>{props.actions.confirmation_default_button.text}</Button>
         }

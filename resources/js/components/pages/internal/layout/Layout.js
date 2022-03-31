@@ -6,8 +6,9 @@ import { useAuthentication } from "../../../context/InternalRoutesAuth/Authentic
 import AxiosApi from "../../../../services/AxiosApi"; // Axios para comunicação com o backend via AJAX
 import Navigator from './Navigator';
 import Header from './Header';
-import { ScreenDarkFilter } from "../../../structures/screenDarkFilter/ScreenDarkFilter";
 import { InternalRoutes } from "../../../../routes/ReactRouter";
+import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
+import { GenericModalDialog } from "../../../structures/generic_modal_dialog/GenericModalDialog";
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
@@ -16,6 +17,9 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { useTheme } from "@emotion/react";
 import { makeStyles } from "@mui/styles";
+
+// IMPORTAÇÃO DOS ASSETS
+import error_image from "../../../assets/images/error/error.png";
 
 function Copyright() {
   return (
@@ -54,7 +58,7 @@ export function Layout() {
 
       // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
       // Neste caso, a operação é a verificação do token JWT
-      const [operationStatus, setOperationStatus] = useState({type: null, status: null, tittle:null, message: null});
+      const [operationStatus, setOperationStatus] = useState({type: null, title:null, message: null, image: null});
 
       // Classes do objeto makeStyles
       const classes = useStyles();
@@ -63,11 +67,8 @@ export function Layout() {
 
       useEffect(() => {
 
-        // Ativação da tela de login com o componente ScreenDarkFilter
-        setOperationStatus({type: "loading", status: true, tittle: "Processando....", message: null});
+        setOperationStatus({type: "loading", title: "Processando....", message: null});
 
-        // Decodificação do token JWT
-        // Se falhar, o usuário é redirecionado para a página de acesso
         AxiosApi.post("/api/get-token-data", {
           token: tokenJWT
           })
@@ -75,32 +76,24 @@ export function Layout() {
   
           if(response.status === 200){
 
-             // Preenchimento do state global de autenticação com os dados do Token decodificado
              setAuthData({status: true, data: response.data.tokenData});
 
-             // Desaparece a tela de carregamento
-             setOperationStatus({type: null, status: null, tittle: null, message: null}); 
+             setOperationStatus({type: null, title: null, message: null, image: null}); 
         
           }else if(response.status === 500){
 
-              // Token é removido do localstorage
               localStorage.removeItem('user_authenticated_token');
 
-              // Aparece um Modal alertando sobre o erro
-              // Neste caso, a autenticação do Token JWT falhou
-              setOperationStatus({type: "token_jwt", status: false, tittle: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte."});
+              setOperationStatus({type: "auth_error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image});
   
           }
   
           })
           .catch(function (error) {
 
-            // Token é removido do localstorage
             localStorage.removeItem('user_authenticated_token');
 
-            // Aparece um Modal alertando sobre o erro
-            // Neste caso, a autenticação do Token JWT falhou
-            setOperationStatus({type: "token_jwt", status: false, tittle: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte."});
+            setOperationStatus({type: "auth_error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image});
   
           });
 
@@ -114,31 +107,49 @@ export function Layout() {
 
   // =============================================================== //
 
-  /*
-
-  - A estruturação da página é realizada apenas apenas a confirmação do Token do usuário
-  - E também é realizado dessa forma para impedir que a estrutura monte antes da validação do Token
-
-  */
-
   return (
-    <>
-    {/* Renderização condicional do componente ScreenDarkFilter */}
-    {operationStatus.type != null && <ScreenDarkFilter {...operationStatus} />}
 
-    {AuthData.status ? 
-      <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-        <Box
-          component="nav"
-          sx={{flexShrink: { sm: 0 }}}
-        >
-          
-          <Navigator
-            PaperProps={{ style: { width: drawerWidth } }}
-            variant="temporary"
-            open={menuOpen}
-            onClose={handleDrawerToggle}
-          />
+    <>
+      {operationStatus.type == "loading" &&
+        <BackdropLoading />
+      }
+
+      {operationStatus.type == "auth_error" &&
+        <GenericModalDialog 
+        modal_controller = {{state: true, setModalState: null, counter: {required: false}}}
+        title = {{top: {required: true, text: operationStatus.title}, middle: {required: false}}}
+        image = {{required: true, src: operationStatus.image}}
+        content_text = {operationStatus.message}
+        actions = {{
+            required: true, 
+            close_button_text: {
+              required: false
+            }, 
+            confirmation_default_button: {
+                required: false
+            },
+            confirmation_button_with_link:{
+                required: true,
+                href: "/acessar",
+                text: "Voltar para o login"
+            }
+        }}
+        />
+      }
+
+      {AuthData.status && 
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+          <Box
+            component="nav"
+            sx={{flexShrink: { sm: 0 }}}
+          >
+            
+            <Navigator
+              PaperProps={{ style: { width: drawerWidth } }}
+              variant="temporary"
+              open={menuOpen}
+              onClose={handleDrawerToggle}
+            />
 
         </Box>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -155,7 +166,8 @@ export function Layout() {
             <Copyright />
           </Box>
         </Box>
-      </Box> : ""}
+      </Box> 
+      }
     </>
 
   ) 

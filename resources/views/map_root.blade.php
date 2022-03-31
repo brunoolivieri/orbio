@@ -41,7 +41,7 @@
 	<link href="{{ asset('css/map/estilo.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- FILESAVER -->
-	<!-- <script src="/authentication/drone/js/node_modules/file-saver/src/FileSaver.js"></script> -->
+	<script src="{{ asset('js/map/file_saver/file_saver.js') }}"></script> 
 
  	<title>Embrapa & BirdView</title>
  </head>

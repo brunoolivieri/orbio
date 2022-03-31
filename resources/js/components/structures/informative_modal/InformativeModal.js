@@ -46,9 +46,6 @@ export const InformativeModal = React.memo(({...operation}) => {
 
     }
 
-    // Por que esse comando é executado mais vezes que o número total de setStates?
-    // console.log(operation)
-
     return(
         <div>
         <Dialog

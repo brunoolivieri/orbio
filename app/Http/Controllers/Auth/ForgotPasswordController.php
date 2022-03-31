@@ -29,28 +29,30 @@ class ForgotPasswordController extends Controller
 
             $tokenGenerated = $model->generateTokenForChangePassword();
 
-            $response = $model->insertTokenIntoUserRegistry($request->email, (int) $tokenGenerated);
+            $model_response = $model->insertTokenIntoUserRegistry($request->email, (int) $tokenGenerated);
 
-            if($response["status"] && !$response["error"]){
+            if($model_response["status"] && !$model_response["error"]){
 
-                if($model->sendTokenToUserEmail($request->email, (int) $tokenGenerated)){
+                $model_response = $model->sendTokenToUserEmail($request->email, (int) $tokenGenerated);
+
+                if($model_response["status"] && !$model_response["error"]){
     
                     return response("", 200);
     
-                }else{
+                }else if(!$model_response["status"] && $model_response["error"]){
     
-                    return response("", 500);
+                    return response(["error" => $model_response["error"]], 500);
                 }
                 
-            }else if(!$response["status"] && $response["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
     
-                return response($response["error"], 500);
+                return response(["error" => $model_response["error"]], 500);
     
             }
 
         }else{
 
-            return response("email", 500);
+            return response(["error" => "unregistered_email"], 500);
 
         }
         
