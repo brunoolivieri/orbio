@@ -189,7 +189,8 @@ export function Login(){
             sm={4}
             md={7}
             sx={{
-                backgroundImage: 'url(https://news.microsoft.com/wp-content/uploads/prod/sites/42/2018/05/DJI_Hero-1920x1080.jpg)',
+                backgroundColor: "#222",
+                backgroundImage: 'url()',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

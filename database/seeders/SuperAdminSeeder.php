@@ -1,12 +1,5 @@
 <?php
 
-/*
-
-- Rotina para criar um Super Admin
-- Executando o comando para executar o seeder, o usuário Super Admin é criado
-
-*/
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;

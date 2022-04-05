@@ -52,7 +52,7 @@ export function UsersPanel(){
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   // Utilizador do state global de autenticação
-  const {AuthData, setAuthData} = useAuthentication();
+  const {AuthData} = useAuthentication();
 
   // State da paginação da tabela e função de alteração
   const [page, setPage] = useState(1);
@@ -89,9 +89,7 @@ export function UsersPanel(){
 
       case false:
 
-        let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
-
-        AxiosApi.get(`/api/admin-module?panel=users_panel&args=${pagination_params}&auth=${user_id}.${module_id}.${action}`, {
+        AxiosApi.get(`/api/admin-module?panel=users_panel&limit=${paginationParams.limit}&auth=${user_id}.${module_id}.${action}`, {
           })
           .then(function (response) {
   
@@ -116,7 +114,7 @@ export function UsersPanel(){
       
       case true:
 
-        let query_arguments = `users_panel.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
+        let query_arguments = `users_panel.${paginationParams.where[1]}.${paginationParams.limit}`;
 
         AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${user_id}.${module_id}.${action}`, {
           access: AuthData.data.access
@@ -243,7 +241,7 @@ export function UsersPanel(){
                     <StyledTableCell align="center">Nome</StyledTableCell>
                     <StyledTableCell align="center">Email</StyledTableCell>
                     <StyledTableCell align="center">Status</StyledTableCell>
-                    <StyledTableCell align="center">Acesso</StyledTableCell>
+                    <StyledTableCell align="center">Perfil</StyledTableCell>
                     <StyledTableCell align="center">Criação da conta</StyledTableCell>
                     <StyledTableCell align="center">Última atualização</StyledTableCell>
                     <StyledTableCell align="center">Último acesso</StyledTableCell>

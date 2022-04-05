@@ -1,12 +1,5 @@
 <?php
 
-/*
-
-- Rotina para criar os módulos
-- Executando o comando para executar o seeder, serão criados os registros do array $data
-
-*/
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 // Models
 use App\Models\User\UserModel;
@@ -32,20 +33,17 @@ class AdministrationModuleController extends Controller
     {
 
         $request_values = explode(".", request()->args);
-        $offset = $request_values[0];
         $limit = $request_values[1];
 
         if(request()->panel === "users_panel"){
 
             $model = new UserModel();
             
-            $response = $model->loadAllUsers((int) $offset, (int) $limit);
+            $response = $model->loadUsersWithPagination((int) $limit);
     
             if($response["status"] && !$response["error"]){
-    
-                $dataFormated = $this->usersPanelDataFormat($response["data"], $limit);
 
-                return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+                return response($response["data"], 200);
     
             }else if(!$response["status"] && $response["error"]){
 
@@ -80,128 +78,7 @@ class AdministrationModuleController extends Controller
 
     }
 
-    /**
-     * Função para formatação dos dados para o painel de usuários
-     * Os dados são tratados e persistidos em uma matriz
-     *
-     * @param object $data
-     * @param string $limit
-     * @return array
-     */
-    private function usersPanelDataFormat(array $data, int $limit) : array {
-
-        $arrData = [];
-        $badge_status = [];
-
-        foreach($data["selectedRecords"] as $row => $object){
-
-                $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
-                $updated_at_formated = $object->dh_atualizacao == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-                $last_access_formated = $object->dh_ultimo_acesso == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_ultimo_acesso));
-                
-                if($object->status == 1){
-
-                    $badge_status = ["Ativo", "success"];
-                
-                }else if($object->status == 0 && $object->dh_ultimo_acesso == null){
-
-                    $badge_status = ["Inativo", "error"];
-                
-                }else if($object->status == 0 && $object->dh_ultimo_acesso != null){
-
-                    $badge_status = ["Desativado", "error"];
-
-                }
-
-                $arrData[$row] = array(
-                    "user_id" => $object->id,
-                    "name" => $object->nome,
-                    "email" => $object->email,
-                    "status_badge" => $badge_status,
-                    "status" => $object->status,
-                    "access" => $object->id_perfil,
-                    "profile_name" => $object->nome_perfil,
-                    "created_at" => $created_at_formated,
-                    "updated_at" => $updated_at_formated,
-                    "last_access" => $last_access_formated
-                );
-
-        }
-
-        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
-        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
-        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
-        $totalPages = $data["referencialValueForCalcPages"] <= $limit ? 1 : ($data["referencialValueForCalcPages"] % $limit === 0 ? $data["referencialValueForCalcPages"] / $limit : ceil($data["referencialValueForCalcPages"] / $limit));
-
-        $ret = [(int) $totalPages, $arrData];
-
-        return $ret;
-
-    }
-
-     /**
-     * Função para formatação dos dados para o painel de perfis
-     * Os dados são tratados e persistidos em uma matriz
-     *
-     * @param object $data
-     * @return array
-     */
-    private function profilesPanelDataFormat(object $data, int $dbTotalRecords,  int $limit) : array {
-
-        $arrData = [];
-
-        $row = 0;
-        $modulesCurrentProfile = array();
-        $profileCounter = 0;
-
-        // O Do While deve reunir em uma só linha cada conjunto de 5 registros em que o campo id_perfil se repete
-        // Cada perfil tem quatro linhas na tabela, e em cada uma dessas linhas o valor do campo "id_modulo" varia
-        // Ou seja: cada linha com o mesmo "id_perfil" representa uma relação desse perfil com um determinado módulo (1,2,3, 4 ou 5)
-
-        do{
-           
-            // A atual posição do array, que é igual ao valor do perfil, recebe as chaves "profile_id" e "profile_name"
-            // Mesmo variando a linha, se o perfil continuar sendo o mesmo, essas chaves receberão o mesmo valor
-            $profile_name = $data[$row]->nome_perfil;
-            $arrData[(int) $profileCounter] = ["profile_id" => $data[$row]->id_perfil, "profile_name" =>  $profile_name, "profile_access" => $data[$row]->acesso_geral, "modules" => array()]; 
-
-            // O array $modulesCurrentProfile recebe os valores dos poderes CRUD do atual perfil
-            // São empurrados novos array enquanto o id do módulo não for igual a 5
-            // A linha, $row, varia a cada loop, também o valor do campo "id_modulo", mas o campo "id_perfil" se mantém o mesmo por 5 loops (porque existem 5 módulos relacionados)
-            // Ou seja, enquanto o id do perfil for X entre os registros percorridos, o array abaixo receberá, a cada variação de $row, novos valores CRUD referente a relação com outro módulo
-            $module_name = $data[$row]->id_modulo == 1 ? "Administração" : ($data[$row]->id_modulo === 2 ? "Planos" : ($data[$row]->id_modulo === 3 ? "Ordens" : ($data[$row]->id_modulo === 4 ? "Relatorios" : "Incidentes")));
-            $modulesCurrentProfile[$data[$row]->id_modulo] = ["mod_name" => $module_name, "profile_powers" => ["ler" => $data[$row]->ler, "escrever" => $data[$row]->escrever]];
-            
-            // Se o ID do módulo atual for igual a 5
-            if($data[$row]->id_modulo == 5){
-
-                // Então agora existem 5 arrays armazenados no array: $modulesCurrentProfile = [[...], [...], [...], [...], [...]]
-                // Em cada posição tem as relações de poder do atual perfil, "id_perfil", com cada um dos quatro módulos existentes
-                // Agora essa estrutura é jogada para dentro do $arrData na posição cujo valor é igual ao id do atual perfil
-                $arrData[$profileCounter]["modules"] = $modulesCurrentProfile;
-
-                // Ou seja, se existe um perfil com ID 1, o $arrData terá uma posição [1] com 5 arrays
-                // Essa posição [1] terá as relações do perfil de ID 1 com os 5 módulos existentes
-
-                $profileCounter += 1;
-
-            }
-
-            $row += 1;
-
-        }while($row < count($data));
-
-        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
-        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
-        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
-        $total_pages = $dbTotalRecords <= $limit ? 1 : ($dbTotalRecords % $limit === 0 ? $dbTotalRecords / $limit : ceil($dbTotalRecords / $limit));
-
-        $ret = [(int) $total_pages, $arrData];
-
-        return $ret;
-
-
-    }
+     
 
     /**
      * Função para composição do formulário de criação de registro de usuário

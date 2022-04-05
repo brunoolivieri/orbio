@@ -55,7 +55,7 @@ export function ProfilesPanel(){
      // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+    const {AuthData} = useAuthentication();
 
     // State da paginação da tabela e função de alteração
     const [page, setPage] = useState(1);
@@ -134,7 +134,7 @@ export function ProfilesPanel(){
 
         case false:
 
-          let pagination_params = `${paginationParams.offset}|${paginationParams.limit}`;
+          let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
 
           AxiosApi.get(`/api/admin-module?panel=profiles_panel&args=${pagination_params}&auth=${userid}.${module_id}.${action}`, {
             access: AuthData.data.access

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Mail;
 // Email
 use App\Mail\UserRegisteredEmail;
 
+use Database\Factories\UserFactory;
+
 class UserModel extends Model
 {
     use HasFactory;
@@ -21,7 +23,17 @@ class UserModel extends Model
     protected $fillable = ["*"];
 
     /**
-     * Método realizar um INSERT na tabela "users"
+     * Instância da Factory desse Model
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    protected static function newFactory() : \Illuminate\Database\Eloquent\Factories\Factory
+    {
+        return UserFactory::new();
+    }
+
+    /**
+     * Create User and send access data for his email
      *
      * @param array $data
      * @return array
@@ -64,64 +76,26 @@ class UserModel extends Model
     }
 
     /**
-     * Método realizar um SELECT SEM WHERE na tabela "users"
-     * Os registros selecionados preencherão uma única página da tabela
-     * A quantidade por página é definida pelo LIMIT, e o número da página pelo OFFSET
+     * Load all users with pagination format
+     * The where clause is optional
      *
-     * @param int $offset
-     * @param int $limit
+     * @param array $data
      * @return array
      */
-    function loadAllUsers(int $offset, int $limit) : array {
+    function loadUsersWithPagination(int $limit, $search = false, $value_searched = null) : array {
 
         try{
 
-            // Query Builder para fazer o relacionamento
-            $all_records = DB::table('users')
+            $data = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
-            ->offset($offset)->limit($limit)->orderBy('users.id')->get();
+            ->when($search, function ($query, $value_searched) {
 
-            $response = [
-                "referencialValueForCalcPages" => UserModel::all()->count(),
-                "selectedRecords" => $all_records
-            ];
+                $query->where('users.id', $value_searched)->orWhere('users.nome', 'LIKE', '%'.$value_searched.'%')->orWhere('users.email', 'LIKE', '%'.$value_searched.'%');
 
-            return ["status" => true, "error" => false, "data" => $response];
+            })->orderBy('users.id')->paginate($limit);
 
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um SELECT COM WHERE na tabela "users"
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return array
-     */
-    function loadSpecificUsers(string $value_searched, int $offset, int $limit) : array {
-
-        try{
-
-            $all_compatible_records = DB::table('users')
-            ->join('profile', 'users.id_perfil', '=', 'profile.id')
-            ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
-            ->where('users.id', $value_searched)
-            ->orWhere('users.nome', 'LIKE', '%'.$value_searched.'%')
-            ->orWhere('users.email', 'LIKE', '%'.$value_searched.'%')
-            ->offset($offset)->limit($limit)->orderBy('users.id')->get();
-
-            $response = [
-                "referencialValueForCalcPages" => count($all_compatible_records),
-                "selectedRecords" => $all_compatible_records
-            ];
-
-            return ["status" => true, "error" => false, "data" => $response];
+            return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){
 

@@ -1,12 +1,5 @@
 <?php
 
-/*
-
-- Rotina para criar criar as relações entre os perfis de usuário e os módulos
-- Executando o comando para executar o seeder, serão criados os registros de cada array
-
-*/
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
