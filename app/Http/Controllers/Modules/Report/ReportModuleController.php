@@ -1,77 +1,70 @@
 <?php
 
-namespace App\Http\Controllers\modules;
+namespace App\Http\Controllers\Modules\Report;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-
-// Model utilizado
-use App\Models\Plans\FlightPlansModel;
-use App\Models\Incidents\IncidentsModel;
 use App\Models\Reports\ReportsModel;
 
-class FlightPlansModuleController extends Controller
+class ReportModuleController extends Controller
 {
-
-     /**
-     * Carrega e retorna os dados para compor o painel dos relatórios
-     * Para os argumentos do SELECT, é enviada uma query string de nome "args"
-     * 
-     * MÉTODO: GET
+    /**
+     * Display a listing of the resource.
      * 
      * @return \Illuminate\Http\Response
      */
     public function index() : \Illuminate\Http\Response
     {
-        
-        $model = new FlightPlansModel();
 
-        $request_values = explode("/", request()->args);
+        $model = new ReportsModel();
+
+        $request_values = explode(".", request()->args);
 
         $offset = isset($request_values[0]) ? $request_values[0] : 0;
         $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
-        $response = $model->loadAllFlightPlans((int) $offset, (int) $limit);
+        $model_response = $model->loadAllReports((int) $offset, (int) $limit);
 
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->plansTableFormat($response["data"], $limit);
+            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
 
-            return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-        }else if(!$response["status"] && $response["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["status" => false, "error" => $response->content()], 500);
+            return response(["error" => $model_response->content()], 500);
 
         }  
 
     }
 
     /**
-     * Função para formatação dos dados para o painel de planos de vôo
-     * Os dados são tratados e persistidos em uma matriz
-     * 
+     * Data is formated for the frontend reports table
      *
      * @param object $data
      * @return array
      */
-    private function plansTableFormat(array $data, int $limit) : array {
+    private function reportsTableFormat(array $data, int $limit) : array {
 
         $arrData = [];
 
         foreach($data["selectedRecords"] as $row => $object){
+
+            // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
+            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
+            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
+            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
             
-            // Geração da estrutura com os dados preparados para uso no front-end
             $arrData[$row] = array(
-                "plan_id" => $object->id,
-                "report_id" => $object->id_relatorio,
-                "incident_id" => $object->id_incidente,
-                "plan_file" => $object->arquivo,
-                "plan_description" => $object->descricao,
-                "plan_status" => $object->status,
-                "created_at" => $object->dh_criacao,
-                "updated_at" => $object->dh_atualizacao
+                "report_id" => $object->id,
+                "flight_log" => $object->log_voo,
+                "report_note" => $object->observacao,
+                "created_at" => $created_at_formated,
+                "updated_at" => $updated_at_formated,
+                "flight_start_date" => $flight_start_date,
+                "flight_end_date" => $flight_end_date
             );
 
         }
@@ -88,32 +81,7 @@ class FlightPlansModuleController extends Controller
     }
 
     /**
-     * Função para processar rotinas que complementam os formulários do plano de vôo
-     * A variável $wich_table pode ser "incidents" ou "reports"
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() : \Illuminate\Http\Response
-    {
-
-        try{
-
-            $table = request()->data_source;
-
-            $data = DB::table($table)->get();
-
-            return response($data, 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()]);
-
-        }
-
-    }
-
-    /**
-     * Função para processar a requisição da criação de um registro de plano
+     * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -121,32 +89,32 @@ class FlightPlansModuleController extends Controller
     public function store(Request $request) : \Illuminate\Http\Response
     {
         
-        $model = new FlightPlansModel();
+        $model = new ReportsModel();
 
-        $model_response = $model->newFlightPlan($request->except("auth"));
+        $model_response = $model->newReport($request->except('auth'));
 
-        if($model_response["status"] && !$model_response["error"]){
+         if($model_response["status"] && !$model_response["error"]){
 
-            return response(["error" => $response["error"]], 200);
+            return response(["error" => $model_response["error"]], 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $response["error"]], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }
 
     }
 
-    /**
-     * Função para buscar um ou mais registros de planos pesquisados
+     /**
+     * Display the specified resource.
      *
      * @param $request
      * @return \Illuminate\Http\Response
      */
     public function show($request) : \Illuminate\Http\Response
     {
-        
-        $model = new FlightPlansModel();
+
+        $model = new ReportsModel();
 
         $request_values = explode(".", request()->args);
 
@@ -154,11 +122,11 @@ class FlightPlansModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $model_response = $model->loadSpecificFlightPlans($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificReports($value_searched, (int) $offset, (int) $limit);
     
         if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->plansTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
 
             return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
@@ -167,13 +135,10 @@ class FlightPlansModuleController extends Controller
             return response(["error" => $model_response["error"]], 500);
 
         }  
-
     }
 
     /**
-     * Função para processar a atualização de um registro de plano
-     * 
-     * MÉTODO: PATCH
+     * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -182,9 +147,9 @@ class FlightPlansModuleController extends Controller
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
         
-        $model = new FlightPlansModel();
+        $model = new ReportsModel();
 
-        $model_response = $model->updateFlightPlan((int) $id, $request->except("auth"));
+        $model_response = $model->updateReport((int) $id, $request->except('auth'));
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -195,22 +160,21 @@ class FlightPlansModuleController extends Controller
             return response(["error" => $model_response["error"]], 500);
 
         }
+
     }
 
     /**
-     * Função para processar a remoção de um registro de plano
-     * 
-     * MÉTODO: DELETE
+     * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+        
+        $model = new ReportsModel();
 
-        $model = new FlightPlansModel();
-
-        $model_response = $model->deleteFlightPlan((int) $id);
+        $model_response = $model->deleteReport((int) $id);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -221,6 +185,6 @@ class FlightPlansModuleController extends Controller
             return response(["error" => $model_response["error"]], 500);
 
         }
-
+ 
     }
 }

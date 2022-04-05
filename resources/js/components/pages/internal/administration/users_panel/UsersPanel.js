@@ -89,13 +89,15 @@ export function UsersPanel(){
 
       case false:
 
-        AxiosApi.get(`/api/admin-module?panel=users_panel&limit=${paginationParams.limit}&auth=${user_id}.${module_id}.${action}`, {
+        AxiosApi.get(`/api/admin-module-user?panel=users_panel&limit=${paginationParams.limit}&auth=${user_id}.${module_id}.${action}`, {
           })
           .then(function (response) {
   
             if(response.status === 200){
 
-              setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
+              console.log(response)
+
+              //setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
     
             }else{
     
@@ -116,7 +118,7 @@ export function UsersPanel(){
 
         let query_arguments = `users_panel.${paginationParams.where[1]}.${paginationParams.limit}`;
 
-        AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${user_id}.${module_id}.${action}`, {
+        AxiosApi.get(`/api/admin-module-user/${query_arguments}?auth=${user_id}.${module_id}.${action}`, {
           access: AuthData.data.access
           })
           .then(function (response) {

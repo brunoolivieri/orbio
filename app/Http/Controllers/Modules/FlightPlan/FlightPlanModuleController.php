@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Modules;
+namespace App\Http\Controllers\Modules\FlightPlan;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
-// Model utilizado
+use Illuminate\Support\Facades\DB;
+use App\Models\Plans\FlightPlansModel;
 use App\Models\Incidents\IncidentsModel;
+use App\Models\Reports\ReportsModel;
 
-class IncidentsModuleController extends Controller
+class FlightPlanModuleController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,49 +18,50 @@ class IncidentsModuleController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
-        
-        $model = new IncidentsModel();
+        $model = new FlightPlansModel();
 
         $request_values = explode("/", request()->args);
 
         $offset = isset($request_values[0]) ? $request_values[0] : 0;
         $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
-        $model_response = $model->loadAllIncidents((int) $offset, (int) $limit);
+        $response = $model->loadAllFlightPlans((int) $offset, (int) $limit);
 
-        if($model_response["status"] && !$model_response["error"]){
+        if($response["status"] && !$response["error"]){
     
-            $dataFormated = $this->incidentsTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->plansTableFormat($response["data"], $limit);
 
             return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }else if(!$response["status"] && $response["error"]){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["status" => false, "error" => $response->content()], 500);
 
         }  
-
     }
 
     /**
-     * Função para formatação dos dados para o painel de incidentes
-     * Os dados são tratados e persistidos em uma matriz
-     * 
+     * Data is formated for the frontend plans table
      *
      * @param object $data
      * @return array
      */
-    private function incidentsTableFormat(array $data, int $limit) : array {
+    private function plansTableFormat(array $data, int $limit) : array {
 
         $arrData = [];
 
         foreach($data["selectedRecords"] as $row => $object){
             
+            // Geração da estrutura com os dados preparados para uso no front-end
             $arrData[$row] = array(
-                "incident_id" => $object->id,
-                "incident_type" => $object->tipo_incidente,
-                "description" => $object->descricao,
-                "incident_date" => $object->dh_incidente
+                "plan_id" => $object->id,
+                "report_id" => $object->id_relatorio,
+                "incident_id" => $object->id_incidente,
+                "plan_file" => $object->arquivo,
+                "plan_description" => $object->descricao,
+                "plan_status" => $object->status,
+                "created_at" => $object->dh_criacao,
+                "updated_at" => $object->dh_atualizacao
             );
 
         }
@@ -76,6 +78,28 @@ class IncidentsModuleController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create() : \Illuminate\Http\Response
+    {
+        try{
+
+            $table = request()->data_source;
+
+            $data = DB::table($table)->get();
+
+            return response($data, 200);
+
+        }catch(\Exception $e){
+
+            return response(["error" => $e->getMessage()]);
+
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -83,21 +107,19 @@ class IncidentsModuleController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
-        
-        $model = new IncidentsModel();
+        $model = new FlightPlansModel();
 
-        $model_response = $model->newIncident($request->except('auth'));
+        $model_response = $model->newFlightPlan($request->except("auth"));
 
-         if($model_response["status"] && !$model_response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
 
-            return response("", 200);
+            return response(["error" => $response["error"]], 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $response["error"]], 500);
 
         }
-
     }
 
     /**
@@ -108,8 +130,7 @@ class IncidentsModuleController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
-        
-        $model = new IncidentsModel();
+        $model = new FlightPlansModel();
 
         $request_values = explode(".", request()->args);
 
@@ -117,11 +138,11 @@ class IncidentsModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $model_response = $model->loadSpecificIncidents($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificFlightPlans($value_searched, (int) $offset, (int) $limit);
     
         if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->incidentsTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->plansTableFormat($model_response["data"], $limit);
 
             return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
@@ -129,8 +150,7 @@ class IncidentsModuleController extends Controller
 
             return response(["error" => $model_response["error"]], 500);
 
-        }  
-
+        }
     }
 
     /**
@@ -142,35 +162,9 @@ class IncidentsModuleController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
-        
-        $model = new IncidentsModel();
+        $model = new FlightPlansModel();
 
-        $update = $model->updateIncident((int) $id, $request->except('auth'));
-
-        if($update["status"] && !$update["error"]){
-
-            return response("", 200);
-
-        }else if(!$update["status"] && $update["error"]){
-
-            return response(["error" => $update["error"]], 500);
-
-        }
-
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id) : \Illuminate\Http\Response
-    {
-        
-        $model = new IncidentsModel();
-
-        $model_response = $model->deleteIncident((int) $id);
+        $model_response = $model->updateFlightPlan((int) $id, $request->except("auth"));
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -181,6 +175,28 @@ class IncidentsModuleController extends Controller
             return response(["error" => $model_response["error"]], 500);
 
         }
+    }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id) : \Illuminate\Http\Response
+    {
+        $model = new FlightPlansModel();
+
+        $model_response = $model->deleteFlightPlan((int) $id);
+
+        if($model_response["status"] && !$model_response["error"]){
+
+            return response("", 200);
+
+        }else if(!$model_response["status"] && $model_response["error"]){
+
+            return response(["error" => $model_response["error"]], 500);
+
+        }
     }
 }

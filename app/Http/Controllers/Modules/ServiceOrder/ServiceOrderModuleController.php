@@ -1,48 +1,40 @@
 <?php
 
-namespace App\Http\Controllers\Modules;
+namespace App\Http\Controllers\Modules\ServiceOrder;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Orders\ServiceOrdersModel;
 
-// Model utilizado
-use App\Models\Reports\ReportsModel;
-
-class ReportsModuleController extends Controller
+class ServiceOrderModuleController extends Controller
 {
-
     /**
-     * Carrega e retorna os dados para compor o painel dos relatórios
-     * Para os argumentos do SELECT, é enviada uma query string de nome "args"
-     * 
-     * MÉTODO: GET
-     * 
+     * Display a listing of the resource.
+     *
      * @return \Illuminate\Http\Response
      */
     public function index() : \Illuminate\Http\Response
     {
+        $model = new ServiceOrdersModel();
 
-        $model = new ReportsModel();
-
-        $request_values = explode(".", request()->args);
+        $request_values = explode("/", request()->args);
 
         $offset = isset($request_values[0]) ? $request_values[0] : 0;
         $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
-        $model_response = $model->loadAllReports((int) $offset, (int) $limit);
+        $model_response = $model->loadAllServiceOrders((int) $offset, (int) $limit);
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
 
             return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $model_response->content()], 500);
+            return response(["error" => $model_response["error"]], 500);
 
         }  
-
     }
 
     /**
@@ -53,7 +45,7 @@ class ReportsModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function reportsTableFormat(array $data, int $limit) : array {
+    private function ordersTableFormat(array $data, int $limit) : array {
 
         $arrData = [];
 
@@ -62,17 +54,22 @@ class ReportsModuleController extends Controller
             // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
             $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
             $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
-            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
+            $order_start_date = $object->dh_inicio === NULL ? "Sem dados" : $object->dh_inicio;
+            $order_end_date = $object->dh_fim === NULL ? "Sem dados" : $object->dh_fim;
             
             $arrData[$row] = array(
-                "report_id" => $object->id,
-                "flight_log" => $object->log_voo,
-                "report_note" => $object->observacao,
+                "order_id" => $object->id,
+                "order_status" => $object->status,
+                "flight_plan_id" => $object->id_plano_voo,
+                "numOS" => $object->numOS,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,
-                "flight_start_date" => $flight_start_date,
-                "flight_end_date" => $flight_end_date
+                "order_start_date" => $order_start_date,
+                "order_end_date" => $order_end_date,
+                "creator_name" => $object->nome_criador,
+                "pilot_name" => $object->nome_piloto,
+                "client_name" => $object->nome_cliente,
+                "order_note" => $object->observacao
             );
 
         }
@@ -89,20 +86,16 @@ class ReportsModuleController extends Controller
     }
 
     /**
-     * Função para processar a requisição da criação de um registro de relatório
-     * Esse registro será um novo relatório
-     * 
-     * MÉTODO: POST
+     * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
-        
-        $model = new ReportsModel();
+        $model = new ServiceOrdersModel();
 
-        $model_response = $model->newReport($request->except('auth'));
+        $model_response = $model->newServiceOrder($request->except("auth"));
 
          if($model_response["status"] && !$model_response["error"]){
 
@@ -113,21 +106,17 @@ class ReportsModuleController extends Controller
             return response(["error" => $model_response["error"]], 500);
 
         }
-
     }
 
-     /**
-     * Função para mostrar um ou mais registros de relatório pesquisados
-     * 
-     * MÉTODO: GET
+    /**
+     * Display the specified resource.
      *
-     * @param $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($request) : \Illuminate\Http\Response
+    public function show($id) : \Illuminate\Http\Response
     {
-
-        $model = new ReportsModel();
+        $model = new ServiceOrdersModel();
 
         $request_values = explode(".", request()->args);
 
@@ -135,11 +124,11 @@ class ReportsModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $model_response = $model->loadSpecificReports($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificServiceOrders($value_searched, (int) $offset, (int) $limit);
     
         if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
 
             return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
@@ -151,9 +140,7 @@ class ReportsModuleController extends Controller
     }
 
     /**
-     * Função para processar a edição de um registro de relatório
-     * 
-     * MÉTODO: PATCH
+     * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -161,10 +148,9 @@ class ReportsModuleController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
-        
-        $model = new ReportsModel();
+        $model = new ServiceOrdersModel();
 
-        $model_response = $model->updateReport((int) $id, $request->except('auth'));
+        $model_response = $model->updateServiceOrder((int) $id, $request->except("auth"));
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -172,36 +158,31 @@ class ReportsModuleController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $update["error"]], 500);
 
         }
-
     }
 
     /**
-     * Função para processar a remoção de um registro de relatório
-     * 
-     * MÉTODO: DELETE
+     * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
-        
-        $model = new ReportsModel();
+        $model = new ServiceOrdersModel();
 
-        $model_response = $model->deleteReport((int) $id);
+        $model_response = $model->deleteServiceOrder((int) $id);
 
         if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }else if($model_response["status"] && !$model_response["error"]){
 
             return response(["error" => $model_response["error"]], 500);
 
         }
- 
     }
 }

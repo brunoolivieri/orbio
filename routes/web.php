@@ -14,11 +14,12 @@ use App\Http\Controllers\Pages\CommonInternalPagesController; // Controlador ger
 use App\Http\Controllers\User\CommonUserController; // Controlador do usuário geral
 
 // CONTROLADORES DAS FUNÇÕES DOS MÓDULOS DO SISTEMA
-use App\Http\Controllers\Modules\AdministrationModuleController;
-use App\Http\Controllers\Modules\ReportsModuleController;
-use App\Http\Controllers\Modules\FlightPlansModuleController;
-use App\Http\Controllers\Modules\ServiceOrdersModuleController;
-use App\Http\Controllers\Modules\IncidentsModuleController;
+use App\Http\Controllers\Modules\Administration\AdministrationModuleUserPanelController;
+use App\Http\Controllers\Modules\Administration\AdministrationModuleProfilePanelController;
+use App\Http\Controllers\Modules\Report\ReportModuleController;
+use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
+use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
+use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 
 /*
 
@@ -55,9 +56,10 @@ Route::patch('/api/update-complementary-data/{id}', [CommonUserController::class
 Route::post("/api/desactivate-account", [CommonUserController::class, "userAccountDesactivation"])->middleware("session.auth"); 
 
 // ==== ROTAS DE REQUISIÇÕES API - MÓDULOS ==== //
-Route::resource("/api/admin-module", AdministrationModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
-Route::resource("/api/reports-module", ReportsModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
-Route::resource("/api/plans-module", FlightPlansModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
-Route::resource("/api/orders-module", ServiceOrdersModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
-Route::resource("/api/incidents-module", IncidentsModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::resource("/api/admin-module-user", AdministrationModuleUserPanelController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::resource("/api/reports-module", ReportModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::resource("/api/plans-module", FlightPlanModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::resource("/api/orders-module", ServiceOrderModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::resource("/api/incidents-module", IncidentModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 

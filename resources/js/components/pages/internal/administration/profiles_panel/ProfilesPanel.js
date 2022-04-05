@@ -136,7 +136,7 @@ export function ProfilesPanel(){
 
           let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
 
-          AxiosApi.get(`/api/admin-module?panel=profiles_panel&args=${pagination_params}&auth=${userid}.${module_id}.${action}`, {
+          AxiosApi.get(`/api/admin-module-profile?panel=profiles_panel&args=${pagination_params}&auth=${userid}.${module_id}.${action}`, {
             access: AuthData.data.access
             })
             .then(function (response) {
@@ -164,7 +164,7 @@ export function ProfilesPanel(){
 
           let query_arguments = `${'profiles_panel'}.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
-          AxiosApi.get(`/api/admin-module/${query_arguments}?auth=${userid}.${module_id}.${action}`, {
+          AxiosApi.get(`/api/admin-module-profile/${query_arguments}?auth=${userid}.${module_id}.${action}`, {
             })
             .then(function (response) {
     

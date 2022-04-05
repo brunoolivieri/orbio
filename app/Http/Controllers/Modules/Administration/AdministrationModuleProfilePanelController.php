@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Http\Controllers\Modules;
+namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\ProfileAndModule\ProfileHasModuleModel;
+use App\Models\ProfileAndModule\ProfileModel;
 
 class AdministrationModuleProfilePanelController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
 
         $request_values = explode(".", request()->args);
@@ -26,6 +29,8 @@ class AdministrationModuleProfilePanelController extends Controller
         $up_offset = $offset*5;
 
         $model_response = $model->loadAllRecords((int) $up_offset, (int) $up_limit);
+
+        dd($model_response);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -110,7 +115,7 @@ class AdministrationModuleProfilePanelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create() : \Illuminate\Http\Response
     {
         
         try{
@@ -133,7 +138,7 @@ class AdministrationModuleProfilePanelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) : \Illuminate\Http\Response
     {
         
         $model = new ProfileModel();
@@ -158,7 +163,7 @@ class AdministrationModuleProfilePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : \Illuminate\Http\Response
     {
         
         $model = new ProfileHasModuleModel();
@@ -185,24 +190,13 @@ class AdministrationModuleProfilePanelController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) : \Illuminate\Http\Response
     {
         
         $model = new ProfileModel();
@@ -227,7 +221,7 @@ class AdministrationModuleProfilePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : \Illuminate\Http\Response
     {
         $model = new ProfileModel();
 
@@ -244,4 +238,5 @@ class AdministrationModuleProfilePanelController extends Controller
         }
 
     }
+    
 }

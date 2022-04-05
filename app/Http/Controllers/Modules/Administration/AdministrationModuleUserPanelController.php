@@ -1,34 +1,37 @@
 <?php
 
-namespace App\Http\Controllers\Modules;
+namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User\UserModel;
 
 class AdministrationModuleUserPanelController extends Controller
 {
+    
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
 
-        $request_values = explode(".", request()->args);
-        $limit = $request_values[1];
+        $limit = request()->limit;
 
         $model = new UserModel();
             
-        $response = $model->loadUsersWithPagination((int) $limit);
+        $model_response = $model->loadUsersWithPagination((int) $limit);
 
-        if($response["status"] && !$response["error"]){
+        dd($model_response["data"]);
 
-            return response($response["data"], 200);
+        if($model_response["status"] && !$model_response["error"]){
 
-        }else if(!$response["status"] && $response["error"]){
+            return response($model_response["data"], 200);
 
-            return response(["error" => $response->content()], 500);
+        }else if(!$model_response["status"] && $model_response["error"]){
+
+            return response(["error" => $model_response->content()], 500);
 
         }  
 
@@ -40,7 +43,7 @@ class AdministrationModuleUserPanelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request) : \Illuminate\Http\Response
     {
         $model = new UserModel();
 
@@ -70,7 +73,7 @@ class AdministrationModuleUserPanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : \Illuminate\Http\Response
     {
         
         $model = new UserModel();
@@ -92,24 +95,13 @@ class AdministrationModuleUserPanelController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id) : \Illuminate\Http\Response
     {
         
         $model = new UserModel();
@@ -134,7 +126,7 @@ class AdministrationModuleUserPanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : \Illuminate\Http\Response
     {
         
         $model = new UserModel();
@@ -152,4 +144,5 @@ class AdministrationModuleUserPanelController extends Controller
         }
 
     }
+    
 }

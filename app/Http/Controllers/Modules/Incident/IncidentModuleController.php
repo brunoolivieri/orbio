@@ -1,79 +1,61 @@
 <?php
 
-namespace App\Http\Controllers\modules;
+namespace App\Http\Controllers\Modules\Incident;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Incidents\IncidentsModel;
 
-// Model utilizado
-use App\Models\Orders\ServiceOrdersModel;
-
-class ServiceOrdersModuleController extends Controller
+class IncidentModuleController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index()
     {
-        
-        $model = new ServiceOrdersModel();
+        $model = new IncidentsModel();
 
         $request_values = explode("/", request()->args);
 
         $offset = isset($request_values[0]) ? $request_values[0] : 0;
         $limit = isset($request_values[1]) ? $request_values[1] : 100;
 
-        $model_response = $model->loadAllServiceOrders((int) $offset, (int) $limit);
+        $model_response = $model->loadAllIncidents((int) $offset, (int) $limit);
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->incidentsTableFormat($model_response["data"], $limit);
 
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $model_response["error"]], 500);
 
         }  
-
     }
 
     /**
-     * Função para formatação dos dados para o painel de relatórios
+     * Função para formatação dos dados para o painel de incidentes
      * Os dados são tratados e persistidos em uma matriz
      * 
      *
      * @param object $data
      * @return array
      */
-    private function ordersTableFormat(array $data, int $limit) : array {
+    private function incidentsTableFormat(array $data, int $limit) : array {
 
         $arrData = [];
 
         foreach($data["selectedRecords"] as $row => $object){
-
-            // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
-            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-            $order_start_date = $object->dh_inicio === NULL ? "Sem dados" : $object->dh_inicio;
-            $order_end_date = $object->dh_fim === NULL ? "Sem dados" : $object->dh_fim;
             
             $arrData[$row] = array(
-                "order_id" => $object->id,
-                "order_status" => $object->status,
-                "flight_plan_id" => $object->id_plano_voo,
-                "numOS" => $object->numOS,
-                "created_at" => $created_at_formated,
-                "updated_at" => $updated_at_formated,
-                "order_start_date" => $order_start_date,
-                "order_end_date" => $order_end_date,
-                "creator_name" => $object->nome_criador,
-                "pilot_name" => $object->nome_piloto,
-                "client_name" => $object->nome_cliente,
-                "order_note" => $object->observacao
+                "incident_id" => $object->id,
+                "incident_type" => $object->tipo_incidente,
+                "description" => $object->descricao,
+                "incident_date" => $object->dh_incidente
             );
 
         }
@@ -95,23 +77,21 @@ class ServiceOrdersModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(Request $request)
     {
-        
-        $model = new ServiceOrdersModel();
+        $model = new IncidentsModel();
 
-        $model_response = $model->newServiceOrder($request->except("auth"));
+        $model_response = $model->newIncident($request->except('auth'));
 
          if($model_response["status"] && !$model_response["error"]){
 
-            return response(["error" => $model_response["error"]], 200);
+            return response("", 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $response["error"]], 500);
 
         }
-
     }
 
     /**
@@ -120,10 +100,9 @@ class ServiceOrdersModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id)
     {
-        
-        $model = new ServiceOrdersModel();
+        $model = new IncidentsModel();
 
         $request_values = explode(".", request()->args);
 
@@ -131,11 +110,11 @@ class ServiceOrdersModuleController extends Controller
         $offset = $request_values[1];
         $limit = $request_values[2];
 
-        $model_response = $model->loadSpecificServiceOrders($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadSpecificIncidents($value_searched, (int) $offset, (int) $limit);
     
         if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
+            $dataFormated = $this->incidentsTableFormat($model_response["data"], $limit);
 
             return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
 
@@ -144,7 +123,6 @@ class ServiceOrdersModuleController extends Controller
             return response(["error" => $model_response["error"]], 500);
 
         }  
-
     }
 
     /**
@@ -154,23 +132,21 @@ class ServiceOrdersModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : \Illuminate\Http\Response
+    public function update(Request $request, $id)
     {
-        
-        $model = new ServiceOrdersModel();
+        $model = new IncidentsModel();
 
-        $model_response = $model->updateServiceOrder((int) $id, $request->except("auth"));
+        $update = $model->updateIncident((int) $id, $request->except('auth'));
 
-        if($model_response["status"] && !$model_response["error"]){
+        if($update["status"] && !$update["error"]){
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }else if(!$update["status"] && $update["error"]){
 
             return response(["error" => $update["error"]], 500);
 
         }
-
     }
 
     /**
@@ -179,22 +155,20 @@ class ServiceOrdersModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id)
     {
-        
-        $model = new ServiceOrdersModel();
+        $model = new IncidentsModel();
 
-        $model_response = $model->deleteServiceOrder((int) $id);
+        $model_response = $model->deleteIncident((int) $id);
 
         if($model_response["status"] && !$model_response["error"]){
 
             return response("", 200);
 
-        }else if($model_response["status"] && !$model_response["error"]){
+        }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $model_response["error"]], 500);
 
         }
-
     }
 }
