@@ -156,7 +156,7 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/admin-module/${data.get("id_input")}`, {
+        AxiosApi.patch(`/api/admin-module-profile/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${action}`,
           nome: data.get("name_input"),
           profile_modules_relationship: modulePowers
@@ -422,6 +422,8 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
             InputProps={{
                 readOnly: operation == "delete" ? true : false,
             }}
+            helperText = {errorMessage.name}
+            error = {errorDetected.name}
           />
 
           </DialogContent>

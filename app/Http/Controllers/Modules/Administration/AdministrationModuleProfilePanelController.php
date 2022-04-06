@@ -164,7 +164,7 @@ class AdministrationModuleProfilePanelController extends Controller
     {
 
         $request->validate([
-            'nome' => 'required|bail|string|unique:profile,nome'
+            'nome' => 'required|bail|string|unique:profile,nome,'.$id
         ]);
         
         $model = new ProfileModel();
