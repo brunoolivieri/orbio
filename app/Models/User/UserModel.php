@@ -82,18 +82,18 @@ class UserModel extends Model
      * @param array $data
      * @return array
      */
-    function loadUsersWithPagination(int $limit, $search = false, $value_searched = null) : array {
+    function loadUsersWithPagination(int $limit, int $current_page, $where_required = false, $value_searched = null) : array {
 
         try{
 
             $data = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
-            ->when($search, function ($query, $value_searched) {
+            ->when($where_required, function ($query, $value_searched) {
 
                 $query->where('users.id', $value_searched)->orWhere('users.nome', 'LIKE', '%'.$value_searched.'%')->orWhere('users.email', 'LIKE', '%'.$value_searched.'%');
 
-            })->orderBy('users.id')->paginate($limit);
+            })->orderBy('users.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
             return ["status" => true, "error" => false, "data" => $data];
 

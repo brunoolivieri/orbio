@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Administration;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User\UserModel;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -17,23 +18,77 @@ class AdministrationModuleUserPanelController extends Controller
     public function index() : \Illuminate\Http\Response
     {
 
-        $limit = request()->limit;
+        $args = explode(".", request()->args);
+
+        //dd($args);
+
+        $limit = (int) $args[0];
+        $where_required = (bool) $args[1];
+        $where_value_searched = $args[2];
+        $actual_page = (int) $args[3];
 
         $model = new UserModel();
             
-        $model_response = $model->loadUsersWithPagination((int) $limit);
-
-        dd($model_response["data"]);
+        $model_response = $model->loadUsersWithPagination($limit, $actual_page, $where_required, $where_value_searched);
 
         if($model_response["status"] && !$model_response["error"]){
 
-            return response($model_response["data"], 200);
+            $data_formated = $this->formatDataForTable($model_response["data"]);
+
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $model_response->content()], 500);
 
         }  
+
+    }
+
+    private function formatDataForTable(LengthAwarePaginator $data) : array {
+
+        $arr_with_formated_data = [];
+
+        foreach($data->items() as $row => $record){
+
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
+            $updated_at_formated = $record->dh_atualizacao == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
+            $last_access_formated = $record->dh_ultimo_acesso == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_ultimo_acesso));
+            
+            if($record->status == 1){
+
+                $badge_status = ["Ativo", "success"];
+            
+            }else if($record->status == 0 && $record->dh_ultimo_acesso == null){
+
+                $badge_status = ["Inativo", "error"];
+            
+            }else if($record->status == 0 && $record->dh_ultimo_acesso != null){
+
+                $badge_status = ["Desativado", "error"];
+
+            }
+
+            $arr_with_formated_data["records"][$row] = array(
+                "user_id" => $record->id,
+                "name" => $record->nome,
+                "email" => $record->email,
+                "status_badge" => $badge_status,
+                "status" => $record->status,
+                "access" => $record->id_perfil,
+                "profile_name" => $record->nome_perfil,
+                "created_at" => $created_at_formated,
+                "updated_at" => $updated_at_formated,
+                "last_access" => $last_access_formated
+            );
+
+        }
+
+        $arr_with_formated_data["total_records_founded"] = $data->total();
+        $arr_with_formated_data["records_per_page"] = $data->perPage();
+        $arr_with_formated_data["total_pages"] = $data->lastPage();
+
+        return $arr_with_formated_data;
 
     }
 

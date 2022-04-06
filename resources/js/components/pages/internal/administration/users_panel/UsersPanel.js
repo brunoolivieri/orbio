@@ -53,16 +53,13 @@ export function UsersPanel(){
 
   // Utilizador do state global de autenticação
   const {AuthData} = useAuthentication();
-
-  // State da paginação da tabela e função de alteração
-  const [page, setPage] = useState(1);
   
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = useState({status: false, response: "", total_pages: 0});
+  const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = useState({offset: 0, limit: 10, where: [false, ""]});
+  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: {required: 0, value_searched: null}, total_records: 0});
 
   // Serve modificar o ícone de refresh da tabela
   const [refreshPanel, setRefreshPanel] = useState(false);
@@ -71,83 +68,122 @@ export function UsersPanel(){
 
   /**
    * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
-   * 
-   * Os dados carregados preenchem uma página de acordo com um offset e um limit 
-   * O offset trabalha junto com o valor da página e define o primeiro registro da página, enquanto o limit define o último
-   * O atributo do switch case define qual o caso de carregamento para a paginação // Os casos são: todos os dados existentes, ou todos os dados pesquisados
-   * Dados pesquisados também podem vir em páginas e a sua paginação também implica em alterar o offset da paginação, e consequentemente em ativar o useEffect (porque é uma dependência)
-   * Além disso, para pesquisar todos os dados e alguns dados, métodos diferentes do mesmo controlador Laravel são utilizados - ou seja, não pode ser utilizada a mesma chamada AXIOS
+   * Esses valores são: limit, where e número da página atual
    * 
    */
     useEffect(() => {
 
-    let user_id = AuthData.data.id;
-    let module_id = 1;
-    let action = "ler";
-      
-    switch(paginationParams.where[0]){
+      const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
 
-      case false:
+    if(!paginationParams.where.required){
 
-        AxiosApi.get(`/api/admin-module-user?panel=users_panel&limit=${paginationParams.limit}&auth=${user_id}.${module_id}.${action}`, {
-          })
-          .then(function (response) {
-  
-            if(response.status === 200){
+      requestToGetAllUsers(module_middleware);
 
-              console.log(response)
+    }else{
 
-              //setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
-    
-            }else{
-    
-              setPanelData({status: true, error: true, response: response.data.error});
-    
-            }
-  
-          })
-          .catch(function (error) {
-  
-            setPanelData({status: true, error: true, response: "ERRO NO CARREGAMENTO DOS REGISTROS DE USUÁRIOS."});
-  
-        });
+      requestToGetSearchedUsers(module_middleware);
 
-      break;
-      
-      case true:
-
-        let query_arguments = `users_panel.${paginationParams.where[1]}.${paginationParams.limit}`;
-
-        AxiosApi.get(`/api/admin-module-user/${query_arguments}?auth=${user_id}.${module_id}.${action}`, {
-          access: AuthData.data.access
-          })
-          .then(function (response) {
-  
-            if(response.status === 200){
-
-              setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
-    
-            }
-  
-          });
-
-      break;
-
-  }
+    }
 
   },[paginationParams]);
 
+
+  /**
+   * Carregamento de todos os registros de usuário
+   * 
+   */
+  function requestToGetAllUsers(module_middleware){
+
+    // This receives: limit clause, where clause and the page number
+    const select_query_params = `${paginationParams.limit}.${paginationParams.where.required}.${paginationParams.where.value_searched}.${paginationParams.page}`;
+
+    AxiosApi.get(`/api/admin-module-user?args=${select_query_params}&auth=${module_middleware}`)
+    .then(function (response) {
+
+      if(response.status === 200){
+
+        setPanelData({
+          status: {
+            loading: false, 
+            success: true,
+            error: false
+          }, 
+          response: {
+            records: response.data.records, 
+            total_records: response.data.total_records_founded, 
+            records_per_page: response.data.records_per_page, 
+            total_pages: response.data.total_pages
+          }
+        });
+
+      }
+
+    })
+    .catch(function (error) {
+
+      console.log(error.message);
+
+      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+
+    });
+
+  }
+
+  /**
+   * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
+   * 
+   */
+  function requestToGetSearchedUsers(module_middleware){
+
+    // This receives: limit clause, where clause and the page number
+    const select_query_params = `${paginationParams.limit}.${paginationParams.where.required}.${paginationParams.where.value_searched}.${paginationParams.page}`;
+
+    AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}?auth=${module_middleware}`)
+      .then(function (response) {
+
+        if(response.status === 200){
+
+          setPanelData({
+            status: {
+              loading: false, 
+              success: true,
+              error: false
+            }, 
+            response: {
+              records: response.data.records, 
+              total_records: response.data.total_records_founded, 
+              records_per_page: response.data.records_per_page, 
+              total_pages: response.data.total_pages
+            }
+          });
+
+        }
+
+      }).catch(function (error) {
+
+        console.log(error.message);
+
+        setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+  
+      });
+
+  }
+
   /**
    * Função para processar a alteração da página da tabela
+   * paginationParams é a dependência do useEffect
    * 
    */
   const handleTablePageChange = (event, value) => {
 
-    setPage(value);
-
-    let newOffset = value === 1 ? 0 : value*paginationParams.limit - paginationParams.limit;
-
-    setPaginationParams({offset: newOffset, limit: paginationParams.limit, where: [paginationParams.where[0],paginationParams.where[1]]});
+    setPaginationParams({
+      page: value,
+      limit: paginationParams.limit, 
+      where: {
+        required: paginationParams.where.required, 
+        value_searched: paginationParams.where.value_searched
+      } 
+    });
 
   };
 
@@ -156,21 +192,34 @@ export function UsersPanel(){
    * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
    * 
    */
-  function handleSearchSubmit(event, offset){
+  function handleSearchSubmit(event){
     event.preventDefault();
 
       let value_searched = window.document.getElementById("users_panel_search_input").value;
 
-      setPage(1);
-      setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});
+      setPaginationParams({
+        page: 1,
+        limit: paginationParams.limit, 
+        where: {
+          required: 1, 
+          value_searched: value_searched
+        } 
+      });
 
   }
 
   function reloadTable(){
 
-    setPage(1);
-    setPaginationParams({offset: 0, limit: paginationParams.limit, where: [false, ""]});
-    setPanelData({status: false, response: "", total_pages: 0});
+    setPanelData({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+    
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit, 
+      where: {
+        required: paginationParams.where.required, 
+        value_searched: paginationParams.where.value_searched
+      } 
+    });
 
   }
   
@@ -223,56 +272,51 @@ export function UsersPanel(){
           />
         </Grid>
         
-        {/* Mecanismo de paginação - depende dos dados retornados pelo servidor */}
-        {/* Se o total de registros for múltiplo de 10, o total de páginas será esse número dividido por 10. Exemplo: 20 registros = 2 páginas */}
-        {/* Se o total de registros não for múltiplo de 10, o total de páginas será esse número mais 10, dividido por 10 e convertido para o maior inteiro mais próximo. Exemplo: 11 páginas = 2 páginas (ao invés de 1,1) */}
-        {panelData.status && 
+        {/* Geração da paginação */}
+        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
         <Grid item>
           <Stack spacing={2}>
-            <Pagination count={panelData.total_pages} shape="rounded" page={page} onChange={handleTablePageChange} />
+            <Pagination count={panelData.response.total_pages} shape="rounded" page={paginationParams.page} onChange={handleTablePageChange} />
           </Stack>
         </Grid>  
         }
 
       </Grid>
-          <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                  <TableHead>
-                  <TableRow>
-                    <StyledTableCell>ID</StyledTableCell>
-                    <StyledTableCell align="center">Nome</StyledTableCell>
-                    <StyledTableCell align="center">Email</StyledTableCell>
-                    <StyledTableCell align="center">Status</StyledTableCell>
-                    <StyledTableCell align="center">Perfil</StyledTableCell>
-                    <StyledTableCell align="center">Criação da conta</StyledTableCell>
-                    <StyledTableCell align="center">Última atualização</StyledTableCell>
-                    <StyledTableCell align="center">Último acesso</StyledTableCell>
-                    <StyledTableCell align="center">Editar</StyledTableCell>
-                    <StyledTableCell align="center">Excluir</StyledTableCell>
-                  </TableRow>
-                  </TableHead>
-                  <TableBody className = "tbody">
-                  {/* Geração das linhas da tabela de usuários - depende dos dados retornados pelo servidor */}
-                  {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
-                  {(panelData.status && !panelData.error) && 
-                      panelData.response.map((row) => (
-                        <StyledTableRow key={row.user_id}>
-                          <StyledTableCell component="th" scope="row">{row.user_id}</StyledTableCell>
-                          <StyledTableCell align="center">{row.name}</StyledTableCell>
-                          <StyledTableCell align="center">{row.email}</StyledTableCell> {}
-                          <StyledTableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</StyledTableCell>
-                          <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
-                          <StyledTableCell align="center">{row.created_at}</StyledTableCell>
-                          <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
-                          <StyledTableCell align="center">{row.last_access}</StyledTableCell>
-                          <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                          <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                        </StyledTableRow>
-                      ))}
-                  </TableBody>
-              </Table>
-          </TableContainer>
-          
+        <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 500 }} aria-label="customized table">
+                <TableHead>
+                <TableRow>
+                  <StyledTableCell>ID</StyledTableCell>
+                  <StyledTableCell align="center">Nome</StyledTableCell>
+                  <StyledTableCell align="center">Email</StyledTableCell>
+                  <StyledTableCell align="center">Status</StyledTableCell>
+                  <StyledTableCell align="center">Perfil</StyledTableCell>
+                  <StyledTableCell align="center">Criação da conta</StyledTableCell>
+                  <StyledTableCell align="center">Última atualização</StyledTableCell>
+                  <StyledTableCell align="center">Último acesso</StyledTableCell>
+                  <StyledTableCell align="center">Editar</StyledTableCell>
+                  <StyledTableCell align="center">Excluir</StyledTableCell>
+                </TableRow>
+                </TableHead>
+                <TableBody className = "tbody">
+                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                    panelData.response.records.map((row) => (
+                      <StyledTableRow key={row.user_id}>
+                        <StyledTableCell component="th" scope="row">{row.user_id}</StyledTableCell>
+                        <StyledTableCell align="center">{row.name}</StyledTableCell>
+                        <StyledTableCell align="center">{row.email}</StyledTableCell> {}
+                        <StyledTableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</StyledTableCell>
+                        <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
+                        <StyledTableCell align="center">{row.created_at}</StyledTableCell>
+                        <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
+                        <StyledTableCell align="center">{row.last_access}</StyledTableCell>
+                        <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                        <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     </>
   )
 }
