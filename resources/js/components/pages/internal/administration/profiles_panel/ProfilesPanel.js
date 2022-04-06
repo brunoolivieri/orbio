@@ -56,19 +56,15 @@ export function ProfilesPanel(){
 
     // Utilizador do state global de autenticação
     const {AuthData} = useAuthentication();
+    
+    // State do carregamento dos dados
+    // Enquanto for false, irá aparecer "carregando" no painel
+    const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
-    // State da paginação da tabela e função de alteração
-    const [page, setPage] = useState(1);
+    // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+    const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // State do carregamento dos dados 
-    // Status true indica que os dados foram carregados, e false que não foram
-    const [panelData, setPanelData] = useState({status: false, response: ""});
-
-    // State dos parâmetros de paginação - define como os dados serão carregados de acordo com a página
-    const [paginationParams, setPaginationParams] = useState({offset: 0, limit: 10, where: [false, ""]});
-
-    // State que serve de dependência para o useEffect do AXIOS
-    // Serve para recarregar o painel
+    // Serve modificar o ícone de refresh da tabela
     const [refreshPanel, setRefreshPanel] = useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -136,7 +132,7 @@ export function ProfilesPanel(){
 
           let pagination_params = `${paginationParams.offset}.${paginationParams.limit}`;
 
-          AxiosApi.get(`/api/admin-module-profile?panel=profiles_panel&args=${pagination_params}&auth=${userid}.${module_id}.${action}`, {
+          AxiosApi.get(`/api/admin-module-profile?args=${pagination_params}&auth=${userid}.${module_id}.${action}`, {
             access: AuthData.data.access
             })
             .then(function (response) {
@@ -162,7 +158,7 @@ export function ProfilesPanel(){
         
         case true:
 
-          let query_arguments = `${'profiles_panel'}.${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
+          let query_arguments = `${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
 
           AxiosApi.get(`/api/admin-module-profile/${query_arguments}?auth=${userid}.${module_id}.${action}`, {
             })
