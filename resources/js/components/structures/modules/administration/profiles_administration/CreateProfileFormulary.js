@@ -31,21 +31,25 @@ import { Alert } from '@mui/material';
 
 export function CreateProfileFormulary() {
 
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
-    // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
-
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({name: false, access: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: false, access: false}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({name: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({name: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+
+    // State da acessibilidade do botão de executar o registro
+    const [disabledButton, setDisabledButton] = useState(false);
+
+    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -55,8 +59,8 @@ export function CreateProfileFormulary() {
     // Função para fechar o modal
     const handleClose = () => {
         
-      setErrorDetected({name: false, access: false});
-      setErrorMessage({name: null, access: null});
+      setErrorDetected({name: false});
+      setErrorMessage({name: null});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -67,8 +71,6 @@ export function CreateProfileFormulary() {
     /*
     * Rotina 1
     * Ponto inicial do processamento do envio do formulário de registro
-    * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */ 
     const handleRegistrationProfile = (event) => {
       event.preventDefault();
@@ -93,8 +95,6 @@ export function CreateProfileFormulary() {
     /*
     * Rotina 2
     * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
     function dataValidate(formData){
 
@@ -102,14 +102,13 @@ export function CreateProfileFormulary() {
       // O valor final é um objeto com dois atributos: "erro" e "message"
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
-      const accessValidate = Number(formData.get("registration_access_input")) === 0 ? {error: true, message: "Defina o nível de acesso (1 - 4)"} : {error: false, message: ""};
 
       // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({name: nameValidate.error, access: accessValidate.error});
-      setErrorMessage({name: nameValidate.message, access: accessValidate.message});
+      setErrorDetected({name: nameValidate.error});
+      setErrorMessage({name: nameValidate.message});
       
       // Se o nome ou acesso estiverem errados
-      if(nameValidate.error || accessValidate.error){
+      if(nameValidate.error){
 
         return false;
 
@@ -124,7 +123,6 @@ export function CreateProfileFormulary() {
     /*
     * Rotina 3
     * Comunicação AJAX com o Laravel utilizando AXIOS
-    * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
     function requestServerOperation(data){
 
@@ -132,82 +130,72 @@ export function CreateProfileFormulary() {
       let module_id = 1;
       let action = "escrever";
 
-      AxiosApi.post("/api/admin-module?", {
-        panel: "profiles_panel",
+      AxiosApi.post("/api/admin-module-profile?", {
         auth: `${user_id}.${module_id}.${action}`,
-        nome: data.get("registration_name_input"),
-        acesso_geral: data.get("registration_access_input")
+        nome: data.get("registration_name_input")
       })
       .then(function (response) {
 
-          // Tratamento da resposta do servidor
-          serverResponseTreatment(response);
+        successServerResponseTreatment();  
 
       })
       .catch(function (error) {
         
-        // Tratamento da resposta do servidor
-        serverResponseTreatment(error.response);
+        errorServerResponseTreatment(error.response.data);
 
       });
 
     }
 
     /*
-    * Rotina 4
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
+    * Rotina 4A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-      if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        // Alerta sucesso
-        setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
+      setTimeout(() => {
 
-        setTimeout(() => {
-        
-          handleClose();
+        setDisabledButton(false);
 
-        }, 2000);
+        handleClose();
 
-      }else{
+      }, 2000);
 
-        if(response.data.error){
+    }
 
-           if(response.data.error === "name"){
+    /*
+    * Rotina 4B
+    * Tratamento da resposta de uma requisição falha
+    */
+    function errorServerResponseTreatment(response_data){
 
-            // Atualização do input
-            setErrorDetected({name: true, access: false});
-            setErrorMessage({name: "Esse perfil já existe!", access: null});
+      setDisabledButton(false);
 
-            // Alerta erro
-            setDisplayAlert({display: true, type: "error", message: "Já existe um perfil cadastrado com esse nome"});
+      let error_message = response_data.message != "" ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
 
-            // Habilitar botão de envio
-            setDisabledButton(false);
+      let input_errors = {
+        nome: {error: false, message: null}
+      }
 
-           }else{
+      for(let prop in response_data.errors){
 
-            // Alerta
-            setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-
-            // Habilitar botão de envio
-            setDisabledButton(false);
-
-           }
-
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
         }
 
       }
-    
+
+      setErrorDetected({name: input_errors.nome.error});
+      setErrorMessage({name: input_errors.nome.message});
+
     }
 
   return (
-    <div>
-
-      {/* Botão para abrir o formulário */}
-      {/* Botão para abrir o formulário */}
+    <>
       <Tooltip title="Novo Perfil">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
           <AddCircleIcon />
@@ -235,18 +223,6 @@ export function CreateProfileFormulary() {
               helperText = {errorMessage.name}
               error = {errorDetected.name}
             />
-            <TextField
-              type = "number"
-              margin="dense"
-              id="registration_access_input"
-              name="registration_access_input"
-              label="Acesso geral"
-              fullWidth
-              variant="outlined"
-              InputProps={{ inputProps: { min: 1, max: 4 } }}
-              helperText = {errorMessage.access}
-              error = {errorDetected.access}
-            />
           </DialogContent>
 
           {displayAlert.display && 
@@ -261,6 +237,6 @@ export function CreateProfileFormulary() {
         </Box>
 
       </Dialog>
-    </div>
+    </>
   );
 }

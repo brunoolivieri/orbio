@@ -137,73 +137,74 @@ export function CreateUserFormulary({...props}) {
       let module_id = 1;
       let action = "escrever";
 
+      const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
+
       AxiosApi.post(`/api/admin-module-user`, {
         auth: `${user_id}.${module_id}.${action}`,
         email: data.get("registration_email_input"),
         nome: data.get("registration_name_input"),
         id_perfil: data.get("select_profile"),
-        senha: `User${(Math.floor(Math.random() * 100000000) + 99999999)}`
+        senha: random_pass
       })
       .then(function (response) {
 
-          // Tratamento da resposta do servidor
-          serverResponseTreatment(response);
+        successServerResponseTreatment();
 
       })
       .catch(function (error) {
-        
-        // Tratamento da resposta do servidor
-        serverResponseTreatment(error.response);
+          
+        errorServerResponseTreatment(error.response.data);
 
       });
+      
+    }
+
+    /*
+    * Rotina 4A
+    * Tratamento da resposta de uma requisição bem sucedida
+    */
+    function successServerResponseTreatment(){
+
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
+
+      setTimeout(() => {
+
+        setDisabledButton(false);
+
+        handleClose();
+
+      }, 2000);
 
     }
 
     /*
-    * Rotina 4
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
+    * Rotina 4B
+    * Tratamento da resposta de uma requisição falha
     */
-    function serverResponseTreatment(response){
+    function errorServerResponseTreatment(response_data){
 
-     if(response.status === 200){
+      setDisabledButton(false);
 
-        // Alerta sucesso
-        setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
+      let error_message = (response_data.message != "" && response_data.message != null) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
 
-        setTimeout(() => {
-          
-          setDisabledButton(false);
-          
-          handleClose();
+      let input_errors = {
+        nome: {error: false, message: null},
+        email: {error: false, message: null},
+        id_perfil: {error: false, message: null}
+      }
 
-        }, 2000);
+      for(let prop in response_data.errors){
 
-      }else{
-
-        if(response.data.error === "email_already_exists"){
-
-          // Atualização do input
-          setErrorDetected({name: false, email: true, profile: false});
-          setErrorMessage({name: null, email: "Esse email já existe", profile: null});
-
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "O email informado já está cadastrado no sistema"});
-
-          // Habilitar botão de envio
-          setDisabledButton(false);
-
-        }else{
-
-          // Alerta
-          setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-
-          // Habilitar botão de envio
-          setDisabledButton(false);
-
-        } 
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
+        }
 
       }
+
+      setErrorDetected({name: input_errors.nome.error, email: input_errors.email.error, profile: input_errors.id_perfil.error});
+      setErrorMessage({name: input_errors.nome.message, email: input_errors.email.message, profile: input_errors.id_perfil.message});
 
     }
 

@@ -121,6 +121,14 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
+
+        $request->validate([
+            'nome' => 'required|bail|string',
+            'email' => 'required|email|unique:users,email,',
+            'id_perfil' => 'required|integer|numeric',
+            'senha' => 'required'
+        ]);
+
         $model = new UserModel();
 
         // A senha não criptografada será utilizada no conteúdo do email

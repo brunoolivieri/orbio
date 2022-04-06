@@ -23,35 +23,27 @@ class ProfileModel extends Model
 
         try{
 
-            if(ProfileModel::where('nome', $data["nome"])->exists()){
+            DB::beginTransaction();
 
-                return ["status" => false, "error" => "name"];
+            $new_profile_id = DB::table("profile")->insertGetId($data);
 
-            }else{
+            $model = new ProfileHasModuleModel();
 
-                DB::beginTransaction();
+            $model_response = $model->newProfileRelationship((int) $new_profile_id);
 
-                $new_profile_id = DB::table("profile")->insertGetId($data);
+            if($model_response["status"] && !$model_response["error"]){
 
-                $model = new ProfileHasModuleModel();
+                DB::commit();
 
-                $model_response = $model->newProfileRelationship((int) $new_profile_id);
+                return ["status" => true, "error" => false];
 
-                if($model_response["status"] && !$model_response["error"]){
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                    DB::commit();
+                DB::rollBack();
 
-                    return ["status" => true, "error" => false];
+                return ["status" => false, "error" => $model_response["error"]];
 
-                }else if(!$model_response["status"] && $model_response["error"]){
-
-                    DB::rollBack();
-
-                    return ["status" => false, "error" => $model_response["error"]];
-
-                }
-
-            }  
+            }
 
         }catch(\Exception $e){
 
@@ -83,36 +75,25 @@ class ProfileModel extends Model
 
         try{
 
-            if(ProfileModel::where('nome', $profile_name)->where('id', '!=', $profile_id)->exists()){
+            DB::beginTransaction();
 
-                return ["status" => false, "error" => "name_already_exists"];
+            ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name]);
 
-            }else{
+            $model = new ProfileHasModuleModel();
 
-                DB::beginTransaction();
+            $model_response = $model->updateProfileModuleRelationship((int) $profile_id, $profile_modules_relationship);
 
-                ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name]);
+            if($model_response["status"] && !$model_response["error"]){
 
-                // O perfil teve seus dados básicos atualizados (tabela 'profile')
-                // Agora é preciso atualizar a relação dele com os módulos (tabela 'profile_has_module')
+                DB::commit();
 
-                $model = new ProfileHasModuleModel();
+                return ["status" => true, "error" => false];
 
-                $model_response = $model->updateProfileModuleRelationship((int) $profile_id, $profile_modules_relationship);
+            }else if(!$model_response["status"] && $model_response["error"]){
 
-                if($model_response["status"] && !$model_response["error"]){
+                DB::rollBack();
 
-                    DB::commit();
-
-                    return ["status" => true, "error" => false];
-
-                }else if(!$model_response["status"] && $model_response["error"]){
-
-                    DB::rollBack();
-
-                    return ["status" => false, "error" => $model_response["error"]];
-
-                }
+                return ["status" => false, "error" => $model_response["error"]];
 
             }
 

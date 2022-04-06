@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
@@ -85,8 +84,6 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
     /*
     * Rotina 1
     * Ponto inicial do processamento do envio do formulário de atualização ou deleção
-    * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */
     function handleSubmitOperation(event){
         event.preventDefault();
@@ -121,8 +118,6 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
     /*
     * Rotina 2
     * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
     function dataValidate(formData){
 
@@ -149,7 +144,102 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
     }
 
     /*
-    * Rotina 3 - apenas no formulário de atualização
+    * Rotina 3
+    * Comunicação AJAX com o Laravel utilizando AXIOS
+    */
+    function requestServerOperation(data){
+
+      // Dados para o middleware de autenticação
+      let logged_user_id = AuthData.data.id; 
+      let module_id = 1; 
+      let action = "escrever"; 
+
+      if(operation === "update"){
+
+        AxiosApi.patch(`/api/admin-module/${data.get("id_input")}`, {
+          auth: `${logged_user_id}.${module_id}.${action}`,
+          nome: data.get("name_input"),
+          profile_modules_relationship: modulePowers
+        })
+        .then(function (response) {
+  
+          successServerResponseTreatment(); 
+  
+        })
+        .catch(function (error) {
+          
+          errorServerResponseTreatment(error.response.data);
+  
+        });
+
+      }else if(operation === "delete"){
+
+        AxiosApi.delete(`/api/admin-module-profile/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${action}`)
+        .then(function (response) {
+  
+          successServerResponseTreatment(); 
+  
+        })
+        .catch(function (error) {
+          
+          errorServerResponseTreatment(error.response.data);
+  
+        });
+
+      }
+
+    }
+
+    /*
+    * Rotina 4A
+    * Tratamento da resposta de uma requisição bem sucedida
+    */
+    function successServerResponseTreatment(){
+
+      refresh_setter(true);
+
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
+
+      setTimeout(() => {
+
+        setDisabledButton(false);
+
+        handleClose();
+
+      }, 2000);
+
+    }
+
+    /*
+    * Rotina 4B
+    * Tratamento da resposta de uma requisição falha
+    */
+    function errorServerResponseTreatment(response_data){
+
+      setDisabledButton(false);
+
+      let error_message = response_data.message != "" ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      let input_errors = {
+        nome: {error: false, message: null}
+      }
+
+      for(let prop in response_data.errors){
+
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
+        }
+
+      }
+
+      setErrorDetected({name: input_errors.nome.error});
+      setErrorMessage({name: input_errors.nome.message});
+
+    }
+
+    /*
     * Essa função serve para organizar os valores dos checkbox
     * 
     */
@@ -275,117 +365,6 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
       }
 
-    }
-
-    /*
-    * Rotina 4
-    * Comunicação AJAX com o Laravel utilizando AXIOS
-    * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
-    */
-    function requestServerOperation(data){
-
-      // Dados para o middleware de autenticação
-      let logged_user_id = AuthData.data.id; // ID do usuário logado
-      let module_id = 1; // ID do módulo
-      let action = "escrever"; // Tipo de ação realizada
-
-      if(operation === "update"){
-
-        AxiosApi.patch(`/api/admin-module/${data.get("id_input")}`, {
-          panel: "profiles_panel",
-          auth: `${logged_user_id}.${module_id}.${action}`,
-          profile_name: data.get("name_input"),
-          profile_modules_relationship: modulePowers
-        })
-        .then(function (response) {
-  
-            // Tratamento da resposta do servidor
-            serverResponseTreatment(response);
-  
-        })
-        .catch(function (error) {
-          
-          // Tratamento da resposta do servidor
-          serverResponseTreatment(error.response);
-  
-        });
-
-      }else if(operation === "delete"){
-
-        let param = `profiles_panel.${data.get("id_input")}`;
-
-        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}.${module_id}.${action}`)
-        .then(function (response) {
-  
-            // Tratamento da resposta do servidor
-            serverResponseTreatment(response);
-  
-        })
-        .catch(function (error) {
-          
-          // Tratamento da resposta do servidor
-          serverResponseTreatment(error.response);
-  
-        });
-
-      }
-
-    }
-
-    /*
-    * Rotina 5
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
-    */
-    function serverResponseTreatment(response){
-
-      if(response.status === 200){
-
-        if(operation === "update"){
-
-          // Altera o state "refreshPanel" para true
-          refresh_setter(true);
-
-          // Alerta sucesso
-          setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
-
-        }else if(operation === "delete"){
-
-          // Altera o state "refreshPanel" para true
-          refresh_setter(true);
-
-          // Alerta sucesso
-          setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});
-
-        }
-
-        setTimeout(() => {
-          
-          setDisabledButton(false);
-          
-          handleClose();
-
-        }, 2000);
-
-      }else{
-
-        // Habilitar botão de envio
-        setDisabledButton(false);
-
-        if(operation === "update" && response.data.error === "name_already_exists"){
-
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "Erro! Já existe um perfil com esse nome."});
-
-        }else{
-
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-
-        }
-
-      }
-      
     }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //

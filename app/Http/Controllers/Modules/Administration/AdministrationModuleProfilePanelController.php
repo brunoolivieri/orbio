@@ -100,10 +100,14 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
+
+        $request->validate([
+            'nome' => 'required|bail|string|unique:profile,nome'
+        ]);
         
         $model = new ProfileModel();
 
-        $model_response = $model->newProfile($request->except("auth", "panel"));
+        $model_response = $model->newProfile($request->except("auth"));
 
         if($model_response["status"] === true && !$model_response["error"]){
 
@@ -158,10 +162,14 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
+
+        $request->validate([
+            'nome' => 'required|bail|string|unique:profile,nome'
+        ]);
         
         $model = new ProfileModel();
 
-        $model_response = $model->updateProfile((int) $id, $request->profile_name, $request->profile_modules_relationship);
+        $model_response = $model->updateProfile((int) $id, $request->nome, $request->profile_modules_relationship);
 
         if($model_response["status"] && !$model_response["error"]){
 

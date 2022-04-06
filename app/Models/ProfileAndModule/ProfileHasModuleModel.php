@@ -16,7 +16,7 @@ class ProfileHasModuleModel extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    // Método para criar um novo relacionamento perfil-módulo
+    
     function newProfileRelationship(int $new_profile_id) : array {
 
         try{

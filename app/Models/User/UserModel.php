@@ -40,34 +40,20 @@ class UserModel extends Model
      */
     function createUser(array $data, string $unencrypted_password) : array {
 
-        try{
+        try{ 
 
-            if(UserModel::where('email', $data["email"])->exists()){
+            UserModel::insert($data);
 
-                return ["status" => false, "error" => "email_already_exists"];
+            // Envio do email com os dados de acesso para o novo usuário
+            Mail::to($data["email"])->send(new UserRegisteredEmail([
+                "name" => $data["nome"],
+                "email" => $data["email"],
+                "password" => $unencrypted_password
+            ]));
 
-            }else{
-
-                DB::beginTransaction();
-
-                UserModel::insert($data);
-
-                // Envio do email com os dados de acesso para o novo usuário
-                Mail::to($data["email"])->send(new UserRegisteredEmail([
-                    "name" => $data["nome"],
-                    "email" => $data["email"],
-                    "password" => $unencrypted_password
-                ]));
-
-                DB::Commit();
-
-                return ["status" => true, "error" => false];
-
-            }  
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
-
-            DB::rollBack();
 
             return ["status" => false, "error" => $e->getMessage()];
 
