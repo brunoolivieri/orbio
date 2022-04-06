@@ -39,22 +39,29 @@ class ProfileHasModuleModel extends Model
         
     }
 
-    function loadAllRecords($offset, $limit) : array {
+    function loadProfilesModulesRelationshipWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
 
-            $all_records = DB::table('profile_has_module')
+            $data = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
-            ->offset($offset)->limit($limit)->get();
+            ->when($where_value, function ($query, $where_value) {
 
-            $response = [
-                "referencialValueForCalcPages" => ProfileHasModuleModel::all()->count() / 5,
-                "selectedRecords" => $all_records
-            ];
+                $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-            return ["status" => true, "error" => false, "data" => $response];
-                         
+                    $query->where('profile_has_module.id_perfil', '=', $where_value);
+
+                }, function($query) use ($where_value){
+
+                    $query->where('profile.nome', 'LIKE', '%'.$where_value.'%');
+
+                });
+
+            })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            return ["status" => true, "error" => false, "data" => $data];
+
         }catch(\Exception $e){
 
             return ["status" => false, "error" => $e->getMessage()];
@@ -81,34 +88,6 @@ class ProfileHasModuleModel extends Model
             return ["status" => false, "error" => $e->getMessage()];
 
         }
-
-    }
-
-    function loadRecordCompatibleWithTheSearchedValue($value_searched, int $offset, int $limit) : array {
-
-        try{
-
-            $all_compatible_records = DB::table('profile_has_module')
-            ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-            ->join('module', 'profile_has_module.id_modulo', '=', 'module.id')
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
-            ->where('profile_has_module.id_perfil', 'LIKE', '%'.$value_searched.'%')
-            ->orWhere('profile.nome', 'LIKE', '%'.$value_searched.'%')
-            ->offset($offset)->limit($limit)->get();
-
-            $response = [
-                "referencialValueForCalcPages" => count($all_compatible_records)/5,
-                "selectedRecords" => $all_compatible_records
-            ];
-
-            return ["status" => true, "error" => false, "data" => $response];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
 
     }
 

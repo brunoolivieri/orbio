@@ -75,15 +75,15 @@ export function UsersPanel(){
 
       const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
 
-    if(!paginationParams.where){
+      if(!paginationParams.where){
 
-      requestToGetAllUsers(module_middleware);
+        requestToGetAllUsers(module_middleware);
 
-    }else{
+      }else{
 
-      requestToGetSearchedUsers(module_middleware);
+        requestToGetSearchedUsers(module_middleware);
 
-    }
+      }
 
   },[paginationParams]);
 

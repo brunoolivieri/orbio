@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class AdministrationModuleProfilePanelController extends Controller
 {
@@ -18,25 +19,20 @@ class AdministrationModuleProfilePanelController extends Controller
     public function index() : \Illuminate\Http\Response
     {
 
-        $request_values = explode(".", request()->args);
-        $limit = $request_values[1];
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0]*5;
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
 
         $model = new ProfileHasModuleModel();
 
-        // O LIMIT e o OFFSET originais devem ser multiplicados por 5
-        // Isso ocorre porque cada grupo de cinco registros da tabela do BD serão agrupados em um
-        $up_limit = $limit*5;
-        $up_offset = $offset*5;
-
-        $model_response = $model->loadAllRecords((int) $up_offset, (int) $up_limit);
-
-        dd($model_response);
+        $model_response = $model->loadProfilesModulesRelationshipWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->profilesPanelDataFormat($model_response["data"]["selectedRecords"], $model_response["data"]["referencialValueForCalcPages"], $limit);
+            $data_formated = $this->formatDataForTable($model_response["data"]);
 
-            return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -47,66 +43,52 @@ class AdministrationModuleProfilePanelController extends Controller
     }
 
     /**
-     * Função para formatação dos dados para o painel de perfis
-     * Os dados são tratados e persistidos em uma matriz
+     * Função para formatação dos dados para a tabela de perfis
      *
      * @param object $data
      * @return array
      */
-    private function profilesPanelDataFormat(object $data, int $dbTotalRecords,  int $limit) : array {
+    private function formatDataForTable(LengthAwarePaginator $data) : array {
 
-        $arrData = [];
+        $arr_with_formated_records = [];
 
         $row = 0;
-        $modulesCurrentProfile = array();
-        $profileCounter = 0;
+        $relationship_of_current_profile_with_modules = [];
+        $profile_row_counter = 0;
 
-        // O Do While deve reunir em uma só linha cada conjunto de 5 registros em que o campo id_perfil se repete
-        // Cada perfil tem quatro linhas na tabela, e em cada uma dessas linhas o valor do campo "id_modulo" varia
-        // Ou seja: cada linha com o mesmo "id_perfil" representa uma relação desse perfil com um determinado módulo (1,2,3, 4 ou 5)
+        // Cada um tem ou não os privilégios de "ler" e "escrever" em relação a cada um dos 5 módulos
+        // Na tabela do banco de dados, cada perfil aparece 5 vezes, porque cada linha é a relação do perfil com 1 dos módulos
+        // Aqui cada um desses conjunto de 5 registros é agrupado em um só
+        foreach($data->items() as $row => $record){
 
-        do{
-           
-            // A atual posição do array, que é igual ao valor do perfil, recebe as chaves "profile_id" e "profile_name"
-            // Mesmo variando a linha, se o perfil continuar sendo o mesmo, essas chaves receberão o mesmo valor
-            $profile_name = $data[$row]->nome_perfil;
-            $arrData[(int) $profileCounter] = ["profile_id" => $data[$row]->id_perfil, "profile_name" =>  $profile_name, "profile_access" => $data[$row]->acesso_geral, "modules" => array()]; 
+            // Esse array recebe os dados básicos do perfil atualmente percorrido
+            // Se hipoteticamente esse fosse o primeiro loop, esses dados seriam do primeiro perfil, e não mudariam nos próximos 4 loops (porque cada perfil tem 5 registros na tabela)
+            $arr_with_formated_records[$profile_row_counter] = ["profile_id" => $record->id_perfil, "profile_name" =>  $record->nome_perfil, "modules" => array()]; 
 
-            // O array $modulesCurrentProfile recebe os valores dos poderes CRUD do atual perfil
-            // São empurrados novos array enquanto o id do módulo não for igual a 5
-            // A linha, $row, varia a cada loop, também o valor do campo "id_modulo", mas o campo "id_perfil" se mantém o mesmo por 5 loops (porque existem 5 módulos relacionados)
-            // Ou seja, enquanto o id do perfil for X entre os registros percorridos, o array abaixo receberá, a cada variação de $row, novos valores CRUD referente a relação com outro módulo
-            $module_name = $data[$row]->id_modulo == 1 ? "Administração" : ($data[$row]->id_modulo === 2 ? "Planos" : ($data[$row]->id_modulo === 3 ? "Ordens" : ($data[$row]->id_modulo === 4 ? "Relatorios" : "Incidentes")));
-            $modulesCurrentProfile[$data[$row]->id_modulo] = ["mod_name" => $module_name, "profile_powers" => ["ler" => $data[$row]->ler, "escrever" => $data[$row]->escrever]];
-            
-            // Se o ID do módulo atual for igual a 5
-            if($data[$row]->id_modulo == 5){
+            // Agora são recuperados os dados do relacionamento do perfil atual com o módulo atual, que é alterado a cada loop
+            // O perfil se mantém por 5 loops, cada loop é o relacionamento dele com um dos módulos
+            $module_name = $record->id_modulo == 1 ? "Administração" : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatorios" : "Incidentes")));
+            $relationship_of_current_profile_with_modules[$record->id_modulo] = ["module_name" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
 
-                // Então agora existem 5 arrays armazenados no array: $modulesCurrentProfile = [[...], [...], [...], [...], [...]]
-                // Em cada posição tem as relações de poder do atual perfil, "id_perfil", com cada um dos quatro módulos existentes
-                // Agora essa estrutura é jogada para dentro do $arrData na posição cujo valor é igual ao id do atual perfil
-                $arrData[$profileCounter]["modules"] = $modulesCurrentProfile;
+            // Se o módulo atual for 5, já foram percorridos os 5 registros do perfil com 5 loops
+            if($record->id_modulo == 5){
 
-                // Ou seja, se existe um perfil com ID 1, o $arrData terá uma posição [1] com 5 arrays
-                // Essa posição [1] terá as relações do perfil de ID 1 com os 5 módulos existentes
+                // Os dados dos 5 loops, reunidos a cada loop, são persistidos em uma única posição
+                // Essa fase, agora, é a transformação final dos dados dos 5 registros em uma única linha
+                $arr_with_formated_records[$profile_row_counter]["modules"] = $relationship_of_current_profile_with_modules;
 
-                $profileCounter += 1;
+                $profile_row_counter += 1;
 
             }
 
-            $row += 1;
+        }
 
-        }while($row < count($data));
+        $return_array["records"] = $arr_with_formated_records;
+        $return_array["total_records_founded"] = $data->total()/5;
+        $return_array["records_per_page"] = $data->perPage()/5;
+        $return_array["total_pages"] = $data->lastPage();
 
-        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
-        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
-        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
-        $total_pages = $dbTotalRecords <= $limit ? 1 : ($dbTotalRecords % $limit === 0 ? $dbTotalRecords / $limit : ceil($dbTotalRecords / $limit));
-
-        $ret = [(int) $total_pages, $arrData];
-
-        return $ret;
-
+        return $return_array;
 
     }
 
@@ -166,20 +148,20 @@ class AdministrationModuleProfilePanelController extends Controller
     public function show($id) : \Illuminate\Http\Response
     {
         
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0]*5;
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new ProfileHasModuleModel();
 
-        // O LIMIT e o OFFSET originais devem ser multiplicados por 5
-        // Isso ocorre porque cada grupo de cinco registros da tabela do BD serão agrupados em um
-        $up_limit = $limit*5;
-        $up_offset = $offset*5;
-
-        $model_response = $model->loadRecordCompatibleWithTheSearchedValue($value_searched, (int) $up_offset, (int) $up_limit);
+        $model_response = $model->loadProfilesModulesRelationshipWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
             
-            $dataFormated = $this->profilesPanelDataFormat($model_response["data"]["selectedRecords"], (int) $model_response["data"]["referencialValueForCalcPages"], $limit);
+            $data_formated = $this->formatDataForTable($model_response["data"]);
 
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
             
