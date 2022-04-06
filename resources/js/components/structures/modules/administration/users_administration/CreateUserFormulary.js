@@ -137,8 +137,7 @@ export function CreateUserFormulary({...props}) {
       let module_id = 1;
       let action = "escrever";
 
-      AxiosApi.post(`/api/admin-module`, {
-        panel: "users_panel",
+      AxiosApi.post(`/api/admin-module-user`, {
         auth: `${user_id}.${module_id}.${action}`,
         email: data.get("registration_email_input"),
         nome: data.get("registration_name_input"),
@@ -255,7 +254,7 @@ export function CreateUserFormulary({...props}) {
               
                <GenericSelect 
                label_text = {"Perfil"} 
-               data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} 
+               data_source = {"/api/admin-module-user/create?auth=none"} 
                primary_key={"id"} 
                key_content={"nome"} 
                error = {errorDetected.profile} 

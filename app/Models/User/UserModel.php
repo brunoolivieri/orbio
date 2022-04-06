@@ -38,7 +38,7 @@ class UserModel extends Model
      * @param array $data
      * @return array
      */
-    function createUserAndSendAccessData(array $data, string $unencrypted_password) : array {
+    function createUser(array $data, string $unencrypted_password) : array {
 
         try{
 
@@ -79,7 +79,6 @@ class UserModel extends Model
      * Carrega os registros no formato de paginação
      * A claúsula where é opcional
      * A claúsula when() permite criar queries condicionais
-     * https://laravel.com/docs/9.x/queries#conditional-clauses
      *
      * @param array $data
      * @return array
@@ -152,65 +151,6 @@ class UserModel extends Model
             ->get();
 
             return ["status" => true, "error" => false, "account_data" => $data];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-    
-    /**
-     * Método realizar um UPDATE em um registro especifico da tabela "users"
-     *
-     * @param int $userid
-     * @return array
-     */
-    function updateUserDataAndSendNotificationEmail(int $user_id, array $data) : array {
-
-        try{
-
-            if(UserModel::where('email', $data["email"])->where('id', '!=', $user_id)->exists()){
-
-                return ["status" => false, "error" => "email_already_exists"];
-                
-            }else{
-
-                UserModel::where('id', $user_id)->update($data);
-
-                // Notificar usuário
-                /*Mail::to($data["email"])->send(new UserRegisteredEmail([
-                    "name" => $data["nome"],
-                    "email" => $data["email"],
-                    "password" => $unencrypted_password
-                ]));*/
-
-                return ["status" => true, "error" => false];
-
-            }
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um DELETE em um registro especifico da tabela "users"
-     *
-     * @param int $userID
-     * @return array
-     */
-    function deleteUser(int $user_id) : array {
-
-        try{
-
-            UserModel::where('id', $user_id)->delete();
-
-            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 

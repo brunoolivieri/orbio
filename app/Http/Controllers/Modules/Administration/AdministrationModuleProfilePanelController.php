@@ -93,28 +93,6 @@ class AdministrationModuleProfilePanelController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() : \Illuminate\Http\Response
-    {
-        
-        try{
-
-            $data = ProfileModel::all();
-
-            return response($data, 200);
-    
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 500);
-
-        }
-
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

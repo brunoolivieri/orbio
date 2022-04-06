@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Modules\Administration;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User\UserModel;
+use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -89,6 +92,28 @@ class AdministrationModuleUserPanelController extends Controller
     }
 
     /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create() : \Illuminate\Http\Response
+    {
+        
+        try{
+
+            $data = ProfileModel::all();
+
+            return response($data, 200);
+    
+        }catch(\Exception $e){
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }
+
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -99,7 +124,7 @@ class AdministrationModuleUserPanelController extends Controller
         $model = new UserModel();
 
         // A senha não criptografada será utilizada no conteúdo do email
-        $model_response = $model->createUserAndSendAccessData([
+        $model_response = $model->createUser([
             "nome" => $request->nome,
             "email" => $request->email,
             "senha" => password_hash($request->senha, PASSWORD_DEFAULT),
@@ -159,18 +184,23 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
-        
-        $model = new UserModel();
 
-        $model_response = $model->updateUserDataAndSendNotificationEmail((int) $id, $request->except("auth", "panel"));
+        $request->validate([
+            'nome' => 'required|bail|string',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'status' => 'required|boolean',
+            'id_perfil' => 'required|integer|numeric'
+        ]);
 
-        if($model_response["status"] && !$model_response["error"]){
+        try{
+
+            UserModel::where('id', $id)->update($request->except("auth"));
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
 
@@ -184,18 +214,16 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
-        
-        $model = new UserModel();
 
-        $model_response = $model->deleteUser($id);
+        try{
 
-        if($model_response["status"]){
+            UserModel::where('id', $id)->delete();
 
             return response("", 200);
 
-        }else{
+        }catch(\Exception $e){
 
-            return response("", 500);
+            return response(["error"=> $e->getMessage()], 500);
 
         }
 

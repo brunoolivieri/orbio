@@ -40,8 +40,8 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
     const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({email: false, name: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({email: null, name: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({email: false, name: false, profile: false, status: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({email: null, name: null, profile: null, status: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -59,8 +59,8 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({email: false, name: false});
-      setErrorMessage({email: false, name: false});
+      setErrorDetected({email: false, name: false, profile: false, status: false});
+      setErrorMessage({email: null, name: null, profile: null, status: null});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -104,19 +104,15 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
       // Padrão de um email válido
       const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-      // Validação dos dados - true para presença de erro e false para ausência
-      // Se utilizada a função FormValidation é retornado um objeto com dois atributos: "erro" e "message"
-      // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
       const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
       const profileValidate = Number(formData.get("select_profile")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
+      const statusValidate = (Number(formData.get("status_input")) != 0 && Number(formData.get("status_input")) != 1) ? {error: true, message: "O status deve ser 1 ou 0"} : {error: false, message: ""}; 
 
-      // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({email: emailValidate.error, name: nameValidate.error});
-      setErrorMessage({email: emailValidate.message, name: nameValidate.message});
+      setErrorDetected({email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error});
+      setErrorMessage({email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message, status: statusValidate.message});
 
-      // Se o email ou a senha estiverem errados
-      if(emailValidate.error === true || nameValidate.error === true || profileValidate.error){
+      if(emailValidate.error === true || nameValidate.error === true || profileValidate.error || statusValidate.error){
 
           return false;
 
@@ -137,42 +133,35 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
 
       if(operation === "update"){
 
-        AxiosApi.patch(`/api/admin-module/${data.get("id_input")}`, {
+        AxiosApi.patch(`/api/admin-module-user/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${action}`,
-          panel: "users_panel",
           nome: data.get("name_input"),
           email: data.get("email_input"),
           status: data.get("status_input"),
           id_perfil: data.get("select_profile")
         })
         .then(function (response) {
-  
-            // Tratamento da resposta do servidor
-            serverResponseTreatment(response);
+
+          successServerResponseTreatment();  
   
         })
         .catch(function (error) {
           
-          // Tratamento da resposta do servidor
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
       }else if(operation === "delete"){
 
-        let param = `users_panel.${data.get("id_input")}`;
-
-        AxiosApi.delete(`/api/admin-module/${param}?auth=${logged_user_id}.${module_id}.${action}`)
+        AxiosApi.delete(`/api/admin-module-user/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${action}`)
         .then(function (response) {
-  
-            // Tratamento da resposta do servidor
-            serverResponseTreatment(response);
+
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          // Tratamento da resposta do servidor
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -180,57 +169,58 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
 
     }
 
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-      if(response.status === 200){
+      refresh_setter(true);
 
-        if(operation === "update"){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-          // Altera o state "refreshPanel" para true
-          refresh_setter(true);
-
-          // Alerta sucesso
-          setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
-
-        }else{
-
-          // Altera o state "refreshPanel" para true
-          refresh_setter(true);
-
-          // Alerta sucesso
-          setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});
-
-        }
-
-        setTimeout(() => {
-
-          setDisabledButton(false);
-
-          handleClose();
-
-        }, 2000);
-
-      }else{
+      setTimeout(() => {
 
         setDisabledButton(false);
 
-        if(operation === "update" && response.data.error === "email_already_exists"){
+        handleClose();
 
-          // Atualização dos estados responsáveis por manipular os inputs
-          setErrorDetected({email: true, name: false});
-          setErrorMessage({email: "Esse email já existe", name: null});
+      }, 2000);
 
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "Erro! Já existe um usuário com esse email."});
+    }
 
-        }else{
+    function errorServerResponseTreatment(response_data){
 
-          // Alerta erro
-          setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+      setDisabledButton(false);
 
+      let error_message = response_data.message != "" ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      let input_errors = {
+        email: {error: false, message: null},
+        nome: {error: false, message: null},
+        id_perfil: {error: false, message: null},
+        status: {error: false, message: null},
+      }
+
+      for(let prop in response_data.errors){
+
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
         }
 
       }
+
+      setErrorDetected({
+        email: input_errors.email.error, 
+        name: input_errors.nome.error, 
+        profile: input_errors.id_perfil.error, 
+        status: input_errors.status.error
+      });
+
+      setErrorMessage({
+        email: input_errors.email.message, 
+        name: input_errors.nome.message, 
+        profile: input_errors.id_perfil.message, 
+        status: input_errors.status.message
+      });
 
     }
 
@@ -321,11 +311,13 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
                   readOnly: operation == "delete" ? true : false,
                   inputProps: { min: 0, max: 1 }
               }}
+              helperText = {errorMessage.status}
+              error = {errorDetected.status}
             />
 
             <GenericSelect 
             label_text = {"Perfil"} 
-            data_source = {"/api/admin-module/create?panel=users_panel&auth=none"} 
+            data_source = {"/api/admin-module-user/create?auth=none"} 
             primary_key={"id"} 
             key_content={"nome"} 
             error = {errorDetected.profile} 
