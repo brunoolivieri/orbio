@@ -45,7 +45,7 @@ class ProfileHasModuleModel extends Model
 
             $data = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
+            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
             ->when($where_value, function ($query, $where_value) {
 
                 $query->when(is_numeric($where_value), function($query) use ($where_value){
@@ -70,15 +70,14 @@ class ProfileHasModuleModel extends Model
 
     }
 
-    function loadRecordThatMatchesExactlyTheParameters($profile_id, $profile_name) : array {
+    function loadProfilesModulesRelationship(int $profile_id) : array {
 
         try{
 
             $compatible_record = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
             ->where('profile_has_module.id_perfil', '=', $profile_id)
-            ->orWhere('profile.nome', '=', $profile_name)
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'profile_has_module.ler', 'profile_has_module.escrever')
+            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
             ->get();
 
             return ["status" => true, "error" => false, "data" => $compatible_record];

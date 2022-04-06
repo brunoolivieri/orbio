@@ -31,27 +31,24 @@ class LoginController extends Controller
 
         $model = new AuthenticationModel();
 
-        $response = $model->userAuthentication($request);
+        $response_from_authentication = $model->userAuthentication($request);
 
         // Se o registro foi realizado com sucesso
-        if($response["status"] && !$response["error"]){
+        if($response_from_authentication["status"] && !$response_from_authentication["error"]){
 
-            // $userData recebe o array dos dados do usuário logado
-            $userData = $response["data"];
+            if($completed_token = $this->supplementTokenData($response_from_authentication["token_data"])){
 
-            if($token_jwt = $this->generateTokenAndSession($userData)){
-
-                return response(["userid"=>$userData["id"], "token" => $token_jwt], 200);
+                return response(["userid"=>$response_from_authentication["token_data"]["id"], "token" => $completed_token], 200);
 
             }else{
 
-                return response(["error" => "token"], 500);
+                return response(["error" => "token supplementation failed"], 500);
 
             }
 
-        }else if(!$response["status"] && $response["error"]){
+        }else if(!$response_from_authentication["status"] && $response_from_authentication["error"]){
 
-            return response(["error" => $response["error"]], 500);
+            return response(["error" => $response_from_authentication["error"]], 500);
 
         }
 
@@ -65,24 +62,23 @@ class LoginController extends Controller
      * @param array $userData
      * @return JWT 
      */
-    private function generateTokenAndSession(array $user_data) {
+    private function supplementTokenData(array $token_data) {
 
         $model = new ProfileHasModuleModel();
 
-        $response = $model->loadRecordThatMatchesExactlyTheParameters($user_data["profile_id"], NULL);
+        $response = $model->loadProfilesModulesRelationship($token_data["profile_id"]);
 
         if($response["status"] && !$response["error"]){
 
             // Recebimento dos dados perfil-módulo re-organizados em um array
-            $profile_module_data = $this->profileModuleFormatData($response["data"], $user_data);
+            $profile_module_data = $this->profileModuleFormatData($response["data"], $token_data);
 
-            // Geração da sessão
-            $this->generateSession($user_data, $profile_module_data);
+            // Inserção dos novos dados no token
+            $full_jwt_token = $this->generateTokenJWT($token_data, $profile_module_data);
 
-            // Geração e retorno do token JWT
-            $token_jwt = $this->generateTokenJWT($user_data, $profile_module_data);
+            $this->generateSession($token_data, $profile_module_data);
 
-            return $token_jwt;
+            return $full_jwt_token;
 
         }else if(!$response["status"] && $response["error"]){
 
@@ -95,12 +91,12 @@ class LoginController extends Controller
     /**
      * Método para gerar a sessão após a autenticação bem sucedida
      * 
-     * @param array $user_data
+     * @param array $token_data
      */
-    private function generateSession(array $user_data, array $profile_module_data) : void {
+    private function generateSession(array $token_data, array $profile_module_data) : void {
 
         Session::put("user_authenticated", true);
-        Session::put("id", $user_data["id"]);
+        Session::put("id", $token_data["id"]);
         Session::put("modules_access", $profile_module_data);
 
     }
@@ -108,17 +104,14 @@ class LoginController extends Controller
     /**
      * Método para gerar o conteúdo do Token JWT após a autenticação do usuário
      * 
-     * @param array $userData
+     * @param array $token_data
      * @return array
      */
-    private function generateTokenJWT(array $user_data, array $profile_module_data) : string {
+    private function generateTokenJWT(array $token_data, array $profile_module_data) : string {
 
-        $user_data["user_powers"] = $profile_module_data;
+        $token_data["user_powers"] = $profile_module_data;
 
-        $key = env('JWT_TOKEN_KEY');
-
-        // Retorno do token gerado
-        $token_generated = JWT::encode($user_data, $key, 'HS256');  
+        $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');  
 
         return $token_generated;
 

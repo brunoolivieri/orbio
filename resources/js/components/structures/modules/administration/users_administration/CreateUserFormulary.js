@@ -185,7 +185,7 @@ export function CreateUserFormulary({...props}) {
 
       setDisabledButton(false);
 
-      let error_message = (response_data.message != "" && response_data.message != null) ? response_data.message : "Houve um erro na realização da operação!";
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
       let input_errors = {

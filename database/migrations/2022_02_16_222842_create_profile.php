@@ -16,7 +16,6 @@ class CreateProfile extends Migration
         Schema::create('profile', function (Blueprint $table) {
             $table->id();
             $table->string("nome");
-            $table->integer("acesso_geral");
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();
         });

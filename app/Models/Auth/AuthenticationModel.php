@@ -33,72 +33,47 @@ class AuthenticationModel extends Model
 
         try{
 
-            // Se o usuário existir 
             if(UserModel::where('email', $request->email)->exists()){
 
-                $userAccountData = UserModel::where('email', '=', $request->email)->get();
+                $user_account_data = UserModel::where('email', '=', $request->email)->get();
 
-                // Se a senha informada for compátivel com a do registro
-                if(password_verify($request->password, $userAccountData[0]->senha)){
+                if(password_verify($request->password, $user_account_data[0]->senha)){
 
-                    $account_status = $this->checkUserStatus($userAccountData[0]);
+                    $account_status = $this->checkUserStatus($user_account_data[0]);
 
                     if($account_status == "ACTIVE"){
 
-                        // Registrar um acesso com a classe de Evento
-                        if(UserSuccessfulLoginEvent::dispatch($userAccountData[0])){
+                        $get_token_data = $this->getTokenData($request, $user_account_data);
 
-                            if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $request->email, $userAccountData[0]->id_perfil)){
+                        if($get_token_data["status"] && !$get_token_data["error"]){
 
-                                // Retornar os dados com uma resposta de sucesso
-                                return ["status" => true, "error"=>false, "data" => $tokenData];
+                            return ["status" => true, "error" => false, "token_data" => $get_token_data["token_data"]];
+                        
+                        }else if(!$get_token_data["status"] && $get_token_data["error"]){
 
-                            }else{
-
-                                //Retornar uma resposta de falha
-                                return ["status" => false, "error"=> "token_generation_failed"];
-
-                            }
-
-                        }else{
-
-                            //Retornar uma resposta de falha
-                            return ["status" => false, "error" => "last_access_field_update_failed"];
+                            return ["status" => true, "error" => $get_token_data["error"]];
 
                         }
 
                     }else if($account_status == "INATIVE"){
 
-                        if($this->activateInactiveAccount((int) $userAccountData[0]->id, (string) $userAccountData[0]->email)){
+                        if($this->activateAccount((int) $user_account_data[0]->id, (string) $user_account_data[0]->email)){
 
-                            // Registrar um acesso com a classe de Evento
-                            if(UserSuccessfulLoginEvent::dispatch($userAccountData[0])){
+                            if($get_token_data["status"] && !$get_token_data["error"]){
 
-                                if($tokenData = $this->generateTokenJWTData($userAccountData[0]->id, $userAccountData[0]->email)){
-
-                                    // Retornar os dados com uma resposta de sucesso
-                                    return ["status" => true, "error"=>false, "data" => $tokenData];
-
-                                }else{
-
-                                    return ["status" => false, "error"=> "token_generation_failed"];
-
-                                }
-                                
-                            // Se o campo do último acesso não for atualizado
-                            }else{
-
-                                return ["status" => false, "error"=> "last_access_field_update_failed"];
-
+                                return ["status" => true, "error" => false, "token_data" => $get_token_data["token_data"]];
+                            
+                            }else if(!$get_token_data["status"] && $get_token_data["error"]){
+    
+                                return ["status" => true, "error" => $get_token_data["error"]];
+    
                             }
                         
-                        // Se a ativação falhar
                         }else{
 
                             return ["status" => false, "error" => "activation"];
 
                         }
-
 
                     }else if($account_status == "DISABLED"){
 
@@ -128,6 +103,27 @@ class AuthenticationModel extends Model
 
     }
 
+    private function getTokenData($request, $user_account_data){
+
+        $token_data_generation_response = $this->generateTokenJWTData($user_account_data[0]->id, $request->email, $user_account_data[0]->id_perfil);
+
+        if($token_data_generation_response["status"] && !$token_data_generation_response["error"]){
+
+            // Registrar um acesso com a classe de Evento
+            UserSuccessfulLoginEvent::dispatch($user_account_data[0]);
+
+            // Retornar os dados com uma resposta de sucesso
+            return ["status" => true, "error"=>false, "token_data" => $token_data_generation_response["token_data"]];
+
+        }else if(!$token_data_generation_response["status"] && $token_data_generation_response["error"]){
+
+            //Retornar uma resposta de falha
+            return ["status" => false, "error"=> "token_generation_failed"];
+
+        }  
+
+    }
+
     /**
      * Método para verificar o status do usuário
      * 
@@ -135,20 +131,20 @@ class AuthenticationModel extends Model
      * Usuário inativo: status é false e não possui registro de acesso
      * Usuário desabilitado: status é false e possui registro de acesso
      * 
-     * @param int $userID
+     * @param int $user_id
      * @return bool
      */
-    private function checkUserStatus(object $userData){
+    private function checkUserStatus(object $user_account_data){
 
-        if($userData->status == true && $userData->dh_ultimo_acesso != NULL){ 
+        if($user_account_data->status == true && $user_account_data->dh_ultimo_acesso != NULL){ 
 
             return "ACTIVE";
 
-        }else if(!$userData->status && $userData->dh_ultimo_acesso === NULL){  
+        }else if(!$user_account_data->status && $user_account_data->dh_ultimo_acesso === NULL){  
 
             return "INATIVE";
 
-        }else if(!$userData->status && $userData->dh_ultimo_acesso != NULL){ 
+        }else if(!$user_account_data->status && $user_account_data->dh_ultimo_acesso != NULL){ 
 
             return "DISABLED";
 
@@ -159,20 +155,20 @@ class AuthenticationModel extends Model
     /**
      * Método para processar a ativação da conta
      * 
-     * @param int $userID
+     * @param int $user_id
      * @return bool
      */
-    private function activateInactiveAccount(int $userID, string $user_email) : bool {
+    private function activateAccount(int $user_id, string $user_email) : bool {
 
         try{
             
             DB::beginTransaction();
 
-            if(UserModel::where('id', $userID)->exists()){
+            if(UserModel::where('id', $user_id)->exists()){
     
-                UserModel::where('id', $userID)->update(['status' => true]);
+                UserModel::where('id', $user_id)->update(['status' => true]);
 
-                if($this->linkNewUserToSupplementalDataTables($userID, $user_email)){
+                if($this->linkNewUserToSupplementalDataTables($user_id, $user_email)){
 
                     // Se a operação for bem sucedida, confirmar
                     DB::commit();
@@ -208,10 +204,10 @@ class AuthenticationModel extends Model
     /**
      * Método para vincular o novo usuário ativado à tabela de dados complementares e de endereços
      * 
-     * @param int $userID
+     * @param int $user_id
      * @return bool|object
      */
-    private function linkNewUserToSupplementalDataTables(int $userID, string $user_email) : bool {
+    private function linkNewUserToSupplementalDataTables(int $user_id, string $user_email) : bool {
 
         try{
 
@@ -237,7 +233,7 @@ class AuthenticationModel extends Model
                 "id_endereco" => $newAddressID
             ]);
 
-            DB::table("users")->where('id', $userID)->update(["id_dados_complementares" => $newCompDataID]); 
+            DB::table("users")->where('id', $user_id)->update(["id_dados_complementares" => $newCompDataID]); 
     
             return true;
 
@@ -254,69 +250,77 @@ class AuthenticationModel extends Model
      * Método para recuperar todos os dados relacionados ao usuário que está logando
      * Se for o Super-Admin serão buscados apenas os dados básicos
      * 
-     * @param int $userID
+     * @param int $user_id
      * @return bool
      */
-    private function generateTokenJWTData(int $userID, string $user_email, int $user_profile) : array|bool {
+    private function generateTokenJWTData(int $user_id, string $user_email, int $user_profile) : array|bool {
 
         try{
 
             // Se o usuário que estiver logando for o "Super-Admin"
             if($user_email == env("SUPER_ADMIN_EMAIL") || $user_profile == 5){
 
-                $tokenData = $this->generateTokenWithBasicData((int) $userID);
+                $token_data_generation_response = $this->generateTokenWithBasicData((int) $user_id);
 
             }else{
 
-                $tokenData = $this->generateTokenWithAllData((int) $userID);
+                $token_data_generation_response = $this->generateTokenWithAllData((int) $user_id);
 
             }
 
-            return $tokenData;
+            return $token_data_generation_response;
             
         }catch(\Exception $e){
 
-            return false;
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
     }
 
-    private function generateTokenWithBasicData(int $userID) : array {
+    private function generateTokenWithBasicData(int $user_id) : array {
 
-        // Query Builder para buscar os dados do usuário e do seu perfil
-        $userAccountData = DB::table('users')
-        ->join('profile', 'users.id_perfil', '=', 'profile.id')
-        ->where('users.id', '=', $userID)
-        ->select('users.id', 'users.nome', 'users.email', 'users.status', 'users.id_perfil', 'profile.nome as nome_perfil', 'profile.acesso_geral', 'users.id_dados_complementares', 'users.dh_ultimo_acesso', 'users.dh_atualizacao', 'users.dh_criacao')
-        ->get();
+        try{
 
-        // Dados para o token JWT simples
-        $simpleTokenJWTData = array(
-            "id" => $userAccountData[0]->id, 
-            "name"=> $userAccountData[0]->nome,  
-            "email"=> $userAccountData[0]->email, 
-            "profile_id" => $userAccountData[0]->id_perfil, 
-            "general_access" => $userAccountData[0]->acesso_geral,
-            "profile" => $userAccountData[0]->nome_perfil,
-            "complementary_data" => $userAccountData[0]->id_dados_complementares,
-            "last_access" => $userAccountData[0]->dh_ultimo_acesso,
-            "last_update" => $userAccountData[0]->dh_atualizacao
-        );
+            // Query Builder para buscar os dados do usuário e do seu perfil
+            $user_account_data = DB::table('users')
+            ->join('profile', 'users.id_perfil', '=', 'profile.id')
+            ->where('users.id', '=', $user_id)
+            ->select('users.id', 'users.nome', 'users.email', 'users.status', 'users.id_perfil', 'profile.nome as nome_perfil', 'users.id_dados_complementares', 'users.dh_ultimo_acesso', 'users.dh_atualizacao', 'users.dh_criacao')
+            ->get();
 
-        return $simpleTokenJWTData;
+            // Dados para o token JWT simples
+            $simpleTokenJWTData = array(
+                "id" => $user_account_data[0]->id, 
+                "name"=> $user_account_data[0]->nome,  
+                "email"=> $user_account_data[0]->email, 
+                "profile_id" => $user_account_data[0]->id_perfil,
+                "profile" => $user_account_data[0]->nome_perfil,
+                "complementary_data" => $user_account_data[0]->id_dados_complementares,
+                "last_access" => $user_account_data[0]->dh_ultimo_acesso,
+                "last_update" => $user_account_data[0]->dh_atualizacao
+            );
 
+            return ["status" => true, "error" => false, "token_data" => $simpleTokenJWTData];
+
+        }catch(\Exception $e){
+
+            return ["status" => true, "error" => $e->getMessage()];
+
+        }
 
     }
     
-    private function generateTokenWithAllData(int $userID) : array {
+    private function generateTokenWithAllData(int $user_id) : array {
 
-        // Query Builder para buscar os dados do usuário e do seu perfil
-        $userAccountData = DB::table('users')
+        try{
+
+            // Query Builder para buscar os dados do usuário e do seu perfil
+        $user_account_data = DB::table('users')
         ->join('profile', 'users.id_perfil', '=', 'profile.id')
         ->join('user_complementary_data', 'users.id_dados_complementares', '=', 'user_complementary_data.id')
         ->join('address', 'user_complementary_data.id_endereco', '=', 'address.id')
-        ->where('users.id', '=', $userID)
+        ->where('users.id', '=', $user_id)
         ->select(
             'users.id', 
             'users.nome', 
@@ -327,8 +331,7 @@ class AuthenticationModel extends Model
             'users.dh_ultimo_acesso', 
             'users.dh_atualizacao', 
             'users.dh_criacao',
-            'profile.nome as nome_perfil', 
-            'profile.acesso_geral',
+            'profile.nome as nome_perfil',
             'user_complementary_data.habANAC',
             'user_complementary_data.CPF',
             'user_complementary_data.CNPJ',
@@ -348,36 +351,41 @@ class AuthenticationModel extends Model
 
         // Dados para o token JWT avançado
         $advancedTokenJWTData = array(
-            "id" => $userAccountData[0]->id, 
-            "name"=> $userAccountData[0]->nome, 
-            "email"=> $userAccountData[0]->email, 
-            "profile_id" => $userAccountData[0]->id_perfil, 
-            "general_access" => $userAccountData[0]->acesso_geral,
-            "profile" => $userAccountData[0]->nome_perfil,
+            "id" => $user_account_data[0]->id, 
+            "name"=> $user_account_data[0]->nome, 
+            "email"=> $user_account_data[0]->email, 
+            "profile_id" => $user_account_data[0]->id_perfil, 
+            "profile" => $user_account_data[0]->nome_perfil,
             "user_complementary_data" => array(
-                "complementary_data_id" => $userAccountData[0]->id_dados_complementares,
-                "habANAC" => $userAccountData[0]->habANAC,
-                "CPF" => $userAccountData[0]->CPF,
-                "CNPJ" => $userAccountData[0]->CNPJ,
-                "telephone" => $userAccountData[0]->telefone,
-                "cellphone" => $userAccountData[0]->celular,
-                "razaoSocial" => $userAccountData[0]->razaoSocial,
-                "nomeFantasia" => $userAccountData[0]->nomeFantasia
+                "complementary_data_id" => $user_account_data[0]->id_dados_complementares,
+                "habANAC" => $user_account_data[0]->habANAC,
+                "CPF" => $user_account_data[0]->CPF,
+                "CNPJ" => $user_account_data[0]->CNPJ,
+                "telephone" => $user_account_data[0]->telefone,
+                "cellphone" => $user_account_data[0]->celular,
+                "razaoSocial" => $user_account_data[0]->razaoSocial,
+                "nomeFantasia" => $user_account_data[0]->nomeFantasia
             ),
             "user_address_data" => array(
-                "user_address_id" => $userAccountData[0]->id_endereco,
-                "logradouro" => $userAccountData[0]->logradouro,
-                "numero" => $userAccountData[0]->numero,
-                "cep" => $userAccountData[0]->cep,
-                "cidade" => $userAccountData[0]->cidade,
-                "estado" => $userAccountData[0]->estado,
-                "complemento" => $userAccountData[0]->complemento
+                "user_address_id" => $user_account_data[0]->id_endereco,
+                "logradouro" => $user_account_data[0]->logradouro,
+                "numero" => $user_account_data[0]->numero,
+                "cep" => $user_account_data[0]->cep,
+                "cidade" => $user_account_data[0]->cidade,
+                "estado" => $user_account_data[0]->estado,
+                "complemento" => $user_account_data[0]->complemento
             ),
-            "last_access" => $userAccountData[0]->dh_ultimo_acesso,
-            "last_update" => $userAccountData[0]->dh_atualizacao
+            "last_access" => $user_account_data[0]->dh_ultimo_acesso,
+            "last_update" => $user_account_data[0]->dh_atualizacao
         );
 
-        return $advancedTokenJWTData;
+        return ["status" => true, "error" => false, "token_data" => $advancedTokenJWTData];
+
+        }catch(\Exception $e){
+
+            return ["status" => true, "error" => $e->getMessage()];
+
+        }
 
     }
 }
