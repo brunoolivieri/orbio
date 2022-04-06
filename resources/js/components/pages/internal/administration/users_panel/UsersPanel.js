@@ -59,7 +59,7 @@ export function UsersPanel(){
   const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: {required: 0, value_searched: null}, total_records: 0});
+  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
   // Serve modificar o ícone de refresh da tabela
   const [refreshPanel, setRefreshPanel] = useState(false);
@@ -75,7 +75,7 @@ export function UsersPanel(){
 
       const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
 
-    if(!paginationParams.where.required){
+    if(!paginationParams.where){
 
       requestToGetAllUsers(module_middleware);
 
@@ -95,7 +95,7 @@ export function UsersPanel(){
   function requestToGetAllUsers(module_middleware){
 
     // This receives: limit clause, where clause and the page number
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where.required}.${paginationParams.where.value_searched}.${paginationParams.page}`;
+    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/admin-module-user?args=${select_query_params}&auth=${module_middleware}`)
     .then(function (response) {
@@ -136,9 +136,9 @@ export function UsersPanel(){
   function requestToGetSearchedUsers(module_middleware){
 
     // This receives: limit clause, where clause and the page number
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where.required}.${paginationParams.where.value_searched}.${paginationParams.page}`;
+    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}?auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}&auth=${module_middleware}`)
       .then(function (response) {
 
         if(response.status === 200){
@@ -179,10 +179,7 @@ export function UsersPanel(){
     setPaginationParams({
       page: value,
       limit: paginationParams.limit, 
-      where: {
-        required: paginationParams.where.required, 
-        value_searched: paginationParams.where.value_searched
-      } 
+      where: paginationParams.where
     });
 
   };
@@ -200,10 +197,7 @@ export function UsersPanel(){
       setPaginationParams({
         page: 1,
         limit: paginationParams.limit, 
-        where: {
-          required: 1, 
-          value_searched: value_searched
-        } 
+        where: value_searched
       });
 
   }
@@ -215,10 +209,7 @@ export function UsersPanel(){
     setPaginationParams({
       page: 1,
       limit: paginationParams.limit, 
-      where: {
-        required: paginationParams.where.required, 
-        value_searched: paginationParams.where.value_searched
-      } 
+      where: 0
     });
 
   }

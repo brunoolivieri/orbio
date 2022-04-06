@@ -19,17 +19,13 @@ class AdministrationModuleUserPanelController extends Controller
     {
 
         $args = explode(".", request()->args);
-
-        //dd($args);
-
         $limit = (int) $args[0];
-        $where_required = (bool) $args[1];
-        $where_value_searched = $args[2];
-        $actual_page = (int) $args[3];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
 
         $model = new UserModel();
             
-        $model_response = $model->loadUsersWithPagination($limit, $actual_page, $where_required, $where_value_searched);
+        $model_response = $model->loadUsersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -130,16 +126,21 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
+
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
         
         $model = new UserModel();
             
-        $model_response = $model->loadSpecificUsers($value_searched, (int) $offset, (int) $limit);
+        $model_response = $model->loadUsersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
-            $dataFormated = $this->usersPanelDataFormat($model_response["data"], $limit);
+            $data_formated = $this->formatDataForTable($model_response["data"]);
 
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 

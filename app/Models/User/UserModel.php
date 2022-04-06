@@ -76,22 +76,32 @@ class UserModel extends Model
     }
 
     /**
-     * Load all users with pagination format
-     * The where clause is optional
+     * Carrega os registros no formato de paginação
+     * A claúsula where é opcional
+     * A claúsula when() permite criar queries condicionais
+     * https://laravel.com/docs/9.x/queries#conditional-clauses
      *
      * @param array $data
      * @return array
      */
-    function loadUsersWithPagination(int $limit, int $current_page, $where_required = false, $value_searched = null) : array {
+    function loadUsersWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
 
             $data = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
-            ->when($where_required, function ($query, $value_searched) {
+            ->when($where_value, function ($query, $where_value) {
 
-                $query->where('users.id', $value_searched)->orWhere('users.nome', 'LIKE', '%'.$value_searched.'%')->orWhere('users.email', 'LIKE', '%'.$value_searched.'%');
+                $query->when(is_numeric($where_value), function($query) use ($where_value){
+
+                    $query->where('users.id', $where_value);
+
+                }, function($query) use ($where_value){
+
+                    $query->where('users.nome', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
+
+                });
 
             })->orderBy('users.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
