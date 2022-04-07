@@ -15,12 +15,13 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
+import { GenericSelect } from '../../input_select/GenericSelect';
+import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
@@ -173,7 +174,7 @@ export function CreateOrderFormulary({...props}){
         nome_cliente: data.get("client_name"),
         observacao: data.get("order_note"),
         status: data.get("status"),
-        id_plano_voo: data.get("flight_plan")
+        id_plano_voo: data.get("select_flight_plan")
       })
       .then(function (response) {
 
@@ -404,18 +405,17 @@ export function CreateOrderFormulary({...props}){
                   error = {errorDetected.client_name}
                 />
 
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Plano de vôo vinculado"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="flight_plan"
-                  name="flight_plan"
-                  helperText = {errorMessage.flight_id}
-                  error = {errorDetected.flight_id}
-                />
+                <Box>
+                  <GenericSelect 
+                    label_text = {"Plano de vôo vinculado"} 
+                    data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
+                    primary_key={"id"} 
+                    key_content={"id"} 
+                    error = {null} 
+                    default = {0} 
+                    name = {"select_flight_plan"}  
+                  />
+                </Box>
 
                 <TextField
                   type = "text"

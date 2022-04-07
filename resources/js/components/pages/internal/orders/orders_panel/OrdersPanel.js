@@ -52,7 +52,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export function OrdersPanel(){
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData} = useAuthentication();
@@ -67,7 +67,7 @@ export function OrdersPanel(){
     // Serve modificar o ícone de refresh da tabela
     const [refreshPanel, setRefreshPanel] = useState(false);
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     /**
      * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
@@ -195,7 +195,7 @@ export function OrdersPanel(){
    function handleSearchSubmit(event, offset){
     event.preventDefault();
 
-      let value_searched = window.document.getElementById("order_panel_search_input").value;
+      let value_searched = window.document.getElementById("search_input").value;
 
       setPaginationParams({
         page: 1,
@@ -221,7 +221,7 @@ export function OrdersPanel(){
 
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
     return(
         <>
@@ -264,7 +264,7 @@ export function OrdersPanel(){
             sx: { fontSize: 'default' },
             }}
             variant="standard"
-            id = "order_panel_search_input"
+            id = "search_input"
         />
         </Grid>
 
@@ -301,25 +301,25 @@ export function OrdersPanel(){
             </TableRow>
             </TableHead>
             <TableBody className = "tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                    panelData.response.records.map((row) => (
-                        <StyledTableRow key={row.order_id}>
-                        <StyledTableCell>{row.order_id}</StyledTableCell>
-                        <StyledTableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell>
-                        <StyledTableCell align="center">{row.flight_plan_id}</StyledTableCell>
-                        <StyledTableCell align="center">{row.numOS}</StyledTableCell> 
-                        <StyledTableCell align="center">{row.creator_name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.pilot_name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.client_name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.order_note}</StyledTableCell>
-                        <StyledTableCell align="center">{row.created_at}</StyledTableCell>
-                        <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
-                        <StyledTableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                        <StyledTableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                        <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                        <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
-                        </StyledTableRow>
-                    ))}    
+              {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                panelData.response.records.map((row) => (
+                    <StyledTableRow key={row.order_id}>
+                    <StyledTableCell>{row.order_id}</StyledTableCell>
+                    <StyledTableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell>
+                    <StyledTableCell align="center">{row.flight_plan_id}</StyledTableCell>
+                    <StyledTableCell align="center">{row.numOS}</StyledTableCell> 
+                    <StyledTableCell align="center">{row.creator_name}</StyledTableCell>
+                    <StyledTableCell align="center">{row.pilot_name}</StyledTableCell>
+                    <StyledTableCell align="center">{row.client_name}</StyledTableCell>
+                    <StyledTableCell align="center">{row.order_note}</StyledTableCell>
+                    <StyledTableCell align="center">{row.created_at}</StyledTableCell>
+                    <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
+                    <StyledTableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
+                    <StyledTableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
+                    <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                    <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
+                    </StyledTableRow>
+                ))}    
             </TableBody>
         </Table>
         </TableContainer> 

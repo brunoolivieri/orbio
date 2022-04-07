@@ -10,12 +10,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Input, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import { styled } from '@mui/material/styles';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
@@ -25,13 +26,9 @@ import { FormValidation } from '../../../../utils/FormValidation';
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
-/*
-
-- Esse modal é utilizado para construir formulários para a página de administração
-- Ele recebe os dados e o tipo de operação, e é construído de acordo com esses dados
-- Por enquanto é utilizado apenas para a operação de DELETE e UPDATE de usuários
-
-*/
+const Input = styled('input')({
+  display: 'none',
+});
 
 export const CreateReportFormulary = React.memo(({...props}) => {
 
@@ -165,54 +162,113 @@ export const CreateReportFormulary = React.memo(({...props}) => {
       let module_id = 4;
       let module_action = "escrever";
 
-      let randomLogTest = "[Log_"+ (Math.floor(Math.random() * 100000000) + 99999999) + "_]";
-
       AxiosApi.post(`/api/reports-module?`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
         dh_inicio_voo: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
         dh_fim_voo: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-        log_voo: randomLogTest,
+        log_voo: "/caminho/logs/exemplo.txt",
         observacao: data.get("report_note")
       })
       .then(function (response) {
 
-          serverResponseTreatment(response);
+        successServerResponseTreatment();
 
       })
       .catch(function (error) {
         
-        serverResponseTreatment(error.response);
+        errorServerResponseTreatment(error.response.data);
 
       });
 
     }
 
     /*
-    * Rotina 5
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
+    * Rotina 5A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-     if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
-
-        setTimeout(() => {
-          
-          setDisabledButton(false);
-          
-          handleClose();
-
-        }, 2000);
-
-      }else{
-
-        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+      setTimeout(() => {
 
         setDisabledButton(false);
 
+        handleClose();
+
+      }, 2000);
+
+    }
+
+    /*
+    * Rotina 5B
+    * Tratamento da resposta de uma requisição falha
+    */
+    function errorServerResponseTreatment(response_data){
+
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      let input_errors = {
+        dh_inicio_voo: {error: false, message: null},
+        dh_fim_voo: {error: false, message: null},
+        log_voo: {error: false, message: null},
+        observacao: {error: false, message: null},
       }
+
+      for(let prop in response_data.errors){
+
+        if(prop == "dh_inicio_voo"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("dh_inicio_voo", "Data inicial")
+          }
+
+        }else if(prop == "dh_fim_voo"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("dh_fim_voo", "Data final")
+          }
+
+        }else if(prop == "log_voo"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("log_voo", "log")
+          }
+
+        }else if(prop == "observacao"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("observacao", "observação")
+          }
+
+        }else{
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0]
+          }
+
+        }
+
+      }
+
+      setErrorDetected({
+        flight_start_date: input_errors.dh_inicio_voo.error, 
+        flight_end_date: input_errors.dh_fim_voo.error, 
+        flight_log: input_errors.log_voo.error, 
+        report_note: input_errors.observacao.error
+      });
+
+      setErrorMessage({flight_start_date: input_errors.dh_inicio_voo.message, 
+        flight_end_date: input_errors.dh_fim_voo.message, 
+        flight_log: input_errors.log_voo.message, 
+        report_note: input_errors.observacao.message
+      });
 
     }
 
@@ -269,17 +325,15 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               helperText = {errorMessage.report_note}
               error = {errorDetected.report_note}
             />
-
-            <Box sx={{ display: 'flex', justifyContent: "flex-start", mt: 1 }}>
+              
+            <Box>
               <label htmlFor="contained-button-file">
-                <Input accept="image/*" id="contained-button-file" multiple type="file" sx={{display: "none"}} name= {"report_log_flight"} />
-                <Button variant="contained" component="span">
-                  Upload
+                <Input accept="image/*" id="contained-button-file" multiple type="file" name = "log_file" />
+                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"}>
+                  {errorDetected.flight_log ? errorMessage.flight_log : "Upload"}
                 </Button>
               </label>
             </Box>
-              
-            {/* FUTURO: INPUT DO TIPO DE RELATÓRIO - IRÁ DEFINIR O TIPO DO DOCUMENTO */}
               
           </DialogContent>
 

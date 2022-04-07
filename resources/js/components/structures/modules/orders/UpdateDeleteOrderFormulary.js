@@ -20,6 +20,7 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import { GenericSelect } from '../../input_select/GenericSelect';
 
 import moment from 'moment';
 
@@ -190,7 +191,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
           nome_cliente: data.get("client_name"),
           observacao: data.get("order_note"),
           status: data.get("status"),
-          id_plano_voo: data.get("flight_plan")
+          id_plano_voo: data.get("select_flight_plan")
         })
         .then(function (response) {
   
@@ -404,9 +405,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   id="order_id"
                   name="order_id"
                   defaultValue = {data.order_id}
-                  InputProps={{
-                    readOnly: true 
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
                 <TextField
@@ -421,9 +420,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   helperText = {errorMessage.numOS}
                   error = {errorDetected.numOS}
                   defaultValue = {data.numOS}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
                 <TextField
@@ -438,9 +435,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   helperText = {errorMessage.creator_name}
                   error = {errorDetected.creator_name}
                   defaultValue = {data.creator_name}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
                 <TextField
@@ -455,9 +450,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   helperText = {errorMessage.pilot_name}
                   error = {errorDetected.pilot_name}
                   defaultValue = {data.pilot_name}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
                 <TextField
@@ -472,27 +465,21 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   helperText = {errorMessage.client_name}
                   error = {errorDetected.client_name}
                   defaultValue = {data.client_name}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Plano de vôo vinculado"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="flight_plan"
-                  name="flight_plan"
-                  helperText = {errorMessage.flight_id}
-                  error = {errorDetected.flight_id}
-                  defaultValue = {data.flight_plan_id}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
-                />
+                <Box>
+                  <GenericSelect 
+                    label_text = {"Plano de vôo vinculado"} 
+                    data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
+                    primary_key={"id"} 
+                    key_content={"id"} 
+                    error = {null} 
+                    default = {data.flight_plan_id != null ? data.flight_plan_id : 0}
+                    name = {"select_flight_plan"}  
+                    disabled = {operation === "update" ? false : true}
+                  />
+                </Box>
 
                 <TextField
                   type = "text"
@@ -506,9 +493,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   helperText = {errorMessage.order_note}
                   error = {errorDetected.order_note}
                   defaultValue = {data.order_note}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
                 <TextField
@@ -522,8 +507,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   defaultValue={data.order_status}
                   InputProps={{
                       inputProps: { min: 0, max: 1 },
-                      readOnly: operation == "delete" ? true : false
                   }}
+                  disabled = {operation === "update" ? false : true} 
                 />
     
               </DialogContent>

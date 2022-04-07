@@ -6,8 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Orders\ServiceOrdersModel;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class ServiceOrderModuleController extends Controller
 {
@@ -55,7 +54,6 @@ class ServiceOrderModuleController extends Controller
 
         foreach($data->items() as $row => $record){
 
-            // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
             $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
             $updated_at_formated = $record->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
             $order_start_date = $record->dh_inicio === NULL ? "Sem dados" : $record->dh_inicio;
@@ -84,6 +82,28 @@ class ServiceOrderModuleController extends Controller
 
         return $arr_with_formated_data;
 
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create() : \Illuminate\Http\Response
+    {
+        try{
+
+            $table = request()->data_source;
+
+            $data = DB::table($table)->get();
+
+            return response($data, 200);
+
+        }catch(\Exception $e){
+
+            return response(["error" => $e->getMessage()]);
+
+        }
     }
 
     /**

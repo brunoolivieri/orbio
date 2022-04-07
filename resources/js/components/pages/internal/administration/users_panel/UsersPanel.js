@@ -227,14 +227,12 @@ export function UsersPanel(){
       <Grid container spacing={1} alignItems="center">
 
         <Grid item>
-          {/* Formulário de criação de usuário */}
           <CreateUserFormulary />
         </Grid>
 
         <Grid item>
           <Tooltip title="Reload">
             <IconButton onClick = {reloadTable}>
-              {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}
 
               {refreshPanel == true ? 
               <Badge color="primary" variant="dot">
@@ -280,18 +278,18 @@ export function UsersPanel(){
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
                 <TableHead>
-                <TableRow>
-                  <StyledTableCell>ID</StyledTableCell>
-                  <StyledTableCell align="center">Nome</StyledTableCell>
-                  <StyledTableCell align="center">Email</StyledTableCell>
-                  <StyledTableCell align="center">Status</StyledTableCell>
-                  <StyledTableCell align="center">Perfil</StyledTableCell>
-                  <StyledTableCell align="center">Criação da conta</StyledTableCell>
-                  <StyledTableCell align="center">Última atualização</StyledTableCell>
-                  <StyledTableCell align="center">Último acesso</StyledTableCell>
-                  <StyledTableCell align="center">Editar</StyledTableCell>
-                  <StyledTableCell align="center">Excluir</StyledTableCell>
-                </TableRow>
+                  <TableRow>
+                    <StyledTableCell>ID</StyledTableCell>
+                    <StyledTableCell align="center">Nome</StyledTableCell>
+                    <StyledTableCell align="center">Email</StyledTableCell>
+                    <StyledTableCell align="center">Status</StyledTableCell>
+                    <StyledTableCell align="center">Perfil</StyledTableCell>
+                    <StyledTableCell align="center">Criação da conta</StyledTableCell>
+                    <StyledTableCell align="center">Última atualização</StyledTableCell>
+                    <StyledTableCell align="center">Último acesso</StyledTableCell>
+                    <StyledTableCell align="center">Editar</StyledTableCell>
+                    <StyledTableCell align="center">Excluir</StyledTableCell>
+                  </TableRow>
                 </TableHead>
                 <TableBody className = "tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
@@ -299,7 +297,7 @@ export function UsersPanel(){
                       <StyledTableRow key={row.user_id}>
                         <StyledTableCell component="th" scope="row">{row.user_id}</StyledTableCell>
                         <StyledTableCell align="center">{row.name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.email}</StyledTableCell> {}
+                        <StyledTableCell align="center">{row.email}</StyledTableCell> 
                         <StyledTableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</StyledTableCell>
                         <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
                         <StyledTableCell align="center">{row.created_at}</StyledTableCell>

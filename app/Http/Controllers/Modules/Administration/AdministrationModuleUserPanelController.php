@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use App\Models\User\UserModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
 
 class AdministrationModuleUserPanelController extends Controller
 {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Report;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Reports\ReportsModel;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ReportModuleController extends Controller
 {
@@ -16,20 +17,20 @@ class ReportModuleController extends Controller
     public function index() : \Illuminate\Http\Response
     {
 
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new ReportsModel();
 
-        $request_values = explode(".", request()->args);
-
-        $offset = isset($request_values[0]) ? $request_values[0] : 0;
-        $limit = isset($request_values[1]) ? $request_values[1] : 100;
-
-        $model_response = $model->loadAllReports((int) $offset, (int) $limit);
+        $model_response = $model->loadAReportsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
+            $data_formated = $this->formatDataForTable($model_response["data"]);
 
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -45,22 +46,22 @@ class ReportModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function reportsTableFormat(array $data, int $limit) : array {
+    private function formatDataForTable(LengthAwarePaginator $data) : array {
 
-        $arrData = [];
+        $arr_with_formated_data = [];
 
-        foreach($data["selectedRecords"] as $row => $object){
+        foreach($data->items() as $row => $record){
 
             // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
-            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-            $flight_start_date = $object->dh_inicio_voo === NULL ? "Sem dados" : $object->dh_inicio_voo;
-            $flight_end_date = $object->dh_fim_voo === NULL ? "Sem dados" : $object->dh_fim_voo;
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
+            $updated_at_formated = $record->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
+            $flight_start_date = $record->dh_inicio_voo === NULL ? "Sem dados" : $record->dh_inicio_voo;
+            $flight_end_date = $record->dh_fim_voo === NULL ? "Sem dados" : $record->dh_fim_voo;
             
-            $arrData[$row] = array(
-                "report_id" => $object->id,
-                "flight_log" => $object->log_voo,
-                "report_note" => $object->observacao,
+            $arr_with_formated_data["records"][$row] = array(
+                "report_id" => $record->id,
+                "flight_log" => $record->log_voo,
+                "report_note" => $record->observacao,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,
                 "flight_start_date" => $flight_start_date,
@@ -69,14 +70,11 @@ class ReportModuleController extends Controller
 
         }
 
-        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
-        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
-        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
-        $totalPages = $data["referencialValueForCalcPages"] <= $limit ? 1 : ($data["referencialValueForCalcPages"] % $limit === 0 ? $data["referencialValueForCalcPages"] / $limit : ceil($data["referencialValueForCalcPages"] / $limit));
+        $arr_with_formated_data["total_records_founded"] = $data->total();
+        $arr_with_formated_data["records_per_page"] = $data->perPage();
+        $arr_with_formated_data["total_pages"] = $data->lastPage();
 
-        $ret = [(int) $totalPages, $arrData];
-
-        return $ret;
+        return $arr_with_formated_data;
 
     }
 
@@ -88,18 +86,23 @@ class ReportModuleController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
+
+        // "log_voo" => 'required|file'
+        $request->validate([
+            "dh_inicio_voo" => 'required|date',
+            "dh_fim_voo" => 'required|date',
+            "observacao" => 'required|string'
+        ]);
         
-        $model = new ReportsModel();
+        try{
 
-        $model_response = $model->newReport($request->except('auth'));
+            ReportsModel::insert($request->except("auth"));
 
-         if($model_response["status"] && !$model_response["error"]){
+            return response("", 200);
+            
+        }catch(\Exception $e){
 
-            return response(["error" => $model_response["error"]], 200);
-
-        }else if(!$model_response["status"] && $model_response["error"]){
-
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $e->getMessage()]);
 
         }
 
@@ -114,27 +117,27 @@ class ReportModuleController extends Controller
     public function show($request) : \Illuminate\Http\Response
     {
 
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new ReportsModel();
 
-        $request_values = explode(".", request()->args);
+        $model_response = $model->loadAReportsWithPagination($limit, $actual_page, $where_value);
 
-        $value_searched = $request_values[0];
-        $offset = $request_values[1];
-        $limit = $request_values[2];
-
-        $model_response = $model->loadSpecificReports($value_searched, (int) $offset, (int) $limit);
-    
         if($model_response["status"] && !$model_response["error"]){
+    
+            $data_formated = $this->formatDataForTable($model_response["data"]);
 
-            $dataFormated = $this->reportsTableFormat($model_response["data"], $limit);
-
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $model_response->content()], 500);
 
         }  
+
     }
 
     /**
@@ -146,18 +149,23 @@ class ReportModuleController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
+
+        // "log_voo" => 'required|file'
+        $request->validate([
+            "dh_inicio_voo" => 'required|date',
+            "dh_fim_voo" => 'required|date',
+            "observacao" => 'required|string'
+        ]);
         
-        $model = new ReportsModel();
+        try{
 
-        $model_response = $model->updateReport((int) $id, $request->except('auth'));
+            ReportsModel::where('id', $id)->update($request->except("auth"));
 
-        if($model_response["status"] && !$model_response["error"]){
+            return ["status" => true, "error" => false];
 
-            return response("", 200);
+        }catch(\Exception $e){
 
-        }else if(!$model_response["status"] && $model_response["error"]){
-
-            return response(["error" => $model_response["error"]], 500);
+            return ["status" => false, "error" => $e->getMessage()];
 
         }
 
@@ -172,17 +180,15 @@ class ReportModuleController extends Controller
     public function destroy($id) : \Illuminate\Http\Response
     {
         
-        $model = new ReportsModel();
+        try{
 
-        $model_response = $model->deleteReport((int) $id);
-
-        if($model_response["status"] && !$model_response["error"]){
+            ReportsModel::where('id', $id)->delete();
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $e->getMessage()]);
 
         }
  

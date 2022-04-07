@@ -407,9 +407,7 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
             label="ID do perfil"
             fullWidth
             variant="outlined"
-            InputProps={{
-                readOnly: true,
-            }}
+            disabled = {operation === "update" ? false : true} 
           />
             <TextField
             margin="dense"
@@ -419,9 +417,7 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
             label="Nome do perfil"
             fullWidth
             variant="outlined"
-            InputProps={{
-                readOnly: operation == "delete" ? true : false,
-            }}
+            disabled = {operation === "update" ? false : true} 
             helperText = {errorMessage.name}
             error = {errorDetected.name}
           />

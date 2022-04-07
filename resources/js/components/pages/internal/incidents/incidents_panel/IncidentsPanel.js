@@ -75,12 +75,6 @@ export function IncidentsPanel(){
     /**
      * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
      * 
-     * Os dados carregados preenchem uma página de acordo com um offset e um limit 
-     * O offset trabalha junto com o valor da página e define o primeiro registro da página, enquanto o limit define o último
-     * O atributo do switch case define qual o caso de carregamento para a paginação // Os casos são: todos os dados existentes, ou todos os dados pesquisados
-     * Dados pesquisados também podem vir em páginas e a sua paginação também implica em alterar o offset da paginação, e consequentemente em ativar o useEffect (porque é uma dependência)
-     * Além disso, para pesquisar todos os dados e alguns dados, métodos diferentes do mesmo controlador Laravel são utilizados - ou seja, não pode ser utilizada a mesma chamada AXIOS
-     * 
      */
      useEffect(() => {
 
@@ -181,38 +175,37 @@ export function IncidentsPanel(){
 
     return(
         <>
+        <Grid container spacing={1} alignItems="center">
 
-            <Grid container spacing={1} alignItems="center">
+          <Grid item>
+              <CreateIncidentFormulary />
+          </Grid>
 
-            <Grid item>
-            {/* Botão para abrir o formulário */}
-                <CreateIncidentFormulary />
-            </Grid>
-
-            <Grid item>
+          <Grid item>
             <Tooltip title="Reload">
-                <IconButton onClick = {reloadTable}>
-                {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}
+              <IconButton onClick = {reloadTable}>
 
-                {refreshPanel == true ? 
-                <Badge color="primary" variant="dot">
-                    <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
-                </Badge>
-                : 
-                <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                }
+              {refreshPanel == true ? 
+              <Badge color="primary" variant="dot">
+                  <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
+              </Badge>
+              : 
+              <RefreshIcon color="inherit" sx={{ display: 'block' }} />
+              }
 
-                </IconButton>
+              </IconButton>
             </Tooltip>  
-            </Grid>
-            <Grid item>
+          </Grid>
+
+          <Grid item>
             <Tooltip title="Pesquisar">
                 <IconButton onClick={handleSearchSubmit}>
                 <SearchIcon sx={{ display: 'block' }} />
                 </IconButton>
             </Tooltip>
-            </Grid>
-            <Grid item xs>
+          </Grid>
+
+          <Grid item xs>
             <TextField
                 fullWidth
                 placeholder={"Pesquisar incidente por ID"}
@@ -223,50 +216,45 @@ export function IncidentsPanel(){
                 variant="standard"
                 id = "incidents_search_input"
             />
-            </Grid>
+          </Grid>
 
-            {/* Mecanismo de paginação - depende dos dados retornados pelo servidor */}
-            {/* Se o total de registros for múltiplo de 10, o total de páginas será esse número dividido por 10. Exemplo: 20 registros = 2 páginas */}
-            {/* Se o total de registros não for múltiplo de 10, o total de páginas será esse número mais 10, dividido por 10 e convertido para o maior inteiro mais próximo. Exemplo: 11 páginas = 2 páginas (ao invés de 1,1) */}
-            {panelData.status && 
-            <Grid item>
+          {panelData.status && 
+          <Grid item>
             <Stack spacing={2}>
                 <Pagination count={panelData.total_pages} shape="rounded" page={page} onChange={handleTablePageChange} />
             </Stack>
-            </Grid>  
-            }
+          </Grid>  
+          }
 
-            </Grid>
-            <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                <TableHead>
-                <TableRow>
-                    <StyledTableCell>ID</StyledTableCell>
-                    <StyledTableCell align="center">Tipo do incidente</StyledTableCell>
-                    <StyledTableCell align="center">Descrição</StyledTableCell>
-                    <StyledTableCell align="center">Data do incidente</StyledTableCell>
-                    <StyledTableCell align="center">Editar</StyledTableCell>
-                    <StyledTableCell align="center">Excluir</StyledTableCell>
-                </TableRow>
-                </TableHead>
-                <TableBody className = "tbody">
-                    {/* Geração das linhas da tabela de usuários - depende dos dados retornados pelo servidor */}
-                    {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
-                    {(panelData.status && !panelData.error) && 
-                        panelData.response.map((row) => (
-                            <StyledTableRow key={row.incident_id}>
-                            <StyledTableCell>{row.incident_id}</StyledTableCell>
-                            <StyledTableCell align="center">{row.incident_type}</StyledTableCell>
-                            <StyledTableCell align="center">{row.description}</StyledTableCell> 
-                            <StyledTableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                            <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                            <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
-                            </StyledTableRow>
-                        ))}    
-                </TableBody>
-            </Table>
-            </TableContainer> 
-        
-        </>
+        </Grid>
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 500 }} aria-label="customized table">
+              <TableHead>
+              <TableRow>
+                  <StyledTableCell>ID</StyledTableCell>
+                  <StyledTableCell align="center">Tipo do incidente</StyledTableCell>
+                  <StyledTableCell align="center">Descrição</StyledTableCell>
+                  <StyledTableCell align="center">Data do incidente</StyledTableCell>
+                  <StyledTableCell align="center">Editar</StyledTableCell>
+                  <StyledTableCell align="center">Excluir</StyledTableCell>
+              </TableRow>
+              </TableHead>
+              <TableBody className = "tbody">
+                  {(panelData.status && !panelData.error) && 
+                      panelData.response.map((row) => (
+                          <StyledTableRow key={row.incident_id}>
+                          <StyledTableCell>{row.incident_id}</StyledTableCell>
+                          <StyledTableCell align="center">{row.incident_type}</StyledTableCell>
+                          <StyledTableCell align="center">{row.description}</StyledTableCell> 
+                          <StyledTableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
+                          <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
+                          <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
+                          </StyledTableRow>
+                      ))}    
+              </TableBody>
+          </Table>
+        </TableContainer> 
+      </>
     );
 }

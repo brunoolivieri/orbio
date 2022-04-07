@@ -218,7 +218,6 @@ export function ProfilesPanel(){
         <Grid container spacing={1} alignItems="center">
 
           <Grid item>
-            {/* Formulário de criação de usuário */}
             <CreateProfileFormulary />
           </Grid>
 
@@ -226,7 +225,6 @@ export function ProfilesPanel(){
             <Tooltip title="Reload">
               <IconButton onClick = {reloadTable}>
 
-                {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição com AXIOS */}
                 {refreshPanel == true ? 
                 <Badge color="primary" variant="dot">
                   <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
@@ -260,9 +258,6 @@ export function ProfilesPanel(){
             />
           </Grid>
 
-          {/* Mecanismo de paginação - depende dos dados retornados pelo servidor */}
-          {/* Se o total de registros for múltiplo de 10, o total de páginas será esse número dividido por 10. Exemplo: 20 registros = 2 páginas */}
-          {/* Se o total de registros não for múltiplo de 10, o total de páginas será esse número mais 10, dividido por 10 e convertido para o maior inteiro mais próximo. Exemplo: 11 páginas = 2 páginas (ao invés de 1,1) */}
           {(panelData.status && !panelData.error) && 
           <Grid item>
             <Stack spacing={2}>

@@ -264,9 +264,7 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
               fullWidth
               variant="outlined"
               defaultValue={data.user_id}
-              InputProps={{
-                  readOnly: true,
-              }}
+              disabled = {operation === "update" ? false : true} 
             />
             <TextField
               margin="dense"
@@ -276,9 +274,7 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
               fullWidth
               variant="outlined"
               defaultValue={data.name}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
+              disabled = {operation === "update" ? false : true} 
               helperText = {errorMessage.name}
               error = {errorDetected.name}
             />
@@ -291,9 +287,7 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
               fullWidth
               variant="outlined"
               defaultValue={data.email} 
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-              }}
+              disabled = {operation === "update" ? false : true} 
               helperText = {errorMessage.email}
               error = {errorDetected.email}
             />
@@ -307,10 +301,7 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
               fullWidth
               variant="outlined"
               defaultValue={data.status}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-                  inputProps: { min: 0, max: 1 }
-              }}
+              disabled = {operation === "update" ? false : true} 
               helperText = {errorMessage.status}
               error = {errorDetected.status}
             />

@@ -23,7 +23,7 @@ import { GenericSelect } from '../../input_select/GenericSelect';
 
 export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_setter}) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -148,12 +148,12 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
         })
         .then(function (response) {
   
-            serverResponseTreatment(response);
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -162,12 +162,12 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
         AxiosApi.delete(`/api/plans-module/${data.get("plan_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
-            serverResponseTreatment(response);
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -175,49 +175,66 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
 
     }
 
-     /*
-    * Rotina 4
-    * Tratamento da resposta da requisição AXIOS
-    * Possui dois casos: o Update e o Delete
-    * 
+    /*
+    * Rotina 4A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-      if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        if(operation === "update"){
-
-          refresh_setter(true);
-
-          setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
-
-        }else{
-
-          refresh_setter(true);
-
-          setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});
-
-        }
-
-        setTimeout(() => {
-
-          setDisabledButton(false);
-
-          handleClose();
-
-        }, 2000);
-
-      }else{
+      setTimeout(() => {
 
         setDisabledButton(false);
 
-        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+        handleClose();
 
-      }
+      }, 2000);
 
     }
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    /*
+    * Rotina 4B
+    * Tratamento da resposta de uma requisição falha
+    */
+    function errorServerResponseTreatment(response_data){
+
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      let input_errors = {
+        id_relatorio: {error: false, message: null},
+        id_incidente: {error: false, message: null},
+        status: {error: false, message: null},
+        descricao: {error: false, message: null}
+      }
+
+      for(let prop in response_data.errors){
+
+        input_errors[prop] = {
+          error: true, 
+          message: ""
+        }
+
+      }
+
+      setErrorDetected({
+        report: input_errors.id_relatorio.error, 
+        incident: input_errors.id_incidente.error, 
+        status: input_errors.status.error, 
+        description: input_errors.descricao.error
+      });
+
+      setErrorMessage({
+        report: input_errors.id_relatorio.message, 
+        incident: input_errors.id_incidente.message, 
+        status: input_errors.status.message, 
+        description: input_errors.descricao.message
+      });
+
+    }
+
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Planos", os botão serão desabilitados - porque o usuário não terá permissão para isso 
     const deleteButton = <IconButton 
@@ -233,6 +250,8 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
     ><EditIcon 
     style={{ fill: AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
     /></IconButton>
+
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
   return (
     <div>
@@ -256,9 +275,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               fullWidth
               variant="outlined"
               defaultValue={data.plan_id}
-              InputProps={{
-                  readOnly: true,
-              }}
+              disabled = {operation === "update" ? false : true} 
             />
 
             <Box>
@@ -294,9 +311,9 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               variant="outlined"
               defaultValue={data.plan_status}
               InputProps={{
-                  readOnly: operation == "delete" ? true : false,
                   inputProps: { min: 0, max: 1 }
               }}
+              disabled = {operation === "update" ? false : true}
             />
 
             <TextField
@@ -308,9 +325,7 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               fullWidth
               variant="outlined"
               defaultValue={data.plan_description}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false
-              }}
+              disabled = {operation == "delete" ? true : false}
               helperText = {errorMessage.description}
               error = {errorDetected.description}
             />

@@ -15,29 +15,6 @@ class ReportsModel extends Model
     const UPDATED_AT = "dh_atualizacao";
     protected $fillable = ["*"];
 
-
-     /**
-     * Método realizar um INSERT na tabela "reports"
-     *
-     * @param array $data
-     * @return array
-     */
-    function newReport(array $data) : array {
-
-        try{
-
-            ReportsModel::insert($data);
-
-            return ["status" => true, "error" => false];
-            
-        }catch(\Exception $e){
-            
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
      /**
      * Método realizar um SELECT SEM WHERE na tabela "reports"
      * Os registros selecionados preencherão uma única página da tabela
@@ -47,103 +24,22 @@ class ReportsModel extends Model
      * @param int $limit
      * @return array
      */
-    function loadAllReports(int $offset, int $limit) : array {
+    function loadAReportsWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
 
-            $allReports = DB::table('reports')
+            $data = DB::table('reports')
             ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
-            ->offset($offset)->limit($limit)->get();
+            ->when($where_value, function ($query, $where_value) {
 
-            if($allReports){
+                $query->where('id', $where_value);
 
-                $response = [
-                    "referencialValueForCalcPages" => count($allReports),
-                    "selectedRecords" => $allReports
-                ];
+            })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
-                return ["status" => true, "error" => false, "data" => $response];
-
-            }
+            return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){
 
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um SELECT COM WHERE na tabela "reports"
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return array
-     */
-    function loadSpecificReports(string $value_searched, int $offset, int $limit) : array {
-
-        try{
-
-            $searchedReports = DB::table('reports')
-            ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
-            ->where('reports.id', $value_searched)
-            ->offset($offset)->limit($limit)->get();
-
-            $response = [
-                "referencialValueForCalcPages" => count($searchedReports),
-                "selectedRecords" => $searchedReports
-            ];
-
-            return ["status" => true, "error" => false, "data" => $response];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um UPDATE em um registro especifico da tabela "reports"
-     *
-     * @param int $report_id
-     * @param array $data
-     * @return array
-     */
-    function updateReport(int $report_id, array $data) : array {
-
-        try{
-
-            ReportsModel::where('id', $report_id)->update($data);
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um DELETE em um registro especifico da tabela "users"
-     *
-     * @param int $report_id
-     * @return array
-     */
-    function deleteReport(int $report_id) : array {
-
-        try{
-
-            ReportsModel::where('id', $report_id)->delete();
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-         
             return ["status" => false, "error" => $e->getMessage()];
 
         }
