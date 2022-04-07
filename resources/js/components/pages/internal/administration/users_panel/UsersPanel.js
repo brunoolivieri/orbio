@@ -135,7 +135,7 @@ export function UsersPanel(){
    */
   function requestToGetSearchedUsers(module_middleware){
 
-    // This receives: limit clause, where clause and the page number
+    // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}&auth=${module_middleware}`)
@@ -202,6 +202,10 @@ export function UsersPanel(){
 
   }
 
+  /**
+   * Função para processar o recarregamento dos dados da tabela
+   * 
+   */
   function reloadTable(){
 
     setPanelData({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});

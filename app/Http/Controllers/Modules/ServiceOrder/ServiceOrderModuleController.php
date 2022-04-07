@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Modules\ServiceOrder;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Orders\ServiceOrdersModel;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ServiceOrderModuleController extends Controller
 {
@@ -15,20 +18,21 @@ class ServiceOrderModuleController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new ServiceOrdersModel();
 
-        $request_values = explode("/", request()->args);
-
-        $offset = isset($request_values[0]) ? $request_values[0] : 0;
-        $limit = isset($request_values[1]) ? $request_values[1] : 100;
-
-        $model_response = $model->loadAllServiceOrders((int) $offset, (int) $limit);
+        $model_response = $model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
+            $data_formated = $this->serviceOrdersTableFormat($model_response["data"], $limit);
 
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -45,43 +49,40 @@ class ServiceOrderModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function ordersTableFormat(array $data, int $limit) : array {
+    private function serviceOrdersTableFormat(LengthAwarePaginator $data) : array {
 
-        $arrData = [];
+        $arr_with_formated_data = [];
 
-        foreach($data["selectedRecords"] as $row => $object){
+        foreach($data->items() as $row => $record){
 
             // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($object->dh_criacao));
-            $updated_at_formated = $object->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($object->dh_atualizacao));
-            $order_start_date = $object->dh_inicio === NULL ? "Sem dados" : $object->dh_inicio;
-            $order_end_date = $object->dh_fim === NULL ? "Sem dados" : $object->dh_fim;
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
+            $updated_at_formated = $record->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
+            $order_start_date = $record->dh_inicio === NULL ? "Sem dados" : $record->dh_inicio;
+            $order_end_date = $record->dh_fim === NULL ? "Sem dados" : $record->dh_fim;
             
-            $arrData[$row] = array(
-                "order_id" => $object->id,
-                "order_status" => $object->status,
-                "flight_plan_id" => $object->id_plano_voo,
-                "numOS" => $object->numOS,
+            $arr_with_formated_data["records"][$row] = array(
+                "order_id" => $record->id,
+                "order_status" => $record->status,
+                "flight_plan_id" => $record->id_plano_voo,
+                "numOS" => $record->numOS,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,
                 "order_start_date" => $order_start_date,
                 "order_end_date" => $order_end_date,
-                "creator_name" => $object->nome_criador,
-                "pilot_name" => $object->nome_piloto,
-                "client_name" => $object->nome_cliente,
-                "order_note" => $object->observacao
+                "creator_name" => $record->nome_criador,
+                "pilot_name" => $record->nome_piloto,
+                "client_name" => $record->nome_cliente,
+                "order_note" => $record->observacao
             );
 
         }
 
-        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
-        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
-        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
-        $totalPages = $data["referencialValueForCalcPages"] <= $limit ? 1 : ($data["referencialValueForCalcPages"] % $limit === 0 ? $data["referencialValueForCalcPages"] / $limit : ceil($data["referencialValueForCalcPages"] / $limit));
+        $arr_with_formated_data["total_records_founded"] = $data->total();
+        $arr_with_formated_data["records_per_page"] = $data->perPage();
+        $arr_with_formated_data["total_pages"] = $data->lastPage();
 
-        $ret = [(int) $totalPages, $arrData];
-
-        return $ret;
+        return $arr_with_formated_data;
 
     }
 
@@ -93,19 +94,31 @@ class ServiceOrderModuleController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
-        $model = new ServiceOrdersModel();
 
-        $model_response = $model->newServiceOrder($request->except("auth"));
+        $request->validate([
+            "dh_inicio" => 'required|date',
+            "dh_fim" => 'required|date',
+            "numOS" => 'required|string',
+            "nome_criador" => 'required|string',
+            "nome_piloto" => 'required|string',
+            "nome_cliente" => 'required|string',
+            "observacao" => 'required|string',
+            "status" => 'required|boolean',
+            "id_plano_voo" => 'required|integer',
+        ]);
 
-         if($model_response["status"] && !$model_response["error"]){
+        try{
 
-            return response(["error" => $model_response["error"]], 200);
+            ServiceOrdersModel::create($request->except("auth"));
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+            return response("", 200);
 
-            return response(["error" => $model_response["error"]], 500);
+        }catch(\Exception $e){
+
+            return response(["error" => $e->getMessage()], 500);
 
         }
+
     }
 
     /**
@@ -116,27 +129,28 @@ class ServiceOrderModuleController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
+        
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new ServiceOrdersModel();
 
-        $request_values = explode(".", request()->args);
+        $model_response = $model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
 
-        $value_searched = $request_values[0];
-        $offset = $request_values[1];
-        $limit = $request_values[2];
-
-        $model_response = $model->loadSpecificServiceOrders($value_searched, (int) $offset, (int) $limit);
-    
         if($model_response["status"] && !$model_response["error"]){
+    
+            $data_formated = $this->serviceOrdersTableFormat($model_response["data"], $limit);
 
-            $dataFormated = $this->ordersTableFormat($model_response["data"], $limit);
-
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $model_response["error"]], 500);
 
         }  
+        
     }
 
     /**
@@ -148,17 +162,28 @@ class ServiceOrderModuleController extends Controller
      */
     public function update(Request $request, $id) : \Illuminate\Http\Response
     {
-        $model = new ServiceOrdersModel();
 
-        $model_response = $model->updateServiceOrder((int) $id, $request->except("auth"));
+        $request->validate([
+            "dh_inicio" => 'required|date',
+            "dh_fim" => 'required|date',
+            "numOS" => 'required|string',
+            "nome_criador" => 'required|string',
+            "nome_piloto" => 'required|string',
+            "nome_cliente" => 'required|string',
+            "observacao" => 'required|string',
+            "status" => 'required|boolean',
+            "id_plano_voo" => 'required|integer',
+        ]);
 
-        if($model_response["status"] && !$model_response["error"]){
+        try{
+
+            ServiceOrdersModel::where('id', $id)->update($request->except("auth"));
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $update["error"]], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
     }
@@ -171,17 +196,15 @@ class ServiceOrderModuleController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
-        $model = new ServiceOrdersModel();
+        try{
 
-        $model_response = $model->deleteServiceOrder((int) $id);
-
-        if($model_response["status"] && !$model_response["error"]){
+            ServiceOrdersModel::where('id', $id)->delete();
 
             return response("", 200);
 
-        }else if($model_response["status"] && !$model_response["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
     }

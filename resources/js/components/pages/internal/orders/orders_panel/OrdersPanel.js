@@ -54,21 +54,17 @@ export function OrdersPanel(){
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // State da paginação da tabela e função de alteração
-    const [page, setPage] = useState(1);
-
     // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
-
+    const {AuthData} = useAuthentication();
+    
     // State do carregamento dos dados
     // Enquanto for false, irá aparecer "carregando" no painel
-    const [panelData, setPanelData] = useState({status: false, response: "", total_pages: 0});
+    const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
-    // State dos parâmetros de paginação - define como os dados serão carregados de acordo com a página
-    const [paginationParams, setPaginationParams] = useState({offset: 0, limit: 10, where: [false, ""]});
+    // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+    const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // State que serve de dependência para o useEffect do AXIOS
-    // Serve para recarregar o painel
+    // Serve modificar o ícone de refresh da tabela
     const [refreshPanel, setRefreshPanel] = useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -76,89 +72,123 @@ export function OrdersPanel(){
     /**
      * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
      * 
-     * Os dados carregados preenchem uma página de acordo com um offset e um limit 
-     * O offset trabalha junto com o valor da página e define o primeiro registro da página, enquanto o limit define o último
-     * O atributo do switch case define qual o caso de carregamento para a paginação // Os casos são: todos os dados existentes, ou todos os dados pesquisados
-     * Dados pesquisados também podem vir em páginas e a sua paginação também implica em alterar o offset da paginação, e consequentemente em ativar o useEffect (porque é uma dependência)
-     * Além disso, para pesquisar todos os dados e alguns dados, métodos diferentes do mesmo controlador Laravel são utilizados - ou seja, não pode ser utilizada a mesma chamada AXIOS
-     * 
      */
      useEffect(() => {
 
-        let logged_user_id = AuthData.data.id;
-        let module_id = 3;
-        let module_action = "ler";
- 
-       switch(paginationParams.where[0]){
- 
-         case false:
- 
-           let pagination_params = `${paginationParams.offset}/${paginationParams.limit}`;
- 
-           AxiosApi.get(`/api/orders-module?args=${pagination_params}&auth=${logged_user_id}.${module_id}.${module_action}`, {
-             })
-             .then(function (response) {
-     
-               if(response.status === 200){
- 
-                 setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
+      const module_middleware = `${AuthData.data.id}.${3}.${"ler"}`;
 
-                 console.log(response.data.records);
-       
-               }else{
-       
-                 setPanelData({status: true, error: true, response: response.data.error});
-       
-               }
-     
-             })
-             .catch(function (error) {
-     
-               setPanelData({status: true, error: true, response: "ERRO NO CARREGAMENTO DOS REGISTROS DE ORDENS DE SERVIÇO."});
-     
-           });
- 
-         break;
-       
-         case true:
- 
-           let query_arguments = `${paginationParams.where[1]}.${paginationParams.offset}.${paginationParams.limit}`;
- 
-           AxiosApi.get(`/api/orders-module/orders?args=${query_arguments}&auth=${logged_user_id}.${module_id}.${module_action}`, {
-             access: AuthData.data.access
-             })
-             .then(function (response) {
-     
-               if(response.status === 200){
- 
-                 setPanelData({status: true, error: false, response: response.data.records, total_pages: response.data.total_pages});
-       
-               }
-     
-             });
- 
-         break;
- 
-     }
+      if(!paginationParams.where){
+
+        requestToGetAllServiceOrders(module_middleware);
+
+      }else{
+
+        requestToGetSearchedServiceOrders(module_middleware);
+
+      }
  
    },[paginationParams]);
 
    /**
+   * Carregamento de todos os registros de ordens de serviço
+   * 
+   */
+  function requestToGetAllServiceOrders(module_middleware){
+
+   // Essa variável recebe: limit clause, where clause and the page number
+   const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
+ 
+    AxiosApi.get(`/api/orders-module?args=${select_query_params}&auth=${module_middleware}`)
+    .then(function (response) {
+
+      if(response.status === 200){
+
+        setPanelData({
+          status: {
+            loading: false, 
+            success: true,
+            error: false
+          }, 
+          response: {
+            records: response.data.records, 
+            total_records: response.data.total_records_founded, 
+            records_per_page: response.data.records_per_page, 
+            total_pages: response.data.total_pages
+          }
+        });
+
+      }
+
+    })
+    .catch(function (error) {
+
+      console.log(error.message);
+
+      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+
+  });
+
+
+  }
+
+  /**
+   * Carregamento dos registros de ordens de serviço compátiveis com a pesquisa realizada
+   * 
+   */
+   function requestToGetSearchedServiceOrders(module_middleware){
+
+    // Essa variável recebe: limit clause, where clause and the page number
+    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
+ 
+    AxiosApi.get(`/api/orders-module/show?args=${select_query_params}&auth=${module_middleware}`)
+    .then(function (response) {
+
+      if(response.status === 200){
+
+        setPanelData({
+          status: {
+            loading: false, 
+            success: true,
+            error: false
+          }, 
+          response: {
+            records: response.data.records, 
+            total_records: response.data.total_records_founded, 
+            records_per_page: response.data.records_per_page, 
+            total_pages: response.data.total_pages
+          }
+        });
+
+      }
+
+    })
+    .catch(function (error) {
+
+      console.log(error.message);
+
+      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+
+    });
+
+   }
+
+   /**
    * Função para processar a alteração da página da tabela
+   * paginationParams é a dependência do useEffect
    * 
    */
   const handleTablePageChange = (event, value) => {
 
-    setPage(value);
-
-    let newOffset = value === 1 ? 0 : value*paginationParams.limit - paginationParams.limit;
-
-    setPaginationParams({offset: newOffset, limit: paginationParams.limit, where: [paginationParams.where[0],paginationParams.where[1]]});
+    setPaginationParams({
+      page: value,
+      limit: paginationParams.limit, 
+      where: paginationParams.where
+    });
 
   };
 
   /**
-   * Função para processar a pesquisa de usuários no input de pesquisa
+   * Função para processar a pesquisa de ordens de serviço no input de pesquisa
    * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
    * 
    */
@@ -167,16 +197,27 @@ export function OrdersPanel(){
 
       let value_searched = window.document.getElementById("order_panel_search_input").value;
 
-      setPage(1);
-      setPaginationParams({offset: 0, limit: paginationParams.limit, where: [true, value_searched]});
+      setPaginationParams({
+        page: 1,
+        limit: paginationParams.limit, 
+        where: value_searched
+      });
 
   }
 
+  /**
+   * Função para processar o recarregamento dos dados da tabela
+   * 
+   */
   function reloadTable(){
 
-    setPage(1);
-    setPaginationParams({offset: 0, limit: paginationParams.limit, where: [false, ""]});
-    setPanelData({status: false, response: "", total_pages: 0});
+    setPanelData({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+    
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit, 
+      where: 0
+    });
 
   }
 
@@ -196,7 +237,7 @@ export function OrdersPanel(){
             <IconButton onClick = {reloadTable}>
             {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}
 
-            {refreshPanel == true ? 
+            {refreshPanel ? 
             <Badge color="primary" variant="dot">
                 <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
             </Badge>
@@ -230,10 +271,10 @@ export function OrdersPanel(){
         {/* Mecanismo de paginação - depende dos dados retornados pelo servidor */}
         {/* Se o total de registros for múltiplo de 10, o total de páginas será esse número dividido por 10. Exemplo: 20 registros = 2 páginas */}
         {/* Se o total de registros não for múltiplo de 10, o total de páginas será esse número mais 10, dividido por 10 e convertido para o maior inteiro mais próximo. Exemplo: 11 páginas = 2 páginas (ao invés de 1,1) */}
-        {panelData.status && 
+        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
         <Grid item>
         <Stack spacing={2}>
-            <Pagination count={panelData.total_pages} shape="rounded" page={page} onChange={handleTablePageChange} />
+            <Pagination count={panelData.total_pages} shape="rounded" page={paginationParams.page} onChange={handleTablePageChange} />
         </Stack>
         </Grid>  
         }
@@ -260,10 +301,8 @@ export function OrdersPanel(){
             </TableRow>
             </TableHead>
             <TableBody className = "tbody">
-                {/* Geração das linhas da tabela de usuários - depende dos dados retornados pelo servidor */}
-                {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
-                {(panelData.status && !panelData.error) && 
-                    panelData.response.map((row) => (
+                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                    panelData.response.records.map((row) => (
                         <StyledTableRow key={row.order_id}>
                         <StyledTableCell>{row.order_id}</StyledTableCell>
                         <StyledTableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell>

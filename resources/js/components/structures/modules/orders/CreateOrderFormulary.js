@@ -177,45 +177,141 @@ export function CreateOrderFormulary({...props}){
       })
       .then(function (response) {
 
-          serverResponseTreatment(response);
+        successServerResponseTreatment();
 
       })
       .catch(function (error) {
         
-        serverResponseTreatment(error.response);
+        errorServerResponseTreatment(error.response.data);
 
       });
 
     }
 
     /*
-    * Rotina 5
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
+    * Rotina 5A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-     if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
-
-        setTimeout(() => {
-          
-          setDisabledButton(false);
-          
-          handleClose();
-
-        }, 2000);
-
-      }else{
-
-        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+      setTimeout(() => {
 
         setDisabledButton(false);
 
-      }
+        handleClose();
+
+      }, 2000);
 
     }
+
+    /*
+    * Rotina 5B
+    * Tratamento da resposta de uma requisição falha
+    */
+    function errorServerResponseTreatment(response_data){
+
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      let input_errors = {
+        dh_inicio: {error: false, message: null},
+        dh_fim: {error: false, message: null},
+        numOS: {error: false, message: null},
+        nome_criador: {error: false, message: null},
+        nome_piloto: {error: false, message: null},
+        nome_cliente: {error: false, message: null},
+        observacao: {error: false, message: null},
+        status: {error: false, message: null},
+        id_plano_voo: {error: false, message: null},
+      }
+
+      for(let prop in response_data.errors){
+
+        if(prop == "dh_inicio"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("dh_inicio", "Data inicial")
+          }
+
+        }else if(prop == "dh_fim"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("dh_fim", "Data final")
+          }
+
+        }else if(prop == "nome_criador"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("nome_criador", "nome do criador")
+          }
+
+        }else if(prop == "nome_piloto"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("nome_piloto", "nome do piloto")
+          }
+
+        }else if(prop == "nome_cliente"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("nome_cliente", "nome do cliente")
+          }
+
+        }else if(prop == "observacao"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("observacao", "observação")
+          }
+
+        }else if(prop == "id_plano_voo"){
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0].replace("id_plano_voo", "plano de vôo")
+          }
+
+        }else{
+
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0]
+          }
+
+        }
+
+      }
+
+      setErrorDetected({
+        order_start_date: input_errors.dh_inicio.error, 
+        order_end_date: input_errors.dh_fim.error, 
+        numOS: input_errors.numOS.error, 
+        creator_name: input_errors.nome_criador.error, 
+        pilot_name: input_errors.nome_piloto.error, 
+        client_name: input_errors.nome_cliente.error, 
+        order_note: input_errors.observacao.error
+      });
+
+      setErrorMessage({
+        order_start_date: input_errors.dh_inicio.message, 
+        order_end_date: input_errors.dh_fim.message, 
+        numOS: input_errors.numOS.message, 
+        creator_name: input_errors.nome_criador.message, 
+        pilot_name: input_errors.nome_piloto.message, 
+        client_name: input_errors.nome_cliente.message, 
+        order_note: input_errors.observacao.message
+      });
+
+    }
+
+    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
     return (
         <>
