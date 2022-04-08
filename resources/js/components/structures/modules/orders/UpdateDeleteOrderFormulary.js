@@ -35,8 +35,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     const [open, setOpen] = useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 
+    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
+    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -58,8 +58,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false});
-      setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""});
+      setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
+      setErrorMessage({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -127,12 +127,34 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
       const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
       const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
+      const fligthPlanValidate = formData.get("select_flight_plan") != "0" ? {error: false, message: ""} : {error: true, message: ""};
+      const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
 
-      // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({order_start_date: startDateValidate.error, order_end_date: endDateValidate.error, numOS: numOsValidate.error, creator_name: creatorNameValidate.error, pilot_name: pilotNameValidate.error, client_name: clientNameValidate.error, order_note: orderNoteValidate.error});
-      setErrorMessage({order_start_date: startDateValidate.message, order_end_date: endDateValidate.message, numOS: numOsValidate.message, creator_name: creatorNameValidate.message, pilot_name: pilotNameValidate.message, client_name: clientNameValidate.message, order_note: orderNoteValidate.message});
+      setErrorDetected({
+        order_start_date: startDateValidate.error, 
+        order_end_date: endDateValidate.error, 
+        numOS: numOsValidate.error, 
+        creator_name: creatorNameValidate.error, 
+        pilot_name: pilotNameValidate.error, 
+        client_name: clientNameValidate.error, 
+        order_note: orderNoteValidate.error, 
+        flight_plan: fligthPlanValidate.error,
+        status: statusValidate.error
+      });
+
+      setErrorMessage({
+        order_start_date: startDateValidate.message, 
+        order_end_date: endDateValidate.message, 
+        numOS: numOsValidate.message, 
+        creator_name: creatorNameValidate.message, 
+        pilot_name: pilotNameValidate.message, 
+        client_name: clientNameValidate.message, 
+        order_note: orderNoteValidate.message, 
+        flight_plan: fligthPlanValidate.message,
+        status: statusValidate.message
+      });
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error){
+      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlanValidate.error || statusValidate.error){
 
         return false;
 
@@ -265,10 +287,10 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
       // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
 
-        input_errors[prop] = {
-          error: true, 
-          message: response_data.errors[prop][0]
-        }
+          input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0]
+          }
 
       }
 
@@ -279,7 +301,9 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
         creator_name: input_errors.creator_name.error, 
         pilot_name: input_errors.pilot_name.error, 
         client_name: input_errors.client_name.error, 
-        order_note: input_errors.observation.error
+        order_note: input_errors.observation.error,
+        flight_plan: input_errors.fligth_plan_id.error,
+        status: input_errors.status.error
       });
 
       setErrorMessage({
@@ -289,7 +313,9 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
         creator_name: input_errors.creator_name.message, 
         pilot_name: input_errors.pilot_name.message, 
         client_name: input_errors.client_name.message, 
-        order_note: input_errors.observation.message
+        order_note: input_errors.observation.message,
+        flight_plan: input_errors.fligth_plan_id.message,
+        status: input_errors.status.message
       });
 
     }
@@ -423,7 +449,7 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                     data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
                     primary_key={"id"} 
                     key_content={"id"} 
-                    error = {null} 
+                    error = {errorDetected.flight_plan} 
                     default = {data.flight_plan_id != null ? data.flight_plan_id : 0}
                     name = {"select_flight_plan"}  
                     disabled = {operation === "update" ? false : true}
@@ -454,6 +480,8 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
                   fullWidth
                   variant="outlined"
                   defaultValue={data.order_status}
+                  error = {errorDetected.status}
+                  helperText = {errorMessage.status}
                   InputProps={{
                       inputProps: { min: 0, max: 1 },
                   }}
