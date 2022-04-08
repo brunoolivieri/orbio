@@ -10,6 +10,10 @@ use App\Models\Incidents\IncidentsModel;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+// Classes de validação das requisições store/update
+use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
+use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
+
 class FlightPlanModuleController extends Controller
 {
     /**
@@ -106,19 +110,18 @@ class FlightPlanModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(FlightPlanStoreRequest $request) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            "id_relatorio" => 'nullable|integer|bail',
-            "id_incidente" => 'nullable|integer',
-            "status" => 'required|boolean',
-            "descricao" => 'required|string',
-        ]);
 
         try{
 
-            FlightPlansModel::create($request->except("auth"));
+            FlightPlansModel::create([
+                "id_relatorio" => $request->report_id,
+                "id_incidente" => $request->incident_id,
+                "arquivo" => $request->flight_plan_log,
+                "descricao" => $request->description,
+                "status" => $request->status
+            ]);
 
             return response("", 200);
 
@@ -167,19 +170,17 @@ class FlightPlanModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : \Illuminate\Http\Response
+    public function update(FlightPlanUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            "id_relatorio" => 'nullable|integer|bail',
-            "id_incidente" => 'nullable|integer',
-            "status" => 'required|boolean',
-            "descricao" => 'required|string',
-        ]);
 
         try{
 
-            FlightPlansModel::where('id', $id)->update($request->except("auth"));
+            FlightPlansModel::where('id', $id)->update([
+                "id_relatorio" => $request->report_id,
+                "id_incidente" => $request->incident_id,
+                "descricao" => $request->description,
+                "status" => $request->status
+            ]);
 
             return response("", 200);
 

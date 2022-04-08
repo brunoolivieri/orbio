@@ -33,7 +33,7 @@ const Input = styled('input')({
 export const CreateReportFormulary = React.memo(({...props}) => {
 
     // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+    const {AuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
@@ -164,10 +164,10 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
       AxiosApi.post(`/api/reports-module?`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
-        dh_inicio_voo: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-        dh_fim_voo: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-        log_voo: "/caminho/logs/exemplo.txt",
-        observacao: data.get("report_note")
+        flight_initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+        flight_final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+        flight_log_file: data.get("flight_log_file"),
+        observation: data.get("report_note")
       })
       .then(function (response) {
 
@@ -209,65 +209,36 @@ export const CreateReportFormulary = React.memo(({...props}) => {
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
       let input_errors = {
-        dh_inicio_voo: {error: false, message: null},
-        dh_fim_voo: {error: false, message: null},
-        log_voo: {error: false, message: null},
-        observacao: {error: false, message: null},
+        flight_initial_date: {error: false, message: null},
+        flight_final_date: {error: false, message: null},
+        flight_log_file: {error: false, message: null},
+        observation: {error: false, message: null},
       }
 
+       // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
 
-        if(prop == "dh_inicio_voo"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("dh_inicio_voo", "Data inicial")
-          }
-
-        }else if(prop == "dh_fim_voo"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("dh_fim_voo", "Data final")
-          }
-
-        }else if(prop == "log_voo"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("log_voo", "log")
-          }
-
-        }else if(prop == "observacao"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("observacao", "observação")
-          }
-
-        }else{
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0]
-          }
-
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
         }
 
       }
 
       setErrorDetected({
-        flight_start_date: input_errors.dh_inicio_voo.error, 
-        flight_end_date: input_errors.dh_fim_voo.error, 
-        flight_log: input_errors.log_voo.error, 
-        report_note: input_errors.observacao.error
+        flight_start_date: input_errors.flight_initial_date.error, 
+        flight_end_date: input_errors.flight_final_date.error, 
+        flight_log: input_errors.flight_log_file.error, 
+        report_note: input_errors.observation.error
       });
 
-      setErrorMessage({flight_start_date: input_errors.dh_inicio_voo.message, 
-        flight_end_date: input_errors.dh_fim_voo.message, 
-        flight_log: input_errors.log_voo.message, 
-        report_note: input_errors.observacao.message
+      setErrorMessage({
+        flight_start_date: input_errors.flight_initial_date.message, 
+        flight_end_date: input_errors.flight_final_date.message, 
+        flight_log: input_errors.flight_log_file.message, 
+        report_note: input_errors.observation.message
       });
 
     }
@@ -328,7 +299,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               
             <Box>
               <label htmlFor="contained-button-file">
-                <Input accept="image/*" id="contained-button-file" multiple type="file" name = "log_file" />
+                <Input accept="image/*" id="contained-button-file" multiple type="file" name = "flight_log_file" />
                 <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"}>
                   {errorDetected.flight_log ? errorMessage.flight_log : "Upload"}
                 </Button>

@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+// Classes de validação das requisições store/update
+use App\Http\Requests\Modules\Reports\ReportStoreRequest;
+use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
+
 class ReportModuleController extends Controller
 {
     /**
@@ -84,19 +88,17 @@ class ReportModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(ReportStoreRequest $request) : \Illuminate\Http\Response
     {
-
-        // "log_voo" => 'required|file'
-        $request->validate([
-            "dh_inicio_voo" => 'required|date',
-            "dh_fim_voo" => 'required|date',
-            "observacao" => 'required|string'
-        ]);
         
         try{
 
-            ReportsModel::insert($request->except("auth"));
+            ReportsModel::insert([
+                "dh_inicio_voo" => $request->flight_initial_date,
+                "dh_fim_voo" => $request->flight_final_date,
+                "log_voo" => $request->flight_log_file,
+                "observacao" => $request->observation
+            ]);
 
             return response("", 200);
             
@@ -147,19 +149,17 @@ class ReportModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : \Illuminate\Http\Response
+    public function update(ReportUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
-
-        // "log_voo" => 'required|file'
-        $request->validate([
-            "dh_inicio_voo" => 'required|date',
-            "dh_fim_voo" => 'required|date',
-            "observacao" => 'required|string'
-        ]);
         
         try{
 
-            ReportsModel::where('id', $id)->update($request->except("auth"));
+            ReportsModel::where('id', $id)->update([
+                "dh_inicio_voo" => $request->flight_initial_date,
+                "dh_fim_voo" => $request->flight_final_date,
+                "log_voo" => $request->flight_log_file,
+                "observacao" => $request->observation
+            ]);
 
             return ["status" => true, "error" => false];
 

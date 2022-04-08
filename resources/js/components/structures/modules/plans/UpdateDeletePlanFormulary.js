@@ -32,8 +32,8 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
     const [open, setOpen] = useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({description: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({description: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = useState({description: false, status: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = useState({description: "", status: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -108,11 +108,12 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
 
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const descriptionValidate = FormValidation(formData.get("description"), 3, null, null, null);
+      const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
      
-      setErrorDetected({description: descriptionValidate.error});
-      setErrorMessage({description: descriptionValidate.message});
+      setErrorDetected({description: descriptionValidate.error, status: statusValidate.error});
+      setErrorMessage({description: descriptionValidate.message, status: statusValidate.message});
       
-      if(descriptionValidate.error){
+      if(descriptionValidate.error || statusValidate.error){
 
         return false;
 
@@ -141,10 +142,10 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
 
         AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          id_relatorio: data.get("select_report"),
-          id_incidente: data.get("select_incident"),
+          report_id: data.get("select_report"),
+          incident_id: data.get("select_incident"),
           status: data.get("status"),
-          descricao: data.get("description"),
+          description: data.get("description"),
         })
         .then(function (response) {
   
@@ -203,10 +204,10 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
       setDisplayAlert({display: true, type: "error", message: error_message});
 
       let input_errors = {
-        id_relatorio: {error: false, message: null},
-        id_incidente: {error: false, message: null},
+        report_id: {error: false, message: null},
+        incident_id: {error: false, message: null},
         status: {error: false, message: null},
-        descricao: {error: false, message: null}
+        description: {error: false, message: null}
       }
 
       for(let prop in response_data.errors){
@@ -219,17 +220,17 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
       }
 
       setErrorDetected({
-        report: input_errors.id_relatorio.error, 
-        incident: input_errors.id_incidente.error, 
+        report: input_errors.report_id.error, 
+        incident: input_errors.incident_id.error, 
         status: input_errors.status.error, 
-        description: input_errors.descricao.error
+        description: input_errors.description.error
       });
 
       setErrorMessage({
-        report: input_errors.id_relatorio.message, 
-        incident: input_errors.id_incidente.message, 
+        report: input_errors.report_id.message, 
+        incident: input_errors.incident_id.message, 
         status: input_errors.status.message, 
-        description: input_errors.descricao.message
+        description: input_errors.description.message
       });
 
     }
@@ -310,6 +311,8 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               fullWidth
               variant="outlined"
               defaultValue={data.plan_status}
+              error = {errorDetected.status}
+              helperText = {errorMessage.status}
               InputProps={{
                   inputProps: { min: 0, max: 1 }
               }}

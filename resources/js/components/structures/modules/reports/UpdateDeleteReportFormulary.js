@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
@@ -29,7 +28,7 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+    const {AuthData} = useAuthentication();
 
     // States do formulário
     const [open, setOpen] = useState(false);
@@ -180,19 +179,19 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
 
         AxiosApi.patch(`/api/reports-module/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          dh_inicio_voo: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          dh_fim_voo: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          log_voo: data.get("flight_log"),
-          observacao: data.get("report_note")
+          flight_initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          flight_final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+          flight_log_file: data.get("flight_log"),
+          observation: data.get("report_note")
         })
         .then(function (response) {
   
-            serverResponseTreatment(response);
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -201,12 +200,12 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
         AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
-            serverResponseTreatment(response);
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -214,45 +213,64 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
 
     }
 
-     /*
-    * Rotina 5
-    * Tratamento da resposta da requisição AXIOS
-    * Possui dois casos: o Update e o Delete
-    * 
+    /*
+    * Rotina 5A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-      if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        if(operation === "update"){
-
-          refresh_setter(true);
-
-          setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
-
-        }else{
-
-          refresh_setter(true);
-
-          setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});
-
-        }
-
-        setTimeout(() => {
-
-          setDisabledButton(false);
-
-          handleClose();
-
-        }, 2000);
-
-      }else{
+      setTimeout(() => {
 
         setDisabledButton(false);
 
-        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+        handleClose();
+
+      }, 2000);
+
+    }
+
+    /*
+    * Rotina 5B
+    * Tratamento da resposta de uma requisição falha
+    */
+    function errorServerResponseTreatment(response_data){
+
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+      let input_errors = {
+        flight_initial_date: {error: false, message: null},
+        flight_final_date: {error: false, message: null},
+        flight_log_file: {error: false, message: null},
+        observation: {error: false, message: null},
+      }
+
+      // Coleta dos objetos de erro existentes na response
+      for(let prop in response_data.errors){
+
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
+        }
 
       }
+
+      setErrorDetected({
+        flight_start_date: input_errors.flight_initial_date.error, 
+        flight_end_date: input_errors.flight_final_date.error, 
+        flight_log: input_errors.flight_log_file.error, 
+        report_note: input_errors.observation.error
+      });
+
+      setErrorMessage({
+        flight_start_date: input_errors.flight_initial_date.message, 
+        flight_end_date: input_errors.flight_final_date.message, 
+        flight_log: input_errors.flight_log_file.message, 
+        report_note: input_errors.observation.message
+      });
 
     }
 
