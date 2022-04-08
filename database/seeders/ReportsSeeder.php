@@ -17,7 +17,7 @@ class ReportsSeeder extends Seeder
     {
         
         $records = [
-            ["dh_criacao" => date("Y-m-d H:i:s"), "dh_inicio_voo" => date("2022-05-10", strtotime('+1 months')), "dh_fim_voo" => date("Y-m-d", strtotime('+2 months')), "path/flight_log_1.txt" => "caminho/logs/flight_log_1.txt", "observacao" => "Relatório Teste 1"],
+            ["dh_criacao" => date("Y-m-d H:i:s"), "dh_inicio_voo" => date("2022-05-10", strtotime('+1 months')), "dh_fim_voo" => date("Y-m-d", strtotime('+2 months')), "log_voo" => "path/flight_log_1.txt", "observacao" => "Relatório Teste 1"],
             ["dh_criacao" => date("Y-m-d H:i:s"), "dh_inicio_voo" => date("2022-05-10", strtotime('+3 months')), "dh_fim_voo" => date("Y-m-d", strtotime('+5 months')), "log_voo" => "path/flight_log_2.txt", "observacao" => "Relatório Teste 2"]
         ];
 
