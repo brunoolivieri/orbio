@@ -25,14 +25,6 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 import { FormValidation } from '../../../../../utils/FormValidation';
 import AxiosApi from '../../../../../services/AxiosApi';
 
-/*
-
-- Esse modal é utilizado para construir formulários para a página de administração
-- Ele recebe os dados e o tipo de operação, e é construído de acordo com esses dados
-- Por enquanto é utilizado apenas para a operação de DELETE e UPDATE de usuários
-
-*/
-
 export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -158,7 +150,7 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
         AxiosApi.patch(`/api/admin-module-profile/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${action}`,
-          nome: data.get("name_input"),
+          name: data.get("name_input"),
           profile_modules_relationship: modulePowers
         })
         .then(function (response) {
@@ -221,10 +213,12 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
       let input_errors = {
-        nome: {error: false, message: null}
+        name: {error: false, message: null}
       }
 
+      // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
 
         input_errors[prop] = {
@@ -234,8 +228,8 @@ export function UpdateDeleteProfileFormulary({data, operation, refresh_setter}) 
 
       }
 
-      setErrorDetected({name: input_errors.nome.error});
-      setErrorMessage({name: input_errors.nome.message});
+      setErrorDetected({name: input_errors.name.error});
+      setErrorMessage({name: input_errors.name.message});
 
     }
 

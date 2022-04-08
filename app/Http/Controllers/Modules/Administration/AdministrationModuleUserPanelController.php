@@ -9,7 +9,7 @@ use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 
-// Classes de validação das requisições
+// Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 

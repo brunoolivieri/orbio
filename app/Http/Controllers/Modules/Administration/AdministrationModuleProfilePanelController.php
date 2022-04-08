@@ -8,6 +8,10 @@ use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+// Classes de validação das requisições store/update
+use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
+use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
+
 class AdministrationModuleProfilePanelController extends Controller
 {
     
@@ -98,12 +102,8 @@ class AdministrationModuleProfilePanelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(ProfilePanelStoreRequest $request) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            'nome' => 'required|bail|string|unique:profile,nome'
-        ]);
         
         $model = new ProfileModel();
 
@@ -160,16 +160,12 @@ class AdministrationModuleProfilePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : \Illuminate\Http\Response
+    public function update(ProfilePanelUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            'nome' => 'required|bail|string|unique:profile,nome,'.$id
-        ]);
         
         $model = new ProfileModel();
 
-        $model_response = $model->updateProfile((int) $id, $request->nome, $request->profile_modules_relationship);
+        $model_response = $model->updateProfile((int) $id, $request->name, $request->profile_modules_relationship);
 
         if($model_response["status"] && !$model_response["error"]){
 

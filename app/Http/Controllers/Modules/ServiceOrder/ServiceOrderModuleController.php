@@ -8,6 +8,10 @@ use App\Models\Orders\ServiceOrdersModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
+// Classes de validação das requisições store/update
+use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
+use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
+
 class ServiceOrderModuleController extends Controller
 {
     /**
@@ -112,24 +116,22 @@ class ServiceOrderModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(ServiceOrderStoreRequest $request) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            "dh_inicio" => 'required|date',
-            "dh_fim" => 'required|date',
-            "numOS" => 'required|string',
-            "nome_criador" => 'required|string',
-            "nome_piloto" => 'required|string',
-            "nome_cliente" => 'required|string',
-            "observacao" => 'required|string',
-            "status" => 'required|boolean',
-            "id_plano_voo" => 'required|integer',
-        ]);
 
         try{
 
-            ServiceOrdersModel::create($request->except("auth"));
+            ServiceOrdersModel::create([
+                "dh_inicio" => $request->initial_date,
+                "dh_fim" => $request->final_date,
+                "numOS" => $request->numOS,
+                "nome_criador" => $request->creator_name,
+                "nome_piloto" => $request->pilot_name,
+                "nome_cliente" => $request->client_name,
+                "observacao" => $request->observation,
+                "status" => $request->status,
+                "id_plano_voo" => $request->fligth_plan_id,
+            ]);
 
             return response("", 200);
 
@@ -180,24 +182,22 @@ class ServiceOrderModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : \Illuminate\Http\Response
+    public function update(ServiceOrderUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            "dh_inicio" => 'required|date',
-            "dh_fim" => 'required|date',
-            "numOS" => 'required|string',
-            "nome_criador" => 'required|string',
-            "nome_piloto" => 'required|string',
-            "nome_cliente" => 'required|string',
-            "observacao" => 'required|string',
-            "status" => 'required|boolean',
-            "id_plano_voo" => 'required|integer',
-        ]);
 
         try{
 
-            ServiceOrdersModel::where('id', $id)->update($request->except("auth"));
+            ServiceOrdersModel::where('id', $id)->update([
+                "dh_inicio" => $request->initial_date,
+                "dh_fim" => $request->final_date,
+                "numOS" => $request->numOS,
+                "nome_criador" => $request->creator_name,
+                "nome_piloto" => $request->pilot_name,
+                "nome_cliente" => $request->client_name,
+                "observacao" => $request->observation,
+                "status" => $request->status,
+                "id_plano_voo" => $request->fligth_plan_id,
+            ]);
 
             return response("", 200);
 

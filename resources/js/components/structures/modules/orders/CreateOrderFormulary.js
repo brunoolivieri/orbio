@@ -34,8 +34,8 @@ export function CreateOrderFormulary({...props}){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 
+    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
+    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -60,8 +60,8 @@ export function CreateOrderFormulary({...props}){
     // Função para fechar o modal
     const handleClose = () => {
 
-        setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false});
-        setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""});
+        setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
+        setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""});
         setDisplayAlert({display: false, type: "", message: ""});
         setDisabledButton(false);
 
@@ -113,12 +113,34 @@ export function CreateOrderFormulary({...props}){
       const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
       const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
+      const fligthPlanValidate = formData.get("select_flight_plan") != "0" ? {error: false, message: ""} : {error: true, message: ""};
+      const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
 
-      // Atualização dos estados responsáveis por manipular os inputs
-      setErrorDetected({order_start_date: startDateValidate.error, order_end_date: endDateValidate.error, numOS: numOsValidate.error, creator_name: creatorNameValidate.error, pilot_name: pilotNameValidate.error, client_name: clientNameValidate.error, order_note: orderNoteValidate.error});
-      setErrorMessage({order_start_date: startDateValidate.message, order_end_date: endDateValidate.message, numOS: numOsValidate.message, creator_name: creatorNameValidate.message, pilot_name: pilotNameValidate.message, client_name: clientNameValidate.message, order_note: orderNoteValidate.message});
+      setErrorDetected({
+        order_start_date: startDateValidate.error, 
+        order_end_date: endDateValidate.error, 
+        numOS: numOsValidate.error, 
+        creator_name: creatorNameValidate.error, 
+        pilot_name: pilotNameValidate.error, 
+        client_name: clientNameValidate.error, 
+        order_note: orderNoteValidate.error, 
+        flight_plan: fligthPlanValidate.error,
+        status: statusValidate.error
+      });
+
+      setErrorMessage({
+        order_start_date: startDateValidate.message, 
+        order_end_date: endDateValidate.message, 
+        numOS: numOsValidate.message, 
+        creator_name: creatorNameValidate.message, 
+        pilot_name: pilotNameValidate.message, 
+        client_name: clientNameValidate.message, 
+        order_note: orderNoteValidate.message, 
+        flight_plan: fligthPlanValidate.message,
+        status: statusValidate.message
+      });
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error){
+      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlanValidate.error || statusValidate.error){
 
         return false;
 
@@ -166,15 +188,15 @@ export function CreateOrderFormulary({...props}){
 
       AxiosApi.post(`/api/orders-module`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
-        dh_inicio: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-        dh_fim: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+        initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+        final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
         numOS: data.get("order_numos"),
-        nome_criador: data.get("creator_name"),
-        nome_piloto: data.get("pilot_name"),
-        nome_cliente: data.get("client_name"),
-        observacao: data.get("order_note"),
+        creator_name: data.get("creator_name"),
+        pilot_name: data.get("pilot_name"),
+        client_name: data.get("client_name"),
+        observation: data.get("order_note"),
         status: data.get("status"),
-        id_plano_voo: data.get("select_flight_plan")
+        fligth_plan_id: data.get("select_flight_plan")
       })
       .then(function (response) {
 
@@ -216,98 +238,51 @@ export function CreateOrderFormulary({...props}){
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
       let input_errors = {
-        dh_inicio: {error: false, message: null},
-        dh_fim: {error: false, message: null},
+        initial_date: {error: false, message: null},
+        final_date: {error: false, message: null},
         numOS: {error: false, message: null},
-        nome_criador: {error: false, message: null},
-        nome_piloto: {error: false, message: null},
-        nome_cliente: {error: false, message: null},
-        observacao: {error: false, message: null},
+        creator_name: {error: false, message: null},
+        pilot_name: {error: false, message: null},
+        client_name: {error: false, message: null},
+        observation: {error: false, message: null},
         status: {error: false, message: null},
-        id_plano_voo: {error: false, message: null},
+        fligth_plan_id: {error: false, message: null}
       }
 
+      // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
-
-        if(prop == "dh_inicio"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("dh_inicio", "Data inicial")
-          }
-
-        }else if(prop == "dh_fim"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("dh_fim", "Data final")
-          }
-
-        }else if(prop == "nome_criador"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("nome_criador", "nome do criador")
-          }
-
-        }else if(prop == "nome_piloto"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("nome_piloto", "nome do piloto")
-          }
-
-        }else if(prop == "nome_cliente"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("nome_cliente", "nome do cliente")
-          }
-
-        }else if(prop == "observacao"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("observacao", "observação")
-          }
-
-        }else if(prop == "id_plano_voo"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("id_plano_voo", "plano de vôo")
-          }
-
-        }else{
 
           input_errors[prop] = {
             error: true, 
             message: response_data.errors[prop][0]
           }
 
-        }
-
       }
 
       setErrorDetected({
-        order_start_date: input_errors.dh_inicio.error, 
-        order_end_date: input_errors.dh_fim.error, 
+        order_start_date: input_errors.initial_date.error, 
+        order_end_date: input_errors.final_date.error, 
         numOS: input_errors.numOS.error, 
-        creator_name: input_errors.nome_criador.error, 
-        pilot_name: input_errors.nome_piloto.error, 
-        client_name: input_errors.nome_cliente.error, 
-        order_note: input_errors.observacao.error
+        creator_name: input_errors.creator_name.error, 
+        pilot_name: input_errors.pilot_name.error, 
+        client_name: input_errors.client_name.error, 
+        order_note: input_errors.observation.error,
+        flight_plan: input_errors.fligth_plan_id.error,
+        status: input_errors.status.error
       });
 
       setErrorMessage({
-        order_start_date: input_errors.dh_inicio.message, 
-        order_end_date: input_errors.dh_fim.message, 
+        order_start_date: input_errors.initial_date.message, 
+        order_end_date: input_errors.final_date.message, 
         numOS: input_errors.numOS.message, 
-        creator_name: input_errors.nome_criador.message, 
-        pilot_name: input_errors.nome_piloto.message, 
-        client_name: input_errors.nome_cliente.message, 
-        order_note: input_errors.observacao.message
+        creator_name: input_errors.creator_name.message, 
+        pilot_name: input_errors.pilot_name.message, 
+        client_name: input_errors.client_name.message, 
+        order_note: input_errors.observation.message,
+        flight_plan: input_errors.fligth_plan_id.message,
+        status: input_errors.status.message
       });
 
     }
@@ -411,7 +386,7 @@ export function CreateOrderFormulary({...props}){
                     data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
                     primary_key={"id"} 
                     key_content={"id"} 
-                    error = {null} 
+                    error = {errorDetected.flight_plan} 
                     default = {0} 
                     name = {"select_flight_plan"}  
                   />
@@ -439,6 +414,8 @@ export function CreateOrderFormulary({...props}){
                   fullWidth
                   variant="outlined"
                   defaultValue={0}
+                  error = {errorDetected.status}
+                  helperText = {errorMessage.status}
                   InputProps={{
                       inputProps: { min: 0, max: 1 }
                   }}

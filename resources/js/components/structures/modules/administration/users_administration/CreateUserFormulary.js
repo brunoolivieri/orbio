@@ -22,14 +22,6 @@ import { GenericSelect } from '../../../input_select/GenericSelect';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 
-/*
-
-- Esse modal é utilizado para construir formulários para a página de administração
-- Ele recebe os dados e o tipo de operação, e é construído de acordo com esses dados
-- Por enquanto é utilizado apenas para a operação de DELETE e UPDATE de usuários
-
-*/
-
 export function CreateUserFormulary({...props}) {
 
     // Utilizador do state global de autenticação

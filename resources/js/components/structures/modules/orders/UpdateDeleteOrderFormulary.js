@@ -183,15 +183,15 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
 
         AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
-          dh_inicio: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-          dh_fim: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+          initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
           numOS: data.get("order_numos"),
-          nome_criador: data.get("creator_name"),
-          nome_piloto: data.get("pilot_name"),
-          nome_cliente: data.get("client_name"),
-          observacao: data.get("order_note"),
+          creator_name: data.get("creator_name"),
+          pilot_name: data.get("pilot_name"),
+          client_name: data.get("client_name"),
+          observation: data.get("order_note"),
           status: data.get("status"),
-          id_plano_voo: data.get("select_flight_plan")
+          fligth_plan_id: data.get("select_flight_plan")
         })
         .then(function (response) {
   
@@ -249,98 +249,47 @@ export function UpdateDeleteOrderFormulary({data, operation, refresh_setter}){
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
       let input_errors = {
-        dh_inicio: {error: false, message: null},
-        dh_fim: {error: false, message: null},
+        initial_date: {error: false, message: null},
+        final_date: {error: false, message: null},
         numOS: {error: false, message: null},
-        nome_criador: {error: false, message: null},
-        nome_piloto: {error: false, message: null},
-        nome_cliente: {error: false, message: null},
-        observacao: {error: false, message: null},
+        creator_name: {error: false, message: null},
+        pilot_name: {error: false, message: null},
+        client_name: {error: false, message: null},
+        observation: {error: false, message: null},
         status: {error: false, message: null},
-        id_plano_voo: {error: false, message: null},
+        fligth_plan_id: {error: false, message: null}
       }
 
+      // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
 
-        if(prop == "dh_inicio"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("dh_inicio", "Data inicial")
-          }
-
-        }else if(prop == "dh_fim"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("dh_fim", "Data final")
-          }
-
-        }else if(prop == "nome_criador"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("nome_criador", "nome do criador")
-          }
-
-        }else if(prop == "nome_piloto"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("nome_piloto", "nome do piloto")
-          }
-
-        }else if(prop == "nome_cliente"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("nome_cliente", "nome do cliente")
-          }
-
-        }else if(prop == "observacao"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("observacao", "observação")
-          }
-
-        }else if(prop == "id_plano_voo"){
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0].replace("id_plano_voo", "plano de vôo")
-          }
-
-        }else{
-
-          input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0]
-          }
-
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
         }
 
       }
 
       setErrorDetected({
-        order_start_date: input_errors.dh_inicio.error, 
-        order_end_date: input_errors.dh_fim.error, 
+        order_start_date: input_errors.initial_date.error, 
+        order_end_date: input_errors.final_date.error, 
         numOS: input_errors.numOS.error, 
-        creator_name: input_errors.nome_criador.error, 
-        pilot_name: input_errors.nome_piloto.error, 
-        client_name: input_errors.nome_cliente.error, 
-        order_note: input_errors.observacao.error
+        creator_name: input_errors.creator_name.error, 
+        pilot_name: input_errors.pilot_name.error, 
+        client_name: input_errors.client_name.error, 
+        order_note: input_errors.observation.error
       });
 
       setErrorMessage({
-        order_start_date: input_errors.dh_inicio.message, 
-        order_end_date: input_errors.dh_fim.message, 
+        order_start_date: input_errors.initial_date.message, 
+        order_end_date: input_errors.final_date.message, 
         numOS: input_errors.numOS.message, 
-        creator_name: input_errors.nome_criador.message, 
-        pilot_name: input_errors.nome_piloto.message, 
-        client_name: input_errors.nome_cliente.message, 
-        order_note: input_errors.observacao.message
+        creator_name: input_errors.creator_name.message, 
+        pilot_name: input_errors.pilot_name.message, 
+        client_name: input_errors.client_name.message, 
+        order_note: input_errors.observation.message
       });
 
     }

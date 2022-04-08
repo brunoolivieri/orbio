@@ -41,11 +41,11 @@ class UserPanelStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'O nome deve ser informado',
-            'email.required' => 'O email deve ser informado',
+            'name.required' => 'O nome do usuário deve ser informado',
+            'email.required' => 'O email do usuário deve ser informado',
             'email.unique' => 'Esse email já está cadastrado',
             'email.email' => 'Digite um email válido',
-            'profile_id.required' => 'Um perfil deve ser selecionado'
+            'profile_id.required' => 'Um perfil de usuário deve ser selecionado'
         ];
     }
 
