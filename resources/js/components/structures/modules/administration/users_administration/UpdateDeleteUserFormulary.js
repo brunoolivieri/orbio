@@ -135,10 +135,10 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
 
         AxiosApi.patch(`/api/admin-module-user/${data.get("id_input")}`, {
           auth: `${logged_user_id}.${module_id}.${action}`,
-          nome: data.get("name_input"),
+          name: data.get("name_input"),
           email: data.get("email_input"),
           status: data.get("status_input"),
-          id_perfil: data.get("select_profile")
+          profile_id: data.get("select_profile")
         })
         .then(function (response) {
 
@@ -192,13 +192,15 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
+       // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
       let input_errors = {
         email: {error: false, message: null},
-        nome: {error: false, message: null},
-        id_perfil: {error: false, message: null},
+        name: {error: false, message: null},
+        profile_id: {error: false, message: null},
         status: {error: false, message: null},
       }
 
+      // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
 
         input_errors[prop] = {
@@ -210,15 +212,15 @@ export function UpdateDeleteUserFormulary({data, operation, refresh_setter}) {
 
       setErrorDetected({
         email: input_errors.email.error, 
-        name: input_errors.nome.error, 
-        profile: input_errors.id_perfil.error, 
+        name: input_errors.name.error, 
+        profile: input_errors.profile_id.error, 
         status: input_errors.status.error
       });
 
       setErrorMessage({
         email: input_errors.email.message, 
-        name: input_errors.nome.message, 
-        profile: input_errors.id_perfil.message, 
+        name: input_errors.name.message, 
+        profile: input_errors.profile_id.message, 
         status: input_errors.status.message
       });
 

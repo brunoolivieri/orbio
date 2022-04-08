@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use App\Models\User\UserModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Validator;
+
+// Classes de validação das requisições
+use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
+use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -117,25 +122,18 @@ class AdministrationModuleUserPanelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(UserPanelStoreRequest $request) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            'nome' => 'required|bail|string',
-            'email' => 'required|email|unique:users,email,',
-            'id_perfil' => 'required|integer|numeric',
-            'senha' => 'required'
-        ]);
 
         $model = new UserModel();
 
         // A senha não criptografada será utilizada no conteúdo do email
         $model_response = $model->createUser([
-            "nome" => $request->nome,
+            "nome" => $request->name,
             "email" => $request->email,
-            "senha" => password_hash($request->senha, PASSWORD_DEFAULT),
-            "id_perfil" => $request->id_perfil
-        ], $request->senha);
+            "senha" => password_hash($request->password, PASSWORD_DEFAULT),
+            "id_perfil" => $request->profile_id
+        ], $request->password);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -188,19 +186,17 @@ class AdministrationModuleUserPanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id) : \Illuminate\Http\Response
+    public function update(UserPanelUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
-
-        $request->validate([
-            'nome' => 'required|bail|string',
-            'email' => 'required|email|unique:users,email,'.$id,
-            'status' => 'required|boolean',
-            'id_perfil' => 'required|integer|numeric'
-        ]);
 
         try{
 
-            UserModel::where('id', $id)->update($request->except("auth"));
+            UserModel::where('id', $id)->update([
+                "nome" => $request->name,
+                "email" => $request->email,
+                "id_perfil" => $request->profile_id,
+                "status" => $request->status
+            ]);
 
             return response("", 200);
 

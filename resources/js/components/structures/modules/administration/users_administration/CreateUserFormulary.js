@@ -142,9 +142,9 @@ export function CreateUserFormulary({...props}) {
       AxiosApi.post(`/api/admin-module-user`, {
         auth: `${user_id}.${module_id}.${action}`,
         email: data.get("registration_email_input"),
-        nome: data.get("registration_name_input"),
-        id_perfil: data.get("select_profile"),
-        senha: random_pass
+        name: data.get("registration_name_input"),
+        profile_id: data.get("select_profile"),
+        password: random_pass
       })
       .then(function (response) {
 
@@ -180,6 +180,7 @@ export function CreateUserFormulary({...props}) {
     /*
     * Rotina 4B
     * Tratamento da resposta de uma requisição falha
+    * Os erros relacionados aos parâmetros enviados são recuperados com o for in
     */
     function errorServerResponseTreatment(response_data){
 
@@ -188,12 +189,14 @@ export function CreateUserFormulary({...props}) {
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
       let input_errors = {
-        nome: {error: false, message: null},
+        name: {error: false, message: null},
         email: {error: false, message: null},
-        id_perfil: {error: false, message: null}
+        profile_id: {error: false, message: null}
       }
 
+      // Coleta dos objetos de erro existentes na response
       for(let prop in response_data.errors){
 
         input_errors[prop] = {
@@ -203,8 +206,17 @@ export function CreateUserFormulary({...props}) {
 
       }
 
-      setErrorDetected({name: input_errors.nome.error, email: input_errors.email.error, profile: input_errors.id_perfil.error});
-      setErrorMessage({name: input_errors.nome.message, email: input_errors.email.message, profile: input_errors.id_perfil.message});
+      setErrorDetected({
+        name: input_errors.name.error, 
+        email: input_errors.email.error, 
+        profile: input_errors.profile_id.error
+      });
+
+      setErrorMessage({
+        name: input_errors.name.message, 
+        email: input_errors.email.message, 
+        profile: input_errors.profile_id.message
+      });
 
     }
 
