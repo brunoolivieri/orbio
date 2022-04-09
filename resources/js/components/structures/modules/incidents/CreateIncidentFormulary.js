@@ -27,12 +27,14 @@ import moment from 'moment';
 
 export function CreateIncidentFormulary(){
 
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({incident_date: false, incident_type: false, incident_note: false}); 
-    const [errorMessage, setErrorMessage] = useState({incident_date: "", incident_type: "", incident_note: ""}); 
+    const [errorDetected, setErrorDetected] = useState({incident_date: false, incident_type: false, description: false}); 
+    const [errorMessage, setErrorMessage] = useState({incident_date: "", incident_type: "", description: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -46,6 +48,8 @@ export function CreateIncidentFormulary(){
     // States dos inputs de data
     const [incidentDate, setIncidentDate] = useState(moment());
 
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+
     // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
@@ -54,8 +58,8 @@ export function CreateIncidentFormulary(){
     // Função para fechar o modal
     const handleClose = () => {
 
-        setErrorDetected({incident_date: false, incident_type: false, incident_note: false});
-        setErrorMessage({incident_date: "", incident_type: "", incident_note: ""});
+        setErrorDetected({incident_date: false, incident_type: false, description: false});
+        setErrorMessage({incident_date: "", incident_type: "", description: ""});
         setDisplayAlert({display: false, type: "", message: ""});
         setDisabledButton(false);
 
@@ -67,12 +71,13 @@ export function CreateIncidentFormulary(){
     * Rotina 1
     * Ponto inicial do processamento do envio do formulário de registro
     * Recebe os dados do formulário, e transforma em um objeto da classe FormData
+    * A próxima rotina, 2, validará esses dados
     */ 
     function handleRegistrationSubmit(event){
         event.preventDefault();
   
         const data = new FormData(event.currentTarget);
-  
+
           if(dataValidate(data)){
   
             setDisabledButton(true);
@@ -83,7 +88,7 @@ export function CreateIncidentFormulary(){
   
       }
   
-      /*
+        /*
       * Rotina 2
       * Validação dos dados no frontend
       * Recebe o objeto da classe FormData criado na rotina 1
@@ -91,14 +96,12 @@ export function CreateIncidentFormulary(){
       */
       function dataValidate(formData){
   
-        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const incidentDateValidate = incidentDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
         const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
-        const incidentNoteValidate = FormValidation(formData.get("incident_note"), 3, null, null, null);
+        const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
   
-        // Atualização dos estados responsáveis por manipular os inputs
-        setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, incident_note: incidentNoteValidate.error});
-        setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, incident_note: incidentNoteValidate.message});
+        setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, description: incidentNoteValidate.error});
+        setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, description: incidentNoteValidate.message});
       
         if(incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error){
   
@@ -114,64 +117,98 @@ export function CreateIncidentFormulary(){
   
   
     /*
-    * Rotina 4
+    * Rotina 3
     * Comunicação AJAX com o Laravel utilizando AXIOS
     * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
     function requestServerOperation(data){
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 5;
-    let module_action = "escrever";
+      // Dados para o middleware de autenticação 
+      let logged_user_id = AuthData.data.id;
+      let module_id = 5;
+      let module_action = "escrever";
 
-    AxiosApi.post(`/api/incidents-module`, {
-        auth: `${logged_user_id}.${module_id}.${module_action}`,
-        dh_incidente: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-        tipo_incidente: data.get("incident_type"),
-        descricao: data.get("incident_note"),
-    })
-    .then(function (response) {
+      AxiosApi.post(`/api/incidents-module`, {
+          auth: `${logged_user_id}.${module_id}.${module_action}`,
+          incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+          incident_type: data.get("incident_type"),
+          description: data.get("description"),
+      })
+      .then(function (response) {
 
-        serverResponseTreatment(response);
+        successServerResponseTreatment();
 
-    })
-    .catch(function (error) {
-        
-        serverResponseTreatment(error.response);
+      })
+      .catch(function (error) {
+          
+        errorServerResponseTreatment(error.response.data);
 
-    });
+      });
 
     }
 
     /*
-    * Rotina 5
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
+    * Rotina 4A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-    if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        setDisplayAlert({display: true, type: "success", message: "Cadastro realizado com sucesso!"});
+      setTimeout(() => {
 
-        setTimeout(() => {
-        
         setDisabledButton(false);
-        
+
         handleClose();
 
-        }, 2000);
-
-    }else{
-
-        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
-
-        setDisabledButton(false);
+      }, 2000);
 
     }
 
+    /*
+    * Rotina 4B
+    * Tratamento da resposta de uma requisição falha
+    * Os erros relacionados aos parâmetros enviados são recuperados com o for in
+    */
+    function errorServerResponseTreatment(response_data){
+
+      setDisabledButton(false);
+
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+      let input_errors = {
+        incident_date: {error: false, message: null},
+        incident_type: {error: false, message: null},
+        description: {error: false, message: null}
+      }
+
+      // Coleta dos objetos de erro existentes na response
+      for(let prop in response_data.errors){
+
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
+        }
+
+      }
+
+      setErrorDetected({
+        incident_date: input_errors.incident_date.error, 
+        incident_type: input_errors.incident_type.error, 
+        description: input_errors.description.error
+      });
+
+      setErrorMessage({
+        incident_date: input_errors.incident_date.message, 
+        incident_type: input_errors.incident_type.message, 
+        description: input_errors.description.message
+      });
+
     }
+
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
     
     return(
         <>
@@ -224,10 +261,10 @@ export function CreateIncidentFormulary(){
                   fullWidth
                   variant="outlined"
                   required
-                  id="incident_note"
-                  name="incident_note"
-                  helperText = {errorMessage.incident_note}
-                  error = {errorDetected.incident_note}
+                  id="description"
+                  name="description"
+                  helperText = {errorMessage.description}
+                  error = {errorDetected.description}
                 />
                   
               </DialogContent>

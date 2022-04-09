@@ -192,7 +192,7 @@ export function OrdersPanel(){
    * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
    * 
    */
-   function handleSearchSubmit(event, offset){
+   function handleSearchSubmit(event){
     event.preventDefault();
 
       let value_searched = window.document.getElementById("search_input").value;

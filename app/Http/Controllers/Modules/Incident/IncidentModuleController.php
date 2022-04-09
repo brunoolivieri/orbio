@@ -5,6 +5,11 @@ namespace App\Http\Controllers\Modules\Incident;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Incidents\IncidentsModel;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+// Classes de validação das requisições store/update
+use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
+use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
 
 class IncidentModuleController extends Controller
 {
@@ -15,20 +20,20 @@ class IncidentModuleController extends Controller
      */
     public function index()
     {
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new IncidentsModel();
 
-        $request_values = explode("/", request()->args);
-
-        $offset = isset($request_values[0]) ? $request_values[0] : 0;
-        $limit = isset($request_values[1]) ? $request_values[1] : 100;
-
-        $model_response = $model->loadAllIncidents((int) $offset, (int) $limit);
+        $model_response = $model->loadIncidentsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $dataFormated = $this->incidentsTableFormat($model_response["data"], $limit);
+            $data_formated = $this->incidentsTableFormat($model_response["data"], $limit);
 
-            return response(["status" => true, "records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -45,51 +50,50 @@ class IncidentModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function incidentsTableFormat(array $data, int $limit) : array {
+    private function incidentsTableFormat(LengthAwarePaginator $data) : array {
 
-        $arrData = [];
+        $arr_with_formated_data = [];
 
-        foreach($data["selectedRecords"] as $row => $object){
+        foreach($data->items() as $row => $record){
             
-            $arrData[$row] = array(
-                "incident_id" => $object->id,
-                "incident_type" => $object->tipo_incidente,
-                "description" => $object->descricao,
-                "incident_date" => $object->dh_incidente
+            $arr_with_formated_data["records"][$row] = array(
+                "incident_id" => $record->id,
+                "incident_type" => $record->tipo_incidente,
+                "description" => $record->descricao,
+                "incident_date" => $record->dh_incidente
             );
 
         }
 
-        // O total de registros existentes é menor ou igual a LIMIT? Se sim, existirá apenas uma página
-        // Se não, se o total de registros existentes é maior do que LIMT, e sua divisão por LIMIT tem resto zero, o total de páginas será igual ao total de registros dividido por LIMIT (Exemplo: 30 / 10 = 3)
-        // Se não, se o total de registros, maior do LIMIT, dividido por LIMIT tem resto maior do que zero, o total de páginas será igual ao total de registros arredondado para cima e dividido por LIMIT (Exemplo: 15 -> 20 / 10 = 2)
-        $totalPages = $data["referencialValueForCalcPages"] <= $limit ? 1 : ($data["referencialValueForCalcPages"] % $limit === 0 ? $data["referencialValueForCalcPages"] / $limit : ceil($data["referencialValueForCalcPages"] / $limit));
+        $arr_with_formated_data["total_records_founded"] = $data->total();
+        $arr_with_formated_data["records_per_page"] = $data->perPage();
+        $arr_with_formated_data["total_pages"] = $data->lastPage();
 
-        $ret = [(int) $totalPages, $arrData];
-
-        return $ret;
+        return $arr_with_formated_data;
 
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\Modules\Incidents\IncidentStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(IncidentStoreRequest $request)
     {
-        $model = new IncidentsModel();
+        try{
 
-        $model_response = $model->newIncident($request->except('auth'));
-
-         if($model_response["status"] && !$model_response["error"]){
+            IncidentsModel::create([
+                "tipo_incidente" => $request->incident_type,
+                "descricao" => $request->description,
+                "dh_incidente" => $request->incident_date
+            ]);
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $response["error"]], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
     }
@@ -102,49 +106,50 @@ class IncidentModuleController extends Controller
      */
     public function show($id)
     {
+        $args = explode(".", request()->args);
+        $limit = (int) $args[0];
+        $where_value = $args[1];
+        $actual_page = (int) $args[2];
+
         $model = new IncidentsModel();
 
-        $request_values = explode(".", request()->args);
+        $model_response = $model->loadIncidentsWithPagination($limit, $actual_page, $where_value);
 
-        $value_searched = $request_values[0];
-        $offset = $request_values[1];
-        $limit = $request_values[2];
-
-        $model_response = $model->loadSpecificIncidents($value_searched, (int) $offset, (int) $limit);
-    
         if($model_response["status"] && !$model_response["error"]){
+    
+            $data_formated = $this->incidentsTableFormat($model_response["data"], $limit);
 
-            $dataFormated = $this->incidentsTableFormat($model_response["data"], $limit);
-
-            return response(["records" => $dataFormated[1], "total_pages" =>  $dataFormated[0]], 200);
+            return response($data_formated, 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
             return response(["error" => $model_response["error"]], 500);
 
-        }  
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\Modules\Incidents\IncidentUpdateRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(IncidentUpdateRequest $request, $id)
     {
-        $model = new IncidentsModel();
+        try{
 
-        $update = $model->updateIncident((int) $id, $request->except('auth'));
-
-        if($update["status"] && !$update["error"]){
+            IncidentsModel::where('id', $id)->update([
+                "tipo_incidente" => $request->incident_type,
+                "descricao" => $request->description,
+                "dh_incidente" => $request->incident_date
+            ]);
 
             return response("", 200);
 
-        }else if(!$update["status"] && $update["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $update["error"]], 500);
+            return response(["error" => $e->getMessage()], 200);
 
         }
     }
@@ -157,17 +162,15 @@ class IncidentModuleController extends Controller
      */
     public function destroy($id)
     {
-        $model = new IncidentsModel();
+        try{
 
-        $model_response = $model->deleteIncident((int) $id);
-
-        if($model_response["status"] && !$model_response["error"]){
+            IncidentsModel::where('id', $id)->delete();
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
+        }catch(\Exception $e){
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
     }

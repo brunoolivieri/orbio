@@ -15,28 +15,6 @@ class IncidentsModel extends Model
     protected $guarded = [];
 
     /**
-     * Método realizar um INSERT na tabela "incidents"
-     *
-     * @param array $data
-     * @return array
-     */
-    function newIncident(array $data) : array {
-
-        try{
-
-            IncidentsModel::create($data);
-
-            return ["status" => true, "error" => false];
-            
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
      * Método realizar um SELECT SEM WHERE na tabela "incidents"
      * Os registros selecionados preencherão uma única página da tabela
      * A quantidade por página é definida pelo LIMIT, e o número da página pelo OFFSET
@@ -45,23 +23,18 @@ class IncidentsModel extends Model
      * @param int $limit
      * @return array
      */
-    function loadAllIncidents(int $offset, int $limit) : array {
+    function loadIncidentsWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
 
-            $allIncidents = DB::table('incidents')
-            ->offset($offset)->limit($limit)->get();
+            $data = DB::table('incidents')
+            ->when($where_value, function ($query, $where_value) {
 
-            if($allIncidents){
+                $query->where('id', $where_value);
 
-                $response = [
-                    "referencialValueForCalcPages" => count($allIncidents),
-                    "selectedRecords" => $allIncidents
-                ];
+            })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
-                return ["status" => true, "error" => false, "data" => $response];
-
-            }
+            return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){
 
@@ -70,82 +43,5 @@ class IncidentsModel extends Model
         }
 
     }
-
-    /**
-     * Método realizar um SELECT COM WHERE na tabela "incidents"
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return array
-     */
-    function loadSpecificIncidents(string $value_searched, int $offset, int $limit) : array {
-
-        try{
-
-            $searchedIncidents = DB::table('incidents')
-            ->where('incidents.id', $value_searched)
-            ->offset($offset)->limit($limit)->get();
-
-            $response = [
-                "referencialValueForCalcPages" => count($searchedIncidents),
-                "selectedRecords" => $searchedIncidents
-            ];
-
-            return ["status" => true, "error" => false, "data" => $response];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => true];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um UPDATE em um registro especifico da tabela "incidents"
-     *
-     * @param int $incident_id
-     * @param array $data
-     * @return array
-     */
-    function updateIncident(int $incident_id, array $data) : array {
-
-        try{
-
-            IncidentsModel::where('id', $incident_id)->update($data);
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Método realizar um DELETE em um registro especifico da tabela "incidents"
-     *
-     * @param int $incident_id
-     * @return array
-     */
-    function deleteIncident(int $incident_id) : array {
-
-        try{
-
-            IncidentsModel::where('id', $incident_id)->delete();
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-
 
 }

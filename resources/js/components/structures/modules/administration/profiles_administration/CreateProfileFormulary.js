@@ -23,7 +23,7 @@ import { Alert } from '@mui/material';
 
 export function CreateProfileFormulary() {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -41,7 +41,7 @@ export function CreateProfileFormulary() {
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -187,6 +187,8 @@ export function CreateProfileFormulary() {
       setErrorMessage({name: input_errors.name.message});
 
     }
+
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
   return (
     <>

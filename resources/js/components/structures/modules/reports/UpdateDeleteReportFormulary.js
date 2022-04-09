@@ -317,6 +317,7 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
               InputProps={{
                   readOnly: true,
               }}
+              disabled = {operation === "update" ? false : true}
             />
             
             <Box sx={{display: "flex", justifyContent: "space-between"}}>
@@ -348,11 +349,11 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
               variant="outlined"
               defaultValue={data.flight_log}
               InputProps={{
-                  readOnly: operation == "delete" ? true : false,
-                  inputProps: { min: 0, max: 1 }
+                  inputProps: { min: 0, max: 1 },
               }}
               helperText = {errorMessage.flight_log}
               error = {errorDetected.flight_log}
+              disabled = {operation === "update" ? false : true}
             />
 
             <TextField
@@ -364,9 +365,7 @@ export const UpdateDeleteReportFormulary = React.memo(({data, operation, refresh
               fullWidth
               variant="outlined"
               defaultValue={data.report_note}
-              InputProps={{
-                  readOnly: operation == "delete" ? true : false
-              }}
+              disabled = {operation === "update" ? false : true}
               helperText = {errorMessage.report_note}
               error = {errorDetected.report_note}
             />

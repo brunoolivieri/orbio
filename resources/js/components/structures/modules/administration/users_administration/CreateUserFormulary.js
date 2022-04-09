@@ -24,6 +24,8 @@ import { FormValidation } from '../../../../../utils/FormValidation';
 
 export function CreateUserFormulary({...props}) {
 
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
@@ -39,6 +41,8 @@ export function CreateUserFormulary({...props}) {
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
+
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -91,21 +95,15 @@ export function CreateUserFormulary({...props}) {
     */
     function dataValidate(formData){
 
-        // Padrão de um email válido
         const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        // Validação dos dados - true para presença de erro e false para ausência
-        // O valor final é um objeto com dois atributos: "erro" e "message"
-        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("registration_email_input"), null, null, emailPattern, "EMAIL");
         const profileValidate = Number(formData.get("select_profile")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
 
-        // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error});
         setErrorMessage({name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message});
         
-        // Se o nome, email ou perfil estiverem errados
         if(nameValidate.error || emailValidate.error || profileValidate.error){
 
           return false;
@@ -211,6 +209,8 @@ export function CreateUserFormulary({...props}) {
       });
 
     }
+
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
   return (
     <div>

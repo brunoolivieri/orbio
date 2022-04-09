@@ -25,17 +25,14 @@ import moment from 'moment';
 
 export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter}){
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
-    // States do formulário
-    const [open, setOpen] = useState(false);
-
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""}); 
+    const [errorDetected, setErrorDetected] = useState({incident_date: false, incident_type: false, description: false}); 
+    const [errorMessage, setErrorMessage] = useState({incident_date: "", incident_type: "", description: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -43,10 +40,13 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
 
-    // States dos inputs de data
-    const [incidentDate, setIncidentDate] = useState(data.incident_date);
+    // States do formulário
+    const [open, setOpen] = React.useState(false);
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // States dos inputs de data
+    const [incidentDate, setIncidentDate] = useState(moment());
+
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -56,12 +56,12 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false});
-      setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: ""});
+      setErrorDetected({incident_date: false, incident_type: false, description: false});
+      setErrorMessage({incident_date: "", incident_type: "", description: ""});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
-      setOpen(false);
+        setOpen(false);
 
     };
 
@@ -112,11 +112,11 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
        const incidentDateValidate = incidentDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
        const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
-       const incidentNoteValidate = FormValidation(formData.get("incident_note"), 3, null, null, null);
+       const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
  
        // Atualização dos estados responsáveis por manipular os inputs
-       setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, incident_note: incidentNoteValidate.error});
-       setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, incident_note: incidentNoteValidate.message});
+       setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, description: incidentNoteValidate.error});
+       setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, description: incidentNoteValidate.message});
     
       if(incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error){
 
@@ -146,19 +146,19 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
       if(operation === "update"){
 
         AxiosApi.patch(`/api/incidents-module/${data.get("incident_id")}`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            dh_incidente: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-            tipo_incidente: data.get("incident_type"),
-            descricao: data.get("incident_note"),
+          auth: `${logged_user_id}.${module_id}.${module_action}`,
+          incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+          incident_type: data.get("incident_type"),
+          description: data.get("description"),
         })
         .then(function (response) {
   
-            serverResponseTreatment(response);
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -167,12 +167,12 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
         AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
-            serverResponseTreatment(response);
+          successServerResponseTreatment();
   
         })
         .catch(function (error) {
           
-          serverResponseTreatment(error.response);
+          errorServerResponseTreatment(error.response.data);
   
         });
 
@@ -180,49 +180,68 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
 
     }
 
-     /*
-    * Rotina 5
-    * Tratamento da resposta da requisição AXIOS
-    * Possui dois casos: o Update e o Delete
-    * 
+    /*
+    * Rotina 4A
+    * Tratamento da resposta de uma requisição bem sucedida
     */
-    function serverResponseTreatment(response){
+    function successServerResponseTreatment(){
 
-      if(response.status === 200){
+      setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
-        if(operation === "update"){
-
-          refresh_setter(true);
-
-          setDisplayAlert({display: true, type: "success", message: "Atualização realizada com sucesso!"});
-
-        }else{
-
-          refresh_setter(true);
-
-          setDisplayAlert({display: true, type: "success", message: "Deleção realizada com sucesso!"});
-
-        }
-
-        setTimeout(() => {
-
-          setDisabledButton(false);
-
-          handleClose();
-
-        }, 2000);
-
-      }else{
+      setTimeout(() => {
 
         setDisabledButton(false);
 
-        setDisplayAlert({display: true, type: "error", message: "Erro! Tente novamente."});
+        handleClose();
 
-      }
+      }, 2000);
 
     }
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    /*
+    * Rotina 4B
+    * Tratamento da resposta de uma requisição falha
+    * Os erros relacionados aos parâmetros enviados são recuperados com o for in
+    */
+    function errorServerResponseTreatment(response_data){
+
+      setDisabledButton(false);
+
+      let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+      setDisplayAlert({display: true, type: "error", message: error_message});
+
+      // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+      let input_errors = {
+        incident_date: {error: false, message: null},
+        incident_type: {error: false, message: null},
+        description: {error: false, message: null}
+      }
+
+      // Coleta dos objetos de erro existentes na response
+      for(let prop in response_data.errors){
+
+        input_errors[prop] = {
+          error: true, 
+          message: response_data.errors[prop][0]
+        }
+
+      }
+
+      setErrorDetected({
+        incident_date: input_errors.incident_date.error, 
+        incident_type: input_errors.incident_type.error, 
+        description: input_errors.description.error
+      });
+
+      setErrorMessage({
+        incident_date: input_errors.incident_date.message, 
+        incident_type: input_errors.incident_type.message, 
+        description: input_errors.description.message
+      });
+
+    }
+
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
     // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso 
     // Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc 
@@ -252,6 +271,22 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     
               <DialogContent>
 
+              <TextField
+                  type = "text"
+                  margin="dense"
+                  label="ID do incidente"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  id="incident_id"
+                  name="incident_id"
+                  InputProps={{
+                    readOnly: true 
+                  }}
+                  disabled = {operation === "update" ? false : true} 
+                  defaultValue = {data.incident_id}
+                />
+
               <Box sx={{display: "flex", justifyContent: "space-between"}}>
                   <DateTimeInput 
                     event = {setIncidentDate}
@@ -266,21 +301,6 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                 <TextField
                   type = "text"
                   margin="dense"
-                  label="ID do incidente"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="incident_id"
-                  name="incident_id"
-                  InputProps={{
-                    readOnly: true 
-                  }}
-                  defaultValue = {data.incident_id}
-                />
-
-                <TextField
-                  type = "text"
-                  margin="dense"
                   label="Tipo do incidente"
                   fullWidth
                   variant="outlined"
@@ -290,9 +310,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                   helperText = {errorMessage.incident_type}
                   error = {errorDetected.incident_type}
                   defaultValue = {data.incident_type}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
 
                 <TextField
@@ -302,14 +320,12 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                   fullWidth
                   variant="outlined"
                   required
-                  id="incident_note"
-                  name="incident_note"
-                  helperText = {errorMessage.incident_note}
-                  error = {errorDetected.incident_note}
+                  id="description"
+                  name="description"
+                  helperText = {errorMessage.description}
+                  error = {errorDetected.description}
                   defaultValue = {data.description}
-                  InputProps={{
-                    readOnly: operation == "delete" ? true : false
-                  }}
+                  disabled = {operation === "update" ? false : true} 
                 />
                   
               </DialogContent>

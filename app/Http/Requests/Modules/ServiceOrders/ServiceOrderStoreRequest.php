@@ -47,6 +47,8 @@ class ServiceOrderStoreRequest extends FormRequest
         return [
             'initial_date.required' => "A data inicial deve ser informada",
             'final_date.required' => "A data final deve ser informada",
+            'initial_date.date' => "Deve ser um formato de data válido",
+            'final_date.date' => "Deve ser um formato de data válido",
             'numOS.required' => "O numOS deve ser informado",
             'creator_name.required' => "O nome do criador deve ser informado",
             'pilot_name.required' => "O nome do piloto deve ser informado",

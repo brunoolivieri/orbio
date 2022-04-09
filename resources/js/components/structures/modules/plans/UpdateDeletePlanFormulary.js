@@ -277,6 +277,9 @@ export const UpdateDeletePlanFormulary = React.memo(({data, operation, refresh_s
               variant="outlined"
               defaultValue={data.plan_id}
               disabled = {operation === "update" ? false : true} 
+              inputProps={{
+                readOnly: true
+              }}
             />
 
             <Box>
