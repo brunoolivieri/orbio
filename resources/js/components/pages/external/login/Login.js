@@ -57,14 +57,10 @@ export function Login(){
     function handleLoginSubmit(event) {
         event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-            // Inicialização da requisição para o servidor
             requestServerOperation(data);
 
         }
@@ -79,20 +75,14 @@ export function Login(){
     */
     function dataValidate(formData){
 
-        // Padrão de um email válido
         const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        // Validação dos dados - true para presença de erro e false para ausência
-        // Se utilizada a função FormValidation é retornado um objeto com dois atributos: "erro" e "message"
-        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
         const emailValidate = FormValidation(formData.get("login_email_input"), null, null, emailPattern, "EMAIL");
         const passwordValidate = FormValidation(formData.get("login_password_input"), null, null, null, null);
 
-        // Atualização dos estados responsáveis por manipular os inputs
         setErrorDetected({email: emailValidate.error, password: passwordValidate.error});
         setErrorMessage({email: emailValidate.message, password: passwordValidate.message});
 
-        // Se o email ou a senha estiverem errados
         if(emailValidate.error === true || passwordValidate.error === true){
 
             return false;
@@ -118,57 +108,77 @@ export function Login(){
           })
           .then(function (response) {
 
-            // Tratamento da resposta do servidor
-            serverResponseTreatment(response);
+            successServerResponseTreatment(response.data);
 
           })
           .catch(function (error) {
 
-            // Tratamento da resposta do servidor
-            serverResponseTreatment(error.response);
+            errorServerResponseTreatment(error.response.data);
 
         });
 
     }
 
     /*
-    * Rotina 4
-    * Tratamento da resposta do servidor
-    * Se for um sucesso, o usuário é redirecionado para a rota do sistema
+    * Rotina 4A
+    * Tratamento da requisição bem sucedida
     */
-    function serverResponseTreatment(response){  
-        
-        if(response.status === 200){
+    function successServerResponseTreatment(response_data){
 
-            // Armazena o Token JWT
-            localStorage.removeItem('user_authenticated_token');
-            localStorage.setItem('user_authenticated_token', JSON.stringify(response.data.token));
+        localStorage.removeItem('user_authenticated_token');
+        localStorage.setItem('user_authenticated_token', JSON.stringify(response_data.token));
 
-            window.location.href = "/sistema"; 
+        window.location.href = "/sistema"; 
+
+    }
+
+    /*
+    * Rotina 4B
+    * Tratamento da requisição que falhou
+    */
+    function errorServerResponseTreatment(response_data){
+
+        // Erros automatizados
+
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        setDisplayAlert({display: true, type: "error", message: error_message});
+
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            name: {error: false, message: null},
+            password: {error: false, message: null}
+        }
+
+        // Coleta dos objetos de erro existentes na response
+        for(let prop in response_data.errors){
+
+            input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0]
+            }
+
+        }
+
+        setErrorDetected({email: input_errors.email.error, password: input_errors.password.error});
+        setErrorMessage({email: input_errors.email.message, password: input_errors.password.message});
+
+        // Erros customizados
+
+        if(response.data.error == "activation"){
+
+            setDisplayAlert({display: true, message: "Houve um erro na ativação da conta. Tente novamente ou contate o suporte."});
+
+        }else if(response.data.error == "token"){
+
+            setDisplayAlert({display: true, message: "Erro na autenticação. Tente novamente ou contate o suporte."});
+
+        }else if(response.data.error == "account_disabled"){
+            
+            setDisplayAlert({display: true, message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la."});
 
         }else{
 
-            if(response.data.error == "email_not_exists" || response.data.error == "password"){
-
-                setDisplayAlert({display: true, message: "Email ou senha incorretos."});
-
-            }else if(response.data.error == "activation"){
-
-                setDisplayAlert({display: true, message: "Houve um erro na ativação da conta. Tente novamente ou contate o suporte."});
-
-            }else if(response.data.error == "token"){
-
-                setDisplayAlert({display: true, message: "Erro na autenticação. Tente novamente ou contate o suporte."});
-
-            }else if(response.data.error == "account_disabled"){
-                
-                setDisplayAlert({display: true, message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la."});
-
-            }else if(response.data.error == "server"){
-
-                setDisplayAlert({display: true, message: "Erro do servidor! Tente novamente ou contate o suporte."});
-
-            }
+            setDisplayAlert({display: true, message: "Erro do servidor! Tente novamente ou contate o suporte."});
 
         }
 

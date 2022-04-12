@@ -13,9 +13,12 @@ use App\Models\ProfileAndModule\ProfileHasModuleModel;
 // Eventos utilizados
 use  App\Events\GenerateTokenAndSessionEvent;
 
-// ==== Token JWT ==== https://github.com/firebase/php-jwt ==== https://www.youtube.com/watch?v=B-7e-ZpIWAs ==== //
+// Token JWT - https://github.com/firebase/php-jwt - https://www.youtube.com/watch?v=B-7e-ZpIWAs 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+
+// Form Requests
+use App\Http\Requests\Auth\Login\LoginRequest;
 
 class LoginController extends Controller
 {
@@ -27,7 +30,7 @@ class LoginController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function index(Request $request) : \Illuminate\Http\Response {
+    function index(LoginRequest $request) : \Illuminate\Http\Response {
 
         $model = new AuthenticationModel();
 

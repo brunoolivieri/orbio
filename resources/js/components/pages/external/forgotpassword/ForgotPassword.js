@@ -225,7 +225,7 @@ export function ForgotPassword(){
 
             setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-        }, 5000)
+        }, 4000)
 
     }
 
@@ -250,14 +250,14 @@ export function ForgotPassword(){
 
         }
 
-        setErrorDetected({name: false, email: input_errors.error, password: false, confirm_password: false});
-        setErrorMessage({name: false, email: input_errors.message, password: null, confirm_password: null});
+        setErrorDetected({name: false, email: input_errors.email.error, password: false, confirm_password: false});
+        setErrorMessage({name: false, email: input_errors.email.message, password: null, confirm_password: null});
 
         setTimeout(() => {
 
             setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-        }, 5000);
+        }, 4000);
 
     }
 
@@ -271,28 +271,42 @@ export function ForgotPassword(){
 
             window.location.href = "/acessar"; 
 
-        }, 4500)
+        }, 4000)
 
 
     }
 
     function changePasswordErrorServerResponseTreatment(response_data){
 
-        setOperationStatus({type: "processed", title: "Erro na alteração da senha!", message: "Ops! O procedimento de alteração da senha falhou. Tente novamente.", image: error_image});
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na alteração da senha. Tente novamente.";
+
+        setOperationStatus({type: "processed", title: "Erro na alteração da senha!", message: error_message, image: error_image});
+
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            token: {error: false, message: null},
+            new_password: {error: false, message: null},
+            new_password_confirmation: {error: false, message: null}
+        }
+
+        // Coleta dos objetos de erro existentes na response
+        for(let prop in response_data.errors){
+
+            input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0]
+            }
+
+        }
+
+        setErrorDetected({name: input_errors.name.error, email: input_errors.email.error, password: input_errors.new_password.error, confirm_password: input_errors.new_password_confirmation.error});
+        setErrorMessage({name: input_errors.name.error, email: input_errors.email.message, password: input_errors.new_password.message, confirm_password: input_errors.new_password_confirmation.message});
 
         setTimeout(() => {
 
             setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-        }, 4500);
-
-        if(response.data.error == "code"){
-
-            // Atualização do input
-            setErrorDetected({email: false, code: true, password: false, confirm_password: false});
-            setErrorMessage({email: null, code: "O código está incorreto", password: null, confirm_password: null});
-
-        }
+        }, 4000);
 
     }
 

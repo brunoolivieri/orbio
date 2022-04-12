@@ -33,8 +33,6 @@ class AuthenticationModel extends Model
 
         try{
 
-            if(UserModel::where('email', $request->email)->exists()){
-
                 $user_account_data = UserModel::where('email', '=', $request->email)->get();
 
                 if(password_verify($request->password, $user_account_data[0]->senha)){
@@ -87,13 +85,6 @@ class AuthenticationModel extends Model
                     return ["status" => false, "error" => "password"];
 
                 }
-
-            // Se não, se o usuário não existir
-            }else{
-
-                return ["status" => false, "error" => "email_not_exists"];
-
-            }
 
         }catch(\Exception $e){
 
