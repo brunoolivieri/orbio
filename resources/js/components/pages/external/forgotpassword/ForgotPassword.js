@@ -73,8 +73,9 @@ export function ForgotPassword(){
 
         // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
-
-        if(dataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")){
+        
+        // dataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")
+        if(true){
 
             sendCodeRequestServerOperation(data);
 
@@ -114,7 +115,7 @@ export function ForgotPassword(){
 
             const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-            const emailValidate = FormValidation(formData.get("forgotpass_email_input"), null, null, emailPattern, "EMAIL");
+            const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
 
             setErrorDetected({email: emailValidate.error, code: false, password: false, confirm_password: false});
             setErrorMessage({email: emailValidate.message, code: false, password: false, confirm_password: false});
@@ -134,9 +135,9 @@ export function ForgotPassword(){
             const codePattern = /^[0-9]{4}$/;
             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-            const codeValidate = FormValidation(formData.get("code_received_input"), 4, 4, codePattern, "CODE");
-            const passwordValidate = FormValidation(formData.get("new_password_input"), 8, null, passwordPattern, "PASSWORD");
-            const passconfirmValidate = formData.get("new_password_confirmation_input") == formData.get("new_password_input") ? {error: false, message: ""} : {error: true, message: "As senhas são incompátiveis"};
+            const codeValidate = FormValidation(formData.get("code"), 4, 4, codePattern, "CODE");
+            const passwordValidate = FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD");
+            const passconfirmValidate = formData.get("new_password_confirmation") == formData.get("new_password") ? {error: false, message: ""} : {error: true, message: "As senhas são incompátiveis"};
 
             setErrorDetected({email: false, code: codeValidate.error, password: passwordValidate.error, confirm_password: passconfirmValidate.error});
             setErrorMessage({email: null, code: codeValidate.message, password: passwordValidate.message, confirm_password: passconfirmValidate.message});
@@ -166,7 +167,7 @@ export function ForgotPassword(){
         setOperationStatus({type: "loading", title: null, message: null, image: null});
 
         AxiosApi.post("/api/enviar-codigo", {
-            email: data.get("forgotpass_email_input")
+            email: data.get("email")
           })
           .then(function (response) {
 
@@ -191,8 +192,8 @@ export function ForgotPassword(){
         setOperationStatus({type: "loading", title: null, message: null, image: null});
 
         AxiosApi.post("/api/alterar-senha", {
-            token: data.get("code_received_input"),
-            newPassword: data.get("new_password_input")
+            token: data.get("code_received"),
+            new_password: data.get("new_password")
           })
           .then(function (response) {
 
@@ -373,9 +374,9 @@ export function ForgotPassword(){
                     margin="normal"
                     required
                     fullWidth
-                    id="forgotpass_email_input"
+                    id="email"
                     label="Informe o seu endereço de email"
-                    name="forgotpass_email_input"
+                    name="email"
                     autoFocus
                     disabled = {codeTimer > 0 ? true : false}
                     error = {errorDetected.email}
@@ -396,10 +397,10 @@ export function ForgotPassword(){
                     margin="normal"
                     required
                     fullWidth
-                    name="code_received_input"
+                    name="code"
                     label="Código recebido"
                     type="text"
-                    id="code_received_input"
+                    id="code"
                     disabled = {!codeSent} // Disabled recebe a negação do state codeSent
                     error = {errorDetected.code}
                     helperText = {errorMessage.code}
@@ -408,9 +409,9 @@ export function ForgotPassword(){
                     margin="normal"
                     required
                     fullWidth
-                    id="new_password_input"
+                    id="new_password"
                     label="Nova senha"
-                    name="new_password_input"
+                    name="new_password"
                     type = "password"
                     autoFocus
                     disabled = {!codeSent} // Disabled recebe a negação do state codeSent
@@ -421,9 +422,9 @@ export function ForgotPassword(){
                     margin="normal"
                     required
                     fullWidth
-                    id="new_password_confirmation_input"
+                    id="new_password_confirmation"
                     label="Confirmação da senha"
-                    name="new_password_confirmation_input"
+                    name="new_password_confirmation"
                     type = "password"
                     autoFocus
                     disabled = {!codeSent} // Disabled recebe a negação do state codeSent

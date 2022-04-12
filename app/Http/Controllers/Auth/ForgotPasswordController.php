@@ -5,12 +5,16 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-// Model utilizado
-use App\Models\Auth\RecoveryAccount;
+// Models
 use App\Models\User\UserModel;
 
-// Classe de Email
+// Email
 use App\Mail\UserChangePasswordEmail;
+use Illuminate\Support\Facades\Mail;
+
+// Form Requests
+use App\Http\Requests\Auth\ForgotPassword\SendTokenToEmailRequest;
+use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
 
 class ForgotPasswordController extends Controller
 {
@@ -21,41 +25,24 @@ class ForgotPasswordController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function index(Request $request) : \Illuminate\Http\Response {
+    function generateAndSendPasswordChangeToken(SendTokenToEmailRequest $request) : \Illuminate\Http\Response {
 
-        $model = new RecoveryAccount();
+        $random_integer_token = random_int(1000, 9999);
 
-        if(UserModel::where('email', $request->email)->where('status', true)->exists()){
+        try{
 
-            $tokenGenerated = $model->generateTokenForChangePassword();
+            UserModel::where('email', $request->email)->update(['token' => $random_integer_token]);
 
-            $model_response = $model->insertTokenIntoUserRegistry($request->email, (int) $tokenGenerated);
+            Mail::to($request->email)->send(new UserChangePasswordEmail($random_integer_token));
 
-            if($model_response["status"] && !$model_response["error"]){
+            return response("", 200);
 
-                $model_response = $model->sendTokenToUserEmail($request->email, (int) $tokenGenerated);
+        }catch(\Exception $e){
 
-                if($model_response["status"] && !$model_response["error"]){
-    
-                    return response("", 200);
-    
-                }else if(!$model_response["status"] && $model_response["error"]){
-    
-                    return response(["error" => $model_response["error"]], 500);
-                }
-                
-            }else if(!$model_response["status"] && $model_response["error"]){
-    
-                return response(["error" => $model_response["error"]], 500);
-    
-            }
-
-        }else{
-
-            return response(["error" => "unregistered_email"], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
-        
+
     }
 
     /**
@@ -64,21 +51,19 @@ class ForgotPasswordController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function passwordChangeProcessing(Request $request) : \Illuminate\Http\Response {
+    function passwordChangeProcessing(UpdatePasswordRequest $request) : \Illuminate\Http\Response {
 
-        $model = new RecoveryAccount();
+        try{
 
-        $response = $model->passwordChangeFromTokenReceivedByEmail($request->new_password, $request->token);
+            UserModel::where('token', $token)->update(['senha' => password_hash($request->new_password, PASSWORD_DEFAULT)]);
 
-        if($response["status"] && !$response["error"]){
-            
             return response("", 200);
 
-        }else if(!$response["status"] && $response["error"]){
+        }catch(\Exception $e){
 
-            return response($response["error"], 500);
+            return response(["error" => $e->getMessage()], 500);
 
-        }
+        }   
 
     }
 

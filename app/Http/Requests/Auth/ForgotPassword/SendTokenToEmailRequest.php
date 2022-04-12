@@ -13,7 +13,7 @@ class SendTokenToEmailRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +23,24 @@ class SendTokenToEmailRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
-            //
+            'email' => 'required|email|exists:users,email'
+        ];
+
+    }
+
+    /**
+    * Get the error messages for the defined validation rules.
+    *
+    * @return array
+    */
+    public function messages()
+    {
+        return [
+            "email.required" => "O email precisa ser informado",
+            "email.email" => "Informe um email válido",
+            "email.exists" => "O email não está cadastrado"
         ];
     }
 }

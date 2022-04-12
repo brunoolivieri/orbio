@@ -45,7 +45,7 @@ Route::get('/registrar/ativar', [CommonUserController::class, "userAccountActiva
 
 // ==== ROTAS DE REQUISIÇÕES API - OPERAÇÕES DE AUTENTICAÇÃO BÁSICAS ==== //
 Route::post('/api/acessar', [LoginController::class, "index"]); // Requisição de login/acesso
-Route::post('/api/enviar-codigo', [ForgotPasswordController::class, "index"]); // Requisição de envio do código para alteração da senha do usuário
+Route::post('/api/enviar-codigo', [ForgotPasswordController::class, "generateAndSendPasswordChangeToken"]); // Requisição de envio do código para alteração da senha do usuário
 Route::post('/api/alterar-senha', [ForgotPasswordController::class, "passwordChangeProcessing"]); // Requisição de alteração da senha do usuário
 Route::post('/api/get-token-data', [CommonInternalPagesController::class, "getDataFromTokenJwt"]); // Requisição para decodificação do token JWT
 

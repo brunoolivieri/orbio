@@ -13,7 +13,7 @@ class UpdatePasswordRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +23,26 @@ class UpdatePasswordRequest extends FormRequest
      */
     public function rules()
     {
+
         return [
-            //
+            "new_password" => "required|confirmed",
+            "token" => "required|integer"
+        ];
+
+    }
+
+    /**
+    * Get the error messages for the defined validation rules.
+    *
+    * @return array
+    */
+    public function messages()
+    {
+        return [
+            "new_password.required" => "A nova senha precisa ser informada",
+            "new_password.confirmed" => "As senhas são incompátiveis",
+            "token.required" => "O token precisa ser informado",
+            "token.integer" => "Insira um token válido"
         ];
     }
 }
