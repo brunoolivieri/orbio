@@ -170,11 +170,12 @@ export function ForgotPassword(){
           })
           .then(function (response) {
 
-            sendCodeServerResponseTreatment(response);
+            sendCodeSuccessServerResponseTreatment(); 
 
           }).catch((error) => {
-              
-            sendCodeServerResponseTreatment(error.response);
+
+            sendCodeErrorServerResponseTreatment(error.response.data); 
+
         })
 
     }
@@ -195,11 +196,11 @@ export function ForgotPassword(){
           })
           .then(function (response) {
 
-            changePasswordServerResponseTreatment(response);
+            changePasswordSuccessServerResponseTreatment(); 
 
           }).catch((error) => {
 
-            changePasswordServerResponseTreatment(error.response);
+            changePasswordErrorServerResponseTreatment(error.response.data);
 
           })
 
@@ -212,78 +213,70 @@ export function ForgotPassword(){
     * Além disso, o botão de envio do código será desabilitado por 60 segundos
     * 
     */
-    function sendCodeServerResponseTreatment(response){
+    function sendCodeSuccessServerResponseTreatment(){
 
-        if(response.status === 200){
+        setOperationStatus({type: "processed", title: "Código enviado!", message: "O código para alteração da senha foi enviado para o seu email.", image: email_image});
 
-            setOperationStatus({type: "processed", title: "Código enviado!", message: "O código para alteração da senha foi enviado para o seu email.", image: email_image});
+        setTimer(60);
+        setCodeSent(true);
 
-            setTimer(60);
-            setCodeSent(true);
+        setTimeout(() => {
 
-            setTimeout(() => {
+            setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-                setOperationStatus({type: null, title: null, message: null, image: null}); 
+        }, 5000)
 
-            }, 5000)
+    }
 
-        }else{
+    function sendCodeErrorServerResponseTreatment(response_data){
 
-            setOperationStatus({type: "processed", title: "Erro no envio do código!", message: "Ops! O procedimento de envio do código falhou. Tente novamente.", image: error_image});
+        setOperationStatus({type: "processed", title: "Erro no envio do código!", message: "Ops! O procedimento de envio do código falhou. Tente novamente.", image: error_image});
 
-            setTimeout(() => {
+        setTimeout(() => {
 
-                setOperationStatus({type: null, title: null, message: null, image: null}); 
+            setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-            }, 5000);
+        }, 5000);
 
-            if(response.data.error == "unregistered_email"){
+        if(response.data.error == "unregistered_email"){
 
-                setErrorDetected({name: false, email: true, password: false, confirm_password: false});
-                setErrorMessage({name: null, email: "Esse email não está registrado", password: null, confirm_password: null});
-
-            }
+            setErrorDetected({name: false, email: true, password: false, confirm_password: false});
+            setErrorMessage({name: null, email: "Esse email não está registrado", password: null, confirm_password: null});
 
         }
 
     }
 
-    /*
-    * Rotina 4B
-    * Tratamento da resposta do servidor para alteração da senha
-    * 
-    */
-    function changePasswordServerResponseTreatment(response){
+    function changePasswordSuccessServerResponseTreatment(){
 
-        if(response.status === 200){
+        setOperationStatus({type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", image: success_image});
 
-            setOperationStatus({type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", image: success_image});
+        setTimeout(() => {
 
-            setTimeout(() => {
+            setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-                setOperationStatus({type: null, title: null, message: null, image: null}); 
+            window.location.href = "/acessar"; 
 
-                window.location.href = "/acessar"; 
+        }, 4500)
 
-            }, 4500)
 
-        }else{
+    }
 
-            setOperationStatus({type: "processed", title: "Erro na alteração da senha!", message: "Ops! O procedimento de alteração da senha falhou. Tente novamente.", image: error_image});
+    function changePasswordErrorServerResponseTreatment(response_data){
 
-            setTimeout(() => {
+        setOperationStatus({type: "processed", title: "Erro na alteração da senha!", message: "Ops! O procedimento de alteração da senha falhou. Tente novamente.", image: error_image});
 
-                setOperationStatus({type: null, title: null, message: null, image: null}); 
+        setTimeout(() => {
 
-            }, 4500);
+            setOperationStatus({type: null, title: null, message: null, image: null}); 
 
-            if(response.data.error == "code"){
+        }, 4500);
 
-                // Atualização do input
-                setErrorDetected({email: false, code: true, password: false, confirm_password: false});
-                setErrorMessage({email: null, code: "O código está incorreto", password: null, confirm_password: null});
+        if(response.data.error == "code"){
 
-            }
+            // Atualização do input
+            setErrorDetected({email: false, code: true, password: false, confirm_password: false});
+            setErrorMessage({email: null, code: "O código está incorreto", password: null, confirm_password: null});
 
         }
 
@@ -291,11 +284,6 @@ export function ForgotPassword(){
 
     /*
     * Rotina do contador
-    * Ela ocorre quando o código é enviado com sucesso para o email do usuário
-    * Se trata de uma função recursiva que gera um cronômetro de 60 segundos
-    * A dependência desse useEffect é o state "codeTimer" que é decrementado em 1 enquanto seu valor for maior do que zero
-    * Toda vez que o valor desse state variar, a função é chamada, e sua rotina é o decremento em 1 do seu valor, gerando um loop de chamadas
-    * O valor desse state é utilizado no texto do botão de enviar o código, que permanece desativado enquanto o valor for maior do que zero
     * 
     */
     useEffect(() => {
