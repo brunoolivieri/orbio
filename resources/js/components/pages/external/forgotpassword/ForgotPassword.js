@@ -230,20 +230,33 @@ export function ForgotPassword(){
 
     function sendCodeErrorServerResponseTreatment(response_data){
 
-        setOperationStatus({type: "processed", title: "Erro no envio do código!", message: "Ops! O procedimento de envio do código falhou. Tente novamente.", image: error_image});
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro no envio do email. Tente novamente.";
+
+        setOperationStatus({type: "processed", title: "Erro no envio do código!", message: error_message, image: error_image});
+
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            email: {error: false, message: null}
+        }
+
+        // Coleta dos objetos de erro existentes na response
+        for(let prop in response_data.errors){
+
+            input_errors[prop] = {
+            error: true, 
+            message: response_data.errors[prop][0]
+            }
+
+        }
+
+        setErrorDetected({name: false, email: input_errors.error, password: false, confirm_password: false});
+        setErrorMessage({name: false, email: input_errors.message, password: null, confirm_password: null});
 
         setTimeout(() => {
 
             setOperationStatus({type: null, title: null, message: null, image: null}); 
 
         }, 5000);
-
-        if(response.data.error == "unregistered_email"){
-
-            setErrorDetected({name: false, email: true, password: false, confirm_password: false});
-            setErrorMessage({name: null, email: "Esse email não está registrado", password: null, confirm_password: null});
-
-        }
 
     }
 
