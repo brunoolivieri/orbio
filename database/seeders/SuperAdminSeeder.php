@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class SuperAdminSeeder extends Seeder
 {
@@ -19,12 +20,12 @@ class SuperAdminSeeder extends Seeder
         DB::table("users")->insert([
             "nome" => "Master",
             "email" => strtolower(env("APP_NAME"))."@gmail.com",
-            "senha" => password_hash(env("SUPER_ADMIN_PASS"), PASSWORD_DEFAULT),
+            "senha" => Hash::make(env("SUPER_ADMIN_PASS")),
             "status" => true,
             "id_perfil" => 1,
             "dh_criacao" => date("Y-m-d H:i:s"),
             "dh_ultimo_acesso" => date("Y-m-d H:i:s"),
-            "id_dados_complementares" => 1
+            "id_dados_complementares" => null
         ]);
 
     }

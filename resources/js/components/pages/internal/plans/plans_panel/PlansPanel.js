@@ -29,6 +29,9 @@ import Chip from '@mui/material/Chip';
 import { Link } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -230,7 +233,7 @@ export function PlansPanel(){
 
           <Grid item>
             <Tooltip title="Novo Plano">
-              <Link href={`/sistema/mapa`} target="_blank">
+              <Link href={`/sistema/mapa?userid=${AuthData.data.id}`} target="_blank">
                 <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
                   <AddCircleIcon />
                 </IconButton>
@@ -286,6 +289,7 @@ export function PlansPanel(){
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
                 <TableHead>
                 <TableRow>
+                  <StyledTableCell>Visualizar</StyledTableCell>
                     <StyledTableCell>ID</StyledTableCell>
                     <StyledTableCell align="center">Status</StyledTableCell>
                     <StyledTableCell align="center">Relatório</StyledTableCell>
@@ -294,7 +298,6 @@ export function PlansPanel(){
                     <StyledTableCell align="center">Descrição</StyledTableCell>
                     <StyledTableCell align="center">Data criação</StyledTableCell>
                     <StyledTableCell align="center">Última atualização</StyledTableCell>
-                    <StyledTableCell align="center">Visualizar</StyledTableCell>
                     <StyledTableCell align="center">Editar</StyledTableCell>
                     <StyledTableCell align="center">Excluir</StyledTableCell>
                 </TableRow>
@@ -303,15 +306,15 @@ export function PlansPanel(){
                   {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                       panelData.response.records.map((row) => (
                       <StyledTableRow key={row.plan_id}>
+                        <StyledTableCell><Link href={`/sistema/mapa?plan_id=${row.plan_id}`} target="_blank"><IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}><RemoveRedEyeIcon /></IconButton></Link></StyledTableCell>
                         <StyledTableCell>{row.plan_id}</StyledTableCell>
                         <StyledTableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</StyledTableCell> 
-                        <StyledTableCell align="center">{row.report_id}</StyledTableCell>
+                        <StyledTableCell align="center">{row.report_id != null ? <IconButton><PictureAsPdfIcon sx={{ color: "green"}} /></IconButton> : <IconButton disabled><PictureAsPdfIcon sx={{ color: "#808991"}} /></IconButton>}</StyledTableCell>
                         <StyledTableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</StyledTableCell>
                         <StyledTableCell align="center">{row.plan_file}</StyledTableCell>
                         <StyledTableCell align="center">{row.plan_description}</StyledTableCell>
                         <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                         <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
-                        <StyledTableCell align="center"><Link href={`/sistema/mapa?plan_id=${row.plan_id}`} target="_blank"><IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}><RemoveRedEyeIcon /></IconButton></Link></StyledTableCell>
                         <StyledTableCell align="center"><UpdateDeletePlanFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                         <StyledTableCell align="center"><UpdateDeletePlanFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
                       </StyledTableRow>

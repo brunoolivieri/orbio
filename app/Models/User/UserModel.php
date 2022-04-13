@@ -43,7 +43,7 @@ class UserModel extends Authenticatable
 
     }
 
-     /*
+    /*
     * Relationship with profile table
     */
     function profile(){
@@ -52,13 +52,24 @@ class UserModel extends Authenticatable
 
     }
 
-    /**
-     * Distant relationship with adress table through user_complementary_data table
+     /**
+     * Distant relationship with profile_has_module table through profile table
      */
-    public function address()
-    {
-        return $this->hasOneThrough(UserAddressModel::class, UserComplementaryDataModel::class);
+    function profile_modules_relationship(){
+
+        return $this->hasManyThrough(ProfileHasModuleModel::class, ProfileModel::class);
+
     }
+
+    /**
+     * Distant relationship with address table through user_complementary_data table
+     */
+    function address()
+    {
+        return $this->hasOneThrough(UserAddressModel::class, UserComplementaryDataModel::class, "id_endereco");
+    }
+
+    
 
     /**
      * Factory that uses this model for generate random users

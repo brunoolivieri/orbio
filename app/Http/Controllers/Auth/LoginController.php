@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 // Models utilizados
 use App\Models\Auth\AuthenticationModel;
@@ -23,6 +24,9 @@ use Firebase\JWT\Key;
 // Form Requests
 use App\Http\Requests\Auth\Login\LoginRequest;
 
+// Events
+//use App\Events\UserSuccessfulLoginEvent;
+
 class LoginController extends Controller
 {
     
@@ -33,12 +37,12 @@ class LoginController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function index(LoginRequest $request) : \Illuminate\Http\Response  {
+    function index(LoginRequest $request)  {
 
         // Password is converted to "senha" - this is defined in the model "UserModel"
         if($user = Auth::attempt(['email' => $request->email, 'password' => $request->password])){
 
-            // User account is active
+            // Case 1: User account is active
             if(Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
 
                 $token_data = $this->gatherAndOrganizeLocalStorageTokenData();
@@ -47,20 +51,18 @@ class LoginController extends Controller
 
                 Session::put("modules_access", $token_data["user_powers"]);
 
+                UserModel::where("id", Auth::user()->id)->update(["dh_ultimo_acesso" => date("Y-m-d H:i:s")]);
+
                 return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
             
-            // User account is inactive
+            // Case 2: User account is inactive
             }else if(!Auth::user()->status && empty(Auth::user()->dh_ultimo_acesso)){
 
                 if($this->activateAccount()){
 
-                    $token_data = $this->gatherAndOrganizeLocalStorageTokenData();
+                    UserModel::where("id", Auth::user()->id)->update(["dh_ultimo_acesso" => date("Y-m-d H:i:s")]);
 
-                    $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');
-
-                    Session::put("modules_access", $token_data["user_powers"]);
-
-                    return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
+                    return redirect("/api/acessar");
 
                 }else{
 
@@ -68,7 +70,7 @@ class LoginController extends Controller
 
                 }
 
-             // User account is disabled
+             // Case 3: User account is disabled
             }else if(!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
 
                 return  response(["error" => "account_disabled"], 500);
@@ -122,13 +124,13 @@ class LoginController extends Controller
                     "nomeFantasia" => Auth::user()->complementary_data->nomeFantasia
                 ),
                 "user_address_data" => array(
-                    "user_address_id" => Auth::user()->address->id_endereco,
-                    "logradouro" => Auth::user()->address->logradouro,
-                    "numero" => Auth::user()->address->numero,
-                    "cep" => Auth::user()->address->cep,
-                    "cidade" => Auth::user()->address->cidade,
-                    "estado" => Auth::user()->address->estado,
-                    "complemento" => Auth::user()->address->complemento
+                    "user_address_id" => Auth::user()->complementary_data->address->id,
+                    "logradouro" => Auth::user()->complementary_data->address->logradouro,
+                    "numero" => Auth::user()->complementary_data->address->numero,
+                    "cep" => Auth::user()->complementary_data->address->cep,
+                    "cidade" => Auth::user()->complementary_data->address->cidade,
+                    "estado" => Auth::user()->complementary_data->address->estado,
+                    "complemento" => Auth::user()->complementary_data->address->complemento
                 ),
                 "last_access" => Auth::user()->dh_ultimo_acesso,
                 "last_update" => Auth::user()->dh_atualizacao,
@@ -142,19 +144,16 @@ class LoginController extends Controller
     }
 
     /**
-     * Method to organize the data regarding the privileges of the authenticated user's profile
-     * 
-     */
+    * Method to organize the data regarding the privileges of the authenticated user's profile
+    * 
+    */
     private function modulesProfileRelationshipFormated() : array {
-
-        $model = new ProfileHasModuleModel();
-        $profile_data = $model->loadProfilesModulesRelationship(Auth::user()->id_perfil);
 
         $arrData = [];
         $row = 0;
         $current_record_data = array();
 
-        foreach($profile_data["data"] as $row => $record){
+        foreach(Auth::user()->profile->module_privileges as $row => $record){
 
             $module_name = $record->id_modulo === 1 ? 
             "Administração" 
@@ -178,7 +177,7 @@ class LoginController extends Controller
 
         try{
 
-            UserModel::where("id", Auth::user()->id)->update("status", 1);
+            UserModel::where("id", Auth::user()->id)->update(["status" => 1]);
 
             $new_address_id = DB::table("address")->insertGetId(
                 [

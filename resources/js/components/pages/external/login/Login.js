@@ -140,9 +140,6 @@ export function Login(){
 
         // Erros automatizados
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
-        setDisplayAlert({display: true, type: "error", message: error_message});
-
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
             name: {error: false, message: null},
@@ -164,25 +161,25 @@ export function Login(){
 
         // Erros customizados
 
-        if(response.data.error == "activation"){
+        if(response_data.error == "activation"){
 
             setDisplayAlert({display: true, message: "Houve um erro na ativação da conta. Tente novamente ou contate o suporte."});
 
-        }else if(response.data.error == "token"){
+        }else if(response_data.error == "token"){
 
             setDisplayAlert({display: true, message: "Erro na autenticação. Tente novamente ou contate o suporte."});
 
-        }else if(response.data.error == "account_disabled"){
+        }else if(response_data.error == "account_disabled"){
             
             setDisplayAlert({display: true, message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la."});
 
-        }else if(response.data.error == "invalid_credentials"){
+        }else if(response_data.error == "invalid_credentials"){
 
             setDisplayAlert({display: true, message: "Email ou senha incorretos."});
 
         }else{
 
-            setDisplayAlert({display: true, message: "Erro do servidor! Tente novamente ou contate o suporte."});
+            setDisplayAlert({display: true, message: "A operação falhou! Tente novamente ou contate o suporte."});
 
         }
 

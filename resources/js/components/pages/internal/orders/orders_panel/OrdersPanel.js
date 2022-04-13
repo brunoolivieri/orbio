@@ -286,7 +286,7 @@ export function OrdersPanel(){
             <TableRow>
                 <StyledTableCell>ID</StyledTableCell>
                 <StyledTableCell align="center">Status</StyledTableCell>
-                <StyledTableCell align="center">Plano de Vôo</StyledTableCell>
+                <StyledTableCell align="center">Plano de vôo</StyledTableCell>
                 <StyledTableCell align="center">numOS</StyledTableCell>
                 <StyledTableCell align="center">Criador</StyledTableCell>
                 <StyledTableCell align="center">Piloto</StyledTableCell>

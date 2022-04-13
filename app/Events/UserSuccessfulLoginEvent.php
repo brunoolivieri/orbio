@@ -24,7 +24,7 @@ class UserSuccessfulLoginEvent
      *
      * @return void
      */
-    public function __construct(UserModel $user)
+    public function __construct($user)
     {
 
         $this->user = $user;

@@ -25,9 +25,9 @@ class ProfileModel extends Model
 
     }
 
-    function module(){
+    function module_privileges(){
 
-        $this->hasMany("App\Models\ProfileAndModule\ProfileHasModuleModel", "id_perfil");
+        return $this->hasMany("App\Models\ProfileAndModule\ProfileHasModuleModel", "id_perfil");
 
     }
 

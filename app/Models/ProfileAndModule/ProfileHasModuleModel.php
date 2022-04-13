@@ -76,26 +76,6 @@ class ProfileHasModuleModel extends Model
 
     }
 
-    function loadProfilesModulesRelationship(int $profile_id) : array {
-
-        try{
-
-            $compatible_record = DB::table('profile_has_module')
-            ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-            ->where('profile_has_module.id_perfil', '=', $profile_id)
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
-            ->get();
-
-            return ["status" => true, "error" => false, "data" => $compatible_record];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
     function updateProfileModuleRelationship(int $profile_id, $data) : array {
 
         try{

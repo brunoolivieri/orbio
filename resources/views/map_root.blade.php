@@ -30,6 +30,9 @@
 	<script src="{{ asset('js/map/es6-promise.min.js') }}"></script>
 	<script src="{{ asset('js/map/es6-promise.auto.min.js') }}"></script>
 
+	<!-- AXIOS -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 	<!-- BOOTSTRAP -->
 	<link href="{{ asset('css/map/bootstrap.min.css') }}" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 	<script src="{{ asset('js/map/jquery-3.3.1.slim.min.js') }}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -57,8 +60,8 @@
 	</div>
 
 	<div class="logo-box">
-		<img src="img/embrapa.png" alt="Embrapa Instrumentação"/>
-		<img src="img/bv.png" alt="BirdView"/>
+		<img src="{{ asset('images/map/embrapa.png') }}" alt="Embrapa Instrumentação"/>
+		<img src="{{ asset('images/map/bv.png') }}" alt="BirdView"/>
 	</div>
 
 	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu">
@@ -127,7 +130,7 @@
 			<label for="distance" id="label-distance" class="form-label">Distância: 50m</label>
 			<input type="range" min="1" max="100" value="50" name="distance" id="distance"/>
 		</div>
-		
+
 	</form>
 	</div>	
 

@@ -8,6 +8,7 @@ use App\Models\User\UserModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
@@ -131,7 +132,7 @@ class AdministrationModuleUserPanelController extends Controller
         $model_response = $model->createUser([
             "nome" => $request->name,
             "email" => $request->email,
-            "senha" => password_hash($request->password, PASSWORD_DEFAULT),
+            "senha" => Hash::make($request->password),
             "id_perfil" => $request->profile_id
         ], $request->password);
 

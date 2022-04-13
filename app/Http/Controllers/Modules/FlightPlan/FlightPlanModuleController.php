@@ -9,6 +9,7 @@ use App\Models\Plans\FlightPlansModel;
 use App\Models\Incidents\IncidentsModel;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Storage;
 
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
@@ -110,18 +111,25 @@ class FlightPlanModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(FlightPlanStoreRequest $request) : \Illuminate\Http\Response
+    public function store(Request $request) : \Illuminate\Http\Response
     {
 
         try{
 
+            $file_name = $request->flight_plan->getClientOriginalName();
+            $storage_folder = "flight_plans";
+
             FlightPlansModel::create([
-                "id_relatorio" => $request->report_id,
-                "id_incidente" => $request->incident_id,
-                "arquivo" => $request->flight_plan_log,
+                "id_relatorio" => null,
+                "id_incidente" => null,
+                "arquivo" => $file_name,
                 "descricao" => $request->description,
-                "status" => $request->status
+                "status" => 0
             ]);
+
+            $path = $request->file('flight_plan')->storeAs(
+                $storage_folder, $file_name
+            );
 
             return response("", 200);
 

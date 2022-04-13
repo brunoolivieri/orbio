@@ -280,6 +280,7 @@ export function ReportsPanel(){
         <Table sx={{ minWidth: 500 }} aria-label="customized table">
             <TableHead>
             <TableRow>
+              <StyledTableCell>Exportar</StyledTableCell>
               <StyledTableCell>ID</StyledTableCell>
               <StyledTableCell align="center">Criação do relatório</StyledTableCell>
               <StyledTableCell align="center">Última atualização</StyledTableCell>
@@ -289,13 +290,13 @@ export function ReportsPanel(){
               <StyledTableCell align="center">Observação</StyledTableCell>
               <StyledTableCell align="center">Editar</StyledTableCell>
               <StyledTableCell align="center">Excluir</StyledTableCell>
-              <StyledTableCell align="center">Exportar</StyledTableCell>
             </TableRow>
             </TableHead>
             <TableBody className = "tbody">
             {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                 panelData.response.records.map((row) => (
                   <StyledTableRow key={row.report_id}>
+                    <StyledTableCell><GenerateReportFormulary data = {row} /></StyledTableCell>
                     <StyledTableCell component="th" scope="row">{row.report_id}</StyledTableCell>
                     <StyledTableCell align="center">{row.created_at}</StyledTableCell>
                     <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
@@ -305,7 +306,6 @@ export function ReportsPanel(){
                     <StyledTableCell align="center">{row.report_note}</StyledTableCell>
                     <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                     <StyledTableCell align="center"><UpdateDeleteReportFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                    <StyledTableCell align="center"><GenerateReportFormulary data = {row} /></StyledTableCell>
                   </StyledTableRow>
                 ))}      
             </TableBody>

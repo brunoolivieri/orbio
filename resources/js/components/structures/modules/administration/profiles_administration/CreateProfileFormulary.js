@@ -122,7 +122,7 @@ export function CreateProfileFormulary() {
       let module_id = 1;
       let action = "escrever";
 
-      AxiosApi.post("/api/admin-module-profile?", {
+      AxiosApi.post("/api/admin-module-profile", {
         auth: `${user_id}.${module_id}.${action}`,
         name: data.get("registration_name_input")
       })
