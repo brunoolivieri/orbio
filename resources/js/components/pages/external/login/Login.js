@@ -176,6 +176,10 @@ export function Login(){
             
             setDisplayAlert({display: true, message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la."});
 
+        }else if(response.data.error == "invalid_credentials"){
+
+            setDisplayAlert({display: true, message: "Email ou senha incorretos."});
+
         }else{
 
             setDisplayAlert({display: true, message: "Erro do servidor! Tente novamente ou contate o suporte."});

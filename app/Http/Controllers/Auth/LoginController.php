@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use App\User;
 
 // Models utilizados
 use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
+use App\Models\User\UserModel;
 
 // Eventos utilizados
 use  App\Events\GenerateTokenAndSessionEvent;
@@ -30,60 +33,173 @@ class LoginController extends Controller
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function index(LoginRequest $request) : \Illuminate\Http\Response {
+    function index(LoginRequest $request)  {
 
-        $model = new AuthenticationModel();
+        // Password is converted to "senha" - this is defined in the model "UserModel"
+        if($user = Auth::attempt(['email' => $request->email, 'password' => $request->password])){
 
-        $response_from_authentication = $model->userAuthentication($request);
+            // User account is active
+            if(Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
 
-        // Se o registro foi realizado com sucesso
-        if($response_from_authentication["status"] && !$response_from_authentication["error"]){
+                $token_data = $this->gatherAndOrganizeLocalStorageTokenData();
 
-            if($completed_token = $this->supplementTokenData($response_from_authentication["token_data"])){
+                $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');
 
-                return response(["userid"=>$response_from_authentication["token_data"]["id"], "token" => $completed_token], 200);
+                return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
+            
+            // User account is inactive
+            }else if(!Auth::user()->status && empty(Auth::user()->dh_ultimo_acesso)){
 
-            }else{
+                if($this->activateAccount()){
 
-                return response(["error" => "token supplementation failed"], 500);
+                    $token_data = $this->gatherAndOrganizeLocalStorageTokenData();
+
+                    $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');
+
+                    return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
+
+                }else{
+
+                    return response(["error" => "activation"], 500);
+
+                }
+
+             // User account is disabled
+            }else if(!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
+
+                return  response(["error" => "account_disabled"], 500);
 
             }
 
-        }else if(!$response_from_authentication["status"] && $response_from_authentication["error"]){
+        }
 
-            return response(["error" => $response_from_authentication["error"]], 500);
+        return response(["error" => "invalid_credentials"], 500);
+
+    }
+
+    private function gatherAndOrganizeLocalStorageTokenData() : array {
+
+        if(Auth::user()->id_perfil === 1){
+
+            $token_data = [
+                "id" => Auth::user()->id, 
+                "name"=> Auth::user()->nome,  
+                "email"=> Auth::user()->email, 
+                "profile_id" => Auth::user()->id_perfil,
+                "profile" => Auth::user()->profile->nome,
+                "complementary_data" => Auth::user()->id_dados_complementares,
+                "last_access" => Auth::user()->dh_ultimo_acesso,
+                "last_update" => Auth::user()->dh_atualizacao,
+                "user_powers" => $this->modulesProfileRelationshipFormated()
+            ];
+        
+        }else{
+
+            $token_data = array(
+                "id" => Auth::user()->id, 
+                "name"=> Auth::user()->nome, 
+                "email"=> Auth::user()->email, 
+                "profile_id" => Auth::user()->id_perfil, 
+                "profile" => Auth::user()->profile->nome,
+                "user_complementary_data" => array(
+                    "complementary_data_id" => Auth::user()->complementary_data->id,
+                    "habANAC" => Auth::user()->complementary_data->habANAC,
+                    "CPF" => Auth::user()->complementary_data->CPF,
+                    "CNPJ" => Auth::user()->complementary_data->CNPJ,
+                    "telephone" => Auth::user()->complementary_data->telefone,
+                    "cellphone" => Auth::user()->complementary_data->celular,
+                    "razaoSocial" => Auth::user()->complementary_data->razaoSocial,
+                    "nomeFantasia" => Auth::user()->complementary_data->nomeFantasia
+                ),
+                "user_address_data" => array(
+                    "user_address_id" => Auth::user()->address->id_endereco,
+                    "logradouro" => Auth::user()->address->logradouro,
+                    "numero" => Auth::user()->address->numero,
+                    "cep" => Auth::user()->address->cep,
+                    "cidade" => Auth::user()->address->cidade,
+                    "estado" => Auth::user()->address->estado,
+                    "complemento" => Auth::user()->address->complemento
+                ),
+                "last_access" => Auth::user()->dh_ultimo_acesso,
+                "last_update" => Auth::user()->dh_atualizacao,
+                "user_powers" => $this->modulesProfileRelationshipFormated()
+            );
 
         }
+
+        return $token_data;
 
     }
 
     /**
-     * Método para inicialização da geração da sessão e do token JWT
-     * A sessão é criada apenas, não precisa ser retornada
-     * O token JWT precisa ser retornado para o frontend, e por isso é retornado
+     * Organização dos dados referentes aos privilégios do perfil do usuário autenticado
      * 
-     * @param array $userData
-     * @return JWT 
      */
-    private function supplementTokenData(array $token_data) {
+    private function modulesProfileRelationshipFormated() : array {
 
         $model = new ProfileHasModuleModel();
+        $profile_data = $model->loadProfilesModulesRelationship(Auth::user()->id_perfil);
 
-        $response = $model->loadProfilesModulesRelationship($token_data["profile_id"]);
+        $arrData = [];
+        $row = 0;
+        $current_record_data = array();
 
-        if($response["status"] && !$response["error"]){
+        foreach($profile_data["data"] as $row => $record){
 
-            // Recebimento dos dados perfil-módulo re-organizados em um array
-            $profile_module_data = $this->profileModuleFormatData($response["data"], $token_data);
+            $module_name = $record->id_modulo === 1 ? 
+            "Administração" 
+            : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatórios" : "Incidentes")));
 
-            // Inserção dos novos dados no token
-            $full_jwt_token = $this->generateTokenJWT($token_data, $profile_module_data);
+            $current_record_data[$record->id_modulo] = ["module" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
+       
+            if($record->id_modulo === 5){
 
-            $this->generateSession($token_data, $profile_module_data);
+                $arrData = $current_record_data;
 
-            return $full_jwt_token;
+            }
 
-        }else if(!$response["status"] && $response["error"]){
+        }
+
+        // Add profile and modules relationship to the auth facade
+        Auth::user()->modules_privileges = $arrData;
+
+        return $arrData;
+
+    }
+
+    private function activateAccount(){
+
+        try{
+
+            UserModel::where("id", Auth::user()->id)->update("status", 1);
+
+            $new_address_id = DB::table("address")->insertGetId(
+                [
+                    "logradouro" => NULL,
+                    "numero" => NULL,
+                    "cep" => NULL,
+                    "cidade" => NULL,
+                    "estado" => NULL,
+                    "complemento" => NULL
+                ]
+            );
+
+            $new_comp_data_id = DB::table("user_complementary_data")->insertGetId([
+                "habANAC" => NULL,
+                "CPF" => NULL,
+                "CNPJ" => NULL,
+                "telefone" => NULL,
+                "celular" => NULL,
+                "razaoSocial" => NULL,
+                "nomeFantasia" => NULL,
+                "id_endereco" => $new_address_id
+            ]);
+
+            DB::table("users")->where('id', Auth::user()->id)->update(["id_dados_complementares" => $new_comp_data_id]);
+
+            return true;
+
+        }catch(\Exception $e){
 
             return false;
 
@@ -91,70 +207,13 @@ class LoginController extends Controller
 
     }
 
-    /**
-     * Método para gerar a sessão após a autenticação bem sucedida
-     * 
-     * @param array $token_data
-     */
+    /*
     private function generateSession(array $token_data, array $profile_module_data) : void {
 
         Session::put("user_authenticated", true);
         Session::put("id", $token_data["id"]);
         Session::put("modules_access", $profile_module_data);
 
-    }
-
-    /**
-     * Método para gerar o conteúdo do Token JWT após a autenticação do usuário
-     * 
-     * @param array $token_data
-     * @return array
-     */
-    private function generateTokenJWT(array $token_data, array $profile_module_data) : string {
-
-        $token_data["user_powers"] = $profile_module_data;
-
-        $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');  
-
-        return $token_generated;
-
-    }
-
-    /**
-     * Método para para alocar os dados em uma estrutura de dados planejada
-     * Possui a mesma lógica do método usado para formatar os dados do painel de perfis
-     * Ela diverge parcialmente da original porque é adaptada para esse outro contexto
-     * Nesse caso ela cria a estrutura com os dados sobre a relação especifica do perfil do usuário logado com os módulos 
-     * 
-     * @param array $profileData
-     * @param array $userData
-     */
-    private function profileModuleFormatData(object $profileData, array $userData) : array {
-
-        $arrData = [];
-
-        $row = 0;
-        $modulesCurrentProfile = array();
-
-        do{
-           
-            $profile_name = $userData["profile"];
-
-            $module_name = $profileData[$row]->id_modulo === 1 ? "Administração" : ($profileData[$row]->id_modulo === 2 ? "Planos" : ($profileData[$row]->id_modulo === 3 ? "Ordens" : ($profileData[$row]->id_modulo === 4 ? "Relatórios" : "Incidentes")));
-            $modulesCurrentProfile[$profileData[$row]->id_modulo] = ["module" => $module_name, "profile_powers" => ["ler" => $profileData[$row]->ler, "escrever" => $profileData[$row]->escrever]];
-       
-            if($profileData[$row]->id_modulo === 5){
-
-                $arrData = $modulesCurrentProfile;
-
-            }
-
-            $row += 1;
-
-        }while($row < count($profileData));
-
-        return $arrData;
-
-    }
+    }*/
 
 }

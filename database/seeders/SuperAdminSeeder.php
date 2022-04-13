@@ -24,6 +24,7 @@ class SuperAdminSeeder extends Seeder
             "id_perfil" => 1,
             "dh_criacao" => date("Y-m-d H:i:s"),
             "dh_ultimo_acesso" => date("Y-m-d H:i:s"),
+            "id_dados_complementares" => 1
         ]);
 
     }

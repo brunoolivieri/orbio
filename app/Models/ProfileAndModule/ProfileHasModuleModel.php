@@ -16,6 +16,12 @@ class ProfileHasModuleModel extends Model
     public $timestamps = false;
     protected $guarded = [];
 
+    function profile(){
+
+        $this->belongsTo("App\Models\ProfileAndModule\ProfileModel", "id_perfil");
+        
+    }
+
     
     function newProfileRelationship(int $new_profile_id) : array {
 

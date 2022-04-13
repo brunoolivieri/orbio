@@ -7,13 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-// Email
+// Custom Models
+use App\Models\User\UserComplementaryDataModel;
+use App\Models\User\UserAddressModel;
+use App\Models\ProfileAndModule\ProfileHasModuleModel;
+use App\Models\ProfileAndModule\ProfileModel;
+
+// Custom Emails
 use App\Mail\UserRegisteredEmail;
 
 use Database\Factories\UserFactory;
 
-class UserModel extends Model
+class UserModel extends Authenticatable
 {
     use HasFactory;
 
@@ -21,9 +28,41 @@ class UserModel extends Model
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
     protected $fillable = ["*"];
+    protected $appends = [ 'modules_privileges' ];
+
+    // For Auth:: works
+    function getAuthPassword() {
+        return $this->senha;
+    }
+
+    /*
+    * Relationship with user_complementary_data table
+    */
+    function complementary_data(){
+
+        return $this->belongsTo("App\Models\User\UserComplementaryDataModel", "id_dados_complementares");
+
+    }
+
+     /*
+    * Relationship with profile table
+    */
+    function profile(){
+
+        return $this->belongsTo("App\Models\ProfileAndModule\ProfileModel", "id_perfil");
+
+    }
 
     /**
-     * Instância da Factory desse Model
+     * Distant relationship with adress table through user_complementary_data table
+     */
+    public function address()
+    {
+        return $this->hasOneThrough(UserAddressModel::class, UserComplementaryDataModel::class);
+    }
+
+    /**
+     * Factory that uses this model for generate random users
      *
      * @return \Illuminate\Database\Eloquent\Factories\Factory
      */
@@ -31,6 +70,8 @@ class UserModel extends Model
     {
         return UserFactory::new();
     }
+
+    // ================================================ //
 
     /**
      * Create User and send access data for his email

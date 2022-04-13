@@ -5,6 +5,7 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User\UserModel;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
@@ -22,7 +23,7 @@ class UserFactory extends Factory
             'id_perfil' => Arr::random([1, 2, 3, 4, 5]),
             'nome' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'senha' => password_hash("123456789User", PASSWORD_DEFAULT),
+            'senha' => Hash::make("123456789User"),
             'status' => (bool) Arr::random([0, 1]),
             'dh_atualizacao' => Arr::random([now(), null]),
         ];

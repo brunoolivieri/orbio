@@ -19,6 +19,20 @@ class ProfileModel extends Model
     const UPDATED_AT = "dh_atualizacao";
     protected $guarded = [];
 
+    function user(){
+
+        $this->hasOne("App\Models\User\UserModel", "id_perfil");
+
+    }
+
+    function module(){
+
+        $this->hasMany("App\Models\ProfileAndModule\ProfileHasModuleModel", "id_perfil");
+
+    }
+
+    // ================================================ //
+
     function newProfile(array $data) : array {
 
         try{

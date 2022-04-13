@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pages;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 
 // Model da tabela de usuário
 use App\Models\User\UserModel;
@@ -61,11 +62,11 @@ class CommonInternalPagesController extends Controller
      */
     function logout() {
 
-        // Sessão do usuário é apagada
+        Auth::logout();
+
         Session::forget(["user_authenticated", "access"]);
         Session::flush();
 
-        // Redirecionamento para a página de login
         return redirect("/acessar");
 
     }

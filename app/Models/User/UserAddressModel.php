@@ -14,4 +14,13 @@ class UserAddressModel extends Model
     protected $table = "address";
     public $timestamps = false;
 
+    /*
+    * Relationship with user_complementary_data table
+    */
+    function complementary_data(){
+
+        $this->hasOne("App\Models\User\UserComplementaryDataModel", "id_endereco");
+
+    }
+
 }

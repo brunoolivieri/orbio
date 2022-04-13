@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
         $this->call(ModulesSeeder::class); // Geração dos módulos 
         $this->call(ProfilesSeeder::class); // Geração dos perfis 
         $this->call(ProfilesModulesRelationshipSeeder::class); // Geração da relação Perfis-Módulos 
+        $this->call(UserAddressSeeder::class); // Gerar 1 endereço
+        $this->call(UserComplementaryDataSeeder::class); // Gerar 1 conjunto de dados complementares
         $this->call(SuperAdminSeeder::class); // Geração do Super-Admin 
         $this->call(UsersSeeder::class); // Geração de usuários a partir do UserFactory
         $this->call(ReportsSeeder::class); // Geração dos relatórios

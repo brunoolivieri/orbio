@@ -4,6 +4,7 @@ namespace App\Http\Middleware\custom\modules;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ModulesCommonMiddleware
 {
@@ -36,18 +37,19 @@ class ModulesCommonMiddleware
             $module_id = $array_params[1];
             $module_action = $array_params[2];
 
-            // Checar se o usuário que fez a requisição tem o mesmo ID do gravado na sessão
-            $user_id_check = $user_id == $request->session()->get("id");
+            dd(Auth::user()->modules_privileges);
+
+            // Checar se o usuário que fez a requisição tem o mesmo ID do que está autenticado
+            $user_id_check = $user_id == Auth::user()->id;
 
             // Checar se o usuário tem permissão para acessar a ação do módulo
-            // Esse valor é salvo na sessão, e é recuperado dinâmicamente com as variáveis $module_id e $module_action
-            $user_module_action_check = $request->session()->get("modules_access")[$module_id]["profile_powers"][$module_action] == 1 ? TRUE : FALSE;
+            // Esse valor é salvo no objeto Auth, e é recuperado dinâmicamente com as variáveis $module_id e $module_action
+            $user_module_action_check = Auth::user()->modules_privileges[$module_id]["profile_powers"][$module_action] == 1 ? TRUE : FALSE;
 
             if(!$user_id_check || !$user_module_action_check){
 
-                // O usuário é redirecionado para "/sistema" com uma resposta
-                // Aparecerá o mesmo modal de erro de quando o Token JWT é inválido
-                return redirect("/acessar");
+                // O usuário é deslogado
+                return redirect("/sistema/sair");
 
             }
 

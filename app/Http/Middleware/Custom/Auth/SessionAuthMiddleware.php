@@ -4,6 +4,7 @@ namespace App\Http\Middleware\Custom\Auth;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SessionAuthMiddleware
 {
@@ -17,10 +18,10 @@ class SessionAuthMiddleware
     public function handle(Request $request, Closure $next)
     {
 
-        if (!$request->session()->has("user_authenticated") || !$request->session()->get("user_authenticated")) {
+        if (!Auth::check()) {
 
-            // Interromper requisição e redirecionar para o login
-            return redirect("/acessar");
+            // Interromper requisição e deslogar
+            return redirect("/sistema/sair");
 
         }
 
