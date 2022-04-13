@@ -60,12 +60,13 @@ class CommonInternalPagesController extends Controller
      * 
      * @return Redirect
      */
-    function logout() {
+    function logout(Request $request) {
 
         Auth::logout();
 
-        Session::forget(["user_authenticated", "access"]);
-        Session::flush();
+        $request->session()->invalidate();
+ 
+        $request->session()->regenerateToken();
 
         return redirect("/acessar");
 

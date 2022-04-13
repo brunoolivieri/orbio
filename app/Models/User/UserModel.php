@@ -28,7 +28,6 @@ class UserModel extends Authenticatable
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
     protected $fillable = ["*"];
-    protected $appends = [ 'modules_privileges' ];
 
     // For Auth:: works
     function getAuthPassword() {

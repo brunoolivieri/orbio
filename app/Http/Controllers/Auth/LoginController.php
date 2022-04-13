@@ -27,13 +27,13 @@ class LoginController extends Controller
 {
     
     /**
-     * Método para processar o login
-     * Se for a primeira vez que é realizado, a conta também é ativada no processo
+     * Method for login processing
+     * Exists 3 cases for valid credentials: user active, user inactive or user disabled
      * 
      * @param object Illuminate\Http\Request
      * @return \Illuminate\Http\Response
      */
-    function index(LoginRequest $request)  {
+    function index(LoginRequest $request) : \Illuminate\Http\Response  {
 
         // Password is converted to "senha" - this is defined in the model "UserModel"
         if($user = Auth::attempt(['email' => $request->email, 'password' => $request->password])){
@@ -45,6 +45,8 @@ class LoginController extends Controller
 
                 $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');
 
+                Session::put("modules_access", $token_data["user_powers"]);
+
                 return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
             
             // User account is inactive
@@ -55,6 +57,8 @@ class LoginController extends Controller
                     $token_data = $this->gatherAndOrganizeLocalStorageTokenData();
 
                     $token_generated = JWT::encode($token_data, env('JWT_TOKEN_KEY'), 'HS256');
+
+                    Session::put("modules_access", $token_data["user_powers"]);
 
                     return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
 
@@ -77,6 +81,12 @@ class LoginController extends Controller
 
     }
 
+    /**
+     * Method for organizing the data that will compose the localstorage token
+     * Exists 2 cases: user is super-admin, or not
+     * 
+     * @return array $token_data
+     */
     private function gatherAndOrganizeLocalStorageTokenData() : array {
 
         if(Auth::user()->id_perfil === 1){
@@ -132,7 +142,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Organização dos dados referentes aos privilégios do perfil do usuário autenticado
+     * Method to organize the data regarding the privileges of the authenticated user's profile
      * 
      */
     private function modulesProfileRelationshipFormated() : array {
@@ -159,9 +169,6 @@ class LoginController extends Controller
             }
 
         }
-
-        // Add profile and modules relationship to the auth facade
-        Auth::user()->modules_privileges = $arrData;
 
         return $arrData;
 
@@ -206,14 +213,5 @@ class LoginController extends Controller
         }
 
     }
-
-    /*
-    private function generateSession(array $token_data, array $profile_module_data) : void {
-
-        Session::put("user_authenticated", true);
-        Session::put("id", $token_data["id"]);
-        Session::put("modules_access", $profile_module_data);
-
-    }*/
 
 }
