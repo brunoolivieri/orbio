@@ -99,7 +99,7 @@ export function Layout() {
 
       },[]);
 
-      const [menuOpen, setMenuOpen] = useState(true);
+      const [menuOpen, setMenuOpen] = useState(false);
 
       const handleDrawerToggle = () => {
         setMenuOpen(!menuOpen);

@@ -24,7 +24,14 @@ class CommonInternalPagesController extends Controller
      */
     function index() {
 
-        return view("react_main_root");
+        if(Auth::check()){
+
+            return view("react_main_root");
+
+        }else{
+
+            return redirect("/sistema/sair");
+        } 
 
     }
 
