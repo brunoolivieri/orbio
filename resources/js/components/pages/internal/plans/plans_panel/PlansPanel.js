@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdateDeletePlanFormulary } from "../../../../structures/modules/plans/UpdateDeletePlanFormulary";
+import { UpdatePlanFormulary } from "../../../../structures/modules/plans/UpdatePlanFormulary";
+import { DeletePlanFormulary } from "../../../../structures/modules/plans/DeletePlanFormulary";
 import { CreatePlanConfiguration } from "../../../../structures/modules/plans/CreatePlanConfiguration";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
@@ -26,7 +27,6 @@ import Chip from '@mui/material/Chip';
 import { Link } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import Checkbox from '@mui/material/Checkbox';
-
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -280,11 +280,7 @@ export function PlansPanel(){
           </Grid>
 
           <Grid item>
-            <Tooltip title="Editar">
-                <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
-                </IconButton>
-              </Tooltip>
+            <UpdatePlanFormulary record = {actualSelectedRecord.data_cells} />
           </Grid>
 
           <Grid item>
