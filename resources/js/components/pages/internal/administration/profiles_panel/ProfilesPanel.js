@@ -30,25 +30,15 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Badge } from "@mui/material";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#101F33",
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
-  
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
+const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#004994",
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
 export function ProfilesPanel(){
 
@@ -274,15 +264,15 @@ export function ProfilesPanel(){
                 <Table sx={{ minWidth: 500 }} aria-label="customized table">
                     <TableHead>
                       <TableRow>
-                      <StyledTableCell align="center">ID</StyledTableCell>
-                        <StyledTableCell align="center">Nome</StyledTableCell>
-                        <StyledTableCell align="center">Administração</StyledTableCell>
-                        <StyledTableCell align="center">Planos de voo</StyledTableCell>
-                        <StyledTableCell align="center">Ordens de serviço</StyledTableCell>
-                        <StyledTableCell align="center">Relatórios</StyledTableCell>
-                        <StyledTableCell align="center">Incidentes</StyledTableCell>
-                        <StyledTableCell align="center">Editar</StyledTableCell>
-                        <StyledTableCell align="center">Excluir</StyledTableCell>
+                        <StyledHeadTableCell align="center">ID</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Editar</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Excluir</StyledHeadTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody className = "tbody">
@@ -290,42 +280,42 @@ export function ProfilesPanel(){
                         {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                         {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                             panelData.response.records.map((row) => ( 
-                              <StyledTableRow key={row.profile_id}>
-                                 <StyledTableCell align="center">{row.profile_id}</StyledTableCell>
-                                <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
-                                <StyledTableCell align="center">
+                              <TableRow key={row.profile_id}>
+                                 <TableCell align="center">{row.profile_id}</TableCell>
+                                <TableCell align="center">{row.profile_name}</TableCell>
+                                <TableCell align="center">
                                   <FormGroup>
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>   
-                                </StyledTableCell>
-                                <StyledTableCell align="center">
+                                </TableCell>
+                                <TableCell align="center">
                                   <FormGroup>
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
-                                </StyledTableCell>
-                                <StyledTableCell align="center">
+                                </TableCell>
+                                <TableCell align="center">
                                   <FormGroup>
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup> 
-                                </StyledTableCell>
-                                <StyledTableCell align="center">   
+                                </TableCell>
+                                <TableCell align="center">   
                                   <FormGroup>
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
-                                </StyledTableCell>
-                                <StyledTableCell align="center">   
+                                </TableCell>
+                                <TableCell align="center">   
                                   <FormGroup>
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
-                                </StyledTableCell>
-                                <StyledTableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                                <StyledTableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                              </StyledTableRow>
+                                </TableCell>
+                                <TableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></TableCell>
+                                <TableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></TableCell>
+                              </TableRow>
                             ))}
                     </TableBody>
                 </Table>

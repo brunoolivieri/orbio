@@ -27,25 +27,15 @@ import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { Badge } from "@mui/material";
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#101F33",
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
-  
-  const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
+const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: "#004994",
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
 export function UsersPanel(){
 
@@ -279,33 +269,33 @@ export function UsersPanel(){
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
                 <TableHead>
                   <TableRow>
-                    <StyledTableCell>ID</StyledTableCell>
-                    <StyledTableCell align="center">Nome</StyledTableCell>
-                    <StyledTableCell align="center">Email</StyledTableCell>
-                    <StyledTableCell align="center">Status</StyledTableCell>
-                    <StyledTableCell align="center">Perfil</StyledTableCell>
-                    <StyledTableCell align="center">Criação da conta</StyledTableCell>
-                    <StyledTableCell align="center">Última atualização</StyledTableCell>
-                    <StyledTableCell align="center">Último acesso</StyledTableCell>
-                    <StyledTableCell align="center">Editar</StyledTableCell>
-                    <StyledTableCell align="center">Excluir</StyledTableCell>
+                    <StyledHeadTableCell>ID</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Criação da conta</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Editar</StyledHeadTableCell>
+                    <StyledHeadTableCell align="center">Excluir</StyledHeadTableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody className = "tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                     panelData.response.records.map((row) => (
-                      <StyledTableRow key={row.user_id}>
-                        <StyledTableCell component="th" scope="row">{row.user_id}</StyledTableCell>
-                        <StyledTableCell align="center">{row.name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.email}</StyledTableCell> 
-                        <StyledTableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</StyledTableCell>
-                        <StyledTableCell align="center">{row.profile_name}</StyledTableCell>
-                        <StyledTableCell align="center">{row.created_at}</StyledTableCell>
-                        <StyledTableCell align="center">{row.updated_at}</StyledTableCell>
-                        <StyledTableCell align="center">{row.last_access}</StyledTableCell>
-                        <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                        <StyledTableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                      </StyledTableRow>
+                      <TableRow key={row.user_id}>
+                        <TableCell component="th" scope="row">{row.user_id}</TableCell>
+                        <TableCell align="center">{row.name}</TableCell>
+                        <TableCell align="center">{row.email}</TableCell> 
+                        <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
+                        <TableCell align="center">{row.profile_name}</TableCell>
+                        <TableCell align="center">{row.created_at}</TableCell>
+                        <TableCell align="center">{row.updated_at}</TableCell>
+                        <TableCell align="center">{row.last_access}</TableCell>
+                        <TableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></TableCell>
+                        <TableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></TableCell>
+                      </TableRow>
                     ))}
                 </TableBody>
             </Table>

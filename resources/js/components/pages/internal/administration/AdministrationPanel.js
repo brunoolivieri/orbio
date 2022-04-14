@@ -38,16 +38,14 @@ export function AdministrationPanel(){
         color="default"
         elevation={0}
         sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-      >
-        <Toolbar>
-          <Grid container spacing={1} alignItems="center">
-            <Grid item xs>
-              {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-              <SwitchPanelAdmin panelStateSetter = {setActualPanel} />
-            </Grid>
+      >  
+        <Grid container spacing={1} alignItems="center">
+          <Grid item xs>
+            {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
+            <SwitchPanelAdmin panelStateSetter = {setActualPanel} />
           </Grid>
-        </Toolbar>
-        </AppBar>
+        </Grid>
+      </AppBar>
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
         {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}
