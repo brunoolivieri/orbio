@@ -7,10 +7,14 @@ use Illuminate\Http\Request;
 use App\Models\Orders\ServiceOrdersModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
+
+// Models
+use App\Models\Orders\ServiceOrderHasUserModel;
 
 class ServiceOrderModuleController extends Controller
 {
@@ -121,21 +125,34 @@ class ServiceOrderModuleController extends Controller
 
         try{
 
-            ServiceOrdersModel::create([
-                "dh_inicio" => $request->initial_date,
-                "dh_fim" => $request->final_date,
-                "numOS" => $request->numOS,
-                "nome_criador" => $request->creator_name,
-                "nome_piloto" => $request->pilot_name,
-                "nome_cliente" => $request->client_name,
-                "observacao" => $request->observation,
-                "status" => $request->status,
-                "id_plano_voo" => $request->fligth_plan_id,
+            DB::beginTransaction();
+
+            $new_service_order_id = DB::table("service_orders")->insertGetId(
+                [
+                    "dh_inicio" => $request->initial_date,
+                    "dh_fim" => $request->final_date,
+                    "numOS" => $request->numOS,
+                    "nome_criador" => Auth::user()->nome,
+                    "nome_piloto" => $request->pilot_name,
+                    "nome_cliente" => $request->client_name,
+                    "observacao" => $request->observation,
+                    "status" => $request->status,
+                    "id_plano_voo" => $request->fligth_plan_id,
+                ]
+            );
+
+            ServiceOrderHasUserModel::create([
+                "id_ordem_servico" => $new_service_order_id,
+                "id_usuario" => Auth::user()->id
             ]);
+
+            DB::commit();
 
             return response("", 200);
 
         }catch(\Exception $e){
+
+            DB::rollBack();
 
             return response(["error" => $e->getMessage()], 500);
 

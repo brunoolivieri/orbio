@@ -9,6 +9,9 @@
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
 
+        <!-- FONTSAWESOME KIT -->
+        <script src="https://kit.fontawesome.com/49b7b83709.js" crossorigin="anonymous"></script>
+
         <!-- ÍCONES - MATERIAL UI -->
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 

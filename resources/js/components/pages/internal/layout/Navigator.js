@@ -60,7 +60,7 @@ const item = {
   color: 'rgba(255, 255, 255, 0.7)',
   '&:hover, &:focus': {
     bgcolor: 'rgba(255, 255, 255, 0.08)',
-  },
+  }
 };
 
 const itemCategory = {
@@ -114,8 +114,8 @@ export default function Navigator(props) {
 
       <List disablePadding className={classes.nav_background}>
         
-        <ListItem sx={{ ...item, ...itemCategory, fontSize: 20, color: '#fff' }}>
-          NOME DO SISTEMA
+        <ListItem sx={{ ...item, ...itemCategory, fontSize: 20, color: '#fff', display: "flex", justifyContent: "center" }}>
+          ORBIO
         </ListItem>
         <ListItem sx={{ ...item, ...itemCategory }}>
           <ListItemText>{AuthData.data.profile} - {AuthData.data.name}</ListItemText>
