@@ -194,7 +194,7 @@ class FlightPlanModuleController extends Controller
 
         }catch(\Exception $e){
 
-            return response(["error" => $e->getMessage()], 200);
+            return response(["error" => $e->getMessage()], 500);
 
         }
     }
@@ -207,9 +207,15 @@ class FlightPlanModuleController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+
         try{
 
-            FlightPlansModel::where('id', $id)->delete();
+            // DESVINCULAR E DELETAR INCIDENTE 
+            // DESVINCULAR E DELETAR RELATÓRIO
+            // DESVINCULAR PLANO DA ORDEM DE SERVIÇO
+            // DELETAR PLANO
+
+            FlightPlansModel::where("id", $id)->delete();
 
             return response("", 200);
 

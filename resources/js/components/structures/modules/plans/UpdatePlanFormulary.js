@@ -31,8 +31,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
-    // States do formulário
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false); 
 
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = useState({description: false, status: false}); // State para o efeito de erro - true ou false
@@ -49,9 +48,9 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     // Função para abrir o modal
     const handleClickOpen = () => {
 
-        if(props.record != null){
-            setOpen(true);
-        }
+      if(props.selected_record.dom != null){
+        setOpen(true);
+      } 
         
     };
 
@@ -223,10 +222,10 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
             </IconButton>
         </Tooltip>
 
-        {(props.record != null && open) && 
+        {(props.selected_record.dom != null && open) && 
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
+                <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.selected_record.data_cells.plan_id})</DialogTitle>
 
                 {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -241,7 +240,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     type="text"
                     fullWidth
                     variant="outlined"
-                    defaultValue={props.record.plan_id}
+                    defaultValue={props.selected_record.data_cells.plan_id}
                     inputProps={{
                         readOnly: true
                     }}
@@ -254,7 +253,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     primary_key={"id"} 
                     key_content={"id"} 
                     error = {null} 
-                    default = {props.record.report_id != null ? props.record.report_id : 0} 
+                    default = {props.selected_record.data_cells.report_id != null ? props.selected_record.data_cells.report_id : 0} 
                     name = {"select_report"}  
                     />
                     <GenericSelect 
@@ -263,7 +262,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     primary_key={"id"} 
                     key_content={"id"} 
                     error = {null} 
-                    default = {props.record.incident_id != null ? props.record.incident_id : 0} 
+                    default = {props.selected_record.data_cells.incident_id != null ? props.selected_record.data_cells.incident_id : 0} 
                     name = {"select_incident"} 
                     />
                     </Box>
@@ -276,7 +275,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     type="number"
                     fullWidth
                     variant="outlined"
-                    defaultValue={props.record.plan_status}
+                    defaultValue={props.selected_record.data_cells.plan_status}
                     error = {errorDetected.status}
                     helperText = {errorMessage.status}
                     InputProps={{
@@ -292,7 +291,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     type="text"
                     fullWidth
                     variant="outlined"
-                    defaultValue={props.record.plan_description}
+                    defaultValue={props.selected_record.data_cells.plan_description}
                     helperText = {errorMessage.description}
                     error = {errorDetected.description}
                     />

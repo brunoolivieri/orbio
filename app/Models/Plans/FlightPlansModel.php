@@ -9,12 +9,30 @@ use Illuminate\Support\Facades\DB;
 class FlightPlansModel extends Model
 {
 
+    use HasFactory;
+
     protected $table = "flight_plans";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
     protected $guarded = [];
 
-    use HasFactory;
+    function incidents(){
+
+        return $this->belongsTo("App\Models\Incidents\IncidentsModel", "id_incidente");
+
+    }
+
+    function reports(){
+
+        return $this->belongsTo("App\Models\Reports\ReportsModel", "id_relatorio");
+
+    }
+
+    function service_orders(){
+
+        return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "id_plano_voo");
+
+    }
 
     /**
      * Método realizar um SELECT SEM WHERE na tabela "flight_plans"

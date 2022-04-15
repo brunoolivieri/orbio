@@ -32,11 +32,10 @@ import Checkbox from '@mui/material/Checkbox';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -222,9 +221,9 @@ export function PlansPanel(){
 
   }
 
-  function handleClickOnTableRow(event, record_clicked){
+  function handleClickOnCheckbox(event, record_clicked){
 
-    //console.log(event.currentTarget.childNodes)
+    //console.log(event.currentTarget.childNodes[0])
     //console.log(record_clicked)
 
     // If already exists a selected record, and its equal to the clicked
@@ -232,8 +231,7 @@ export function PlansPanel(){
     if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.plan_id == record_clicked.plan_id)){
       //console.log("uncheck selected row");
 
-      actualSelectedRecord.dom.style.backgroundColor = "#fff";
-      actualSelectedRecord.dom.childNodes[0].lastChild.checked = false;
+      actualSelectedRecord.dom.childNodes[0].checked = false;
       setActualSelectedRecord({dom: null, data_cells: null});
     
     // If already exists a selected record, and its different from the clicked
@@ -241,10 +239,7 @@ export function PlansPanel(){
     }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.plan_id != record_clicked.plan_id)){
       //console.log("change selected row")
 
-      actualSelectedRecord.dom.childNodes[0].lastChild.checked = false;
-      actualSelectedRecord.dom.style.backgroundColor = "#fff";
-
-      event.currentTarget.style.backgroundColor = "#E3EEFA";
+      actualSelectedRecord.dom.childNodes[0].checked = false;
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
     
     // If not exists a selected record
@@ -252,12 +247,14 @@ export function PlansPanel(){
     }else if(actualSelectedRecord.dom == null){
       //console.log("check row")
 
-      event.currentTarget.style.backgroundColor = "#E3EEFA";
-      event.currentTarget.childNodes[0].lastChild.checked = true;
-
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
 
     }
+
+  }
+
+  function handleDownloadFlightPlan(){
+
 
   }
 
@@ -273,22 +270,18 @@ export function PlansPanel(){
             <Tooltip title="Novo Plano">
               <Link href={`/sistema/mapa?userid=${AuthData.data.id}`} target="_blank">
                 <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                  <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+                  <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
                 </IconButton>
               </Link>
             </Tooltip>
           </Grid>
 
           <Grid item>
-            <UpdatePlanFormulary record = {actualSelectedRecord.data_cells} />
+            <UpdatePlanFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
           </Grid>
 
           <Grid item>
-            <Tooltip title="Excluir">
-              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm" />
-              </IconButton>
-              </Tooltip>
+            <DeletePlanFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
           </Grid>
 
           <Grid item>
@@ -332,12 +325,13 @@ export function PlansPanel(){
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
                 <TableHead>
                 <TableRow>
-                  <StyledHeadTableCell>Visualizar</StyledHeadTableCell>
-                    <StyledHeadTableCell>ID</StyledHeadTableCell>
+                <StyledHeadTableCell></StyledHeadTableCell>
+                <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                     <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                     <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
                     <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                     <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
                     <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
@@ -346,24 +340,30 @@ export function PlansPanel(){
                 <TableBody className = "tbody">
                   {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                       panelData.response.records.map((row) => (
-                      <TableRow key={row.plan_id} onClick={(event) => {handleClickOnTableRow(event, row)}}>
-                        <TableCell sx={{display: "none"}}><Checkbox /></TableCell>
-                        <TableCell>
+                      <TableRow key={row.plan_id} >
+                        <TableCell><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
+                        <TableCell>{row.plan_id}</TableCell>
+                        <TableCell align="center">
                           <Link href={`/sistema/mapa?plan_id=${row.plan_id}`} target="_blank">
                             <Tooltip title="Ver plano">
                               <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
                               </IconButton>
                             </Tooltip>
                           </Link> 
                         </TableCell>
-                        <TableCell>{row.plan_id}</TableCell>
-                        <TableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell> 
+                        <TableCell align="center">
+                          <Tooltip title="Baixar plano">
+                            <IconButton onClick={handleDownloadFlightPlan}>
+                              <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color = {"#00713A"} />
+                            </IconButton>
+                          </Tooltip> 
+                        </TableCell>
                         <TableCell align="center">
                           {row.report_id != null ? 
                           <Tooltip title="Ver relatório">
                             <IconButton>
-                              <FontAwesomeIcon icon={faFilePdf} color="green"/>
+                              <FontAwesomeIcon icon={faFilePdf} color="#00713A"/>
                             </IconButton> 
                           </Tooltip> 
                           : 
@@ -372,8 +372,8 @@ export function PlansPanel(){
                           </IconButton> 
                           }
                         </TableCell>
+                        <TableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell> 
                         <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
-                        <TableCell align="center">{row.plan_file}</TableCell>
                         <TableCell align="center">{row.plan_description}</TableCell>
                         <TableCell align="center">{row.created_at}</TableCell>
                         <TableCell align="center">{row.updated_at}</TableCell>    
