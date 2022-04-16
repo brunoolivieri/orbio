@@ -23,6 +23,10 @@ import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
@@ -287,12 +291,12 @@ export function CreateOrderFormulary({...props}){
 
     return (
         <>
-          {/* Botão para abrir o formulário */}
-          <Tooltip title="Nova Ordem">
-            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true}>
-              <AddCircleIcon />
+          <Tooltip title="Nova ordem de serviço">
+            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
+              <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
             </IconButton>
           </Tooltip>
+
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
     

@@ -5,6 +5,11 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
+
 function TabPanel(props) {
 
   const { children, value, index, ...other } = props;
@@ -64,8 +69,8 @@ export const SwitchPanelAdmin = React.memo((props) => {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'transparent' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="fullWidth" indicatorColor="primary">
-          <Tab label="Gerenciamento dos usuários" {...a11yProps(0)}/>
-          <Tab label="Gerenciamento dos perfis" {...a11yProps(1)} />
+          <Tab icon={<FontAwesomeIcon icon={faUsers} />} label="Gerenciamento dos usuários" {...a11yProps(0)}/>
+          <Tab icon={<FontAwesomeIcon icon={faIdCardClip} />} label="Gerenciamento dos perfis" {...a11yProps(1)} />
         </Tabs>
       </Box>
     </Box>

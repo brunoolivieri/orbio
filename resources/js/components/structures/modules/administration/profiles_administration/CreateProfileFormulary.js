@@ -201,6 +201,7 @@ export function CreateProfileFormulary() {
           <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
         </IconButton>
       </Tooltip>
+      
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>CADASTRO DE PERFIL</DialogTitle>
 

@@ -27,7 +27,7 @@ export function AdministrationPanel(){
     */
     useEffect(() => {
       
-      setActualPage("PAINEL DO ADMINISTRADOR");
+      setActualPage("PAINEL DE ADMINISTRAÇÃO");
 
     }, [])
     

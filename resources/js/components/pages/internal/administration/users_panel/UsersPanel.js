@@ -291,6 +291,7 @@ export function UsersPanel(){
             }}
             variant="outlined"
             id = "search_input"
+            sx={{borderRadius: 30}}
           />
         </Grid>
         
@@ -330,7 +331,7 @@ export function UsersPanel(){
                   <TableCell component="th" scope="row">{row.user_id}</TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">{row.email}</TableCell> 
-                  <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
+                  <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} />}</TableCell>
                   <TableCell align="center">{row.profile_name}</TableCell>
                   <TableCell align="center">{row.created_at}</TableCell>
                   <TableCell align="center">{row.updated_at}</TableCell>
