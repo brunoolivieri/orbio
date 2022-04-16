@@ -333,7 +333,7 @@ export function OrdersPanel(){
                   {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                     panelData.response.records.length > 0 &&
                     panelData.response.records.map((row) => (
-                        <StyledTableRow key={row.order_id}>
+                        <TableRow key={row.order_id}>
                         <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
                         <TableCell>{row.order_id}</TableCell>
                         <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell>
@@ -347,7 +347,7 @@ export function OrdersPanel(){
                         <TableCell align="center">{row.updated_at}</TableCell>
                         <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                         <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
-                        </StyledTableRow>
+                        </TableRow>
                         
                     ))}    
                 </TableBody>

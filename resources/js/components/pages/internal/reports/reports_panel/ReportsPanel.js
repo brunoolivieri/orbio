@@ -312,7 +312,7 @@ export function ReportsPanel(){
             <TableRow>
               <StyledTableCell></StyledTableCell>
               <StyledTableCell>ID</StyledTableCell>
-              <StyledTableCell>Exportar</StyledTableCell>
+              <StyledTableCell align="center">Exportar</StyledTableCell>
               <StyledTableCell align="center">Criação do relatório</StyledTableCell>
               <StyledTableCell align="center">Última atualização</StyledTableCell>
               <StyledTableCell align="center">Inicio do vôo</StyledTableCell>
@@ -325,9 +325,9 @@ export function ReportsPanel(){
             {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                 panelData.response.records.map((row) => (
                   <TableRow key={row.report_id}>
-                    <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
+                    <TableCell><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
                     <TableCell component="th" scope="row">{row.report_id}</TableCell>
-                    <TableCell><GenerateReportFormulary data = {row} /></TableCell>
+                    <TableCell align="center"><GenerateReportFormulary data = {row} /></TableCell>
                     <TableCell align="center">{row.created_at}</TableCell>
                     <TableCell align="center">{row.updated_at}</TableCell>
                     <TableCell align="center">{moment(row.flight_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>

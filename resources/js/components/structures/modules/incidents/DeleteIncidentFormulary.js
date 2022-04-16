@@ -12,25 +12,22 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../services/AxiosApi';
+import { Tooltip } from "@mui/material";
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
-export function DeleteOrderFormulary({...props}){
+// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
+import AxiosApi from '../../../../services/AxiosApi';
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+export function DeleteIncidentFormulary({...props}){
+
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
-
-    // States do formulário
-    const [open, setOpen] = useState(false);
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -38,13 +35,16 @@ export function DeleteOrderFormulary({...props}){
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
 
+    // States do formulário
+    const [open, setOpen] = React.useState(false);
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-      if(props.selected_record.dom != null){
-          setOpen(true);
-      }
+        if(props.selected_record.dom != null){
+            setOpen(true);
+        }
     };
 
     // Função para fechar o modal
@@ -53,7 +53,7 @@ export function DeleteOrderFormulary({...props}){
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
-      setOpen(false);
+        setOpen(false);
 
     };
 
@@ -65,10 +65,12 @@ export function DeleteOrderFormulary({...props}){
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-      const data = new FormData(event.currentTarget);
+        // Instância da classe JS FormData - para trabalhar os dados do formulário
+        const data = new FormData(event.currentTarget);
 
         setDisabledButton(true);
 
+        // Inicialização da requisição para o servidor
         requestServerOperation(data);
 
     }
@@ -83,10 +85,10 @@ export function DeleteOrderFormulary({...props}){
 
         // Dados para o middleware de autenticação 
         let logged_user_id = AuthData.data.id;
-        let module_id = 3;
+        let module_id = 5;
         let module_action = "escrever";
 
-        AxiosApi.delete(`/api/orders-module/${data.get("order_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+        AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
         .then(function (response) {
   
           successServerResponseTreatment();
@@ -101,7 +103,7 @@ export function DeleteOrderFormulary({...props}){
     }
 
     /*
-    * Rotina 5A
+    * Rotina 3A
     * Tratamento da resposta de uma requisição bem sucedida
     */
     function successServerResponseTreatment(){
@@ -119,101 +121,86 @@ export function DeleteOrderFormulary({...props}){
     }
 
     /*
-    * Rotina 5B
+    * Rotina 3B
     * Tratamento da resposta de uma requisição falha
+    * Os erros relacionados aos parâmetros enviados são recuperados com o for in
     */
     function errorServerResponseTreatment(response_data){
+
+      setDisabledButton(false);
 
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
     }
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
-    
-
-    return (
+    return(
         <>
-    
+
         <Tooltip title="Deletar">
-            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+            <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
             </IconButton>
         </Tooltip>
 
         {(props.selected_record.dom != null && open) && 
+
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.selected_record.data_cells.order_id})</DialogTitle>
+            <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.selected_record.data_cells.incident_id})</DialogTitle>
     
+            {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
               <DialogContent>
 
-                <TextField
+              <TextField
                   type = "text"
                   margin="dense"
-                  label="ID da ordem de serviço"
+                  label="ID do incidente"
                   fullWidth
                   variant="outlined"
                   required
-                  id="order_id"
-                  name="order_id"
-                  defaultValue = {props.selected_record.data_cells.order_id}
-                  inputProps={{
-                    readOnly: true
+                  id="incident_id"
+                  name="incident_id"
+                  InputProps={{
+                    readOnly: true 
                   }}
+                  defaultValue={props.selected_record.data_cells.incident_id}
                 />
 
                 <TextField
                   type = "text"
                   margin="dense"
-                  label="numOS"
+                  label="Tipo do incidente"
                   fullWidth
                   variant="outlined"
                   required
-                  id="order_numos"
-                  name="order_numos"
-                  defaultValue = {props.selected_record.data_cells.numOS}
-                  inputProps={{
-                    readOnly: true
+                  id="incident_type"
+                  name="incident_type"
+                  defaultValue = {props.selected_record.data_cells.incident_type} 
+                  InputProps={{
+                    readOnly: true 
                   }}
                 />
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Nome do criador"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="creator_name"
-                  name="creator_name"
-                  defaultValue = {props.selected_record.data_cells.creator_name}
-                  inputProps={{
-                    readOnly: true
-                  }}
-                />
-    
+                  
               </DialogContent>
     
               {displayAlert.display && 
-                  <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+                <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
               }
               
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+                <Button type="submit" disabled={disabledButton}>Confirmar deleção</Button>
               </DialogActions>
     
             </Box>
-    
             
           </Dialog>
         }
         </>
-    
-      );
-
+    )
     
 }

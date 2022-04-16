@@ -55,9 +55,9 @@ export function UpdateOrderFormulary({...props}){
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-        if(props.selected_record.dom != null){
-            setOpen(true);
-        }
+      if(props.selected_record.dom != null){
+          setOpen(true);
+      }
     };
 
     // Função para fechar o modal

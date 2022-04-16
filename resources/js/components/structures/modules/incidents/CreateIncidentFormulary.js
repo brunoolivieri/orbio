@@ -10,20 +10,24 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Input, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+
+// OUTRAS LIBS
+import moment from 'moment';
+
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
-
-// IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
-import moment from 'moment';
 
 export function CreateIncidentFormulary(){
 
@@ -212,12 +216,13 @@ export function CreateIncidentFormulary(){
     
     return(
         <>
-        {/* Botão para abrir o formulário */}
-        <Tooltip title="Nova Ordem">
-            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
-              <AddCircleIcon />
+
+          <Tooltip title="Novo incidente">
+            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
+              <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
             </IconButton>
           </Tooltip>
+
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
     

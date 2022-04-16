@@ -27,7 +27,6 @@ import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
 import { Checkbox } from "@mui/material";
-import { Box } from "@mui/system";
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -57,9 +56,6 @@ export function UsersPanel(){
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
   const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
-
-  // Serve modificar o ícone de refresh da tabela
-  const [refreshPanel, setRefreshPanel] = useState(false);
 
   // State da linha selecionada
   const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});

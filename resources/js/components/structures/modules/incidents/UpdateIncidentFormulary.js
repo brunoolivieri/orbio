@@ -12,8 +12,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+import { Tooltip } from "@mui/material";
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+
+// OUTRAS LIBS
+import moment from 'moment';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -21,9 +27,7 @@ import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 
-import moment from 'moment';
-
-export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter}){
+export function UpdateIncidentFormulary({...props}){
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -44,13 +48,15 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [incidentDate, setIncidentDate] = useState(moment());
+    const [incidentDate, setIncidentDate] = useState(null);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-        setOpen(true);
+        if(props.selected_record.dom != null){
+            setOpen(true);
+        }
     };
 
     // Função para fechar o modal
@@ -73,31 +79,15 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-      // Instância da classe JS FormData - para trabalhar os dados do formulário
-      const data = new FormData(event.currentTarget);
+        const data = new FormData(event.currentTarget);
 
-      if(operation === "update"){
-
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-            // Botão é desabilitado
             setDisabledButton(true);
 
-            // Inicialização da requisição para o servidor
             requestServerOperation(data);
 
         }
-
-      }else if(operation === "delete"){
-
-          setDisabledButton(true);
-
-         // Inicialização da requisição para o servidor
-         requestServerOperation(data, operation);
-
-      }
 
     }
 
@@ -138,12 +128,10 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
     */ 
     function requestServerOperation(data){
 
-      // Dados para o middleware de autenticação 
+        // Dados para o middleware de autenticação 
         let logged_user_id = AuthData.data.id;
         let module_id = 5;
         let module_action = "escrever";
-
-      if(operation === "update"){
 
         AxiosApi.patch(`/api/incidents-module/${data.get("incident_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
@@ -161,22 +149,6 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
           errorServerResponseTreatment(error.response.data);
   
         });
-
-      }else if(operation === "delete"){
-
-        AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
-        .then(function (response) {
-  
-          successServerResponseTreatment();
-  
-        })
-        .catch(function (error) {
-          
-          errorServerResponseTreatment(error.response.data);
-  
-        });
-
-      }
 
     }
 
@@ -243,28 +215,18 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
 
 // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
-    // Se o perfil do usuário logado não tiver o poder de LER quanto ao módulo de "Administração", os botão serão desabilitados - porque o usuário não terá permissão para isso 
-    // Ou, se o registro atual, da tabela, tiver um número de acesso menor (quanto menor, maior o poder) ou igual ao do usuário logado, os botão serão desabilitados - Super Admin não edita Super Admin, Admin não edita Admin, etc 
-    const deleteButton = <IconButton 
-    disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? true : false) : true} 
-    value = {data.id} onClick={handleClickOpen}
-    ><DeleteIcon 
-    style={{ fill: AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#D4353B") : "#808991"}} 
-    /></IconButton>
-
-    const updateButton = <IconButton 
-    disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} 
-    value = {data.id} onClick={handleClickOpen}
-    ><EditIcon 
-    style={{ fill: AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? (data.access <= AuthData.data.general_access ? "#808991" : "#009BE5") : "#808991"}} 
-    /></IconButton>
-
     return(
         <>
-        {/* Botão que abre o Modal - pode ser o de atualização ou de deleção, depende da operação */}
-        {operation === "update" ? updateButton : deleteButton}
+        <Tooltip title="Editar">
+            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
+                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+            </IconButton>
+        </Tooltip>
+
+        {(props.selected_record.dom != null && open) && 
+
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>{operation === "update" ? "ATUALIZAÇÃO" : "DELEÇÃO"} | INCIDENTE (ID: {data.incident_id})</DialogTitle>
+            <DialogTitle>ATUALIZAÇÃO | INCIDENTE (ID: {props.selected_record.data_cells.incident_id})</DialogTitle>
     
             {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -283,8 +245,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                   InputProps={{
                     readOnly: true 
                   }}
-                  disabled = {operation === "update" ? false : true} 
-                  defaultValue = {data.incident_id}
+                  defaultValue = {props.selected_record.data_cells.incident_id}
                 />
 
               <Box sx={{display: "flex", justifyContent: "space-between"}}>
@@ -293,7 +254,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                     label = {"Data do incidente"} 
                     helperText = {errorMessage.incident_date} 
                     error = {errorDetected.incident_date} 
-                    defaultValue = {data.incident_date}
+                    defaultValue = {props.selected_record.data_cells.incident_date}
                     operation = {"create"}
                     />
                 </Box>
@@ -309,8 +270,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                   name="incident_type"
                   helperText = {errorMessage.incident_type}
                   error = {errorDetected.incident_type}
-                  defaultValue = {data.incident_type}
-                  disabled = {operation === "update" ? false : true} 
+                  defaultValue = {props.selected_record.data_cells.incident_type}
                 />
 
                 <TextField
@@ -324,8 +284,7 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
                   name="description"
                   helperText = {errorMessage.description}
                   error = {errorDetected.description}
-                  defaultValue = {data.description}
-                  disabled = {operation === "update" ? false : true} 
+                  defaultValue = {props.selected_record.data_cells.description}
                 />
                   
               </DialogContent>
@@ -336,13 +295,13 @@ export function UpdateDeleteIncidentFormulary({data, operation, refresh_setter})
               
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton}>Confirmar {operation === "update" ? "atualização" : "deleção"}</Button>
+                <Button type="submit" disabled={disabledButton}>Confirmar atualização</Button>
               </DialogActions>
     
             </Box>
-    
-            
+
           </Dialog>
+        }
         </>
     )
     

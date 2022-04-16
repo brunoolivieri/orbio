@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import {CreateIncidentFormulary} from "../../../../structures/modules/incidents/CreateIncidentFormulary";
-import {UpdateDeleteIncidentFormulary} from "../../../../structures/modules/incidents/UpdateDeleteIncidentFormulary";
+import { UpdateIncidentFormulary } from "../../../../structures/modules/incidents/UpdateIncidentFormulary";
+import { DeleteIncidentFormulary } from "../../../../structures/modules/incidents/DeleteIncidentFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -14,18 +15,22 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { Tooltip } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import { Badge } from "@mui/material";
 import Alert from '@mui/material/Alert';
+import { InputAdornment } from "@mui/material";
+import { Checkbox } from "@mui/material";
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
@@ -64,8 +69,9 @@ export function IncidentsPanel(){
     // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
     const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // Serve modificar o ícone de refresh da tabela
-    const [refreshPanel, setRefreshPanel] = useState(false);
+    // State da linha selecionada
+    const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -215,52 +221,80 @@ export function IncidentsPanel(){
 
   }
 
+  function handleClickOnCheckbox(event, record_clicked){
+  
+    // If already exists a selected record, and its equal to the clicked
+    // The actual selected row is unmarked
+    if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
+      //console.log("uncheck selected row");
+
+      actualSelectedRecord.dom.childNodes[0].checked = false;
+      setActualSelectedRecord({dom: null, data_cells: null});
+    
+    // If already exists a selected record, and its different from the clicked
+    // The actual selected row is unmarked, and the new clicked one becomes the selected row
+    }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
+      //console.log("change selected row")
+
+      actualSelectedRecord.dom.childNodes[0].checked = false;
+      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
+    
+    // If not exists a selected record
+    // The clicked row becomes the selected row
+    }else if(actualSelectedRecord.dom == null){
+      //console.log("check row")
+
+      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
+
+    }
+
+  }
+
 // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
     return(
         <>
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={1} alignItems="center" mb={1}>
 
           <Grid item>
-              <CreateIncidentFormulary />
+            <CreateIncidentFormulary />
           </Grid>
 
           <Grid item>
-            <Tooltip title="Reload">
-              <IconButton onClick = {reloadTable}>
-
-              {refreshPanel ? 
-              <Badge color="primary" variant="dot">
-                  <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
-              </Badge>
-              : 
-              <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-              }
-
-              </IconButton>
-            </Tooltip>  
+            <UpdateIncidentFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
           </Grid>
 
           <Grid item>
-            <Tooltip title="Pesquisar">
+             <DeleteIncidentFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+          </Grid>
+
+          <Grid item>
+          <Tooltip title="Reload">
+            <IconButton onClick = {reloadTable}>
+              <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
+            </IconButton>
+          </Tooltip>  
+        </Grid>
+
+        <Grid item xs>
+          <TextField
+            fullWidth
+            placeholder={"Pesquisar incidente por ID"}
+            InputProps={{
+              startAdornment: 
+              <InputAdornment position="start">
                 <IconButton onClick={handleSearchSubmit}>
-                <SearchIcon sx={{ display: 'block' }} />
+                  <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
                 </IconButton>
-            </Tooltip>
-          </Grid>
-
-          <Grid item xs>
-            <TextField
-                fullWidth
-                placeholder={"Pesquisar incidente por ID"}
-                InputProps={{
-                disableUnderline: true,
-                sx: { fontSize: 'default' },
-                }}
-                variant="standard"
-                id = "search_input"
-            />
-          </Grid>
+              </InputAdornment>,
+              disableUnderline: true,
+              sx: { fontSize: 'default' },
+            }}
+            variant="outlined"
+            id = "search_input"
+            sx={{borderRadius: 30}}
+          />
+        </Grid>
 
           {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
           <Grid item>
@@ -276,25 +310,23 @@ export function IncidentsPanel(){
           <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>
               <TableRow>
+                <StyledTableCell></StyledTableCell>
                   <StyledTableCell>ID</StyledTableCell>
                   <StyledTableCell align="center">Tipo do incidente</StyledTableCell>
                   <StyledTableCell align="center">Descrição</StyledTableCell>
                   <StyledTableCell align="center">Data do incidente</StyledTableCell>
-                  <StyledTableCell align="center">Editar</StyledTableCell>
-                  <StyledTableCell align="center">Excluir</StyledTableCell>
               </TableRow>
               </TableHead>
               <TableBody className = "tbody">
                   {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                       panelData.response.records.map((row) => (
-                          <StyledTableRow key={row.incident_id}>
-                          <StyledTableCell>{row.incident_id}</StyledTableCell>
-                          <StyledTableCell align="center">{row.incident_type}</StyledTableCell>
-                          <StyledTableCell align="center">{row.description}</StyledTableCell> 
-                          <StyledTableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</StyledTableCell>
-                          <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
-                          <StyledTableCell align="center"><UpdateDeleteIncidentFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
-                          </StyledTableRow>
+                          <TableRow key={row.incident_id}>
+                            <TableCell><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
+                            <TableCell>{row.incident_id}</TableCell>
+                            <TableCell align="center">{row.incident_type}</TableCell>
+                            <TableCell align="center">{row.description}</TableCell> 
+                            <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
+                          </TableRow>
                       ))}    
               </TableBody>
           </Table>
