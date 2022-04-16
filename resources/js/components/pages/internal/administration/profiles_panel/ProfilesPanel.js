@@ -276,8 +276,6 @@ export function ProfilesPanel(){
                       </TableRow>
                     </TableHead>
                     <TableBody className = "tbody">
-                        {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
-                        {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                         {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                             panelData.response.records.map((row) => ( 
                               <TableRow key={row.profile_id}>

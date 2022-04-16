@@ -36,9 +36,17 @@ class AdministrationModuleUserPanelController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
 
-            $data_formated = $this->formatDataForTable($model_response["data"]);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                $data_formated = $this->formatDataForTable($model_response["data"]);
+
+                return response($data_formated, 200);
+
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -168,9 +176,17 @@ class AdministrationModuleUserPanelController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
 
-            $data_formated = $this->formatDataForTable($model_response["data"]);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                $data_formated = $this->formatDataForTable($model_response["data"]);
+
+                return response($data_formated, 200);
+
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
 
         }else if(!$model_response["status"] && $model_response["error"]){
 

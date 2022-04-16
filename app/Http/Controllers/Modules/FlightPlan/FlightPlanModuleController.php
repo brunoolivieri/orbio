@@ -32,17 +32,25 @@ class FlightPlanModuleController extends Controller
 
         $model = new FlightPlansModel();
 
-        $response = $model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
+        $model_response = $model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
 
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
     
-            $data_formated = $this->flightPlansTableFormat($response["data"], $limit);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                $data_formated = $this->formatDataForTable($model_response["data"]);
 
-        }else if(!$response["status"] && $response["error"]){
+                return response($data_formated, 200);
 
-            return response(["status" => false, "error" => $response->content()], 500);
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
+
+        }else if(!$model_response["status"] && $model_response["error"]){
+
+            return response(["status" => false, "error" => $model_response->content()], 500);
 
         }  
     }
@@ -53,7 +61,7 @@ class FlightPlanModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function flightPlansTableFormat(LengthAwarePaginator $data) : array {
+    private function formatDataForTable(LengthAwarePaginator $data) : array {
 
         $arr_with_formated_data = [];
 
@@ -155,17 +163,25 @@ class FlightPlanModuleController extends Controller
 
         $model = new FlightPlansModel();
 
-        $response = $model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
+        $model_response = $model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
 
-        if($response["status"] && !$response["error"]){
+        if($model_response["status"] && !$model_response["error"]){
     
-            $data_formated = $this->flightPlansTableFormat($response["data"], $limit);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                $data_formated = $this->formatDataForTable($model_response["data"]);
 
-        }else if(!$response["status"] && $response["error"]){
+                return response($data_formated, 200);
 
-            return response(["status" => false, "error" => $response->content()], 500);
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
+
+        }else if(!$model_response["status"] && $model_response["error"]){
+
+            return response(["status" => false, "error" => $model_response->content()], 500);
 
         }  
 

@@ -36,10 +36,18 @@ class ServiceOrderModuleController extends Controller
         $model_response = $model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
-    
-            $data_formated = $this->serviceOrdersTableFormat($model_response["data"], $limit);
 
-            return response($data_formated, 200);
+            if($model_response["data"]->total() > 0){
+
+                $data_formated = $this->formatDataForTable($model_response["data"]);
+
+                return response($data_formated, 200);
+
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -56,7 +64,7 @@ class ServiceOrderModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function serviceOrdersTableFormat(LengthAwarePaginator $data) : array {
+    private function formatDataForTable(LengthAwarePaginator $data) : array {
 
         $arr_with_formated_data = [];
 
@@ -180,9 +188,25 @@ class ServiceOrderModuleController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $data_formated = $this->serviceOrdersTableFormat($model_response["data"], $limit);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                if($model_response["data"]->total() > 0){
+
+                    $data_formated = $this->formatDataForTable($model_response["data"]);
+    
+                    return response($data_formated, 200);
+    
+                }else{
+    
+                    return response(["error" => "records_not_founded"], 404);
+    
+                }
+
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
 
         }else if(!$model_response["status"] && $model_response["error"]){
 

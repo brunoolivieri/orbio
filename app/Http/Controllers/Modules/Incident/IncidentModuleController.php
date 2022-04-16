@@ -31,9 +31,17 @@ class IncidentModuleController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $data_formated = $this->incidentsTableFormat($model_response["data"], $limit);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                $data_formated = $this->formatDataForTable($model_response["data"]);
+
+                return response($data_formated, 200);
+
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
@@ -50,7 +58,7 @@ class IncidentModuleController extends Controller
      * @param object $data
      * @return array
      */
-    private function incidentsTableFormat(LengthAwarePaginator $data) : array {
+    private function formatDataForTable(LengthAwarePaginator $data) : array {
 
         $arr_with_formated_data = [];
 
@@ -117,9 +125,17 @@ class IncidentModuleController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
     
-            $data_formated = $this->incidentsTableFormat($model_response["data"], $limit);
+            if($model_response["data"]->total() > 0){
 
-            return response($data_formated, 200);
+                $data_formated = $this->formatDataForTable($model_response["data"]);
+
+                return response($data_formated, 200);
+
+            }else{
+
+                return response(["error" => "records_not_founded"], 404);
+
+            }
 
         }else if(!$model_response["status"] && $model_response["error"]){
 

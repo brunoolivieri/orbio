@@ -101,6 +101,7 @@ export function OrdersPanel(){
     AxiosApi.get(`/api/orders-module?args=${select_query_params}&auth=${module_middleware}`)
     .then(function (response) {
 
+
       if(response.status === 200){
 
         setPanelData({
@@ -122,7 +123,7 @@ export function OrdersPanel(){
     })
     .catch(function (error) {
 
-      console.log(error.message);
+      //console.log(error.message);
 
       setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
 
@@ -164,7 +165,7 @@ export function OrdersPanel(){
     })
     .catch(function (error) {
 
-      console.log(error.message);
+      console.log(error)
 
       setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
 
@@ -301,7 +302,8 @@ export function OrdersPanel(){
             </TableRow>
             </TableHead>
             <TableBody className = "tbody">
-              {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+              {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                panelData.response.records.length > 0 &&
                 panelData.response.records.map((row) => (
                     <StyledTableRow key={row.order_id}>
                     <StyledTableCell>{row.order_id}</StyledTableCell>
@@ -319,6 +321,7 @@ export function OrdersPanel(){
                     <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation={"update"} refresh_setter = {setRefreshPanel} /></StyledTableCell>
                     <StyledTableCell align="center"><UpdateDeleteOrderFormulary data ={row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></StyledTableCell>     
                     </StyledTableRow>
+                    
                 ))}    
             </TableBody>
         </Table>
