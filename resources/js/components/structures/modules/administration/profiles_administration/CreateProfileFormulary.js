@@ -21,6 +21,10 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+
 export function CreateProfileFormulary() {
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -194,7 +198,7 @@ export function CreateProfileFormulary() {
     <>
       <Tooltip title="Novo Perfil">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-          <AddCircleIcon />
+          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
         </IconButton>
       </Tooltip>
       <Dialog open={open} onClose={handleClose}>

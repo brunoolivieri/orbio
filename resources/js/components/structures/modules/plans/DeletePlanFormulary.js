@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import * as React from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -16,9 +16,7 @@ import { Tooltip } from '@mui/material';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { GenericSelect } from '../../input_select/GenericSelect';
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -71,43 +69,11 @@ export const DeletePlanFormulary = React.memo(({...props}) => {
       // Instância da classe JS FormData - para trabalhar os dados do formulário
       const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
-        if(dataValidate(data)){
+        // Botão é desabilitado
+        setDisabledButton(true);
 
-            // Botão é desabilitado
-            setDisabledButton(true);
-
-            // Inicialização da requisição para o servidor
-            requestServerOperation(data);  
-
-        }
-
-    }
-
-     /*
-    * Rotina 2
-    * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
-    */
-     function dataValidate(formData){
-
-        const idValidate = formData.get("plan_id") == props.selected_record.data_cells.plan_id ? {error: false, message: null} : {error: false, message: "ID inválido"}
-
-        setDisabledButton(false);
-      
-        if(idValidate.error){
-
-            setDisplayAlert({display: true, type: "error", message: idValidate.message});
-
-            return false;
-
-        }else{
-
-            return true;
-
-        }
+        // Inicialização da requisição para o servidor
+        requestServerOperation(data);  
 
     }
 

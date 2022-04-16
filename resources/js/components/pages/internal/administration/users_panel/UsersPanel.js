@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdateDeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateDeleteUserFormulary";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
+import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
+import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -18,14 +19,20 @@ import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
-import { Badge } from "@mui/material";
+import { InputAdornment } from "@mui/material";
+import { Checkbox } from "@mui/material";
+import { Box } from "@mui/system";
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -39,7 +46,7 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
 
 export function UsersPanel(){
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   // Utilizador do state global de autenticação
   const {AuthData} = useAuthentication();
@@ -54,7 +61,10 @@ export function UsersPanel(){
   // Serve modificar o ícone de refresh da tabela
   const [refreshPanel, setRefreshPanel] = useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // State da linha selecionada
+  const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   /**
    * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
@@ -182,7 +192,7 @@ export function UsersPanel(){
   function handleSearchSubmit(event){
     event.preventDefault();
 
-      let value_searched = window.document.getElementById("users_panel_search_input").value;
+      let value_searched = window.document.getElementById("search_input").value;
 
       setPaginationParams({
         page: 1,
@@ -207,9 +217,38 @@ export function UsersPanel(){
     });
 
   }
+
+  function handleClickOnCheckbox(event, record_clicked){
+  
+    // If already exists a selected record, and its equal to the clicked
+    // The actual selected row is unmarked
+    if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
+      //console.log("uncheck selected row");
+
+      actualSelectedRecord.dom.childNodes[0].checked = false;
+      setActualSelectedRecord({dom: null, data_cells: null});
+    
+    // If already exists a selected record, and its different from the clicked
+    // The actual selected row is unmarked, and the new clicked one becomes the selected row
+    }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
+      //console.log("change selected row")
+
+      actualSelectedRecord.dom.childNodes[0].checked = false;
+      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
+    
+    // If not exists a selected record
+    // The clicked row becomes the selected row
+    }else if(actualSelectedRecord.dom == null){
+      //console.log("check row")
+
+      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
+
+    }
+
+  }
   
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
   return(
 
@@ -221,37 +260,37 @@ export function UsersPanel(){
         </Grid>
 
         <Grid item>
+          <UpdateUserFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+        </Grid>
+
+        <Grid item>
+          <DeleteUserFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
+        </Grid>
+
+        <Grid item>
           <Tooltip title="Reload">
             <IconButton onClick = {reloadTable}>
-
-              {refreshPanel == true ? 
-              <Badge color="primary" variant="dot">
-                <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
-              </Badge>
-              : 
-              <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-              }
-    
+              <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
             </IconButton>
           </Tooltip>  
         </Grid>
-        <Grid item>
-          <Tooltip title="Pesquisar">
-            <IconButton onClick={handleSearchSubmit}>
-              <SearchIcon sx={{ display: 'block' }} />
-            </IconButton>
-          </Tooltip>
-        </Grid>
+
         <Grid item xs>
           <TextField
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
             InputProps={{
+              startAdornment: 
+              <InputAdornment position="start">
+                <IconButton onClick={handleSearchSubmit}>
+                  <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
+                </IconButton>
+              </InputAdornment>,
               disableUnderline: true,
               sx: { fontSize: 'default' },
             }}
-            variant="standard"
-            id = "users_panel_search_input"
+            variant="outlined"
+            id = "search_input"
           />
         </Grid>
         
@@ -265,41 +304,44 @@ export function UsersPanel(){
         }
 
       </Grid>
+
+      <Box sx={{ mt: 1 }} >
+
         <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledHeadTableCell>ID</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Criação da conta</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Editar</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Excluir</StyledHeadTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody className = "tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                    panelData.response.records.map((row) => (
-                      <TableRow key={row.user_id}>
-                        <TableCell component="th" scope="row">{row.user_id}</TableCell>
-                        <TableCell align="center">{row.name}</TableCell>
-                        <TableCell align="center">{row.email}</TableCell> 
-                        <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
-                        <TableCell align="center">{row.profile_name}</TableCell>
-                        <TableCell align="center">{row.created_at}</TableCell>
-                        <TableCell align="center">{row.updated_at}</TableCell>
-                        <TableCell align="center">{row.last_access}</TableCell>
-                        <TableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></TableCell>
-                        <TableCell align="center"><UpdateDeleteUserFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+          <Table sx={{ minWidth: 500 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledHeadTableCell></StyledHeadTableCell>
+                <StyledHeadTableCell>ID</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Criação da conta</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
+                <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody className = "tbody">
+            {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+              panelData.response.records.map((row) => (
+                <TableRow key={row.user_id}>
+                  <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
+                  <TableCell component="th" scope="row">{row.user_id}</TableCell>
+                  <TableCell align="center">{row.name}</TableCell>
+                  <TableCell align="center">{row.email}</TableCell> 
+                  <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
+                  <TableCell align="center">{row.profile_name}</TableCell>
+                  <TableCell align="center">{row.created_at}</TableCell>
+                  <TableCell align="center">{row.updated_at}</TableCell>
+                  <TableCell align="center">{row.last_access}</TableCell>
+                </TableRow>
+                ))}
+            </TableBody>
+          </Table>
         </TableContainer>
+
+      </Box>
     </>
   )
 }

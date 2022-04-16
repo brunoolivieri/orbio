@@ -12,9 +12,12 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../../services/AxiosApi';
@@ -70,17 +73,12 @@ export function CreateUserFormulary({...props}) {
     function handleRegistrationSubmit(event){
       event.preventDefault();
 
-      // Instância da classe JS FormData - para trabalhar os dados do formulário
       const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-          // Botão é desabilitado
           setDisabledButton(true);
 
-          // Inicialização da requisição para o servidor
           requestServerOperation(data);
 
         }
@@ -218,7 +216,7 @@ export function CreateUserFormulary({...props}) {
       {/* Botão para abrir o formulário */}
       <Tooltip title="Novo Usuário">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-          <AddCircleIcon />
+          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm" />
         </IconButton>
       </Tooltip>
       <Dialog open={open} onClose={handleClose}>

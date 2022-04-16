@@ -25,13 +25,14 @@ import Paper from '@mui/material/Paper';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import { Badge } from "@mui/material";
+import Alert from '@mui/material/Alert';
 
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#101F33",
+      backgroundColor: "#004994",
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -121,9 +122,7 @@ export function IncidentsPanel(){
     })
     .catch(function (error) {
 
-      console.log(error.message);
-
-      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+      setPanelData({status: {loading: false, success: false, error: true}, response:  error.response.statusText});
 
     });
 
@@ -162,9 +161,7 @@ export function IncidentsPanel(){
     })
     .catch(function (error) {
 
-      console.log(error.message);
-
-      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+      setPanelData({status: {loading: false, success: false, error: true}, response:  error.response.statusText});
 
     });
   
@@ -301,6 +298,11 @@ export function IncidentsPanel(){
                       ))}    
               </TableBody>
           </Table>
+
+          {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
+            <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
+          }
+
         </TableContainer> 
       </>
     );

@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdateDeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateDeleteProfileFormulary";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
+import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
+import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -16,7 +17,6 @@ import TableHead from '@mui/material/TableHead';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
@@ -24,11 +24,15 @@ import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
-import SearchIcon from '@mui/icons-material/Search';
 import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Badge } from "@mui/material";
+import { InputAdornment } from "@mui/material";
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -57,6 +61,9 @@ export function ProfilesPanel(){
     // Serve modificar o ícone de refresh da tabela
     const [refreshPanel, setRefreshPanel] = useState(false);
 
+    // State da linha selecionada
+    const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     /**
@@ -81,7 +88,7 @@ export function ProfilesPanel(){
     function handleSearchSubmit(event){
       event.preventDefault();
 
-        let value_searched = window.document.getElementById("profiles_panel_search_input").value;
+        let value_searched = window.document.getElementById("search_input").value;
 
         setPaginationParams({
           page: 1,
@@ -198,6 +205,35 @@ export function ProfilesPanel(){
       });
 
     }
+
+    function handleClickOnCheckbox(event, record_clicked){
+  
+      // If already exists a selected record, and its equal to the clicked
+      // The actual selected row is unmarked
+      if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id == record_clicked.profile_id)){
+        //console.log("uncheck selected row");
+  
+        actualSelectedRecord.dom.childNodes[0].checked = false;
+        setActualSelectedRecord({dom: null, data_cells: null});
+      
+      // If already exists a selected record, and its different from the clicked
+      // The actual selected row is unmarked, and the new clicked one becomes the selected row
+      }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id != record_clicked.profile_id)){
+        //console.log("change selected row")
+  
+        actualSelectedRecord.dom.childNodes[0].checked = false;
+        setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
+      
+      // If not exists a selected record
+      // The clicked row becomes the selected row
+      }else if(actualSelectedRecord.dom == null){
+        //console.log("check row")
+  
+        setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
+  
+      }
+  
+    }
   
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -212,39 +248,37 @@ export function ProfilesPanel(){
           </Grid>
 
           <Grid item>
-            <Tooltip title="Reload">
-              <IconButton onClick = {reloadTable}>
-
-                {refreshPanel == true ? 
-                <Badge color="primary" variant="dot">
-                  <RefreshIcon color="inherit" sx={{ display: 'block' }} onClick = {() => { setRefreshPanel(false) }} />
-                </Badge>
-                : 
-                <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                } 
-                
-              </IconButton>
-            </Tooltip>  
+            <UpdateProfileFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
           </Grid>
 
           <Grid item>
-            <Tooltip title="Pesquisar">
-              <IconButton onClick={handleSearchSubmit}>
-                <SearchIcon sx={{ display: 'block' }} />
+            <DeleteProfileFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
+          </Grid>
+
+          <Grid item>
+            <Tooltip title="Reload">
+              <IconButton onClick = {reloadTable}>
+                <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
               </IconButton>
-            </Tooltip>
+            </Tooltip>  
           </Grid>
 
           <Grid item xs>
             <TextField
               fullWidth
-              placeholder={"Pesquisar por id ou nome do perfil"}
+              placeholder={"Pesquisar perfil por ID"}
               InputProps={{
+                startAdornment: 
+                <InputAdornment position="start">
+                  <IconButton onClick={handleSearchSubmit}>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
+                  </IconButton>
+                </InputAdornment>,
                 disableUnderline: true,
                 sx: { fontSize: 'default' },
               }}
-              variant="standard"
-              id = "profiles_panel_search_input"
+              variant="outlined"
+              id = "search_input"
             />
           </Grid>
 
@@ -258,12 +292,13 @@ export function ProfilesPanel(){
 
         </Grid>
 
-        <Box id = "profiles_table_formulary" noValidate sx={{ mt: 1 }} >
+        <Box sx={{ mt: 1 }} >
 
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 500 }} aria-label="customized table">
                     <TableHead>
                       <TableRow>
+                      <StyledHeadTableCell></StyledHeadTableCell>
                         <StyledHeadTableCell align="center">ID</StyledHeadTableCell>
                         <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                         <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
@@ -271,15 +306,16 @@ export function ProfilesPanel(){
                         <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
                         <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
                         <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Editar</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Excluir</StyledHeadTableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody className = "tbody">
+                        {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
+                        {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                         {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                             panelData.response.records.map((row) => ( 
                               <TableRow key={row.profile_id}>
-                                 <TableCell align="center">{row.profile_id}</TableCell>
+                                <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
+                                <TableCell align="center">{row.profile_id}</TableCell>
                                 <TableCell align="center">{row.profile_name}</TableCell>
                                 <TableCell align="center">
                                   <FormGroup>
@@ -311,8 +347,6 @@ export function ProfilesPanel(){
                                     <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
                                   </FormGroup>
                                 </TableCell>
-                                <TableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"update"} refresh_setter = {setRefreshPanel} /></TableCell>
-                                <TableCell align="center"><UpdateDeleteProfileFormulary data = {row} operation = {"delete"} refresh_setter = {setRefreshPanel} /></TableCell>
                               </TableRow>
                             ))}
                     </TableBody>

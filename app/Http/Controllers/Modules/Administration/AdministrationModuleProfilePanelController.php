@@ -181,7 +181,7 @@ class AdministrationModuleProfilePanelController extends Controller
         
         $model = new ProfileModel();
 
-        $model_response = $model->updateProfile((int) $id, $request->name, $request->profile_modules_relationship);
+        $model_response = $model->updateProfile((int) $id, $request->profile_name, $request->profile_modules_relationship);
 
         if($model_response["status"] && !$model_response["error"]){
 

@@ -27,6 +27,7 @@ import Chip from '@mui/material/Chip';
 import { Link } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import Checkbox from '@mui/material/Checkbox';
+import Alert from '@mui/material/Alert';
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -123,9 +124,7 @@ export function PlansPanel(){
     })
     .catch(function (error) {
 
-      console.log(error.message);
-
-      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+      setPanelData({status: {loading: false, success: false, error: true}, response: error.response.statusText});
 
     });
 
@@ -165,9 +164,7 @@ export function PlansPanel(){
     })
     .catch(function (error) {
 
-      console.log(error.message);
-
-      setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+      setPanelData({status: {loading: false, success: false, error: true}, response:  error.response.statusText});
 
     });
 
@@ -381,6 +378,11 @@ export function PlansPanel(){
                     ))}    
                 </TableBody>
             </Table>
+
+            {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
+              <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
+            }
+
         </TableContainer> 
       </>
     );

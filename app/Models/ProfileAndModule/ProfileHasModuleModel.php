@@ -82,17 +82,16 @@ class ProfileHasModuleModel extends Model
 
             DB::beginTransaction();
 
-            for($actual_module = 1; $actual_module <= 5; $actual_module++){
+            foreach($data as $module_id => $module_privileges){
 
                 ProfileHasModuleModel::where('id_perfil', $profile_id)
-                ->where('id_modulo', $actual_module)
+                ->where('id_modulo', $module_id)
                 ->update(
                     [
-                    'ler' => $data[$actual_module]["read"], 
-                    'escrever' => $data[$actual_module]["write"]
+                    'ler' => $module_privileges["read"], 
+                    'escrever' => $module_privileges["write"]
                     ]
                 );
-
             }
 
             DB::commit();
