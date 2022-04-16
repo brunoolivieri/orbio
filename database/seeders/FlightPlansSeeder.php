@@ -17,8 +17,7 @@ class FlightPlansSeeder extends Seeder
     {
         
         $records = [
-            ["id_relatorio" => 1, "id_incidente" => null, "arquivo" => "path/map_routes_log_1.txt", "descricao" => "Plano de Voo 1", "status" => true],
-            ["id_relatorio" => null, "id_incidente" => 2, "arquivo" => "path/map_routes_log_2.txt", "descricao" => "Plano de Voo 2", "status" => false]
+            ["id_relatorio" => 1, "id_incidente" => null, "arquivo" => "16546546.txt", "descricao" => "nenhuma", "status" => true]
         ];
 
         DB::table("flight_plans")->insert($records);

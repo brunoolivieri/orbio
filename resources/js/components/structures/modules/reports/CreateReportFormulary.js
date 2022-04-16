@@ -23,6 +23,10 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
@@ -245,12 +249,14 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
   return (
     <>
+
       {/* Botão para abrir o formulário */}
-      <Tooltip title="Novo Relatório">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-          <AddCircleIcon />
+      <Tooltip title="Novo relatório">
+        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true}>
+          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm" />
         </IconButton>
       </Tooltip>
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>CADASTRO DE RELATÓRIO</DialogTitle>
 
@@ -263,6 +269,14 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               Os dados de um registro de relatório são utilizados para a geração de documentos de relatório.
             </DialogContentText>
 
+            <Box sx={{mb: 2}}>
+              <label htmlFor="contained-button-file">
+                <Input accept="image/*" id="contained-button-file" multiple type="file" name = "flight_log_file" />
+                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"}>
+                  {errorDetected.flight_log ? errorMessage.flight_log : "Upload do Log"}
+                </Button>
+              </label>
+            </Box>
 
             <Box sx={{display: "flex", justifyContent: "space-between"}}>
               <DateTimeInput 
@@ -297,15 +311,6 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               error = {errorDetected.report_note}
             />
               
-            <Box>
-              <label htmlFor="contained-button-file">
-                <Input accept="image/*" id="contained-button-file" multiple type="file" name = "flight_log_file" />
-                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"}>
-                  {errorDetected.flight_log ? errorMessage.flight_log : "Upload"}
-                </Button>
-              </label>
-            </Box>
-              
           </DialogContent>
 
           {displayAlert.display && 
@@ -314,7 +319,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Criar relatório</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Criar relatório</Button>
           </DialogActions>
 
         </Box>

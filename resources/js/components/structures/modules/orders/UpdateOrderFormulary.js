@@ -48,8 +48,8 @@ export function UpdateOrderFormulary({...props}){
     const [disabledButton, setDisabledButton] = useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -80,28 +80,23 @@ export function UpdateOrderFormulary({...props}){
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-            if(verifyDateInterval()){
+          if(verifyDateInterval()){
 
-            // Botão é desabilitado
             setDisabledButton(true);
 
-            // Inicialização da requisição para o servidor
             requestServerOperation(data);
 
-            }else{
-            
+          }else{
+          
             setDisplayAlert({display: false, type: "", message: "Erro! A data inicial não pode anteceder a final."});
 
-            }
+          }
 
-        }
+      }
 
     }
 
@@ -153,7 +148,7 @@ export function UpdateOrderFormulary({...props}){
         return false;
 
       }else{
-
+    
           return true;
 
       }
@@ -301,16 +296,16 @@ export function UpdateOrderFormulary({...props}){
     return (
         <>
     
-            <Tooltip title="Editar">
-                <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
-                </IconButton>
-            </Tooltip>
+        <Tooltip title="Editar">
+            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
+                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+            </IconButton>
+        </Tooltip>
 
         {(props.selected_record.dom != null && open) && 
 
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {data.order_id})</DialogTitle>
+            <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.selected_record.data_cells.order_id})</DialogTitle>
     
             {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -454,7 +449,7 @@ export function UpdateOrderFormulary({...props}){
               
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton}>Confirmar atualização</Button>
+                <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
               </DialogActions>
     
             </Box>

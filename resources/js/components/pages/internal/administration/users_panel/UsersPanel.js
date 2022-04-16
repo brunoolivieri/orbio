@@ -253,7 +253,7 @@ export function UsersPanel(){
   return(
 
     <>
-      <Grid container spacing={1} alignItems="center">
+      <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
           <CreateUserFormulary />
@@ -306,8 +306,6 @@ export function UsersPanel(){
 
       </Grid>
 
-      <Box sx={{ mt: 1 }} >
-
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 500 }} aria-label="customized table">
             <TableHead>
@@ -342,7 +340,6 @@ export function UsersPanel(){
           </Table>
         </TableContainer>
 
-      </Box>
     </>
   )
 }

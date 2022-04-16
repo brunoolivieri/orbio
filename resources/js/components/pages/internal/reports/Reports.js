@@ -38,14 +38,6 @@ export function Reports(){
 
     return(
       <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
-        <AppBar
-          position="static"
-          color="default"
-          elevation={0}
-          sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-        >
-          <Toolbar />
-        </AppBar>
         <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
 
           <ReportsPanel />

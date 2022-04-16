@@ -275,7 +275,7 @@ export function CreateIncidentFormulary(){
     
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton}>Criar incidente</Button>
+                <Button type="submit" disabled={disabledButton} variant="contained">Criar incidente</Button>
               </DialogActions>
     
             </Box>

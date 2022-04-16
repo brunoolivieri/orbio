@@ -250,8 +250,23 @@ export function PlansPanel(){
 
   }
 
-  function handleDownloadFlightPlan(){
+  function handleDownloadFlightPlan(filename){
 
+    AxiosApi.get(`/api/plans-module/download-plan?filename=${filename}&auth=${module_middleware}`)
+    .then(function (response) {
+
+      if(response.status === 200){
+
+        // snackbar
+
+      }
+
+    })
+    .catch(function (error) {
+
+      // snackbar
+
+    });
 
   }
 
@@ -351,7 +366,7 @@ export function PlansPanel(){
                         </TableCell>
                         <TableCell align="center">
                           <Tooltip title="Baixar plano">
-                            <IconButton onClick={handleDownloadFlightPlan}>
+                            <IconButton onClick={() => handleDownloadFlightPlan(row.plan_file)}>
                               <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color = {"#00713A"} />
                             </IconButton>
                           </Tooltip> 

@@ -22,8 +22,6 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
-import moment from 'moment';
-
 export function DeleteOrderFormulary({...props}){
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -67,13 +65,11 @@ export function DeleteOrderFormulary({...props}){
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-      // Instância da classe JS FormData - para trabalhar os dados do formulário
       const data = new FormData(event.currentTarget);
 
         setDisabledButton(true);
 
-        // Inicialização da requisição para o servidor
-        requestServerOperation(data, operation);
+        requestServerOperation(data);
 
     }
 
@@ -148,7 +144,7 @@ export function DeleteOrderFormulary({...props}){
 
         {(props.selected_record.dom != null && open) && 
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {data.order_id})</DialogTitle>
+            <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.selected_record.data_cells.order_id})</DialogTitle>
     
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
@@ -163,8 +159,10 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="order_id"
                   name="order_id"
-                  defaultValue = {data.order_id}
-                  disabled = {operation === "update" ? false : true} 
+                  defaultValue = {props.selected_record.data_cells.order_id}
+                  inputProps={{
+                    readOnly: true
+                  }}
                 />
 
                 <TextField
@@ -176,10 +174,10 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="order_numos"
                   name="order_numos"
-                  helperText = {errorMessage.numOS}
-                  error = {errorDetected.numOS}
-                  defaultValue = {data.numOS}
-                  disabled = {operation === "update" ? false : true} 
+                  defaultValue = {props.selected_record.data_cells.numOS}
+                  inputProps={{
+                    readOnly: true
+                  }}
                 />
 
                 <TextField
@@ -191,10 +189,10 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="creator_name"
                   name="creator_name"
-                  helperText = {errorMessage.creator_name}
-                  error = {errorDetected.creator_name}
-                  defaultValue = {data.creator_name}
-                  disabled = {operation === "update" ? false : true} 
+                  defaultValue = {props.selected_record.data_cells.creator_name}
+                  inputProps={{
+                    readOnly: true
+                  }}
                 />
     
               </DialogContent>
@@ -205,7 +203,7 @@ export function DeleteOrderFormulary({...props}){
               
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton}>Confirmar deleção</Button>
+                <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
               </DialogActions>
     
             </Box>

@@ -219,6 +219,7 @@ export function CreateUserFormulary({...props}) {
           <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm" />
         </IconButton>
       </Tooltip>
+      
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
 
@@ -273,7 +274,7 @@ export function CreateUserFormulary({...props}) {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Confirmar e enviar email</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Criar usuário e enviar email</Button>
           </DialogActions>
 
         </Box>

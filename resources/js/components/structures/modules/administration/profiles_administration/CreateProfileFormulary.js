@@ -232,7 +232,7 @@ export function CreateProfileFormulary() {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Confirmar</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Criar perfil</Button>
           </DialogActions>
 
         </Box>

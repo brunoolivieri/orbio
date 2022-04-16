@@ -181,7 +181,7 @@ return (
                 
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton}>Confirmar deleção</Button>
+                        <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
                     </DialogActions>
 
                 </Box>

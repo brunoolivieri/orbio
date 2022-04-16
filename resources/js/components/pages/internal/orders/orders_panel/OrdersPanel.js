@@ -71,9 +71,6 @@ export function OrdersPanel(){
     // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
     const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // Serve modificar o ícone de refresh da tabela
-    const [refreshPanel, setRefreshPanel] = useState(false);
-
     // State da linha selecionada
     const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
 
@@ -261,7 +258,7 @@ export function OrdersPanel(){
 
     return(
         <>
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={1} alignItems="center" mb={1}>
 
           <Grid item>
             <CreateOrderFormulary />
@@ -276,12 +273,12 @@ export function OrdersPanel(){
           </Grid>
 
           <Grid item>
-          <Tooltip title="Reload">
-            <IconButton onClick = {reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
-            </IconButton>
-          </Tooltip>  
-        </Grid>
+            <Tooltip title="Reload">
+              <IconButton onClick = {reloadTable}>
+                <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
+              </IconButton>
+            </Tooltip>  
+          </Grid>
 
         <Grid item xs>
           <TextField
@@ -303,9 +300,6 @@ export function OrdersPanel(){
           />
         </Grid>
 
-        {/* Mecanismo de paginação - depende dos dados retornados pelo servidor */}
-        {/* Se o total de registros for múltiplo de 10, o total de páginas será esse número dividido por 10. Exemplo: 20 registros = 2 páginas */}
-        {/* Se o total de registros não for múltiplo de 10, o total de páginas será esse número mais 10, dividido por 10 e convertido para o maior inteiro mais próximo. Exemplo: 11 páginas = 2 páginas (ao invés de 1,1) */}
         {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
         <Grid item>
         <Stack spacing={2}>
@@ -315,8 +309,6 @@ export function OrdersPanel(){
         }
 
         </Grid>
-
-        <Box sx={{ mt: 1 }} >
 
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
@@ -367,7 +359,6 @@ export function OrdersPanel(){
 
           </TableContainer> 
 
-        </Box>
         </>
     );
 }

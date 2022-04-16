@@ -416,7 +416,7 @@ export function CreateOrderFormulary({...props}){
     
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton}>Criar relatório</Button>
+                <Button type="submit" disabled={disabledButton} variant="contained">Criar ordem de serviço</Button>
               </DialogActions>
     
             </Box>

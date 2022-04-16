@@ -196,11 +196,11 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
   return (
     <>
 
-        <Tooltip title="Editar">
-            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
-            </IconButton>
-        </Tooltip>
+      <Tooltip title="Editar">
+          <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
+              <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+          </IconButton>
+      </Tooltip>
 
     {(props.selected_record.dom != null && open) && 
 
@@ -283,7 +283,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
           
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Confirmar atualização</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
           </DialogActions>
 
         </Box>

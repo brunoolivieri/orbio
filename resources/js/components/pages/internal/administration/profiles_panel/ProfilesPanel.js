@@ -241,7 +241,7 @@ export function ProfilesPanel(){
     return(
 
       <>
-        <Grid container spacing={1} alignItems="center">
+        <Grid container spacing={1} alignItems="center" mb={1}>
 
           <Grid item>
             <CreateProfileFormulary />
@@ -292,68 +292,65 @@ export function ProfilesPanel(){
 
         </Grid>
 
-        <Box sx={{ mt: 1 }} >
-
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                    <TableHead>
-                      <TableRow>
-                      <StyledHeadTableCell></StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">ID</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
-                        <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody className = "tbody">
-                        {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
-                        {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
-                        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                            panelData.response.records.map((row) => ( 
-                              <TableRow key={row.profile_id}>
-                                <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
-                                <TableCell align="center">{row.profile_id}</TableCell>
-                                <TableCell align="center">{row.profile_name}</TableCell>
-                                <TableCell align="center">
-                                  <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                  </FormGroup>   
-                                </TableCell>
-                                <TableCell align="center">
-                                  <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                  </FormGroup>
-                                </TableCell>
-                                <TableCell align="center">
-                                  <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                  </FormGroup> 
-                                </TableCell>
-                                <TableCell align="center">   
-                                  <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                  </FormGroup>
-                                </TableCell>
-                                <TableCell align="center">   
-                                  <FormGroup>
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
-                                    <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                  </FormGroup>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
-          </Box>
-            
+          <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 500 }} aria-label="customized table">
+                  <TableHead>
+                    <TableRow>
+                    <StyledHeadTableCell></StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">ID</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody className = "tbody">
+                      {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
+                      {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
+                      {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                          panelData.response.records.map((row) => ( 
+                            <TableRow key={row.profile_id}>
+                              <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
+                              <TableCell align="center">{row.profile_id}</TableCell>
+                              <TableCell align="center">{row.profile_name}</TableCell>
+                              <TableCell align="center">
+                                <FormGroup>
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
+                                </FormGroup>   
+                              </TableCell>
+                              <TableCell align="center">
+                                <FormGroup>
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
+                                </FormGroup>
+                              </TableCell>
+                              <TableCell align="center">
+                                <FormGroup>
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
+                                </FormGroup> 
+                              </TableCell>
+                              <TableCell align="center">   
+                                <FormGroup>
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
+                                </FormGroup>
+                              </TableCell>
+                              <TableCell align="center">   
+                                <FormGroup>
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler === 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever === 1 ? true : false} disabled size="small" />} label="Escrever" />
+                                </FormGroup>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                  </TableBody>
+              </Table>
+          </TableContainer>
+             
       </>
     )
 }
