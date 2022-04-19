@@ -133,11 +133,11 @@ export function IncidentsPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de incidente encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de incidentes!", "error");
 
         console.log(error.message);
 
@@ -178,9 +178,9 @@ export function IncidentsPanel(){
         });
 
         if(response.data.total_records_founded > 1){
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} incidentes`, "success");
         }else{
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} incidente`, "success");
         } 
 
       }
@@ -190,11 +190,11 @@ export function IncidentsPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de incidente encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de incidentes!", "error");
 
         console.log(error.message);
 

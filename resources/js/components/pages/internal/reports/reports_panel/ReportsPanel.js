@@ -134,11 +134,11 @@ export function ReportsPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de relatório encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de relatórios!", "error");
 
         console.log(error.message);
 
@@ -179,9 +179,9 @@ export function ReportsPanel(){
         });
 
         if(response.data.total_records_founded > 1){
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} relatórios`, "success");
         }else{
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} relatório`, "success");
         } 
 
       }
@@ -191,11 +191,11 @@ export function ReportsPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de relatório encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de relatórios!", "error");
 
         console.log(error.message);
 

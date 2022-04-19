@@ -128,11 +128,11 @@ export function PlansPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
 
         console.log(error.message);
 
@@ -174,9 +174,9 @@ export function PlansPanel(){
         });
 
         if(response.data.total_records_founded > 1){
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de vôo`, "success");
         }else{
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de vôo`, "success");
         } 
 
       }
@@ -186,11 +186,11 @@ export function PlansPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
 
         console.log(error.message);
 

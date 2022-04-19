@@ -168,11 +168,11 @@ export function ProfilesPanel(){
 
         if(error.response.status == 404){
 
-          handleOpenSnackbar("Nenhum registro encontrado!", "error");
+          handleOpenSnackbar("Nenhum registro de perfil encontrado!", "error");
   
         }else{
   
-          handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
   
           console.log(error.message);
   
@@ -214,9 +214,9 @@ export function ProfilesPanel(){
           });
 
           if(response.data.total_records_founded > 1){
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} perfis`, "success");
           }else{
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} perfil`, "success");
           } 
 
         }
@@ -225,11 +225,11 @@ export function ProfilesPanel(){
 
         if(error.response.status == 404){
 
-          handleOpenSnackbar("Nenhum registro encontrado!", "error");
+          handleOpenSnackbar("Nenhum registro de perfil encontrado!", "error");
   
         }else{
   
-          handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
   
           console.log(error.message);
   

@@ -26,7 +26,6 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
-import { Checkbox } from "@mui/material";
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -125,11 +124,11 @@ export function UsersPanel(){
 
       if(error.response.status == 404){
 
-        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+        handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
 
       }else{
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+        handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
 
         console.log(error.message);
 
@@ -170,9 +169,9 @@ export function UsersPanel(){
           });
 
           if(response.data.total_records_founded > 1){
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
           }else{
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
           }   
 
         }
@@ -181,11 +180,11 @@ export function UsersPanel(){
 
         if(error.response.status == 404){
 
-          handleOpenSnackbar("Nenhum registro encontrado!", "error");
+          handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
   
         }else{
   
-          handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
   
           console.log(error.message);
   
