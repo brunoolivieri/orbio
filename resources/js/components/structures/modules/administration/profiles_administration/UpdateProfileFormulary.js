@@ -358,6 +358,9 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
                             fullWidth
                             variant="outlined"
                             sx={{mb: 2}}
+                            InputProps={{
+                                readOnly: true 
+                              }}
                             />
 
                             <TextField

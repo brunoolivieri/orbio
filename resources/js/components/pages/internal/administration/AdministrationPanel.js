@@ -38,21 +38,12 @@ export function AdministrationPanel(){
     
     return(
       <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
-      <AppBar
-        position="static"
-        color="default"
-        elevation={0}
-        sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
-      >  
-      <Toolbar>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-            <Switcher panelStateSetter = {setActualPanel} options = {[{page: "users", title: "Gerenciamento dos usuários"}, {page: "profiles", title: "Gerenciamento dos perfis"}]} /> 
+            <Switcher panelStateSetter = {setActualPanel} options = {[{page: "users", title: "Gerenciamento dos usuários", icon: <FontAwesomeIcon icon = {faUsers} />}, {page: "profiles", title: "Gerenciamento dos perfis", icon: <FontAwesomeIcon icon = {faIdCardClip} />}]} /> 
           </Grid>
         </Grid>
-      </Toolbar>
-      </AppBar>
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
         {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}

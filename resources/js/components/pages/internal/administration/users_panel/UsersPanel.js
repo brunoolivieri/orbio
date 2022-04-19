@@ -7,6 +7,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
+import { CheckboxStyled } from "../../../../structures/checkbox_styled/CheckboxStyled";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -258,23 +259,17 @@ export function UsersPanel(){
   function handleClickOnCheckbox(event, record_clicked){
   
     // If already exists a selected record, and its equal to the clicked
-    // The actual selected row is unmarked
     if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
-      //console.log("uncheck selected row");
 
-      actualSelectedRecord.dom.childNodes[0].checked = false;
       setActualSelectedRecord({dom: null, data_cells: null});
     
     // If already exists a selected record, and its different from the clicked
-    // The actual selected row is unmarked, and the new clicked one becomes the selected row
     }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
       //console.log("change selected row")
 
-      actualSelectedRecord.dom.childNodes[0].checked = false;
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
     
     // If not exists a selected record
-    // The clicked row becomes the selected row
     }else if(actualSelectedRecord.dom == null){
       //console.log("check row")
 
@@ -353,7 +348,6 @@ export function UsersPanel(){
           <Table sx={{ minWidth: 500 }} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledHeadTableCell></StyledHeadTableCell>
                 <StyledHeadTableCell>ID</StyledHeadTableCell>
                 <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                 <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
@@ -368,8 +362,7 @@ export function UsersPanel(){
             {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
               panelData.response.records.map((row) => (
                 <TableRow key={row.user_id}>
-                  <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
-                  <TableCell component="th" scope="row">{row.user_id}</TableCell>
+                  <TableCell component="th" scope="row"><CheckboxStyled row = {row} text_key ={"user_id"} eventOnClick = {handleClickOnCheckbox} /></TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">{row.email}</TableCell> 
                   <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} />}</TableCell>

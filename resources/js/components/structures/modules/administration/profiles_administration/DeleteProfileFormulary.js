@@ -162,6 +162,9 @@ return (
                         fullWidth
                         variant="outlined"
                         sx={{mb: 2}}
+                        InputProps={{
+                          readOnly: true 
+                        }}
                         />
 
                         <TextField
@@ -172,6 +175,9 @@ return (
                         label="Nome do perfil"
                         fullWidth
                         variant="outlined"
+                        InputProps={{
+                          readOnly: true 
+                        }}
                         />
 
                     </DialogContent>

@@ -104,27 +104,21 @@ export function Account(){
 
     return(
       <>
-        <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
-          <AppBar
-            position="static"
-            color="default"
-            elevation={0}
-          >
-            <Toolbar>
-              <Grid container spacing={1} alignItems="center">
-                <Grid item xs>
-                  {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-                  <Switcher panelStateSetter = {setActualPanel} options = {[{page: "basic", title: "cadastro básico"}, {page: "complementary", title: "cadastro complementar"}]} /> 
-                </Grid>
-              </Grid>
-            </Toolbar>
-          </AppBar>
+        <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden', borderRadius: "10px"}}>
+          <Grid container spacing={1} alignItems="center">
+            <Grid item xs>
+              {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
+              <Switcher panelStateSetter = {setActualPanel} options = {[{page: "basic", title: "cadastro básico", icon: ""}, {page: "complementary", title: "cadastro complementar", icon: ""}]} /> 
+            </Grid>
+          </Grid>
+
           <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
             {formularyData.status ? (actualPanel === "basic" ? <BasicDataPanel {...formularyData} reload_state = {reloadForm} reload_setter = {setReloadForm} /> 
             : <ComplementaryDataPanel {...formularyData} reload_state = {reloadForm} reload_setter = {setReloadForm} /> ) : "CARREGANDO" }
             
           </Box>
+          
         </Paper>
     </>
 

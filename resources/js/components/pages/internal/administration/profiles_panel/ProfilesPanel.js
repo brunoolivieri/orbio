@@ -7,6 +7,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
+import { CheckboxStyled } from "../../../../structures/checkbox_styled/CheckboxStyled";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -336,7 +337,6 @@ export function ProfilesPanel(){
               <Table sx={{ minWidth: 500 }} aria-label="customized table">
                   <TableHead>
                     <TableRow>
-                    <StyledHeadTableCell></StyledHeadTableCell>
                       <StyledHeadTableCell align="center">ID</StyledHeadTableCell>
                       <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                       <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
@@ -352,8 +352,7 @@ export function ProfilesPanel(){
                       {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                           panelData.response.records.map((row) => ( 
                             <TableRow key={row.profile_id}>
-                              <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
-                              <TableCell align="center">{row.profile_id}</TableCell>
+                              <TableCell component="th" scope="row"><CheckboxStyled row = {row} text_key ={"profile_id"} eventOnClick = {handleClickOnCheckbox} /></TableCell>
                               <TableCell align="center">{row.profile_name}</TableCell>
                               <TableCell align="center">
                                 <FormGroup>
