@@ -269,7 +269,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               Os dados de um registro de relatório são utilizados para a geração de documentos de relatório.
             </DialogContentText>
 
-            <Box sx={{mb: 2}}>
+            <Box sx={{mb: 3}}>
               <label htmlFor="contained-button-file">
                 <Input accept="image/*" id="contained-button-file" multiple type="file" name = "flight_log_file" />
                 <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"}>
@@ -278,7 +278,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               </label>
             </Box>
 
-            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+            <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
               <DateTimeInput 
                 event = {setStartDate}
                 label = {"Inicio do vôo"} 
@@ -286,6 +286,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
                 error = {errorDetected.flight_start_date} 
                 defaultValue = {moment()}
                 operation = {"create"}
+                read_only = {true}
                 />
                 <DateTimeInput
                 event = {setEndDate}
@@ -295,6 +296,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
                 error = {errorDetected.flight_end_date} 
                 defaultValue = {moment()}
                 operation = {"create"}
+                read_only = {true}
               />
             </Box>
 
@@ -309,6 +311,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               name="report_note"
               helperText = {errorMessage.report_note}
               error = {errorDetected.report_note}
+              sx={{mb: 3}}
             />
               
           </DialogContent>

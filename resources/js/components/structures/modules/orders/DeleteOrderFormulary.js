@@ -163,6 +163,7 @@ export function DeleteOrderFormulary({...props}){
                   inputProps={{
                     readOnly: true
                   }}
+                  sx={{mb: 2}}
                 />
 
                 <TextField
@@ -178,6 +179,7 @@ export function DeleteOrderFormulary({...props}){
                   inputProps={{
                     readOnly: true
                   }}
+                  sx={{mb: 2}}
                 />
 
                 <TextField

@@ -35,7 +35,7 @@ export function DateTimeInput({...props}) {
         value={value}
         onChange={(newValue) => {updateDateValue(newValue)}}
         inputFormat="dd/MM/yyyy hh:mm"
-        readOnly = {props.operation == "delete" ? true : false}
+        readOnly = {props.read_only}
       />
       </LocalizationProvider>
     </>

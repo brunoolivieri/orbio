@@ -46,6 +46,8 @@ export const GenericSelect = memo(({...props}) => {
                 .then(function (response) {
     
                 if(response.status === 200){
+
+                    console.log(response.data)
     
                     setSelectOptions({status: true, data: {error: {load: false, submit: false}, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text}});
 

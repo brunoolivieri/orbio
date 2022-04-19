@@ -14,6 +14,7 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -229,42 +230,45 @@ export function CreateUserFormulary({...props}) {
           <DialogContent>
         
             <DialogContentText>
-              Quando confirmada e executada a criação do usuário no sistema, o email cadastrado receberá uma orientação para realizar a ativação da conta.
+              O usuário criado receberá um e-mail com dados de acesso padrão.
             </DialogContentText>
             
               <TextField
-                margin="dense"
-                label="Nome completo"
-                fullWidth
-                variant="outlined"
-                required
-                id="registration_name_input"
-                name="registration_name_input"
-                helperText = {errorMessage.name}
-                error = {errorDetected.name}
+              margin="dense"
+              label="Nome completo"
+              fullWidth
+              variant="outlined"
+              required
+              id="registration_name_input"
+              name="registration_name_input"
+              helperText = {errorMessage.name}
+              error = {errorDetected.name}
+              sx={{mb: 2}}
               />
+
               <TextField
-                type = "email"
-                margin="dense"
-                label="Endereço de email"
-                fullWidth
-                variant="outlined"
-                required
-                id="registration_email_input"
-                name="registration_email_input"
-                helperText = {errorMessage.email}
-                error = {errorDetected.email}
+              type = "email"
+              margin="dense"
+              label="Endereço de email"
+              fullWidth
+              variant="outlined"
+              required
+              id="registration_email_input"
+              name="registration_email_input"
+              helperText = {errorMessage.email}
+              error = {errorDetected.email}
+              sx={{mb: 2}}
               />
-              
-               <GenericSelect 
-               label_text = {"Perfil"} 
-               data_source = {"/api/admin-module-user/create?auth=none"} 
-               primary_key={"id"} 
-               key_content={"nome"} 
-               error = {errorDetected.profile} 
-               default = {0}  
-               name = {"select_profile"} 
-               />
+          
+              <GenericSelect 
+              label_text = {"Perfil"} 
+              data_source = {"/api/admin-module-user/create?auth=none"} 
+              primary_key={"id"} 
+              key_content={"nome"} 
+              error = {errorDetected.profile} 
+              default = {0}  
+              name = {"select_profile"} 
+              />
               
           </DialogContent>
 

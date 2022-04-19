@@ -107,11 +107,26 @@ class ServiceOrderModuleController extends Controller
      */
     public function create() : \Illuminate\Http\Response
     {
+
         try{
 
-            $table = request()->data_source;
+            if(request()->table == "flight_plans"){
 
-            $data = DB::table($table)->get();
+                $data = DB::table("flight_plans")->get();
+
+            }else if(request()->table == "users"){
+
+                if(request()->content == "pilots_name"){
+
+                    $data = DB::table("users")->where("id_perfil", 3)->select("id", "nome")->get();
+
+                }else if(request()->content == "clients_name"){
+
+                    $data = DB::table("users")->where("id_perfil", 4)->select("id", "nome")->get();
+
+                }
+
+            }
 
             return response($data, 200);
 

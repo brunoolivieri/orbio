@@ -167,6 +167,7 @@ export const DeleteReportFormulary = React.memo(({...props}) => {
               InputProps={{
                   readOnly: true,
               }}
+              sx={{mb: 2}}
             />
 
             <TextField

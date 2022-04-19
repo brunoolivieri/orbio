@@ -27,6 +27,7 @@ import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
 import { Checkbox } from "@mui/material";
+import TablePagination from '@mui/material/TablePagination';
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -178,6 +179,16 @@ export function UsersPanel(){
       where: paginationParams.where
     });
 
+  };
+
+  const handleChangeRowsPerPage = (event, new_value) => {
+
+    setPaginationParams({
+      page: 1,
+      limit: new_value, 
+      where: value_searched
+    });
+    
   };
 
   /**

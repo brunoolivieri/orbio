@@ -244,27 +244,28 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     inputProps={{
                         readOnly: true
                     }}
+                    sx={{mb: 2}}
                     />
 
-                    <Box>
-                    <GenericSelect 
-                    label_text = {"Relatório"} 
-                    data_source = {"/api/plans-module/create?data_source=reports&auth=none"} 
-                    primary_key={"id"} 
-                    key_content={"id"} 
-                    error = {null} 
-                    default = {props.selected_record.data_cells.report_id != null ? props.selected_record.data_cells.report_id : 0} 
-                    name = {"select_report"}  
-                    />
-                    <GenericSelect 
-                    label_text = {"Incidente"} 
-                    data_source = {"/api/plans-module/create?data_source=incidents&auth=none"} 
-                    primary_key={"id"} 
-                    key_content={"id"} 
-                    error = {null} 
-                    default = {props.selected_record.data_cells.incident_id != null ? props.selected_record.data_cells.incident_id : 0} 
-                    name = {"select_incident"} 
-                    />
+                    <Box sx={{mb: 2}}>
+                      <GenericSelect 
+                      label_text = {"Relatório"} 
+                      data_source = {"/api/plans-module/create?data_source=reports&auth=none"} 
+                      primary_key={"id"} 
+                      key_content={"id"} 
+                      error = {null} 
+                      default = {props.selected_record.data_cells.report_id != null ? props.selected_record.data_cells.report_id : 0} 
+                      name = {"select_report"}  
+                      />
+                      <GenericSelect 
+                      label_text = {"Incidente"} 
+                      data_source = {"/api/plans-module/create?data_source=incidents&auth=none"} 
+                      primary_key={"id"} 
+                      key_content={"id"} 
+                      error = {null} 
+                      default = {props.selected_record.data_cells.incident_id != null ? props.selected_record.data_cells.incident_id : 0} 
+                      name = {"select_incident"} 
+                      />
                     </Box>
 
                     <TextField
@@ -281,6 +282,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     InputProps={{
                         inputProps: { min: 0, max: 1 }
                     }}
+                    sx={{mb: 2}}
                     />
 
                     <TextField

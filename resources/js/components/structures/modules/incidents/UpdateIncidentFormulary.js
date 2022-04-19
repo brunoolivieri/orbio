@@ -246,9 +246,10 @@ export function UpdateIncidentFormulary({...props}){
                     readOnly: true 
                   }}
                   defaultValue = {props.selected_record.data_cells.incident_id}
+                  sx={{mb: 2}}
                 />
 
-              <Box sx={{display: "flex", justifyContent: "space-between"}}>
+              <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
                   <DateTimeInput 
                     event = {setIncidentDate}
                     label = {"Data do incidente"} 
@@ -256,6 +257,7 @@ export function UpdateIncidentFormulary({...props}){
                     error = {errorDetected.incident_date} 
                     defaultValue = {props.selected_record.data_cells.incident_date}
                     operation = {"create"}
+                    read_only = {false}
                     />
                 </Box>
 
@@ -271,6 +273,7 @@ export function UpdateIncidentFormulary({...props}){
                   helperText = {errorMessage.incident_type}
                   error = {errorDetected.incident_type}
                   defaultValue = {props.selected_record.data_cells.incident_type}
+                  sx={{mb: 2}}
                 />
 
                 <TextField

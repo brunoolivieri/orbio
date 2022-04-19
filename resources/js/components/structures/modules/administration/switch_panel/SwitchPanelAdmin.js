@@ -68,7 +68,7 @@ export const SwitchPanelAdmin = React.memo((props) => {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'transparent' }}>
-        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="fullWidth" indicatorColor="primary">
+        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="fullWidth">
           <Tab icon={<FontAwesomeIcon icon={faUsers} />} label="Gerenciamento dos usuários" {...a11yProps(0)}/>
           <Tab icon={<FontAwesomeIcon icon={faIdCardClip} />} label="Gerenciamento dos perfis" {...a11yProps(1)} />
         </Tabs>

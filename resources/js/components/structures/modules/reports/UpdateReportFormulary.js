@@ -284,9 +284,10 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
               InputProps={{
                   readOnly: true,
               }}
+              sx={{mb: 3}}
             />
             
-            <Box sx={{display: "flex", justifyContent: "space-between"}}>
+            <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
               <DateTimeInput 
                 event = {setStartDate}
                 label = {"Inicio do vôo"} 
@@ -294,6 +295,7 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
                 error = {errorDetected.flight_start_date} 
                 defaultValue = {props.selected_record.data_cells.flight_start_date}
                 operation = {"update"}
+                read_only = {false}
                 />
                 <DateTimeInput
                 event = {setEndDate}
@@ -302,6 +304,7 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
                 error = {errorDetected.flight_end_date} 
                 defaultValue = {props.selected_record.data_cells.flight_end_date}
                 operation = {"update"}
+                read_only = {false}
               />
             </Box>
 
@@ -319,6 +322,7 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
               }}
               helperText = {errorMessage.flight_log}
               error = {errorDetected.flight_log}
+              sx={{mb: 2}}
             />
 
             <TextField

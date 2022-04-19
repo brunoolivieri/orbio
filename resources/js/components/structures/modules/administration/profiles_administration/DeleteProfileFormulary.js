@@ -161,6 +161,7 @@ return (
                         label="ID do perfil"
                         fullWidth
                         variant="outlined"
+                        sx={{mb: 2}}
                         />
 
                         <TextField

@@ -27,7 +27,6 @@ import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
 import { Checkbox } from "@mui/material";
 import { InputAdornment } from "@mui/material";
-import { Box } from "@mui/system";
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

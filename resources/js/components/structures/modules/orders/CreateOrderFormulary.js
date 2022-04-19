@@ -30,7 +30,7 @@ import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
-export function CreateOrderFormulary({...props}){
+export const CreateOrderFormulary = React.memo(({...props}) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -113,8 +113,8 @@ export function CreateOrderFormulary({...props}){
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
       const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
       const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
-      const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
-      const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
+      const pilotNameValidate = FormValidation(formData.get("select_pilot_name"), 3, null, null, null);
+      const clientNameValidate = FormValidation(formData.get("select_client_name"), 3, null, null, null);
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
       const fligthPlanValidate = formData.get("select_flight_plan") != "0" ? {error: false, message: ""} : {error: true, message: ""};
       const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
@@ -193,8 +193,8 @@ export function CreateOrderFormulary({...props}){
         final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
         numOS: data.get("order_numos"),
         creator_name: AuthData.data.name,
-        pilot_name: data.get("pilot_name"),
-        client_name: data.get("client_name"),
+        pilot_name: data.get("select_pilot_name"),
+        client_name: data.get("select_client_name"),
         observation: data.get("order_note"),
         status: data.get("status"),
         fligth_plan_id: data.get("select_flight_plan")
@@ -309,7 +309,7 @@ export function CreateOrderFormulary({...props}){
                   Formulário para criação de uma ordem de serviço.
                 </DialogContentText>
 
-                <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
                   <DateTimeInput 
                     event = {setStartDate}
                     label = {"Inicio da ordem de serviço"} 
@@ -317,6 +317,7 @@ export function CreateOrderFormulary({...props}){
                     error = {errorDetected.flight_start_date} 
                     defaultValue = {moment()}
                     operation = {"create"}
+                    read_only = {false}
                     />
                     <DateTimeInput
                     event = {setEndDate}
@@ -325,6 +326,7 @@ export function CreateOrderFormulary({...props}){
                     error = {errorDetected.flight_end_date} 
                     defaultValue = {moment()}
                     operation = {"create"}
+                    read_only = {false}
                   />
                 </Box>
 
@@ -339,40 +341,41 @@ export function CreateOrderFormulary({...props}){
                   name="order_numos"
                   helperText = {errorMessage.numOS}
                   error = {errorDetected.numOS}
+                  sx={{mb: 2}}
                 />
 
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Nome do piloto"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="pilot_name"
-                  name="pilot_name"
-                  helperText = {errorMessage.pilot_name}
-                  error = {errorDetected.pilot_name}
-                />
+                <Box sx={{mb: 2}}>
+                  <GenericSelect 
+                    label_text = "Nome do piloto"
+                    data_source = {"/api/orders-module/create?table=users&content=pilots_name&auth=none"} 
+                    primary_key={"nome"} 
+                    key_content={"nome"} 
+                    helperText = {errorMessage.pilot_name}
+                    error = {errorDetected.pilot_name} 
+                    default = {0} 
+                    name = {"select_pilot_name"}  
+                  />
+                </Box>
 
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Nome do cliente"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="client_name"
-                  name="client_name"
-                  helperText = {errorMessage.client_name}
-                  error = {errorDetected.client_name}
-                />
+                <Box sx={{mb: 2}}>
+                  <GenericSelect 
+                    label_text = "Nome do cliente"
+                    data_source = {"/api/orders-module/create?table=users&content=clients_name&auth=none"} 
+                    primary_key={"nome"} 
+                    key_content={"nome"} 
+                    helperText = {errorMessage.client_name}
+                    error = {errorDetected.client_name} 
+                    default = {0} 
+                    name = {"select_client_name"}  
+                  />
+                </Box>
 
-                <Box>
+                <Box sx={{mb: 2}}>
                   <GenericSelect 
                     label_text = {"Plano de vôo vinculado"} 
-                    data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
+                    data_source = {"/api/orders-module/create?table=flight_plans&auth=none"} 
                     primary_key={"id"} 
-                    key_content={"id"} 
+                    key_content={"arquivo"} 
                     error = {errorDetected.flight_plan} 
                     default = {0} 
                     name = {"select_flight_plan"}  
@@ -390,6 +393,7 @@ export function CreateOrderFormulary({...props}){
                   name="order_note"
                   helperText = {errorMessage.order_note}
                   error = {errorDetected.order_note}
+                  sx={{mb: 2}}
                 />
 
                 <TextField
@@ -425,4 +429,4 @@ export function CreateOrderFormulary({...props}){
         </>
     );
 
-}
+});

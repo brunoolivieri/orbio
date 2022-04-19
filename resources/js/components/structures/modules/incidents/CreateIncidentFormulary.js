@@ -235,7 +235,7 @@ export function CreateIncidentFormulary(){
                   Formulário para criação de um registro de incidente.
                 </DialogContentText>
 
-                <Box sx={{display: "flex", justifyContent: "space-between"}}>
+                <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
                   <DateTimeInput 
                     event = {setIncidentDate}
                     label = {"Data do incidente"} 
@@ -243,6 +243,7 @@ export function CreateIncidentFormulary(){
                     error = {errorDetected.incident_date} 
                     defaultValue = {moment()}
                     operation = {"create"}
+                    read_only = {false}
                     />
                 </Box>
 
@@ -257,6 +258,7 @@ export function CreateIncidentFormulary(){
                   name="incident_type"
                   helperText = {errorMessage.incident_type}
                   error = {errorDetected.incident_type}
+                  sx={{mb: 2}}
                 />
 
                 <TextField

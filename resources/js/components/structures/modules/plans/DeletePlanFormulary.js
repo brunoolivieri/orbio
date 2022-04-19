@@ -167,6 +167,7 @@ export const DeletePlanFormulary = React.memo(({...props}) => {
                             readOnly: true
                         }}
                         value={props.selected_record.data_cells.plan_id}
+                        sx={{mb: 2}}
                         />
 
                         <TextField

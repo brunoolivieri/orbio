@@ -357,6 +357,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
                             label="ID do perfil"
                             fullWidth
                             variant="outlined"
+                            sx={{mb: 2}}
                             />
 
                             <TextField

@@ -155,7 +155,7 @@ export function DeleteIncidentFormulary({...props}){
     
               <DialogContent>
 
-              <TextField
+                <TextField
                   type = "text"
                   margin="dense"
                   label="ID do incidente"
@@ -168,6 +168,7 @@ export function DeleteIncidentFormulary({...props}){
                     readOnly: true 
                   }}
                   defaultValue={props.selected_record.data_cells.incident_id}
+                  sx={{mb: 2}}
                 />
 
                 <TextField

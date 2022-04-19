@@ -165,6 +165,7 @@ return (
                             readOnly: true
                         }}
                         value={props.selected_record.data_cells.user_id}
+                        sx={{mb: 2}}
                         />
 
                         <TextField

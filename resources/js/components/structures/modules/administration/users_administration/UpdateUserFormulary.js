@@ -224,6 +224,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
               inputProps={{
                 readOnly: true
             }}
+            sx={{mb: 2}}
             />
             <TextField
               margin="dense"
@@ -235,6 +236,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
               defaultValue={props.selected_record.data_cells.name}
               helperText = {errorMessage.name}
               error = {errorDetected.name}
+              sx={{mb: 2}}
             />
             <TextField
               margin="dense"
@@ -247,6 +249,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
               defaultValue={props.selected_record.data_cells.email} 
               helperText = {errorMessage.email}
               error = {errorDetected.email}
+              sx={{mb: 2}}
             />
 
             <TextField
@@ -262,7 +265,8 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
               error = {errorDetected.status}
               InputProps={{
                 inputProps: { min: 0, max: 1 }
-                }}
+              }}
+              sx={{mb: 2}}
             />
 
             <GenericSelect 

@@ -312,25 +312,6 @@ export function UpdateOrderFormulary({...props}){
     
               <DialogContent>
 
-                <Box sx={{display: "flex", justifyContent: "space-between"}}>
-                  <DateTimeInput 
-                    event = {setStartDate}
-                    label = {"Inicio da ordem de serviço"} 
-                    helperText = {errorMessage.order_start_date} 
-                    error = {errorDetected.order_start_date} 
-                    defaultValue = {props.selected_record.data_cells.order_start_date}
-                    operation = {"update"}
-                    />
-                    <DateTimeInput
-                    event = {setEndDate}
-                    label = {"Fim da ordem de serviço"} 
-                    helperText = {errorMessage.order_start_date} 
-                    error = {errorDetected.order_start_date} 
-                    defaultValue = {props.selected_record.data_cells.order_end_date}
-                    operation = {"update"}
-                  />
-                </Box>
-
                 <TextField
                   type = "text"
                   margin="dense"
@@ -341,7 +322,29 @@ export function UpdateOrderFormulary({...props}){
                   id="order_id"
                   name="order_id"
                   defaultValue = {props.selected_record.data_cells.order_id}
+                  sx={{mb: 2}}
                 />
+
+                <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
+                  <DateTimeInput 
+                    event = {setStartDate}
+                    label = {"Inicio da ordem de serviço"} 
+                    helperText = {errorMessage.order_start_date} 
+                    error = {errorDetected.order_start_date} 
+                    defaultValue = {props.selected_record.data_cells.order_start_date}
+                    operation = {"update"}
+                    read_only = {false}
+                    />
+                    <DateTimeInput
+                    event = {setEndDate}
+                    label = {"Fim da ordem de serviço"} 
+                    helperText = {errorMessage.order_start_date} 
+                    error = {errorDetected.order_start_date} 
+                    defaultValue = {props.selected_record.data_cells.order_end_date}
+                    operation = {"update"}
+                    read_only = {false}
+                  />
+                </Box>
 
                 <TextField
                   type = "text"
@@ -355,6 +358,7 @@ export function UpdateOrderFormulary({...props}){
                   helperText = {errorMessage.numOS}
                   error = {errorDetected.numOS}
                   defaultValue = {props.selected_record.data_cells.numOS}
+                  sx={{mb: 2}}
                 />
 
                 <TextField
@@ -369,6 +373,7 @@ export function UpdateOrderFormulary({...props}){
                   helperText = {errorMessage.creator_name}
                   error = {errorDetected.creator_name}
                   defaultValue = {props.selected_record.data_cells.creator_name}
+                  sx={{mb: 2}}
                 />
 
                 <TextField
@@ -383,6 +388,7 @@ export function UpdateOrderFormulary({...props}){
                   helperText = {errorMessage.pilot_name}
                   error = {errorDetected.pilot_name}
                   defaultValue = {props.selected_record.data_cells.pilot_name}
+                  sx={{mb: 2}}
                 />
 
                 <TextField
@@ -397,9 +403,10 @@ export function UpdateOrderFormulary({...props}){
                   helperText = {errorMessage.client_name}
                   error = {errorDetected.client_name}
                   defaultValue = {props.selected_record.data_cells.client_name}
+                  sx={{mb: 2}}
                 />
 
-                <Box>
+                <Box sx={{mb: 2}}>
                   <GenericSelect 
                     label_text = {"Plano de vôo vinculado"} 
                     data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
@@ -423,6 +430,7 @@ export function UpdateOrderFormulary({...props}){
                   helperText = {errorMessage.order_note}
                   error = {errorDetected.order_note}
                   defaultValue = {props.selected_record.data_cells.order_note}
+                  sx={{mb: 2}}
                 />
 
                 <TextField
