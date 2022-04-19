@@ -316,7 +316,7 @@ export function OrdersPanel(){
                   <StyledTableCell></StyledTableCell>
                     <StyledTableCell>ID</StyledTableCell>
                     <StyledTableCell align="center">Status</StyledTableCell>
-                    <StyledTableCell align="center">Plano de vôo</StyledTableCell>
+                    <StyledTableCell align="center">Planos de Vôo</StyledTableCell>
                     <StyledTableCell align="center">numOS</StyledTableCell>
                     <StyledTableCell align="center">Criador</StyledTableCell>
                     <StyledTableCell align="center">Piloto</StyledTableCell>
@@ -324,7 +324,7 @@ export function OrdersPanel(){
                     <StyledTableCell align="center">Observação</StyledTableCell>
                     <StyledTableCell align="center">Data da criação</StyledTableCell>
                     <StyledTableCell align="center">Última atualização</StyledTableCell>
-                    <StyledTableCell align="center">Data do inicio</StyledTableCell>
+                    <StyledTableCell align="center">Data do início</StyledTableCell>
                     <StyledTableCell align="center">Data do fim</StyledTableCell>
                 </TableRow>
                 </TableHead>

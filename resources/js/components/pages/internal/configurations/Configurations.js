@@ -35,34 +35,6 @@ export function Configurations(){
         elevation={0}
         sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
       >
-        <Toolbar>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item>
-              <SearchIcon color="inherit" sx={{ display: 'block' }} />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                fullWidth
-                placeholder="Pesquisar"
-                InputProps={{
-                  disableUnderline: true,
-                  sx: { fontSize: 'default' },
-                }}
-                variant="standard"
-              />
-            </Grid>
-            <Grid item>
-              <Button variant="contained" sx={{ mr: 1 }}>
-                Salvar configurações
-              </Button>
-              { /* <Tooltip title="Reload">
-                <IconButton>
-                  <RefreshIcon color="inherit" sx={{ display: 'block' }} />
-                </IconButton>
-              </Tooltip> */}
-            </Grid>
-          </Grid>
-        </Toolbar>
       </AppBar>
       <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
 
