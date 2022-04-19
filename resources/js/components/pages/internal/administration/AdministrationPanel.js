@@ -12,7 +12,12 @@ import { AppBar } from "@mui/material";
 import { Toolbar } from "@mui/material";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
-import { SwitchPanelAdmin } from "../../../structures/modules/administration/switch_panel/SwitchPanelAdmin";
+import { Switcher } from "../../../structures/switcher/Switcher";
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 
 export function AdministrationPanel(){
 
@@ -39,12 +44,14 @@ export function AdministrationPanel(){
         elevation={0}
         sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
       >  
+      <Toolbar>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-            <SwitchPanelAdmin panelStateSetter = {setActualPanel} />
+            <Switcher panelStateSetter = {setActualPanel} options = {[{page: "users", title: "Gerenciamento dos usuários"}, {page: "profiles", title: "Gerenciamento dos perfis"}]} /> 
           </Grid>
         </Grid>
+      </Toolbar>
       </AppBar>
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 

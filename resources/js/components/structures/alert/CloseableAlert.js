@@ -9,10 +9,11 @@ import CloseIcon from '@mui/icons-material/Close';
 export const CloseableAlert = React.memo((props) => {
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%'}}>
       <Collapse in={props.open}>
         <Alert
           severity={props.severity}
+          variant="filled"
           action={
             <IconButton
               aria-label="close"

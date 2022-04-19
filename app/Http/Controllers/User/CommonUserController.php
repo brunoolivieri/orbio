@@ -45,22 +45,35 @@ class CommonUserController extends Controller
         if($check_data_response["status"] && !$check_data_response["error"]){
 
             try{
+
+                if(isset($request->actual_password) && isset($request->new_password)){
+
+                    $user_record = UserModel::select('senha')->where('id', $id)->get();
     
-                $user_record = UserModel::select('senha')->where('id', $id)->get();
-    
-                if(password_verify($request->actual_password, $user_record[0]->senha)){
-    
-                    $update = UserModel::where('id', $id)->update([
-                        "nome" => $request->name,
-                        "email" => $request->email,
-                        "senha" => password_hash($request->new_password, PASSWORD_DEFAULT)
-                    ]);
-    
-                    return response("", 200);
-    
+                    if(password_verify($request->actual_password, $user_record[0]->senha)){
+        
+                        $update = UserModel::where('id', $id)->update([
+                            "nome" => $request->name,
+                            "email" => $request->email,
+                            "senha" => password_hash($request->new_password, PASSWORD_DEFAULT)
+                        ]);
+        
+                        return response("", 200);
+        
+                    }else{
+
+                        return response(["error" => "wrong_password"], 500);
+                    }
+
                 }else{
 
-                    return response(["error" => "wrong_password"], 500);
+                    $update = UserModel::where('id', $id)->update([
+                        "nome" => $request->name,
+                        "email" => $request->email
+                    ]);
+
+                    return response("", 200);
+
                 }
     
             }catch(\Exception $e){

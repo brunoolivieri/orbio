@@ -115,7 +115,7 @@ export function GenerateReportFormulary({...props}){
           </DialogContent>
 
           {displayAlert.display && 
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+              <Alert severity={displayAlert.type} variant="filled">{displayAlert.message}</Alert> 
           }
           
           <DialogActions>

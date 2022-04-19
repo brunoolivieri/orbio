@@ -91,6 +91,12 @@ class FlightPlanModuleController extends Controller
 
     }
 
+    public function getDownloadFlightPlan(){
+
+        dd("ok");
+
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -125,7 +131,7 @@ class FlightPlanModuleController extends Controller
         try{
 
             $file_name = $request->flight_plan->getClientOriginalName();
-            $storage_folder = "flight_plans";
+            $storage_folder = "public/flight_plans";
 
             FlightPlansModel::create([
                 "id_relatorio" => null,

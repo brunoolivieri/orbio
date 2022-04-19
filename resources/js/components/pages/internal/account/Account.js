@@ -6,9 +6,10 @@ import { useState } from "react";
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { BasicDataPanel } from "./basic_data_panel/BasicDataPanel";
 import { ComplementaryDataPanel } from "./complementary_data_panel/ComplementaryDataPanel";
-import { SwitchPanelAccount } from "../../../structures/modules/account/SwitchPanelAccount";
 import AxiosApi from "../../../../services/AxiosApi";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
+
+import { Switcher } from "../../../structures/switcher/Switcher";
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Toolbar from '@mui/material/Toolbar';
@@ -108,20 +109,18 @@ export function Account(){
             position="static"
             color="default"
             elevation={0}
-            sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)' }}
           >
             <Toolbar>
               <Grid container spacing={1} alignItems="center">
                 <Grid item xs>
                   {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-                  <SwitchPanelAccount panelStateSetter = {setActualPanel} /> 
+                  <Switcher panelStateSetter = {setActualPanel} options = {[{page: "basic", title: "cadastro básico"}, {page: "complementary", title: "cadastro complementar"}]} /> 
                 </Grid>
               </Grid>
             </Toolbar>
-            </AppBar>
+          </AppBar>
           <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-            {/* VARIAÇÃO DOS PAINÉIS - BÁSICO E COMPLEMENTAR */}
             {formularyData.status ? (actualPanel === "basic" ? <BasicDataPanel {...formularyData} reload_state = {reloadForm} reload_setter = {setReloadForm} /> 
             : <ComplementaryDataPanel {...formularyData} reload_state = {reloadForm} reload_setter = {setReloadForm} /> ) : "CARREGANDO" }
             

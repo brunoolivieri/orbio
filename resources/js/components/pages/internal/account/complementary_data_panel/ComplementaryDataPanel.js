@@ -6,12 +6,15 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
-import EditIcon from '@mui/icons-material/Edit';
 import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
 import { Typography } from '@mui/material';
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -328,25 +331,26 @@ export const ComplementaryDataPanel = ((props) => {
             </Grid>}
 
             <Grid item>
-                <Tooltip title="Habilitar Edição">
-                    <IconButton onClick = {enableFieldsEdition}>
-                        <EditIcon />         
+                <Tooltip title="Editar">
+                    <IconButton onClick={enableFieldsEdition}>
+                        <FontAwesomeIcon icon={faPenToSquare} size = "sm"/>
                     </IconButton>
-                </Tooltip>  
+                </Tooltip> 
             </Grid>
 
             <Grid item>
                 <Tooltip title="Reload">
                     <IconButton onClick = {reloadFormulary}>
-                    {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}
-                    <RefreshIcon color="inherit" sx={{ display: 'block' }} />         
+                        <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" />
                     </IconButton>
-                </Tooltip>  
+                </Tooltip> 
             </Grid>
 
         </Grid>
         
-        <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} />  
+        <Box sx={{mt: 2}}>
+            <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} />  
+        </Box>
          
         <Box component="form" id = "user_account_complementary_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
 

@@ -6,13 +6,16 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
-import EditIcon from '@mui/icons-material/Edit';
 import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
+
+// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -41,8 +44,7 @@ export const BasicDataPanel = memo((props) => {
     const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
 
     // States dos inputs de senha
-    const [actualPassword, setActualPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
+    const [password, setPassword] = useState({update: false, actual_password: null, new_password: null});
 
     // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = useState(false);
@@ -108,16 +110,16 @@ export const BasicDataPanel = memo((props) => {
 
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
         const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
-        const actualPasswordValidate = actualPassword != null ? FormValidation(actualPassword, 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
-        const newPasswordValidate = newPassword != null ? FormValidation(newPassword, 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
+        const actualPasswordValidate = password.update ? FormValidation(password.actual_password, 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
+        const newPasswordValidate = password.update ? FormValidation(password.new_password, 8, null, passwordPattern, "PASSWORD") : {error: false, message: ""};
   
         setErrorDetected({name: nameValidate.error, email: emailValidate.error, actual_password: actualPasswordValidate.error, new_password: newPasswordValidate.error});
         setErrorMessage({name: nameValidate.message, email: emailValidate.message, actual_password: actualPasswordValidate.message, new_password: newPasswordValidate.message});
         
-        if(nameValidate.error || emailValidate.error || actualPasswordValidate.error || newPasswordValidate.error || passwordsAreEqual()){
-  
-          return false;
-  
+        if(nameValidate.error || emailValidate.error || actualPasswordValidate.error || newPasswordValidate.error || (password.update ? passwordsAreEqual() : false)){
+
+            return false;
+
         }else{
 
             return true;
@@ -134,7 +136,7 @@ export const BasicDataPanel = memo((props) => {
     */
     function passwordsAreEqual(){
 
-        if(actualPassword == newPassword){
+        if(password.actual_password == password.new_password){
 
             setDisplayAlert({open: true, type: "error", message: "Erro! A nova senha não pode ser igual à atual."});
 
@@ -155,12 +157,27 @@ export const BasicDataPanel = memo((props) => {
     */
     function requestServerOperation(data){
 
-        AxiosApi.patch(`/api/update-basic-data/${props.userid}`, {
-          email: data.get("user_email"),
-          name: data.get("user_fullname"),
-          actual_password: actualPassword,
-          new_password: newPassword
-        })
+        let request_data = {};
+
+        if(password.update){
+
+            request_data = {
+                email: data.get("user_email"),
+                name: data.get("user_fullname"),
+                actual_password: password.actual_password,
+                new_password: password.new_password
+            };
+
+        }else{
+
+            request_data = {
+                email: data.get("user_email"),
+                name: data.get("user_fullname")
+            };
+
+        }
+
+        AxiosApi.patch(`/api/update-basic-data/${props.userid}`, request_data)
         .then(function (response) {
   
             serverResponseTreatment(response);
@@ -189,8 +206,7 @@ export const BasicDataPanel = memo((props) => {
 
            setEditMode(false);
 
-           setNewPassword("");
-           setActualPassword("");
+           setPassword({update: false, actual_password: null, new_password: null});
    
          }else{
    
@@ -236,20 +252,19 @@ export const BasicDataPanel = memo((props) => {
             </Grid>}
 
             <Grid item>
-                <Tooltip title="Habilitar Edição">
-                    <IconButton onClick = {enableFieldsEdition}>
-                        <EditIcon />         
+                <Tooltip title="Editar">
+                    <IconButton onClick={enableFieldsEdition}>
+                        <FontAwesomeIcon icon={faPenToSquare} size = "sm"/>
                     </IconButton>
-                </Tooltip>  
+                </Tooltip> 
             </Grid>
 
             <Grid item>
                 <Tooltip title="Reload">
                     <IconButton onClick = {reloadFormulary}>
-                    {/* O recarregamento dos dados é a alteração do valor das dependências do useEffect que realiza uma requisição AXIOS */}
-                    <RefreshIcon color="inherit" sx={{ display: 'block' }} />         
+                        <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" />
                     </IconButton>
-                </Tooltip>  
+                </Tooltip> 
             </Grid>
 
             <Grid item>
@@ -277,8 +292,10 @@ export const BasicDataPanel = memo((props) => {
             </Grid>
 
         </Grid>
-
-        <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} /> 
+            
+        <Box sx={{mt: 2}}>
+            <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} />
+        </Box>
     
         <Box component="form" id = "user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
             <Grid container spacing={3}>
@@ -378,11 +395,11 @@ export const BasicDataPanel = memo((props) => {
                         label="Senha atual"
                         type="password"
                         fullWidth
-                        value={actualPassword}
+                        value={password.actual_password}
                         variant="outlined"
                         helperText = {errorMessage.actual_password}
                         error = {errorDetected.actual_password}
-                        onChange={(e) => { enableSaveButton(); setActualPassword(e.currentTarget.value); }}
+                        onChange={(e) => { enableSaveButton(); setPassword({update: true, actual_password: e.currentTarget.value, new_password: password.new_password}); }}
                         InputProps={{
                             readOnly: !editMode,
                         }}
@@ -397,11 +414,11 @@ export const BasicDataPanel = memo((props) => {
                         label="Nova senha"
                         type="password"
                         fullWidth
-                        value={newPassword}
+                        value={password.new_password}
                         variant="outlined"
                         helperText = {errorMessage.new_password}
                         error = {errorDetected.new_password}
-                        onChange={(e) => { enableSaveButton(); setNewPassword(e.currentTarget.value); }}
+                        onChange={(e) => { enableSaveButton(); setPassword({update: true, actual_password: password.actual_password, new_password: e.currentTarget.value}); }}
                         InputProps={{
                             readOnly: !editMode,
                         }}

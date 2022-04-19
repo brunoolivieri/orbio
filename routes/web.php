@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 // CONTROLADORES DE AUTENTICAÇÃO
 use App\Http\Controllers\Auth\LoginController; // Controlador do Login 
@@ -60,6 +61,17 @@ Route::resource("/api/admin-module-user", AdministrationModuleUserPanelControlle
 Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/reports-module", ReportModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/plans-module", FlightPlanModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
+Route::get("/api/plans-module-download/{filename}", function($filename){
+
+    if(Storage::disk("public")->exists('flight_plans/'.$filename)){
+
+        return Storage::disk("public")->download("flight_plans/".$filename);
+
+    }
+
+    return response("", 404);
+
+})->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/orders-module", ServiceOrderModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 Route::resource("/api/incidents-module", IncidentModuleController::class)->middleware(["session.auth", "modules.common.authorization"]);
 
