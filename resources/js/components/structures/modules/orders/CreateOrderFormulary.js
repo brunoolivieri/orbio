@@ -10,11 +10,10 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Input, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
@@ -287,13 +286,13 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
     return (
         <>
           <Tooltip title="Nova ordem de serviço">
-            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-              <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
+            <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true}>
+              <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size = "sm"/>
             </IconButton>
           </Tooltip>
 

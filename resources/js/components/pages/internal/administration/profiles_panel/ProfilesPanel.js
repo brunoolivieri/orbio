@@ -21,7 +21,6 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import Box from '@mui/material/Box';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
@@ -34,9 +33,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
+// OUTROS
+import { useSnackbar } from 'notistack';
+
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#004994",
+    backgroundColor: "#0F408F",
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -58,11 +60,11 @@ export function ProfilesPanel(){
     // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
     const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // Serve modificar o ícone de refresh da tabela
-    const [refreshPanel, setRefreshPanel] = useState(false);
-
     // State da linha selecionada
     const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+
+     // context do snackbar
+    const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -163,9 +165,19 @@ export function ProfilesPanel(){
       })
       .catch(function (error) {
 
-        console.log(error.message);
+        if(error.response.status == 404){
 
-        setPanelData({status: {loading: false, success: false, error: true}, response: "ERRO NO CARREGAMENTO DOS REGISTROS"});
+          handleOpenSnackbar("Nenhum registro encontrado!", "error");
+  
+        }else{
+  
+          handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+  
+          console.log(error.message);
+  
+          setPanelData({status: {loading: false, success: false, error: true}, response: null});
+  
+        }
 
     });
 
@@ -200,6 +212,28 @@ export function ProfilesPanel(){
             }
           });
 
+          if(response.data.total_records_founded > 1){
+            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+          }else{
+            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+          } 
+
+        }
+
+      }).catch((error) => {
+
+        if(error.response.status == 404){
+
+          handleOpenSnackbar("Nenhum registro encontrado!", "error");
+  
+        }else{
+  
+          handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+  
+          console.log(error.message);
+  
+          setPanelData({status: {loading: false, success: false, error: true}, response: null});
+  
         }
 
       });
@@ -234,6 +268,12 @@ export function ProfilesPanel(){
       }
   
     }
+
+    function handleOpenSnackbar(text, variant){
+
+      enqueueSnackbar(text, { variant });
+  
+    };
   
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //

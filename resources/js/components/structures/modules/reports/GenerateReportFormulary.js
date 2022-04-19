@@ -25,7 +25,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 
 export function GenerateReportFormulary({...props}){
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -42,7 +42,7 @@ export function GenerateReportFormulary({...props}){
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
 
-     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -90,26 +90,26 @@ export function GenerateReportFormulary({...props}){
 
     }
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
   return (
     <>
 
-      <Tooltip title="Gerar relatório">
+      <Tooltip title="Baixar relatório">
         <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? "green" : "#808991"} />
         </IconButton>
       </Tooltip> 
       
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>RELATÓRIO {reportType == "BASIC" ? "BÁSICO" : "AVANÇADO"}</DialogTitle>
+        <DialogTitle>DOWNLOAD DO RELATÓRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
           <DialogContent>
             <DialogContentText>
-              Formulário para geração do documento do relatório de ID {props.data.report_id}.
+              Formulário para download do documento do relatório de ID {props.data.report_id}.
             </DialogContentText>
 
           </DialogContent>
@@ -120,7 +120,6 @@ export function GenerateReportFormulary({...props}){
           
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Gerar documento</Button>
           </DialogActions>
 
         </Box>

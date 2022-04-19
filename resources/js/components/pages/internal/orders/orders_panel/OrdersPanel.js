@@ -33,12 +33,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 
-// IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
+// OUTROS
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-      backgroundColor: "#004994",
+      backgroundColor: "#0F408F",
       color: theme.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
@@ -60,18 +61,21 @@ export function OrdersPanel(){
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
-    const {AuthData} = useAuthentication();
-    
-    // State do carregamento dos dados
-    // Enquanto for false, irá aparecer "carregando" no painel
-    const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  // Utilizador do state global de autenticação
+  const {AuthData} = useAuthentication();
+  
+  // State do carregamento dos dados
+  // Enquanto for false, irá aparecer "carregando" no painel
+  const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
-    // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-    const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
+  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // State da linha selecionada
-    const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+  // State da linha selecionada
+  const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+
+  // Context do snackbar
+  const { enqueueSnackbar } = useSnackbar();
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -107,7 +111,6 @@ export function OrdersPanel(){
     AxiosApi.get(`/api/orders-module?args=${select_query_params}&auth=${module_middleware}`)
     .then(function (response) {
 
-
       if(response.status === 200){
 
         setPanelData({
@@ -129,7 +132,19 @@ export function OrdersPanel(){
     })
     .catch(function (error) {
 
-      setPanelData({status: {loading: false, success: false, error: true}, response:  error.response.statusText});
+      if(error.response.status == 404){
+
+        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+
+      }else{
+
+        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+
+        console.log(error.message);
+
+        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+
+      }
 
   });
 
@@ -164,12 +179,30 @@ export function OrdersPanel(){
           }
         });
 
+        if(response.data.total_records_founded > 1){
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+        }else{
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+        } 
+
       }
 
     })
     .catch(function (error) {
 
-      setPanelData({status: {loading: false, success: false, error: true}, response:  error.response.statusText});
+      if(error.response.status == 404){
+
+        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+
+      }else{
+
+        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+
+        console.log(error.message);
+
+        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+
+      }
 
     });
 
@@ -252,6 +285,12 @@ export function OrdersPanel(){
     }
 
   }
+
+  function handleOpenSnackbar(text, variant){
+
+    enqueueSnackbar(text, { variant });
+
+  };
 
 // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 

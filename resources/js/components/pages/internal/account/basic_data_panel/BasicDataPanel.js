@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES NATIVOS 
-import { useState, memo, useRef } from 'react';
+import { useState, memo } from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Tooltip } from '@mui/material';
@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
-import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 
@@ -25,8 +24,9 @@ import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/
 // IMPORTAÇÃO DOS ASSETS
 import dangerImage from "../../../../assets/images/Error/error.png";
 
-// OUTROS COMPONENTES
+// OUTROS
 import moment from 'moment';
+import { useSnackbar } from 'notistack';
 
 export const BasicDataPanel = memo((props) => {
 
@@ -40,14 +40,13 @@ export const BasicDataPanel = memo((props) => {
     const [errorDetected, setErrorDetected] = useState({name: false, email: false, actual_password: false, new_password: false}); // State para o efeito de erro - true ou false
     const [errorMessage, setErrorMessage] = useState({name: "", email: "", actual_password: "", new_password: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-    // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
-
     // States dos inputs de senha
     const [password, setPassword] = useState({update: false, actual_password: null, new_password: null});
 
     // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = useState(false);
+
+    const { enqueueSnackbar } = useSnackbar();
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -138,7 +137,7 @@ export const BasicDataPanel = memo((props) => {
 
         if(password.actual_password == password.new_password){
 
-            setDisplayAlert({open: true, type: "error", message: "Erro! A nova senha não pode ser igual à atual."});
+            handleOpenSnackbar("Erro! A nova senha não pode ser igual à atual", "error");
 
             return true;
 
@@ -199,14 +198,14 @@ export const BasicDataPanel = memo((props) => {
     function serverResponseTreatment(response){
 
         if(response.status === 200){
-   
-           setDisplayAlert({open: true, type: "success", message: "Dados atualizados com sucesso!"});
+            
+            handleOpenSnackbar("Dados atualizados com sucesso!", "success");
 
-           props.reload_setter(!props.reload_state);
+            props.reload_setter(!props.reload_state);
 
-           setEditMode(false);
+            setEditMode(false);
 
-           setPassword({update: false, actual_password: null, new_password: null});
+            setPassword({update: false, actual_password: null, new_password: null});
    
          }else{
    
@@ -215,19 +214,19 @@ export const BasicDataPanel = memo((props) => {
             setErrorDetected({name: false, email: true});
             setErrorMessage({name: null, email: "Esse email já existe"});
 
-            setDisplayAlert({open: true, type: "error", message: "O email informado já está cadastrado no sistema"});
+            handleOpenSnackbar("Erro! O email já existe", "error");
 
             setDisabledButton(false);
    
            }else if(response.data.error === "wrong_password"){
-   
-            setDisplayAlert({open: true, type: "error", message: "Erro! Senha incorreta."});
+            
+            handleOpenSnackbar("Erro! A senha está incorreta", "error");
    
             setDisabledButton(false);
    
            }else{
 
-            setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
+            handleOpenSnackbar("Erro do servidor!", "error");
    
             setDisabledButton(false);
 
@@ -236,6 +235,12 @@ export const BasicDataPanel = memo((props) => {
         }
    
        }
+
+       function handleOpenSnackbar(text, variant){
+
+        enqueueSnackbar(text, { variant });
+    
+      };
 
 // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
@@ -292,10 +297,6 @@ export const BasicDataPanel = memo((props) => {
             </Grid>
 
         </Grid>
-            
-        <Box sx={{mt: 2}}>
-            <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} />
-        </Box>
     
         <Box component="form" id = "user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
             <Grid container spacing={3}>

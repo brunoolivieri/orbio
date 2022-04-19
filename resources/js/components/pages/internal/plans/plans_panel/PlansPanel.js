@@ -6,7 +6,6 @@ import { useAuthentication } from "../../../../context/InternalRoutesAuth/Authen
 import AxiosApi from "../../../../../services/AxiosApi";
 import { UpdatePlanFormulary } from "../../../../structures/modules/plans/UpdatePlanFormulary";
 import { DeletePlanFormulary } from "../../../../structures/modules/plans/DeletePlanFormulary";
-import { CreatePlanConfiguration } from "../../../../structures/modules/plans/CreatePlanConfiguration";
 
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
@@ -38,9 +37,12 @@ import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 
+// OUTROS
+import { useSnackbar } from 'notistack';
+
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#004994",
+    backgroundColor: "#0F408F",
     color: theme.palette.common.white,
   },
   [`&.${tableCellClasses.body}`]: {
@@ -50,23 +52,23 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
 
 export function PlansPanel(){
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
-    const {AuthData} = useAuthentication();
-    
-    // State do carregamento dos dados
-    // Enquanto for false, irá aparecer "carregando" no painel
-    const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  // Utilizador do state global de autenticação
+  const {AuthData} = useAuthentication();
 
-    // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-    const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
+  // Context da snackbar
+  const { enqueueSnackbar } = useSnackbar();
+  
+  // State do carregamento dos dados
+  // Enquanto for false, irá aparecer "carregando" no painel
+  const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
-    // Serve modificar o ícone de refresh da tabela
-    const [refreshPanel, setRefreshPanel] = useState(false);
+  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // State da linha selecionada
-    const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+  // State da linha selecionada
+  const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
     
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -124,7 +126,19 @@ export function PlansPanel(){
     })
     .catch(function (error) {
 
-      setPanelData({status: {loading: false, success: false, error: true}, response: error.response.statusText});
+      if(error.response.status == 404){
+
+        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+
+      }else{
+
+        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+
+        console.log(error.message);
+
+        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+
+      }
 
     });
 
@@ -159,12 +173,30 @@ export function PlansPanel(){
           }
         });
 
+        if(response.data.total_records_founded > 1){
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} registros`, "success");
+        }else{
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} registro`, "success");
+        } 
+
       }
 
     })
     .catch(function (error) {
 
-      setPanelData({status: {loading: false, success: false, error: true}, response:  error.response.statusText});
+      if(error.response.status == 404){
+
+        handleOpenSnackbar("Nenhum registro encontrado!", "error");
+
+      }else{
+
+        handleOpenSnackbar("Erro no carregamento dos dados do painel!", "error");
+
+        console.log(error.message);
+
+        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+
+      }
 
     });
 
@@ -259,18 +291,24 @@ export function PlansPanel(){
 
       if(response.status === 200){
 
-        // snackbar
+        handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
 
       }
 
     })
     .catch(function (error) {
 
-      // snackbar
+      handleOpenSnackbar(`O download não foi realizado! Arquivo: ${filename}`, "error");
 
     });
 
   }
+
+  function handleOpenSnackbar(text, variant){
+
+    enqueueSnackbar(text, { variant });
+
+  };
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
@@ -368,8 +406,8 @@ export function PlansPanel(){
                         </TableCell>
                         <TableCell align="center">
                           <Tooltip title="Baixar plano">
-                            <IconButton onClick={() => handleDownloadFlightPlan(row.plan_file)}>
-                              <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color = {"#00713A"} />
+                            <IconButton onClick={() => handleDownloadFlightPlan(row.plan_file)} disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
+                              <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#007937" : "#808991"} />
                             </IconButton>
                           </Tooltip> 
                         </TableCell>

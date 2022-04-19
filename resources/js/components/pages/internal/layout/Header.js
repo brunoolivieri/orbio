@@ -11,13 +11,11 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
 import { makeStyles } from "@mui/styles";
-import { Icon } from '@mui/material';
 
 const useStyles = makeStyles((theme) => ({
   header_top: {
-    background: theme.palette.mode == 'light' ? '#004994' : '#121212',
+    background: theme.palette.mode == 'light' ? '#0F408F' : '#121212',
     boxShadow: '1px -1px 11px 0px rgba(0,0,0,0.75)',
   },
   header_bottom: {

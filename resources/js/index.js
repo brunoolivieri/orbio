@@ -9,6 +9,7 @@ import { AuthProvider } from './components/context/InternalRoutesAuth/Authentica
 
 import { createTheme, ThemeProvider } from '@mui/material/styles'; // Para criar e injetar o objeto do Tema 
 import CssBaseline from '@mui/material/CssBaseline';
+import { SnackbarProvider } from 'notistack';
 
 let theme = createTheme({
   palette: {
@@ -171,7 +172,9 @@ export default function Index() {
                 <AuthProvider>      
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
-                      <ReactRoutes/>
+                      <SnackbarProvider maxSnack={3}>
+                        <ReactRoutes/>
+                      </SnackbarProvider>
                   </ThemeProvider>    
                 </AuthProvider>
             </StrictMode>

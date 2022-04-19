@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -129,16 +129,14 @@ export function DeleteOrderFormulary({...props}){
 
     }
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
-
-    
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
     return (
         <>
     
         <Tooltip title="Deletar">
-            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "green" : "#808991"} size = "sm"/>
+            <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
             </IconButton>
         </Tooltip>
 

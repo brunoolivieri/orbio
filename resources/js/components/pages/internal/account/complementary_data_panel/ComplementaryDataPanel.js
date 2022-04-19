@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
-import { CloseableAlert } from '../../../../structures/alert/CloseableAlert';
 import { Typography } from '@mui/material';
 
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
@@ -21,6 +20,9 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { SelectStates } from '../../../../structures/input_select/InputSelectStates';
 import { SelectCities } from '../../../../structures/input_select/SelectCities';
+
+// OUTROS
+import { useSnackbar } from 'notistack';
 
 export const ComplementaryDataPanel = ((props) => {
 
@@ -35,15 +37,14 @@ export const ComplementaryDataPanel = ((props) => {
     const [errorDetected, setErrorDetected] = useState({habANAC: false, cpf: false, cnpj: false, telephone: false, cellphone: false, razaoSocial: false, nomeFantasia: false, logradouro: false, numero: false, cep: false, cidade: false, estado: false, complemento: false}); // State para o efeito de erro - true ou false
     const [errorMessage, setErrorMessage] = useState({habANAC: null, cpf: null, cnpj: null, telephone: null, cellphone: null,  razaoSocial: null, nomeFantasia: null, logradouro: null, numero: null, cep: null, cidade: null, estado: null, complemento: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-    // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({open: false, type: "error", message: ""});
-
     // State key Down
     const [keyPressed, setKeyPressed] = useState();
 
     // State do input de estado e de cidade
     const [inputState, setInputState] = useState(props.estado);
     const [inputCity, setInputCity] = useState(props.cidade);
+
+    const { enqueueSnackbar } = useSnackbar();
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -267,12 +268,12 @@ export const ComplementaryDataPanel = ((props) => {
     function serverResponseTreatment(response){
 
         if(response.status === 200){
-   
-           setDisplayAlert({open: true, type: "success", message: "Dados atualizados com sucesso!"});
+            
+            handleOpenSnackbar("Dados atualizados com sucesso!", "success");
 
-           props.reload_setter(!props.reload_state);
+            props.reload_setter(!props.reload_state);
 
-           setEditMode(false);
+            setEditMode(false);
    
          }else{
 
@@ -309,12 +310,18 @@ export const ComplementaryDataPanel = ((props) => {
                     complemento: null
                 }
             );
-
-            setDisplayAlert({open: true, type: "error", message: "Erro! Tente novamente."});
+            
+            handleOpenSnackbar("Erro! Dados inválidos", "error");
    
          }
    
        }
+
+       function handleOpenSnackbar(text, variant){
+
+        enqueueSnackbar(text, { variant });
+    
+      };
 
 // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
@@ -347,10 +354,6 @@ export const ComplementaryDataPanel = ((props) => {
             </Grid>
 
         </Grid>
-        
-        <Box sx={{mt: 2}}>
-            <CloseableAlert open = {displayAlert.open} alert_setter = {setDisplayAlert} severity={displayAlert.type} message = {displayAlert.message} />  
-        </Box>
          
         <Box component="form" id = "user_account_complementary_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
 

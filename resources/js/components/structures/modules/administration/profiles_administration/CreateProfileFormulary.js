@@ -17,7 +17,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 
@@ -198,7 +197,7 @@ export function CreateProfileFormulary() {
     <>
       <Tooltip title="Novo Perfil">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
+          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size = "sm"/>
         </IconButton>
       </Tooltip>
       

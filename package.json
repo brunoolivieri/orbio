@@ -41,6 +41,7 @@
         "@types/date-fns": "^2.6.0",
         "moment": "^2.29.1",
         "moment-timezone": "^0.5.34",
+        "notistack": "^2.0.4",
         "react-moment": "^1.1.1",
         "react-router-dom": "^6.0.2"
     }

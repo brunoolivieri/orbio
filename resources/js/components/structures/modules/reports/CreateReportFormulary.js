@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -14,7 +14,6 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { styled } from '@mui/material/styles';
 
@@ -36,6 +35,8 @@ const Input = styled('input')({
 
 export const CreateReportFormulary = React.memo(({...props}) => {
 
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
     // Utilizador do state global de autenticação
     const {AuthData} = useAuthentication();
 
@@ -55,6 +56,8 @@ export const CreateReportFormulary = React.memo(({...props}) => {
     // States dos inputs de data
     const [startDate, setStartDate] = useState(moment());
     const [endDate, setEndDate] = useState(moment());
+
+// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -247,13 +250,15 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
     }
 
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+
   return (
     <>
 
       {/* Botão para abrir o formulário */}
       <Tooltip title="Novo relatório">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true}>
-          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm" />
+          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size = "sm" />
         </IconButton>
       </Tooltip>
 
