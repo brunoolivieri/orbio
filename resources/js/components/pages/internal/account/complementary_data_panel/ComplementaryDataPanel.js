@@ -26,7 +26,7 @@ import { useSnackbar } from 'notistack';
 
 export const ComplementaryDataPanel = ((props) => {
 
-// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // States referentes ao formulário
     // const [dataChanged, setDataChanged] = useState(false);

@@ -291,11 +291,11 @@ export function UpdateOrderFormulary({...props}){
 
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
     return (
         <>
-    
+        
         <Tooltip title="Editar">
             <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
                 <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
@@ -303,11 +303,9 @@ export function UpdateOrderFormulary({...props}){
         </Tooltip>
 
         {(props.selected_record.dom != null && open) && 
-
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.selected_record.data_cells.order_id})</DialogTitle>
     
-            {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
               <DialogContent>
@@ -409,7 +407,7 @@ export function UpdateOrderFormulary({...props}){
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
                     label_text = {"Plano de vôo vinculado"} 
-                    data_source = {"/api/orders-module/create?data_source=flight_plans&auth=none"} 
+                    data_source = {"/api/orders-module/create?table=flight_plans&auth=none"} 
                     primary_key={"id"} 
                     key_content={"id"} 
                     error = {errorDetected.flight_plan} 
@@ -461,10 +459,9 @@ export function UpdateOrderFormulary({...props}){
               </DialogActions>
     
             </Box>
-    
             
           </Dialog>
-        }
+        } 
         </>
     
       );

@@ -8,24 +8,19 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Facades\DB;
-
 // Models utilizados
 use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\User\UserModel;
-
 // Eventos utilizados
 use  App\Events\GenerateTokenAndSessionEvent;
-
 // Token JWT - https://github.com/firebase/php-jwt - https://www.youtube.com/watch?v=B-7e-ZpIWAs 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-
 // Form Requests
 use App\Http\Requests\Auth\Login\LoginRequest;
-
-// Events
-//use App\Events\UserSuccessfulLoginEvent;
+// Log
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
@@ -53,6 +48,8 @@ class LoginController extends Controller
 
                 UserModel::where("id", Auth::user()->id)->update(["dh_ultimo_acesso" => date("Y-m-d H:i:s")]);
 
+                Log::channel('login_action')->info("[Acesso realizado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
+
                 return response(["userid"=>Auth::user()->id, "token" => $token_generated], 200);
             
             // Case 2: User account is inactive
@@ -61,6 +58,8 @@ class LoginController extends Controller
                 if($this->activateAccount()){
 
                     UserModel::where("id", Auth::user()->id)->update(["dh_ultimo_acesso" => date("Y-m-d H:i:s")]);
+
+                    Log::channel('login_action')->info("[Acesso realizado | Conta ativada] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
 
                     return redirect("/api/acessar");
 
@@ -73,11 +72,15 @@ class LoginController extends Controller
              // Case 3: User account is disabled
             }else if(!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
 
+                Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada");
+
                 return  response(["error" => "account_disabled"], 500);
 
             }
 
         }
+
+        Log::channel('login_error')->error("[Acesso negado] - Email informado: ".$request->email." | Erro: Credenciais incorretas");
 
         return response(["error" => "invalid_credentials"], 500);
 
@@ -206,6 +209,8 @@ class LoginController extends Controller
             return true;
 
         }catch(\Exception $e){
+
+            Log::channel('login_error')->error("[Acesso negado | Ativação da conta falhou] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: ".$e->getMessage());
 
             return false;
 

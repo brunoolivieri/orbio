@@ -142,7 +142,7 @@ export function Login(){
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
-            name: {error: false, message: null},
+            email: {error: false, message: null},
             password: {error: false, message: null}
         }
 

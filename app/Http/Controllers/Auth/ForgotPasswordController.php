@@ -4,17 +4,16 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 // Models
 use App\Models\User\UserModel;
-
 // Email
 use App\Mail\UserChangePasswordEmail;
 use Illuminate\Support\Facades\Mail;
-
 // Form Requests
 use App\Http\Requests\Auth\ForgotPassword\SendTokenToEmailRequest;
 use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
+// Log
+use Illuminate\Support\Facades\Log;
 
 class ForgotPasswordController extends Controller
 {
@@ -35,9 +34,13 @@ class ForgotPasswordController extends Controller
 
             Mail::to($request->email)->send(new UserChangePasswordEmail($random_integer_token));
 
+            Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('mail')->error("[O envio do email falhou | Alteração da senha] - Destinatário: ".$request->email."| Erro:".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -57,9 +60,13 @@ class ForgotPasswordController extends Controller
 
             UserModel::where('token', $token)->update(['senha' => password_hash($request->new_password, PASSWORD_DEFAULT)]);
 
+            Log::channel('user')->info("[Senha alterada com sucesso | Recuperação da conta] - Token utilizado: ".$token);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('user')->info("[Erro na alteração da senha| Recuperação da conta] - Token utilizado: ".$token."| Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 

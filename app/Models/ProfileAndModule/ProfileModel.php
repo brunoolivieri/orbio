@@ -121,28 +121,5 @@ class ProfileModel extends Model
 
     }
 
-    /**
-     * Método realizar um DELETE em um registro especifico da tabela "profiles"
-     *
-     * @param int $userid
-     * @return array
-     */
-    function deleteProfile(int $profile_id) : array {
-
-        try{
-
-            ProfileModel::where('id', $profile_id)->delete();
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-
-    }
-
 
 }

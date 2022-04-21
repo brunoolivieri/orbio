@@ -60,39 +60,90 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
         ],
 
-        'login' => [
+        'login_action' => [
             'driver' => 'single',
-            'path' => storage_path('logs/login.log'),
-            'level' => env('LOG_LEVEL', 'error'),
+            'path' => storage_path('logs/login/actions.log'),
+            'level' => "info",
         ],
 
-        'registration' => [
+        'login_error' => [
             'driver' => 'single',
-            'path' => storage_path('logs/registration.log'),
-            'level' => env('LOG_LEVEL', 'error'),
+            'path' => storage_path('logs/login/errors.log'),
+            'level' => "error",
         ],
 
-        'change_password' => [
+        'mail' => [
             'driver' => 'single',
-            'path' => storage_path('logs/change_password.log'),
-            'level' => env('LOG_LEVEL', 'error'),
+            'path' => storage_path('logs/mails/actions.log'),
+            'level' => "info",
         ],
 
-        'internal' => [
+        'user' => [
             'driver' => 'single',
-            'path' => storage_path('logs/internal.log'),
-            'level' => env('LOG_LEVEL', 'error'),
+            'path' => storage_path('logs/user/actions.log'),
+            'level' => "error",
         ],
 
-        'general_user' => [
+        'administration_action' => [
             'driver' => 'single',
-            'path' => storage_path('logs/general_user.log'),
-            'level' => env('LOG_LEVEL', 'error'),
+            'path' => storage_path('logs/modules/administration/actions.log'),
+            'level' => "info",
         ],
 
+        'administration_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/administration/errors.log'),
+            'level' => "error",
+        ],
 
+        'flight_plans_action' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/flight_plans/actions.log'),
+            'level' => "info",
+        ],
 
-        
+        'flight_plans_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules//flight_plans/errors.log'),
+            'level' => "error",
+        ],
+
+        'service_orders_action' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/service_orders/actions.log'),
+            'level' => "info",
+        ],
+
+        'service_orders_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/service_orders/errors.log'),
+            'level' => "error",
+        ],
+
+        'reports_action' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/reports/actions.log'),
+            'level' => "info",
+        ],
+
+        'reports_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/reports/errors.log'),
+            'level' => "error",
+        ],
+
+        'incidents_action' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/incidents/actions.log'),
+            'level' => "info",
+        ],
+
+        'incidents_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/incidents/errors.log'),
+            'level' => "error",
+        ],
+
     ],
 
 ];
