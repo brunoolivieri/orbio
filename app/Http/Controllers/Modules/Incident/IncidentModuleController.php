@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Incidents\IncidentsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
-
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
+// Log
+use Illuminate\Support\Facades\Log;
 
 class IncidentModuleController extends Controller
 {
@@ -39,11 +40,15 @@ class IncidentModuleController extends Controller
 
             }else{
 
+                Log::channel('incidents_error')->error("[Método: Index][Controlador: IncidentModuleController] - Nenhum registro de incidente foi encontrado no sistema");
+
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('incidents_error')->error("[Método: Index][Controlador: IncidentModuleController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -97,9 +102,13 @@ class IncidentModuleController extends Controller
                 "dh_incidente" => $request->incident_date
             ]);
 
+            Log::channel('incidents_action')->info("[Método: Store][Controlador: IncidentModuleController] - Incidente criado com sucesso");
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('incidents_error')->error("[Método: Store][Controlador: IncidentModuleController] - Falha na criação do incidente - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -133,11 +142,15 @@ class IncidentModuleController extends Controller
 
             }else{
 
+                Log::channel('incidents_error')->error("[Método: Show][Controlador: IncidentModuleController] - Nenhum registro encontrado na pesquisa");
+
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('incidents_error')->error("[Método: Show][Controlador: IncidentModuleController] - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -161,9 +174,13 @@ class IncidentModuleController extends Controller
                 "dh_incidente" => $request->incident_date
             ]);
 
+            Log::channel('incidents_action')->info("[Método: Update][Controlador: IncidentModuleController] - Incidente atualizado com sucesso - ID do incidente: ".$id);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('incidents_error')->error("[Método: Update][Controlador: IncidentModuleController] - Falha na atualização do incidente - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 200);
 
@@ -182,9 +199,13 @@ class IncidentModuleController extends Controller
 
             IncidentsModel::where('id', $id)->delete();
 
+            Log::channel('incidents_action')->info("[Método: Destroy][Controlador: IncidentModuleController] - Incidente removido com sucesso - ID do incidente: ".$id);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('incidents_error')->error("[Método: Destroy][Controlador: IncidentModuleController] - Falha na remoção do incidente - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 

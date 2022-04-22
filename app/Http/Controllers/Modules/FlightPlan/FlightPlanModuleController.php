@@ -10,10 +10,11 @@ use App\Models\Incidents\IncidentsModel;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
-
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
+// Log
+use Illuminate\Support\Facades\Log;
 
 class FlightPlanModuleController extends Controller
 {
@@ -44,11 +45,15 @@ class FlightPlanModuleController extends Controller
 
             }else{
 
+                Log::channel('flight_plans_error')->error("[Método: Index][Controlador: FlightPlanModuleController] - Nenhum registro de plano de vôo foi encontrado no sistema");
+
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('flight_plans_error')->error("[Método: Index][Controlador: FlightPlanModuleController] - Erro no carregamento dos planos de vôo - Erro: ".$model_response["error"]);
 
             return response(["status" => false, "error" => $model_response->content()], 500);
 
@@ -91,6 +96,11 @@ class FlightPlanModuleController extends Controller
 
     }
 
+    /**
+     * Download the flight plan file
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function getDownloadFlightPlan(){
 
         dd("ok");
@@ -110,9 +120,13 @@ class FlightPlanModuleController extends Controller
 
             $data = DB::table($table)->get();
 
+            Log::channel('flight_plans_action')->info("[Método: Create][Controlador: FlightPlanModuleController] - Dados da tabela ".$table." para composição do formulário foram carregados com sucesso");
+
             return response($data, 200);
 
         }catch(\Exception $e){
+
+            Log::channel('flight_plans_error')->error("[Método: Create][Controlador: FlightPlanModuleController] - Erro no carregamento dos dados da tabela ".$table." para composição do formulário - Erro: ".$model_response["error"]);
 
             return response(["error" => $e->getMessage()]);
 
@@ -145,9 +159,13 @@ class FlightPlanModuleController extends Controller
                 $storage_folder, $file_name
             );
 
+            Log::channel('flight_plans_action')->info("[Método: Store][Controlador: FlightPlanModuleController] - Plano de vôo criado com sucesso - Caminho do plano: ".$storage_folder."/".$file_name);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('flight_plans_error')->error("[Método: Store][Controlador: FlightPlanModuleController] - Falha na criação do plano de vôo");
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -181,11 +199,15 @@ class FlightPlanModuleController extends Controller
 
             }else{
 
+                Log::channel('flight_plans_error')->error("[Método: Show][Controlador: FlightPlanModuleController] - Nenhum registro encontrado na pesquisa");
+
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('flight_plans_error')->error("[Método: Show][Controlador: FlightPlanModuleController] - Erro: ".$model_response["error"]);
 
             return response(["status" => false, "error" => $model_response->content()], 500);
 
@@ -212,9 +234,13 @@ class FlightPlanModuleController extends Controller
                 "status" => $request->status
             ]);
 
+            Log::channel('flight_plans_action')->info("[Método: Update][Controlador: FlightPlanModuleController] - Plano de vôo atualizado com sucesso - ID do plano de vôo: ".$id);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('flight_plans_error')->error("[Método: Update][Controlador: FlightPlanModuleController] - Falha na atualização do plano de vôo - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -235,13 +261,18 @@ class FlightPlanModuleController extends Controller
             // DESVINCULAR E DELETAR INCIDENTE 
             // DESVINCULAR E DELETAR RELATÓRIO
             // DESVINCULAR PLANO DA ORDEM DE SERVIÇO
-            // DELETAR PLANO
+            // DELETAR ARQUIVO
+            // DELETAR REGISTRO DO PLANO
 
             FlightPlansModel::where("id", $id)->delete();
+
+            Log::channel('flight_plans_action')->info("[Método: Destroy][Controlador: FlightPlanModuleController] - Plano de vôo removido com sucesso - Arquivo deletado - Relações desfeitas - ID do plano de vôo: ".$id);
 
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('flight_plans_error')->error("[Método: Destroy][Controlador: FlightPlanModuleController] - Falha na remoção do plano de vôo - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 

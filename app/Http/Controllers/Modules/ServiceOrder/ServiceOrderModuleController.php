@@ -8,13 +8,13 @@ use App\Models\Orders\ServiceOrdersModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
-
 // Models
 use App\Models\Orders\ServiceOrderHasUserModel;
+// Log
+use Illuminate\Support\Facades\Log;
 
 class ServiceOrderModuleController extends Controller
 {
@@ -45,11 +45,15 @@ class ServiceOrderModuleController extends Controller
 
             }else{
 
+                Log::channel('service_orders_error')->info("[Método: Index][Controlador: ReportModuleController] - Nenhum registro de ordem de serviço encontrado no sistema");
+
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('service_orders_error')->error("[Método: Store][Controlador: ReportModuleController] - Falha na criação da ordem de serviço - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -171,11 +175,15 @@ class ServiceOrderModuleController extends Controller
 
             DB::commit();
 
+            Log::channel('service_orders_action')->info("[Método: Store][Controlador: ReportModuleController] - Ordem de serviço criada com sucesso");
+
             return response("", 200);
 
         }catch(\Exception $e){
 
             DB::rollBack();
+
+            Log::channel('service_orders_error')->error("[Método: Store][Controlador: ReportModuleController] - Falha na criação da ordem de serviço - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -205,25 +213,21 @@ class ServiceOrderModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                if($model_response["data"]->total() > 0){
+                $data_formated = $this->formatDataForTable($model_response["data"]);
 
-                    $data_formated = $this->formatDataForTable($model_response["data"]);
-    
-                    return response($data_formated, 200);
-    
-                }else{
-    
-                    return response(["error" => "records_not_founded"], 404);
-    
-                }
+                return response($data_formated, 200);
 
             }else{
+
+                Log::channel('service_orders_error')->error("[Método: Show][Controlador: ReportModuleController] - Nenhum registro encontrado na pesquisa");
 
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('service_orders_error')->error("[Método: Show][Controlador: ReportModuleController] - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -255,9 +259,13 @@ class ServiceOrderModuleController extends Controller
                 "id_plano_voo" => $request->fligth_plan_id,
             ]);
 
+            Log::channel('service_orders_action')->info("[Método: Update][Controlador: ReportModuleController] - Ordem de serviço atualizada com sucesso - ID da ordem de serviço: ".$id);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('service_orders_error')->error("[Método: Update][Controlador: ReportModuleController] - Falha na atualização da ordem de serviço - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -276,9 +284,13 @@ class ServiceOrderModuleController extends Controller
 
             ServiceOrdersModel::where('id', $id)->delete();
 
+            Log::channel('service_orders_action')->info("[Método: Destroy][Controlador: ReportModuleController] - Ordem de serviço removido com sucesso - ID da ordem de serviço: ".$id);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('service_orders_error')->error("[Método: Destroy][Controlador: ReportModuleController] - Falha na remoção da ordem de serviço - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 

@@ -43,7 +43,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->error("[Nenhum registro de perfil encontrado no sistema]");
+                Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleProfilePanelController] - Nenhum perfil encontrado");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -51,7 +51,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Erro no carregamento dos perfis] | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleProfilePanelController] - Erro no carregamento dos perfis - Erro: ".$model_response["error"]);
 
             return response(["status" => false, "error" => $response["error"]], 500);
 
@@ -124,11 +124,13 @@ class AdministrationModuleProfilePanelController extends Controller
 
         if($model_response["status"] === true && !$model_response["error"]){
 
+            Log::channel('administration_action')->info("[Método: Store][Controlador: AdministrationModuleProfilePanelController] - Perfil criado com sucesso - Nome do perfil: ".$request->name);
+
             return response(["error" => $model_response["error"]], 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Erro no cadastro de perfil] | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Store][Controlador: AdministrationModuleProfilePanelController] - Falha na criação do perfil - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -164,7 +166,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->error("[Nenhum registro de perfil encontrado na pesquisa]");
+                Log::channel('administration_error')->error("[Método: Show][Controlador: AdministrationModuleProfilePanelController] - Nenhum perfil encontrado na pesquisa");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -172,7 +174,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Erro no carregamento dos perfis pesquisados] | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Show][Controlador: AdministrationModuleProfilePanelController] - Falha na realização da pesquisa - Erro: ".$model_response["error"]);
             
             return response(["error" => $model_response["error"]], 500);
 
@@ -196,13 +198,13 @@ class AdministrationModuleProfilePanelController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
 
-            Log::channel('administration_action')->info("[Atualização de perfil realizada] | ID do perfil: ".$id);
+            Log::channel('administration_action')->info("[Método: Update][Controlador: AdministrationModuleProfilePanelController] - Perfil atualizado com sucesso - ID do perfil: ".$id);
 
             return response("", 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Atualização do perfil falhou] | ID do perfil: ".$id." | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Update][Controlador: AdministrationModuleProfilePanelController] - Registro não foi atualizado - ID do perfil: ".$id." - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -223,13 +225,13 @@ class AdministrationModuleProfilePanelController extends Controller
 
             ProfileModel::where('id', $profile_id)->delete();
 
-            Log::channel('administration_action')->info("[Deleção de perfil realizada] | ID do perfil: ".$id);
+            Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil removido com sucesso - ID do perfil: ".$id);
 
             return response("", 200);
 
         }catch(\Exception $e){
 
-            Log::channel('administration_error')->error("[Deleção de perfil falhou] | ID do perfil: ".$id." | Erro: ".$e->getMessage());
+            Log::channel('administration_error')->error("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil não foi removido - ID do perfil: ".$id." - Erro: ".$e->getMessage());
 
             return response(["error" => $model_response["error"]], 500);
 

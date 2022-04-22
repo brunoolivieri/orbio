@@ -39,7 +39,7 @@ class ProfileModel extends Model
 
             DB::beginTransaction();
 
-            $new_profile_id = DB::table("profile")->insertGetId($data);
+            $new_profile_id = DB::table("profile")->insertGetId(["nome" => $data["name"]]);
 
             $model = new ProfileHasModuleModel();
 

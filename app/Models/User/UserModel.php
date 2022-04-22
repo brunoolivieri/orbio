@@ -5,18 +5,17 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
 // Custom Models
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
-
 // Custom Emails
 use App\Mail\UserRegisteredEmail;
+// Log
+use Illuminate\Support\Facades\Log;
 
 use Database\Factories\UserFactory;
 
@@ -101,6 +100,8 @@ class UserModel extends Authenticatable
                 "email" => $data["email"],
                 "password" => $unencrypted_password
             ]));
+
+            Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$data["email"]);
 
             return ["status" => true, "error" => false];
 

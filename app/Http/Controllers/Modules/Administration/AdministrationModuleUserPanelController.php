@@ -45,7 +45,7 @@ class AdministrationModuleUserPanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->error("[Nenhum registro de usuário encontrado no sistema]");
+                Log::channel('administration_error')->info("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Nenhum registro de usuário encontrado no sistema");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -53,7 +53,7 @@ class AdministrationModuleUserPanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Erro no carregamento dos usuários] | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -151,13 +151,13 @@ class AdministrationModuleUserPanelController extends Controller
 
         if($model_response["status"] && !$model_response["error"]){
 
-            Log::channel('administration_action')->info("[Cadastro de usuário realizado] | Email do usuário: ".$request->email." | Perfil do usuário: ". $request->profile_id);
+            Log::channel('administration_action')->info("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Usuário criado com sucesso - Email do usuário: ".$request->email." - Perfil do usuário: ". $request->profile_id);
 
             return response("", 200);
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Erro no cadastro de usuário] | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Falha na criação do usuário - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -193,7 +193,7 @@ class AdministrationModuleUserPanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->error("[Nenhum registro de usuário encontrado na pesquisa]");
+                Log::channel('administration_error')->error("[Método: Show][Controlador: AdministrationModuleUserPanelController] - Nenhum registro encontrado na pesquisa");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -201,7 +201,7 @@ class AdministrationModuleUserPanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Erro no carregamentos dos usuários pesquisados] | Erro: ".$model_response["error"]);
+            Log::channel('administration_error')->error("[Método: Show][Controlador: AdministrationModuleUserPanelController] - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response["error"]], 500);
 
@@ -228,13 +228,13 @@ class AdministrationModuleUserPanelController extends Controller
                 "status" => $request->status
             ]);
 
-            Log::channel('administration_action')->info("[Atualização de usuário realizada] | ID do usuário: ".$id);
+            Log::channel('administration_action')->info("[Método: Update][Controlador: AdministrationModuleUserPanelController] - Usuário atualizado com sucesso - ID do usuário: ".$id);
 
             return response("", 200);
 
         }catch(\Exception $e){
 
-            Log::channel('administration_error')->error("[Atualização de usuário falhou] | Erro: ".$e->getMessage());
+            Log::channel('administration_error')->error("[Método: Update][Controlador: AdministrationModuleUserPanelController] - Falha na atualização do usuário - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 
@@ -255,13 +255,13 @@ class AdministrationModuleUserPanelController extends Controller
 
             UserModel::where('id', $id)->delete();
 
-            Log::channel('administration_action')->error("[Deleção de usuário realizada] | ID do usuário: ".$id);
+            Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleUserPanelController] - Usuário removido com sucesso - ID do usuário: ".$id);
 
             return response("", 200);
 
         }catch(\Exception $e){
 
-            Log::channel('administration_error')->error("[Deleção de usuário falhou] | Erro: ".$e->getMessage());
+            Log::channel('administration_error')->error("[Método: Destroy][Controlador: AdministrationModuleUserPanelController] - Falha na remoção do usuário - Erro: ".$e->getMessage());
 
             return response(["error"=> $e->getMessage()], 500);
 

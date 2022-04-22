@@ -6,10 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
-
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
+// Log
+use Illuminate\Support\Facades\Log;
 
 class ReportModuleController extends Controller
 {
@@ -34,25 +35,21 @@ class ReportModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                if($model_response["data"]->total() > 0){
+                $data_formated = $this->formatDataForTable($model_response["data"]);
 
-                    $data_formated = $this->formatDataForTable($model_response["data"]);
-    
-                    return response($data_formated, 200);
-    
-                }else{
-    
-                    return response(["error" => "records_not_founded"], 404);
-    
-                }
+                return response($data_formated, 200);
 
             }else{
+
+                Log::channel('reports_error')->info("[Método: Index][Controlador: ReportModuleController] - Nenhum registro de relatório encontrado no sistema");
 
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('reports_error')->error("[Método: Store][Controlador: ReportModuleController] - Falha na criação do relatório - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -116,9 +113,13 @@ class ReportModuleController extends Controller
                 "observacao" => $request->observation
             ]);
 
+            Log::channel('reports_action')->info("[Método: Store][Controlador: ReportModuleController] - Relatório criado com sucesso");
+
             return response("", 200);
             
         }catch(\Exception $e){
+
+            Log::channel('reports_error')->error("[Método: Store][Controlador: ReportModuleController] - Falha na criação do relatório - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()]);
 
@@ -154,11 +155,15 @@ class ReportModuleController extends Controller
 
             }else{
 
+                Log::channel('reports_error')->error("[Método: Show][Controlador: ReportModuleController] - Nenhum registro encontrado na pesquisa");
+
                 return response(["error" => "records_not_founded"], 404);
 
             }
 
         }else if(!$model_response["status"] && $model_response["error"]){
+
+            Log::channel('reports_error')->error("[Método: Show][Controlador: ReportModuleController] - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -185,9 +190,13 @@ class ReportModuleController extends Controller
                 "observacao" => $request->observation
             ]);
 
+            Log::channel('reports_action')->info("[Método: Update][Controlador: ReportModuleController] - Relatório atualizado com sucesso - ID do relatório: ".$id);
+
             return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
+
+            Log::channel('reports_error')->error("[Método: Update][Controlador: ReportModuleController] - Falha na atualização do relatório - Erro: ".$e->getMessage());
 
             return ["status" => false, "error" => $e->getMessage()];
 
@@ -208,9 +217,13 @@ class ReportModuleController extends Controller
 
             ReportsModel::where('id', $id)->delete();
 
+            Log::channel('reports_action')->info("[Método: Destroy][Controlador: ReportModuleController] - Relatório removido com sucesso - ID do relatório: ".$id);
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            Log::channel('reports_error')->error("[Método: Destroy][Controlador: ReportModuleController] - Falha na remoção do relatório - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()]);
 
