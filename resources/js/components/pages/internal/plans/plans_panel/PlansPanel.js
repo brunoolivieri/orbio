@@ -286,12 +286,22 @@ export function PlansPanel(){
 
     const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
 
-    AxiosApi.get(`/api/plans-module-download/${filename}?auth=${module_middleware}`)
+    AxiosApi.get(`/api/plans-module-download/${filename}?auth=${module_middleware}`,null,{
+      responseType: 'blob'
+    })
     .then(function (response) {
 
       if(response.status === 200){
 
         handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
+
+        // Download do arquivo com o conteúdo retornado do servidor
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${filename}.txt`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
 
       }
 
