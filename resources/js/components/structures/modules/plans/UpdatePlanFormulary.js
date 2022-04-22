@@ -250,7 +250,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     <Box sx={{mb: 2}}>
                       <GenericSelect 
                       label_text = {"Relatório"} 
-                      data_source = {"/api/plans-module/create?data_source=reports&auth=none"} 
+                      data_source = {"/api/plans-module/create?table=reports&auth=none"} 
                       primary_key={"id"} 
                       key_content={"id"} 
                       error = {null} 

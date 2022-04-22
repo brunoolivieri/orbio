@@ -103,21 +103,35 @@ class FlightPlanModuleController extends Controller
      */
     public function downloadFlightPlanFile(string $filename) : \Illuminate\Http\Response {
 
-        if(Storage::disk("public")->exists("flight_plans/$filename")){
+        try{
 
-            $path = Storage::disk("public")->path("flight_plans/$filename");
-            $contents = file_get_contents($path); 
+            if(Storage::disk("public")->exists("flight_plans/$filename")){
 
-            return response($contents)->withHeaders([
-                "Content-type" => mime_content_type($path)
-            ]);
-
-            //return Storage::disk("public")->download("flight_plans/".$filename);
+                $path = Storage::disk("public")->path("flight_plans/$filename");
+                $contents = file_get_contents($path); 
     
+                Log::channel('flight_plans_action')->info("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo baixado com sucesso - Arquivo: ".$storage_folder."/".$file_name);
+    
+                return response($contents)->withHeaders([
+                    "Content-type" => mime_content_type($path)
+                ]);
+        
+            }else{
+
+                Log::channel('flight_plans_error')->error("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo não foi encontrado - Arquivo: ".$storage_folder."/".$file_name);
+    
+                return response("", 404);
+
+            }
+
+        }catch(\Exception $e){
+
+            Log::channel('flight_plans_error')->error("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Erro no download do arquivo do plano de vôo - Arquivo: ".$storage_folder."/".$file_name." - Erro: ".$e->getMessage());
+
+            return response("", 500);
+
         }
-    
-        return response("", 404);
-
+       
     }
 
     /**
@@ -129,7 +143,7 @@ class FlightPlanModuleController extends Controller
     {
         try{
 
-            $table = request()->data_source;
+            $table = request()->table;
 
             $data = DB::table($table)->get();
 
@@ -139,7 +153,7 @@ class FlightPlanModuleController extends Controller
 
         }catch(\Exception $e){
 
-            Log::channel('flight_plans_error')->error("[Método: Create][Controlador: FlightPlanModuleController] - Erro no carregamento dos dados da tabela ".$table." para composição do formulário - Erro: ".$model_response["error"]);
+            Log::channel('flight_plans_error')->error("[Método: Create][Controlador: FlightPlanModuleController] - Erro no carregamento dos dados da tabela ".$table." para composição do formulário - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()]);
 
@@ -178,7 +192,7 @@ class FlightPlanModuleController extends Controller
 
         }catch(\Exception $e){
 
-            Log::channel('flight_plans_error')->error("[Método: Store][Controlador: FlightPlanModuleController] - Falha na criação do plano de vôo");
+            Log::channel('flight_plans_error')->error("[Método: Store][Controlador: FlightPlanModuleController] - Falha na criação do plano de vôo - Erro: ".$e->getMessage());
 
             return response(["error" => $e->getMessage()], 500);
 

@@ -250,6 +250,10 @@ export function PlansPanel(){
 
   }
 
+   /**
+   * Função para processar o click no checkbox de uma linha da tabela
+   * 
+   */
   function handleClickOnCheckbox(event, record_clicked){
 
     //console.log(event.currentTarget.childNodes[0])
@@ -282,6 +286,10 @@ export function PlansPanel(){
 
   }
 
+   /**
+   * Função para processar o download do arquivo com as coordenadas do plano de vôo
+   * 
+   */
   function handleDownloadFlightPlan(filename){
 
     const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
