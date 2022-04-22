@@ -101,11 +101,18 @@ class FlightPlanModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function downloadFlightPlanFile($filename){
+    public function downloadFlightPlanFile(string $filename) : \Illuminate\Http\Response {
 
-        if(Storage::disk("public")->exists('flight_plans/'.$filename)){
+        if(Storage::disk("public")->exists("flight_plans/$filename")){
 
-            return Storage::disk("public")->download("flight_plans/".$filename);
+            $path = Storage::disk("public")->path("flight_plans/$filename");
+            $contents = file_get_contents($path); 
+
+            return response($contents)->withHeaders([
+                "Content-type" => mime_content_type($path)
+            ]);
+
+            //return Storage::disk("public")->download("flight_plans/".$filename);
     
         }
     
