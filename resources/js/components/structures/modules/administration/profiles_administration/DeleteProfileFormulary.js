@@ -146,7 +146,7 @@ return (
         {(props.selected_record.dom != null && open) && 
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.selected_record.data_cells.plan_id})</DialogTitle>
+                <DialogTitle>DELEÇÃO | PERFIL (ID: {props.selected_record.data_cells.profile_id})</DialogTitle>
 
                 {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >

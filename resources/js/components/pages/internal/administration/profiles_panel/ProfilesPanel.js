@@ -1,6 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useEffect, useState } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -8,7 +7,6 @@ import { CreateProfileFormulary } from "../../../../structures/modules/administr
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
 import { CheckboxStyled } from "../../../../structures/checkbox_styled/CheckboxStyled";
-
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -28,12 +26,10 @@ import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { InputAdornment } from "@mui/material";
-
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-
 // OUTROS
 import { useSnackbar } from 'notistack';
 
@@ -337,7 +333,7 @@ export function ProfilesPanel(){
               <Table sx={{ minWidth: 500 }} aria-label="customized table">
                   <TableHead>
                     <TableRow>
-                      <StyledHeadTableCell align="center">ID</StyledHeadTableCell>
+                      <StyledHeadTableCell>ID</StyledHeadTableCell>
                       <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                       <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
                       <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>

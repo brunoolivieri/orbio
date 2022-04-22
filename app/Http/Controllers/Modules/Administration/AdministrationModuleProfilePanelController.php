@@ -223,7 +223,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
         try{
 
-            ProfileModel::where('id', $profile_id)->delete();
+            ProfileModel::where('id', $id)->delete();
 
             Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil removido com sucesso - ID do perfil: ".$id);
 
@@ -233,7 +233,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             Log::channel('administration_error')->error("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil não foi removido - ID do perfil: ".$id." - Erro: ".$e->getMessage());
 
-            return response(["error" => $model_response["error"]], 500);
+            return response(["error" => $e->getMessage()], 500);
 
         }
 

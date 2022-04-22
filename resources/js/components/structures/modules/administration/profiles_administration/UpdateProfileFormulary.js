@@ -343,7 +343,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
             {(props.selected_record.dom != null && open) && 
     
                 <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.selected_record.data_cells.profile_id})</DialogTitle>
+                    <DialogTitle>EDIÇÃO | PERFIL (ID: {props.selected_record.data_cells.profile_id})</DialogTitle>
 
                     <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
