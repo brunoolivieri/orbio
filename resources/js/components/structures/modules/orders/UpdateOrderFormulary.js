@@ -51,6 +51,9 @@ export function UpdateOrderFormulary({...props}){
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
 
+    // State dos planos de vôo selecionados
+    const [flightPlansSelected, setFlightPlansSelected] = useState();
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -116,7 +119,7 @@ export function UpdateOrderFormulary({...props}){
       const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
       const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
-      const fligthPlanValidate = formData.get("select_flight_plan") != "0" ? {error: false, message: ""} : {error: true, message: ""};
+      const fligthPlansValidate = flightPlansSelected != null ? {error: false, message: ""} : {error: true, message: ""};
       const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
 
       setErrorDetected({
@@ -200,7 +203,7 @@ export function UpdateOrderFormulary({...props}){
             client_name: data.get("client_name"),
             observation: data.get("order_note"),
             status: data.get("status"),
-            fligth_plan_id: data.get("select_flight_plan")
+            fligth_plans_id: flightPlansSelected
         })
         .then(function (response) {
 
@@ -252,7 +255,7 @@ export function UpdateOrderFormulary({...props}){
         client_name: {error: false, message: null},
         observation: {error: false, message: null},
         status: {error: false, message: null},
-        fligth_plan_id: {error: false, message: null}
+        fligth_plans_ids: {error: false, message: null}
       }
 
       // Coleta dos objetos de erro existentes na response
@@ -273,7 +276,7 @@ export function UpdateOrderFormulary({...props}){
         pilot_name: input_errors.pilot_name.error, 
         client_name: input_errors.client_name.error, 
         order_note: input_errors.observation.error,
-        flight_plan: input_errors.fligth_plan_id.error,
+        flight_plans: input_errors.fligth_plans_ids.error,
         status: input_errors.status.error
       });
 
@@ -285,7 +288,7 @@ export function UpdateOrderFormulary({...props}){
         pilot_name: input_errors.pilot_name.message, 
         client_name: input_errors.client_name.message, 
         order_note: input_errors.observation.message,
-        flight_plan: input_errors.fligth_plan_id.message,
+        flight_plans: input_errors.fligth_plans_ids.message,
         status: input_errors.status.message
       });
 

@@ -43,6 +43,15 @@ class FlightPlansModel extends Model
 
     }
 
+    /*
+    * Relationship with service_order_has_flight_plans table
+    */
+    function service_order_has_flight_plans(){
+
+        return $this->hasMany("App\Models\Orders\ServiceOrdersHasFlightPlansModel", "id_plano_voo");
+
+    }
+
     /**
      * Método realizar um SELECT SEM WHERE na tabela "flight_plans"
      * Os registros selecionados preencherão uma única página da tabela

@@ -13,6 +13,7 @@ use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 // Models
 use App\Models\Orders\ServiceOrderHasUserModel;
+use App\Models\Orders\ServiceOrderHasFlightPlansModel;
 // Log
 use Illuminate\Support\Facades\Log;
 
@@ -154,6 +155,7 @@ class ServiceOrderModuleController extends Controller
 
             DB::beginTransaction();
 
+            // Create service order
             $new_service_order_id = DB::table("service_orders")->insertGetId(
                 [
                     "dh_inicio" => $request->initial_date,
@@ -163,16 +165,25 @@ class ServiceOrderModuleController extends Controller
                     "nome_piloto" => $request->pilot_name,
                     "nome_cliente" => $request->client_name,
                     "observacao" => $request->observation,
-                    "status" => $request->status,
-                    "id_plano_voo" => $request->fligth_plan_id,
+                    "status" => $request->status
                 ]
             );
 
+            // Create relation with users
             ServiceOrderHasUserModel::create([
                 "id_ordem_servico" => $new_service_order_id,
                 "id_usuario" => Auth::user()->id
             ]);
 
+            // Create relations with each flight plan selected
+            $flight_plans_selected = explode("|", $request->fligth_plans_ids);
+            foreach($flight_plans_selected as $index => $plan_id){
+                ServiceOrderHasFlightPlansModel::create([
+                    "id_ordem_servico" => $new_service_order_id,
+                    "id_plano_voo" => $plan_id
+                ]);
+            }
+           
             DB::commit();
 
             Log::channel('service_orders_action')->info("[Método: Store][Controlador: ReportModuleController] - Ordem de serviço criada com sucesso");
@@ -286,12 +297,12 @@ class ServiceOrderModuleController extends Controller
 
             $service_order = ServiceOrdersModel::find($id);
 
-            // Desvinculation with flight_plans table
-            if(!empty($service_order->flight_plans)){ 
-                $service_order->update(["id_plano_voo" => null]);
+            // Desvinculation with flight_plans through service_order_has_flight_plans table
+            if(!empty($service_order->service_order_has_flight_plans)){ 
+                $service_order->service_order_has_flight_plans()->delete();
             }
 
-            // Desvinculation with service_order_has_user table
+            // Desvinculation with user through service_order_has_user table
             $service_order->service_order_has_user()->delete();
 
             $service_order->delete();

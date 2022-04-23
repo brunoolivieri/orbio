@@ -310,9 +310,9 @@ class FlightPlanModuleController extends Controller
                 $flight_plan->reports()->delete();
             }
             
-            // Desvinculations with service_orders table
-            if(!empty($flight_plan->service_orders)){
-                $flight_plan->service_orders()->update(["id_plano_voo" => null]);
+            // Desvinculations with service_orders through service_orders_has_flight_plans table
+            if(!empty($flight_plan->service_order_has_flight_plans)){
+                $flight_plan->service_order_has_flight_plans()->delete();
             }
 
             // Delete file from storage

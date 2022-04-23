@@ -1,7 +1,6 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useState, useEffect } from 'react';
 import * as React from 'react';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -14,18 +13,16 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
-
+import {ModalTransferList} from "../../modal_with_transfer_list/ModalTransferList";
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
@@ -37,8 +34,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
+    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false}); 
+    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
@@ -53,6 +50,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     const [startDate, setStartDate] = useState(moment());
     const [endDate, setEndDate] = useState(moment());
 
+    // State dos planos de vôo selecionados
+    const [flightPlansSelected, setFlightPlansSelected] = useState();
+
+    // State do modal da seleção de listas
+    const [openSelecionList, setOpenSelectionList] = useState();
+
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -63,8 +66,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
-        setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
-        setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""});
+        setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false});
+        setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""});
         setDisplayAlert({display: false, type: "", message: ""});
         setDisabledButton(false);
 
@@ -115,7 +118,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       const pilotNameValidate = FormValidation(formData.get("select_pilot_name"), 3, null, null, null);
       const clientNameValidate = FormValidation(formData.get("select_client_name"), 3, null, null, null);
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
-      const fligthPlanValidate = formData.get("select_flight_plan") != "0" ? {error: false, message: ""} : {error: true, message: ""};
+      const fligthPlansValidate = flightPlansSelected != null ? {error: false, message: ""} : {error: true, message: ""};
       const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
 
       setErrorDetected({
@@ -125,7 +128,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         pilot_name: pilotNameValidate.error, 
         client_name: clientNameValidate.error, 
         order_note: orderNoteValidate.error, 
-        flight_plan: fligthPlanValidate.error,
+        flight_plans: fligthPlansValidate.error,
         status: statusValidate.error
       });
 
@@ -136,7 +139,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         pilot_name: pilotNameValidate.message, 
         client_name: clientNameValidate.message, 
         order_note: orderNoteValidate.message, 
-        flight_plan: fligthPlanValidate.message,
+        flight_plans: fligthPlansValidate.message,
         status: statusValidate.message
       });
     
@@ -196,7 +199,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         client_name: data.get("select_client_name"),
         observation: data.get("order_note"),
         status: data.get("status"),
-        fligth_plan_id: data.get("select_flight_plan")
+        fligth_plans_ids: flightPlansSelected
       })
       .then(function (response) {
 
@@ -249,7 +252,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         client_name: {error: false, message: null},
         observation: {error: false, message: null},
         status: {error: false, message: null},
-        fligth_plan_id: {error: false, message: null}
+        fligth_plans_ids: {error: false, message: null}
       }
 
       // Coleta dos objetos de erro existentes na response
@@ -269,7 +272,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         pilot_name: input_errors.pilot_name.error, 
         client_name: input_errors.client_name.error, 
         order_note: input_errors.observation.error,
-        flight_plan: input_errors.fligth_plan_id.error,
+        flight_plans: input_errors.fligth_plans_ids.error,
         status: input_errors.status.error
       });
 
@@ -280,7 +283,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         pilot_name: input_errors.pilot_name.message, 
         client_name: input_errors.client_name.message, 
         order_note: input_errors.observation.message,
-        flight_plan: input_errors.fligth_plan_id.message,
+        flight_plans: input_errors.fligth_plans_ids.message,
         status: input_errors.status.message
       });
 
@@ -370,15 +373,9 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
                 </Box>
 
                 <Box sx={{mb: 2}}>
-                  <GenericSelect 
-                    label_text = {"Plano de vôo vinculado"} 
-                    data_source = {"/api/orders-module/create?table=flight_plans&auth=none"} 
-                    primary_key={"id"} 
-                    key_content={"arquivo"} 
-                    error = {errorDetected.flight_plan} 
-                    default = {0} 
-                    name = {"select_flight_plan"}  
-                  />
+
+                  <ModalTransferList open_button_text = {"Selecionar planos de vôo"} modal_title = {"Seleção de planos de vôo"} />
+
                 </Box>
 
                 <TextField

@@ -380,7 +380,7 @@ export function OrdersPanel(){
                           <TableRow key={row.order_id}>
                           <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
                           <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell>
-                          <TableCell align="center">{row.flight_plan_id}</TableCell>
+                          <TableCell align="center">[planos vinculados - tabela pivô]</TableCell>
                           <TableCell align="center">{row.numOS}</TableCell> 
                           <TableCell align="center">{row.creator_name}</TableCell>
                           <TableCell align="center">{row.pilot_name}</TableCell>

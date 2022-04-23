@@ -33,6 +33,15 @@ class ServiceOrdersModel extends Model
 
     }
 
+    /*
+    * Relationship with service_order_has_flight_plans table
+    */
+    function service_order_has_flight_plans(){
+
+        return $this->hasMany("App\Models\Orders\ServiceOrdersHasFlightPlansModel", "id_ordem_servico");
+
+    }
+
     /**
      * Carrega os registros no formato de paginação
      * A claúsula where é opcional
@@ -47,11 +56,14 @@ class ServiceOrdersModel extends Model
         try{
 
             $data = DB::table('service_orders')
+            ->join("service_order_has_flight_plans", "service_order_has_flight_plans.id_ordem_servico", "=", "service_orders.id")
             ->when($where_value, function ($query, $where_value) {
 
                 $query->where('service_orders.id', $where_value);
 
             })->orderBy('service_orders.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            dd($data);
 
             return ["status" => true, "error" => false, "data" => $data];
 

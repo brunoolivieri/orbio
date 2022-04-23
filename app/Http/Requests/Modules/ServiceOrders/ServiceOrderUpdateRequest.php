@@ -33,7 +33,7 @@ class ServiceOrderUpdateRequest extends FormRequest
             "client_name" => 'required|string',
             "observation" => 'required|string',
             "status" => 'required|boolean',
-            "fligth_plan_id" => 'required|integer', 
+            "fligth_plans_ids" => 'required', 
         ];
     }
 
@@ -54,7 +54,7 @@ class ServiceOrderUpdateRequest extends FormRequest
             'observation.required' => "A observação deve ser informada",
             'status.required' => "O status deve ser definido",
             'status.boolean' => "O status deve ser 1 ou 0",
-            'fligth_plan_id.required' => "Um plano de vôo deve ser selecionado"
+            'fligth_plans_ids.required' => "Pelo menos um plano de vôo deve ser selecionado"
         ];
     }
 }

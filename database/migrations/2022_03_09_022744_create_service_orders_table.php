@@ -15,7 +15,6 @@ class CreateServiceOrdersTable extends Migration
     {
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_plano_voo')->nullable(true)->constrained('flight_plans');
             $table->string("numOS");
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();
