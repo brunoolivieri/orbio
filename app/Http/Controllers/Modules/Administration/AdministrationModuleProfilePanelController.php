@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
@@ -229,7 +230,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             // Desvinculation with user table
             if(!empty($profile->user)){ 
-                $profile->user()->update(["id_perfil", 5]);
+                $profile->user()->update(["id_perfil" => 5]);
             }
 
             // Desvinculation with profile_has_module table

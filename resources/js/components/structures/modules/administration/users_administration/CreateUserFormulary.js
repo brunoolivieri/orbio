@@ -225,7 +225,7 @@ export function CreateUserFormulary({...props}) {
 
           <DialogContent>
         
-            <DialogContentText>
+            <DialogContentText mb={2}>
               O usuário criado receberá um e-mail com dados de acesso padrão.
             </DialogContentText>
             

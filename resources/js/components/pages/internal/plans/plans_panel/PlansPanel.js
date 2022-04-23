@@ -419,7 +419,7 @@ export function PlansPanel(){
                           <TableRow key={row.plan_id} >
                             <TableCell><FormControlLabel value={row.plan_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.plan_id} /></TableCell>
                             <TableCell align="center">
-                              <Link href={`/sistema/mapa?plan_id=${row.plan_id}`} target="_blank">
+                              <Link href={`/sistema/mapa?file=${row.plan_file}`} target="_blank">
                                 <Tooltip title="Ver plano">
                                   <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
                                     <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
