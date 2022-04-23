@@ -419,7 +419,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton} variant="contained">Criar ordem de serviço</Button>
+                <Button type="submit" disabled={disabledButton}>Criar ordem de serviço</Button>
               </DialogActions>
     
             </Box>

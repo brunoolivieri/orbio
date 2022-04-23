@@ -15,7 +15,7 @@ class CreateServiceOrdersTable extends Migration
     {
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("id_plano_voo");
+            $table->foreignId('id_plano_voo')->nullable(true)->constrained('flight_plans');
             $table->string("numOS");
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();
@@ -26,7 +26,6 @@ class CreateServiceOrdersTable extends Migration
             $table->string("nome_piloto");
             $table->string("nome_cliente");
             $table->text("observacao");
-            $table->foreign('id_plano_voo')->references('id')->on('flight_plans');
         });
     }
 

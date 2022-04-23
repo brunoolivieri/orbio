@@ -16,21 +16,30 @@ class FlightPlansModel extends Model
     const UPDATED_AT = "dh_atualizacao";
     protected $guarded = [];
 
+    /*
+    * Relationship with incidents table
+    */
     function incidents(){
 
         return $this->belongsTo("App\Models\Incidents\IncidentsModel", "id_incidente");
 
     }
 
+    /*
+    * Relationship with reports table
+    */
     function reports(){
 
         return $this->belongsTo("App\Models\Reports\ReportsModel", "id_relatorio");
 
     }
 
+    /*
+    * Relationship with service_orders table
+    */
     function service_orders(){
 
-        return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "id_plano_voo");
+        return $this->hasMany("App\Models\Orders\ServiceOrdersModel", "id_plano_voo");
 
     }
 

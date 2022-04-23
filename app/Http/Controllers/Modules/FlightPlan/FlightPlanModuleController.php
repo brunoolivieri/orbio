@@ -182,7 +182,7 @@ class FlightPlanModuleController extends Controller
                 "status" => 0
             ]);
 
-            if($request->hash_file('flight_plan')){
+            if($request->file('flight_plan')){
 
                 $path = $request->file('flight_plan')->storeAs(
                     $storage_folder, $file_name
@@ -266,8 +266,8 @@ class FlightPlanModuleController extends Controller
         try{
 
             FlightPlansModel::where('id', $id)->update([
-                "id_relatorio" => $request->report_id,
-                "id_incidente" => $request->incident_id,
+                "id_relatorio" => $request->report_id == 0 ? null : $request->report_id,
+                "id_incidente" => $request->incident_id == 0 ? null : $request->incident_id,
                 "descricao" => $request->description,
                 "status" => $request->status
             ]);
@@ -296,19 +296,37 @@ class FlightPlanModuleController extends Controller
 
         try{
 
-            // DESVINCULAR E DELETAR INCIDENTE 
-            // DESVINCULAR E DELETAR RELATÓRIO
-            // DESVINCULAR PLANO DA ORDEM DE SERVIÇO
-            // DELETAR ARQUIVO
-            // DELETAR REGISTRO DO PLANO
+            DB::BeginTransaction();
 
-            FlightPlansModel::where("id", $id)->delete();
+            $flight_plan = FlightPlansModel::find($id);
 
-            Log::channel('flight_plans_action')->info("[Método: Destroy][Controlador: FlightPlanModuleController] - Plano de vôo removido com sucesso - Arquivo deletado - Relações desfeitas - ID do plano de vôo: ".$id);
+            // Relationship desvinculations 
+            if(!empty($flight_plan->incidents)){ 
+                $flight_plan->incidents()->delete();
+            }
+
+            if(!empty($flight_plan->reports)){
+                $flight_plan->reports()->delete();
+            }
+            
+            if(!empty($flight_plan->service_orders)){
+                $flight_plan->service_orders()->update(["id_plano_voo" => null]);
+            }
+
+            // Delete file from storage
+            Storage::disk('public')->delete("flight_plans/".$flight_plan->arquivo);
+
+            $flight_plan->delete();
+
+            Log::channel('flight_plans_action')->info("[Método: Destroy][Controlador: FlightPlanModuleController] - Plano de vôo removido com sucesso - Incidentes e relatórios relacionados foram deletados - Arquivo 'flight_plans/".$flight_plan->arquivo." deletado - ID do plano de vôo: ".$id);
+
+            DB::Commit();
 
             return response("", 200);
 
         }catch(\Exception $e){
+
+            DB::rollBack();
 
             Log::channel('flight_plans_error')->error("[Método: Destroy][Controlador: FlightPlanModuleController] - Falha na remoção do plano de vôo - Erro: ".$e->getMessage());
 

@@ -15,15 +15,13 @@ class CreateFlightPlansTable extends Migration
     {
         Schema::create('flight_plans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("id_relatorio")->nullable(true);
-            $table->unsignedBigInteger("id_incidente")->nullable(true);
+            $table->foreignId('id_relatorio')->nullable(true)->constrained('reports')->onDelete('cascade');
+            $table->foreignId('id_incidente')->nullable(true)->constrained('incidents')->onDelete('cascade');
             $table->text("arquivo");
             $table->text("descricao");
             $table->boolean("status")->default(false);
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();
-            $table->foreign('id_relatorio')->references('id')->on('reports')->onDelete('cascade');
-            $table->foreign('id_incidente')->references('id')->on('incidents')->onDelete('cascade');
         });
     }
 

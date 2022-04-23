@@ -19,12 +19,18 @@ class ProfileModel extends Model
     const UPDATED_AT = "dh_atualizacao";
     protected $guarded = [];
 
+    /*
+    * Relationship with user table
+    */
     function user(){
 
         $this->hasOne("App\Models\User\UserModel", "id_perfil");
 
     }
 
+    /*
+    * Relationship with profilehasmodule table
+    */
     function module_privileges(){
 
         return $this->hasMany("App\Models\ProfileAndModule\ProfileHasModuleModel", "id_perfil");

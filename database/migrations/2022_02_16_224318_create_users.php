@@ -15,8 +15,8 @@ class CreateUsers extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("id_perfil");
-            $table->unsignedBigInteger("id_dados_complementares")->nullable(true);
+            $table->foreignId('id_perfil')->constrained('profile');
+            $table->foreignId('id_dados_complementares')->nullable(true)->constrained('user_complementary_data')->onDelete('cascade');
             $table->string("nome");
             $table->string("email");
             $table->string("senha");
@@ -24,9 +24,7 @@ class CreateUsers extends Migration
             $table->string("token")->nullable(true);
             $table->dateTime("dh_ultimo_acesso")->nullable(true);
             $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_criacao")->useCurrent();
-            $table->foreign('id_perfil')->references('id')->on('profile');
-            $table->foreign('id_dados_complementares')->references('id')->on('user_complementary_data')->onDelete('cascade');
+            $table->dateTime("dh_criacao")->useCurrent();   
         });
     }
 

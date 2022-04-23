@@ -15,6 +15,24 @@ class ServiceOrdersModel extends Model
     const UPDATED_AT = "dh_atualizacao";
     protected $guarded = []; 
 
+    /*
+    * Relationship with flight_plans table
+    */
+    function flight_plans(){
+
+        return $this->belongsTo("App\Models\Plans\FlightPlansModel", "id_plano_voo");
+
+    }
+
+    /*
+    * Relationship with service_order_has_user table
+    */
+    function service_order_has_user(){
+
+        return $this->hasOne("App\Models\Orders\ServiceOrderHasUserModel", "id_ordem_servico");
+
+    }
+
     /**
      * Carrega os registros no formato de paginação
      * A claúsula where é opcional

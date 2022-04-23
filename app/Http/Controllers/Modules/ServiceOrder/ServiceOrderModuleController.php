@@ -282,13 +282,28 @@ class ServiceOrderModuleController extends Controller
     {
         try{
 
+            DB::BeginTransaction();
+
+            $service_order = ServiceOrdersModel::find($id);
+
+            // Relationship desvinculations 
+            if(!empty($service_order->flight_plans)){ 
+                $service_order->update(["id_plano_voo" => null]);
+            }
+
+            $service_order->service_order_has_user()->delete();
+
             ServiceOrdersModel::where('id', $id)->delete();
 
             Log::channel('service_orders_action')->info("[Método: Destroy][Controlador: ReportModuleController] - Ordem de serviço removido com sucesso - ID da ordem de serviço: ".$id);
 
+            DB::Commit();
+
             return response("", 200);
 
         }catch(\Exception $e){
+
+            DB::rollBack();
 
             Log::channel('service_orders_error')->error("[Método: Destroy][Controlador: ReportModuleController] - Falha na remoção da ordem de serviço - Erro: ".$e->getMessage());
 

@@ -14,10 +14,8 @@ class CreateServiceOrderHasUserTable extends Migration
     public function up()
     {
         Schema::create('service_order_has_user', function (Blueprint $table) {
-            $table->unsignedBigInteger("id_ordem_servico");
-            $table->unsignedBigInteger("id_usuario");
-            $table->foreign("id_ordem_servico")->references('id')->on('service_orders');
-            $table->foreign("id_usuario")->references('id')->on('users');
+            $table->foreignId("id_ordem_servico")->constrained('service_orders');
+            $table->foreignId("id_usuario")->constrained('users');
         });
     }
 
