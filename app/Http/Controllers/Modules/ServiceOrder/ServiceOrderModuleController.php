@@ -286,14 +286,15 @@ class ServiceOrderModuleController extends Controller
 
             $service_order = ServiceOrdersModel::find($id);
 
-            // Relationship desvinculations 
+            // Desvinculation with flight_plans table
             if(!empty($service_order->flight_plans)){ 
                 $service_order->update(["id_plano_voo" => null]);
             }
 
+            // Desvinculation with service_order_has_user table
             $service_order->service_order_has_user()->delete();
 
-            ServiceOrdersModel::where('id', $id)->delete();
+            $service_order->delete();
 
             Log::channel('service_orders_action')->info("[Método: Destroy][Controlador: ReportModuleController] - Ordem de serviço removido com sucesso - ID da ordem de serviço: ".$id);
 

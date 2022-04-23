@@ -223,13 +223,29 @@ class AdministrationModuleProfilePanelController extends Controller
 
         try{
 
-            ProfileModel::where('id', $id)->delete();
+            DB::BeginTransaction();
+
+            $profile = ProfileModel::find($id);
+
+            // Desvinculation with user table
+            if(!empty($profile->user)){ 
+                $profile->user()->update(["id_perfil", 5]);
+            }
+
+            // Desvinculation with profile_has_module table
+            $profile->module_privileges()->delete();
+           
+            $profile->delete();
 
             Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil removido com sucesso - ID do perfil: ".$id);
+
+            DB::Commit();
 
             return response("", 200);
 
         }catch(\Exception $e){
+
+            DB::rollBack();
 
             Log::channel('administration_error')->error("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil não foi removido - ID do perfil: ".$id." - Erro: ".$e->getMessage());
 

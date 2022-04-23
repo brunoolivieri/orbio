@@ -24,7 +24,7 @@ class ProfileModel extends Model
     */
     function user(){
 
-        $this->hasOne("App\Models\User\UserModel", "id_perfil");
+        $this->hasMany("App\Models\User\UserModel", "id_perfil");
 
     }
 

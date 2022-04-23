@@ -300,15 +300,17 @@ class FlightPlanModuleController extends Controller
 
             $flight_plan = FlightPlansModel::find($id);
 
-            // Relationship desvinculations 
+            // Desvinculation with incidents table
             if(!empty($flight_plan->incidents)){ 
                 $flight_plan->incidents()->delete();
             }
 
+            // Desvinculation with reports table
             if(!empty($flight_plan->reports)){
                 $flight_plan->reports()->delete();
             }
             
+            // Desvinculations with service_orders table
             if(!empty($flight_plan->service_orders)){
                 $flight_plan->service_orders()->update(["id_plano_voo" => null]);
             }
