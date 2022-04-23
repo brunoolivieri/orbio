@@ -57,14 +57,17 @@ export const CreateReportFormulary = React.memo(({...props}) => {
     const [startDate, setStartDate] = useState(moment());
     const [endDate, setEndDate] = useState(moment());
 
+    // State do upload do log
+    const [logUploaded, setLogUploaded] = useState({status: false, file: null});
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
+    // Function por open the modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
+    // Function for close the modal
     const handleClose = () => {
 
         setErrorDetected({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false});
@@ -78,8 +81,42 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
     /*
     * Rotina 1
-    * Ponto inicial do processamento do envio do formulário de registro
-    * Recebe os dados do formulário, e transforma em um objeto da classe FormData
+    * Validation of the file selected and release, if its valid, of the report generation
+    * Its content will have part of the data for the report generation
+    */ 
+    function handleFileUploadedValidateItAndReleaseFormulary(event){
+      //console.log(event.target.files[0])
+
+      let file_uploaded = event.target.files[0];
+  	  let file_extension = event.target.files[0].name.split('.').pop().toLowerCase();
+
+  	  if (file_uploaded && file_extension == 'txt') {  
+
+        // EXTRAÇÃO DOS DADOS RELEVANTES DO ARQUIVO PARA O STATE
+        // LIBERAÇÃO DO FORMULÁRIO DE GERAÇÃO DO RELATÓRIO
+
+        let filename = "";
+        let filecontent = "";
+
+        // Report generation is released
+        setLogUploaded({status: true, file: file_uploaded});
+
+      }else{
+
+        // Report generation is closed
+        setLogUploaded({status: false, file: null});
+
+        setErrorDetected({flight_start_date: false, flight_end_date: false, flight_log: true, report_note: false});
+        setErrorMessage({flight_start_date: "", flight_end_date: "", flight_log: "Arquivo inválido", report_note: ""});
+
+      } 
+
+    }
+
+    /*
+    * Rotina 2
+    * Initial point for the report creation formulary process
+    * Its receives the formulary data and transforms into an object of the FormData class
     */ 
     function handleRegistrationSubmit(event){
       event.preventDefault();
@@ -276,36 +313,38 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
             <Box sx={{mb: 3}}>
               <label htmlFor="contained-button-file">
-                <Input accept="image/*" id="contained-button-file" multiple type="file" name = "flight_log_file" />
-                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"}>
+                <Input accept=".txt" id="contained-button-file" multiple type="file" name = "flight_log_file" onChange= {handleFileUploadedValidateItAndReleaseFormulary} />
+                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} >
                   {errorDetected.flight_log ? errorMessage.flight_log : "Upload do Log"}
                 </Button>
               </label>
             </Box>
 
-            <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
-              <DateTimeInput 
-                event = {setStartDate}
-                label = {"Inicio do vôo"} 
-                helperText = {errorMessage.flight_start_date} 
-                error = {errorDetected.flight_start_date} 
-                defaultValue = {moment()}
-                operation = {"create"}
-                read_only = {true}
-                />
-                <DateTimeInput
-                event = {setEndDate}
-                name = {"report_end_flight"} 
-                label = {"Fim do vôo"} 
-                helperText = {errorMessage.flight_end_date} 
-                error = {errorDetected.flight_end_date} 
-                defaultValue = {moment()}
-                operation = {"create"}
-                read_only = {true}
-              />
-            </Box>
+            {logUploaded.status && 
+              <>
+                <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
+                  <DateTimeInput 
+                    event = {setStartDate}
+                    label = {"Inicio do vôo"} 
+                    helperText = {errorMessage.flight_start_date} 
+                    error = {errorDetected.flight_start_date} 
+                    defaultValue = {moment()}
+                    operation = {"create"}
+                    read_only = {true}
+                    />
+                    <DateTimeInput
+                    event = {setEndDate}
+                    name = {"report_end_flight"} 
+                    label = {"Fim do vôo"} 
+                    helperText = {errorMessage.flight_end_date} 
+                    error = {errorDetected.flight_end_date} 
+                    defaultValue = {moment()}
+                    operation = {"create"}
+                    read_only = {true}
+                  />
+              </Box>
 
-            <TextField
+              <TextField
               type = "text"
               margin="dense"
               label="Observação"
@@ -317,7 +356,10 @@ export const CreateReportFormulary = React.memo(({...props}) => {
               helperText = {errorMessage.report_note}
               error = {errorDetected.report_note}
               sx={{mb: 3}}
-            />
+              />
+            </>
+            }
+            
               
           </DialogContent>
 
