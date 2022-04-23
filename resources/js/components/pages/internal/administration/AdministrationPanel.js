@@ -1,19 +1,14 @@
 // IMPORTAÇÃO DOS COMPONENTES DO REACT
 import { useEffect, useState } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { UsersPanel } from "./users_panel/UsersPanel";
 import { ProfilesPanel } from "./profiles_panel/ProfilesPanel";
-
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import Paper from '@mui/material/Paper';
-import { AppBar } from "@mui/material";
-import { Toolbar } from "@mui/material";
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { Switcher } from "../../../structures/switcher/Switcher";
-
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';

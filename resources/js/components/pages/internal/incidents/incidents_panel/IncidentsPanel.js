@@ -1,13 +1,11 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useEffect, useState } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import {CreateIncidentFormulary} from "../../../../structures/modules/incidents/CreateIncidentFormulary";
 import { UpdateIncidentFormulary } from "../../../../structures/modules/incidents/UpdateIncidentFormulary";
 import { DeleteIncidentFormulary } from "../../../../structures/modules/incidents/DeleteIncidentFormulary";
-
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -26,12 +24,14 @@ import Stack from '@mui/material/Stack';
 import Alert from '@mui/material/Alert';
 import { InputAdornment } from "@mui/material";
 import { Checkbox } from "@mui/material";
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-
 // OUTROS
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -308,12 +308,12 @@ export function IncidentsPanel(){
           </Grid>
 
           <Grid item>
-          <Tooltip title="Reload">
-            <IconButton onClick = {reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
-            </IconButton>
-          </Tooltip>  
-        </Grid>
+            <Tooltip title="Reload">
+              <IconButton onClick = {reloadTable}>
+                <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
+              </IconButton>
+            </Tooltip>  
+          </Grid>
 
         <Grid item xs>
           <TextField
@@ -345,36 +345,44 @@ export function IncidentsPanel(){
 
         </Grid>
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 500 }} aria-label="customized table">
-              <TableHead>
-              <TableRow>
-                <StyledTableCell></StyledTableCell>
-                  <StyledTableCell>ID</StyledTableCell>
-                  <StyledTableCell align="center">Tipo do incidente</StyledTableCell>
-                  <StyledTableCell align="center">Descrição</StyledTableCell>
-                  <StyledTableCell align="center">Data do incidente</StyledTableCell>
-              </TableRow>
-              </TableHead>
-              <TableBody className = "tbody">
-                  {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                      panelData.response.records.map((row) => (
-                          <TableRow key={row.incident_id}>
-                            <TableCell><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
-                            <TableCell>{row.incident_id}</TableCell>
-                            <TableCell align="center">{row.incident_type}</TableCell>
-                            <TableCell align="center">{row.description}</TableCell> 
-                            <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
-                          </TableRow>
-                      ))}    
-              </TableBody>
-          </Table>
+        <FormControl fullWidth>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            name="radio-buttons-group"
+            defaultChecked={false}
+          >
 
-          {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
-            <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
-          }
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 500 }} aria-label="customized table">
+                  <TableHead>
+                  <TableRow>
+                      <StyledTableCell>ID</StyledTableCell>
+                      <StyledTableCell align="center">Tipo do incidente</StyledTableCell>
+                      <StyledTableCell align="center">Descrição</StyledTableCell>
+                      <StyledTableCell align="center">Data do incidente</StyledTableCell>
+                  </TableRow>
+                  </TableHead>
+                  <TableBody className = "tbody">
+                      {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                          panelData.response.records.map((row) => (
+                              <TableRow key={row.incident_id}>
+                                <TableCell><FormControlLabel value={row.incident_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.incident_id} /></TableCell>
+                                <TableCell align="center">{row.incident_type}</TableCell>
+                                <TableCell align="center">{row.description}</TableCell> 
+                                <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
+                              </TableRow>
+                          ))}    
+                  </TableBody>
+              </Table>
 
-        </TableContainer> 
+              {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
+                <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
+              }
+
+            </TableContainer> 
+
+        </RadioGroup>
+      </FormControl>
       </>
     );
 }

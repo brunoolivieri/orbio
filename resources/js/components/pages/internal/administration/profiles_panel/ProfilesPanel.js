@@ -6,7 +6,6 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
-import { CheckboxStyled } from "../../../../structures/checkbox_styled/CheckboxStyled";
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -26,6 +25,9 @@ import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { InputAdornment } from "@mui/material";
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
@@ -329,6 +331,13 @@ export function ProfilesPanel(){
 
         </Grid>
 
+        <FormControl fullWidth>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            name="radio-buttons-group"
+            defaultChecked={false}
+          >
+
           <TableContainer component={Paper}>
               <Table sx={{ minWidth: 500 }} aria-label="customized table">
                   <TableHead>
@@ -348,7 +357,7 @@ export function ProfilesPanel(){
                       {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                           panelData.response.records.map((row) => ( 
                             <TableRow key={row.profile_id}>
-                              <TableCell component="th" scope="row"><CheckboxStyled row = {row} text_key ={"profile_id"} eventOnClick = {handleClickOnCheckbox} /></TableCell>
+                              <TableCell><FormControlLabel value={row.profile_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.profile_id} /></TableCell>
                               <TableCell align="center">{row.profile_name}</TableCell>
                               <TableCell align="center">
                                 <FormGroup>
@@ -385,6 +394,9 @@ export function ProfilesPanel(){
                   </TableBody>
               </Table>
           </TableContainer>
+
+        </RadioGroup>
+      </FormControl>
              
       </>
     )

@@ -1,12 +1,10 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useEffect, useState } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { UpdatePlanFormulary } from "../../../../structures/modules/plans/UpdatePlanFormulary";
 import { DeletePlanFormulary } from "../../../../structures/modules/plans/DeletePlanFormulary";
-
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -27,7 +25,10 @@ import { Link } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import Checkbox from '@mui/material/Checkbox';
 import Alert from '@mui/material/Alert';
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
@@ -36,7 +37,6 @@ import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
-
 // OUTROS
 import { useSnackbar } from 'notistack';
 
@@ -391,72 +391,80 @@ export function PlansPanel(){
 
         </Grid>
 
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                <TableHead>
-                <TableRow>
-                <StyledHeadTableCell></StyledHeadTableCell>
-                <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
-                </TableRow>
-                </TableHead>
-                <TableBody className = "tbody">
-                  {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                      panelData.response.records.map((row) => (
-                      <TableRow key={row.plan_id} >
-                        <TableCell><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
-                        <TableCell>{row.plan_id}</TableCell>
-                        <TableCell align="center">
-                          <Link href={`/sistema/mapa?plan_id=${row.plan_id}`} target="_blank">
-                            <Tooltip title="Ver plano">
-                              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
-                              </IconButton>
-                            </Tooltip>
-                          </Link> 
-                        </TableCell>
-                        <TableCell align="center">
-                          <Tooltip title="Baixar plano">
-                            <IconButton onClick={() => handleDownloadFlightPlan(row.plan_file)} disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                              <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#007937" : "#808991"} />
-                            </IconButton>
-                          </Tooltip> 
-                        </TableCell>
-                        <TableCell align="center">
-                          {row.report_id != null ? 
-                          <Tooltip title="Ver relatório">
-                            <IconButton>
-                              <FontAwesomeIcon icon={faFilePdf} color="#00713A"/>
-                            </IconButton> 
-                          </Tooltip> 
-                          : 
-                          <IconButton disabled>
-                            <FontAwesomeIcon icon={faFilePdf} color="#808991" />
-                          </IconButton> 
-                          }
-                        </TableCell>
-                        <TableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell> 
-                        <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
-                        <TableCell align="center">{row.plan_description}</TableCell>
-                        <TableCell align="center">{row.created_at}</TableCell>
-                        <TableCell align="center">{row.updated_at}</TableCell>    
-                      </TableRow>
-                    ))}    
-                </TableBody>
-            </Table>
+        <FormControl fullWidth>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            name="radio-buttons-group"
+            defaultChecked={false}
+          >
 
-            {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
-              <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
-            }
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 500 }} aria-label="customized table">
+                    <TableHead>
+                    <TableRow>
+                    <StyledHeadTableCell>ID</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
+                      <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
+                        <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
+                    </TableRow>
+                    </TableHead>
+                    <TableBody className = "tbody">
+                      {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                          panelData.response.records.map((row) => (
+                          <TableRow key={row.plan_id} >
+                            <TableCell><FormControlLabel value={row.plan_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.plan_id} /></TableCell>
+                            <TableCell align="center">
+                              <Link href={`/sistema/mapa?plan_id=${row.plan_id}`} target="_blank">
+                                <Tooltip title="Ver plano">
+                                  <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
+                                    <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
+                                  </IconButton>
+                                </Tooltip>
+                              </Link> 
+                            </TableCell>
+                            <TableCell align="center">
+                              <Tooltip title="Baixar plano">
+                                <IconButton onClick={() => handleDownloadFlightPlan(row.plan_file)} disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
+                                  <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#007937" : "#808991"} />
+                                </IconButton>
+                              </Tooltip> 
+                            </TableCell>
+                            <TableCell align="center">
+                              {row.report_id != null ? 
+                              <Tooltip title="Ver relatório">
+                                <IconButton>
+                                  <FontAwesomeIcon icon={faFilePdf} color="#00713A"/>
+                                </IconButton> 
+                              </Tooltip> 
+                              : 
+                              <IconButton disabled>
+                                <FontAwesomeIcon icon={faFilePdf} color="#808991" />
+                              </IconButton> 
+                              }
+                            </TableCell>
+                            <TableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell> 
+                            <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
+                            <TableCell align="center">{row.plan_description}</TableCell>
+                            <TableCell align="center">{row.created_at}</TableCell>
+                            <TableCell align="center">{row.updated_at}</TableCell>    
+                          </TableRow>
+                        ))}    
+                    </TableBody>
+                </Table>
 
-        </TableContainer> 
+                {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
+                  <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
+                }
+
+            </TableContainer> 
+
+        </RadioGroup>
+      </FormControl>
       </>
     );
 }

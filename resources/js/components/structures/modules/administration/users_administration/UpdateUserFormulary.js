@@ -1,7 +1,6 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useState, useEffect } from 'react';
 import * as React from 'react';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,13 +12,11 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericSelect } from '../../../input_select/GenericSelect';
 import AxiosApi from '../../../../../services/AxiosApi';
-
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -191,7 +188,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
     }
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
   return (
     <>
@@ -213,60 +210,61 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
           <DialogContent>
             
             <TextField
-              margin="dense"
-              id="user_id"
-              name="user_id"
-              label="ID"
-              type="email"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.selected_record.data_cells.user_id}
-              inputProps={{
-                readOnly: true
+            margin="dense"
+            id="user_id"
+            name="user_id"
+            label="ID"
+            type="email"
+            fullWidth
+            variant="outlined"
+            defaultValue={props.selected_record.data_cells.user_id}
+            inputProps={{
+              readOnly: true
             }}
             sx={{mb: 2}}
             />
+            
             <TextField
-              margin="dense"
-              id="name_input"
-              name="name_input"
-              label="Nome completo"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.selected_record.data_cells.name}
-              helperText = {errorMessage.name}
-              error = {errorDetected.name}
-              sx={{mb: 2}}
+            margin="dense"
+            id="name_input"
+            name="name_input"
+            label="Nome completo"
+            fullWidth
+            variant="outlined"
+            defaultValue={props.selected_record.data_cells.name}
+            helperText = {errorMessage.name}
+            error = {errorDetected.name}
+            sx={{mb: 2}}
             />
             <TextField
-              margin="dense"
-              id="email_input"
-              name="email_input"
-              label="Endereço de email"
-              type="email"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.selected_record.data_cells.email} 
-              helperText = {errorMessage.email}
-              error = {errorDetected.email}
-              sx={{mb: 2}}
+            margin="dense"
+            id="email_input"
+            name="email_input"
+            label="Endereço de email"
+            type="email"
+            fullWidth
+            variant="outlined"
+            defaultValue={props.selected_record.data_cells.email} 
+            helperText = {errorMessage.email}
+            error = {errorDetected.email}
+            sx={{mb: 2}}
             />
 
             <TextField
-              margin="dense"
-              id="status_input"
-              name="status_input"
-              label="Status da conta"
-              type="number"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.selected_record.data_cells.status}
-              helperText = {errorMessage.status}
-              error = {errorDetected.status}
-              InputProps={{
-                inputProps: { min: 0, max: 1 }
-              }}
-              sx={{mb: 2}}
+            margin="dense"
+            id="status_input"
+            name="status_input"
+            label="Status da conta"
+            type="number"
+            fullWidth
+            variant="outlined"
+            defaultValue={props.selected_record.data_cells.status}
+            helperText = {errorMessage.status}
+            error = {errorDetected.status}
+            InputProps={{
+              inputProps: { min: 0, max: 1 }
+            }}
+            sx={{mb: 2}}
             />
 
             <GenericSelect 

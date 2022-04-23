@@ -1,14 +1,11 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useEffect, useState } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
-import { CheckboxStyled } from "../../../../structures/checkbox_styled/CheckboxStyled";
-
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -26,12 +23,14 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-
 // OUTROS
 import { useSnackbar } from 'notistack';
 
@@ -256,6 +255,8 @@ export function UsersPanel(){
   }
 
   function handleClickOnCheckbox(event, record_clicked){
+
+    console.log(event.currentTarget)
   
     // If already exists a selected record, and its equal to the clicked
     if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
@@ -343,37 +344,47 @@ export function UsersPanel(){
 
       </Grid>
 
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 500 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledHeadTableCell>ID</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Criação da conta</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
-                <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody className = "tbody">
-            {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-              panelData.response.records.map((row) => (
-                <TableRow key={row.user_id}>
-                  <TableCell component="th" scope="row"><CheckboxStyled row = {row} text_key ={"user_id"} eventOnClick = {handleClickOnCheckbox} /></TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
-                  <TableCell align="center">{row.email}</TableCell> 
-                  <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} />}</TableCell>
-                  <TableCell align="center">{row.profile_name}</TableCell>
-                  <TableCell align="center">{row.created_at}</TableCell>
-                  <TableCell align="center">{row.updated_at}</TableCell>
-                  <TableCell align="center">{row.last_access}</TableCell>
+      <FormControl fullWidth>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          name="radio-buttons-group"
+          defaultChecked={false}
+        >
+
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 500 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Criação da conta</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
                 </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody className = "tbody">
+                    {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                    panelData.response.records.map((row) => (
+                    <TableRow key={row.user_id}>
+                      <TableCell><FormControlLabel value={row.user_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.user_id} /></TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.email}</TableCell> 
+                      <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} />}</TableCell>
+                      <TableCell align="center">{row.profile_name}</TableCell>
+                      <TableCell align="center">{row.created_at}</TableCell>
+                      <TableCell align="center">{row.updated_at}</TableCell>
+                      <TableCell align="center">{row.last_access}</TableCell>
+                    </TableRow>
+                    ))}   
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+        </RadioGroup>
+      </FormControl>
 
     </>
   )

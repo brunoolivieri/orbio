@@ -110,7 +110,7 @@ class FlightPlanModuleController extends Controller
                 $path = Storage::disk("public")->path("flight_plans/$filename");
                 $contents = file_get_contents($path); 
     
-                Log::channel('flight_plans_action')->info("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo baixado com sucesso - Arquivo: ".$storage_folder."/".$file_name);
+                Log::channel('flight_plans_action')->info("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo baixado com sucesso - Arquivo: ".$path);
     
                 return response($contents)->withHeaders([
                     "Content-type" => mime_content_type($path)
@@ -118,7 +118,7 @@ class FlightPlanModuleController extends Controller
         
             }else{
 
-                Log::channel('flight_plans_error')->error("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo não foi encontrado - Arquivo: ".$storage_folder."/".$file_name);
+                Log::channel('flight_plans_error')->error("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo não foi encontrado - Arquivo: ".$path);
     
                 return response("", 404);
 
@@ -126,7 +126,7 @@ class FlightPlanModuleController extends Controller
 
         }catch(\Exception $e){
 
-            Log::channel('flight_plans_error')->error("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Erro no download do arquivo do plano de vôo - Arquivo: ".$storage_folder."/".$file_name." - Erro: ".$e->getMessage());
+            Log::channel('flight_plans_error')->error("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Erro no download do arquivo do plano de vôo - Arquivo: ".$path." - Erro: ".$e->getMessage());
 
             return response("", 500);
 
@@ -182,13 +182,24 @@ class FlightPlanModuleController extends Controller
                 "status" => 0
             ]);
 
-            $path = $request->file('flight_plan')->storeAs(
-                $storage_folder, $file_name
-            );
+            if($request->hash_file('flight_plan')){
 
-            Log::channel('flight_plans_action')->info("[Método: Store][Controlador: FlightPlanModuleController] - Plano de vôo criado com sucesso - Caminho do plano: ".$storage_folder."/".$file_name);
+                $path = $request->file('flight_plan')->storeAs(
+                    $storage_folder, $file_name
+                );
 
-            return response("", 200);
+                Log::channel('flight_plans_action')->info("[Método: Store][Controlador: FlightPlanModuleController] - Plano de vôo criado com sucesso - Arquivo: ".$storage_folder."/".$file_name);
+
+                return response("", 200);
+
+
+            }else{
+
+                Log::channel('flight_plans_error')->error("[Método: Store][Controlador: FlightPlanModuleController] - Falha na criação do plano de vôo");
+
+                return response(["error" => $e->getMessage()], 500);
+
+            }
 
         }catch(\Exception $e){
 

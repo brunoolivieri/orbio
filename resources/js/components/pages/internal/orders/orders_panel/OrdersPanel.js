@@ -1,13 +1,11 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useEffect, useState } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateOrderFormulary } from "../../../../structures/modules/orders/CreateOrderFormulary";
 import { UpdateOrderFormulary } from "../../../../structures/modules/orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/orders/DeleteOrderFormulary";
-
 // IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -27,12 +25,14 @@ import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
 import { Checkbox } from "@mui/material";
 import { InputAdornment } from "@mui/material";
-
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-
 // OUTROS
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -348,54 +348,62 @@ export function OrdersPanel(){
 
         </Grid>
 
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                <TableHead>
-                <TableRow>
-                  <StyledTableCell></StyledTableCell>
-                    <StyledTableCell>ID</StyledTableCell>
-                    <StyledTableCell align="center">Status</StyledTableCell>
-                    <StyledTableCell align="center">Planos de Vôo</StyledTableCell>
-                    <StyledTableCell align="center">numOS</StyledTableCell>
-                    <StyledTableCell align="center">Criador</StyledTableCell>
-                    <StyledTableCell align="center">Piloto</StyledTableCell>
-                    <StyledTableCell align="center">Cliente</StyledTableCell>
-                    <StyledTableCell align="center">Observação</StyledTableCell>
-                    <StyledTableCell align="center">Data da criação</StyledTableCell>
-                    <StyledTableCell align="center">Última atualização</StyledTableCell>
-                    <StyledTableCell align="center">Data do início</StyledTableCell>
-                    <StyledTableCell align="center">Data do fim</StyledTableCell>
-                </TableRow>
-                </TableHead>
-                <TableBody className = "tbody">
-                  {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
-                    panelData.response.records.length > 0 &&
-                    panelData.response.records.map((row) => (
-                        <TableRow key={row.order_id}>
-                        <TableCell align="center"><Checkbox inputProps={{ 'aria-label': 'controlled' }} onClick={(event) => {handleClickOnCheckbox(event, row)}} /></TableCell>
-                        <TableCell>{row.order_id}</TableCell>
-                        <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell>
-                        <TableCell align="center">{row.flight_plan_id}</TableCell>
-                        <TableCell align="center">{row.numOS}</TableCell> 
-                        <TableCell align="center">{row.creator_name}</TableCell>
-                        <TableCell align="center">{row.pilot_name}</TableCell>
-                        <TableCell align="center">{row.client_name}</TableCell>
-                        <TableCell align="center">{row.order_note}</TableCell>
-                        <TableCell align="center">{row.created_at}</TableCell>
-                        <TableCell align="center">{row.updated_at}</TableCell>
-                        <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                        <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
-                        </TableRow>
-                        
-                    ))}    
-                </TableBody>
-            </Table>
+        <FormControl fullWidth>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            name="radio-buttons-group"
+            defaultChecked={false}
+          >
 
-          {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
-              <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
-          }
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 500 }} aria-label="customized table">
+                  <TableHead>
+                  <TableRow>
+                      <StyledTableCell>ID</StyledTableCell>
+                      <StyledTableCell align="center">Status</StyledTableCell>
+                      <StyledTableCell align="center">Planos de Vôo</StyledTableCell>
+                      <StyledTableCell align="center">numOS</StyledTableCell>
+                      <StyledTableCell align="center">Criador</StyledTableCell>
+                      <StyledTableCell align="center">Piloto</StyledTableCell>
+                      <StyledTableCell align="center">Cliente</StyledTableCell>
+                      <StyledTableCell align="center">Observação</StyledTableCell>
+                      <StyledTableCell align="center">Data da criação</StyledTableCell>
+                      <StyledTableCell align="center">Última atualização</StyledTableCell>
+                      <StyledTableCell align="center">Data do início</StyledTableCell>
+                      <StyledTableCell align="center">Data do fim</StyledTableCell>
+                  </TableRow>
+                  </TableHead>
+                  <TableBody className = "tbody">
+                    {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                      panelData.response.records.length > 0 &&
+                      panelData.response.records.map((row) => (
+                          <TableRow key={row.order_id}>
+                          <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
+                          <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell>
+                          <TableCell align="center">{row.flight_plan_id}</TableCell>
+                          <TableCell align="center">{row.numOS}</TableCell> 
+                          <TableCell align="center">{row.creator_name}</TableCell>
+                          <TableCell align="center">{row.pilot_name}</TableCell>
+                          <TableCell align="center">{row.client_name}</TableCell>
+                          <TableCell align="center">{row.order_note}</TableCell>
+                          <TableCell align="center">{row.created_at}</TableCell>
+                          <TableCell align="center">{row.updated_at}</TableCell>
+                          <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                          <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
+                          </TableRow>
+                          
+                      ))}    
+                  </TableBody>
+              </Table>
 
-          </TableContainer> 
+            {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
+                <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
+            }
+
+            </TableContainer> 
+
+          </RadioGroup>
+      </FormControl>
 
         </>
     );
