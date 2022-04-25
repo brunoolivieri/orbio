@@ -86,9 +86,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
           if(verifyDateInterval()){
 
-            setDisabledButton(true);
+            console.log("ok")
+            console.log(flightPlansSelected)
 
-            requestServerOperation(data);
+            //setDisabledButton(true);
+
+            //requestServerOperation(data);
 
           }else{
             
@@ -140,7 +143,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         status: statusValidate.message
       });
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlanValidate.error || statusValidate.error){
+      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error){
 
         return false;
 
@@ -357,7 +360,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
                 <Box sx={{mb: 2}}>
 
-                  <ModalTransferList open_button_text = {"Selecionar planos de vôo"} modal_title = {"Seleção de planos de vôo"} data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo&auth=none"} />
+                  <ModalTransferList open_button = {"Selecionar planos de vôo"} modal_title = {"Seleção de Planos de Vôo"} data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo&auth=none"} set_selected_items = {setFlightPlansSelected} />
 
                 </Box>
 

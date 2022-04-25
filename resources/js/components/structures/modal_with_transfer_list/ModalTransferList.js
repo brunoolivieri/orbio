@@ -8,13 +8,10 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
-
-import { useEffect, useState } from 'react';
+import { Alert } from '@mui/material';
 
 // Custom Transfer List
 import { TransferList } from '../transfer_list/TransferList';
-import AxiosApi from '../../../services/AxiosApi';
 import { useAuthentication } from '../../context/InternalRoutesAuth/AuthenticationContext';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -61,58 +58,35 @@ export function ModalTransferList({...props}) {
 
   const [open, setOpen] = React.useState(false);
 
-  // Utilizador do state global de autenticação
-  const {AuthData, setAuthData} = useAuthentication();
-  
-  // State da fonte dos dados
-  const [axiosURL] = useState(props.data_source);
+  // State dos planos selecionados
+  const [selectedItems, setSelectedItems] = React.useState([]);
 
-  // State do carregamento dos dados do input de select
-  const [selectOptions, setSelectOptions] = useState({status: {loading: true, success: false}, records: null, default_option: "Carregando", label_text: props.label_text});
+  // State da mensagem do alerta
+  const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
+    setSelectedItems([]);
   };
 
 // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
-  useEffect(() => {
-
-    // Comunicação com o backend
-    // Para recuperação dos dados que formam o input de seleção de perfis no formulário de registro
-    AxiosApi.get(axiosURL, {
-      access: AuthData.data.access
-      })
-      .then(function (response) {
-
-      if(response.status === 200){
-
-        //console.log(response.data)
-
-        setSelectOptions({status: {loading: false, success: true}, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text});
-
-      }else{
-
-        setSelectOptions({status: {loading: false, success: false}, default_option: "Erro", label_text: props.label_text});
-
-      }
-
-      })
-      .catch(function (error) {
-
-        console.log(error)
-
-        setSelectOptions({status: {loading: false, success: false}, default_option: "Erro", label_text: props.label_text});
-
-      });
-
-  },[]);
-
   function handleSubmitList(){
 
+    if(selectedItems.length > 0){
+
+      props.set_selected_items(selectedItems);
+
+      setOpen(false);
+
+    }else{
+
+      setDisplayAlert({display: true, type: "error", message: "Erro! Nenhum plano de vôo foi selecionado."});
+
+    }
 
   }
 
@@ -120,8 +94,11 @@ export function ModalTransferList({...props}) {
 
   return (
     <>
-      <Button variant="contained" onClick={handleClickOpen} disabled={(selectOptions.status.loading || !selectOptions.status.success) ? true : false}>
-        {selectOptions.status.loading ? "Carregando..." : (!selectOptions.status.success ? "Erro!" : props.open_button_text)} 
+      <Button 
+      variant="contained" 
+      onClick={handleClickOpen} 
+      >
+        {props.open_button} 
       </Button>
 
       <BootstrapDialog
@@ -134,11 +111,14 @@ export function ModalTransferList({...props}) {
         </BootstrapDialogTitle>
         <DialogContent dividers>
 
-            {(selectOptions.status.loading == false && selectOptions.status.success) && 
-              <TransferList values = {selectOptions} />
-            }
+          <TransferList  axios_url = {props.data_source} default_selections = {props.default} selections = {{state: selectedItems, setter: setSelectedItems}} />
 
         </DialogContent>
+
+        {displayAlert.display && 
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+        }
+
         <DialogActions>
           <Button variant = "outlined" onClick={handleClose}>
             Cancelar
