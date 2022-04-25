@@ -26,6 +26,8 @@ function union(a, b) {
 
 export function TransferList({...props}) {
 
+// ============================================================================== STATES E OUTROS VALORES ============================================================================== //
+
   const [checked, setChecked] = React.useState([]);
   const [left, setLeft] = React.useState([0,1,2,3]);
   const [right, setRight] = React.useState([]);
@@ -33,35 +35,7 @@ export function TransferList({...props}) {
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
 
-  useEffect(() => {
-
-        /*// Comunicação com o backend
-        // Para recuperação dos dados que formam a lista
-        AxiosApi.get(axiosURL, {
-            access: AuthData.data.access
-            })
-            .then(function (response) {
-
-            if(response.status === 200){
-
-                console.log(response.data)
-
-                setSelectOptions({status: true, data: {error: {load: false, submit: false}, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text}});
-
-            }else{
-
-                setSelectOptions({status: true, data: {error: {load: true, submit: false}, default_option: "Erro", label_text: props.label_text}});
-
-            }
-
-            })
-            .catch(function (error) {
-
-                setSelectOptions({status: true, data: {error: {load: true, submit: false}, default_option: "Erro", label_text: "Perfil"}});
-
-        });*/
-
-    },[]);
+// ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -158,6 +132,8 @@ export function TransferList({...props}) {
       </List>
     </Card>
   );
+
+// ============================================================================== ESTRUTURAÇÃO ============================================================================== //
 
   return (
     <Grid container spacing={2} justifyContent="center" alignItems="center">

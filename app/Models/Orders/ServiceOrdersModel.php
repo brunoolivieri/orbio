@@ -63,8 +63,6 @@ class ServiceOrdersModel extends Model
 
             })->orderBy('service_orders.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
-            dd($data);
-
             return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){

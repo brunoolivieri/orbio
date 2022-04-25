@@ -28,7 +28,7 @@ import moment from 'moment';
 
 export const CreateOrderFormulary = React.memo(({...props}) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -53,10 +53,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     // State dos planos de vôo selecionados
     const [flightPlansSelected, setFlightPlansSelected] = useState();
 
-    // State do modal da seleção de listas
-    const [openSelecionList, setOpenSelectionList] = useState();
-
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -289,7 +286,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     }
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO ============================================================================== //
 
     return (
         <>
@@ -313,43 +310,29 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
                 <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
                   <DateTimeInput 
-                    event = {setStartDate}
-                    label = {"Inicio da ordem de serviço"} 
-                    helperText = {errorMessage.flight_start_date} 
-                    error = {errorDetected.flight_start_date} 
-                    defaultValue = {moment()}
-                    operation = {"create"}
-                    read_only = {false}
-                    />
-                    <DateTimeInput
-                    event = {setEndDate}
-                    label = {"Fim da ordem de serviço"} 
-                    helperText = {errorMessage.flight_end_date} 
-                    error = {errorDetected.flight_end_date} 
-                    defaultValue = {moment()}
-                    operation = {"create"}
-                    read_only = {false}
+                  event = {setStartDate}
+                  label = {"Inicio da ordem de serviço"} 
+                  helperText = {errorMessage.flight_start_date} 
+                  error = {errorDetected.flight_start_date} 
+                  defaultValue = {moment()}
+                  operation = {"create"}
+                  read_only = {false}
+                  />
+                  <DateTimeInput
+                  event = {setEndDate}
+                  label = {"Fim da ordem de serviço"} 
+                  helperText = {errorMessage.flight_end_date} 
+                  error = {errorDetected.flight_end_date} 
+                  defaultValue = {moment()}
+                  operation = {"create"}
+                  read_only = {false}
                   />
                 </Box>
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="numOS"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="order_numos"
-                  name="order_numos"
-                  helperText = {errorMessage.numOS}
-                  error = {errorDetected.numOS}
-                  sx={{mb: 2}}
-                />
 
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
                     label_text = "Nome do piloto"
-                    data_source = {"/api/orders-module/create?table=users&content=pilots_name&auth=none"} 
+                    data_source = {"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"} 
                     primary_key={"nome"} 
                     key_content={"nome"} 
                     helperText = {errorMessage.pilot_name}
@@ -362,7 +345,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
                     label_text = "Nome do cliente"
-                    data_source = {"/api/orders-module/create?table=users&content=clients_name&auth=none"} 
+                    data_source = {"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"} 
                     primary_key={"nome"} 
                     key_content={"nome"} 
                     helperText = {errorMessage.client_name}
@@ -374,9 +357,22 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
                 <Box sx={{mb: 2}}>
 
-                  <ModalTransferList open_button_text = {"Selecionar planos de vôo"} modal_title = {"Seleção de planos de vôo"} />
+                  <ModalTransferList open_button_text = {"Selecionar planos de vôo"} modal_title = {"Seleção de planos de vôo"} data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo&auth=none"} />
 
                 </Box>
+
+                <TextField
+                  type = "text"
+                  margin="dense"
+                  label="Número da ordem de serviço"
+                  fullWidth
+                  variant="outlined"
+                  id="order_numos"
+                  name="order_numos"
+                  helperText = {errorMessage.numOS}
+                  error = {errorDetected.numOS}
+                  sx={{mb: 2}}
+                />
 
                 <TextField
                   type = "text"
@@ -384,7 +380,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
                   label="Observação"
                   fullWidth
                   variant="outlined"
-                  required
                   id="order_note"
                   name="order_note"
                   helperText = {errorMessage.order_note}

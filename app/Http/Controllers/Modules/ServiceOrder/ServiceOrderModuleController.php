@@ -106,32 +106,23 @@ class ServiceOrderModuleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get data to fill the select inputs that exists in create and update formulary 
      *
      * @return \Illuminate\Http\Response
      */
     public function create() : \Illuminate\Http\Response
     {
 
+        $where = isset(request()->where) ? explode(".", request()->where) : false;
+        $select = explode(".", request()->select_columns);
+
         try{
 
-            if(request()->table == "flight_plans"){
+            $data = DB::table(request()->table)->when( $where, function($query, $where){
 
-                $data = DB::table("flight_plans")->get();
+                $query->where($where[0], $where[1]);
 
-            }else if(request()->table == "users"){
-
-                if(request()->content == "pilots_name"){
-
-                    $data = DB::table("users")->where("id_perfil", 3)->select("id", "nome")->get();
-
-                }else if(request()->content == "clients_name"){
-
-                    $data = DB::table("users")->where("id_perfil", 4)->select("id", "nome")->get();
-
-                }
-
-            }
+            })->select($select[0], $select[1])->get();
 
             return response($data, 200);
 

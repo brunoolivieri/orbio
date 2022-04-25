@@ -10,8 +10,12 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 
+import { useEffect, useState } from 'react';
+
 // Custom Transfer List
 import { TransferList } from '../transfer_list/TransferList';
+import AxiosApi from '../../../services/AxiosApi';
+import { useAuthentication } from '../../context/InternalRoutesAuth/AuthenticationContext';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -52,7 +56,19 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export function ModalTransferList({...props}) {
+
+// ============================================================================== STATES E OUTROS VALORES ============================================================================== //
+
   const [open, setOpen] = React.useState(false);
+
+  // Utilizador do state global de autenticação
+  const {AuthData, setAuthData} = useAuthentication();
+  
+  // State da fonte dos dados
+  const [axiosURL] = useState(props.data_source);
+
+  // State do carregamento dos dados do input de select
+  const [selectOptions, setSelectOptions] = useState({status: {loading: true, success: false}, records: null, default_option: "Carregando", label_text: props.label_text});
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -61,10 +77,51 @@ export function ModalTransferList({...props}) {
     setOpen(false);
   };
 
+// ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
+
+  useEffect(() => {
+
+    // Comunicação com o backend
+    // Para recuperação dos dados que formam o input de seleção de perfis no formulário de registro
+    AxiosApi.get(axiosURL, {
+      access: AuthData.data.access
+      })
+      .then(function (response) {
+
+      if(response.status === 200){
+
+        //console.log(response.data)
+
+        setSelectOptions({status: {loading: false, success: true}, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text});
+
+      }else{
+
+        setSelectOptions({status: {loading: false, success: false}, default_option: "Erro", label_text: props.label_text});
+
+      }
+
+      })
+      .catch(function (error) {
+
+        console.log(error)
+
+        setSelectOptions({status: {loading: false, success: false}, default_option: "Erro", label_text: props.label_text});
+
+      });
+
+  },[]);
+
+  function handleSubmitList(){
+
+
+  }
+
+// ============================================================================== ESTRUTURAÇÃO ============================================================================== //
+
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        {props.open_button_text}
+    <>
+      <Button variant="contained" onClick={handleClickOpen} disabled={(selectOptions.status.loading || !selectOptions.status.success) ? true : false}>
+        {selectOptions.status.loading ? "Carregando..." : (!selectOptions.status.success ? "Erro!" : props.open_button_text)} 
       </Button>
 
       <BootstrapDialog
@@ -76,16 +133,21 @@ export function ModalTransferList({...props}) {
           {props.modal_title}
         </BootstrapDialogTitle>
         <DialogContent dividers>
-         
-            <TransferList items_values = {props.items_values} items_name = {props.items_name} />
+
+            {(selectOptions.status.loading == false && selectOptions.status.success) && 
+              <TransferList values = {selectOptions} />
+            }
 
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button variant = "outlined" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button variant = "contained" autoFocus onClick={handleSubmitList}>
             Salvar alterações
           </Button>
         </DialogActions>
       </BootstrapDialog>
-    </div>
+    </>
   );
 }
