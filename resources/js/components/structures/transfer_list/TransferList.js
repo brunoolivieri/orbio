@@ -63,9 +63,30 @@ export function TransferList({...props}) {
 
       if(response.status === 200){
 
-        setLeftItems(response.data);
+        let options_available = [];
 
-        setListOptions({status: {loading: false, success: true}, records: response.data, item_primary_key: "id", item_key_text: "arquivo"});
+        // If already exists selected items (right list) they need to be excluded of the left list
+        if(props.selections.state.length > 0){
+
+          props.selections.state.map((value, index) => {
+
+            if(options_available.indexOf(response.data[index]) != -1){
+
+              options_available[index] = response.data[index];
+
+            }
+           
+          });
+
+        }else{
+
+          options_available = response.data;
+
+        }
+
+        setLeftItems(options_available);
+
+        setListOptions({status: {loading: false, success: true}, records: options_available, item_primary_key: "id", item_key_text: "arquivo"});
 
       }else{
 
