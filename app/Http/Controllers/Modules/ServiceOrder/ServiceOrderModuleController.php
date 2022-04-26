@@ -146,6 +146,8 @@ class ServiceOrderModuleController extends Controller
 
             DB::beginTransaction();
 
+            dd($request->all());
+
             // Create service order
             $new_service_order_id = DB::table("service_orders")->insertGetId(
                 [
@@ -160,15 +162,15 @@ class ServiceOrderModuleController extends Controller
                 ]
             );
 
-            // Create relation with users
+            // Create the relation with each user involved (creator, pilot and client)
             ServiceOrderHasUserModel::create([
                 "id_ordem_servico" => $new_service_order_id,
                 "id_usuario" => Auth::user()->id
             ]);
 
-            // Create relations with each flight plan selected
-            $flight_plans_selected = explode("|", $request->fligth_plans_ids);
-            foreach($flight_plans_selected as $index => $plan_id){
+            // Create the relations with each flight plan involved
+            $arr_flight_plans_ids = json_decode($request->fligth_plans_ids, true);
+            foreach($arr_flight_plans_ids as $index => $plan_id){
                 ServiceOrderHasFlightPlansModel::create([
                     "id_ordem_servico" => $new_service_order_id,
                     "id_plano_voo" => $plan_id

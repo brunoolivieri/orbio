@@ -17,7 +17,7 @@ import AxiosApi from '../../../services/AxiosApi';
 - Two lists are generated: the left with all items, and the right one with the selected items
 - The original component "TransferList" has two main states: "left" (an array will all items) and "right" (an array with the selected items)
 - For a better semantic code, instead of use just "left" as a name that indicates the left list, i wrote with "Items" posfix - leftItems
-- The "right" state were substituted for the state of selected items that exists in the parent component
+- The "right" state were substituted for the state of selected items that exists in the parent component - props.right_items
 - By this way, the items are being selected and pushed for an array that the parent component has directly access
 
 */
@@ -46,11 +46,9 @@ export function TransferList({...props}) {
 
   const [checked, setChecked] = React.useState([]);
   const [leftItems, setLeftItems] = React.useState([]);
-  // Substituded for the parent state of the selected items
-  //const [rightItems, setRightItems] = React.useState(props.default_selections); 
 
   const leftChecked = intersection(checked, leftItems);
-  const rightChecked = intersection(checked, props.selections.state);
+  const rightChecked = intersection(checked, props.right_items.state);
 
 // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
@@ -63,30 +61,52 @@ export function TransferList({...props}) {
 
       if(response.status === 200){
 
-        let options_available = [];
+        let available_options = [];
 
-        // If already exists selected items (right list) they need to be excluded of the left list
-        if(props.selections.state.length > 0){
+        if(props.right_items.state.length == 0){
 
-          props.selections.state.map((value, index) => {
+          available_options = response.data;
 
-            if(options_available.indexOf(response.data[index]) != -1){
+        }else if(props.right_items.state.length > 0){
 
-              options_available[index] = response.data[index];
+          let counter_available_options = 0;
+
+          for(let i = 0; i < response.data.length; i++){
+
+            let counter_of_the_true_cases = 0;
+
+            for(let j = 0; j < props.right_items.state.length; j++){
+              
+              if(response.data[i].id == props.right_items.state[j].id){
+                //console.log("zera")
+                
+                counter_of_the_true_cases = 0;
+
+              }else if(response.data[i].id != props.right_items.state[j].id){
+                //console.log("conta")
+              
+                counter_of_the_true_cases++;
+
+              }
 
             }
-           
-          });
 
-        }else{
+            if(counter_of_the_true_cases == props.right_items.state.length){
 
-          options_available = response.data;
+              available_options[counter_available_options] = response.data[i];
+
+              counter_available_options++;
+
+            }
+
+          }
+
+          //console.log(counter_available_options);
 
         }
 
-        setLeftItems(options_available);
-
-        setListOptions({status: {loading: false, success: true}, records: options_available, item_primary_key: "id", item_key_text: "arquivo"});
+        setLeftItems(available_options);
+        setListOptions({status: {loading: false, success: true}, records: available_options, item_primary_key: "id", item_key_text: "arquivo"});
 
       }else{
 
@@ -133,7 +153,7 @@ export function TransferList({...props}) {
   };
 
   const handleCheckedRight = () => {
-    props.selections.setter(props.selections.state.concat(leftChecked));
+    props.right_items.setter(props.right_items.state.concat(leftChecked));
     setLeftItems(not(leftItems, leftChecked));
     setChecked(not(checked, leftChecked));
 
@@ -141,7 +161,7 @@ export function TransferList({...props}) {
 
   const handleCheckedLeft = () => {
     setLeftItems(leftItems.concat(rightChecked));
-    props.selections.setter(not(props.selections.state, rightChecked));
+    props.right_items.setter(not(props.right_items.state, rightChecked));
     setChecked(not(checked, rightChecked));
   };
 
@@ -161,9 +181,6 @@ export function TransferList({...props}) {
               numberOfChecked(items) !== items.length && numberOfChecked(items) !== 0
             }
             disabled={items.length === 0}
-            inputProps={{
-              'aria-label': 'all items selected',
-            }}
           />
         }
         title={title}
@@ -236,7 +253,7 @@ export function TransferList({...props}) {
             </Button>
           </Grid>
         </Grid>
-        <Grid item>{makeList('Seleções', props.selections.state)}</Grid>
+        <Grid item>{makeList('Seleções', props.right_items.state)}</Grid>
       </Grid>
       :
       (!listOptions.status.loading && !listOptions.status.success) ? 

@@ -68,8 +68,8 @@ export function ModalTransferList({...props}) {
     setOpen(true);
   };
   const handleClose = () => {
+    props.set_selected_items(selectedItems);
     setOpen(false);
-    setSelectedItems([]);
   };
 
 // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
@@ -97,6 +97,7 @@ export function ModalTransferList({...props}) {
       <Button 
       variant="contained" 
       onClick={handleClickOpen} 
+
       >
         {props.open_button} 
       </Button>
@@ -111,7 +112,7 @@ export function ModalTransferList({...props}) {
         </BootstrapDialogTitle>
         <DialogContent dividers>
 
-          <TransferList  axios_url = {props.data_source} default_selections = {props.default} selections = {{state: selectedItems, setter: setSelectedItems}} />
+          <TransferList  axios_url = {props.data_source} default_selections = {props.default} right_items = {{state: selectedItems, setter: setSelectedItems}} />
 
         </DialogContent>
 

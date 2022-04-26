@@ -13,6 +13,7 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
+import { FormHelperText } from '@mui/material';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -86,12 +87,9 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
           if(verifyDateInterval()){
 
-            console.log("ok")
-            console.log(flightPlansSelected)
+            setDisabledButton(true);
 
-            //setDisabledButton(true);
-
-            //requestServerOperation(data);
+            requestServerOperation(data);
 
           }else{
             
@@ -149,7 +147,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
       }else{
 
-          return true;
+        return true;
 
       }
 
@@ -189,17 +187,27 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       let module_id = 3;
       let module_action = "escrever";
 
+      let arr = [];
+      let obj_with_arr_of_ids = {};
+
+      flightPlansSelected.map((flight_plan, index) => {
+        arr[index] = flight_plan.id;
+      });
+
+      obj_with_arr_of_ids["flight_plans_ids"] = arr;
+
+      console.log(obj_with_arr_of_ids)
+
       AxiosApi.post(`/api/orders-module`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
         initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
         final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
         numOS: data.get("order_numos"),
-        creator_name: AuthData.data.name,
         pilot_name: data.get("select_pilot_name"),
         client_name: data.get("select_client_name"),
         observation: data.get("order_note"),
         status: data.get("status"),
-        fligth_plans_ids: flightPlansSelected
+        fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
       })
       .then(function (response) {
 
@@ -323,7 +331,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
                   />
                   <DateTimeInput
                   event = {setEndDate}
-                  label = {"Fim da ordem de serviço"} 
+                  label = {"Término da ordem de serviço"} 
                   helperText = {errorMessage.flight_end_date} 
                   error = {errorDetected.flight_end_date} 
                   defaultValue = {moment()}
@@ -334,9 +342,9 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
-                    label_text = "Nome do piloto"
+                    label_text = "Piloto"
                     data_source = {"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"} 
-                    primary_key={"nome"} 
+                    primary_key={"id"} 
                     key_content={"nome"} 
                     helperText = {errorMessage.pilot_name}
                     error = {errorDetected.pilot_name} 
@@ -347,9 +355,9 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
-                    label_text = "Nome do cliente"
+                    label_text = "Cliente"
                     data_source = {"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"} 
-                    primary_key={"nome"} 
+                    primary_key={"id"} 
                     key_content={"nome"} 
                     helperText = {errorMessage.client_name}
                     error = {errorDetected.client_name} 

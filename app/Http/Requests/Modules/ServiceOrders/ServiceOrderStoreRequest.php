@@ -28,12 +28,11 @@ class ServiceOrderStoreRequest extends FormRequest
             "initial_date" => 'required|date',
             "final_date" => 'required|date',
             "numOS" => 'required|string',
-            "creator_name" => 'required|string',
             "pilot_name" => 'required|string',
             "client_name" => 'required|string',
             "observation" => 'required|string',
             "status" => 'required|boolean',
-            "fligth_plans_ids" => 'required', 
+            "fligth_plans_ids" => 'required|string', 
         ];
     }
 
@@ -50,9 +49,8 @@ class ServiceOrderStoreRequest extends FormRequest
             'initial_date.date' => "Deve ser um formato de data válido",
             'final_date.date' => "Deve ser um formato de data válido",
             'numOS.required' => "O numOS deve ser informado",
-            'creator_name.required' => "O nome do criador deve ser informado",
-            'pilot_name.required' => "O nome do piloto deve ser informado",
-            'client_name.required' => "O nome do cliente deve ser informado",
+            'pilot_name.required' => "O piloto deve ser selecionado",
+            'client_name.required' => "O cliente deve ser informado",
             'observation.required' => "A observação deve ser informada",
             'status.required' => "O status deve ser definido",
             'status.boolean' => "O status deve ser 1 ou 0",
