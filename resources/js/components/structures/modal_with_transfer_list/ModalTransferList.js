@@ -59,7 +59,7 @@ export function ModalTransferList({...props}) {
   const [open, setOpen] = React.useState(false);
 
   // State dos planos selecionados
-  const [selectedItems, setSelectedItems] = React.useState([]);
+  const [selectedItems, setSelectedItems] = React.useState(props.selected_items);
 
   // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
@@ -112,7 +112,10 @@ export function ModalTransferList({...props}) {
         </BootstrapDialogTitle>
         <DialogContent dividers>
 
-          <TransferList  axios_url = {props.data_source} default_selections = {props.default} right_items = {{state: selectedItems, setter: setSelectedItems}} />
+          <TransferList 
+          axios_url = {props.data_source} 
+          right_items = {{state: selectedItems, setter: setSelectedItems}} 
+          />
 
         </DialogContent>
 

@@ -26,12 +26,15 @@ import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 // IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
 import moment from 'moment';
 
-export const CreateOrderFormulary = React.memo(({...props}) => {
+export const CreateOrderFormulary = React.memo(() => {
 
   // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
+
+    // States do formulário
+    const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false}); 
@@ -43,15 +46,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = React.useState(false);
 
-    // States do formulário
-    const [open, setOpen] = React.useState(false);
-
     // States dos inputs de data
     const [startDate, setStartDate] = React.useState(moment());
     const [endDate, setEndDate] = React.useState(moment());
 
     // State dos planos de vôo selecionados
-    const [flightPlansSelected, setFlightPlansSelected] = React.useState();
+    const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
@@ -194,8 +194,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       });
 
       obj_with_arr_of_ids["flight_plans_ids"] = arr;
-
-      console.log(obj_with_arr_of_ids)
 
       AxiosApi.post(`/api/orders-module`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
@@ -367,7 +365,13 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
                 <Box sx={{mb: 2}}>
 
-                  <ModalTransferList open_button = {"Selecionar planos de vôo"} modal_title = {"Seleção de Planos de Vôo"} data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo&auth=none"} set_selected_items = {setFlightPlansSelected} />
+                  <ModalTransferList 
+                  open_button = {"Selecionar planos de vôo"} 
+                  modal_title = {"Seleção de Planos de Vôo"} 
+                  data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status&auth=none"} 
+                  set_selected_items = {setFlightPlansSelected} 
+                  selected_items = {flightPlansSelected} 
+                  />
 
                 </Box>
 

@@ -1,7 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState } from 'react';
 import * as React from 'react';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,14 +11,13 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { GenericSelect } from '../../input_select/GenericSelect';
-
+import {ModalTransferList} from "../../modal_with_transfer_list/ModalTransferList";
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -35,24 +32,24 @@ export function UpdateOrderFormulary({...props}){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States do formulário
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
+    const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = React.useState(null);
+    const [endDate, setEndDate] = React.useState(null);
 
     // State dos planos de vôo selecionados
-    const [flightPlansSelected, setFlightPlansSelected] = useState();
+    const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -130,7 +127,7 @@ export function UpdateOrderFormulary({...props}){
         pilot_name: pilotNameValidate.error, 
         client_name: clientNameValidate.error, 
         order_note: orderNoteValidate.error, 
-        flight_plan: fligthPlanValidate.error,
+        flight_plan: fligthPlansValidate.error,
         status: statusValidate.error
       });
 
@@ -142,7 +139,7 @@ export function UpdateOrderFormulary({...props}){
         pilot_name: pilotNameValidate.message, 
         client_name: clientNameValidate.message, 
         order_note: orderNoteValidate.message, 
-        flight_plan: fligthPlanValidate.message,
+        flight_plan: fligthPlansValidate.message,
         status: statusValidate.message
       });
     
@@ -194,16 +191,15 @@ export function UpdateOrderFormulary({...props}){
         let module_action = "escrever";
 
         AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-            final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-            numOS: data.get("order_numos"),
-            creator_name: data.get("creator_name"),
-            pilot_name: data.get("pilot_name"),
-            client_name: data.get("client_name"),
-            observation: data.get("order_note"),
-            status: data.get("status"),
-            fligth_plans_id: flightPlansSelected
+          auth: `${logged_user_id}.${module_id}.${module_action}`,
+          initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+          final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+          numOS: data.get("order_numos"),
+          pilot_id: data.get("select_pilot_name"),
+          client_id: data.get("select_client_name"),
+          observation: data.get("order_note"),
+          status: data.get("status"),
+          fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
         })
         .then(function (response) {
 
@@ -347,6 +343,44 @@ export function UpdateOrderFormulary({...props}){
                   />
                 </Box>
 
+                <Box sx={{mb: 2}}>
+                  <GenericSelect 
+                    label_text = "Piloto"
+                    data_source = {"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"} 
+                    primary_key={"id"} 
+                    key_content={"nome"} 
+                    helperText = {errorMessage.pilot_name}
+                    error = {errorDetected.pilot_name} 
+                    default = {0} 
+                    name = {"select_pilot_name"}  
+                  />
+                </Box>
+
+                <Box sx={{mb: 2}}>
+                  <GenericSelect 
+                    label_text = "Cliente"
+                    data_source = {"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"} 
+                    primary_key={"id"} 
+                    key_content={"nome"} 
+                    helperText = {errorMessage.client_name}
+                    error = {errorDetected.client_name} 
+                    default = {0} 
+                    name = {"select_client_name"}  
+                  />
+                </Box>
+
+                <Box sx={{mb: 2}}>
+
+                  <ModalTransferList 
+                  open_button = {"Selecionar planos de vôo"} 
+                  modal_title = {"Seleção de Planos de Vôo"} 
+                  data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status&auth=none"} 
+                  set_selected_items = {setFlightPlansSelected} 
+                  selected_items = {props.selected_record.data_cells.flight_plans} 
+                  />
+                  
+                </Box>
+
                 <TextField
                   type = "text"
                   margin="dense"
@@ -361,63 +395,6 @@ export function UpdateOrderFormulary({...props}){
                   defaultValue = {props.selected_record.data_cells.numOS}
                   sx={{mb: 2}}
                 />
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Nome do criador"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="creator_name"
-                  name="creator_name"
-                  helperText = {errorMessage.creator_name}
-                  error = {errorDetected.creator_name}
-                  defaultValue = {props.selected_record.data_cells.creator_name}
-                  sx={{mb: 2}}
-                />
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Nome do piloto"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="pilot_name"
-                  name="pilot_name"
-                  helperText = {errorMessage.pilot_name}
-                  error = {errorDetected.pilot_name}
-                  defaultValue = {props.selected_record.data_cells.pilot_name}
-                  sx={{mb: 2}}
-                />
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Nome do cliente"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="client_name"
-                  name="client_name"
-                  helperText = {errorMessage.client_name}
-                  error = {errorDetected.client_name}
-                  defaultValue = {props.selected_record.data_cells.client_name}
-                  sx={{mb: 2}}
-                />
-
-                <Box sx={{mb: 2}}>
-                  <GenericSelect 
-                    label_text = {"Plano de vôo vinculado"} 
-                    data_source = {"/api/orders-module/create?table=flight_plans&auth=none"} 
-                    primary_key={"id"} 
-                    key_content={"id"} 
-                    error = {errorDetected.flight_plan} 
-                    default = {props.selected_record.data_cells.flight_plan_id != null ? props.selected_record.data_cells.flight_plan_id : 0}
-                    name = {"select_flight_plan"}  
-                  />
-                </Box>
 
                 <TextField
                   type = "text"

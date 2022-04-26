@@ -81,16 +81,14 @@ class ServiceOrderModuleController extends Controller
             $order_start_date = $record->dh_inicio === NULL ? "Sem dados" : $record->dh_inicio;
             $order_end_date = $record->dh_fim === NULL ? "Sem dados" : $record->dh_fim;
 
-            $related_flight_plans = ServiceOrderHasFlightPlansModel::where("id_ordem_servico", $record->id)->get();
+            $related_flight_plans_ids = ServiceOrderHasFlightPlansModel::where("id_ordem_servico", $record->id)->get();
 
-            $string_plans_ids = "";
-            for($count = 0; $count < count($related_flight_plans); $count++){
+            $arr_flight_plans = [];
+            for($count = 0; $count < count($related_flight_plans_ids); $count++){
 
-                if($count < (count($related_flight_plans) - 1)){
-                    $string_plans_ids .= $related_flight_plans[$count]->id_plano_voo.".";
-                }else if($count == (count($related_flight_plans) - 1)){
-                    $string_plans_ids .= $related_flight_plans[$count]->id_plano_voo;
-                }
+                $arr_flight_plans[$count]["id"] = $related_flight_plans_ids[$count]->flight_plans->id;
+                $arr_flight_plans[$count]["arquivo"] = $related_flight_plans_ids[$count]->flight_plans->arquivo;
+                $arr_flight_plans[$count]["status"] = $related_flight_plans_ids[$count]->flight_plans->status;
 
             }
             
@@ -106,12 +104,10 @@ class ServiceOrderModuleController extends Controller
                 "pilot_name" => $record->nome_piloto,
                 "client_name" => $record->nome_cliente,
                 "order_note" => $record->observacao,
-                "flight_plans_ids" => $string_plans_ids
+                "flight_plans" => $arr_flight_plans
             );
 
         }
-
-
 
         $arr_with_formated_data["total_records_founded"] = $data->total();
         $arr_with_formated_data["records_per_page"] = $data->perPage();

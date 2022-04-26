@@ -182,7 +182,7 @@ export function OrdersPanel(){
 
         if(response.data.total_records_founded > 1){
           handleOpenSnackbar(`Foram encontradas ${response.data.total_records_founded} ordens de serviços`, "success");
-        }else{
+        }else if(response.data.total_records_founded == 1){
           handleOpenSnackbar(`Foi encontrada ${response.data.total_records_founded} ordem de serviço`, "success");
         } 
 
@@ -263,23 +263,18 @@ export function OrdersPanel(){
     // If already exists a selected record, and its equal to the clicked
     // The actual selected row is unmarked
     if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
-      //console.log("uncheck selected row");
 
-      actualSelectedRecord.dom.childNodes[0].checked = false;
       setActualSelectedRecord({dom: null, data_cells: null});
     
     // If already exists a selected record, and its different from the clicked
     // The actual selected row is unmarked, and the new clicked one becomes the selected row
     }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
-      //console.log("change selected row")
 
-      actualSelectedRecord.dom.childNodes[0].checked = false;
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
     
     // If not exists a selected record
     // The clicked row becomes the selected row
     }else if(actualSelectedRecord.dom == null){
-      //console.log("check row")
 
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
 
@@ -304,7 +299,7 @@ export function OrdersPanel(){
           </Grid>
 
           <Grid item>
-            <UpdateOrderFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+            <UpdateOrderFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
           </Grid>
 
           <Grid item>
@@ -381,7 +376,9 @@ export function OrdersPanel(){
                           <TableRow key={row.order_id}>
                           <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
                           <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell>
-                          <TableCell align="center"><BadgeIcon number = {row.flight_plans_ids.split(".").length} color = {"primary"} /></TableCell>
+                          <TableCell align="center">
+                            <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 
+                          </TableCell>
                           <TableCell align="center">{row.numOS}</TableCell> 
                           <TableCell align="center">{row.creator_name}</TableCell>
                           <TableCell align="center">{row.pilot_name}</TableCell>
