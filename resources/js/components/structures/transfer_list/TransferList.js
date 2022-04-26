@@ -52,6 +52,13 @@ export function TransferList({...props}) {
 
 // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
+  /*
+  *
+  * If there are not items selected, the left side receives all data, and the right nothing
+  * If there are selected items, the left side receives only the not selected items, and the right the selecteds
+  * In each loop of the items on the left, each is compared to each item on the right
+  * 
+  */
   React.useEffect(() => {
 
     AxiosApi.get(props.axios_url, {
@@ -69,21 +76,27 @@ export function TransferList({...props}) {
 
         }else if(props.right_items.state.length > 0){
 
+          // Every value comparison that is different will add 1 to the counter
+          // Every value comparison that is equal resets the counter
           let counter_available_options = 0;
 
+          // Loops the loaded items
           for(let i = 0; i < response.data.length; i++){
 
             let counter_of_the_true_cases = 0;
 
+            // Loops the selected items
             for(let j = 0; j < props.right_items.state.length; j++){
               
+              // If the loaded item is equal to the selected one
               if(response.data[i].id == props.right_items.state[j].id){
-                //console.log("zera")
+                //console.log("resets")
                 
                 counter_of_the_true_cases = 0;
-
+              
+              // If the loaded item is different from the selected one
               }else if(response.data[i].id != props.right_items.state[j].id){
-                //console.log("conta")
+                //console.log("count")
               
                 counter_of_the_true_cases++;
 
@@ -91,6 +104,8 @@ export function TransferList({...props}) {
 
             }
 
+            // If the different cases counter is equal to the quantity of selected items
+            // This means that the value is not one of the selected ones
             if(counter_of_the_true_cases == props.right_items.state.length){
 
               available_options[counter_available_options] = response.data[i];
