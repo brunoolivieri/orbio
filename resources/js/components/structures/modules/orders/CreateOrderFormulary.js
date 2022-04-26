@@ -1,5 +1,4 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
 import * as React from 'react';
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
@@ -35,24 +34,24 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false}); 
-    const [errorMessage, setErrorMessage] = useState({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""}); 
+    const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""}); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState(moment());
-    const [endDate, setEndDate] = useState(moment());
+    const [startDate, setStartDate] = React.useState(moment());
+    const [endDate, setEndDate] = React.useState(moment());
 
     // State dos planos de vôo selecionados
-    const [flightPlansSelected, setFlightPlansSelected] = useState();
+    const [flightPlansSelected, setFlightPlansSelected] = React.useState();
 
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
@@ -113,8 +112,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
       const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
       const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
-      const pilotNameValidate = FormValidation(formData.get("select_pilot_name"), 3, null, null, null);
-      const clientNameValidate = FormValidation(formData.get("select_client_name"), 3, null, null, null);
+      const pilotNameValidate = formData.get("select_pilot_name") != 0 ? {error: false, message: ""} : {error: true, message: "O piloto deve ser selecionado"};
+      const clientNameValidate = formData.get("select_client_name") != 0 ? {error: false, message: ""} : {error: true, message: "O cliente deve ser selecionado"};
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
       const fligthPlansValidate = flightPlansSelected != null ? {error: false, message: ""} : {error: true, message: ""};
       const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
@@ -203,8 +202,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
         final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
         numOS: data.get("order_numos"),
-        pilot_name: data.get("select_pilot_name"),
-        client_name: data.get("select_client_name"),
+        pilot_id: data.get("select_pilot_name"),
+        client_id: data.get("select_client_name"),
         observation: data.get("order_note"),
         status: data.get("status"),
         fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)

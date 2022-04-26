@@ -9,7 +9,7 @@ class ServiceOrderHasFlightPlansModel extends Model
 {
     use HasFactory;
 
-    protected $table = "service_order_has_flight_plans";
+    protected $table = "service_order_has_flight_plan";
     public $timestamps = false;
     protected $guarded = [];
 }

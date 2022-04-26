@@ -34,9 +34,9 @@ class ServiceOrdersModel extends Model
     }
 
     /*
-    * Relationship with service_order_has_flight_plans table
+    * Relationship with service_order_has_flight_plan table
     */
-    function service_order_has_flight_plans(){
+    function service_order_has_flight_plan(){
 
         return $this->hasMany("App\Models\Orders\ServiceOrdersHasFlightPlansModel", "id_ordem_servico");
 
@@ -56,7 +56,6 @@ class ServiceOrdersModel extends Model
         try{
 
             $data = DB::table('service_orders')
-            ->join("service_order_has_flight_plans", "service_order_has_flight_plans.id_ordem_servico", "=", "service_orders.id")
             ->when($where_value, function ($query, $where_value) {
 
                 $query->where('service_orders.id', $where_value);

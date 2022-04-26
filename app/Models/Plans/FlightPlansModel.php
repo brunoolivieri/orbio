@@ -44,9 +44,9 @@ class FlightPlansModel extends Model
     }
 
     /*
-    * Relationship with service_order_has_flight_plans table
+    * Relationship with service_order_has_flight_plan table
     */
-    function service_order_has_flight_plans(){
+    function service_order_has_flight_plan(){
 
         return $this->hasMany("App\Models\Orders\ServiceOrdersHasFlightPlansModel", "id_plano_voo");
 

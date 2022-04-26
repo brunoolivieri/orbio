@@ -95,7 +95,6 @@ export const GenericSelect = memo(({...props}) => {
                         }
                     
                     </Select>
-
                 </FormControl>
             : ""}
              
