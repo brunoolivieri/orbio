@@ -112,9 +112,8 @@ export function UpdateOrderFormulary({...props}){
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
       const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
       const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
-      const creatorNameValidate = FormValidation(formData.get("creator_name"), 3, null, null, null);
-      const pilotNameValidate = FormValidation(formData.get("pilot_name"), 3, null, null, null);
-      const clientNameValidate = FormValidation(formData.get("client_name"), 3, null, null, null);
+      const pilotNameValidate = formData.get("select_pilot_name") != 0 ? {error: false, message: ""} : {error: true, message: "O piloto deve ser selecionado"};
+      const clientNameValidate = formData.get("select_client_name") != 0 ? {error: false, message: ""} : {error: true, message: "O cliente deve ser selecionado"};
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
       const fligthPlansValidate = flightPlansSelected != null ? {error: false, message: ""} : {error: true, message: ""};
       const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
@@ -123,7 +122,6 @@ export function UpdateOrderFormulary({...props}){
         order_start_date: startDateValidate.error, 
         order_end_date: endDateValidate.error, 
         numOS: numOsValidate.error, 
-        creator_name: creatorNameValidate.error, 
         pilot_name: pilotNameValidate.error, 
         client_name: clientNameValidate.error, 
         order_note: orderNoteValidate.error, 
@@ -135,7 +133,6 @@ export function UpdateOrderFormulary({...props}){
         order_start_date: startDateValidate.message, 
         order_end_date: endDateValidate.message, 
         numOS: numOsValidate.message, 
-        creator_name: creatorNameValidate.message, 
         pilot_name: pilotNameValidate.message, 
         client_name: clientNameValidate.message, 
         order_note: orderNoteValidate.message, 
@@ -143,7 +140,7 @@ export function UpdateOrderFormulary({...props}){
         status: statusValidate.message
       });
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || creatorNameValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlanValidate.error || statusValidate.error){
+      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error){
 
         return false;
 
@@ -189,6 +186,17 @@ export function UpdateOrderFormulary({...props}){
         let logged_user_id = AuthData.data.id;
         let module_id = 3;
         let module_action = "escrever";
+
+        let arr = [];
+        let obj_with_arr_of_ids = {};
+
+        flightPlansSelected.map((flight_plan, index) => {
+          arr[index] = flight_plan.id;
+        });
+
+        obj_with_arr_of_ids["flight_plans_ids"] = arr;
+
+        console.log(obj_with_arr_of_ids)
 
         AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
@@ -351,7 +359,7 @@ export function UpdateOrderFormulary({...props}){
                     key_content={"nome"} 
                     helperText = {errorMessage.pilot_name}
                     error = {errorDetected.pilot_name} 
-                    default = {0} 
+                    default = {props.selected_record.data_cells.pilot.id} 
                     name = {"select_pilot_name"}  
                   />
                 </Box>
@@ -364,7 +372,7 @@ export function UpdateOrderFormulary({...props}){
                     key_content={"nome"} 
                     helperText = {errorMessage.client_name}
                     error = {errorDetected.client_name} 
-                    default = {0} 
+                    default = {props.selected_record.data_cells.client.id} 
                     name = {"select_client_name"}  
                   />
                 </Box>

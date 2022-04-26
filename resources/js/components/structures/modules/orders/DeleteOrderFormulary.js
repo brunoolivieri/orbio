@@ -189,7 +189,7 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="creator_name"
                   name="creator_name"
-                  defaultValue = {props.selected_record.data_cells.creator_name}
+                  defaultValue = {props.selected_record.data_cells.creator.name}
                   inputProps={{
                     readOnly: true
                   }}

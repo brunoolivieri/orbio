@@ -114,6 +114,8 @@ export function OrdersPanel(){
 
       if(response.status === 200){
 
+        console.log(response.data)
+
         setPanelData({
           status: {
             loading: false, 
@@ -380,9 +382,9 @@ export function OrdersPanel(){
                             <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 
                           </TableCell>
                           <TableCell align="center">{row.numOS}</TableCell> 
-                          <TableCell align="center">{row.creator_name}</TableCell>
-                          <TableCell align="center">{row.pilot_name}</TableCell>
-                          <TableCell align="center">{row.client_name}</TableCell>
+                          <TableCell align="center">{row.creator.status === 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined" /> : <Chip label={row.creator.name} color={"error"} variant="outlined"/>}</TableCell>
+                          <TableCell align="center">{row.pilot.status === 1 ? <Chip label={row.pilot.name} color={"success"} variant="outlined"/> : <Chip label={row.pilot.name} color={"error"} variant="outlined"/>}</TableCell>
+                          <TableCell align="center">{row.client.status === 1 ? <Chip label={row.client.name} color={"success"} variant="outlined"/> : <Chip label={row.client.name} color={"error"} variant="outlined"/>}</TableCell>
                           <TableCell align="center">{row.order_note}</TableCell>
                           <TableCell align="center">{row.created_at}</TableCell>
                           <TableCell align="center">{row.updated_at}</TableCell>
