@@ -1,6 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import * as React from 'react';
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// MaterialUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -11,17 +11,17 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import {ModalTransferList} from "../../modal_with_transfer_list/ModalTransferList";
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-
+// Libs
 import moment from 'moment';
 
 export function UpdateOrderFormulary({...props}){
@@ -35,8 +35,8 @@ export function UpdateOrderFormulary({...props}){
     const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
-    const [errorMessage, setErrorMessage] = React.useState({order_start_date: "", order_end_date: "", numOS: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
+    const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({order_start_date: "", order_end_date: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
@@ -63,8 +63,8 @@ export function UpdateOrderFormulary({...props}){
     // Função para fechar o modal
     const handleClose = () => {
 
-      setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
-      setErrorMessage({order_start_date: false, order_end_date: false, numOS: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
+      setErrorDetected({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
+      setErrorMessage({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -111,7 +111,6 @@ export function UpdateOrderFormulary({...props}){
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
       const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-      const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
       const pilotNameValidate = formData.get("select_pilot_name") != 0 ? {error: false, message: ""} : {error: true, message: "O piloto deve ser selecionado"};
       const clientNameValidate = formData.get("select_client_name") != 0 ? {error: false, message: ""} : {error: true, message: "O cliente deve ser selecionado"};
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
@@ -121,7 +120,6 @@ export function UpdateOrderFormulary({...props}){
       setErrorDetected({
         order_start_date: startDateValidate.error, 
         order_end_date: endDateValidate.error, 
-        numOS: numOsValidate.error, 
         pilot_name: pilotNameValidate.error, 
         client_name: clientNameValidate.error, 
         order_note: orderNoteValidate.error, 
@@ -132,7 +130,6 @@ export function UpdateOrderFormulary({...props}){
       setErrorMessage({
         order_start_date: startDateValidate.message, 
         order_end_date: endDateValidate.message, 
-        numOS: numOsValidate.message, 
         pilot_name: pilotNameValidate.message, 
         client_name: clientNameValidate.message, 
         order_note: orderNoteValidate.message, 
@@ -140,7 +137,7 @@ export function UpdateOrderFormulary({...props}){
         status: statusValidate.message
       });
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error){
+      if(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error){
 
         return false;
 
@@ -200,7 +197,6 @@ export function UpdateOrderFormulary({...props}){
           auth: `${logged_user_id}.${module_id}.${module_action}`,
           initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
           final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-          numOS: data.get("order_numos"),
           pilot_id: data.get("select_pilot_name"),
           client_id: data.get("select_client_name"),
           observation: data.get("order_note"),
@@ -253,7 +249,6 @@ export function UpdateOrderFormulary({...props}){
       let input_errors = {
         initial_date: {error: false, message: null},
         final_date: {error: false, message: null},
-        numOS: {error: false, message: null},
         creator_name: {error: false, message: null},
         pilot_name: {error: false, message: null},
         client_name: {error: false, message: null},
@@ -275,7 +270,6 @@ export function UpdateOrderFormulary({...props}){
       setErrorDetected({
         order_start_date: input_errors.initial_date.error, 
         order_end_date: input_errors.final_date.error, 
-        numOS: input_errors.numOS.error, 
         creator_name: input_errors.creator_name.error, 
         pilot_name: input_errors.pilot_name.error, 
         client_name: input_errors.client_name.error, 
@@ -287,7 +281,6 @@ export function UpdateOrderFormulary({...props}){
       setErrorMessage({
         order_start_date: input_errors.initial_date.message, 
         order_end_date: input_errors.final_date.message, 
-        numOS: input_errors.numOS.message, 
         creator_name: input_errors.creator_name.message, 
         pilot_name: input_errors.pilot_name.message, 
         client_name: input_errors.client_name.message, 
@@ -388,21 +381,6 @@ export function UpdateOrderFormulary({...props}){
                   />
                   
                 </Box>
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="numOS"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="order_numos"
-                  name="order_numos"
-                  helperText = {errorMessage.numOS}
-                  error = {errorDetected.numOS}
-                  defaultValue = {props.selected_record.data_cells.numOS}
-                  sx={{mb: 2}}
-                />
 
                 <TextField
                   type = "text"

@@ -183,7 +183,7 @@ class ServiceOrderModuleController extends Controller
                 [
                     "dh_inicio" => $request->initial_date,
                     "dh_fim" => $request->final_date,
-                    "numOS" => $request->numOS,
+                    "numOS" => "os.".time(),
                     "nome_criador" => Auth::user()->nome,
                     "nome_piloto" => $pilot_data->nome,
                     "nome_cliente" => $client_data->nome,
@@ -297,7 +297,6 @@ class ServiceOrderModuleController extends Controller
                 [
                     "dh_inicio" => $request->initial_date,
                     "dh_fim" => $request->final_date,
-                    "numOS" => $request->numOS,
                     "nome_criador" => Auth::user()->nome,
                     "nome_piloto" => $pilot_data->nome,
                     "nome_cliente" => $client_data->nome,
@@ -355,6 +354,7 @@ class ServiceOrderModuleController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+        
         try{
 
             DB::BeginTransaction();

@@ -1,6 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import * as React from 'react';
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -12,18 +12,17 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import { FormHelperText } from '@mui/material';
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import {ModalTransferList} from "../../modal_with_transfer_list/ModalTransferList";
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-// IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
+// Libs
 import moment from 'moment';
 
 export const CreateOrderFormulary = React.memo(() => {
@@ -37,8 +36,8 @@ export const CreateOrderFormulary = React.memo(() => {
     const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false}); 
-    const [errorMessage, setErrorMessage] = React.useState({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""}); 
+    const [errorDetected, setErrorDetected] = React.useState({order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""}); 
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
@@ -63,8 +62,8 @@ export const CreateOrderFormulary = React.memo(() => {
     // Função para fechar o modal
     const handleClose = () => {
 
-        setErrorDetected({order_start_date: false, order_end_date: false, numOS: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false});
-        setErrorMessage({order_start_date: "", order_end_date: "", numOS: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""});
+        setErrorDetected({order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false});
+        setErrorMessage({order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""});
         setDisplayAlert({display: false, type: "", message: ""});
         setDisabledButton(false);
 
@@ -111,7 +110,6 @@ export const CreateOrderFormulary = React.memo(() => {
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
       const endDateValidate = endDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data final"};
-      const numOsValidate = FormValidation(formData.get("order_numos"), 3, null, null, null);
       const pilotNameValidate = formData.get("select_pilot_name") != 0 ? {error: false, message: ""} : {error: true, message: "O piloto deve ser selecionado"};
       const clientNameValidate = formData.get("select_client_name") != 0 ? {error: false, message: ""} : {error: true, message: "O cliente deve ser selecionado"};
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
@@ -121,7 +119,6 @@ export const CreateOrderFormulary = React.memo(() => {
       setErrorDetected({
         order_start_date: startDateValidate.error, 
         order_end_date: endDateValidate.error, 
-        numOS: numOsValidate.error, 
         pilot_name: pilotNameValidate.error, 
         client_name: clientNameValidate.error, 
         order_note: orderNoteValidate.error, 
@@ -132,7 +129,6 @@ export const CreateOrderFormulary = React.memo(() => {
       setErrorMessage({
         order_start_date: startDateValidate.message, 
         order_end_date: endDateValidate.message, 
-        numOS: numOsValidate.message, 
         pilot_name: pilotNameValidate.message, 
         client_name: clientNameValidate.message, 
         order_note: orderNoteValidate.message, 
@@ -140,7 +136,7 @@ export const CreateOrderFormulary = React.memo(() => {
         status: statusValidate.message
       });
     
-      if(startDateValidate.error || endDateValidate.error || numOsValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error){
+      if(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error){
 
         return false;
 
@@ -199,7 +195,6 @@ export const CreateOrderFormulary = React.memo(() => {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
         initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
         final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-        numOS: data.get("order_numos"),
         pilot_id: data.get("select_pilot_name"),
         client_id: data.get("select_client_name"),
         observation: data.get("order_note"),
@@ -252,7 +247,6 @@ export const CreateOrderFormulary = React.memo(() => {
       let input_errors = {
         initial_date: {error: false, message: null},
         final_date: {error: false, message: null},
-        numOS: {error: false, message: null},
         pilot_name: {error: false, message: null},
         client_name: {error: false, message: null},
         observation: {error: false, message: null},
@@ -272,8 +266,7 @@ export const CreateOrderFormulary = React.memo(() => {
 
       setErrorDetected({
         order_start_date: input_errors.initial_date.error, 
-        order_end_date: input_errors.final_date.error, 
-        numOS: input_errors.numOS.error,  
+        order_end_date: input_errors.final_date.error,  
         pilot_name: input_errors.pilot_name.error, 
         client_name: input_errors.client_name.error, 
         order_note: input_errors.observation.error,
@@ -284,7 +277,6 @@ export const CreateOrderFormulary = React.memo(() => {
       setErrorMessage({
         order_start_date: input_errors.initial_date.message, 
         order_end_date: input_errors.final_date.message, 
-        numOS: input_errors.numOS.message, 
         pilot_name: input_errors.pilot_name.message, 
         client_name: input_errors.client_name.message, 
         order_note: input_errors.observation.message,
@@ -374,19 +366,6 @@ export const CreateOrderFormulary = React.memo(() => {
                   />
 
                 </Box>
-
-                <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Número da ordem de serviço"
-                  fullWidth
-                  variant="outlined"
-                  id="order_numos"
-                  name="order_numos"
-                  helperText = {errorMessage.numOS}
-                  error = {errorDetected.numOS}
-                  sx={{mb: 2}}
-                />
 
                 <TextField
                   type = "text"

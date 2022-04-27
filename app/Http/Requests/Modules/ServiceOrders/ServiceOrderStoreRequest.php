@@ -27,7 +27,6 @@ class ServiceOrderStoreRequest extends FormRequest
         return [
             "initial_date" => 'required|date',
             "final_date" => 'required|date',
-            "numOS" => 'required|string',
             "pilot_id" => 'required|string',
             "client_id" => 'required|string',
             "observation" => 'required|string',
@@ -48,7 +47,6 @@ class ServiceOrderStoreRequest extends FormRequest
             'final_date.required' => "A data final deve ser informada",
             'initial_date.date' => "Deve ser um formato de data válido",
             'final_date.date' => "Deve ser um formato de data válido",
-            'numOS.required' => "O numOS deve ser informado",
             'pilot_id.required' => "O piloto deve ser selecionado",
             'client_id.required' => "O cliente deve ser selecionado",
             'observation.required' => "A observação deve ser informada",

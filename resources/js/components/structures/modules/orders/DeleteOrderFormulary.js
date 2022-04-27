@@ -1,8 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState } from 'react';
+// React
 import * as React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// MaterialUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -13,12 +11,10 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
@@ -30,13 +26,13 @@ export function DeleteOrderFormulary({...props}){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States do formulário
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = React.useState(false);
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -124,6 +120,8 @@ export function DeleteOrderFormulary({...props}){
     */
     function errorServerResponseTreatment(response_data){
 
+      setDisabledButton(false);
+
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});
 
@@ -167,7 +165,7 @@ export function DeleteOrderFormulary({...props}){
                 <TextField
                   type = "text"
                   margin="dense"
-                  label="numOS"
+                  label="Número da ordem de serviço"
                   fullWidth
                   variant="outlined"
                   required

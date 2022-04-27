@@ -1,13 +1,13 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useEffect, useState } from "react";
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// React
+import * as React from 'react';
+// Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateOrderFormulary } from "../../../../structures/modules/orders/CreateOrderFormulary";
 import { UpdateOrderFormulary } from "../../../../structures/modules/orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/orders/DeleteOrderFormulary";
 import { BadgeIcon } from "../../../../structures/badge_icon/BadgeIcon";
-// IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
+// MaterialUI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -30,11 +30,11 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-// OUTROS
+// Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
@@ -67,13 +67,13 @@ export function OrdersPanel(){
   
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
+  const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
   // State da linha selecionada
-  const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+  const [actualSelectedRecord, setActualSelectedRecord] = React.useState({dom: null, data_cells: null});
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -84,7 +84,7 @@ export function OrdersPanel(){
      * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
      * 
      */
-     useEffect(() => {
+     React.useEffect(() => {
 
       const module_middleware = `${AuthData.data.id}.${3}.${"ler"}`;
 
@@ -263,19 +263,17 @@ export function OrdersPanel(){
   function handleClickOnCheckbox(event, record_clicked){
   
     // If already exists a selected record, and its equal to the clicked
-    if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
+    if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.order_id == record_clicked.order_id)){
 
       setActualSelectedRecord({dom: null, data_cells: null});
     
     // If already exists a selected record, and its different from the clicked
-    }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
-      //console.log("change selected row")
+    }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.order_id != record_clicked.order_id)){
 
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
     
     // If not exists a selected record
     }else if(actualSelectedRecord.dom == null){
-      //console.log("check row")
 
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
 
@@ -359,7 +357,7 @@ export function OrdersPanel(){
                       <StyledTableCell>ID</StyledTableCell>
                       <StyledTableCell align="center">Status</StyledTableCell>
                       <StyledTableCell align="center">Planos de Vôo</StyledTableCell>
-                      <StyledTableCell align="center">numOS</StyledTableCell>
+                      <StyledTableCell align="center">NumOS</StyledTableCell>
                       <StyledTableCell align="center">Criador</StyledTableCell>
                       <StyledTableCell align="center">Piloto</StyledTableCell>
                       <StyledTableCell align="center">Cliente</StyledTableCell>

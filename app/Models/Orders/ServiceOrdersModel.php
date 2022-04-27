@@ -38,7 +38,7 @@ class ServiceOrdersModel extends Model
     */
     function service_order_has_flight_plan(){
 
-        return $this->hasMany("App\Models\Orders\ServiceOrdersHasFlightPlansModel", "id_ordem_servico");
+        return $this->hasMany("App\Models\Orders\ServiceOrderHasFlightPlansModel", "id_ordem_servico");
 
     }
 
