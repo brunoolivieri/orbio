@@ -24,7 +24,6 @@ import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import Alert from '@mui/material/Alert';
-import { Checkbox } from "@mui/material";
 import { InputAdornment } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -113,8 +112,6 @@ export function OrdersPanel(){
     .then(function (response) {
 
       if(response.status === 200){
-
-        console.log(response.data)
 
         setPanelData({
           status: {
@@ -372,23 +369,28 @@ export function OrdersPanel(){
                     {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                       panelData.response.records.length > 0 &&
                       panelData.response.records.map((row) => (
-                          <TableRow key={row.order_id}>
-                          <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
-                          <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
-                          <TableCell align="center">
-                            <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 
-                          </TableCell>
-                          <TableCell align="center">{row.numOS}</TableCell> 
-                          <TableCell align="center">{row.creator.status === 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined" /> : <Chip label={row.creator.name} color={"error"} variant="outlined"/>}</TableCell>
-                          <TableCell align="center">{row.pilot.status === 1 ? <Chip label={row.pilot.name} color={"success"} variant="outlined"/> : <Chip label={row.pilot.name} color={"error"} variant="outlined"/>}</TableCell>
-                          <TableCell align="center">{row.client.status === 1 ? <Chip label={row.client.name} color={"success"} variant="outlined"/> : <Chip label={row.client.name} color={"error"} variant="outlined"/>}</TableCell>
-                          <TableCell align="center">{row.order_note}</TableCell>
-                          <TableCell align="center">{row.created_at}</TableCell>
-                          <TableCell align="center">{row.updated_at}</TableCell>
-                          <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                          <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
-                          </TableRow>
-                          
+                        <TableRow key={row.order_id}>
+                        <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
+                        <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                        <TableCell align="center">
+                          <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 
+                        </TableCell>
+                        <TableCell align="center">{row.numOS}</TableCell> 
+                        <TableCell align="center">
+                          {row.creator.id == 0 ? <Chip label={"Sem dados"} variant="outlined" /> : (row.creator.status == 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined"/> : <Chip label={row.creator.name} color={"error"} variant="outlined"/>)}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.pilot.id == 0 ? <Chip label={"Sem dados"} variant="outlined"/> : (row.pilot.status == 1 ? <Chip label={row.pilot.name} color={"success"} variant="outlined"/> : <Chip label={row.pilot.name} color={"error"} variant="outlined"/>)}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.client.ids == 0 ? <Chip label={"Sem dados"} variant="outlined"/> : (row.client.status == 1 ? <Chip label={row.client.name} color={"success"} variant="outlined"/> : <Chip label={row.client.name} color={"error"} variant="outlined"/>)}
+                        </TableCell>
+                        <TableCell align="center">{row.order_note}</TableCell>
+                        <TableCell align="center">{row.created_at}</TableCell>
+                        <TableCell align="center">{row.updated_at}</TableCell>
+                        <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                        <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
+                        </TableRow>    
                       ))}    
                   </TableBody>
               </Table>

@@ -83,27 +83,72 @@ class ServiceOrderModuleController extends Controller
             $order_start_date = $record->dh_inicio === NULL ? "Sem dados" : $record->dh_inicio;
             $order_end_date = $record->dh_fim === NULL ? "Sem dados" : $record->dh_fim;
 
-            // Formated data of each flight plans with its id, file and status
-            // Each flight plan data is retrieved by the relationship function "flight_plans()" that exists in "ServiceOrderHasFlightPlansModel"
+            // ====== Formatação dos dados dos planos de voo vinculados ====== //
+
+            // Recuperação dos ids dos planos de voo relacionados à ordem de serviço
             $service_order_related_flight_plans_ids = ServiceOrderHasFlightPlansModel::where("id_ordem_servico", $record->id)->get();
             $arr_flight_plans = [];
             for($count = 0; $count < count($service_order_related_flight_plans_ids); $count++){
 
+                 // Os dados de cada plano de voo são recuperado pela função de relacionamento "flight_plans()" que existe em "ServiceOrderHasFlightPlansModel"
                 $arr_flight_plans[$count]["id"] = $service_order_related_flight_plans_ids[$count]->flight_plans->id;
                 $arr_flight_plans[$count]["arquivo"] = $service_order_related_flight_plans_ids[$count]->flight_plans->arquivo;
                 $arr_flight_plans[$count]["status"] = $service_order_related_flight_plans_ids[$count]->flight_plans->status;
 
             }
 
-            // Formated data of each user with its id, name and status
-            // Each user data is retrieved by the relationship function "users()" that exists in "ServiceOrderHasUserModel"
+            // ====== Formatação dos dados dos usuários vinculados ====== //
+           
+            // Recuperação dos ids dos usuários relacionados à ordem de serviço
             $service_order_related_users_ids = ServiceOrderHasUserModel::where("id_ordem_servico", $record->id)->get();
-            $arr_users = [];
-            for($count = 0; $count < count($service_order_related_users_ids); $count++){
+            $arr_users["creator"] = null;
+            $arr_users["pilot"] = null;
+            $arr_users["client"] = null;
+            $index = 0;
 
-                $arr_users[$count]["id"] = $service_order_related_users_ids[$count]->users->id;
-                $arr_users[$count]["name"] = $service_order_related_users_ids[$count]->users->nome;
-                $arr_users[$count]["status"] = $service_order_related_users_ids[$count]->users->status;
+            // Se o usuário criador, piloto ou cliente não for null, seus dados são armazenados
+            // Se for null, a posição "id" recebe 0
+            // Será dessa forma para que na abertura do form de update o item selecionado no select seja o com value "0"
+            if(!empty($record->nome_criador)){
+
+                $arr_users["creator"]["id"] = $service_order_related_users_ids[$index]->users->id;
+                $arr_users["creator"]["id_perfil"] = $service_order_related_users_ids[$index]->users->id_perfil;
+                $arr_users["creator"]["name"] = $service_order_related_users_ids[$index]->users->nome;
+                $arr_users["creator"]["status"] = $service_order_related_users_ids[$index]->users->status;
+
+                $index++;
+
+            }else{
+
+                $arr_users["creator"]["id"] = 0;
+
+            }
+
+            if(!empty($record->nome_piloto)){
+
+                $arr_users["pilot"]["id"] = $service_order_related_users_ids[$index]->users->id;
+                $arr_users["pilot"]["id_perfil"] = $service_order_related_users_ids[$index]->users->id_perfil;
+                $arr_users["pilot"]["name"] = $service_order_related_users_ids[$index]->users->nome;
+                $arr_users["pilot"]["status"] = $service_order_related_users_ids[$index]->users->status;
+
+                $index++;
+
+            }else{
+
+                $arr_users["pilot"]["id"] = 0;
+
+            }
+
+            if(!empty($record->nome_cliente)){
+
+                $arr_users["client"]["id"] = $service_order_related_users_ids[$index]->users->id;
+                $arr_users["client"]["id_perfil"] = $service_order_related_users_ids[$index]->users->id_perfil;
+                $arr_users["client"]["name"] = $service_order_related_users_ids[$index]->users->nome;
+                $arr_users["client"]["status"] = $service_order_related_users_ids[$index]->users->status;
+
+            }else{
+
+                $arr_users["client"]["id"] = 0;
 
             }
 
@@ -113,18 +158,16 @@ class ServiceOrderModuleController extends Controller
                 "numOS" => $record->numOS,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,
+                "creator" => $arr_users["creator"],
+                "pilot" => $arr_users["pilot"],
+                "client" => $arr_users["client"],
                 "order_start_date" => $order_start_date,
                 "order_end_date" => $order_end_date,
-                "creator" => $arr_users[0],
-                "pilot" => $arr_users[1],
-                "client" => $arr_users[2],
                 "order_note" => $record->observacao,
                 "flight_plans" => $arr_flight_plans
             );
 
         }
-
-        //dd($arr_with_formated_data);
 
         $arr_with_formated_data["total_records_founded"] = $data->total();
         $arr_with_formated_data["records_per_page"] = $data->perPage();

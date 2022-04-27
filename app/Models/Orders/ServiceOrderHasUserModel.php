@@ -17,4 +17,8 @@ class ServiceOrderHasUserModel extends Model
         return $this->belongsTo("App\Models\User\UserModel", "id_usuario");
     }
 
+    function service_order(){
+        return $this->belongsTo("App\Models\Orders\ServiceOrdersModel", "id_ordem_servico");
+    }
+
 }

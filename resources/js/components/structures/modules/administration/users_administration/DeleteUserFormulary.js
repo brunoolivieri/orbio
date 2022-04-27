@@ -12,6 +12,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import { DialogContentText } from '@mui/material';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
@@ -149,6 +150,10 @@ return (
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
                     <DialogContent>
+
+                    <DialogContentText mb={2}>
+                      Todos os vínculos do usuário serão desfeitos, e todos os seus dados serão apagados do sistema.
+                    </DialogContentText>
 
                         <TextField
                         margin="dense"

@@ -21,9 +21,9 @@ class CreateServiceOrdersTable extends Migration
             $table->dateTime("dh_inicio");
             $table->dateTime("dh_fim");
             $table->boolean("status")->default(false);
-            $table->string("nome_criador");
-            $table->string("nome_piloto");
-            $table->string("nome_cliente");
+            $table->string("nome_criador")->nullable(true);
+            $table->string("nome_piloto")->nullable(true);
+            $table->string("nome_cliente")->nullable(true);
             $table->text("observacao");
         });
     }

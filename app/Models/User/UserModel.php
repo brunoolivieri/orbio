@@ -68,6 +68,15 @@ class UserModel extends Authenticatable
         return $this->hasOneThrough(UserAddressModel::class, UserComplementaryDataModel::class, "id_endereco");
     }
 
+    /*
+    * Relationship with service_order_has_user table
+    */
+    function service_order_has_user(){
+
+        return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "id_usuario");
+
+    }
+
     
 
     /**

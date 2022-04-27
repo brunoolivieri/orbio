@@ -4,16 +4,20 @@ namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\User\UserModel;
-use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 // Log
 use Illuminate\Support\Facades\Log;
+// Models
+use App\Models\Orders\ServiceOrderHasUserModel;
+use App\Models\User\UserModel;
+use App\Models\ProfileAndModule\ProfileModel;
+use  App\Models\Orders\ServiceOrdersModel;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -253,15 +257,64 @@ class AdministrationModuleUserPanelController extends Controller
 
         try{
 
+            DB::beginTransaction();
+
+            $user = UserModel::find($id);
+
+            //dd($user->service_order_has_user[0]->service_order);
+            //dd($user->service_order_has_user[0]->users->nome);
+
+            // If user is linked to a service order
+            if(!empty($user->service_order_has_user)){
+
+                // Desvinculations with service_orders table
+                // The user name must be removed from the service_order 
+                foreach($user->service_order_has_user as $index => $value){
+
+                    // If user is a pilot and his name is the same of the pilot of the actual service order
+                    if($user->id_perfil == 3 && ($value->service_order->nome_piloto === $user->nome)){
+
+                        ServiceOrdersModel::where("id", $value->id_ordem_servico)
+                        ->where("nome_piloto", $user->nome)
+                        ->update(["nome_piloto" => null]);
+                    
+                    // If user is a client and his name is the same of the client of the actual service order
+                    }else if($user->id_perfil == 4 && ($value->service_order->nome_cliente === $user->nome)){
+
+                        ServiceOrdersModel::where("id", $value->id_ordem_servico)
+                        ->where("nome_cliente", $user->nome)
+                        ->update(["nome_cliente" => null]);
+                    
+                    // If the name of the user is the same of the creator of the actual service order
+                    }else if(($value->service_order->nome_criador === $user->nome)){
+
+                        ServiceOrdersModel::where("id", $value->id_ordem_servico)
+                        ->where("nome_criador", $user->nome)
+                        ->update(["nome_criador" => null]);
+
+                    }
+
+                }
+
+            }
+
+            // Desvinculations with service_orders_has_user table 
+            // The relations with the user id are deleted
+            $user->service_order_has_user()->delete();
+
             UserModel::where('id', $id)->delete();
 
             Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleUserPanelController] - Usuário removido com sucesso - ID do usuário: ".$id);
+
+            DB::Commit();
 
             return response("", 200);
 
         }catch(\Exception $e){
 
             Log::channel('administration_error')->error("[Método: Destroy][Controlador: AdministrationModuleUserPanelController] - Falha na remoção do usuário - Erro: ".$e->getMessage());
+
+            DB::rollBack();
 
             return response(["error"=> $e->getMessage()], 500);
 

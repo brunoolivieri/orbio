@@ -24,7 +24,7 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-export function UpdateOrderFormulary({...props}){
+export const UpdateOrderFormulary = React.memo(({...props}) => {
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -430,7 +430,5 @@ export function UpdateOrderFormulary({...props}){
         } 
         </>
     
-      );
-
-    
-}
+      );  
+});
