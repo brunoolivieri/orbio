@@ -196,8 +196,6 @@ export function UpdateOrderFormulary({...props}){
 
         obj_with_arr_of_ids["flight_plans_ids"] = arr;
 
-        console.log(obj_with_arr_of_ids)
-
         AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
           auth: `${logged_user_id}.${module_id}.${module_action}`,
           initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
@@ -245,6 +243,8 @@ export function UpdateOrderFormulary({...props}){
     * Tratamento da resposta de uma requisição falha
     */
     function errorServerResponseTreatment(response_data){
+
+      setDisabledButton(false);
 
       let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
       setDisplayAlert({display: true, type: "error", message: error_message});

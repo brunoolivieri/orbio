@@ -43,6 +43,8 @@ class ServiceOrderModuleController extends Controller
 
                 $data_formated = $this->formatDataForTable($model_response["data"]);
 
+                //dd($data_formated);
+
                 return response($data_formated, 200);
 
             }else{
@@ -308,9 +310,9 @@ class ServiceOrderModuleController extends Controller
             ServiceOrderHasUserModel::where("id_ordem_servico", $id)->delete();
             // Cria novamente as relações com cada usuário envolvido na ordem de serviço (criador, piloto e cliente)
             ServiceOrderHasUserModel::insert([
-                ["id_ordem_servico" => $id,"id_usuario" => Auth::user()->id], 
-                ["id_ordem_servico" => $id,"id_usuario" => $request->pilot_id],
-                ["id_ordem_servico" => $id,"id_usuario" => $request->client_id]
+                ["id_ordem_servico" => (int) $id,"id_usuario" => Auth::user()->id], 
+                ["id_ordem_servico" => (int) $id,"id_usuario" => $request->pilot_id],
+                ["id_ordem_servico" => (int) $id,"id_usuario" => $request->client_id]
             ]);
 
              // Deleta as relações atuais com os planos de vôo - é mais fácil desse modo
@@ -321,8 +323,8 @@ class ServiceOrderModuleController extends Controller
                 foreach($value as $j => $plan_id){
 
                     ServiceOrderHasFlightPlansModel::insert([
-                        "id_ordem_servico" => $id,
-                        "id_plano_voo" => $plan_id
+                        "id_ordem_servico" => (int) $id,
+                        "id_plano_voo" => (int) $plan_id
                     ]);
 
                 }
@@ -330,11 +332,15 @@ class ServiceOrderModuleController extends Controller
 
             Log::channel('service_orders_action')->info("[Método: Update][Controlador: ReportModuleController] - Ordem de serviço atualizada com sucesso - ID da ordem de serviço: ".$id);
 
+            DB::Commit();
+
             return response("", 200);
 
         }catch(\Exception $e){
 
             Log::channel('service_orders_error')->error("[Método: Update][Controlador: ReportModuleController] - Falha na atualização da ordem de serviço - Erro: ".$e->getMessage());
+
+            DB::rollBack();
 
             return response(["error" => $e->getMessage()], 500);
 

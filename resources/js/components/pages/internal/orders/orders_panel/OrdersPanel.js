@@ -263,20 +263,19 @@ export function OrdersPanel(){
   function handleClickOnCheckbox(event, record_clicked){
   
     // If already exists a selected record, and its equal to the clicked
-    // The actual selected row is unmarked
     if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
 
       setActualSelectedRecord({dom: null, data_cells: null});
     
     // If already exists a selected record, and its different from the clicked
-    // The actual selected row is unmarked, and the new clicked one becomes the selected row
     }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
+      //console.log("change selected row")
 
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
     
     // If not exists a selected record
-    // The clicked row becomes the selected row
     }else if(actualSelectedRecord.dom == null){
+      //console.log("check row")
 
       setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
 
@@ -377,7 +376,7 @@ export function OrdersPanel(){
                       panelData.response.records.map((row) => (
                           <TableRow key={row.order_id}>
                           <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
-                          <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} /> : <Chip label={"Inativo"} color={"error"} />}</TableCell>
+                          <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                           <TableCell align="center">
                             <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 
                           </TableCell>

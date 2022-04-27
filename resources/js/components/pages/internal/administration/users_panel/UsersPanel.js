@@ -255,8 +255,6 @@ export function UsersPanel(){
   }
 
   function handleClickOnCheckbox(event, record_clicked){
-
-    console.log(event.currentTarget)
   
     // If already exists a selected record, and its equal to the clicked
     if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
@@ -372,7 +370,7 @@ export function UsersPanel(){
                       <TableCell><FormControlLabel value={row.user_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.user_id} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.email}</TableCell> 
-                      <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} />}</TableCell>
+                      <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.profile_name}</TableCell>
                       <TableCell align="center">{row.created_at}</TableCell>
                       <TableCell align="center">{row.updated_at}</TableCell>
