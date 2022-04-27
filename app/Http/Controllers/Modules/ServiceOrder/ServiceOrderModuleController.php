@@ -107,7 +107,7 @@ class ServiceOrderModuleController extends Controller
             $index = 0;
 
             // Se o usuário criador, piloto ou cliente não for null, seus dados são armazenados
-            // Se for null, a posição "id" recebe 0
+            // Se for null, a posição "id" dele recebe 0
             // Será dessa forma para que na abertura do form de update o item selecionado no select seja o com value "0"
             if(!empty($record->nome_criador)){
 

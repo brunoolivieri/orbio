@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\User;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,23 +14,21 @@ class NotifyUserThatTheirDataHasBeenUpdated extends Mailable
     private $title;
     private $name;
     private $email;
-    private $date;
     private $content;
+    private $datetime;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($email_data)
+    public function __construct($data)
     {
-
-        $this->name = $email_data["name"];
-        $this->email = $email_data["email"];
-        $this->date = date("d-m-Y h:i");
+        $this->name = $data["name"];
+        $this->email = $data["email"];
         $this->title = "Notificação de alteração dos dados";
-        $this->content = $email_data["content"];
-
+        $this->content = $data["content"];
+        $this->datetime = Carbon::now();
     }
 
     /**
@@ -40,15 +38,14 @@ class NotifyUserThatTheirDataHasBeenUpdated extends Mailable
      */
     public function build()
     {
-
         $view_data = [
             "name" => $this->name,
             "email" => $this->email,
             "date" => $this->date,
-            "content" => $this->content
+            "content" => $this->content,
+            "date" => $this->datetime
         ];
 
         return $this->subject("Olá".$this->name."!")->view('emails.user_registered')->with($view_data);
-
     }
 }

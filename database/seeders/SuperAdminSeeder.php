@@ -19,7 +19,7 @@ class SuperAdminSeeder extends Seeder
 
         DB::table("users")->insert([
             "nome" => "Master",
-            "email" => strtolower(env("APP_NAME"))."@gmail.com",
+            "email" => env("SUPER_ADMIN_EMAIL"),
             "senha" => Hash::make(env("SUPER_ADMIN_PASS")),
             "status" => true,
             "id_perfil" => 1,

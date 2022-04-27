@@ -145,13 +145,15 @@ class AdministrationModuleUserPanelController extends Controller
 
         $model = new UserModel();
 
-        // A senha não criptografada será utilizada no conteúdo do email
-        $model_response = $model->createUser([
+        // Criação do usuário
+        $model_response = $model->createUserAndSendEmail([
             "nome" => $request->name,
             "email" => $request->email,
             "senha" => Hash::make($request->password),
             "id_perfil" => $request->profile_id
-        ], $request->password);
+            ], 
+            $request->password
+        );
 
         if($model_response["status"] && !$model_response["error"]){
 

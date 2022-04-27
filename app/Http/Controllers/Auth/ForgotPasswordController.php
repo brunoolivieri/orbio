@@ -1,13 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Models
 use App\Models\User\UserModel;
 // Email
-use App\Mail\UserChangePasswordEmail;
+use App\Mail\User\SendCodeToChangePassword;
 use Illuminate\Support\Facades\Mail;
 // Form Requests
 use App\Http\Requests\Auth\ForgotPassword\SendTokenToEmailRequest;
@@ -30,13 +29,28 @@ class ForgotPasswordController extends Controller
 
         try{
 
-            UserModel::where('email', $request->email)->update(['token' => $random_integer_token]);
+            DB::transaction(function () {
 
-            Mail::to($request->email)->send(new UserChangePasswordEmail($random_integer_token));
+                $user = UserModel::where("email", $request->email)->first();
 
-            Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
+                $user->update(['token' => $random_integer_token]);
 
-            return response("", 200);
+                UserModel::where('email', $request->email)->update(['token' => $random_integer_token]);
+
+                Mail::to($request->email)->send(new SendCodeToChangePassword(
+                    [
+                        "name" =>  $user->nome,
+                        "email" =>  $user_email,
+                        "code" => $random_integer_token,
+                        "datetime" => now(),
+                    ]
+                ));
+
+                Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
+
+                return response("", 200);
+
+            });
 
         }catch(\Exception $e){
 

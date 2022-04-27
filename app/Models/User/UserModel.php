@@ -13,7 +13,7 @@ use App\Models\User\UserAddressModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
 // Custom Emails
-use App\Mail\UserRegisteredEmail;
+use App\Mail\User\SendAccessDataToCreatedUser;
 // Log
 use Illuminate\Support\Facades\Log;
 
@@ -97,22 +97,30 @@ class UserModel extends Authenticatable
      * @param array $data
      * @return array
      */
-    function createUser(array $data, string $unencrypted_password) : array {
+    function createUserAndSendEmail(array $data, string $unencrypted_password) : array {
 
         try{ 
 
-            UserModel::insert($data);
+            DB::transaction(function () {
 
-            // Envio do email com os dados de acesso para o novo usuário
-            Mail::to($data["email"])->send(new UserRegisteredEmail([
-                "name" => $data["nome"],
-                "email" => $data["email"],
-                "password" => $unencrypted_password
-            ]));
+                $new_user_id = DB::table("users")->insertGetId($data);
 
-            Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$data["email"]);
+                $new_user_data = UserModel::find($new_user_id);
 
-            return ["status" => true, "error" => false];
+                // Envio do email de registro para o novo usuário
+                Mail::to($data["email"])->send(new SendAccessDataToCreatedUser([
+                    "name" =>  $new_user_data->nome,
+                    "email" =>  $new_user_data->email,
+                    "profile" =>  $new_user_data->profile->nome,
+                    "unencrypted_password" => $unencrypted_password,
+                    "datetime" => now(),
+                ]));
+
+                Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$data["email"]);
+
+                return ["status" => true, "error" => false];
+
+            });
 
         }catch(\Exception $e){
 

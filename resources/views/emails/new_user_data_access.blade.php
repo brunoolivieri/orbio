@@ -67,10 +67,14 @@
                 <p><b>{{ $message }}</b></p>
             </div>
             <div class = "section_body">
-                 <p>Código: {{ $code }}</p>
+                <p>Email: {{ $email }}</p>
+                <p>Senha: {{ $password }}</p>
+                <p>Perfil: {{ $profile }}</p>
+                <p>Data da criação: {{ $datetime }}</p>
             </div>
             <div class = "section_footer">
-                <p>Se você não solicitou uma alteração da senha, nenhuma ação adicional é necessária.</p>
+                <p>Após o primeiro acesso, a conta será ativada, e você precisará atualizar seus dados pessoais.</p>
+                <p><a href = "{{ env('APP_URL') }}/acessar" >Acessar</a></p> 
             </div>
             <hr>
             <p>Atenciosamente, equipe ORBIO.</p>
@@ -83,10 +87,3 @@
     
 </body>
 </html>
-
-
-<h1>Alteração da senha</h1>
-<p>Para alterar a sua senha o código abaixo é necessário.</p>
-@isset($code)
-<p>{{ $code }}</p>
-@endisset 
