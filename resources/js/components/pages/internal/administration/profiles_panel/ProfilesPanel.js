@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useEffect, useState } from "react";
+import * as React from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -45,6 +45,8 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
+const native_profiles = [1,2,3,4,5];
+
 export function ProfilesPanel(){
 
      // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -54,15 +56,18 @@ export function ProfilesPanel(){
     
     // State do carregamento dos dados
     // Enquanto for false, irá aparecer "carregando" no painel
-    const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+    const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
     // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-    const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
+    const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
     // State da linha selecionada
-    const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+    const [actualSelectedRecord, setActualSelectedRecord] = React.useState({dom: null, data_cells: null});
 
-     // context do snackbar
+    // State da deleção permitida
+    const [deleteAvailable, setDeleteAvailable] = React.useState(true);
+
+    // context do snackbar
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -115,7 +120,7 @@ export function ProfilesPanel(){
      * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
      * 
      */
-     useEffect(() => {
+     React.useEffect(() => {
 
       const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
 
@@ -240,27 +245,28 @@ export function ProfilesPanel(){
     }
 
     function handleClickOnCheckbox(event, record_clicked){
+
+      // If the profile selected is one of the native profiles...
+      if(native_profiles.indexOf(record_clicked.profile_id) != -1){
+        setDeleteAvailable(false);
+      }else{
+        setDeleteAvailable(true);
+      }
   
       // If already exists a selected record, and its equal to the clicked
-      // The actual selected row is unmarked
       if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id == record_clicked.profile_id)){
-        //console.log("uncheck selected row");
   
         actualSelectedRecord.dom.childNodes[0].checked = false;
         setActualSelectedRecord({dom: null, data_cells: null});
       
       // If already exists a selected record, and its different from the clicked
-      // The actual selected row is unmarked, and the new clicked one becomes the selected row
       }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id != record_clicked.profile_id)){
-        //console.log("change selected row")
   
         actualSelectedRecord.dom.childNodes[0].checked = false;
         setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
       
       // If not exists a selected record
-      // The clicked row becomes the selected row
       }else if(actualSelectedRecord.dom == null){
-        //console.log("check row")
   
         setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
   
@@ -290,7 +296,7 @@ export function ProfilesPanel(){
             <UpdateProfileFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
           </Grid>
 
-          <Grid item>
+          <Grid item hidden={!deleteAvailable}>
             <DeleteProfileFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
           </Grid>
 

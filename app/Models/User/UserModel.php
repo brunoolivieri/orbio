@@ -101,26 +101,25 @@ class UserModel extends Authenticatable
 
         try{ 
 
-            DB::transaction(function () {
+            DB::transaction(function () use ($data, $unencrypted_password) {
 
                 $new_user_id = DB::table("users")->insertGetId($data);
 
                 $new_user_data = UserModel::find($new_user_id);
 
                 // Envio do email de registro para o novo usuário
-                Mail::to($data["email"])->send(new SendAccessDataToCreatedUser([
+                Mail::to($new_user_data->email)->send(new SendAccessDataToCreatedUser([
                     "name" =>  $new_user_data->nome,
                     "email" =>  $new_user_data->email,
                     "profile" =>  $new_user_data->profile->nome,
-                    "unencrypted_password" => $unencrypted_password,
-                    "datetime" => now(),
+                    "unencrypted_password" => $unencrypted_password
                 ]));
 
                 Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$data["email"]);
 
-                return ["status" => true, "error" => false];
-
             });
+
+            return ["status" => true, "error" => false];
 
         }catch(\Exception $e){
 

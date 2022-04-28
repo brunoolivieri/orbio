@@ -129,10 +129,12 @@ export default function Navigator(props) {
 
             {/* Geração do menu de opções com base no id do perfil do usuário */}
             {children.map(({ id: childId, icon, active, default_allowed_profiles }) => (
+              
+                /* O item será gerado se o ID do perfil do usuário logado é um dos permitidos, ou se o seu poder de acesso em relação ao módulo é 'true' */
                 (default_allowed_profiles.includes(AuthData.data.profile_id) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])) ?
                 <ListItem disablePadding key={childId}>
 
-                  {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
+                {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
                 <Link to = {childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className = {layoutStyle.navigator_navlink}>
                   <ListItemButton selected={active} sx={item}>
                     <ListItemIcon sx={{color: "#fff"}}>{icon}</ListItemIcon>

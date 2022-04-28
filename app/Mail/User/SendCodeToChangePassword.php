@@ -12,7 +12,7 @@ class SendCodeToChangePassword extends Mailable
     use Queueable, SerializesModels;
 
     private $title;
-    private $message;
+    private $text;
     private $name;
     private $email;
     private $datetime;
@@ -26,10 +26,10 @@ class SendCodeToChangePassword extends Mailable
     public function __construct($data)
     {
         $this->subject = env("APP_NAME")." - Alteração da senha de acesso";
-        $this->message = "Você está recebendo este e-mail porque recebemos um pedido de redefinição de senha para sua conta.";
+        $this->text = "Você está recebendo este e-mail porque recebemos um pedido de redefinição de senha para sua conta.";
         $this->name = $data["name"];
         $this->email = $data["email"];
-        $this->datetime = $data["datetime"];
+        $this->datetime = date('d-m-Y H:i');
         $this->code = $data["code"];
     }
 
@@ -42,7 +42,7 @@ class SendCodeToChangePassword extends Mailable
     {
 
         $view_data = [
-            "message" => $this->message,
+            "text" => $this->text,
             "name" => $this->name,
             "email" => $this->email,
             "datetime" => $this->datetime,

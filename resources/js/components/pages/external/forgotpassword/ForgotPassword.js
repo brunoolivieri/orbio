@@ -1,15 +1,13 @@
-// REACT
+// React
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-
-// CUSTOM
+// Custom
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 import { BackdropLoading } from '../../../structures/backdrop_loading/BackdropLoading';
 import { GenericModalDialog } from '../../../structures/generic_modal_dialog/GenericModalDialog';
-
-// MATERIAL UI
+// Material UI
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -21,8 +19,7 @@ import Container from '@mui/material/Container';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
-
-// ASSETS
+// Assets
 import success_image from "../../../assets/images/success/success.png";
 import email_image from "../../../assets/images/email/email.png";
 import error_image from "../../../assets/images/error/error.png";

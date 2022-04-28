@@ -12,7 +12,7 @@ class SendAccessDataToCreatedUser extends Mailable
     use Queueable, SerializesModels;
 
     private $title;
-    private $message;
+    private $text;
     private $link;
     private $datetime;
     private $name;
@@ -25,15 +25,15 @@ class SendAccessDataToCreatedUser extends Mailable
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct(array $data)
     {
         $this->subject = env("APP_NAME")." - Dados de acesso";
-        $this->message = "Você está recebendo este e-mail para que tenha acesso à sua nova conta no sistema ".env("APP_NAME");
+        $this->text = "Você está recebendo este e-mail com os dados de acesso para a sua nova conta no sistema ".env("APP_NAME").".";
         $this->name = $data["name"];
         $this->email = $data["email"];
         $this->profile = $data["profile"];
         $this->password = $data["unencrypted_password"];
-        $this->datetime = $data["created_at"];
+        $this->datetime = date('d-m-Y H:i');
     }
 
     /**
@@ -44,7 +44,7 @@ class SendAccessDataToCreatedUser extends Mailable
     public function build()
     {
         $view_data = [
-            "message" => $this->message,
+            "text" => $this->text,
             "name" => $this->name,
             "email" => $this->email,
             "profile" => $this->profile,

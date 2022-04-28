@@ -22,6 +22,8 @@ import AxiosApi from '../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
+const native_profiles = [1,2,3,4,5];
+
 export const DeleteProfileFormulary = React.memo(({...props}) => {
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -143,58 +145,59 @@ return (
             </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        <Dialog open={open} onClose={handleClose}>
 
-            <Dialog open={open} onClose={handleClose}>
+            {(props.selected_record.dom != null && open) && (native_profiles.indexOf(props.selected_record.data_cells.profile_id) == -1) && 
+              <>
                 <DialogTitle>DELEÇÃO | PERFIL (ID: {props.selected_record.data_cells.profile_id})</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-                    <DialogContent>
+                  <DialogContent>
 
-                        <TextField
-                        margin="dense"
-                        defaultValue={props.selected_record.data_cells.profile_id}
-                        id="profile_id"
-                        name = "profile_id"
-                        label="ID do perfil"
-                        fullWidth
-                        variant="outlined"
-                        sx={{mb: 2}}
-                        InputProps={{
-                          readOnly: true 
-                        }}
-                        />
+                    <TextField
+                    margin="dense"
+                    defaultValue={props.selected_record.data_cells.profile_id}
+                    id="profile_id"
+                    name = "profile_id"
+                    label="ID do perfil"
+                    fullWidth
+                    variant="outlined"
+                    sx={{mb: 2}}
+                    InputProps={{
+                      readOnly: true 
+                    }}
+                    />
 
-                        <TextField
-                        margin="dense"
-                        defaultValue={props.selected_record.data_cells.profile_name}
-                        id="profile_name"
-                        name = "profile_name"
-                        label="Nome do perfil"
-                        fullWidth
-                        variant="outlined"
-                        InputProps={{
-                          readOnly: true 
-                        }}
-                        />
+                    <TextField
+                    margin="dense"
+                    defaultValue={props.selected_record.data_cells.profile_name}
+                    id="profile_name"
+                    name = "profile_name"
+                    label="Nome do perfil"
+                    fullWidth
+                    variant="outlined"
+                    InputProps={{
+                      readOnly: true 
+                    }}
+                    />
 
-                    </DialogContent>
+                  </DialogContent>
 
-                    {displayAlert.display && 
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
-                    }
-                
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
-                    </DialogActions>
+                  {displayAlert.display && 
+                      <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+                  }
+
+                  <DialogActions>
+                      <Button onClick={handleClose}>Cancelar</Button>
+                      <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+                  </DialogActions>
 
                 </Box>
-
-            </Dialog>
-        }
+              </>
+            }
+          
+        </Dialog>
     </>
 
   );
