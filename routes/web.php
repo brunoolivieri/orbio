@@ -20,14 +20,14 @@ use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 
 // ROTAS QUE RETORNAM AS VIEWS EXTERNAS 
 Route::get('/', function(){ return redirect("/acessar"); }); 
-Route::view('/acessar', "react_main_root"); 
-Route::view('/recuperarsenha', "react_main_root"); 
+Route::view('/acessar', "react_root"); 
+Route::view('/recuperarsenha', "react_root"); 
 
 // ROTAS DAS SEÇÕES INTERNAS, DO MAPA E DE SAÍDA  
 Route::get('/sistema', [CommonInternalController::class, "index"])->middleware(["session.auth"]); 
 Route::get('/sistema/{internalpage?}', [CommonInternalController::class, "refreshInternalSystem"])->where(["internalpage" => "^(?!sair|mapa).*$"]); 
 Route::get('/sistema/sair', [CommonInternalController::class, "logout"]); 
-Route::view('/sistema/mapa', "map_root")->middleware(["session.auth"]); 
+Route::view('/sistema/mapa', "map")->middleware(["session.auth"]); 
 
 // ===================================================================== ROTAS "/API/" ===================================================================== //
 

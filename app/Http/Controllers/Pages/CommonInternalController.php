@@ -23,7 +23,7 @@ class CommonInternalController extends Controller
 
         if(Auth::check()){
 
-            return view("react_main_root");
+            return view("react_root");
 
         }else{
 

@@ -9,7 +9,6 @@ export function NotFound(){
     return(
         <>
             <h1>NOT FOUND</h1>
-            <a href = "/sistema">Ir para a dashboard</a>
         </>
     )
 }

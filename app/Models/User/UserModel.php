@@ -16,7 +16,7 @@ use App\Models\ProfileAndModule\ProfileModel;
 use App\Mail\User\SendAccessDataToCreatedUser;
 // Log
 use Illuminate\Support\Facades\Log;
-
+// Factory
 use Database\Factories\UserFactory;
 
 class UserModel extends Authenticatable
