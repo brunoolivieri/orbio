@@ -8,17 +8,17 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Facades\DB;
+// Token JWT - https://github.com/firebase/php-jwt - https://www.youtube.com/watch?v=B-7e-ZpIWAs 
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 // Models utilizados
 use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\User\UserModel;
-// Eventos utilizados
-use  App\Events\GenerateTokenAndSessionEvent;
-// Token JWT - https://github.com/firebase/php-jwt - https://www.youtube.com/watch?v=B-7e-ZpIWAs 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 // Form Requests
 use App\Http\Requests\Auth\Login\LoginRequest;
+// Events
+use App\Events\Auth\UserLoggedInEvent;
 // Log
 use Illuminate\Support\Facades\Log;
 
@@ -46,6 +46,8 @@ class LoginController extends Controller
 
                 Session::put("modules_access", $token_data["user_powers"]);
 
+                event(new UserLoggedInEvent($request));
+
                 UserModel::where("id", Auth::user()->id)->update(["dh_ultimo_acesso" => date("Y-m-d H:i:s")]);
 
                 Log::channel('login_action')->info("[Acesso realizado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
@@ -69,10 +71,10 @@ class LoginController extends Controller
 
                 }
 
-             // Case 3: User account is disabled
-            }else if(!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
+             // Case 3: User account is disabled or deleted
+            }else if((!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso) || (Auth::user()->deleted_at))){
 
-                Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada");
+                Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada ou removida do sistema.");
 
                 return  response(["error" => "account_disabled"], 500);
 

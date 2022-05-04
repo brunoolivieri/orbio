@@ -76,15 +76,15 @@ export function Layout() {
   
           if(response.status === 200){
 
-             setAuthData({status: true, data: response.data.tokenData});
+            setAuthData({status: true, data: response.data.tokenData});
 
-             setOperationStatus({type: null, title: null, message: null, image: null}); 
+            setOperationStatus({type: null, title: null, message: null, image: null}); 
         
           }else if(response.status === 500){
 
-              localStorage.removeItem('user_authenticated_token');
+            localStorage.removeItem('user_authenticated_token');
 
-              setOperationStatus({type: "auth_error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image});
+            setOperationStatus({type: "auth_error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image});
   
           }
   

@@ -28,7 +28,7 @@ class UserModel extends Authenticatable
     const UPDATED_AT = "dh_atualizacao";
     protected $fillable = ["*"];
 
-    // For Auth:: works
+    // For Auth::attempt works
     function getAuthPassword() {
         return $this->senha;
     }

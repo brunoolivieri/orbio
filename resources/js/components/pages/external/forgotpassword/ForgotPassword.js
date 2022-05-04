@@ -1,6 +1,5 @@
 // React
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import * as React from 'react';
 // Custom
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
@@ -8,7 +7,6 @@ import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode'
 import { BackdropLoading } from '../../../structures/backdrop_loading/BackdropLoading';
 import { GenericModalDialog } from '../../../structures/generic_modal_dialog/GenericModalDialog';
 // Material UI
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -23,6 +21,8 @@ import { makeStyles } from "@mui/styles";
 import success_image from "../../../assets/images/success/success.png";
 import email_image from "../../../assets/images/email/email.png";
 import error_image from "../../../assets/images/error/error.png";
+// Raect Router
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -38,24 +38,24 @@ export function ForgotPassword(){
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({email: false, code: false, password: false, confirm_password: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({email: null, code: null, password: null, confirm_password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({email: false, code: false, password: false, confirm_password: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({email: null, code: null, password: null, confirm_password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State do envio do código - true se foi enviado, false se não 
-    const [codeSent, setCodeSent] = useState(false);
+    const [codeSent, setCodeSent] = React.useState(false);
 
     // State do contador para envio de um novo código 
-    const [codeTimer, setTimer] = useState(0);
+    const [codeTimer, setTimer] = React.useState(0);
 
     // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
     // Neste caso, a operação é envio do código e alteração da senha
-    const [operationStatus, setOperationStatus] = useState({type: null, title:null, message: null, image: null});
+    const [operationStatus, setOperationStatus] = React.useState({type: null, title:null, message: null, image: null});
 
     // Classes do objeto makeStyles
     const classes = useStyles();
 
     // State do modal informativo acerca da operação realizada
-    const [openGenericModal, setOpenGenericModal] = useState(true);
+    const [openGenericModal, setOpenGenericModal] = React.useState(true);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
     
@@ -189,8 +189,9 @@ export function ForgotPassword(){
         setOperationStatus({type: "loading", title: null, message: null, image: null});
 
         AxiosApi.post("/api/alterar-senha", {
-            token: data.get("code_received"),
-            new_password: data.get("new_password")
+            token: data.get("code"),
+            new_password: data.get("new_password"),
+            new_password_confirmation: data.get("new_password")
           })
           .then(function (response) {
 
@@ -311,7 +312,7 @@ export function ForgotPassword(){
     * Rotina do contador
     * 
     */
-    useEffect(() => {
+    React.useEffect(() => {
 
         if(codeTimer > 0){
 
