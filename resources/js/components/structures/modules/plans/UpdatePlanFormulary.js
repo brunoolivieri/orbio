@@ -1,7 +1,6 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
 import { useState } from 'react';
 import * as React from 'react';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,13 +12,14 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-
+import { Switch } from '@mui/material';
+import { FormGroup } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { GenericSelect } from '../../input_select/GenericSelect';
-
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -43,6 +43,9 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = useState(false);
 
+    // Switch state
+    const [isChecked, setIsChecked] = React.useState(null);
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -57,6 +60,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
+      setIsChecked(null);
       setErrorDetected({status: false, description: false});
       setErrorMessage({status: "", description: ""});
       setDisplayAlert({display: false, type: "", message: ""});
@@ -137,7 +141,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
             report_id: data.get("select_report"),
             incident_id: data.get("select_incident"),
-            status: data.get("status"),
+            status: isChecked,
             description: data.get("description"),
         })
         .then(function (response) {
@@ -162,6 +166,8 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
       setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
       setTimeout(() => {
+
+        setIsChecked(null);
 
         setDisabledButton(false);
 
@@ -270,23 +276,6 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
 
                     <TextField
                     margin="dense"
-                    id="status"
-                    name="status"
-                    label="Status do plano"
-                    type="number"
-                    fullWidth
-                    variant="outlined"
-                    defaultValue={props.selected_record.data_cells.plan_status}
-                    error = {errorDetected.status}
-                    helperText = {errorMessage.status}
-                    InputProps={{
-                        inputProps: { min: 0, max: 1 }
-                    }}
-                    sx={{mb: 2}}
-                    />
-
-                    <TextField
-                    margin="dense"
                     id="description"
                     name="description"
                     label="Descrição"
@@ -297,6 +286,12 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
                     helperText = {errorMessage.description}
                     error = {errorDetected.description}
                     />
+
+                  <Box sx={{marginTop: 3}}>
+                    <FormGroup>
+                      <FormControlLabel control={<Switch defaultChecked={props.selected_record.data_cells.status} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked == null ? (props.selected_record.data_cells.status ? "Ativo" : "Inativo") : (isChecked ? "Ativo" : "Inativo")} />
+                    </FormGroup>
+                  </Box>
 
                 </DialogContent>
 

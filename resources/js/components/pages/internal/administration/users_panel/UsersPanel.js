@@ -358,8 +358,6 @@ export function UsersPanel(){
                   <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Criação da conta</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
@@ -372,8 +370,6 @@ export function UsersPanel(){
                       <TableCell align="center">{row.email}</TableCell> 
                       <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.profile_name}</TableCell>
-                      <TableCell align="center">{row.created_at}</TableCell>
-                      <TableCell align="center">{row.updated_at}</TableCell>
                       <TableCell align="center">{row.last_access}</TableCell>
                     </TableRow>
                     ))}   

@@ -359,8 +359,6 @@ export function OrdersPanel(){
                       <StyledTableCell align="center">Piloto</StyledTableCell>
                       <StyledTableCell align="center">Cliente</StyledTableCell>
                       <StyledTableCell align="center">Observação</StyledTableCell>
-                      <StyledTableCell align="center">Data da criação</StyledTableCell>
-                      <StyledTableCell align="center">Última atualização</StyledTableCell>
                       <StyledTableCell align="center">Data do início</StyledTableCell>
                       <StyledTableCell align="center">Data do fim</StyledTableCell>
                   </TableRow>
@@ -386,8 +384,6 @@ export function OrdersPanel(){
                           {row.client.ids == 0 ? <Chip label={"Sem dados"} variant="outlined"/> : (row.client.status == 1 ? <Chip label={row.client.name} color={"success"} variant="outlined"/> : <Chip label={row.client.name} color={"error"} variant="outlined"/>)}
                         </TableCell>
                         <TableCell align="center">{row.order_note}</TableCell>
-                        <TableCell align="center">{row.created_at}</TableCell>
-                        <TableCell align="center">{row.updated_at}</TableCell>
                         <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                         <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
                         </TableRow>    

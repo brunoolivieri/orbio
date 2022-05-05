@@ -11,6 +11,9 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import { Switch } from '@mui/material';
+import { FormGroup } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -51,6 +54,9 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
     // State dos planos de vôo selecionados
     const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
+    // Switch state
+    const [isChecked, setIsChecked] = React.useState(null);
+
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -63,6 +69,7 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
+      setIsChecked(null);
       setErrorDetected({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
       setErrorMessage({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
       setDisplayAlert({display: false, type: "", message: ""});
@@ -115,7 +122,7 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
       const clientNameValidate = formData.get("select_client_name") != 0 ? {error: false, message: ""} : {error: true, message: "O cliente deve ser selecionado"};
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
       const fligthPlansValidate = flightPlansSelected != null ? {error: false, message: ""} : {error: true, message: ""};
-      const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
+      const statusValidate = Number(isChecked) != 0 && Number(isChecked) != 1 ? {error: true, message: "O status deve ser 1 ou 0"} : {error: false, message: ""}; 
 
       setErrorDetected({
         order_start_date: startDateValidate.error, 
@@ -200,7 +207,7 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
           pilot_id: data.get("select_pilot_name"),
           client_id: data.get("select_client_name"),
           observation: data.get("order_note"),
-          status: data.get("status"),
+          status: isChecked,
           fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
         })
         .then(function (response) {
@@ -225,6 +232,8 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
       setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
       setTimeout(() => {
+
+        setIsChecked(null);
 
         setDisabledButton(false);
 
@@ -397,21 +406,11 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
                   sx={{mb: 2}}
                 />
 
-                <TextField
-                  margin="dense"
-                  id="status"
-                  name="status"
-                  label="Status"
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={props.selected_record.data_cells.order_status}
-                  error = {errorDetected.status}
-                  helperText = {errorMessage.status}
-                  InputProps={{
-                      inputProps: { min: 0, max: 1 },
-                  }}
-                />
+          <Box sx={{marginTop: 3}}>
+            <FormGroup>
+              <FormControlLabel control={<Switch defaultChecked={props.selected_record.data_cells.status} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked == null ? (props.selected_record.data_cells.status ? "Ativo" : "Inativo") : (isChecked ? "Ativo" : "Inativo")} />
+            </FormGroup>
+          </Box>
     
               </DialogContent>
     

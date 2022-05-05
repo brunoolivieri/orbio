@@ -12,6 +12,9 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
+import { Switch } from '@mui/material';
+import { FormGroup } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -52,6 +55,9 @@ export const CreateOrderFormulary = React.memo(() => {
     // State dos planos de vôo selecionados
     const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
+    // Switch state
+    const [isChecked, setIsChecked] = React.useState(false);
+
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
     // Função para abrir o modal
@@ -62,6 +68,7 @@ export const CreateOrderFormulary = React.memo(() => {
     // Função para fechar o modal
     const handleClose = () => {
 
+        setIsChecked(null);
         setErrorDetected({order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false});
         setErrorMessage({order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: ""});
         setDisplayAlert({display: false, type: "", message: ""});
@@ -114,7 +121,7 @@ export const CreateOrderFormulary = React.memo(() => {
       const clientNameValidate = formData.get("select_client_name") != 0 ? {error: false, message: ""} : {error: true, message: "O cliente deve ser selecionado"};
       const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
       const fligthPlansValidate = flightPlansSelected != null ? {error: false, message: ""} : {error: true, message: ""};
-      const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
+      const statusValidate = Number(isChecked) != 0 && Number(isChecked) != 1 ? {error: true, message: "O status deve ser 1 ou 0"} : {error: false, message: ""}; 
 
       setErrorDetected({
         order_start_date: startDateValidate.error, 
@@ -198,7 +205,7 @@ export const CreateOrderFormulary = React.memo(() => {
         pilot_id: data.get("select_pilot_name"),
         client_id: data.get("select_client_name"),
         observation: data.get("order_note"),
-        status: data.get("status"),
+        status: isChecked,
         fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
       })
       .then(function (response) {
@@ -223,6 +230,8 @@ export const CreateOrderFormulary = React.memo(() => {
       setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
       setTimeout(() => {
+
+        setIsChecked(null);
 
         setDisabledButton(false);
 
@@ -380,21 +389,11 @@ export const CreateOrderFormulary = React.memo(() => {
                   sx={{mb: 2}}
                 />
 
-                <TextField
-                  margin="dense"
-                  id="status"
-                  name="status"
-                  label="Status"
-                  type="number"
-                  fullWidth
-                  variant="outlined"
-                  defaultValue={0}
-                  error = {errorDetected.status}
-                  helperText = {errorMessage.status}
-                  InputProps={{
-                      inputProps: { min: 0, max: 1 }
-                  }}
-                />
+              <Box sx={{marginTop: 3}}>
+                <FormGroup>
+                  <FormControlLabel control={<Switch defaultChecked={false} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked ? "Ativo" : "Inativo"} />
+                </FormGroup>
+              </Box>
                   
               </DialogContent>
     

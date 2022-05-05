@@ -21,7 +21,7 @@ export function Switcher({...props}) {
       fullWidth
     >
     {props.options.map((item, index) => (
-        <ToggleButton value = {index} onClick={() => props.panelStateSetter(item.page)} sx={{display: "flex", flexDirection: "column"}}>
+        <ToggleButton value = {index} onClick={() => props.panelStateSetter(item.page)} sx={{display: "flex", flexDirection: "column"}} key = {index}>
           {item.title.toUpperCase()} {item.icon}
         </ToggleButton>
     ))}

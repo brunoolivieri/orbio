@@ -1,12 +1,12 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import * as React from "react";
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
-// IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
+// Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -28,12 +28,11 @@ import { InputAdornment } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import { useSnackbar } from 'notistack';
+// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-// OUTROS
-import { useSnackbar } from 'notistack';
 
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -367,32 +366,32 @@ export function ProfilesPanel(){
                               <TableCell align="center">{row.profile_name}</TableCell>
                               <TableCell align="center">
                                 <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever} disabled size="small" />} label="Escrever" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                                 </FormGroup>   
                               </TableCell>
                               <TableCell align="center">
                                 <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever} disabled size="small" />} label="Escrever" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                                 </FormGroup>
                               </TableCell>
                               <TableCell align="center">
                                 <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever} disabled size="small" />} label="Escrever" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                                 </FormGroup> 
                               </TableCell>
                               <TableCell align="center">   
                                 <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever} disabled size="small" />} label="Escrever" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                                 </FormGroup>
                               </TableCell>
                               <TableCell align="center">   
                                 <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever} disabled size="small" />} label="Escrever" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                                 </FormGroup>
                               </TableCell>
                             </TableRow>

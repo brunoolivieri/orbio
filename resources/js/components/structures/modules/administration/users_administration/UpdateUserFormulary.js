@@ -1,5 +1,4 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
 import * as React from 'react';
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
@@ -12,6 +11,9 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import { Switch } from '@mui/material';
+import { FormGroup } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -32,14 +34,17 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
     const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({email: false, name: false, profile: false, status: false}); 
-    const [errorMessage, setErrorMessage] = useState({email: null, name: null, profile: null, status: null}); 
+    const [errorDetected, setErrorDetected] = React.useState({email: false, name: false, profile: false, status: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({email: null, name: null, profile: null, status: null}); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
+
+    // Switch state
+    const [isChecked, setIsChecked] = React.useState(null);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -53,6 +58,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
+      setIsChecked(null);
       setErrorDetected({email: false, name: false, profile: false, status: false});
       setErrorMessage({email: null, name: null, profile: null, status: null});
       setDisplayAlert({display: false, type: "", message: ""});
@@ -89,7 +95,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
       const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
       const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
       const profileValidate = Number(formData.get("select_profile")) === 0 ? {error: true, message: "Selecione um perfil"} : {error: false, message: ""};
-      const statusValidate = Number(formData.get("status_input")) != 0 && Number(formData.get("status_input")) != 1 ? {error: true, message: "O status deve ser 1 ou 0"} : {error: false, message: ""}; 
+      const statusValidate = Number(isChecked) != 0 && Number(isChecked) != 1 ? {error: true, message: "O status deve ser 1 ou 0"} : {error: false, message: ""}; 
 
       setErrorDetected({email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error});
       setErrorMessage({email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message, status: statusValidate.message});
@@ -117,7 +123,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             auth: `${logged_user_id}.${module_id}.${action}`,
             name: data.get("name_input"),
             email: data.get("email_input"),
-            status: data.get("status_input"),
+            status: isChecked,
             profile_id: data.get("select_profile")
         })
         .then((response) => {
@@ -140,6 +146,8 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
       setTimeout(() => {
 
         setDisabledButton(false);
+
+        setIsChecked(null);
 
         handleClose();
 
@@ -250,23 +258,6 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             sx={{mb: 2}}
             />
 
-            <TextField
-            margin="dense"
-            id="status_input"
-            name="status_input"
-            label="Status da conta"
-            type="number"
-            fullWidth
-            variant="outlined"
-            defaultValue={props.selected_record.data_cells.status}
-            helperText = {errorMessage.status}
-            error = {errorDetected.status}
-            InputProps={{
-              inputProps: { min: 0, max: 1 }
-            }}
-            sx={{mb: 2}}
-            />
-
             <GenericSelect 
             label_text = {"Perfil"} 
             data_source = {"/api/admin-module-user/create?auth=none"} 
@@ -276,6 +267,12 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             default = {props.selected_record.data_cells.access} 
             name = {"select_profile"} 
             />
+
+          <Box sx={{marginTop: 3}}>
+            <FormGroup>
+              <FormControlLabel control={<Switch defaultChecked={props.selected_record.data_cells.status} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked == null ? (props.selected_record.data_cells.status ? "Ativo" : "Inativo") : (isChecked ? "Ativo" : "Inativo")} />
+            </FormGroup>
+          </Box>
 
           </DialogContent>
 

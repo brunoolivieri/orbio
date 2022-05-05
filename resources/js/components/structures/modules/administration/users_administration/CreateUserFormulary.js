@@ -1,5 +1,4 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
 import * as React from 'react';
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
@@ -30,14 +29,14 @@ export function CreateUserFormulary({...props}) {
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({name: false, email: false, profile: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: null, email: null, profile: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({name: false, email: false, profile: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({name: null, email: null, profile: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // States do formulário
     const [open, setOpen] = React.useState(false);

@@ -358,8 +358,6 @@ export function ReportsPanel(){
                 <TableRow>
                   <StyledTableCell>ID</StyledTableCell>
                   <StyledTableCell align="center">Exportar</StyledTableCell>
-                  <StyledTableCell align="center">Criação do relatório</StyledTableCell>
-                  <StyledTableCell align="center">Última atualização</StyledTableCell>
                   <StyledTableCell align="center">Inicio do vôo</StyledTableCell>
                   <StyledTableCell align="center">Fim do vôo</StyledTableCell>
                   <StyledTableCell align="center">Log do vôo</StyledTableCell>
@@ -372,8 +370,6 @@ export function ReportsPanel(){
                       <TableRow key={row.report_id}>
                         <TableCell><FormControlLabel value={row.report_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.report_id} /></TableCell>
                         <TableCell align="center"><GenerateReportFormulary data = {row} /></TableCell>
-                        <TableCell align="center">{row.created_at}</TableCell>
-                        <TableCell align="center">{row.updated_at}</TableCell>
                         <TableCell align="center">{moment(row.flight_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                         <TableCell align="center">{moment(row.flight_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                         <TableCell align="center">{row.flight_log}</TableCell>
