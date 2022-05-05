@@ -1,14 +1,10 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// React
+import * as React from 'react';
+// Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
-import * as React from 'react';
+// Material UI
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -22,6 +18,8 @@ import { Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
+// React router dom
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -34,14 +32,17 @@ const useStyles = makeStyles((theme) => ({
 
 export function Login(){
 
-// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({email: false, password: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({email: false, password: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({email: null, password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State do alerta
-    const [displayAlert, setDisplayAlert]= useState({display: false, message: ""});
+    const [displayAlert, setDisplayAlert]= React.useState({display: false, type: "error", message: ""});
+
+    // Para desabilitar o botão de login
+    const [disabled, setDisabled] = React.useState(false);
 
     // Classes do objeto makeStyles
     const classes = useStyles();
@@ -58,6 +59,8 @@ export function Login(){
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
+
+        setDisabled(true);
 
         if(dataValidate(data)){
 
@@ -125,10 +128,11 @@ export function Login(){
     */
     function successServerResponseTreatment(response_data){
 
-        localStorage.removeItem('user_authenticated_token');
-        localStorage.setItem('user_authenticated_token', JSON.stringify(response_data.token));
+        setDisplayAlert({display: true, type: "success", message: response_data.message});
 
-        window.location.href = "/sistema"; 
+        setTimeout(() => {
+            window.location.href = "/sistema"; 
+        }, [1500])
 
     }
 
@@ -137,6 +141,8 @@ export function Login(){
     * Tratamento da requisição que falhou
     */
     function errorServerResponseTreatment(response_data){
+
+        setDisabled(false);
 
         // Erros automatizados
 
@@ -163,23 +169,23 @@ export function Login(){
 
         if(response_data.error == "activation"){
 
-            setDisplayAlert({display: true, message: "Houve um erro na ativação da conta. Tente novamente ou contate o suporte."});
+            setDisplayAlert({display: true, type: "error", message: "Houve um erro na ativação da conta. Tente novamente ou contate o suporte."});
 
         }else if(response_data.error == "token"){
 
-            setDisplayAlert({display: true, message: "Erro na autenticação. Tente novamente ou contate o suporte."});
+            setDisplayAlert({display: true, type: "error", message: "Erro na autenticação. Tente novamente ou contate o suporte."});
 
         }else if(response_data.error == "account_disabled"){
             
-            setDisplayAlert({display: true, message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la."});
+            setDisplayAlert({display: true, type: "error", message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la."});
 
         }else if(response_data.error == "invalid_credentials"){
 
-            setDisplayAlert({display: true, message: "Email ou senha incorretos."});
+            setDisplayAlert({display: true, type: "error", message: "Email ou senha incorretos."});
 
         }else{
 
-            setDisplayAlert({display: true, message: "A operação falhou! Tente novamente ou contate o suporte."});
+            setDisplayAlert({display: true, type: "error", message: "A operação falhou! Tente novamente ou contate o suporte."});
 
         }
 
@@ -258,6 +264,7 @@ export function Login(){
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                     color="primary"
+                    disabled={disabled}
                 >
                     Acessar
                 </Button>
@@ -269,7 +276,7 @@ export function Login(){
                     </Grid>
                 </Grid>
                 {displayAlert.display && 
-                <Alert severity="error" fullWidth>{displayAlert.message}</Alert> 
+                <Alert severity={displayAlert.type} fullWidth>{displayAlert.message}</Alert> 
                 }
                 </Box>
             </Box>

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 // Custom Models
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
@@ -207,6 +208,48 @@ class UserModel extends Authenticatable
             return ["status" => true, "error" => false, "account_data" => $data];
 
         }catch(\Exception $e){
+
+            return ["status" => false, "error" => $e->getMessage()];
+
+        }
+
+    }
+
+    function accountActivation() : array {
+
+        try{
+
+            UserModel::where("id", Auth::user()->id)->update(["status" => 1]);
+
+            $new_address_id = DB::table("address")->insertGetId(
+                [
+                    "logradouro" => NULL,
+                    "numero" => NULL,
+                    "cep" => NULL,
+                    "cidade" => NULL,
+                    "estado" => NULL,
+                    "complemento" => NULL
+                ]
+            );
+
+            $new_comp_data_id = DB::table("user_complementary_data")->insertGetId([
+                "habANAC" => NULL,
+                "CPF" => NULL,
+                "CNPJ" => NULL,
+                "telefone" => NULL,
+                "celular" => NULL,
+                "razaoSocial" => NULL,
+                "nomeFantasia" => NULL,
+                "id_endereco" => $new_address_id
+            ]);
+
+            UserModel::where('id', Auth::user()->id)->update(["id_dados_complementares" => $new_comp_data_id]);
+
+            return ["status" => true, "error" => false];
+
+        }catch(\Exception $e){
+
+            Log::channel('login_error')->error("[Acesso negado | Ativação da conta falhou] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: ".$e->getMessage());
 
             return ["status" => false, "error" => $e->getMessage()];
 

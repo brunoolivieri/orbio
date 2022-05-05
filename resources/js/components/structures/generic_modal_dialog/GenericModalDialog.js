@@ -40,10 +40,6 @@ export const GenericModalDialog = memo(({...props}) => {
   return (
     <>
 
-    {/*
-        BOTÃO OPCIONAL QUE ATIVARÁ O HANDLECLICKOPEN
-    */}
-
     <Dialog 
     open={props.modal_controller.state} 
     onClose={handleClose}

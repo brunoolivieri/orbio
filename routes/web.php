@@ -18,12 +18,12 @@ use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
 use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 
-// ROTAS QUE RETORNAM AS VIEWS EXTERNAS 
+// Views externas
 Route::get('/', function(){ return redirect("/acessar"); }); 
 Route::view('/acessar', "react_root"); 
 Route::view('/recuperarsenha', "react_root"); 
 
-// ROTAS DAS SEÇÕES INTERNAS, DO MAPA E DE SAÍDA  
+// Rotas internas, do mapa e de logout 
 Route::get('/sistema', [CommonInternalController::class, "index"])->middleware(["session.auth"]); 
 Route::get('/sistema/{internalpage?}', [CommonInternalController::class, "refreshInternalSystem"])->where(["internalpage" => "^(?!sair|mapa).*$"]); 
 Route::get('/sistema/sair', [CommonInternalController::class, "logout"]); 
@@ -31,13 +31,13 @@ Route::view('/sistema/mapa', "map")->middleware(["session.auth"]);
 
 // ===================================================================== ROTAS "/API/" ===================================================================== //
 
-// OPERAÇÕES DE AUTENTICAÇÃO BÁSICAS 
+// Operações de autenticação básicas
 Route::post('/api/acessar', [LoginController::class, "index"]); 
 Route::post('/api/enviar-codigo', [ForgotPasswordController::class, "generateAndSendPasswordChangeToken"]); 
 Route::post('/api/alterar-senha', [ForgotPasswordController::class, "passwordChangeProcessing"]); 
-Route::post('/api/get-token-data', [CommonInternalController::class, "getDataFromTokenJwt"]); 
+Route::post('/api/get-auth-data', [CommonInternalController::class, "getUserAuthenticatedData"])->middleware(["session.auth"]); 
 
-// OPERAÇÕES DA SEÇÃO INTERNA "MINHA CONTA"
+// Operações da seção "minha conta"
 Route::middleware(["session.auth"])->group(function(){
     Route::get('/api/user-account-data', [AccountSectionController::class, "loadUserAccountData"]);
     Route::patch('/api/update-basic-data/{id}', [AccountSectionController::class, "userBasicDataUpdate"]);
@@ -45,7 +45,7 @@ Route::middleware(["session.auth"])->group(function(){
     Route::post("/api/desactivate-account/{id}", [AccountSectionController::class, "userAccountDesactivation"]);
 });
 
-// OPERAÇÕES DOS MÓDULOS 
+// Operações dos módulos
 Route::middleware(["session.auth", "modules.common.authorization"])->group(function(){
     Route::resource("/api/admin-module-user", AdministrationModuleUserPanelController::class);
     Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class);

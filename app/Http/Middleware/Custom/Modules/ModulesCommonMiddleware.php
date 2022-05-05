@@ -19,36 +19,39 @@ class ModulesCommonMiddleware
     {
 
         // As operações que não necessitam de autenticação enviam "auth" com valor "none"
-        if(request()->auth != "none" || $request->auth != "none"){
+        if(request()->auth != "none" && $request->auth != "none"){
 
             // Se o método for "GET" OU "DELETE" o parâmetro "auth" é uma query string
             if($request->method() == "GET" || $request->method() == "DELETE"){
 
-                $array_params = explode(".", request()->auth);
+                $request_params = explode(".", request()->auth);
             
             // Se o método não for "GET" o parâmetro "auth" é incluso no corpo da requisição
             }else if($request->method() == "POST" || $request->method() == "PATCH"){
 
-                $array_params = explode(".", $request->auth);
+                $request_params = explode(".", $request->auth);
 
             }
 
-            $user_id = $array_params[0];
-            $module_id = $array_params[1];
-            $module_action = $array_params[2];
+            // ID do usuário vindo do frontend
+            $user_id = $request_params[0];
+            // ID do módulo vindo do frontend - existem 5 tipos
+            // É substraído 1 porque será utilizado como índice
+            $module_index = $request_params[1] - 1;
+            // Ação a ser executada no módulo
+            $module_action = $request_params[2];
 
             // Checar se o usuário que fez a requisição tem o mesmo ID do gravado na sessão
             $user_id_check = $user_id == Auth::user()->id;
 
             // Checar se o usuário tem permissão para acessar a ação do módulo
             // Esse valor é salvo na sessão, e é recuperado dinâmicamente com as variáveis $module_id e $module_action
-            $user_module_action_check = $request->session()->get("modules_access")[$module_id]["profile_powers"][$module_action] == 1 ? TRUE : FALSE;
+            $user_module_action_check = Auth::user()->profile->module_privileges[$module_index][$module_action];
 
             if(!$user_id_check || !$user_module_action_check){
 
-                // O usuário é redirecionado para "/sistema" com uma resposta
-                // Aparecerá o mesmo modal de erro de quando o Token JWT é inválido
-                return redirect("/acessar");
+                // O usuário é deslogado
+                return redirect("/sistema/sair");
 
             }
 
