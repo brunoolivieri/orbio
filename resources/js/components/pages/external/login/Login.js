@@ -132,7 +132,7 @@ export function Login(){
 
         setTimeout(() => {
             window.location.href = "/sistema"; 
-        }, [1500])
+        }, [1000])
 
     }
 

@@ -1,10 +1,10 @@
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// React 
+import * as React from 'react';
+// Custom
 import { usePagination } from '../../../context/Pagination/PaginationContext';
 import {HeaderMenu} from "../../../structures/header_menu/HeaderMenu";
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
-import * as React from 'react';
+// Material UI
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Grid from '@mui/material/Grid';
@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function Header(props) {
+export const Header = React.memo((props) => {
 
   const { onDrawerToggle } = props;
 
@@ -76,10 +76,8 @@ function Header(props) {
       </AppBar>
     </>
   );
-}
+});
 
 Header.propTypes = {
   onDrawerToggle: PropTypes.func.isRequired,
 };
-
-export default Header;

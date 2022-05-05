@@ -75,7 +75,8 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function Navigator(props) {
+export const Navigator = React.memo((props) => {
+
   const { ...other } = props;
 
   // Utilizador do contexto/state global de Autenticação
@@ -152,4 +153,4 @@ export default function Navigator(props) {
 
     </Drawer>
   );
-}
+});

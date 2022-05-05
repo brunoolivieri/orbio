@@ -14,7 +14,7 @@ class FlightPlanStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return Session::get("modules_access")[2]["profile_powers"]["escrever"] == 1 ? true : false;
+        return true;
     }
 
     /**

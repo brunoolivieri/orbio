@@ -14,7 +14,7 @@ class ServiceOrderUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return Session::get("modules_access")[3]["profile_powers"]["escrever"] == 1 ? true : false;
+        return true;
     }
 
     /**

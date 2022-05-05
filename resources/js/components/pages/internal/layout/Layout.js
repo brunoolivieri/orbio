@@ -3,8 +3,8 @@ import * as React from 'react';
 // Custom
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext"; // State global de autenticação
 import AxiosApi from "../../../../services/AxiosApi"; // Axios para comunicação com o backend via AJAX
-import Navigator from './Navigator';
-import Header from './Header';
+import { Navigator } from './Navigator';
+import { Header } from './Header';
 import { InternalRoutes } from "../../../../routes/ReactRouter";
 import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
 import { GenericModalDialog } from "../../../structures/generic_modal_dialog/GenericModalDialog";
@@ -90,7 +90,7 @@ export function Layout() {
         setMenuOpen(!menuOpen);
       };
 
-  // =============================================================== //
+// =============================================================== ESTRUTURAÇÃO DA PÁGINA  =============================================================== //
 
   return (
 

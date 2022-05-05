@@ -18,6 +18,8 @@ use App\Models\Orders\ServiceOrderHasUserModel;
 use App\Models\User\UserModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use  App\Models\Orders\ServiceOrdersModel;
+// Events
+use App\Events\Modules\Admin\UserCreatedEvent;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -65,6 +67,11 @@ class AdministrationModuleUserPanelController extends Controller
 
     }
 
+    /**
+     * Form data for frontend table.
+     *
+     * @return array
+     */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
 
         $arr_with_formated_data = [];
@@ -143,31 +150,38 @@ class AdministrationModuleUserPanelController extends Controller
     public function store(UserPanelStoreRequest $request) : \Illuminate\Http\Response
     {
 
-        $model = new UserModel();
+        try{
 
-        // Criação do usuário
-        $model_response = $model->createUserAndSendEmail([
-            "nome" => $request->name,
-            "email" => $request->email,
-            "senha" => Hash::make($request->password),
-            "id_perfil" => $request->profile_id
-            ], 
-            $request->password
-        );
+            DB::transaction(function () use ($request) {
 
-        if($model_response["status"] && !$model_response["error"]){
+                $user_model = new UserModel();
 
-            Log::channel('administration_action')->info("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Usuário criado com sucesso - Email do usuário: ".$request->email." - Perfil do usuário: ". $request->profile_id);
+                $user_model->id_perfil = $request->profile_id;
+                $user_model->nome = $request->name;
+                $user_model->email = $request->email;
+                $user_model->senha = Hash::make($request->password);
+        
+                $user_model->save();
+
+                $profile_name = $user_model->profile->nome;
+        
+                event(new UserCreatedEvent($request->name, $profile_name, $request->email, $request->password));
+
+                Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$request->email);
+                Log::channel('administration_action')->info("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Usuário criado com sucesso - Email do usuário: ".$request->email." - Perfil do usuário: ". $request->profile_id);
+
+            });
 
             return response("", 200);
 
-        }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Falha na criação do usuário - Erro: ".$model_response["error"]);
+        }catch(\Exception $e){
 
-            return response(["error" => $model_response["error"]], 500);
+            Log::channel('administration_error')->error("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Falha na criação do usuário - Erro: ".$e->getMessage());
 
-        }
+            return response(["error" => $e->getMessage()], 500);
+
+        }       
 
     }
 

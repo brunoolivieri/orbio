@@ -15,7 +15,7 @@ class ProfilePanelUpdateRequest extends FormRequest
      */
     public function authorize()
     {
-        return Session::get("modules_access")[1]["profile_powers"]["escrever"] == 1 ? true : false;
+        return true;
     }
 
     /**
