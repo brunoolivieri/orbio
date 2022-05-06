@@ -1,5 +1,5 @@
 // React
-import { useEffect, useState } from "react";
+import * as React from 'react';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -63,16 +63,16 @@ export function PlansPanel(){
   
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
+  const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
   // State do registro selecionado
   // O valor do checkbox de cada registro é o seu índice da estrutura de dados original retornada do servidor
   // Quando um registro é selecionado, aqui é salvo seu índice, e o modal de update e delete são renderizados
   // Os modais recebem o elemento do array da resposta do servidor cujo índice é igual ao salvo aqui 
-  const [selectedRecordIndex, setSelectedRecordIndex] = useState(null);
+  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
     
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -80,7 +80,7 @@ export function PlansPanel(){
      * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
      * 
      */
-     useEffect(() => {
+     React.useEffect(() => {
  
       const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
 
@@ -96,7 +96,6 @@ export function PlansPanel(){
  
    },[paginationParams]);
 
-   
    /**
    * Carregamento de todos os registros de planos de vôo
    * 
@@ -267,7 +266,7 @@ export function PlansPanel(){
 
   }
 
-   /**
+  /**
    * Função para processar o download do arquivo com as coordenadas do plano de vôo
    * 
    */
@@ -288,7 +287,7 @@ export function PlansPanel(){
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${filename}.txt`); //or any other extension
+        link.setAttribute('download', `${filename}`); //or any other extension
         document.body.appendChild(link);
         link.click();
 
@@ -309,7 +308,7 @@ export function PlansPanel(){
 
   };
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
   
     return (

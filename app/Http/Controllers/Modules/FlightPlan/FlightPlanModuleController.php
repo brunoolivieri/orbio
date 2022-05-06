@@ -110,8 +110,6 @@ class FlightPlanModuleController extends Controller
                 $path = Storage::disk("public")->path("flight_plans/$filename");
                 $contents = file_get_contents($path); 
 
-                dd("Filename: $filename| Path: $path");
-    
                 Log::channel('flight_plans_action')->info("[Método: downloadFlightPlanFile][Controlador: FlightPlanModuleController] - Arquivo do plano de vôo baixado com sucesso - Arquivo: ".$path);
     
                 return response($contents)->withHeaders([
