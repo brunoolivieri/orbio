@@ -156,7 +156,7 @@ class AdministrationModuleUserPanelController extends Controller
 
                 $user_model = new UserModel();
 
-                $user_model->id_perfil = $request->profile_id;
+                $user_model->id_perfil = intval($request->profile_id);
                 $user_model->nome = $request->name;
                 $user_model->email = $request->email;
                 $user_model->senha = Hash::make($request->password);
