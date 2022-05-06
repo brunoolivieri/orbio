@@ -1,7 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState} from 'react';
 import * as React from 'react';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -13,11 +11,9 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
-
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
@@ -31,22 +27,20 @@ export const DeleteProfileFormulary = React.memo(({...props}) => {
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
-    const [open, setOpen] = useState(false); 
+    const [open, setOpen] = React.useState(false); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-        if(props.selected_record.dom != null){
-          setOpen(true);
-        }     
-      };
+      setOpen(true);       
+    };
   
       // Função para fechar o modal
       const handleClose = () => {
@@ -116,8 +110,10 @@ export const DeleteProfileFormulary = React.memo(({...props}) => {
   
         setTimeout(() => {
   
+          // Deselecionar registro na tabela
+          props.record_setter(null);
+          // Outros
           setDisabledButton(false);
-  
           handleClose();
   
         }, 2000);
@@ -147,9 +143,9 @@ return (
 
         <Dialog open={open} onClose={handleClose}>
 
-            {(props.selected_record.dom != null && open) && (native_profiles.indexOf(props.selected_record.data_cells.profile_id) == -1) && 
+            {(props.record != null && open) && (native_profiles.indexOf(props.record.profile_id) == -1) && 
               <>
-                <DialogTitle>DELEÇÃO | PERFIL (ID: {props.selected_record.data_cells.profile_id})</DialogTitle>
+                <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
@@ -157,7 +153,7 @@ return (
 
                     <TextField
                     margin="dense"
-                    defaultValue={props.selected_record.data_cells.profile_id}
+                    defaultValue={props.record.profile_id}
                     id="profile_id"
                     name = "profile_id"
                     label="ID do perfil"
@@ -171,7 +167,7 @@ return (
 
                     <TextField
                     margin="dense"
-                    defaultValue={props.selected_record.data_cells.profile_name}
+                    defaultValue={props.record.profile_name}
                     id="profile_name"
                     name = "profile_name"
                     label="Nome do perfil"

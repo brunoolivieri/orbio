@@ -33,6 +33,8 @@ import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -60,8 +62,11 @@ export function ProfilesPanel(){
     // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
     const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-    // State da linha selecionada
-    const [actualSelectedRecord, setActualSelectedRecord] = React.useState({dom: null, data_cells: null});
+    // State do registro selecionado
+    // O valor do checkbox de cada registro é o seu índice da estrutura de dados original retornada do servidor
+    // Quando um registro é selecionado, aqui é salvo seu índice, e o modal de update e delete são renderizados
+    // Os modais recebem o elemento do array da resposta do servidor cujo índice é igual ao salvo aqui 
+    const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
     // State da deleção permitida
     const [deleteAvailable, setDeleteAvailable] = React.useState(true);
@@ -243,30 +248,15 @@ export function ProfilesPanel(){
 
     }
 
-    function handleClickOnCheckbox(event, record_clicked){
-
-      // If the profile selected is one of the native profiles...
-      if(native_profiles.indexOf(record_clicked.profile_id) != -1){
-        setDeleteAvailable(false);
-      }else{
-        setDeleteAvailable(true);
-      }
+    function handleClickRadio(event, row){
+      //console.log(event.target.value)
   
-      // If already exists a selected record, and its equal to the clicked
-      if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id == record_clicked.profile_id)){
-
-        setActualSelectedRecord({dom: null, data_cells: null});
-      
-      // If already exists a selected record, and its different from the clicked
-      }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id != record_clicked.profile_id)){
-  
-        setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
-      
-      // If not exists a selected record
-      }else if(actualSelectedRecord.dom == null){
-  
-        setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
-  
+      if (event.target.value === selectedRecordIndex) {
+        setSelectedRecordIndex(null);
+      } else if(event.target.value != selectedRecordIndex){
+        //console.log(panelData.response.records[selectedRecordIndex])
+        //console.log(panelData.response.records[event.target.value])
+        setSelectedRecordIndex(event.target.value);
       }
   
     }
@@ -290,11 +280,33 @@ export function ProfilesPanel(){
           </Grid>
 
           <Grid item>
-            <UpdateProfileFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+            {selectedRecordIndex == null && 
+              <Tooltip title="Selecione um registro para editar">
+                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
+                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                </IconButton>
+              </Tooltip>
+            }
+
+            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+            {(panelData.response.records != null && selectedRecordIndex != null) && 
+              <UpdateProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+            } 
           </Grid>
 
           <Grid item hidden={!deleteAvailable}>
-            <DeleteProfileFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
+            {selectedRecordIndex == null && 
+              <Tooltip title="Selecione um registro para excluir">
+              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
+                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+              </IconButton>
+              </Tooltip>
+            }
+
+            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+            {(panelData.response.records != null && selectedRecordIndex != null) && 
+              <DeleteProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+            }
           </Grid>
 
           <Grid item>
@@ -338,7 +350,7 @@ export function ProfilesPanel(){
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
             name="radio-buttons-group"
-            defaultChecked={false}
+            value={selectedRecordIndex} 
           >
 
           <TableContainer component={Paper}>
@@ -358,9 +370,9 @@ export function ProfilesPanel(){
                       {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
                       {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                       {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                          panelData.response.records.map((row) => ( 
+                          panelData.response.records.map((row, index) => ( 
                             <TableRow key={row.profile_id}>
-                              <TableCell><FormControlLabel value={row.profile_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.profile_id} /></TableCell>
+                              <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(e, row)}} />} label={row.profile_id} /></TableCell>
                               <TableCell align="center">{row.profile_name}</TableCell>
                               <TableCell align="center">
                                 <FormGroup>

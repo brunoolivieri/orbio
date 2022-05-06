@@ -1,5 +1,4 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState} from 'react';
 import * as React from 'react';
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
@@ -31,10 +30,10 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
     const [open, setOpen] = React.useState(false);
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 

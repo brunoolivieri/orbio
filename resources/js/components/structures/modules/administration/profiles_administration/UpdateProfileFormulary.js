@@ -1,7 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
 import * as React from 'react';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -37,36 +35,33 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
     const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({profile_name: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({profile_name: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({profile_name: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({profile_name: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
-    const [modulePowers, setModulePowers] = useState({
-      "1": {read: false, write: false}, 
-      "2": {read: false, write: false}, 
-      "3": {read: false, write: false}, 
-      "4": {read: false, write: false},
-      "5": {read: false, write: false}
-      }
-    );
+    // Relação do perfil com os módulos
+    const [modulePowers, setModulePowers] = React.useState({
+      "1": {read: props.record.modules["1"].profile_powers.ler == 1 ? true : false, write: props.record.modules["1"].profile_powers.escrever == 1 ? true : false}, 
+      "2": {read: props.record.modules["2"].profile_powers.ler == 1 ? true : false, write: props.record.modules["2"].profile_powers.escrever == 1 ? true : false}, 
+      "3": {read: props.record.modules["3"].profile_powers.ler == 1 ? true : false, write: props.record.modules["3"].profile_powers.escrever == 1 ? true : false}, 
+      "4": {read: props.record.modules["4"].profile_powers.ler == 1 ? true : false, write: props.record.modules["4"].profile_powers.escrever == 1 ? true : false},
+      "5": {read: props.record.modules["5"].profile_powers.ler == 1 ? true : false, write: props.record.modules["5"].profile_powers.escrever == 1 ? true : false}
+    });
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
     
     // Função para abrir o modal
     const handleClickOpen = () => {
-        if(props.selected_record.dom != null){
-            setOpen(true);
-        }
+        setOpen(true); 
     };
 
     // Função para fechar o modal
     const handleClose = () => {
-    
       
       setErrorDetected({profile_name: false});
       setErrorMessage({profile_name: null});
@@ -162,8 +157,10 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
 
       setTimeout(() => {
 
+        // Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);
@@ -303,25 +300,51 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
 
             if(checkboxPower === "read"){
 
-            setModulePowers({
-                "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
-                "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
-                "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-                "4":{read: new_value, write: modulePowers["4"].write},
-                "5":{read: new_value, write: modulePowers["5"].write}
-                }
-            );
+                setModulePowers({
+                    "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
+                    "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
+                    "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
+                    "4":{read: new_value, write: modulePowers["4"].write},
+                    "5":{read:  modulePowers["5"].read, write: modulePowers["5"].write}
+                    }
+                );
 
             }else if(checkboxPower === "write"){
 
-            setModulePowers({
-                "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
-                "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
-                "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
-                "4":{read: modulePowers["4"].read, write: new_value},
-                "5":{read: modulePowers["5"].read, write: new_value}
-                }
-            );
+                setModulePowers({
+                    "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
+                    "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
+                    "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
+                    "4":{read: modulePowers["4"].read, write: new_value},
+                    "5":{read: modulePowers["5"].read, write: modulePowers["5"].write}
+                    }
+                );
+            
+            }
+
+        }else if(checkboxModule === "5"){
+
+            if(checkboxPower === "read"){
+
+                setModulePowers({
+                    "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
+                    "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
+                    "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
+                    "4":{read:  modulePowers["4"].read, write: modulePowers["4"].write},
+                    "5":{read:  new_value, write: modulePowers["5"].write}
+                    }
+                );
+
+            }else if(checkboxPower === "write"){
+
+                setModulePowers({
+                    "1": {read: modulePowers["1"].read, write: modulePowers["1"].write}, 
+                    "2": {read: modulePowers["2"].read, write: modulePowers["2"].write}, 
+                    "3": {read: modulePowers["3"].read, write: modulePowers["3"].write}, 
+                    "4":{read: modulePowers["4"].read, write:  modulePowers["4"].write},
+                    "5":{read: modulePowers["5"].read, write: new_value}
+                    }
+                );
             
             }
 
@@ -339,10 +362,10 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
                 </IconButton>
             </Tooltip>
     
-            {(props.selected_record.dom != null && open) && 
+            {(props.record != null && open) && 
     
                 <Dialog open={open} onClose={handleClose}>
-                    <DialogTitle>EDIÇÃO | PERFIL (ID: {props.selected_record.data_cells.profile_id})</DialogTitle>
+                    <DialogTitle>EDIÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
 
                     <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
@@ -350,7 +373,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
                 
                             <TextField
                             margin="dense"
-                            defaultValue={props.selected_record.data_cells.profile_id}
+                            defaultValue={props.record.profile_id}
                             id="profile_id"
                             name = "profile_id"
                             label="ID do perfil"
@@ -364,7 +387,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
 
                             <TextField
                             margin="dense"
-                            defaultValue={props.selected_record.data_cells.profile_name}
+                            defaultValue={props.record.profile_name}
                             id="profile_name"
                             name = "profile_name"
                             label="Nome do perfil"
@@ -375,49 +398,46 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
                             />
 
                         </DialogContent>
-
-                         {/* Os checkbox não possuem name porque seus valores, após o envio do formulário, serão recuperados a partir do state "modulePowers" */}
-
                         
                         <Grid container sx={{ ml: 2, mb: 3 }} spacing={1} alignItems="left">
 
                             <Grid item>
                                 <FormLabel component="legend">Admin</FormLabel>
                                 <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["1"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "1|read")} } />} label="Ler" />
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["1"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "1|write")} } />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["1"].read} onChange={(event) => { changeModulePowers(event, "1|read")} } />} label="Ler" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["1"].write} onChange={(event) => { changeModulePowers(event, "1|write")} } />} label="Escrever" />
                                 </FormGroup>
                             </Grid>
 
                             <Grid item>
                                 <FormLabel component="legend">Planos</FormLabel>
                                 <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["2"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "2|read")} } />} label="Ler" />
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["2"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "2|write")} } />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["2"].read} onChange={(event) => { changeModulePowers(event, "2|read")} } />} label="Ler" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["2"].write} onChange={(event) => { changeModulePowers(event, "2|write")} } />} label="Escrever" />
                                 </FormGroup>
                             </Grid>
 
                             <Grid item>
                                 <FormLabel component="legend">Ordens</FormLabel>
                                 <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["3"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "3|read") }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["3"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "3|write") }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["3"].read} onChange={(event) => { changeModulePowers(event, "3|read") }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["3"].write} onChange={(event) => { changeModulePowers(event, "3|write") }} />} label="Escrever" />
                                 </FormGroup>
                             </Grid>
 
                             <Grid item>
                                 <FormLabel component="legend">Relatórios</FormLabel>
                                 <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["4"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "4|read") }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["4"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "4|write") }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["4"].read} onChange={(event) => { changeModulePowers(event, "4|read") }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["4"].write} onChange={(event) => { changeModulePowers(event, "4|write") }} />} label="Escrever" />
                                 </FormGroup>
                             </Grid>
 
                             <Grid item>
                                 <FormLabel component="legend">Incidentes</FormLabel>
                                 <FormGroup>
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["5"].profile_powers.ler == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "5|read") }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox defaultChecked={props.selected_record.data_cells.modules["5"].profile_powers.escrever == 1 ? true : false} onChange={(event) => { changeModulePowers(event, "5|write") }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["5"].read} onChange={(event) => { changeModulePowers(event, "5|read") }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox defaultChecked={modulePowers["5"].write} onChange={(event) => { changeModulePowers(event, "5|write") }} />} label="Escrever" />
                                 </FormGroup>
                             </Grid>
 
