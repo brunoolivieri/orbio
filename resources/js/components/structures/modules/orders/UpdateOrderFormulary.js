@@ -55,15 +55,13 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
     const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
     // Switch state
-    const [isChecked, setIsChecked] = React.useState(null);
+    const [isChecked, setIsChecked] = React.useState(props.record.status == 1 ? true : false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-      if(props.selected_record.dom != null){
-          setOpen(true);
-      }
+      setOpen(true);
     };
 
     // Função para fechar o modal
@@ -191,6 +189,7 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
         let module_id = 3;
         let module_action = "escrever";
 
+        // Para recuperar os ids dos planos selecionados
         let arr = [];
         let obj_with_arr_of_ids = {};
 
@@ -233,10 +232,11 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
 
       setTimeout(() => {
 
-        setIsChecked(null);
-
+        // Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
         setDisabledButton(false);
-
+        setIsChecked(null);
         handleClose();
 
       }, 2000);
@@ -311,71 +311,71 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
             </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.selected_record.data_cells.order_id})</DialogTitle>
+            <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.order_id})</DialogTitle>
     
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
               <DialogContent>
 
                 <TextField
-                  type = "text"
-                  margin="dense"
-                  label="ID da ordem de serviço"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="order_id"
-                  name="order_id"
-                  defaultValue = {props.selected_record.data_cells.order_id}
-                  sx={{mb: 2}}
+                type = "text"
+                margin="dense"
+                label="ID da ordem de serviço"
+                fullWidth
+                variant="outlined"
+                required
+                id="order_id"
+                name="order_id"
+                defaultValue = {props.record.order_id}
+                sx={{mb: 2}}
                 />
 
                 <Box sx={{display: "flex", justifyContent: "space-between", mb: 2}}>
                   <DateTimeInput 
-                    event = {setStartDate}
-                    label = {"Inicio da ordem de serviço"} 
-                    helperText = {errorMessage.order_start_date} 
-                    error = {errorDetected.order_start_date} 
-                    defaultValue = {props.selected_record.data_cells.order_start_date}
-                    operation = {"update"}
-                    read_only = {false}
-                    />
-                    <DateTimeInput
-                    event = {setEndDate}
-                    label = {"Fim da ordem de serviço"} 
-                    helperText = {errorMessage.order_start_date} 
-                    error = {errorDetected.order_start_date} 
-                    defaultValue = {props.selected_record.data_cells.order_end_date}
-                    operation = {"update"}
-                    read_only = {false}
+                  event = {setStartDate}
+                  label = {"Inicio da ordem de serviço"} 
+                  helperText = {errorMessage.order_start_date} 
+                  error = {errorDetected.order_start_date} 
+                  defaultValue = {props.record.order_start_date}
+                  operation = {"update"}
+                  read_only = {false}
+                  />
+                  <DateTimeInput
+                  event = {setEndDate}
+                  label = {"Fim da ordem de serviço"} 
+                  helperText = {errorMessage.order_start_date} 
+                  error = {errorDetected.order_start_date} 
+                  defaultValue = {props.record.order_end_date}
+                  operation = {"update"}
+                  read_only = {false}
                   />
                 </Box>
 
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
-                    label_text = "Piloto"
-                    data_source = {"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"} 
-                    primary_key={"id"} 
-                    key_content={"nome"} 
-                    helperText = {errorMessage.pilot_name}
-                    error = {errorDetected.pilot_name} 
-                    default = {props.selected_record.data_cells.pilot.id} 
-                    name = {"select_pilot_name"}  
+                  label_text = "Piloto"
+                  data_source = {"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"} 
+                  primary_key={"id"} 
+                  key_content={"nome"} 
+                  helperText = {errorMessage.pilot_name}
+                  error = {errorDetected.pilot_name} 
+                  default = {props.record.pilot.id} 
+                  name = {"select_pilot_name"}  
                   />
                 </Box>
 
                 <Box sx={{mb: 2}}>
                   <GenericSelect 
-                    label_text = "Cliente"
-                    data_source = {"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"} 
-                    primary_key={"id"} 
-                    key_content={"nome"} 
-                    helperText = {errorMessage.client_name}
-                    error = {errorDetected.client_name} 
-                    default = {props.selected_record.data_cells.client.id} 
-                    name = {"select_client_name"}  
+                  label_text = "Cliente"
+                  data_source = {"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"} 
+                  primary_key={"id"} 
+                  key_content={"nome"} 
+                  helperText = {errorMessage.client_name}
+                  error = {errorDetected.client_name} 
+                  default = {props.record.client.id} 
+                  name = {"select_client_name"}  
                   />
                 </Box>
 
@@ -386,31 +386,31 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
                   modal_title = {"Seleção de Planos de Vôo"} 
                   data_source = {"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status&auth=none"} 
                   set_selected_items = {setFlightPlansSelected} 
-                  selected_items = {props.selected_record.data_cells.flight_plans} 
+                  selected_items = {props.record.flight_plans} 
                   />
                   
                 </Box>
 
                 <TextField
-                  type = "text"
-                  margin="dense"
-                  label="Observação"
-                  fullWidth
-                  variant="outlined"
-                  required
-                  id="order_note"
-                  name="order_note"
-                  helperText = {errorMessage.order_note}
-                  error = {errorDetected.order_note}
-                  defaultValue = {props.selected_record.data_cells.order_note}
-                  sx={{mb: 2}}
+                type = "text"
+                margin="dense"
+                label="Observação"
+                fullWidth
+                variant="outlined"
+                required
+                id="order_note"
+                name="order_note"
+                helperText = {errorMessage.order_note}
+                error = {errorDetected.order_note}
+                defaultValue = {props.record.order_note}
+                sx={{mb: 2}}
                 />
 
-          <Box sx={{marginTop: 3}}>
-            <FormGroup>
-              <FormControlLabel control={<Switch defaultChecked={props.selected_record.data_cells.status} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked == null ? (props.selected_record.data_cells.status ? "Ativo" : "Inativo") : (isChecked ? "Ativo" : "Inativo")} />
-            </FormGroup>
-          </Box>
+                <Box sx={{marginTop: 3}}>
+                  <FormGroup>
+                    <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked ? "Ativo" : "Inativo"} />
+                  </FormGroup>
+                </Box>
     
               </DialogContent>
     

@@ -38,9 +38,7 @@ export function DeleteOrderFormulary({...props}){
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-      if(props.selected_record.dom != null){
-          setOpen(true);
-      }
+      setOpen(true);  
     };
 
     // Função para fechar o modal
@@ -106,8 +104,11 @@ export function DeleteOrderFormulary({...props}){
 
       setTimeout(() => {
 
+        //  Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
+        setIsChecked(null);
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);
@@ -138,9 +139,9 @@ export function DeleteOrderFormulary({...props}){
             </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.selected_record.data_cells.order_id})</DialogTitle>
+            <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.record.order_id})</DialogTitle>
     
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
     
@@ -155,7 +156,7 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="order_id"
                   name="order_id"
-                  defaultValue = {props.selected_record.data_cells.order_id}
+                  defaultValue = {props.record.order_id}
                   inputProps={{
                     readOnly: true
                   }}
@@ -171,7 +172,7 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="order_numos"
                   name="order_numos"
-                  defaultValue = {props.selected_record.data_cells.numOS}
+                  defaultValue = {props.record.numOS}
                   inputProps={{
                     readOnly: true
                   }}
@@ -187,7 +188,7 @@ export function DeleteOrderFormulary({...props}){
                   required
                   id="creator_name"
                   name="creator_name"
-                  defaultValue = {props.selected_record.data_cells.creator.name}
+                  defaultValue = {props.record.creator.name}
                   inputProps={{
                     readOnly: true
                   }}

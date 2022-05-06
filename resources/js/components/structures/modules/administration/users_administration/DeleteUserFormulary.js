@@ -86,12 +86,12 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
         AxiosApi.delete(`/api/admin-module-user/${data.get("user_id")}?auth=${logged_user_id}.${module_id}.${action}`)
         .then(function (response) {
 
-        successServerResponseTreatment();
+          successServerResponseTreatment();
 
         })
         .catch(function (error) {
         
-        errorServerResponseTreatment(error.response.data);
+          errorServerResponseTreatment(error.response.data);
 
         });
   
@@ -107,13 +107,12 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
   
         setTimeout(() => {
 
-          //  Deselecionar registro na tabela
+          // Deselecionar registro na tabela
           props.record_setter(null);
           // Outros
           setIsChecked(null);
           setDisabledButton(false);
           handleClose();
-
   
         }, 2000);
   

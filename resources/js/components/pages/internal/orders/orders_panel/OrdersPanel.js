@@ -33,6 +33,8 @@ import FormControl from '@mui/material/FormControl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -71,8 +73,11 @@ export function OrdersPanel(){
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
   const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-  // State da linha selecionada
-  const [actualSelectedRecord, setActualSelectedRecord] = React.useState({dom: null, data_cells: null});
+  // State do registro selecionado
+  // O valor do checkbox de cada registro é o seu índice da estrutura de dados original retornada do servidor
+  // Quando um registro é selecionado, aqui é salvo seu índice, e o modal de update e delete são renderizados
+  // Os modais recebem o elemento do array da resposta do servidor cujo índice é igual ao salvo aqui 
+  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -257,23 +262,15 @@ export function OrdersPanel(){
 
   }
 
-  function handleClickOnCheckbox(event, record_clicked){
-  
-    // If already exists a selected record, and its equal to the clicked
-    if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.order_id == record_clicked.order_id)){
+  function handleClickRadio(event, row){
+    //console.log(event.target.value)
 
-      setActualSelectedRecord({dom: null, data_cells: null});
-    
-    // If already exists a selected record, and its different from the clicked
-    }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.order_id != record_clicked.order_id)){
-
-      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
-    
-    // If not exists a selected record
-    }else if(actualSelectedRecord.dom == null){
-
-      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
-
+    if (event.target.value === selectedRecordIndex) {
+      setSelectedRecordIndex(null);
+    } else if(event.target.value != selectedRecordIndex){
+      //console.log(panelData.response.records[selectedRecordIndex])
+      //console.log(panelData.response.records[event.target.value])
+      setSelectedRecordIndex(event.target.value);
     }
 
   }
@@ -295,11 +292,33 @@ export function OrdersPanel(){
           </Grid>
 
           <Grid item>
-            <UpdateOrderFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
+            {selectedRecordIndex == null && 
+              <Tooltip title="Selecione um registro para editar">
+                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
+                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                </IconButton>
+              </Tooltip>
+            }
+
+            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+            {(panelData.response.records != null && selectedRecordIndex != null) && 
+              <UpdateOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+            }
           </Grid>
 
           <Grid item>
-            <DeleteOrderFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
+            {selectedRecordIndex == null && 
+              <Tooltip title="Selecione um registro para excluir">
+              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
+                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+              </IconButton>
+              </Tooltip>
+            }
+
+            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+            {(panelData.response.records != null && selectedRecordIndex != null) && 
+              <DeleteOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+            }
           </Grid>
 
           <Grid item>
@@ -344,7 +363,7 @@ export function OrdersPanel(){
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
             name="radio-buttons-group"
-            defaultChecked={false}
+            value={selectedRecordIndex} 
           >
 
             <TableContainer component={Paper}>
@@ -366,9 +385,9 @@ export function OrdersPanel(){
                   <TableBody className = "tbody">
                     {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                       panelData.response.records.length > 0 &&
-                      panelData.response.records.map((row) => (
+                      panelData.response.records.map((row, index) => (
                         <TableRow key={row.order_id}>
-                        <TableCell><FormControlLabel value={row.order_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.order_id} /></TableCell>
+                        <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(e, row)}} />} label={row.order_id} /></TableCell>
                         <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                         <TableCell align="center">
                           <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 
