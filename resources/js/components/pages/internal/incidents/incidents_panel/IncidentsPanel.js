@@ -32,6 +32,8 @@ import FormControl from '@mui/material/FormControl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 // OUTROS
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -70,8 +72,11 @@ export function IncidentsPanel(){
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
   const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
 
-  // State da linha selecionada
-  const [actualSelectedRecord, setActualSelectedRecord] = useState({dom: null, data_cells: null});
+  // State do registro selecionado
+  // O valor do checkbox de cada registro é o seu índice da estrutura de dados original retornada do servidor
+  // Quando um registro é selecionado, aqui é salvo seu índice, e o modal de update e delete são renderizados
+  // Os modais recebem o elemento do array da resposta do servidor cujo índice é igual ao salvo aqui 
+  const [selectedRecordIndex, setSelectedRecordIndex] = useState(null);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -254,31 +259,15 @@ export function IncidentsPanel(){
 
   }
 
-  function handleClickOnCheckbox(event, record_clicked){
-  
-    // If already exists a selected record, and its equal to the clicked
-    // The actual selected row is unmarked
-    if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id == record_clicked.user_id)){
-      //console.log("uncheck selected row");
+  function handleClickRadio(event){
+    //console.log(event.target.value)
 
-      actualSelectedRecord.dom.childNodes[0].checked = false;
-      setActualSelectedRecord({dom: null, data_cells: null});
-    
-    // If already exists a selected record, and its different from the clicked
-    // The actual selected row is unmarked, and the new clicked one becomes the selected row
-    }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.user_id != record_clicked.user_id)){
-      //console.log("change selected row")
-
-      actualSelectedRecord.dom.childNodes[0].checked = false;
-      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
-    
-    // If not exists a selected record
-    // The clicked row becomes the selected row
-    }else if(actualSelectedRecord.dom == null){
-      //console.log("check row")
-
-      setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
-
+    if (event.target.value === selectedRecordIndex) {
+      setSelectedRecordIndex(null);
+    } else if(event.target.value != selectedRecordIndex){
+      //console.log(panelData.response.records[selectedRecordIndex])
+      //console.log(panelData.response.records[event.target.value])
+      setSelectedRecordIndex(event.target.value);
     }
 
   }
@@ -300,11 +289,33 @@ export function IncidentsPanel(){
           </Grid>
 
           <Grid item>
-            <UpdateIncidentFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+            {selectedRecordIndex == null && 
+                <Tooltip title="Selecione um registro para editar">
+                  <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                  </IconButton>
+                </Tooltip>
+              }
+
+              {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+              {(panelData.response.records != null && selectedRecordIndex != null) && 
+                <UpdateIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+              } 
           </Grid>
 
           <Grid item>
-             <DeleteIncidentFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+            {selectedRecordIndex == null && 
+              <Tooltip title="Selecione um registro para excluir">
+              <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} >
+                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+              </IconButton>
+              </Tooltip>
+            }
+
+            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+            {(panelData.response.records != null && selectedRecordIndex != null) && 
+              <DeleteIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+            } 
           </Grid>
 
           <Grid item>
@@ -349,7 +360,7 @@ export function IncidentsPanel(){
           <RadioGroup
             aria-labelledby="demo-radio-buttons-group-label"
             name="radio-buttons-group"
-            defaultChecked={false}
+            value={selectedRecordIndex} 
           >
 
             <TableContainer component={Paper}>
@@ -364,9 +375,9 @@ export function IncidentsPanel(){
                   </TableHead>
                   <TableBody className = "tbody">
                       {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                          panelData.response.records.map((row) => (
+                          panelData.response.records.map((row, index) => (
                               <TableRow key={row.incident_id}>
-                                <TableCell><FormControlLabel value={row.incident_id} control={<Radio onClick={(event) => {handleClickOnCheckbox(event, row)}} />} label={row.incident_id} /></TableCell>
+                                <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => {handleClickRadio(event)}} />} label={row.incident_id} /></TableCell>
                                 <TableCell align="center">{row.incident_type}</TableCell>
                                 <TableCell align="center">{row.description}</TableCell> 
                                 <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>    

@@ -294,8 +294,8 @@ export function OrdersPanel(){
           <Grid item>
             {selectedRecordIndex == null && 
               <Tooltip title="Selecione um registro para editar">
-                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true}>
+                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
                 </IconButton>
               </Tooltip>
             }
@@ -309,8 +309,8 @@ export function OrdersPanel(){
           <Grid item>
             {selectedRecordIndex == null && 
               <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
-                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+              <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} >
+                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
               </IconButton>
               </Tooltip>
             }

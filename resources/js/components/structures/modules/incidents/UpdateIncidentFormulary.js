@@ -1,8 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+// React
 import * as React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -13,15 +11,12 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from "@mui/material";
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-
-// OUTRAS LIBS
+// Outros
 import moment from 'moment';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
@@ -35,39 +30,40 @@ export function UpdateIncidentFormulary({...props}){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({incident_date: false, incident_type: false, description: false}); 
-    const [errorMessage, setErrorMessage] = useState({incident_date: "", incident_type: "", description: ""}); 
+    const [errorDetected, setErrorDetected] = React.useState({incident_date: false, incident_type: false, description: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({incident_date: "", incident_type: "", description: ""}); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [incidentDate, setIncidentDate] = useState(null);
+    const [incidentDate, setIncidentDate] = React.useState(null);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-        if(props.selected_record.dom != null){
-            setOpen(true);
-        }
+      setOpen(true);   
     };
 
     // Função para fechar o modal
     const handleClose = () => {
 
+      // Deselecionar registro na tabela
+      props.record_setter(null);
+      // Outros
       setErrorDetected({incident_date: false, incident_type: false, description: false});
       setErrorMessage({incident_date: "", incident_type: "", description: ""});
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
-        setOpen(false);
+      setOpen(false);
 
     };
 
@@ -79,15 +75,15 @@ export function UpdateIncidentFormulary({...props}){
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+      const data = new FormData(event.currentTarget);
 
-        if(submitedDataValidate(data)){
+      if(submitedDataValidate(data)){
 
-            setDisabledButton(true);
+          setDisabledButton(true);
 
-            requestServerOperation(data);
+          requestServerOperation(data);
 
-        }
+      }
 
     }
 
@@ -99,14 +95,14 @@ export function UpdateIncidentFormulary({...props}){
     */
      function submitedDataValidate(formData){
 
-       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
-       const incidentDateValidate = incidentDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
-       const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
-       const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
- 
-       // Atualização dos estados responsáveis por manipular os inputs
-       setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, description: incidentNoteValidate.error});
-       setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, description: incidentNoteValidate.message});
+      // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
+      const incidentDateValidate = incidentDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};
+      const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
+      const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
+
+      // Atualização dos estados responsáveis por manipular os inputs
+      setErrorDetected({incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, description: incidentNoteValidate.error});
+      setErrorMessage({incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, description: incidentNoteValidate.message});
     
       if(incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error){
 
@@ -128,27 +124,27 @@ export function UpdateIncidentFormulary({...props}){
     */ 
     function requestServerOperation(data){
 
-        // Dados para o middleware de autenticação 
-        let logged_user_id = AuthData.data.id;
-        let module_id = 5;
-        let module_action = "escrever";
+      // Dados para o middleware de autenticação 
+      let logged_user_id = AuthData.data.id;
+      let module_id = 5;
+      let module_action = "escrever";
 
-        AxiosApi.patch(`/api/incidents-module/${data.get("incident_id")}`, {
-          auth: `${logged_user_id}.${module_id}.${module_action}`,
-          incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-          incident_type: data.get("incident_type"),
-          description: data.get("description"),
-        })
-        .then(function (response) {
-  
-          successServerResponseTreatment();
-  
-        })
-        .catch(function (error) {
-          
-          errorServerResponseTreatment(error.response.data);
-  
-        });
+      AxiosApi.patch(`/api/incidents-module/${data.get("incident_id")}`, {
+        auth: `${logged_user_id}.${module_id}.${module_action}`,
+        incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+        incident_type: data.get("incident_type"),
+        description: data.get("description"),
+      })
+      .then(function (response) {
+
+        successServerResponseTreatment();
+
+      })
+      .catch(function (error) {
+        
+        errorServerResponseTreatment(error.response.data);
+
+      });
 
     }
 
@@ -162,8 +158,10 @@ export function UpdateIncidentFormulary({...props}){
 
       setTimeout(() => {
 
+        // Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);
@@ -223,10 +221,10 @@ export function UpdateIncidentFormulary({...props}){
             </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
 
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>ATUALIZAÇÃO | INCIDENTE (ID: {props.selected_record.data_cells.incident_id})</DialogTitle>
+            <DialogTitle>ATUALIZAÇÃO | INCIDENTE (ID: {props.record.incident_id})</DialogTitle>
     
             {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -245,7 +243,7 @@ export function UpdateIncidentFormulary({...props}){
                   InputProps={{
                     readOnly: true 
                   }}
-                  defaultValue = {props.selected_record.data_cells.incident_id}
+                  defaultValue = {props.record.incident_id}
                   sx={{mb: 2}}
                 />
 
@@ -255,7 +253,7 @@ export function UpdateIncidentFormulary({...props}){
                     label = {"Data do incidente"} 
                     helperText = {errorMessage.incident_date} 
                     error = {errorDetected.incident_date} 
-                    defaultValue = {props.selected_record.data_cells.incident_date}
+                    defaultValue = {props.record.incident_date}
                     operation = {"create"}
                     read_only = {false}
                     />
@@ -272,7 +270,7 @@ export function UpdateIncidentFormulary({...props}){
                   name="incident_type"
                   helperText = {errorMessage.incident_type}
                   error = {errorDetected.incident_type}
-                  defaultValue = {props.selected_record.data_cells.incident_type}
+                  defaultValue = {props.record.incident_type}
                   sx={{mb: 2}}
                 />
 
@@ -287,7 +285,7 @@ export function UpdateIncidentFormulary({...props}){
                   name="description"
                   helperText = {errorMessage.description}
                   error = {errorDetected.description}
-                  defaultValue = {props.selected_record.data_cells.description}
+                  defaultValue = {props.record.description}
                 />
                   
               </DialogContent>

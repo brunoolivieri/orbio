@@ -1,13 +1,11 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import { useState } from 'react';
 import React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -19,8 +17,7 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 

@@ -1,8 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+// React
 import * as React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -13,12 +11,10 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from "@mui/material";
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
 
@@ -30,10 +26,10 @@ export function DeleteIncidentFormulary({...props}){
     const {AuthData, setAuthData} = useAuthentication();
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
@@ -41,19 +37,19 @@ export function DeleteIncidentFormulary({...props}){
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
-    const handleClickOpen = () => {
-        if(props.selected_record.dom != null){
-            setOpen(true);
-        }
+    const handleClickOpen = () => { 
+      setOpen(true);   
     };
 
     // Função para fechar o modal
     const handleClose = () => {
 
+      // Deselecionar registro na tabela
+      props.record_setter(null);
+      // Outros
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
-
-        setOpen(false);
+      setOpen(false);
 
     };
 
@@ -65,13 +61,13 @@ export function DeleteIncidentFormulary({...props}){
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
-        const data = new FormData(event.currentTarget);
+      // Instância da classe JS FormData - para trabalhar os dados do formulário
+      const data = new FormData(event.currentTarget);
 
-        setDisabledButton(true);
+      setDisabledButton(true);
 
-        // Inicialização da requisição para o servidor
-        requestServerOperation(data);
+      // Inicialização da requisição para o servidor
+      requestServerOperation(data);
 
     }
 
@@ -83,22 +79,22 @@ export function DeleteIncidentFormulary({...props}){
     */ 
     function requestServerOperation(data){
 
-        // Dados para o middleware de autenticação 
-        let logged_user_id = AuthData.data.id;
-        let module_id = 5;
-        let module_action = "escrever";
+      // Dados para o middleware de autenticação 
+      let logged_user_id = AuthData.data.id;
+      let module_id = 5;
+      let module_action = "escrever";
 
-        AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
-        .then(function (response) {
-  
-          successServerResponseTreatment();
-  
-        })
-        .catch(function (error) {
-          
-          errorServerResponseTreatment(error.response.data);
-  
-        });
+      AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+      .then(function (response) {
+
+        successServerResponseTreatment();
+
+      })
+      .catch(function (error) {
+        
+        errorServerResponseTreatment(error.response.data);
+
+      });
 
     }
 
@@ -138,17 +134,16 @@ export function DeleteIncidentFormulary({...props}){
 
     return(
         <>
-
         <Tooltip title="Deletar">
-            <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-            </IconButton>
+          <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
+              <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+          </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
 
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.selected_record.data_cells.incident_id})</DialogTitle>
+            <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.incident_id})</DialogTitle>
     
             {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
             <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -167,7 +162,7 @@ export function DeleteIncidentFormulary({...props}){
                   InputProps={{
                     readOnly: true 
                   }}
-                  defaultValue={props.selected_record.data_cells.incident_id}
+                  defaultValue={props.record.incident_id}
                   sx={{mb: 2}}
                 />
 
@@ -180,7 +175,7 @@ export function DeleteIncidentFormulary({...props}){
                   required
                   id="incident_type"
                   name="incident_type"
-                  defaultValue = {props.selected_record.data_cells.incident_type} 
+                  defaultValue = {props.record.incident_type} 
                   InputProps={{
                     readOnly: true 
                   }}
@@ -201,7 +196,7 @@ export function DeleteIncidentFormulary({...props}){
             
           </Dialog>
         }
-        </>
+      </>
     )
     
 }

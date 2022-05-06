@@ -254,7 +254,7 @@ export function PlansPanel(){
 
   }
 
-  function handleClickRadio(event, row){
+  function handleClickRadio(event){
     //console.log(event.target.value)
 
     if (event.target.value === selectedRecordIndex) {
@@ -418,7 +418,7 @@ export function PlansPanel(){
                   {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                     panelData.response.records.map((row, index) => (
                     <TableRow key={row.plan_id} >
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(e, row)}} />} label={row.plan_id} /></TableCell>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => {handleClickRadio(event)}} />} label={row.plan_id} /></TableCell>
                       <TableCell align="center">
                         <Link href={`/sistema/mapa?file=${row.plan_file}`} target="_blank">
                           <Tooltip title="Ver plano">

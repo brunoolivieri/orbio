@@ -1,5 +1,4 @@
 // React
-import { useState } from 'react';
 import * as React from 'react';
 // Material UI
 import Button from '@mui/material/Button';
@@ -31,17 +30,17 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
-    const [open, setOpen] = useState(false); 
+    const [open, setOpen] = React.useState(false); 
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({description: false, status: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({description: "", status: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({description: false, status: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({description: "", status: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // Switch state
     const [isChecked, setIsChecked] = React.useState(props.record.plan_status == 1 ? true : false);

@@ -1,8 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState, useEffect } from 'react';
+// React
 import * as React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -14,17 +12,13 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-
-// OUTRAS LIBS
+// Outros
 import moment from 'moment';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -37,20 +31,20 @@ export function CreateIncidentFormulary(){
     const {AuthData, setAuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({incident_date: false, incident_type: false, description: false}); 
-    const [errorMessage, setErrorMessage] = useState({incident_date: "", incident_type: "", description: ""}); 
+    const [errorDetected, setErrorDetected] = React.useState({incident_date: false, incident_type: false, description: false}); 
+    const [errorMessage, setErrorMessage] = React.useState({incident_date: "", incident_type: "", description: ""}); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [incidentDate, setIncidentDate] = useState(moment());
+    const [incidentDate, setIncidentDate] = React.useState(moment());
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 

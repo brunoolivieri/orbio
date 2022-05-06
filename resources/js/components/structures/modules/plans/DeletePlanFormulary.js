@@ -1,5 +1,4 @@
 // React
-import { useState} from 'react';
 import * as React from 'react';
 // Material UI
 import Button from '@mui/material/Button';
@@ -26,13 +25,13 @@ export const DeletePlanFormulary = React.memo(({...props}) => {
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
 
-    const [open, setOpen] = useState(false); 
+    const [open, setOpen] = React.useState(false); 
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 

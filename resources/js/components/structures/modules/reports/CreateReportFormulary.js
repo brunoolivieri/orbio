@@ -1,8 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState } from 'react';
+// React
 import * as React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -16,17 +14,15 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { styled } from '@mui/material/styles';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-
-// IMPORTAÇÃO DE BIBLIOTECAS EXTERNAS
+import { faWifi } from '@fortawesome/free-solid-svg-icons';
+// Outros
 import moment from 'moment';
 
 const Input = styled('input')({
@@ -41,24 +37,24 @@ export const CreateReportFormulary = React.memo(({...props}) => {
     const {AuthData} = useAuthentication();
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({flight_start_date: "", flight_end_date: "", flight_log: "", report_note: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+    const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
 
     // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+    const [disabledButton, setDisabledButton] = React.useState(true);
 
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // States dos inputs de data
-    const [startDate, setStartDate] = useState(moment());
-    const [endDate, setEndDate] = useState(moment());
+    const [startDate, setStartDate] = React.useState(moment());
+    const [endDate, setEndDate] = React.useState(moment());
 
     // State do upload do log
-    const [logUploaded, setLogUploaded] = useState({status: false, file: null});
+    const [logUploaded, setLogUploaded] = React.useState({status: false, file: null});
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -308,14 +304,14 @@ export const CreateReportFormulary = React.memo(({...props}) => {
           <DialogContent>
         
             <DialogContentText sx={{mb: 3}}>
-              Os dados de um registro de relatório são utilizados para a geração de documentos de relatório.
+              Realize uma conexão com o drone para realizar o download dos dados do vôo realizado.
             </DialogContentText>
 
             <Box sx={{mb: 3}}>
               <label htmlFor="contained-button-file">
                 <Input accept=".txt" id="contained-button-file" multiple type="file" name = "flight_log_file" onChange= {handleFileUploadedValidateItAndReleaseFormulary} />
-                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} >
-                  {errorDetected.flight_log ? errorMessage.flight_log : "Upload do Log"}
+                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faWifi} color={"#fff"} size = "sm" />}>
+                  {errorDetected.flight_log ? errorDetected.flight_log : "Upload do Log"}
                 </Button>
               </label>
             </Box>
@@ -369,7 +365,7 @@ export const CreateReportFormulary = React.memo(({...props}) => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton} variant="contained">Criar relatório</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Gerar relatório</Button> 
           </DialogActions>
 
         </Box>
