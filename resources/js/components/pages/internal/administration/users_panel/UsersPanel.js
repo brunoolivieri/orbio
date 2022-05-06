@@ -339,7 +339,7 @@ export function UsersPanel(){
                   <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
                 </IconButton>
               </InputAdornment>,
-              disableUnderline: true,
+              disableunderline: 1,
               sx: { fontSize: 'default' },
             }}
             variant="outlined"

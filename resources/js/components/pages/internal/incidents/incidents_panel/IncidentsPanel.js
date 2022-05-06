@@ -326,7 +326,7 @@ export function IncidentsPanel(){
                   <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
                 </IconButton>
               </InputAdornment>,
-              disableUnderline: true,
+              disableunderline: 1,
               sx: { fontSize: 'default' },
             }}
             variant="outlined"

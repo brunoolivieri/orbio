@@ -340,7 +340,7 @@ export function OrdersPanel(){
                   <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
                 </IconButton>
               </InputAdornment>,
-              disableUnderline: true,
+              disableunderline: 1,
               sx: { fontSize: 'default' },
             }}
             variant="outlined"
@@ -387,7 +387,7 @@ export function OrdersPanel(){
                       panelData.response.records.length > 0 &&
                       panelData.response.records.map((row, index) => (
                         <TableRow key={row.order_id}>
-                        <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(e, row)}} />} label={row.order_id} /></TableCell>
+                        <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(event)}} />} label={row.order_id} /></TableCell>
                         <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                         <TableCell align="center">
                           <BadgeIcon number = {row.flight_plans.length} color = {"primary"} /> 

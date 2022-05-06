@@ -1,8 +1,7 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import { useState} from 'react';
 import * as React from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -13,12 +12,10 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
@@ -41,16 +38,15 @@ export const DeletePlanFormulary = React.memo(({...props}) => {
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-
-      if(props.selected_record.dom != null){
-        setOpen(true);
-      } 
-        
+      setOpen(true);   
     };
 
     // Função para fechar o modal
     const handleClose = () => {
 
+      // Deselecionar registro na tabela
+      props.record_setter(null);
+      // Outros
       setDisplayAlert({display: false, type: "", message: ""});
       setDisabledButton(false);
 
@@ -116,8 +112,11 @@ export const DeletePlanFormulary = React.memo(({...props}) => {
 
       setTimeout(() => {
 
+        // Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
+        setIsChecked(null);
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);
@@ -140,62 +139,61 @@ export const DeletePlanFormulary = React.memo(({...props}) => {
   return (
     <>
         <Tooltip title="Deletar">
-            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-            </IconButton>
+          <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
+            <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+          </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
 
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.selected_record.data_cells.plan_id})</DialogTitle>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-                <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+          {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
+          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-                    <DialogContent>
+            <DialogContent>
 
-                        <TextField
-                        margin="dense"
-                        id="plan_id"
-                        name="plan_id"
-                        label="ID do plano"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        inputProps={{
-                            readOnly: true
-                        }}
-                        value={props.selected_record.data_cells.plan_id}
-                        sx={{mb: 2}}
-                        />
+              <TextField
+              margin="dense"
+              id="plan_id"
+              name="plan_id"
+              label="ID do plano"
+              type="text"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                  readOnly: true
+              }}
+              value={props.record.plan_id}
+              sx={{mb: 2}}
+              />
 
-                        <TextField
-                        margin="dense"
-                        label="Arquivo"
-                        type="text"
-                        fullWidth
-                        variant="outlined"
-                        inputProps={{
-                            readOnly: true
-                        }}
-                        defaultValue={props.selected_record.data_cells.plan_file}
-                        />
+              <TextField
+              margin="dense"
+              label="Arquivo"
+              type="text"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                  readOnly: true
+              }}
+              defaultValue={props.record.plan_file}
+              />
 
-                    </DialogContent>
+            </DialogContent>
 
-                    {displayAlert.display && 
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
-                    }
-                
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
-                    </DialogActions>
+            {displayAlert.display && 
+                <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+            }
+          
+            <DialogActions>
+                <Button onClick={handleClose}>Cancelar</Button>
+                <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+            </DialogActions>
 
-                </Box>
-
-            </Dialog>
+          </Box>
+        </Dialog>
         }
     </>
 

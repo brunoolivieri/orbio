@@ -56,7 +56,9 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
-      setIsChecked(null);
+      // Deselecionar registro na tabela
+      props.record_setter(null);
+      // Outros
       setErrorDetected({email: false, name: false, profile: false, status: false});
       setErrorMessage({email: null, name: null, profile: null, status: null});
       setDisplayAlert({display: false, type: "", message: ""});
@@ -147,7 +149,6 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
         props.record_setter(null);
         // Outros
         setDisabledButton(false);
-        setIsChecked(null);
         handleClose();
 
       }, 2000);
@@ -207,7 +208,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
       </Tooltip>
 
     {(props.record != null && open) && 
-
+      
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 

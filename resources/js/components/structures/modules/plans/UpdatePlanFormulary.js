@@ -1,7 +1,7 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import { useState } from 'react';
 import * as React from 'react';
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -15,12 +15,12 @@ import { Tooltip } from '@mui/material';
 import { Switch } from '@mui/material';
 import { FormGroup } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { GenericSelect } from '../../input_select/GenericSelect';
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 
@@ -44,23 +44,21 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     const [disabledButton, setDisabledButton] = useState(false);
 
     // Switch state
-    const [isChecked, setIsChecked] = React.useState(null);
+    const [isChecked, setIsChecked] = React.useState(props.record.status == 1 ? true : false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-
-      if(props.selected_record.dom != null){
-        setOpen(true);
-      } 
-        
+      setOpen(true);
     };
 
     // Função para fechar o modal
     const handleClose = () => {
 
-      setIsChecked(null);
+      // Deselecionar registro na tabela
+      props.record_setter(null);
+      // Outros
       setErrorDetected({status: false, description: false});
       setErrorMessage({status: "", description: ""});
       setDisplayAlert({display: false, type: "", message: ""});
@@ -78,18 +76,13 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     const handleSubmitOperation = (event) => {
       event.preventDefault();
 
-      // Instância da classe JS FormData - para trabalhar os dados do formulário
       const data = new FormData(event.currentTarget);
 
-        // Validação dos dados do formulário
-        // A comunicação com o backend só é realizada se o retorno for true
         if(dataValidate(data)){
 
-            // Botão é desabilitado
-            setDisabledButton(true);
+          setDisabledButton(true);
 
-            // Inicialização da requisição para o servidor
-            requestServerOperation(data);  
+          requestServerOperation(data);  
 
         }
 
@@ -132,28 +125,30 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     */ 
     function requestServerOperation(data){
 
-        // Dados para o middleware de autenticação 
-        let logged_user_id = AuthData.data.id;
-        let module_id = 2;
-        let module_action = "escrever";
+      // Dados para o middleware de autenticação 
+      let logged_user_id = AuthData.data.id;
+      let module_id = 2;
+      let module_action = "escrever";
 
-        AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            report_id: data.get("select_report"),
-            incident_id: data.get("select_incident"),
-            status: isChecked,
-            description: data.get("description"),
-        })
-        .then(function (response) {
+      console.log(data.get("select_report"))
 
-            successServerResponseTreatment();
+      AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
+        auth: `${logged_user_id}.${module_id}.${module_action}`,
+        report_id: data.get("select_report"),
+        incident_id: data.get("select_incident"),
+        status: isChecked,
+        description: data.get("description"),
+      })
+      .then(function (response) {
 
-        })
-        .catch(function (error) {
-            
-            errorServerResponseTreatment(error.response.data);
+        successServerResponseTreatment();
 
-        });
+      })
+      .catch(function (error) {
+          
+        errorServerResponseTreatment(error.response.data);
+
+      });
 
     }
 
@@ -167,10 +162,10 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
 
       setTimeout(() => {
 
-        setIsChecked(null);
-
+        // Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);
@@ -223,93 +218,89 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
   return (
     <>
         <Tooltip title="Editar">
-            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-            </IconButton>
+          <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
+              <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+          </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
 
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.selected_record.data_cells.plan_id})</DialogTitle>
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-                <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+            {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
+            <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+              <DialogContent>
 
-                <DialogContent>
+                <TextField
+                margin="dense"
+                id="plan_id"
+                name="plan_id"
+                label="ID do plano"
+                type="text"
+                fullWidth
+                variant="outlined"
+                defaultValue={props.record.plan_id}
+                inputProps={{
+                    readOnly: true
+                }}
+                sx={{mb: 2}}
+                />
 
-                    <TextField
-                    margin="dense"
-                    id="plan_id"
-                    name="plan_id"
-                    label="ID do plano"
-                    type="text"
-                    fullWidth
-                    variant="outlined"
-                    defaultValue={props.selected_record.data_cells.plan_id}
-                    inputProps={{
-                        readOnly: true
-                    }}
-                    sx={{mb: 2}}
-                    />
-
-                    <Box sx={{mb: 2}}>
-                      <GenericSelect 
-                      label_text = {"Relatório"} 
-                      data_source = {"/api/plans-module/create?table=reports&auth=none"} 
-                      primary_key={"id"} 
-                      key_content={"id"} 
-                      error = {null} 
-                      default = {props.selected_record.data_cells.report_id != null ? props.selected_record.data_cells.report_id : 0} 
-                      name = {"select_report"}  
-                      />
-                      <GenericSelect 
-                      label_text = {"Incidente"} 
-                      data_source = {"/api/plans-module/create?table=incidents&auth=none"} 
-                      primary_key={"id"} 
-                      key_content={"id"} 
-                      error = {null} 
-                      default = {props.selected_record.data_cells.incident_id != null ? props.selected_record.data_cells.incident_id : 0} 
-                      name = {"select_incident"} 
-                      />
-                    </Box>
-
-                    <TextField
-                    margin="dense"
-                    id="description"
-                    name="description"
-                    label="Descrição"
-                    type="text"
-                    fullWidth
-                    variant="outlined"
-                    defaultValue={props.selected_record.data_cells.plan_description}
-                    helperText = {errorMessage.description}
-                    error = {errorDetected.description}
-                    />
-
-                  <Box sx={{marginTop: 3}}>
-                    <FormGroup>
-                      <FormControlLabel control={<Switch defaultChecked={props.selected_record.data_cells.status} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked == null ? (props.selected_record.data_cells.status ? "Ativo" : "Inativo") : (isChecked ? "Ativo" : "Inativo")} />
-                    </FormGroup>
-                  </Box>
-
-                </DialogContent>
-
-                {displayAlert.display && 
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
-                }
-                
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancelar</Button>
-                    <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
-                </DialogActions>
-
+                <Box sx={{mb: 2}}>
+                  <GenericSelect 
+                  label_text = {"Relatório"} 
+                  data_source = {"/api/plans-module/create?table=reports&auth=none"} 
+                  primary_key={"id"} 
+                  key_content={"id"} 
+                  error = {null} 
+                  default = {props.record.report_id != null ? props.record.report_id : 0} 
+                  name = {"select_report"}  
+                  />
+                  <GenericSelect 
+                  label_text = {"Incidente"} 
+                  data_source = {"/api/plans-module/create?table=incidents&auth=none"} 
+                  primary_key={"id"} 
+                  key_content={"id"} 
+                  error = {null} 
+                  default = {props.record.incident_id != null ? props.record.incident_id : 0} 
+                  name = {"select_incident"} 
+                  />
                 </Box>
 
-            </Dialog>
+                <TextField
+                margin="dense"
+                id="description"
+                name="description"
+                label="Descrição"
+                type="text"
+                fullWidth
+                variant="outlined"
+                defaultValue={props.record.plan_description}
+                helperText = {errorMessage.description}
+                error = {errorDetected.description}
+                />
+
+                <Box sx={{marginTop: 3}}>
+                  <FormGroup>
+                    <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked ? "Ativo" : "Inativo"} />
+                  </FormGroup>
+                </Box>
+
+              </DialogContent>
+
+              {displayAlert.display && 
+                <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+              }
+                
+              <DialogActions>
+                <Button onClick={handleClose}>Cancelar</Button>
+                <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
+              </DialogActions>
+
+            </Box>
+          </Dialog>
         }
     </>
-
   );
-
 });

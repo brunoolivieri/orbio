@@ -55,7 +55,7 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
     const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
     // Switch state
-    const [isChecked, setIsChecked] = React.useState(props.record.status == 1 ? true : false);
+    const [isChecked, setIsChecked] = React.useState(props.record.order_status == 1 ? true : false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -67,7 +67,9 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
-      setIsChecked(null);
+      // Deselecionar registro na tabela
+      props.record_setter(null);
+      // Outros
       setErrorDetected({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
       setErrorMessage({order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false});
       setDisplayAlert({display: false, type: "", message: ""});
@@ -236,7 +238,6 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
         props.record_setter(null);
         // Outros
         setDisabledButton(false);
-        setIsChecked(null);
         handleClose();
 
       }, 2000);
@@ -406,11 +407,11 @@ export const UpdateOrderFormulary = React.memo(({...props}) => {
                 sx={{mb: 2}}
                 />
 
-                <Box sx={{marginTop: 3}}>
-                  <FormGroup>
-                    <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked ? "Ativo" : "Inativo"} />
-                  </FormGroup>
-                </Box>
+          <Box sx={{marginTop: 3}}>
+            <FormGroup>
+              <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked ? "Ativo" : "Inativo"} />
+            </FormGroup>
+          </Box>
     
               </DialogContent>
     
