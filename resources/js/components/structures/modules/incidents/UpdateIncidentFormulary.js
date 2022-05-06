@@ -81,7 +81,7 @@ export function UpdateIncidentFormulary({...props}){
 
         const data = new FormData(event.currentTarget);
 
-        if(dataValidate(data)){
+        if(submitedDataValidate(data)){
 
             setDisabledButton(true);
 
@@ -97,7 +97,7 @@ export function UpdateIncidentFormulary({...props}){
     * Recebe o objeto da classe FormData criado na rotina 1
     * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
-     function dataValidate(formData){
+     function submitedDataValidate(formData){
 
        // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
        const incidentDateValidate = incidentDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};

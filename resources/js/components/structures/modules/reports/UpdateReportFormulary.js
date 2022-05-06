@@ -85,7 +85,7 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
 
         // Validação dos dados do formulário
         // A comunicação com o backend só é realizada se o retorno for true
-        if(dataValidate(data)){
+        if(submitedDataValidate(data)){
 
           if(verifyDateInterval()){
 
@@ -111,9 +111,7 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
     * Recebe o objeto da classe FormData criado na rotina 1
     * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
-     function dataValidate(formData){
-
-      const logPattern = "";
+     function submitedDataValidate(formData){
 
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const startDateValidate = startDate != null ? {error: false, message: ""} : {error: true, message: "Selecione a data inicial"};

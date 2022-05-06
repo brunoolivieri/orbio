@@ -78,7 +78,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
   
         const data = new FormData(event.currentTarget);
   
-        if(dataValidate(data)){
+        if(submitedDataValidate(data)){
 
             setDisabledButton(true);
 
@@ -88,7 +88,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
   
     }
 
-    function dataValidate(formData){
+    function submitedDataValidate(formData){
 
       const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 

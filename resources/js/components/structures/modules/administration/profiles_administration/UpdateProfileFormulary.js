@@ -89,7 +89,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
 
         // Validação dos dados do formulário
         // A comunicação com o backend só é realizada se o retorno for true
-        if(dataValidate(data)){
+        if(submitedDataValidate(data)){
 
             // Inicialização da requisição para o servidor
             requestServerOperation(data);
@@ -102,7 +102,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
     * Rotina 2
     * Validação dos dados no frontend
     */
-    function dataValidate(formData){
+    function submitedDataValidate(formData){
 
       const nameValidate = FormValidation(formData.get("profile_name"), 3, null, null, null);
 

@@ -44,7 +44,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     const [disabledButton, setDisabledButton] = useState(false);
 
     // Switch state
-    const [isChecked, setIsChecked] = React.useState(props.record.status == 1 ? true : false);
+    const [isChecked, setIsChecked] = React.useState(props.record.plan_status == 1 ? true : false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -78,7 +78,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
 
       const data = new FormData(event.currentTarget);
 
-        if(dataValidate(data)){
+        if(submitedDataValidate(data)){
 
           setDisabledButton(true);
 
@@ -94,13 +94,11 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
     * Recebe o objeto da classe FormData criado na rotina 1
     * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
-     function dataValidate(formData){
-
-      const logPattern = "";
+     function submitedDataValidate(formData){
 
       // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
       const descriptionValidate = FormValidation(formData.get("description"), 3, null, null, null);
-      const statusValidate = (formData.get("status") == 0 || formData.get("status") == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
+      const statusValidate = (Number(isChecked) == 0 || Number(isChecked) == 1) ? {error: false, message: ""} : {error: true, message: "O status deve ser 1 ou 0"};
      
       setErrorDetected({description: descriptionValidate.error, status: statusValidate.error});
       setErrorMessage({description: descriptionValidate.message, status: statusValidate.message});
@@ -129,8 +127,6 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
       let logged_user_id = AuthData.data.id;
       let module_id = 2;
       let module_action = "escrever";
-
-      console.log(data.get("select_report"))
 
       AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
         auth: `${logged_user_id}.${module_id}.${module_action}`,
