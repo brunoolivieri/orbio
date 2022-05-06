@@ -18,12 +18,10 @@ import { FormLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { FormGroup } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
-
 // IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
@@ -68,7 +66,8 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
 
     // Função para fechar o modal
     const handleClose = () => {
-
+    
+      
       setErrorDetected({profile_name: false});
       setErrorMessage({profile_name: null});
       setDisplayAlert({display: false, type: "", message: ""});

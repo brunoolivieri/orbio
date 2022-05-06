@@ -44,15 +44,13 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
     const [disabledButton, setDisabledButton] = React.useState(false);
 
     // Switch state
-    const [isChecked, setIsChecked] = React.useState(null);
+    const [isChecked, setIsChecked] = React.useState(props.record.status == 1 ? true : false);
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
-        if(props.selected_record.dom != null){
-            setOpen(true);
-        }
+      setOpen(true);
     };
 
     // Função para fechar o modal
@@ -145,10 +143,11 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
       setTimeout(() => {
 
+        // Deselecionar registro na tabela
+        props.record_setter(null);
+        // Outros
         setDisabledButton(false);
-
         setIsChecked(null);
-
         handleClose();
 
       }, 2000);
@@ -207,10 +206,10 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
           </IconButton>
       </Tooltip>
 
-    {(props.selected_record.dom != null && open) && 
+    {(props.record != null && open) && 
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.selected_record.data_cells.user_id})</DialogTitle>
+        <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -225,7 +224,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             type="email"
             fullWidth
             variant="outlined"
-            defaultValue={props.selected_record.data_cells.user_id}
+            defaultValue={props.record.user_id}
             inputProps={{
               readOnly: true
             }}
@@ -239,7 +238,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             label="Nome completo"
             fullWidth
             variant="outlined"
-            defaultValue={props.selected_record.data_cells.name}
+            defaultValue={props.record.name}
             helperText = {errorMessage.name}
             error = {errorDetected.name}
             sx={{mb: 2}}
@@ -252,7 +251,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             type="email"
             fullWidth
             variant="outlined"
-            defaultValue={props.selected_record.data_cells.email} 
+            defaultValue={props.record.email} 
             helperText = {errorMessage.email}
             error = {errorDetected.email}
             sx={{mb: 2}}
@@ -264,13 +263,13 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             primary_key={"id"} 
             key_content={"nome"} 
             error = {errorDetected.profile} 
-            default = {props.selected_record.data_cells.access} 
+            default = {props.record.access} 
             name = {"select_profile"} 
             />
 
           <Box sx={{marginTop: 3}}>
             <FormGroup>
-              <FormControlLabel control={<Switch defaultChecked={props.selected_record.data_cells.status} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked == null ? (props.selected_record.data_cells.status ? "Ativo" : "Inativo") : (isChecked ? "Ativo" : "Inativo")} />
+              <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => {setIsChecked(event.currentTarget.checked)}} />} label = {isChecked ? "Ativo" : "Inativo"} />
             </FormGroup>
           </Box>
 

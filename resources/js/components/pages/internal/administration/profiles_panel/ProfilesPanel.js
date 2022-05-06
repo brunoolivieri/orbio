@@ -254,14 +254,12 @@ export function ProfilesPanel(){
   
       // If already exists a selected record, and its equal to the clicked
       if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id == record_clicked.profile_id)){
-  
-        actualSelectedRecord.dom.childNodes[0].checked = false;
+
         setActualSelectedRecord({dom: null, data_cells: null});
       
       // If already exists a selected record, and its different from the clicked
       }else if(actualSelectedRecord.dom != null && (actualSelectedRecord.data_cells.profile_id != record_clicked.profile_id)){
   
-        actualSelectedRecord.dom.childNodes[0].checked = false;
         setActualSelectedRecord({dom: event.currentTarget, data_cells: record_clicked});
       
       // If not exists a selected record

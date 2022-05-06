@@ -40,9 +40,7 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
 
      // Função para abrir o modal
      const handleClickOpen = () => {
-      if(props.selected_record.dom != null){
         setOpen(true);
-      }
     };
 
     // Função para fechar o modal
@@ -109,10 +107,14 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
         setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
   
         setTimeout(() => {
-  
+
+          //  Deselecionar registro na tabela
+          props.record_setter(null);
+          // Outros
+          setIsChecked(null);
           setDisabledButton(false);
-  
           handleClose();
+
   
         }, 2000);
   
@@ -141,10 +143,10 @@ return (
             </IconButton>
         </Tooltip>
 
-        {(props.selected_record.dom != null && open) && 
+        {(props.record != null && open) && 
 
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>DELEÇÃO | USUÁRIO (ID: {props.selected_record.data_cells.user_id})</DialogTitle>
+                <DialogTitle>DELEÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 
                 {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -166,7 +168,7 @@ return (
                         inputProps={{
                             readOnly: true
                         }}
-                        value={props.selected_record.data_cells.user_id}
+                        value={props.record.user_id}
                         sx={{mb: 2}}
                         />
 
@@ -181,7 +183,7 @@ return (
                         inputProps={{
                             readOnly: true
                         }}
-                        value={props.selected_record.data_cells.name}
+                        value={props.record.name}
                         />
 
                     </DialogContent>
