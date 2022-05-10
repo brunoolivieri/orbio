@@ -16,6 +16,7 @@ class CreateModule extends Migration
         Schema::create('module', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
+            $table->softDeletes();
         });
     }
 

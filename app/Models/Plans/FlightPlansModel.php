@@ -5,11 +5,11 @@ namespace App\Models\Plans;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FlightPlansModel extends Model
 {
-
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "flight_plans";
     const CREATED_AT = "dh_criacao";
@@ -67,7 +67,8 @@ class FlightPlansModel extends Model
         try{
 
             $data = DB::table('flight_plans')
-            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao')
+            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao', 'deleted_at')
+            ->where("flight_plans.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 
                 $query->where('id', $where_value);

@@ -25,6 +25,7 @@ class CreateUsers extends Migration
             $table->dateTime("dh_ultimo_acesso")->nullable(true);
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();   
+            $table->softDeletes();
         });
     }
 

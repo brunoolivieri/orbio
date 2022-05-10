@@ -4,7 +4,6 @@ namespace App\Models\ProfileAndModule;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Support\Facades\DB;
 
 class ProfileHasModuleModel extends Model
@@ -13,7 +12,6 @@ class ProfileHasModuleModel extends Model
 
     protected $table = "profile_has_module";
     public $incrementing = false;
-    public $timestamps = false;
     protected $guarded = [];
 
     function profile(){
@@ -51,7 +49,7 @@ class ProfileHasModuleModel extends Model
 
             $data = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
+            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever', 'profile.deleted_at')
             ->when($where_value, function ($query, $where_value) {
 
                 $query->when(is_numeric($where_value), function($query) use ($where_value){

@@ -23,6 +23,7 @@ class CreateUserComplementaryData extends Migration
             $table->string("celular")->nullable(true);
             $table->string("razaoSocial")->nullable(true);
             $table->string("nomeFantasia")->nullable(true);
+            $table->softDeletes();
         });
     }
 

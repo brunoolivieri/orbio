@@ -5,10 +5,11 @@ namespace App\Models\Orders;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServiceOrdersModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "service_orders";
     const CREATED_AT = "dh_criacao";
@@ -56,6 +57,7 @@ class ServiceOrdersModel extends Model
         try{
 
             $data = DB::table('service_orders')
+            ->where("service_orders.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 
                 $query->where('service_orders.id', $where_value);

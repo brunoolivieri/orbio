@@ -18,6 +18,9 @@ class CreateIncidentsTable extends Migration
             $table->string("tipo_incidente");
             $table->text("descricao");
             $table->dateTime("dh_incidente")->useCurrent();
+            $table->dateTime("dh_criacao")->useCurrent();
+            $table->dateTime("dh_atualizacao")->nullable(true);
+            $table->softDeletes();
         });
     }
 

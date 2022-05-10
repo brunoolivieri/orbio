@@ -5,10 +5,11 @@ namespace App\Models\Reports;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReportsModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "reports";
     const CREATED_AT = "dh_criacao";
@@ -29,7 +30,8 @@ class ReportsModel extends Model
         try{
 
             $data = DB::table('reports')
-            ->select('id', 'dh_criacao', 'dh_atualizacao', 'dh_inicio_voo', 'dh_fim_voo', 'log_voo', 'observacao')
+            ->select('reports.id', 'reports.dh_criacao', 'reports.dh_atualizacao', 'reports.dh_inicio_voo', 'reports.dh_fim_voo', 'reports.log_voo', 'reports.observacao')
+            ->where("reports.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 
                 $query->where('id', $where_value);

@@ -25,6 +25,7 @@ class CreateServiceOrdersTable extends Migration
             $table->string("nome_piloto")->nullable(true);
             $table->string("nome_cliente")->nullable(true);
             $table->text("observacao");
+            $table->softDeletes();
         });
     }
 

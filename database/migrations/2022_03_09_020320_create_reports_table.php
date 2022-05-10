@@ -21,6 +21,7 @@ class CreateReportsTable extends Migration
             $table->dateTime("dh_fim_voo");
             $table->mediumText("log_voo");
             $table->text("observacao");
+            $table->softDeletes();
         });
     }
 

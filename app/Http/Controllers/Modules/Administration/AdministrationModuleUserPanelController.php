@@ -277,34 +277,31 @@ class AdministrationModuleUserPanelController extends Controller
 
             $user = UserModel::find($id);
 
-            //dd($user->service_order_has_user[0]->service_order);
-            //dd($user->service_order_has_user[0]->users->nome);
-
             // If user is linked to a service order
             if(!empty($user->service_order_has_user)){
 
                 // Desvinculations with service_orders table
                 // The user name must be removed from the service_order 
-                foreach($user->service_order_has_user as $index => $value){
+                foreach($user->service_order_has_user as $index => $record){
 
                     // If user is a pilot and his name is the same of the pilot of the actual service order
-                    if($user->id_perfil == 3 && ($value->service_order->nome_piloto === $user->nome)){
+                    if($user->id_perfil == 3 && ($record->service_order->nome_piloto === $user->nome)){
 
-                        ServiceOrdersModel::where("id", $value->id_ordem_servico)
+                        ServiceOrdersModel::where("id", $record->id_ordem_servico)
                         ->where("nome_piloto", $user->nome)
                         ->update(["nome_piloto" => null]);
                     
                     // If user is a client and his name is the same of the client of the actual service order
-                    }else if($user->id_perfil == 4 && ($value->service_order->nome_cliente === $user->nome)){
+                    }else if($user->id_perfil == 4 && ($record->service_order->nome_cliente === $user->nome)){
 
-                        ServiceOrdersModel::where("id", $value->id_ordem_servico)
+                        ServiceOrdersModel::where("id", $record->id_ordem_servico)
                         ->where("nome_cliente", $user->nome)
                         ->update(["nome_cliente" => null]);
                     
                     // If the name of the user is the same of the creator of the actual service order
-                    }else if(($value->service_order->nome_criador === $user->nome)){
+                    }else if(($record->service_order->nome_criador === $user->nome)){
 
-                        ServiceOrdersModel::where("id", $value->id_ordem_servico)
+                        ServiceOrdersModel::where("id", $record->id_ordem_servico)
                         ->where("nome_criador", $user->nome)
                         ->update(["nome_criador" => null]);
 
@@ -318,6 +315,7 @@ class AdministrationModuleUserPanelController extends Controller
             // The relations with the user id are deleted
             $user->service_order_has_user()->delete();
 
+            // The user record is soft deleted
             UserModel::where('id', $id)->delete();
 
             Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleUserPanelController] - Usuário removido com sucesso - ID do usuário: ".$id);

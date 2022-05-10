@@ -22,6 +22,7 @@ class CreateFlightPlansTable extends Migration
             $table->boolean("status")->default(false);
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();
+            $table->softDeletes();
         });
     }
 

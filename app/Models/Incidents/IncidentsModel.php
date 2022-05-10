@@ -5,13 +5,15 @@ namespace App\Models\Incidents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class IncidentsModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "incidents";
-    public $timestamps = false;
+    const CREATED_AT = "dh_criacao";
+    const UPDATED_AT = "dh_atualizacao";
     protected $guarded = [];
 
     /**
@@ -28,6 +30,7 @@ class IncidentsModel extends Model
         try{
 
             $data = DB::table('incidents')
+            ->where("incidents.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 
                 $query->where('id', $where_value);

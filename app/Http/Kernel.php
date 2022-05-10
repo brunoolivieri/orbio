@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'modules.common.authorization' => \App\Http\Middleware\Custom\Modules\ModulesCommonMiddleware::class,
         'session.auth' => \App\Http\Middleware\Custom\Auth\SessionAuthMiddleware::class // Middleware para validar a sessão do usuário
+       
     ];
 }

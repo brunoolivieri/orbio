@@ -18,6 +18,7 @@ class CreateProfile extends Migration
             $table->string("nome");
             $table->dateTime("dh_atualizacao")->nullable(true);
             $table->dateTime("dh_criacao")->useCurrent();
+            $table->softDeletes();
         });
     }
 

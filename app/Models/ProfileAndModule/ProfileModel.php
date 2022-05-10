@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
+// Models
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use  App\Models\User\UserModel;
 
 class ProfileModel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "profile";
     const CREATED_AT = "dh_criacao";

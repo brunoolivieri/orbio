@@ -21,6 +21,7 @@ class CreateAddress extends Migration
             $table->string("cidade")->nullable(true);
             $table->string("estado")->nullable(true);
             $table->string("complemento")->nullable(true);
+            $table->softDeletes();
         });
     }
 

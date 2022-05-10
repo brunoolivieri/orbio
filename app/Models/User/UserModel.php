@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\SoftDeletes;
 // Custom Models
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
@@ -22,7 +23,7 @@ use Database\Factories\UserFactory;
 
 class UserModel extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = "users";
     const CREATED_AT = "dh_criacao";
@@ -145,6 +146,7 @@ class UserModel extends Authenticatable
             $data = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
+            ->where("users.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 
                 $query->when(is_numeric($where_value), function($query) use ($where_value){
