@@ -61,7 +61,7 @@ class LoginController extends Controller
                 }
 
              // Case 3: User account is disabled or deleted
-            }else if((!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso) || (Auth::user()->deleted_at))){
+            }else if((!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso) || (!empty(Auth::user()->deleted_at)))){
 
                 Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada ou removida do sistema.");
 

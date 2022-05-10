@@ -234,10 +234,9 @@ class AdministrationModuleProfilePanelController extends Controller
             }
 
             // Desvinculation with profile_has_module table
-            $profile->module_privileges()->delete();
+            //$profile->module_privileges()->delete();
             
             // The record will be soft deleted
-            $profile->update(["status" => false]);
             $profile->delete();
 
             Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleProfilePanelController] - Perfil removido com sucesso - ID do perfil: ".$id);

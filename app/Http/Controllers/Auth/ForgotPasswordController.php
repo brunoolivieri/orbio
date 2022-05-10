@@ -37,18 +37,26 @@ class ForgotPasswordController extends Controller
 
                 $user = UserModel::where("email", $request->email)->firstOrFail();
 
-                $user->update(['token' => $random_integer_token]);
+                if(!$user->trashed()){
 
-                UserModel::where('email', $request->email)->update(['token' => $random_integer_token]);
+                    $user->update(['token' => $random_integer_token]);
 
-                // Send token event
-                event(new TokenForChangePasswordEvent($user, $random_integer_token));
+                    UserModel::where('email', $request->email)->update(['token' => $random_integer_token]);
 
-                Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
+                    // Send token event
+                    event(new TokenForChangePasswordEvent($user, $random_integer_token));
+
+                    Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
+
+                    return response("", 200);
+
+                }else{
+
+                    return response("", 500);
+
+                }
 
             });
-
-            return response("", 200);
 
         }catch(\Exception $e){
 

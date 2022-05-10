@@ -18,7 +18,6 @@ class CreateProfileHasModule extends Migration
             $table->foreignId('id_perfil')->constrained('profile')->onDelete('cascade');
             $table->boolean("ler");
             $table->boolean("escrever");
-            $table->softDeletes();
         });
     }
 

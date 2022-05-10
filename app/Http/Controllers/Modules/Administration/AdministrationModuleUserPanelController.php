@@ -316,7 +316,10 @@ class AdministrationModuleUserPanelController extends Controller
             $user->service_order_has_user()->delete();
 
             // The user record is soft deleted
+            UserModel::where('id', $id)->update(["status" => false]);
             UserModel::where('id', $id)->delete();
+
+            // Destroy user session?
 
             Log::channel('administration_action')->info("[Método: Destroy][Controlador: AdministrationModuleUserPanelController] - Usuário removido com sucesso - ID do usuário: ".$id);
 
