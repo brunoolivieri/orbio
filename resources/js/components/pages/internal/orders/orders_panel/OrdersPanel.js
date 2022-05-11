@@ -289,7 +289,7 @@ export function OrdersPanel(){
 
   };
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
     return(
         <>
@@ -308,7 +308,6 @@ export function OrdersPanel(){
               </Tooltip>
             }
 
-            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
             {(panelData.response.records != null && selectedRecordIndex != null) && 
               <UpdateOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
             }
@@ -323,7 +322,6 @@ export function OrdersPanel(){
               </Tooltip>
             }
 
-            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
             {(panelData.response.records != null && selectedRecordIndex != null) && 
               <DeleteOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
             }
@@ -401,7 +399,7 @@ export function OrdersPanel(){
                   <TableBody className = "tbody">
                   {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
                     panelData.response.records.map((row, index) => (
-                        <TableRow key={row.order_id}>
+                      <TableRow key={row.order_id}>
                         <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(event)}} />} label={row.order_id} /></TableCell>
                         <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                         <TableCell align="center">
@@ -420,8 +418,8 @@ export function OrdersPanel(){
                         <TableCell align="center">{row.order_note}</TableCell>
                         <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                         <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
-                        </TableRow>    
-                      ))}    
+                      </TableRow>    
+                    ))}    
                   </TableBody>
               </Table>
 

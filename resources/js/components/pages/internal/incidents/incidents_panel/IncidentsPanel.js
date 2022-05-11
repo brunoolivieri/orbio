@@ -281,7 +281,7 @@ export function IncidentsPanel(){
 
   };
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
     return(
         <>
@@ -293,16 +293,16 @@ export function IncidentsPanel(){
 
           <Grid item>
             {selectedRecordIndex == null && 
-                <Tooltip title="Selecione um registro para editar">
-                  <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-                  </IconButton>
-                </Tooltip>
-              }
+              <Tooltip title="Selecione um registro para editar">
+                <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
+                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                </IconButton>
+              </Tooltip>
+            }
 
-              {(panelData.response.records != null && selectedRecordIndex != null) && 
-                <UpdateIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
-              } 
+            {(panelData.response.records != null && selectedRecordIndex != null) && 
+              <UpdateIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+            } 
           </Grid>
 
           <Grid item>
@@ -327,25 +327,25 @@ export function IncidentsPanel(){
             </Tooltip>  
           </Grid>
 
-        <Grid item xs>
-          <TextField
-            fullWidth
-            placeholder={"Pesquisar incidente por ID"}
-            InputProps={{
-              startAdornment: 
-              <InputAdornment position="start">
-                <IconButton onClick={handleSearchSubmit}>
-                  <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
-                </IconButton>
-              </InputAdornment>,
-              disableunderline: 1,
-              sx: { fontSize: 'default' },
-            }}
-            variant="outlined"
-            id = "search_input"
-            sx={{borderRadius: 30}}
-          />
-        </Grid>
+          <Grid item xs>
+            <TextField
+              fullWidth
+              placeholder={"Pesquisar incidente por ID"}
+              InputProps={{
+                startAdornment: 
+                <InputAdornment position="start">
+                  <IconButton onClick={handleSearchSubmit}>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
+                  </IconButton>
+                </InputAdornment>,
+                disableunderline: 1,
+                sx: { fontSize: 'default' },
+              }}
+              variant="outlined"
+              id = "search_input"
+              sx={{borderRadius: 30}}
+            />
+          </Grid>
 
           {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
           <Grid item>
@@ -383,15 +383,15 @@ export function IncidentsPanel(){
                   </TableRow>
                   </TableHead>
                   <TableBody className = "tbody">
-                      {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                          panelData.response.records.map((row, index) => (
-                              <TableRow key={row.incident_id}>
-                                <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => {handleClickRadio(event)}} />} label={row.incident_id} /></TableCell>
-                                <TableCell align="center">{row.incident_type}</TableCell>
-                                <TableCell align="center">{row.description}</TableCell> 
-                                <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
-                              </TableRow>
-                          ))}    
+                  {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                    panelData.response.records.map((row, index) => (
+                      <TableRow key={row.incident_id}>
+                        <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => {handleClickRadio(event)}} />} label={row.incident_id} /></TableCell>
+                        <TableCell align="center">{row.incident_type}</TableCell>
+                        <TableCell align="center">{row.description}</TableCell> 
+                        <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>    
+                      </TableRow>
+                  ))}    
                   </TableBody>
               </Table>
 
@@ -400,7 +400,6 @@ export function IncidentsPanel(){
               }
 
             </TableContainer> 
-
         </RadioGroup>
       </FormControl>
       </>
