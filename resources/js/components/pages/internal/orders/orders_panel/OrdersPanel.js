@@ -383,9 +383,8 @@ export function OrdersPanel(){
                   </TableRow>
                   </TableHead>
                   <TableBody className = "tbody">
-                    {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
-                      panelData.response.records.length > 0 &&
-                      panelData.response.records.map((row, index) => (
+                  {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+                    panelData.response.records.map((row, index) => (
                         <TableRow key={row.order_id}>
                         <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(event)}} />} label={row.order_id} /></TableCell>
                         <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>

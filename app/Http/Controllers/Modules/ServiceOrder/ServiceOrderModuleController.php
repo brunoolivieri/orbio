@@ -43,6 +43,8 @@ class ServiceOrderModuleController extends Controller
 
                 $data_formated = $this->formatDataForTable($model_response["data"]);
 
+                dd($data_formated);
+
                 return response($data_formated, 200);
 
             }else{

@@ -1,11 +1,9 @@
 // IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
 import { useRef } from "react";
-
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
 import layoutStyle from "./layout.module.css";
 import { Link } from 'react-router-dom';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
 import Divider from '@mui/material/Divider';
@@ -37,11 +35,11 @@ const categories = [
         active: false,
         default_allowed_profiles: [1, 4, 3, 4, 5]
       },
-      { id: 'Administração', icon: <AdminPanelSettingsIcon />, default_allowed_profiles: [1, 2]},
-      { id: 'Ordens', icon: <AssignmentIcon />, default_allowed_profiles: [1, 2, 3]},
-      { id: 'Planos', icon: <MapIcon />, default_allowed_profiles: [1, 2, 3]},
-      { id: 'Relatórios', icon: <AssessmentIcon />, default_allowed_profiles: [1, 2]},
-      {id: 'Incidentes', icon: <ReportIcon />, default_allowed_profiles: [1, 2, 3]}
+      { id: 'Administração', icon: <AdminPanelSettingsIcon />},
+      { id: 'Ordens', icon: <AssignmentIcon />},
+      { id: 'Planos', icon: <MapIcon />},
+      { id: 'Relatórios', icon: <AssessmentIcon />},
+      {id: 'Incidentes', icon: <ReportIcon />}
     ],
   },
   {
@@ -80,16 +78,14 @@ export const Navigator = React.memo((props) => {
   const { ...other } = props;
 
   // Utilizador do contexto/state global de Autenticação
-  const {AuthData, setAuthData} = useAuthentication();
+  const {AuthData} = useAuthentication();
 
   // Organização dos valores dos poderes do usuário
-  // Estrutura previamente adaptada à lógica da renderização do menu
-  // Cada um desses atributos será acessado a partir do valor do ID do item do menu recuperado na função .map() com "childID" 
-  // Por exemplo, quando "childID" for "Administração" o valor recuperado será refUserPowers["administracao"] - a codificação é alterada para coincidir um com outro
+  // Cada item desses será acessado na função .map() 
   const refUserPowers = useRef({
     administracao: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false,
-    ordens: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
-    planos: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
+    planos: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
+    ordens: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
     relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false,
     incidentes: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false
   });
@@ -122,7 +118,7 @@ export const Navigator = React.memo((props) => {
           <ListItemText>{AuthData.data.profile} - {AuthData.data.name}</ListItemText>
         </ListItem>
 
-        {categories.map(({ id, children }) => ( 
+          {categories.map(({ id, children }) => ( 
           <Box key={id} sx={{ bgcolor: '#101F33'}}>
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
@@ -130,20 +126,17 @@ export const Navigator = React.memo((props) => {
 
             {/* Geração do menu de opções com base no id do perfil do usuário */}
             {children.map(({ id: childId, icon, active, default_allowed_profiles }) => (
-              
-                /* O item será gerado se o ID do perfil do usuário logado é um dos permitidos, ou se o seu poder de acesso em relação ao módulo é 'true' */
-                (default_allowed_profiles.includes(AuthData.data.profile_id) || (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`])) ?
-                <ListItem disablePadding key={childId}>
-
-                {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
-                <Link to = {childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className = {layoutStyle.navigator_navlink}>
-                  <ListItemButton selected={active} sx={item}>
-                    <ListItemIcon sx={{color: "#fff"}}>{icon}</ListItemIcon>
-                    <ListItemText sx={{color: "#fff"}}>{childId}</ListItemText>
-                  </ListItemButton>
-                </Link>
-              </ListItem> : ""
-              
+                /* Se o seu poder de acesso (ler) em relação ao módulo é 'true' */
+                (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
+                  <ListItem disablePadding key={childId}>
+                  {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
+                  <Link to = {childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className = {layoutStyle.navigator_navlink}>
+                    <ListItemButton selected={active} sx={item}>
+                      <ListItemIcon sx={{color: "#fff"}}>{icon}</ListItemIcon>
+                      <ListItemText sx={{color: "#fff"}}>{childId}</ListItemText>
+                    </ListItemButton>
+                  </Link>
+                </ListItem> 
             ))}
             <Divider sx={{ mt: 2 }} />
           </Box>
