@@ -1,7 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES NATIVOS 
-import { useState, memo } from 'react';
-
-// IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
+// React
+import * as React from 'react';
+// Material UI
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -10,41 +9,37 @@ import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
-
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
-
-// IMPORTAÇÃO DOS ASSETS
+// Assets
 import dangerImage from "../../../../assets/images/Error/error.png";
-
-// OUTROS
+// Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
-export const BasicDataPanel = memo((props) => {
+export const BasicDataPanel = React.memo((props) => {
 
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // States referentes ao formulário
-    const [editMode, setEditMode] = useState(false);
-    const [saveNecessary, setSaveNecessary] = useState(false);
+    const [editMode, setEditMode] = React.useState(false);
+    const [saveNecessary, setSaveNecessary] = React.useState(false);
 
     // States de validação dos campos
-    const [errorDetected, setErrorDetected] = useState({name: false, email: false, actual_password: false, new_password: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = useState({name: "", email: "", actual_password: "", new_password: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({name: false, email: false, actual_password: false, new_password: false}); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({name: "", email: "", actual_password: "", new_password: ""}); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // States dos inputs de senha
-    const [password, setPassword] = useState({update: false, actual_password: null, new_password: null});
+    const [password, setPassword] = React.useState({update: false, actual_password: null, new_password: null});
 
     // State do modal informativo acerca da desativação da conta
-    const [openGenericModal, setOpenGenericModal] = useState(false);
+    const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -68,11 +63,24 @@ export const BasicDataPanel = memo((props) => {
 
     }
 
-    function temporarilyDisableAccount(){
+    function disableAccount(){
         
-        console.log("DESATIVAÇÃO DA CONTA")
-        
+        AxiosApi.post(`/api/desactivate-account/${props.userid}`)
+        .then(function (response) {
+  
+            handleOpenSnackbar("Conta desativada com sucesso!", "success");
 
+            setTimeout(() => {
+                window.location.href = "/sistema/sair";
+            },[2000])
+  
+        })
+        .catch(function (error) {
+          
+          console.log(error)
+          handleOpenSnackbar("Erro! Tente novamente.", "error");
+  
+        });
 
     }
 
@@ -87,7 +95,7 @@ export const BasicDataPanel = memo((props) => {
 
         const data = new FormData(event.currentTarget);
 
-        if(dataValidate(data)){
+        if(formDataValidate(data)){
   
             requestServerOperation(data);
   
@@ -101,7 +109,7 @@ export const BasicDataPanel = memo((props) => {
     * Recebe o objeto da classe FormData criado na rotina 1
     * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
-    function dataValidate(formData){
+    function formDataValidate(formData){
 
         // Regex para validação
         const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -287,7 +295,7 @@ export const BasicDataPanel = memo((props) => {
                     confirmation_default_button: {
                         required: true, 
                         text: "Desativar a conta", 
-                        event: temporarilyDisableAccount
+                        event: disableAccount
                     },
                     confirmation_button_with_link:{
                         required: false
@@ -435,7 +443,7 @@ export const BasicDataPanel = memo((props) => {
 
         <Grid container spacing={3}>
             <Grid item>
-                <Button variant="contained" color="error" onClick = {() => {setOpenModal(!openModal)}}>
+                <Button variant="contained" color="error" onClick = {disableAccount}>
                     Desativar conta temporariamente
                 </Button> 
             </Grid>

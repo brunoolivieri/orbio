@@ -46,7 +46,7 @@
 	<!-- FILESAVER -->
 	<script src="{{ asset('js/map/file_saver/src/FileSaver.js') }}"></script> 
 
- 	<title>Embrapa & BirdView</title>
+ 	<title>{{ env('APP_NAME'); }}</title>
  </head>
  <body>
 

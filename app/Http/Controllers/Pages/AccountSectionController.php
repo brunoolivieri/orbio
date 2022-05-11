@@ -192,9 +192,15 @@ class AccountSectionController extends Controller
      */
     function userAccountDesactivation($user_id) : \Illuminate\Http\Response {
 
-        
+        try{
 
+            UserModel::where("id", $user_id)->update(["status" => false]);
 
+            return response("", 200);
 
+        }catch(\Exception $e){
+
+            return response(["error" => $e->getMessage()], 500);
+        }
     }
 }
