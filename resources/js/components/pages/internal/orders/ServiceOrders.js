@@ -24,15 +24,14 @@ export function ServiceOrders(){
     })
 
     return(
-
         <>
         <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
-        <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+            <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          <OrdersPanel />
-        
-        </Box>
-    </Paper>
+            <OrdersPanel />
+            
+            </Box>
+        </Paper>
         </>
     )
 }

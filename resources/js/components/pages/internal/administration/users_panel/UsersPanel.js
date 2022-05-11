@@ -1,12 +1,12 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useEffect, useState } from "react";
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// React
+import * as React from 'react';
+// Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
-// IMPORTAÇÃO DOS COMPONENTES PARA O MATERIAL UI
+// Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -19,7 +19,6 @@ import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
@@ -27,13 +26,14 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+import TablePagination from '@mui/material/TablePagination';
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-// OUTROS
+// Outros
 import { useSnackbar } from 'notistack';
 
 const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
@@ -55,16 +55,15 @@ export function UsersPanel(){
   
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = useState({page: 1, limit: 10, where: 0, total_records: 0});
+  const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
   // State do registro selecionado
-  // O valor do checkbox de cada registro é o seu índice da estrutura de dados original retornada do servidor
-  // Quando um registro é selecionado, aqui é salvo seu índice, e o modal de update e delete são renderizados
-  // Os modais recebem o elemento do array da resposta do servidor cujo índice é igual ao salvo aqui 
-  const [selectedRecordIndex, setSelectedRecordIndex] = useState(null);
+  // Quando um registro é selecionado, seu índice é salvo nesse state
+  // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
+  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -76,7 +75,7 @@ export function UsersPanel(){
    * Esses valores são: limit, where e número da página atual
    * 
    */
-    useEffect(() => {
+   React.useEffect(() => {
 
       const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
 
@@ -208,19 +207,19 @@ export function UsersPanel(){
   const handleTablePageChange = (event, value) => {
 
     setPaginationParams({
-      page: value,
+      page: value+1,
       limit: paginationParams.limit, 
       where: paginationParams.where
     });
 
   };
 
-  const handleChangeRowsPerPage = (event, new_value) => {
+  const handleChangeRowsPerPage = (event) => {
 
     setPaginationParams({
       page: 1,
-      limit: new_value, 
-      where: value_searched
+      limit: event.target.value, 
+      where: paginationParams.where
     });
     
   };
@@ -352,7 +351,15 @@ export function UsersPanel(){
         {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
         <Grid item>
           <Stack spacing={2}>
-            <Pagination count={panelData.response.total_pages} shape="rounded" page={paginationParams.page} onChange={handleTablePageChange} />
+            <TablePagination
+              labelRowsPerPage="Linhas por página: "
+              component="div"
+              count={panelData.response.total_records}
+              page={paginationParams.page - 1}
+              onPageChange={handleTablePageChange}
+              rowsPerPage={paginationParams.limit}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
           </Stack>
         </Grid>  
         }

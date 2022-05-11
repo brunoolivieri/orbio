@@ -19,7 +19,6 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
-import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import FormGroup from '@mui/material/FormGroup';
@@ -29,6 +28,7 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import { useSnackbar } from 'notistack';
+import TablePagination from '@mui/material/TablePagination';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
@@ -63,9 +63,8 @@ export function ProfilesPanel(){
     const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
 
     // State do registro selecionado
-    // O valor do checkbox de cada registro é o seu índice da estrutura de dados original retornada do servidor
-    // Quando um registro é selecionado, aqui é salvo seu índice, e o modal de update e delete são renderizados
-    // Os modais recebem o elemento do array da resposta do servidor cujo índice é igual ao salvo aqui 
+    // Quando um registro é selecionado, seu índice é salvo nesse state
+    // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
     const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
     // State da deleção permitida
@@ -84,7 +83,7 @@ export function ProfilesPanel(){
      const handleTablePageChange = (event, value) => {
 
       setPaginationParams({
-        page: value,
+        page: value+1,
         limit: paginationParams.limit, 
         where: paginationParams.where
       });
@@ -248,6 +247,16 @@ export function ProfilesPanel(){
 
     }
 
+    const handleChangeRowsPerPage = (event) => {
+
+      setPaginationParams({
+        page: 1,
+        limit: event.target.value, 
+        where: paginationParams.where
+      });
+      
+    };
+
     function handleClickRadio(event, row){
       //console.log(event.target.value)
   
@@ -339,7 +348,15 @@ export function ProfilesPanel(){
           {(panelData.status && !panelData.error) && 
           <Grid item>
             <Stack spacing={2}>
-              <Pagination count={panelData.total_pages} shape="rounded" page={paginationParams.page} onChange={handleTablePageChange} />
+              <TablePagination
+                labelRowsPerPage="Linhas por página: "
+                component="div"
+                count={panelData.response.total_records}
+                page={paginationParams.page - 1}
+                onPageChange={handleTablePageChange}
+                rowsPerPage={paginationParams.limit}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Stack>
           </Grid>  
           }
