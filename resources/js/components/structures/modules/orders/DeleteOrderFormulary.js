@@ -110,6 +110,7 @@ export function DeleteOrderFormulary({...props}){
         //  Deselecionar registro na tabela
         props.record_setter(null);
         // Outros
+        props.reload_table();
         setIsChecked(null);
         setDisabledButton(false);
         handleClose();

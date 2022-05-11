@@ -286,7 +286,7 @@ export function UsersPanel(){
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateUserFormulary />
+          <CreateUserFormulary reload_table = {reloadTable} />
         </Grid>
 
         <Grid item>
@@ -300,7 +300,7 @@ export function UsersPanel(){
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(panelData.response.records != null && selectedRecordIndex != null) && 
-            <UpdateUserFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+            <UpdateUserFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
           }
         </Grid>
 
@@ -315,7 +315,7 @@ export function UsersPanel(){
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(panelData.response.records != null && selectedRecordIndex != null) && 
-            <DeleteUserFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+            <DeleteUserFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
           }
         </Grid>
 
@@ -372,7 +372,6 @@ export function UsersPanel(){
           name="radio-buttons-group"
           value={selectedRecordIndex} 
         >
-
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>
@@ -400,10 +399,8 @@ export function UsersPanel(){
               </TableBody>
             </Table>
           </TableContainer>
-
         </RadioGroup>
       </FormControl>
-
     </>
   )
 }

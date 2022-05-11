@@ -288,7 +288,7 @@ export function IncidentsPanel(){
         <Grid container spacing={1} alignItems="center" mb={1}>
 
           <Grid item>
-            <CreateIncidentFormulary />
+            <CreateIncidentFormulary reload_table = {reloadTable} />
           </Grid>
 
           <Grid item>
@@ -301,7 +301,7 @@ export function IncidentsPanel(){
             }
 
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <UpdateIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+              <UpdateIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
             } 
           </Grid>
 
@@ -315,7 +315,7 @@ export function IncidentsPanel(){
             }
 
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <DeleteIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+              <DeleteIncidentFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
             } 
           </Grid>
 

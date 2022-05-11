@@ -28,7 +28,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
 // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+    const {AuthData} = useAuthentication();
 
     const [open, setOpen] = React.useState(false); 
 
@@ -160,6 +160,7 @@ export const UpdatePlanFormulary = React.memo(({...props}) => {
         // Deselecionar registro na tabela
         props.record_setter(null);
         // Outros
+        props.reload_table();
         setDisabledButton(false);
         handleClose();
 

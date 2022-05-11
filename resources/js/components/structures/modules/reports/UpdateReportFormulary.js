@@ -193,8 +193,8 @@ export const UpdateReportFormulary = React.memo(({...props}) => {
 
       setTimeout(() => {
 
+        props.reload_table();
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);

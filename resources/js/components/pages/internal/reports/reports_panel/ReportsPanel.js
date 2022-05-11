@@ -296,15 +296,15 @@ export function ReportsPanel(){
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateReportFormulary />
+          <CreateReportFormulary reload_table = {reloadTable}/>
         </Grid>
 
         <Grid item>
-          <UpdateReportFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} /> 
+          <UpdateReportFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} reload_table = {reloadTable}/> 
         </Grid>
 
         <Grid item>
-          <DeleteReportFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} />
+          <DeleteReportFormulary selected_record = {{dom: actualSelectedRecord.dom, data_cells: actualSelectedRecord.data_cells}} reload_table = {reloadTable}/>
         </Grid>
 
         <Grid item>

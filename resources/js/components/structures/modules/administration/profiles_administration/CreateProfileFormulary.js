@@ -20,6 +20,7 @@ import { Alert } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { ProfilesPanel } from '../../../../pages/internal/administration/profiles_panel/ProfilesPanel';
 
 export function CreateProfileFormulary() {
 
@@ -149,8 +150,8 @@ export function CreateProfileFormulary() {
 
       setTimeout(() => {
 
+        props.reload_table();
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);

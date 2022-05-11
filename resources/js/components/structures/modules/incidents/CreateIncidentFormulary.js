@@ -155,8 +155,8 @@ export function CreateIncidentFormulary(){
 
       setTimeout(() => {
 
+        props.reload_table();
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);

@@ -296,7 +296,7 @@ export function OrdersPanel(){
         <Grid container spacing={1} alignItems="center" mb={1}>
 
           <Grid item>
-            <CreateOrderFormulary />
+            <CreateOrderFormulary reload_table = {reloadTable} />
           </Grid>
 
           <Grid item>
@@ -309,7 +309,7 @@ export function OrdersPanel(){
             }
 
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <UpdateOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+              <UpdateOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
             }
           </Grid>
 
@@ -323,7 +323,7 @@ export function OrdersPanel(){
             }
 
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <DeleteOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+              <DeleteOrderFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
             }
           </Grid>
 

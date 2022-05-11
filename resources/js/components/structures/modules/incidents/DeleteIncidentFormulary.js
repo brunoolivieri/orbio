@@ -108,8 +108,8 @@ export function DeleteIncidentFormulary({...props}){
 
       setTimeout(() => {
 
+        props.reload_table();
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);

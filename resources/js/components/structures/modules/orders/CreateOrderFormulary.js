@@ -30,7 +30,7 @@ import moment from 'moment';
 
 export const CreateOrderFormulary = React.memo(() => {
 
-  // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
+// ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
     // Utilizador do state global de autenticação
     const {AuthData, setAuthData} = useAuthentication();
@@ -58,7 +58,7 @@ export const CreateOrderFormulary = React.memo(() => {
     // Switch state
     const [isChecked, setIsChecked] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
+// ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
     // Função para abrir o modal
     const handleClickOpen = () => {
@@ -231,10 +231,9 @@ export const CreateOrderFormulary = React.memo(() => {
 
       setTimeout(() => {
 
+        props.reload_table();
         setIsChecked(null);
-
         setDisabledButton(false);
-
         handleClose();
 
       }, 2000);

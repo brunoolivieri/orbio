@@ -1,6 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import * as React from 'react';
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -12,10 +12,10 @@ import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import { DialogContentText } from '@mui/material';
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
@@ -110,6 +110,7 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
           // Deselecionar registro na tabela
           props.record_setter(null);
           // Outros
+          props.reload_table();
           setIsChecked(null);
           setDisabledButton(false);
           handleClose();

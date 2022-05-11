@@ -163,6 +163,7 @@ export const UpdateProfileFormulary = React.memo(({...props}) => {
         // Deselecionar registro na tabela
         props.record_setter(null);
         // Outros
+        props.reload_table();
         setDisabledButton(false);
         handleClose();
 

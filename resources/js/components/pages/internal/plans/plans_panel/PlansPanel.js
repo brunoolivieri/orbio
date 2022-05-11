@@ -153,7 +153,6 @@ export function PlansPanel(){
  */
   function requestToGetSearchedFlightPlans(module_middleware){
 
-    // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/plans-module/show?args=${select_query_params}&auth=${module_middleware}`)
@@ -341,7 +340,7 @@ export function PlansPanel(){
 
             {/* O modal é renderizado apenas quando um registro já foi selecionado */}
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <UpdatePlanFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+              <UpdatePlanFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
             }
           </Grid>
 
@@ -356,7 +355,7 @@ export function PlansPanel(){
 
             {/* O modal é renderizado apenas quando um registro já foi selecionado */}
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <DeletePlanFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+              <DeletePlanFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
             }
           </Grid>
 

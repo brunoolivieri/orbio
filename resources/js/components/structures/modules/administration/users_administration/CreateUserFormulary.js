@@ -1,6 +1,6 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+// React
 import * as React from 'react';
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -12,10 +12,10 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-// IMPORTAÇÃO DOS ÍCONES DO FONTS AWESOME
+// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// Custom
 import AxiosApi from '../../../../../services/AxiosApi';
 import { GenericSelect } from '../../../input_select/GenericSelect';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -152,6 +152,8 @@ export function CreateUserFormulary({...props}) {
       setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
       setTimeout(() => {
+
+        props.reload_table();
 
         setDisabledButton(false);
 

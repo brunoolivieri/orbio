@@ -285,7 +285,7 @@ export function ProfilesPanel(){
         <Grid container spacing={1} alignItems="center" mb={1}>
 
           <Grid item>
-            <CreateProfileFormulary />
+            <CreateProfileFormulary reload_table = {reloadTable} />
           </Grid>
 
           <Grid item>
@@ -299,7 +299,7 @@ export function ProfilesPanel(){
 
             {/* O modal é renderizado apenas quando um registro já foi selecionado */}
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <UpdateProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} /> 
+              <UpdateProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
             } 
           </Grid>
 
@@ -314,7 +314,7 @@ export function ProfilesPanel(){
 
             {/* O modal é renderizado apenas quando um registro já foi selecionado */}
             {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <DeleteProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} />
+              <DeleteProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
             }
           </Grid>
 
