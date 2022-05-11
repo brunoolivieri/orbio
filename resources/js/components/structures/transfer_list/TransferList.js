@@ -34,15 +34,15 @@ function union(a, b) {
   return [...a, ...not(b, a)];
 }
 
-export function TransferList({...props}) {
+export function TransferList({ ...props }) {
 
-// ============================================================================== STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
   // Utilizador do state global de autenticação
-  const {AuthData, setAuthData} = useAuthentication();
+  const { AuthData } = useAuthentication();
 
   // State do carregamento dos dados do input de select
-  const [listOptions, setListOptions] = React.useState({status: {loading: true, success: false}, records: null, item_primary_key: "", item_key_text: ""});
+  const [listOptions, setListOptions] = React.useState({ status: { loading: true, success: false }, records: null, item_primary_key: "", item_key_text: "" });
 
   const [checked, setChecked] = React.useState([]);
   const [leftItems, setLeftItems] = React.useState([]);
@@ -50,7 +50,7 @@ export function TransferList({...props}) {
   const leftChecked = intersection(checked, leftItems);
   const rightChecked = intersection(checked, props.right_items.state);
 
-// ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
+  // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
   /*
   *
@@ -63,82 +63,82 @@ export function TransferList({...props}) {
 
     AxiosApi.get(props.axios_url, {
       access: AuthData.data.access
-      })
+    })
       .then(function (response) {
 
-      if(response.status === 200){
+        if (response.status === 200) {
 
-        let available_options = [];
+          let available_options = [];
 
-        if(props.right_items.state.length == 0){
+          if (props.right_items.state.length == 0) {
 
-          available_options = response.data;
+            available_options = response.data;
 
-        }else if(props.right_items.state.length > 0){
+          } else if (props.right_items.state.length > 0) {
 
-          // Every value comparison that is different will add 1 to the counter
-          // Every value comparison that is equal resets the counter
-          let counter_available_options = 0;
+            // Every value comparison that is different will add 1 to the counter
+            // Every value comparison that is equal resets the counter
+            let counter_available_options = 0;
 
-          // Loops the loaded items
-          for(let i = 0; i < response.data.length; i++){
+            // Loops the loaded items
+            for (let i = 0; i < response.data.length; i++) {
 
-            let counter_of_the_true_cases = 0;
+              let counter_of_the_true_cases = 0;
 
-            // Loops the selected items
-            for(let j = 0; j < props.right_items.state.length; j++){
-              
-              // If the loaded item is equal to the selected one
-              if(response.data[i].id == props.right_items.state[j].id){
-                //console.log("resets")
-                
-                counter_of_the_true_cases = 0;
-              
-              // If the loaded item is different from the selected one
-              }else if(response.data[i].id != props.right_items.state[j].id){
-                //console.log("count")
-              
-                counter_of_the_true_cases++;
+              // Loops the selected items
+              for (let j = 0; j < props.right_items.state.length; j++) {
+
+                // If the loaded item is equal to the selected one
+                if (response.data[i].id == props.right_items.state[j].id) {
+                  //console.log("resets")
+
+                  counter_of_the_true_cases = 0;
+
+                  // If the loaded item is different from the selected one
+                } else if (response.data[i].id != props.right_items.state[j].id) {
+                  //console.log("count")
+
+                  counter_of_the_true_cases++;
+
+                }
+
+              }
+
+              // If the different cases counter is equal to the quantity of selected items
+              // This means that the value is not one of the selected ones
+              if (counter_of_the_true_cases == props.right_items.state.length) {
+
+                available_options[counter_available_options] = response.data[i];
+
+                counter_available_options++;
 
               }
 
             }
 
-            // If the different cases counter is equal to the quantity of selected items
-            // This means that the value is not one of the selected ones
-            if(counter_of_the_true_cases == props.right_items.state.length){
-
-              available_options[counter_available_options] = response.data[i];
-
-              counter_available_options++;
-
-            }
+            //console.log(counter_available_options);
 
           }
 
-          //console.log(counter_available_options);
+          setLeftItems(available_options);
+          setListOptions({ status: { loading: false, success: true }, records: available_options, item_primary_key: "id", item_key_text: "arquivo" });
+
+        } else {
+
+          setListOptions({ status: { loading: false, success: false } });
 
         }
-
-        setLeftItems(available_options);
-        setListOptions({status: {loading: false, success: true}, records: available_options, item_primary_key: "id", item_key_text: "arquivo"});
-
-      }else{
-
-        setListOptions({status: {loading: false, success: false}});
-
-      }
 
       })
       .catch(function (error) {
 
         console.log(error)
 
-        setListOptions({status: {loading: false, success: false}});
+        setListOptions({ status: { loading: false, success: false } });
 
       });
 
-  },[]);
+  }, []);
 
   // Handle click on one list item
   const handleToggle = (value) => () => {
@@ -182,7 +182,7 @@ export function TransferList({...props}) {
 
 
 
-// ============================================================================== ESTRUTURAÇÃO DAS LISTAS ============================================================================== //
+  // ============================================================================== ESTRUTURAÇÃO DAS LISTAS ============================================================================== //
 
   const makeList = (title, items) => (
     <Card>
@@ -237,45 +237,45 @@ export function TransferList({...props}) {
     </Card>
   );
 
-// ============================================================================== ESTRUTURAÇÃO PRINCIPAL ============================================================================== //
-      
+  // ============================================================================== ESTRUTURAÇÃO PRINCIPAL ============================================================================== //
+
   return (
     <>
-    {(listOptions.status.loading == false && listOptions.status.success) ?
-      <Grid container spacing={2} justifyContent="center" alignItems="center">
-        <Grid item>{makeList('Itens', leftItems)}</Grid>
-        <Grid item>
-          <Grid container direction="column" alignItems="center">
-            <Button
-              sx={{ my: 0.5 }}
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedRight}
-              disabled={leftChecked.length === 0}
-              aria-label="move selected right"
-            >
-              &gt;
-            </Button>
-            <Button
-              sx={{ my: 0.5 }}
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedLeft}
-              disabled={rightChecked.length === 0}
-              aria-label="move selected left"
-            >
-              &lt;
-            </Button>
+      {(listOptions.status.loading == false && listOptions.status.success) ?
+        <Grid container spacing={2} justifyContent="center" alignItems="center">
+          <Grid item>{makeList('Itens', leftItems)}</Grid>
+          <Grid item>
+            <Grid container direction="column" alignItems="center">
+              <Button
+                sx={{ my: 0.5 }}
+                variant="outlined"
+                size="small"
+                onClick={handleCheckedRight}
+                disabled={leftChecked.length === 0}
+                aria-label="move selected right"
+              >
+                &gt;
+              </Button>
+              <Button
+                sx={{ my: 0.5 }}
+                variant="outlined"
+                size="small"
+                onClick={handleCheckedLeft}
+                disabled={rightChecked.length === 0}
+                aria-label="move selected left"
+              >
+                &lt;
+              </Button>
+            </Grid>
           </Grid>
+          <Grid item>{makeList('Seleções', props.right_items.state)}</Grid>
         </Grid>
-        <Grid item>{makeList('Seleções', props.right_items.state)}</Grid>
-      </Grid>
-      :
-      (!listOptions.status.loading && !listOptions.status.success) ? 
-      "ERRO" 
-      : 
-      "CARREGANDO...."
-    }
+        :
+        (!listOptions.status.loading && !listOptions.status.success) ?
+          "ERRO"
+          :
+          "CARREGANDO...."
+      }
     </>
   );
 }

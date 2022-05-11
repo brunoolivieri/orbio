@@ -46,123 +46,123 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const native_profiles = [1,2,3,4,5];
+const native_profiles = [1, 2, 3, 4, 5];
 
-export function ProfilesPanel(){
+export function ProfilesPanel() {
 
-     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
-    const {AuthData} = useAuthentication();
-    
-    // State do carregamento dos dados
-    // Enquanto for false, irá aparecer "carregando" no painel
-    const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  // Utilizador do state global de autenticação
+  const { AuthData } = useAuthentication();
 
-    // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-    const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
+  // State do carregamento dos dados
+  // Enquanto for false, irá aparecer "carregando" no painel
+  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
-    // State do registro selecionado
-    // Quando um registro é selecionado, seu índice é salvo nesse state
-    // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
-    const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
+  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
 
-    // State da deleção permitida
-    const [deleteAvailable, setDeleteAvailable] = React.useState(true);
+  // State do registro selecionado
+  // Quando um registro é selecionado, seu índice é salvo nesse state
+  // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
+  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
-    // context do snackbar
-    const { enqueueSnackbar } = useSnackbar();
+  // State da deleção permitida
+  const [deleteAvailable, setDeleteAvailable] = React.useState(true);
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // context do snackbar
+  const { enqueueSnackbar } = useSnackbar();
 
-    /**
-     * Função para processar a alteração da página da tabela
-     * paginationParams é a dependência do useEffect
-     * 
-     */
-     const handleTablePageChange = (event, value) => {
+  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-      setPaginationParams({
-        page: value+1,
-        limit: paginationParams.limit, 
-        where: paginationParams.where
-      });
-
-    };
-
-    /**
-     * Função para processar a pesquisa de usuários no input de pesquisa
-     * 
-     */
-    function handleSearchSubmit(event){
-      event.preventDefault();
-
-        let value_searched = window.document.getElementById("search_input").value;
-
-        setPaginationParams({
-          page: 1,
-          limit: paginationParams.limit, 
-          where: value_searched
-        });
-
-    }
-
-    function reloadTable(){
-
-      setPanelData({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
-    
-      setPaginationParams({
-        page: 1,
-        limit: paginationParams.limit, 
-        where: 0
-      });
-
-    }
-
-    /**
-     * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
-     * 
-     */
-     React.useEffect(() => {
-
-      const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
-
-      if(!paginationParams.where){
-
-        requestToGetAllProfiles(module_middleware);
-
-      }else{
-
-        requestToGetSearchedProfiles(module_middleware);
-
-      }
-
-    },[paginationParams]);
-
-    /**
-   * Carregamento de todos os registros de usuário
+  /**
+   * Função para processar a alteração da página da tabela
+   * paginationParams é a dependência do useEffect
    * 
    */
-    function requestToGetAllProfiles(module_middleware){
+  const handleTablePageChange = (event, value) => {
 
-     // This receives: limit clause, where clause and the page number
+    setPaginationParams({
+      page: value + 1,
+      limit: paginationParams.limit,
+      where: paginationParams.where
+    });
+
+  };
+
+  /**
+   * Função para processar a pesquisa de usuários no input de pesquisa
+   * 
+   */
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+
+    let value_searched = window.document.getElementById("search_input").value;
+
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit,
+      where: value_searched
+    });
+
+  }
+
+  function reloadTable() {
+
+    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit,
+      where: 0
+    });
+
+  }
+
+  /**
+   * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
+   * 
+   */
+  React.useEffect(() => {
+
+    const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
+
+    if (!paginationParams.where) {
+
+      requestToGetAllProfiles(module_middleware);
+
+    } else {
+
+      requestToGetSearchedProfiles(module_middleware);
+
+    }
+
+  }, [paginationParams]);
+
+  /**
+ * Carregamento de todos os registros de usuário
+ * 
+ */
+  function requestToGetAllProfiles(module_middleware) {
+
+    // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-      AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}&auth=${module_middleware}`)
       .then(function (response) {
 
-        if(response.status === 200){
+        if (response.status === 200) {
 
           setPanelData({
             status: {
-              loading: false, 
+              loading: false,
               success: true,
               error: false
-            }, 
+            },
             response: {
-              records: response.data.records, 
-              total_records: response.data.total_records_founded, 
-              records_per_page: response.data.records_per_page, 
+              records: response.data.records,
+              total_records: response.data.total_records_founded,
+              records_per_page: response.data.records_per_page,
               total_pages: response.data.total_pages
             }
           });
@@ -172,180 +172,180 @@ export function ProfilesPanel(){
       })
       .catch(function (error) {
 
-        if(error.response.status == 404){
+        if (error.response.status == 404) {
 
           handleOpenSnackbar("Nenhum registro de perfil encontrado!", "error");
-  
-        }else{
-  
+
+        } else {
+
           handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
-  
+
           console.log(error.message);
-  
-          setPanelData({status: {loading: false, success: false, error: true}, response: null});
-  
+
+          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
+
         }
 
-    });
+      });
 
 
-    }
+  }
 
-    /**
-    * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
-    * 
-    */
-    function requestToGetSearchedProfiles(module_middleware){
+  /**
+  * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
+  * 
+  */
+  function requestToGetSearchedProfiles(module_middleware) {
 
-      // This receives: limit clause, where clause and the page number
-      const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
+    // This receives: limit clause, where clause and the page number
+    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-      AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}&auth=${module_middleware}`)
       .then(function (response) {
 
-        if(response.status === 200){
+        if (response.status === 200) {
 
           setPanelData({
             status: {
-              loading: false, 
+              loading: false,
               success: true,
               error: false
-            }, 
+            },
             response: {
-              records: response.data.records, 
-              total_records: response.data.total_records_founded, 
-              records_per_page: response.data.records_per_page, 
+              records: response.data.records,
+              total_records: response.data.total_records_founded,
+              records_per_page: response.data.records_per_page,
               total_pages: response.data.total_pages
             }
           });
 
-          if(response.data.total_records_founded > 1){
+          if (response.data.total_records_founded > 1) {
             handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} perfis`, "success");
-          }else{
+          } else {
             handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} perfil`, "success");
-          } 
+          }
 
         }
 
       }).catch((error) => {
 
-        if(error.response.status == 404){
+        if (error.response.status == 404) {
 
           handleOpenSnackbar("Nenhum registro de perfil encontrado!", "error");
-  
-        }else{
-  
+
+        } else {
+
           handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
-  
+
           console.log(error.message);
-  
-          setPanelData({status: {loading: false, success: false, error: true}, response: null});
-  
+
+          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
+
         }
 
       });
 
+  }
+
+  const handleChangeRowsPerPage = (event) => {
+
+    setPaginationParams({
+      page: 1,
+      limit: event.target.value,
+      where: paginationParams.where
+    });
+
+  };
+
+  function handleClickRadio(event, row) {
+    //console.log(event.target.value)
+
+    if (event.target.value === selectedRecordIndex) {
+      setSelectedRecordIndex(null);
+    } else if (event.target.value != selectedRecordIndex) {
+      //console.log(panelData.response.records[selectedRecordIndex])
+      //console.log(panelData.response.records[event.target.value])
+      setSelectedRecordIndex(event.target.value);
     }
 
-    const handleChangeRowsPerPage = (event) => {
+  }
 
-      setPaginationParams({
-        page: 1,
-        limit: event.target.value, 
-        where: paginationParams.where
-      });
-      
-    };
+  function handleOpenSnackbar(text, variant) {
 
-    function handleClickRadio(event, row){
-      //console.log(event.target.value)
-  
-      if (event.target.value === selectedRecordIndex) {
-        setSelectedRecordIndex(null);
-      } else if(event.target.value != selectedRecordIndex){
-        //console.log(panelData.response.records[selectedRecordIndex])
-        //console.log(panelData.response.records[event.target.value])
-        setSelectedRecordIndex(event.target.value);
-      }
-  
-    }
+    enqueueSnackbar(text, { variant });
 
-    function handleOpenSnackbar(text, variant){
+  };
 
-      enqueueSnackbar(text, { variant });
-  
-    };
-  
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
-    return(
+  return (
 
-      <>
-        <Grid container spacing={1} alignItems="center" mb={1}>
+    <>
+      <Grid container spacing={1} alignItems="center" mb={1}>
 
-          <Grid item>
-            <CreateProfileFormulary reload_table = {reloadTable} />
-          </Grid>
+        <Grid item>
+          <CreateProfileFormulary reload_table={reloadTable} />
+        </Grid>
 
-          <Grid item>
-            {selectedRecordIndex == null && 
-              <Tooltip title="Selecione um registro para editar">
-                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-                </IconButton>
-              </Tooltip>
-            }
+        <Grid item>
+          {selectedRecordIndex == null &&
+            <Tooltip title="Selecione um registro para editar">
+              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              </IconButton>
+            </Tooltip>
+          }
 
-            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-            {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <UpdateProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
-            } 
-          </Grid>
+          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+          {(panelData.response.records != null && selectedRecordIndex != null) &&
+            <UpdateProfileFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          }
+        </Grid>
 
-          <Grid item hidden={!deleteAvailable}>
-            {selectedRecordIndex == null && 
-              <Tooltip title="Selecione um registro para excluir">
+        <Grid item hidden={!deleteAvailable}>
+          {selectedRecordIndex == null &&
+            <Tooltip title="Selecione um registro para excluir">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
-                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
-              </Tooltip>
-            }
+            </Tooltip>
+          }
 
-            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-            {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <DeleteProfileFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
-            }
-          </Grid>
+          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+          {(panelData.response.records != null && selectedRecordIndex != null) &&
+            <DeleteProfileFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          }
+        </Grid>
 
-          <Grid item>
-            <Tooltip title="Reload">
-              <IconButton onClick = {reloadTable}>
-                <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
-              </IconButton>
-            </Tooltip>  
-          </Grid>
+        <Grid item>
+          <Tooltip title="Reload">
+            <IconButton onClick={reloadTable}>
+              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
 
-          <Grid item xs>
-            <TextField
-              fullWidth
-              placeholder={"Pesquisar perfil por ID"}
-              InputProps={{
-                startAdornment: 
+        <Grid item xs>
+          <TextField
+            fullWidth
+            placeholder={"Pesquisar perfil por ID"}
+            InputProps={{
+              startAdornment:
                 <InputAdornment position="start">
                   <IconButton onClick={handleSearchSubmit}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
+                    <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                   </IconButton>
                 </InputAdornment>,
-                disableunderline: 1,
-                sx: { fontSize: 'default' },
-              }}
-              variant="outlined"
-              id = "search_input"
-            />
-          </Grid>
+              disableunderline: 1,
+              sx: { fontSize: 'default' },
+            }}
+            variant="outlined"
+            id="search_input"
+          />
+        </Grid>
 
-          {(panelData.status && !panelData.error) && 
+        {(panelData.status && !panelData.error) &&
           <Grid item>
             <Stack spacing={2}>
               <TablePagination
@@ -358,78 +358,78 @@ export function ProfilesPanel(){
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Stack>
-          </Grid>  
-          }
+          </Grid>
+        }
 
-        </Grid>
+      </Grid>
 
-        <FormControl fullWidth>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            name="radio-buttons-group"
-            value={selectedRecordIndex} 
-          >
+      <FormControl fullWidth>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          name="radio-buttons-group"
+          value={selectedRecordIndex}
+        >
 
           <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                  <TableHead>
-                    <TableRow>
-                      <StyledHeadTableCell>ID</StyledHeadTableCell>
-                      <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                      <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
-                      <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
-                      <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
-                      <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
-                      <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
+            <Table sx={{ minWidth: 500 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Administração</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody className="tbody">
+                {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
+                {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
+                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                  panelData.response.records.map((row, index) => (
+                    <TableRow key={row.profile_id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e, row) }} />} label={row.profile_id} /></TableCell>
+                      <TableCell align="center">{row.profile_name}</TableCell>
+                      <TableCell align="center">
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                        </FormGroup>
+                      </TableCell>
+                      <TableCell align="center">
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                        </FormGroup>
+                      </TableCell>
+                      <TableCell align="center">
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                        </FormGroup>
+                      </TableCell>
+                      <TableCell align="center">
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                        </FormGroup>
+                      </TableCell>
+                      <TableCell align="center">
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                        </FormGroup>
+                      </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody className = "tbody">
-                      {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
-                      {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
-                      {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                          panelData.response.records.map((row, index) => ( 
-                            <TableRow key={row.profile_id}>
-                              <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(e, row)}} />} label={row.profile_id} /></TableCell>
-                              <TableCell align="center">{row.profile_name}</TableCell>
-                              <TableCell align="center">
-                                <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                </FormGroup>   
-                              </TableCell>
-                              <TableCell align="center">
-                                <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                </FormGroup>
-                              </TableCell>
-                              <TableCell align="center">
-                                <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["3"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                </FormGroup> 
-                              </TableCell>
-                              <TableCell align="center">   
-                                <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                </FormGroup>
-                              </TableCell>
-                              <TableCell align="center">   
-                                <FormGroup>
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
-                                  <FormControlLabel control={<Checkbox defaultChecked={row.modules["5"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
-                                </FormGroup>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                  </TableBody>
-              </Table>
+                  ))}
+              </TableBody>
+            </Table>
           </TableContainer>
 
         </RadioGroup>
       </FormControl>
-             
-      </>
-    )
+
+    </>
+  )
 }

@@ -84,7 +84,7 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
         setDisabledButton(false);
 
         AxiosApi.delete(`/api/admin-module-user/${data.get("user_id")}?auth=${logged_user_id}.${module_id}.${action}`)
-        .then(function (response) {
+        .then(function () {
 
           successServerResponseTreatment();
 
@@ -111,7 +111,6 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
           props.record_setter(null);
           // Outros
           props.reload_table();
-          setIsChecked(null);
           setDisabledButton(false);
           handleClose();
   

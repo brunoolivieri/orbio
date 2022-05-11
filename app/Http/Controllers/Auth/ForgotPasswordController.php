@@ -31,34 +31,38 @@ class ForgotPasswordController extends Controller
 
         try{
 
-            DB::transaction(function () use ($request) {
+            DB::beginTransaction();
 
-                $random_integer_token = random_int(1000, 9999);
+            $random_integer_token = random_int(1000, 9999);
 
-                $user = UserModel::where("email", $request->email)->firstOrFail();
+            $user = UserModel::where("email", $request->email)->firstOrFail();
 
-                if(!$user->trashed()){
+            if(!$user->trashed()){
 
-                    $user->update(['token' => $random_integer_token]);
+                $user->update(['token' => $random_integer_token]);
 
-                    UserModel::where('email', $request->email)->update(['token' => $random_integer_token]);
+                UserModel::where('email', $user->email)->update(['token' => $random_integer_token]);
 
-                    // Send token event
-                    event(new TokenForChangePasswordEvent($user, $random_integer_token));
+                // Send token event
+                event(new TokenForChangePasswordEvent($user, $random_integer_token));
 
-                    Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
+                Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
 
-                    return response("", 200);
+                DB::Commit();
 
-                }else{
+                return response("", 200);
 
-                    return response("", 500);
+            }else{
 
-                }
+                DB::rollBack();
 
-            });
+                return response("", 500);
+
+            }
 
         }catch(\Exception $e){
+
+            DB::rollBack();
 
             Log::channel('mail')->error("[O envio do email falhou | Alteração da senha] - Destinatário: ".$request->email."| Erro:".$e->getMessage());
 

@@ -46,19 +46,19 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-export function UsersPanel(){
+export function UsersPanel() {
 
-// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   // Utilizador do state global de autenticação
-  const {AuthData} = useAuthentication();
-  
+  const { AuthData } = useAuthentication();
+
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
+  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
@@ -68,78 +68,78 @@ export function UsersPanel(){
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
 
-// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   /**
    * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
    * Esses valores são: limit, where e número da página atual
    * 
    */
-   React.useEffect(() => {
+  React.useEffect(() => {
 
-      const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
+    const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
 
-      if(!paginationParams.where){
+    if (!paginationParams.where) {
 
-        requestToGetAllUsers(module_middleware);
+      requestToGetAllUsers(module_middleware);
 
-      }else{
+    } else {
 
-        requestToGetSearchedUsers(module_middleware);
+      requestToGetSearchedUsers(module_middleware);
 
-      }
+    }
 
-  },[paginationParams]);
+  }, [paginationParams]);
 
 
   /**
    * Carregamento de todos os registros de usuário
    * 
    */
-  function requestToGetAllUsers(module_middleware){
+  function requestToGetAllUsers(module_middleware) {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/admin-module-user?args=${select_query_params}&auth=${module_middleware}`)
-    .then(function (response) {
+      .then(function (response) {
 
-      if(response.status === 200){
+        if (response.status === 200) {
 
-        setPanelData({
-          status: {
-            loading: false, 
-            success: true,
-            error: false
-          }, 
-          response: {
-            records: response.data.records, 
-            total_records: response.data.total_records_founded, 
-            records_per_page: response.data.records_per_page, 
-            total_pages: response.data.total_pages
-          }
-        });
+          setPanelData({
+            status: {
+              loading: false,
+              success: true,
+              error: false
+            },
+            response: {
+              records: response.data.records,
+              total_records: response.data.total_records_founded,
+              records_per_page: response.data.records_per_page,
+              total_pages: response.data.total_pages
+            }
+          });
 
-      }
+        }
 
-    })
-    .catch(function (error) {
+      })
+      .catch(function (error) {
 
-      if(error.response.status == 404){
+        if (error.response.status == 404) {
 
-        handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
+          handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
 
-      }else{
+        } else {
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
 
-        console.log(error.message);
+          console.log(error.message);
 
-        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 
-      }
+        }
 
-    });
+      });
 
   }
 
@@ -147,7 +147,7 @@ export function UsersPanel(){
    * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
    * 
    */
-  function requestToGetSearchedUsers(module_middleware){
+  function requestToGetSearchedUsers(module_middleware) {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
@@ -155,46 +155,46 @@ export function UsersPanel(){
     AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}&auth=${module_middleware}`)
       .then(function (response) {
 
-        if(response.status === 200){
+        if (response.status === 200) {
 
           setPanelData({
             status: {
-              loading: false, 
+              loading: false,
               success: true,
               error: false
-            }, 
+            },
             response: {
-              records: response.data.records, 
-              total_records: response.data.total_records_founded, 
-              records_per_page: response.data.records_per_page, 
+              records: response.data.records,
+              total_records: response.data.total_records_founded,
+              records_per_page: response.data.records_per_page,
               total_pages: response.data.total_pages
             }
           });
 
-          if(response.data.total_records_founded > 1){
+          if (response.data.total_records_founded > 1) {
             handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
-          }else{
+          } else {
             handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
-          }   
+          }
 
         }
 
       }).catch(function (error) {
 
-        if(error.response.status == 404){
+        if (error.response.status == 404) {
 
           handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
-  
-        }else{
-  
+
+        } else {
+
           handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
-  
+
           console.log(error.message);
-  
-          setPanelData({status: {loading: false, success: false, error: true}, response: null});
-  
+
+          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
+
         }
-  
+
       });
 
   }
@@ -207,8 +207,8 @@ export function UsersPanel(){
   const handleTablePageChange = (event, value) => {
 
     setPaginationParams({
-      page: value+1,
-      limit: paginationParams.limit, 
+      page: value + 1,
+      limit: paginationParams.limit,
       where: paginationParams.where
     });
 
@@ -218,10 +218,10 @@ export function UsersPanel(){
 
     setPaginationParams({
       page: 1,
-      limit: event.target.value, 
+      limit: event.target.value,
       where: paginationParams.where
     });
-    
+
   };
 
   /**
@@ -229,16 +229,16 @@ export function UsersPanel(){
    * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
    * 
    */
-  function handleSearchSubmit(event){
+  function handleSearchSubmit(event) {
     event.preventDefault();
 
-      let value_searched = window.document.getElementById("search_input").value;
+    let value_searched = window.document.getElementById("search_input").value;
 
-      setPaginationParams({
-        page: 1,
-        limit: paginationParams.limit, 
-        where: value_searched
-      });
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit,
+      where: value_searched
+    });
 
   }
 
@@ -246,24 +246,24 @@ export function UsersPanel(){
    * Função para processar o recarregamento dos dados da tabela
    * 
    */
-  function reloadTable(){
+  function reloadTable() {
 
-    setPanelData({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
-    
+    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+
     setPaginationParams({
       page: 1,
-      limit: paginationParams.limit, 
+      limit: paginationParams.limit,
       where: 0
     });
 
   }
 
-  function handleClickRadio(event, row){
+  function handleClickRadio(event, row) {
     //console.log(event.target.value)
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
-    } else if(event.target.value != selectedRecordIndex){
+    } else if (event.target.value != selectedRecordIndex) {
       //console.log(panelData.response.records[selectedRecordIndex])
       //console.log(panelData.response.records[event.target.value])
       setSelectedRecordIndex(event.target.value);
@@ -271,60 +271,60 @@ export function UsersPanel(){
 
   }
 
-  function handleOpenSnackbar(text, variant){
+  function handleOpenSnackbar(text, variant) {
 
     enqueueSnackbar(text, { variant });
 
   };
-  
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
-  return(
+  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+
+  return (
 
     <>
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateUserFormulary reload_table = {reloadTable} />
+          <CreateUserFormulary reload_table={reloadTable} />
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null && 
+          {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) && 
-            <UpdateUserFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
+          {(panelData.response.records != null && selectedRecordIndex != null) &&
+            <UpdateUserFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null && 
+          {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
-             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
-                 <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-             </IconButton>
+              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              </IconButton>
             </Tooltip>
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) && 
-            <DeleteUserFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
+          {(panelData.response.records != null && selectedRecordIndex != null) &&
+            <DeleteUserFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
         <Grid item>
           <Tooltip title="Reload">
-            <IconButton onClick = {reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
+            <IconButton onClick={reloadTable}>
+              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
             </IconButton>
-          </Tooltip>  
+          </Tooltip>
         </Grid>
 
         <Grid item xs>
@@ -332,36 +332,36 @@ export function UsersPanel(){
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
             InputProps={{
-              startAdornment: 
-              <InputAdornment position="start">
-                <IconButton onClick={handleSearchSubmit}>
-                  <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
-                </IconButton>
-              </InputAdornment>,
+              startAdornment:
+                <InputAdornment position="start">
+                  <IconButton onClick={handleSearchSubmit}>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
+                  </IconButton>
+                </InputAdornment>,
               disableunderline: 1,
               sx: { fontSize: 'default' },
             }}
             variant="outlined"
-            id = "search_input"
-            sx={{borderRadius: 30}}
+            id="search_input"
+            sx={{ borderRadius: 30 }}
           />
         </Grid>
-        
+
         {/* Geração da paginação */}
-        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-        <Grid item>
-          <Stack spacing={2}>
-            <TablePagination
-              labelRowsPerPage="Linhas por página: "
-              component="div"
-              count={panelData.response.total_records}
-              page={paginationParams.page - 1}
-              onPageChange={handleTablePageChange}
-              rowsPerPage={paginationParams.limit}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-          </Stack>
-        </Grid>  
+        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+          <Grid item>
+            <Stack spacing={2}>
+              <TablePagination
+                labelRowsPerPage="Linhas por página: "
+                component="div"
+                count={panelData.response.total_records}
+                page={paginationParams.page - 1}
+                onPageChange={handleTablePageChange}
+                rowsPerPage={paginationParams.limit}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
+            </Stack>
+          </Grid>
         }
 
       </Grid>
@@ -370,7 +370,7 @@ export function UsersPanel(){
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
           name="radio-buttons-group"
-          value={selectedRecordIndex} 
+          value={selectedRecordIndex}
         >
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
@@ -384,18 +384,18 @@ export function UsersPanel(){
                   <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody className = "tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                panelData.response.records.map((row, index) => (
-                <TableRow key={row.user_id}>
-                  <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => {handleClickRadio(e, row)}} />} label={row.user_id} /></TableCell>
-                  <TableCell align="center">{row.name}</TableCell>
-                  <TableCell align="center">{row.email}</TableCell> 
-                  <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
-                  <TableCell align="center">{row.profile_name}</TableCell>
-                  <TableCell align="center">{row.last_access}</TableCell>
-                </TableRow>
-                ))}   
+              <TableBody className="tbody">
+                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                  panelData.response.records.map((row, index) => (
+                    <TableRow key={row.user_id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e, row) }} />} label={row.user_id} /></TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.email}</TableCell>
+                      <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
+                      <TableCell align="center">{row.profile_name}</TableCell>
+                      <TableCell align="center">{row.last_access}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

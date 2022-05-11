@@ -51,98 +51,98 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-export function PlansPanel(){
+export function PlansPanel() {
 
-// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   // Utilizador do state global de autenticação
-  const {AuthData} = useAuthentication();
+  const { AuthData } = useAuthentication();
 
   // Context da snackbar
   const { enqueueSnackbar } = useSnackbar();
-  
+
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = React.useState({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
+  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
   // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
-  const [paginationParams, setPaginationParams] = React.useState({page: 1, limit: 10, where: 0, total_records: 0});
+  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-    
-// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    /**
-     * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
-     * 
-     */
-     React.useEffect(() => {
- 
-      const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
+  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-      if(!paginationParams.where){
-
-        requestToGetAllFlightPlans(module_middleware);
-
-      }else{
-
-        requestToGetSearchedFlightPlans(module_middleware);
-
-      }
- 
-   },[paginationParams]);
-
-   /**
-   * Carregamento de todos os registros de planos de vôo
+  /**
+   * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
    * 
    */
-  function requestToGetAllFlightPlans(module_middleware){
+  React.useEffect(() => {
+
+    const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
+
+    if (!paginationParams.where) {
+
+      requestToGetAllFlightPlans(module_middleware);
+
+    } else {
+
+      requestToGetSearchedFlightPlans(module_middleware);
+
+    }
+
+  }, [paginationParams]);
+
+  /**
+  * Carregamento de todos os registros de planos de vôo
+  * 
+  */
+  function requestToGetAllFlightPlans(module_middleware) {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/plans-module?args=${select_query_params}&auth=${module_middleware}`)
-    .then(function (response) {
+      .then(function (response) {
 
-      if(response.status === 200){
+        if (response.status === 200) {
 
-        setPanelData({
-          status: {
-            loading: false, 
-            success: true,
-            error: false
-          }, 
-          response: {
-            records: response.data.records, 
-            total_records: response.data.total_records_founded, 
-            records_per_page: response.data.records_per_page, 
-            total_pages: response.data.total_pages
-          }
-        });
+          setPanelData({
+            status: {
+              loading: false,
+              success: true,
+              error: false
+            },
+            response: {
+              records: response.data.records,
+              total_records: response.data.total_records_founded,
+              records_per_page: response.data.records_per_page,
+              total_pages: response.data.total_pages
+            }
+          });
 
-      }
+        }
 
-    })
-    .catch(function (error) {
+      })
+      .catch(function (error) {
 
-      if(error.response.status == 404){
+        if (error.response.status == 404) {
 
-        handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
+          handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
 
-      }else{
+        } else {
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
 
-        console.log(error.message);
+          console.log(error.message);
 
-        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 
-      }
+        }
 
-    });
+      });
 
 
   }
@@ -151,67 +151,67 @@ export function PlansPanel(){
  * Carregamento dos registros de planos de vôo compátiveis com a pesquisa realizada
  * 
  */
-  function requestToGetSearchedFlightPlans(module_middleware){
+  function requestToGetSearchedFlightPlans(module_middleware) {
 
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/plans-module/show?args=${select_query_params}&auth=${module_middleware}`)
-    .then(function (response) {
+      .then(function (response) {
 
-      if(response.status === 200){
+        if (response.status === 200) {
 
-        setPanelData({
-          status: {
-            loading: false, 
-            success: true,
-            error: false
-          }, 
-          response: {
-            records: response.data.records, 
-            total_records: response.data.total_records_founded, 
-            records_per_page: response.data.records_per_page, 
-            total_pages: response.data.total_pages
+          setPanelData({
+            status: {
+              loading: false,
+              success: true,
+              error: false
+            },
+            response: {
+              records: response.data.records,
+              total_records: response.data.total_records_founded,
+              records_per_page: response.data.records_per_page,
+              total_pages: response.data.total_pages
+            }
+          });
+
+          if (response.data.total_records_founded > 1) {
+            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de vôo`, "success");
+          } else {
+            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de vôo`, "success");
           }
-        });
 
-        if(response.data.total_records_founded > 1){
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de vôo`, "success");
-        }else{
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de vôo`, "success");
-        } 
+        }
 
-      }
+      })
+      .catch(function (error) {
 
-    })
-    .catch(function (error) {
+        if (error.response.status == 404) {
 
-      if(error.response.status == 404){
+          handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
 
-        handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
+        } else {
 
-      }else{
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
 
-        handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
+          console.log(error.message);
 
-        console.log(error.message);
+          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 
-        setPanelData({status: {loading: false, success: false, error: true}, response: null});
+        }
 
-      }
-
-    });
+      });
 
   }
 
-   /**
-   * Função para processar a alteração da página da tabela
-   * 
-   */
-  const handleTablePageChange = (event, value) => {
+  /**
+  * Função para processar a alteração da página da tabela
+  * 
+  */
+  const handleTablePageChange = (_event, value) => {
 
     setPaginationParams({
-      page: value+1,
-      limit: paginationParams.limit, 
+      page: value + 1,
+      limit: paginationParams.limit,
       where: paginationParams.where
     });
 
@@ -222,16 +222,16 @@ export function PlansPanel(){
    * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
    * 
    */
-   function handleSearchSubmit(event, offset){
+  function handleSearchSubmit(event) {
     event.preventDefault();
 
-      let value_searched = window.document.getElementById("search_input").value;
+    let value_searched = window.document.getElementById("search_input").value;
 
-      setPaginationParams({
-        page: 1,
-        limit: paginationParams.limit, 
-        where: value_searched
-      });
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit,
+      where: value_searched
+    });
 
   }
 
@@ -239,23 +239,23 @@ export function PlansPanel(){
    * Função para processar o recarregamento dos dados da tabela
    * 
    */
-  function reloadTable(){
+  function reloadTable() {
 
-    setPanelData({status: {loading: true, success: false, error: false}, response: {records: "", total_records: null, records_per_page: null, total_pages: null}});
-    
+    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+
     setPaginationParams({
       page: 1,
-      limit: paginationParams.limit, 
+      limit: paginationParams.limit,
       where: 0
     });
 
   }
 
-  function handleClickRadio(event){
+  function handleClickRadio(event) {
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
-    } else if(event.target.value != selectedRecordIndex){
+    } else if (event.target.value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
 
@@ -265,128 +265,128 @@ export function PlansPanel(){
 
     setPaginationParams({
       page: 1,
-      limit: event.target.value, 
+      limit: event.target.value,
       where: paginationParams.where
     });
-    
+
   };
 
   /**
    * Função para processar o download do arquivo com as coordenadas do plano de vôo
    * 
    */
-  function handleDownloadFlightPlan(filename){
+  function handleDownloadFlightPlan(filename) {
 
     const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
 
-    AxiosApi.get(`/api/plans-module-download/${filename}?auth=${module_middleware}`,null,{
+    AxiosApi.get(`/api/plans-module-download/${filename}?auth=${module_middleware}`, null, {
       responseType: 'blob'
     })
-    .then(function (response) {
+      .then(function (response) {
 
-      if(response.status === 200){
+        if (response.status === 200) {
 
-        handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
+          handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
 
-        // Download do arquivo com o conteúdo retornado do servidor
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `${filename}`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
+          // Download do arquivo com o conteúdo retornado do servidor
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', `${filename}`); //or any other extension
+          document.body.appendChild(link);
+          link.click();
 
-      }
+        }
 
-    })
-    .catch(function (error) {
+      })
+      .catch(function () {
 
-      handleOpenSnackbar(`O download não foi realizado! Arquivo: ${filename}`, "error");
+        handleOpenSnackbar(`O download não foi realizado! Arquivo: ${filename}`, "error");
 
-    });
+      });
 
   }
 
-  function handleOpenSnackbar(text, variant){
+  function handleOpenSnackbar(text, variant) {
 
     enqueueSnackbar(text, { variant });
 
-  };
+  }
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
-  
-    return (
-        <>
-        <Grid container spacing={1} alignItems="center" mb={1}>
-          <Grid item>
-            <Tooltip title="Novo Plano">
-              <Link href={`/sistema/mapa?userid=${AuthData.data.id}`} target="_blank">
-                <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                  <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
-                </IconButton>
-              </Link>
+
+  return (
+    <>
+      <Grid container spacing={1} alignItems="center" mb={1}>
+        <Grid item>
+          <Tooltip title="Novo Plano">
+            <Link href={`/sistema/mapa?userid=${AuthData.data.id}`} target="_blank">
+              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
+                <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size="sm" />
+              </IconButton>
+            </Link>
+          </Tooltip>
+        </Grid>
+
+        <Grid item>
+          {selectedRecordIndex == null &&
+            <Tooltip title="Selecione um registro para editar">
+              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              </IconButton>
             </Tooltip>
-          </Grid>
+          }
 
-          <Grid item>
-            {selectedRecordIndex == null && 
-              <Tooltip title="Selecione um registro para editar">
-                <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true}>
-                  <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
-                </IconButton>
-              </Tooltip>
-            }
+          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+          {(panelData.response.records != null && selectedRecordIndex != null) &&
+            <UpdatePlanFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          }
+        </Grid>
 
-            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-            {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <UpdatePlanFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} /> 
-            }
-          </Grid>
-
-          <Grid item>
-            {selectedRecordIndex == null && 
-              <Tooltip title="Selecione um registro para excluir">
+        <Grid item>
+          {selectedRecordIndex == null &&
+            <Tooltip title="Selecione um registro para excluir">
               <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} >
-                  <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size = "sm"/>
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
-              </Tooltip>
-            }
+            </Tooltip>
+          }
 
-            {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-            {(panelData.response.records != null && selectedRecordIndex != null) && 
-              <DeletePlanFormulary record = {panelData.response.records[selectedRecordIndex]} record_setter = {setSelectedRecordIndex} reload_table = {reloadTable} />
-            }
-          </Grid>
+          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
+          {(panelData.response.records != null && selectedRecordIndex != null) &&
+            <DeletePlanFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          }
+        </Grid>
 
-          <Grid item>
-            <Tooltip title="Reload">
-              <IconButton onClick = {reloadTable}>
-                <FontAwesomeIcon icon={faArrowRotateRight} size = "sm" id = "reload_icon" />
-              </IconButton>
-            </Tooltip>  
-          </Grid>
+        <Grid item>
+          <Tooltip title="Reload">
+            <IconButton onClick={reloadTable}>
+              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
 
-          <Grid item xs>
-            <TextField
-              fullWidth
-              placeholder={"Pesquisar plano por ID"}
-              InputProps={{
-                startAdornment: 
+        <Grid item xs>
+          <TextField
+            fullWidth
+            placeholder={"Pesquisar plano por ID"}
+            InputProps={{
+              startAdornment:
                 <InputAdornment position="start">
                   <IconButton onClick={handleSearchSubmit}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} size = "sm" />
+                    <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                   </IconButton>
                 </InputAdornment>,
-                disableunderline: 1,
-                sx: { fontSize: 'default' },
-              }}
-              variant="outlined"
-              id = "search_input"
-            />
-          </Grid>
-          
-          {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
+              disableunderline: 1,
+              sx: { fontSize: 'default' },
+            }}
+            variant="outlined"
+            id="search_input"
+          />
+        </Grid>
+
+        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
           <Grid item>
             <Stack spacing={2}>
               <TablePagination
@@ -399,84 +399,84 @@ export function PlansPanel(){
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Stack>
-          </Grid>  
-          }
+          </Grid>
+        }
 
-        </Grid>
+      </Grid>
 
-        <FormControl fullWidth>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            name="radio-buttons-group"
-            value={selectedRecordIndex} 
-          >
+      <FormControl fullWidth>
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          name="radio-buttons-group"
+          value={selectedRecordIndex}
+        >
 
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledHeadTableCell>ID</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
-                    <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody className = "tbody">
-                  {(!panelData.status.loading && panelData.status.success && !panelData.status.error) && 
-                    panelData.response.records.map((row, index) => (
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 500 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody className="tbody">
+                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                  panelData.response.records.map((row, index) => (
                     <TableRow key={row.plan_id} >
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => {handleClickRadio(event)}} />} label={row.plan_id} /></TableCell>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.plan_id} /></TableCell>
                       <TableCell align="center">
                         <Link href={`/sistema/mapa?file=${row.plan_file}`} target="_blank">
                           <Tooltip title="Ver plano">
                             <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size = "sm"/>
+                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size="sm" />
                             </IconButton>
                           </Tooltip>
-                        </Link> 
+                        </Link>
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Baixar plano">
                           <IconButton onClick={() => handleDownloadFlightPlan(row.plan_file)} disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                            <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#007937" : "#808991"} />
+                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#007937" : "#808991"} />
                           </IconButton>
-                        </Tooltip> 
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">
-                        {row.report_id != null ? 
-                        <Tooltip title="Ver relatório">
-                          <IconButton>
-                            <FontAwesomeIcon icon={faFilePdf} color="#00713A"/>
-                          </IconButton> 
-                        </Tooltip> 
-                        : 
-                        <IconButton disabled>
-                          <FontAwesomeIcon icon={faFilePdf} color="#808991" />
-                        </IconButton> 
+                        {row.report_id != null ?
+                          <Tooltip title="Ver relatório">
+                            <IconButton>
+                              <FontAwesomeIcon icon={faFilePdf} color="#00713A" />
+                            </IconButton>
+                          </Tooltip>
+                          :
+                          <IconButton disabled>
+                            <FontAwesomeIcon icon={faFilePdf} color="#808991" />
+                          </IconButton>
                         }
                       </TableCell>
-                      <TableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell> 
+                      <TableCell align="center">{row.plan_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
                       <TableCell align="center">{row.plan_description}</TableCell>
                       <TableCell align="center">{row.created_at}</TableCell>
-                      <TableCell align="center">{row.updated_at}</TableCell>    
+                      <TableCell align="center">{row.updated_at}</TableCell>
                     </TableRow>
-                  ))}    
-                </TableBody>
-              </Table>
+                  ))}
+              </TableBody>
+            </Table>
 
-              {(!panelData.status.loading && !panelData.status.success && panelData.status.error) && 
-                <Alert severity="error" sx={{display: "flex", justifyContent: "center"}}>{panelData.response}</Alert>
-              }
+            {(!panelData.status.loading && !panelData.status.success && panelData.status.error) &&
+              <Alert severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Alert>
+            }
 
-            </TableContainer> 
-          </RadioGroup>
-        </FormControl>
-      </>
-    );
+          </TableContainer>
+        </RadioGroup>
+      </FormControl>
+    </>
+  );
 }

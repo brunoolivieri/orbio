@@ -35,11 +35,11 @@ const categories = [
         active: false,
         default_allowed_profiles: [1, 4, 3, 4, 5]
       },
-      { id: 'Administração', icon: <AdminPanelSettingsIcon />},
-      { id: 'Ordens', icon: <AssignmentIcon />},
-      { id: 'Planos', icon: <MapIcon />},
-      { id: 'Relatórios', icon: <AssessmentIcon />},
-      {id: 'Incidentes', icon: <ReportIcon />}
+      { id: 'Administração', icon: <AdminPanelSettingsIcon /> },
+      { id: 'Ordens', icon: <AssignmentIcon /> },
+      { id: 'Planos', icon: <MapIcon /> },
+      { id: 'Relatórios', icon: <AssessmentIcon /> },
+      { id: 'Incidentes', icon: <ReportIcon /> }
     ],
   },
   {
@@ -67,7 +67,7 @@ const itemCategory = {
   px: 3,
 };
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   nav_background: {
     backgroundColor: '#081627'
   }
@@ -76,9 +76,7 @@ const useStyles = makeStyles((theme) => ({
 export const Navigator = React.memo((props) => {
 
   const { ...other } = props;
-
-  // Utilizador do contexto/state global de Autenticação
-  const {AuthData} = useAuthentication();
+  const { AuthData } = useAuthentication();
 
   // Organização dos valores dos poderes do usuário
   // Cada item desses será acessado na função .map() 
@@ -106,11 +104,11 @@ export const Navigator = React.memo((props) => {
 
   return (
     <Drawer {...other}
-    PaperProps={{ sx: { backgroundColor: "#081627" }}}
+      PaperProps={{ sx: { backgroundColor: "#081627" } }}
     >
 
       <List disablePadding className={classes.nav_background}>
-        
+
         <ListItem sx={{ ...item, ...itemCategory, fontSize: 20, color: '#fff', display: "flex", justifyContent: "center" }}>
           ORBIO
         </ListItem>
@@ -118,25 +116,25 @@ export const Navigator = React.memo((props) => {
           <ListItemText>{AuthData.data.profile} - {AuthData.data.name}</ListItemText>
         </ListItem>
 
-          {categories.map(({ id, children }) => ( 
-          <Box key={id} sx={{ bgcolor: '#101F33'}}>
+        {categories.map(({ id, children }) => (
+          <Box key={id} sx={{ bgcolor: '#101F33' }}>
             <ListItem sx={{ py: 2, px: 3 }}>
               <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
             </ListItem>
 
             {/* Geração do menu de opções com base no id do perfil do usuário */}
-            {children.map(({ id: childId, icon, active, default_allowed_profiles }) => (
-                /* Se o seu poder de acesso (ler) em relação ao módulo é 'true' */
-                (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
-                  <ListItem disablePadding key={childId}>
-                  {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
-                  <Link to = {childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className = {layoutStyle.navigator_navlink}>
-                    <ListItemButton selected={active} sx={item}>
-                      <ListItemIcon sx={{color: "#fff"}}>{icon}</ListItemIcon>
-                      <ListItemText sx={{color: "#fff"}}>{childId}</ListItemText>
-                    </ListItemButton>
-                  </Link>
-                </ListItem> 
+            {children.map(({ id: childId, icon, active }) => (
+              /* Se o seu poder de acesso (ler) em relação ao módulo é 'true' */
+              (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
+              <ListItem disablePadding key={childId}>
+                {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
+                <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className={layoutStyle.navigator_navlink}>
+                  <ListItemButton selected={active} sx={item}>
+                    <ListItemIcon sx={{ color: "#fff" }}>{icon}</ListItemIcon>
+                    <ListItemText sx={{ color: "#fff" }}>{childId}</ListItemText>
+                  </ListItemButton>
+                </Link>
+              </ListItem>
             ))}
             <Divider sx={{ mt: 2 }} />
           </Box>

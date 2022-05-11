@@ -1,47 +1,29 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useEffect } from "react";
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { usePagination } from "../../../context/Pagination/PaginationContext";
-import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
+// React
 import * as React from 'react';
+// Custom
+import { usePagination } from "../../../context/Pagination/PaginationContext";
+// Material UI
 import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import SearchIcon from '@mui/icons-material/Search';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import HelpIcon from '@mui/icons-material/Help';
 
-export function Support(){
+export function Support() {
 
-    // Atualização do state global da páginação
-    const {actualPage, setActualPage}= usePagination();
+  // Atualização do state global da páginação
+  const { setActualPage } = usePagination();
 
-    // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+  /*
+  * Atualização do state global da página atual
+  */
+  React.useEffect(() => {
 
-    /*
-    * Atualização do state global da página atual
-    */
-    useEffect(() => {
-      
-      setActualPage("SUPORTE AO USUÁRIO");
+    setActualPage("SUPORTE AO USUÁRIO");
 
-      // AXIOS PARA RECUPERAR RELATÓRIOS VINCULADOS AO USUÁRIOS
-  
-    })
+  });
 
-    return(
+  return (
 
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
+    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
       <AppBar
         position="static"
         color="default"
@@ -55,5 +37,5 @@ export function Support(){
 
       </Typography>
     </Paper>
-    )
+  )
 }

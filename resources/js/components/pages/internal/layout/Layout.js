@@ -31,8 +31,8 @@ function Copyright() {
 const useStyles = makeStyles((theme) => ({
   root: {
     backgroundColor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919',
-    "&.MuiPaper-root":{
-      backgroundColor:"#333" // Teste
+    "&.MuiPaper-root": {
+      backgroundColor: "#333" // Teste
     }
   }
 }))
@@ -42,55 +42,55 @@ const drawerWidth = 256;
 
 export function Layout() {
 
-// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    const theme = useTheme();
+  const theme = useTheme();
 
-    // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+  // Utilizador do state global de autenticação
+  const { AuthData, setAuthData } = useAuthentication();
 
-    // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
-    // Neste caso, a operação é a verificação do token JWT
-    const [operationStatus, setOperationStatus] = React.useState({type: null, title:null, message: null, image: null});
+  // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
+  // Neste caso, a operação é a verificação do token JWT
+  const [operationStatus, setOperationStatus] = React.useState({ type: null, title: null, message: null, image: null });
 
-    // Classes do objeto makeStyles
-    const classes = useStyles();
+  // Classes do objeto makeStyles
+  const classes = useStyles();
 
-    const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
-// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-      React.useEffect(() => {
+  React.useEffect(() => {
 
-        setOperationStatus({type: "loading", title: "Processando....", message: null});
+    setOperationStatus({ type: "loading", title: "Processando....", message: null });
 
-        AxiosApi.post("/api/get-auth-data")
-          .then(function (response) {
-  
-            setOperationStatus({type: null, title: null, message: null, image: null}); 
+    AxiosApi.post("/api/get-auth-data")
+      .then(function (response) {
 
-            setAuthData({status: true, data: response.data});
-  
-          })
-          .catch(function (error) {
+        setOperationStatus({ type: null, title: null, message: null, image: null });
 
-            console.log(error)
+        setAuthData({ status: true, data: response.data });
 
-            setOperationStatus({type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image});
+      })
+      .catch(function (error) {
 
-            setTimeout(() => {
-              window.document.href = "/sistema/sair";
-            },[3000]);
-  
-          });
+        console.log(error)
 
-      },[]);
+        setOperationStatus({ type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image });
 
-      const handleDrawerToggle = () => {
-        setMenuOpen(!menuOpen);
-      };
+        setTimeout(() => {
+          window.document.href = "/sistema/sair";
+        }, [3000]);
 
-// =============================================================== ESTRUTURAÇÃO DA PÁGINA  =============================================================== //
+      });
+
+  }, []);
+
+  const handleDrawerToggle = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  // =============================================================== ESTRUTURAÇÃO DA PÁGINA  =============================================================== //
 
   return (
 
@@ -100,33 +100,33 @@ export function Layout() {
       }
 
       {operationStatus.type == "error" &&
-        <GenericModalDialog 
-        modal_controller = {{state: true, setModalState: null, counter: {required: false}}}
-        title = {{top: {required: true, text: operationStatus.title}, middle: {required: false}}}
-        image = {{required: true, src: operationStatus.image}}
-        content_text = {operationStatus.message}
-        actions = {{
-          required: false, 
-          close_button_text: {
-            required: false
-          }, 
-          confirmation_default_button: {
+        <GenericModalDialog
+          modal_controller={{ state: true, setModalState: null, counter: { required: false } }}
+          title={{ top: { required: true, text: operationStatus.title }, middle: { required: false } }}
+          image={{ required: true, src: operationStatus.image }}
+          content_text={operationStatus.message}
+          actions={{
+            required: false,
+            close_button_text: {
               required: false
-          },
-          confirmation_button_with_link:{
+            },
+            confirmation_default_button: {
+              required: false
+            },
+            confirmation_button_with_link: {
               required: false,
-          }
-        }}
+            }
+          }}
         />
       }
 
-      {AuthData.status && 
+      {AuthData.status &&
         <Box sx={{ display: 'flex', minHeight: '100vh' }}>
           <Box
             component="nav"
-            sx={{flexShrink: { sm: 0 }}}
+            sx={{ flexShrink: { sm: 0 } }}
           >
-            
+
             <Navigator
               PaperProps={{ style: { width: drawerWidth } }}
               variant="temporary"
@@ -134,25 +134,25 @@ export function Layout() {
               onClose={handleDrawerToggle}
             />
 
-        </Box>
-        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <Header onDrawerToggle={handleDrawerToggle} />
-          <Box component="main" sx={{ flex: 1, py: 6, px: 4 }} className={classes.root}>
+          </Box>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Header onDrawerToggle={handleDrawerToggle} />
+            <Box component="main" sx={{ flex: 1, py: 6, px: 4 }} className={classes.root}>
 
-            {/* Conteúdo variável de cada página */}
-            {AuthData.status && 
-              <InternalRoutes /> 
-            }
-  
-          </Box>
-          <Box component="footer" sx={{ p: 2, bgcolor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919' }}>
-            <Copyright />
+              {/* Conteúdo variável de cada página */}
+              {AuthData.status &&
+                <InternalRoutes />
+              }
+
+            </Box>
+            <Box component="footer" sx={{ p: 2, bgcolor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919' }}>
+              <Copyright />
+            </Box>
           </Box>
         </Box>
-      </Box> 
       }
     </>
 
-  ) 
+  )
 
 }

@@ -33,13 +33,13 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export function ForgotPassword(){
+export function ForgotPassword() {
 
-// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({email: false, code: false, password: false, confirm_password: false}); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({email: null, code: null, password: null, confirm_password: null}); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({ email: false, code: false, password: false, confirm_password: false }); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({ email: null, code: null, password: null, confirm_password: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State do envio do código - true se foi enviado, false se não 
     const [codeSent, setCodeSent] = React.useState(false);
@@ -49,7 +49,7 @@ export function ForgotPassword(){
 
     // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
     // Neste caso, a operação é envio do código e alteração da senha
-    const [operationStatus, setOperationStatus] = React.useState({type: null, title:null, message: null, image: null});
+    const [operationStatus, setOperationStatus] = React.useState({ type: null, title: null, message: null, image: null });
 
     // Classes do objeto makeStyles
     const classes = useStyles();
@@ -57,22 +57,22 @@ export function ForgotPassword(){
     // State do modal informativo acerca da operação realizada
     const [openGenericModal, setOpenGenericModal] = React.useState(true);
 
-// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
-    
+    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+
     /*
     * Rotina 1A
     * Ponto inicial do processamento do envio do formulário de envio do código para o email
     * Recebe os dados do formulário respectivo, e transforma em um objeto da classe FormData
     * A próxima rotina, 2, validará esses dados
     */
-    function handleCodeSubmit(event){
+    function handleCodeSubmit(event) {
         event.preventDefault();
 
         // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
-        
+
         // dataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")
-        if(true){
+        if (formDataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")) {
 
             sendCodeRequestServerOperation(data);
 
@@ -86,16 +86,16 @@ export function ForgotPassword(){
     * Recebe os dados do formulário respectivo, e transforma em um objeto da classe FormData
     * A próxima rotina, 2, validará esses dados
     */
-    function handleChangePasswordSubmit(event){
+    function handleChangePasswordSubmit(event) {
         event.preventDefault();
 
         // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
 
-        if(dataValidate(data, "CHANGE_PASSWORD_FORMULARY_VALIDATION")){
+        if (formDataValidate(data, "CHANGE_PASSWORD_FORMULARY_VALIDATION")) {
 
             changePasswordRequestServerOperation(data);
-            
+
         }
 
     }
@@ -106,44 +106,43 @@ export function ForgotPassword(){
     * Recebe o objeto Event do evento onSubmit, e o formulário a ser validado
     * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
-    function dataValidate(formData, formulary){
+    function formDataValidate(formData, formulary) {
 
-        if(formulary === "SEND_CODE_FORMULARY_VALIDATION"){
+        if (formulary === "SEND_CODE_FORMULARY_VALIDATION") {
 
-            const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
+            const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
             const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
 
-            setErrorDetected({email: emailValidate.error, code: false, password: false, confirm_password: false});
-            setErrorMessage({email: emailValidate.message, code: false, password: false, confirm_password: false});
+            setErrorDetected({ email: emailValidate.error, code: false, password: false, confirm_password: false });
+            setErrorMessage({ email: emailValidate.message, code: false, password: false, confirm_password: false });
 
-            if(emailValidate.error === true){
+            if (emailValidate.error === true) {
 
                 return false;
 
-            }else{
+            } else {
 
                 return true;
 
             }
 
-        }else if(formulary === "CHANGE_PASSWORD_FORMULARY_VALIDATION"){
+        } else if (formulary === "CHANGE_PASSWORD_FORMULARY_VALIDATION") {
 
             const codePattern = /^[0-9]{4}$/;
             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
             const codeValidate = FormValidation(formData.get("code"), 4, 4, codePattern, "CODE");
             const passwordValidate = FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD");
-            const passconfirmValidate = formData.get("new_password_confirmation") == formData.get("new_password") ? {error: false, message: ""} : {error: true, message: "As senhas são incompátiveis"};
+            const passconfirmValidate = formData.get("new_password_confirmation") == formData.get("new_password") ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
 
-            setErrorDetected({email: false, code: codeValidate.error, password: passwordValidate.error, confirm_password: passconfirmValidate.error});
-            setErrorMessage({email: null, code: codeValidate.message, password: passwordValidate.message, confirm_password: passconfirmValidate.message});
+            setErrorDetected({ email: false, code: codeValidate.error, password: passwordValidate.error, confirm_password: passconfirmValidate.error });
+            setErrorMessage({ email: null, code: codeValidate.message, password: passwordValidate.message, confirm_password: passconfirmValidate.message });
 
-            if(codeValidate.error === true || passwordValidate.error === true || passconfirmValidate.error === true){
+            if (codeValidate.error === true || passwordValidate.error === true || passconfirmValidate.error === true) {
 
                 return false;
 
-            }else{
+            } else {
 
                 return true;
 
@@ -159,22 +158,22 @@ export function ForgotPassword(){
     * Envio do código de alteração da senha para o email do usuário
     * 
     */
-    function sendCodeRequestServerOperation(data){
+    function sendCodeRequestServerOperation(data) {
 
-        setOperationStatus({type: "loading", title: null, message: null, image: null});
+        setOperationStatus({ type: "loading", title: null, message: null, image: null });
 
         AxiosApi.post("/api/enviar-codigo", {
             email: data.get("email")
-          })
-          .then(function (response) {
-
-            sendCodeSuccessServerResponseTreatment(); 
-
-          }).catch((error) => {
-
-            sendCodeErrorServerResponseTreatment(error.response.data); 
-
         })
+            .then(function () {
+
+                sendCodeSuccessServerResponseTreatment();
+
+            }).catch((error) => {
+
+                sendCodeErrorServerResponseTreatment(error.response.data);
+
+            })
 
     }
 
@@ -184,24 +183,24 @@ export function ForgotPassword(){
     * Alteração da senha a partir do código enviado para o email do usuário
     * 
     */
-    function changePasswordRequestServerOperation(data){
+    function changePasswordRequestServerOperation(data) {
 
-        setOperationStatus({type: "loading", title: null, message: null, image: null});
+        setOperationStatus({ type: "loading", title: null, message: null, image: null });
 
         AxiosApi.post("/api/alterar-senha", {
             token: data.get("code"),
             new_password: data.get("new_password"),
             new_password_confirmation: data.get("new_password")
-          })
-          .then(function (response) {
+        })
+            .then(function () {
 
-            changePasswordSuccessServerResponseTreatment(); 
+                changePasswordSuccessServerResponseTreatment();
 
-          }).catch((error) => {
+            }).catch((error) => {
 
-            changePasswordErrorServerResponseTreatment(error.response.data);
+                changePasswordErrorServerResponseTreatment(error.response.data);
 
-          })
+            })
 
     }
 
@@ -212,97 +211,97 @@ export function ForgotPassword(){
     * Além disso, o botão de envio do código será desabilitado por 60 segundos
     * 
     */
-    function sendCodeSuccessServerResponseTreatment(){
+    function sendCodeSuccessServerResponseTreatment() {
 
-        setOperationStatus({type: "processed", title: "Código enviado!", message: "O código para alteração da senha foi enviado para o seu email.", image: email_image});
+        setOperationStatus({ type: "processed", title: "Código enviado!", message: "O código para alteração da senha foi enviado para o seu email.", image: email_image });
 
         setTimer(60);
         setCodeSent(true);
 
         setTimeout(() => {
 
-            setOperationStatus({type: null, title: null, message: null, image: null}); 
+            setOperationStatus({ type: null, title: null, message: null, image: null });
 
         }, 4000)
 
     }
 
-    function sendCodeErrorServerResponseTreatment(response_data){
+    function sendCodeErrorServerResponseTreatment(response_data) {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro no envio do email. Tente novamente.";
 
-        setOperationStatus({type: "processed", title: "Erro no envio do código!", message: error_message, image: error_image});
+        setOperationStatus({ type: "processed", title: "Erro no envio do código!", message: error_message, image: error_image });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
-            email: {error: false, message: null}
+            email: { error: false, message: null }
         }
 
         // Coleta dos objetos de erro existentes na response
-        for(let prop in response_data.errors){
+        for (let prop in response_data.errors) {
 
             input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0]
+                error: true,
+                message: response_data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({name: false, email: input_errors.email.error, password: false, confirm_password: false});
-        setErrorMessage({name: false, email: input_errors.email.message, password: null, confirm_password: null});
+        setErrorDetected({ name: false, email: input_errors.email.error, password: false, confirm_password: false });
+        setErrorMessage({ name: false, email: input_errors.email.message, password: null, confirm_password: null });
 
         setTimeout(() => {
 
-            setOperationStatus({type: null, title: null, message: null, image: null}); 
+            setOperationStatus({ type: null, title: null, message: null, image: null });
 
         }, 4000);
 
     }
 
-    function changePasswordSuccessServerResponseTreatment(){
+    function changePasswordSuccessServerResponseTreatment() {
 
-        setOperationStatus({type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", image: success_image});
+        setOperationStatus({ type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", image: success_image });
 
         setTimeout(() => {
 
-            setOperationStatus({type: null, title: null, message: null, image: null}); 
+            setOperationStatus({ type: null, title: null, message: null, image: null });
 
-            window.location.href = "/acessar"; 
+            window.location.href = "/acessar";
 
         }, 4000)
 
 
     }
 
-    function changePasswordErrorServerResponseTreatment(response_data){
+    function changePasswordErrorServerResponseTreatment(response_data) {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na alteração da senha. Tente novamente.";
 
-        setOperationStatus({type: "processed", title: "Erro na alteração da senha!", message: error_message, image: error_image});
+        setOperationStatus({ type: "processed", title: "Erro na alteração da senha!", message: error_message, image: error_image });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
-            token: {error: false, message: null},
-            new_password: {error: false, message: null},
-            new_password_confirmation: {error: false, message: null}
+            token: { error: false, message: null },
+            new_password: { error: false, message: null },
+            new_password_confirmation: { error: false, message: null }
         }
 
         // Coleta dos objetos de erro existentes na response
-        for(let prop in response_data.errors){
+        for (let prop in response_data.errors) {
 
             input_errors[prop] = {
-            error: true, 
-            message: response_data.errors[prop][0]
+                error: true,
+                message: response_data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({name: input_errors.name.error, email: input_errors.email.error, password: input_errors.new_password.error, confirm_password: input_errors.new_password_confirmation.error});
-        setErrorMessage({name: input_errors.name.error, email: input_errors.email.message, password: input_errors.new_password.message, confirm_password: input_errors.new_password_confirmation.message});
+        setErrorDetected({ name: input_errors.name.error, email: input_errors.email.error, password: input_errors.new_password.error, confirm_password: input_errors.new_password_confirmation.error });
+        setErrorMessage({ name: input_errors.name.error, email: input_errors.email.message, password: input_errors.new_password.message, confirm_password: input_errors.new_password_confirmation.message });
 
         setTimeout(() => {
 
-            setOperationStatus({type: null, title: null, message: null, image: null}); 
+            setOperationStatus({ type: null, title: null, message: null, image: null });
 
         }, 4000);
 
@@ -314,7 +313,7 @@ export function ForgotPassword(){
     */
     React.useEffect(() => {
 
-        if(codeTimer > 0){
+        if (codeTimer > 0) {
 
             setTimeout(() => {
 
@@ -323,146 +322,146 @@ export function ForgotPassword(){
             }, 1000)
 
         }
-        
+
 
     }, [codeTimer]);
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
-    return(
+    return (
 
         <>
-        <Box sx={{position: 'absolute', right: '10px', top: '10px'}}>
-            <ColorModeToggle />
-        </Box>
-    
-        {operationStatus.type == "loading" &&
-            <BackdropLoading />
-        }
-
-        {operationStatus.type == "processed" &&
-            <GenericModalDialog 
-            modal_controller = {{state: openGenericModal, setModalState: setOpenGenericModal, counter: {required: false}}}
-            title = {{top: {required: false}, middle: {required: true, text: operationStatus.message}}}
-            image = {{required: true, src: operationStatus.image}}
-            content_text = ""
-            actions = {{
-                required: false, 
-                close_button_text: {
-                    required: false, 
-                }, 
-                confirmation_default_button: {
-                    required: false
-                },
-                confirmation_button_with_link:{
-                    required: false
-                }
-            }}
-            />
-        }
-        
-        <Container component="main" maxWidth="xs">
-            
-            <Box
-            sx={{
-                marginTop: 8,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-            }}
-            >
-
-                <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50]}}>
-                    <ManageAccountsIcon />
-                </Avatar>
-
-                <Typography component="h1" variant="h5">
-                    Recuperar a conta
-                </Typography>
-
-                <Box component="form" onSubmit={handleCodeSubmit} noValidate sx={{ mt: 1 }}>
-
-                    <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="email"
-                    label="Informe o seu endereço de email"
-                    name="email"
-                    autoFocus
-                    disabled = {codeTimer > 0 ? true : false}
-                    error = {errorDetected.email}
-                    helperText = {errorMessage.email}
-                    />
-                    <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    disabled = {codeTimer > 0 ? true : false}
-                    >
-                    {codeTimer === 0 ? "Receber código": codeTimer}
-                    </Button>    
-                </Box>
-                <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
-                    <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    name="code"
-                    label="Código recebido"
-                    type="text"
-                    id="code"
-                    disabled = {!codeSent} // Disabled recebe a negação do state codeSent
-                    error = {errorDetected.code}
-                    helperText = {errorMessage.code}
-                    />
-                    <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="new_password"
-                    label="Nova senha"
-                    name="new_password"
-                    type = "password"
-                    autoFocus
-                    disabled = {!codeSent} // Disabled recebe a negação do state codeSent
-                    helperText = {errorMessage.password}
-                    error = {errorDetected.password}
-                    />
-                    <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="new_password_confirmation"
-                    label="Confirmação da senha"
-                    name="new_password_confirmation"
-                    type = "password"
-                    autoFocus
-                    disabled = {!codeSent} // Disabled recebe a negação do state codeSent
-                    helperText = {errorMessage.confirm_password}
-                    error = {errorDetected.confirm_password}
-                    />
-                    <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
-                    sx={{ mt: 3, mb: 2 }}
-                    disabled = {!codeSent}
-                    >
-                    Alterar a senha
-                    </Button>
-                    <Grid container justifyContent="flex-end">
-                        <Grid item>
-                            <Link to ="/acessar" className={classes.hiperlink}>
-                                Voltar para a página de acesso 
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </Box>
-
+            <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
+                <ColorModeToggle />
             </Box>
-        </Container>    
+
+            {operationStatus.type == "loading" &&
+                <BackdropLoading />
+            }
+
+            {operationStatus.type == "processed" &&
+                <GenericModalDialog
+                    modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
+                    title={{ top: { required: false }, middle: { required: true, text: operationStatus.message } }}
+                    image={{ required: true, src: operationStatus.image }}
+                    content_text=""
+                    actions={{
+                        required: false,
+                        close_button_text: {
+                            required: false,
+                        },
+                        confirmation_default_button: {
+                            required: false
+                        },
+                        confirmation_button_with_link: {
+                            required: false
+                        }
+                    }}
+                />
+            }
+
+            <Container component="main" maxWidth="xs">
+
+                <Box
+                    sx={{
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                    }}
+                >
+
+                    <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50] }}>
+                        <ManageAccountsIcon />
+                    </Avatar>
+
+                    <Typography component="h1" variant="h5">
+                        Recuperar a conta
+                    </Typography>
+
+                    <Box component="form" onSubmit={handleCodeSubmit} noValidate sx={{ mt: 1 }}>
+
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Informe o seu endereço de email"
+                            name="email"
+                            autoFocus
+                            disabled={codeTimer > 0 ? true : false}
+                            error={errorDetected.email}
+                            helperText={errorMessage.email}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            disabled={codeTimer > 0 ? true : false}
+                        >
+                            {codeTimer === 0 ? "Receber código" : codeTimer}
+                        </Button>
+                    </Box>
+                    <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="code"
+                            label="Código recebido"
+                            type="text"
+                            id="code"
+                            disabled={!codeSent} // Disabled recebe a negação do state codeSent
+                            error={errorDetected.code}
+                            helperText={errorMessage.code}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="new_password"
+                            label="Nova senha"
+                            name="new_password"
+                            type="password"
+                            autoFocus
+                            disabled={!codeSent} // Disabled recebe a negação do state codeSent
+                            helperText={errorMessage.password}
+                            error={errorDetected.password}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="new_password_confirmation"
+                            label="Confirmação da senha"
+                            name="new_password_confirmation"
+                            type="password"
+                            autoFocus
+                            disabled={!codeSent} // Disabled recebe a negação do state codeSent
+                            helperText={errorMessage.confirm_password}
+                            error={errorDetected.confirm_password}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                            disabled={!codeSent}
+                        >
+                            Alterar a senha
+                        </Button>
+                        <Grid container justifyContent="flex-end">
+                            <Grid item>
+                                <Link to="/acessar" className={classes.hiperlink}>
+                                    Voltar para a página de acesso
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Box>
+
+                </Box>
+            </Container>
         </>
     )
 }

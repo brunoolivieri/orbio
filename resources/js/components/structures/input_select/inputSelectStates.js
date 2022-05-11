@@ -1,22 +1,19 @@
-// MATERIAL UI
+// React
 import * as React from 'react';
+// Material UI
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-
-// REACT
-import { memo,useState} from "react";
-
-// CUSTOM
+// Custom JSON
 import brazil_cities from "../../../services/brazil_geo_data.json";
 
-export const SelectStates = memo((props) => {
+export const SelectStates = React.memo((props) => {
 
-    const [selectedItemValue, setSelectedItem] = useState(props.default != null ? props.default : "0");
+    const [selectedItemValue, setSelectedItem] = React.useState(props.default != null ? props.default : "0");
 
     // State do carregamento dos dados do input de select
-    const [selectData] = useState({status: false, data: brazil_cities.estados});
+    const [selectData] = React.useState({ status: false, data: brazil_cities.estados });
 
     const handleSelectChange = (event) => {
 
@@ -26,40 +23,37 @@ export const SelectStates = memo((props) => {
 
     };
 
-    return(
+    return (
 
         <>
-            <FormControl sx={{mr: 2}}>
+            <FormControl sx={{ mr: 2 }}>
                 <InputLabel id="demo-simple-select-helper-label">Estado</InputLabel>
                 <Select
-                labelId="demo-simple-select-helper-label"
-                id={"select_state_input"}
-                value={selectedItemValue}
-                label={"Estado"}
-                onChange={handleSelectChange}
-                name={"select_state_input"}
-                error = {props.error}
-                disabled = {!props.edit_mode}
+                    labelId="demo-simple-select-helper-label"
+                    id={"select_state_input"}
+                    value={selectedItemValue}
+                    label={"Estado"}
+                    onChange={handleSelectChange}
+                    name={"select_state_input"}
+                    error={props.error}
+                    disabled={!props.edit_mode}
                 >
-                
-                {/* GERAÇÃO DOS ITENS DO SELECT */}
-                <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
+                    <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
 
                     {
-                    selectData.data.map((row, index) => 
-                        
-                        // O valor de cada item é igual à sigla do estado para que possa haver a correspondência com o Token JWT
-                        // O valor do estado no Token JWT é a sua sigla
-                        <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
+                        selectData.data.map((row, index) =>
 
-                    )
+                            // O valor de cada item é igual à sigla do estado para que possa haver a correspondência com o AuthContext
+                            // O valor do estado regional no context é a sua sigla
+                            <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
+
+                        )
                     }
-                    
-                </Select>
 
-            </FormControl>     
+                </Select>
+            </FormControl>
         </>
 
     )
-    
+
 });

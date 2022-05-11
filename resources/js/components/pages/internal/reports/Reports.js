@@ -17,32 +17,32 @@ import IconButton from '@mui/material/IconButton';
 import { Box } from "@mui/system";
 import PostAddIcon from '@mui/icons-material/PostAdd';
 
-export function Reports(){
+export function Reports() {
 
-    // Atualização do state global da páginação
-    const {actualPage, setActualPage}= usePagination();
+  // Atualização do state global da páginação
+  const { actualPage, setActualPage } = usePagination();
 
-    // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+  // Utilizador do state global de autenticação
+  const { AuthData, setAuthData } = useAuthentication();
 
-    /*
-    * Atualização do state global da página atual
-    */
-    useEffect(() => {
-      
-      setActualPage("RELATÓRIOS");
+  /*
+  * Atualização do state global da página atual
+  */
+  useEffect(() => {
 
-      // AXIOS PARA RECUPERAR RELATÓRIOS VINCULADOS AO USUÁRIOS
-  
-    })
+    setActualPage("RELATÓRIOS");
 
-    return(
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
-        <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
+    // AXIOS PARA RECUPERAR RELATÓRIOS VINCULADOS AO USUÁRIOS
 
-          <ReportsPanel />
+  })
 
-        </Box>
-      </Paper>
-    )
+  return (
+    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
+      <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
+
+        <ReportsPanel />
+
+      </Box>
+    </Paper>
+  )
 }

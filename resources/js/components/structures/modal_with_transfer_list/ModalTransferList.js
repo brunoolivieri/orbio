@@ -1,4 +1,6 @@
+// React
 import * as React from 'react';
+// Material UI
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -9,10 +11,8 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import { Alert } from '@mui/material';
-
 // Custom Transfer List
 import { TransferList } from '../transfer_list/TransferList';
-import { useAuthentication } from '../../context/InternalRoutesAuth/AuthenticationContext';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -52,9 +52,9 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export function ModalTransferList({...props}) {
+export function ModalTransferList({ ...props }) {
 
-// ============================================================================== STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
   const [open, setOpen] = React.useState(false);
 
@@ -62,7 +62,7 @@ export function ModalTransferList({...props}) {
   const [selectedItems, setSelectedItems] = React.useState(props.selected_items);
 
   // State da mensagem do alerta
-  const [displayAlert, setDisplayAlert] = React.useState({display: false, type: "", message: ""});
+  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -72,34 +72,34 @@ export function ModalTransferList({...props}) {
     setOpen(false);
   };
 
-// ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
+  // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
-  function handleSubmitList(){
+  function handleSubmitList() {
 
-    if(selectedItems.length > 0){
+    if (selectedItems.length > 0) {
 
       props.set_selected_items(selectedItems);
 
       setOpen(false);
 
-    }else{
+    } else {
 
-      setDisplayAlert({display: true, type: "error", message: "Erro! Nenhum plano de vôo foi selecionado."});
+      setDisplayAlert({ display: true, type: "error", message: "Erro! Nenhum plano de vôo foi selecionado." });
 
     }
 
   }
 
-// ============================================================================== ESTRUTURAÇÃO ============================================================================== //
+  // ============================================================================== ESTRUTURAÇÃO ============================================================================== //
 
   return (
     <>
-      <Button 
-      variant="contained" 
-      onClick={handleClickOpen} 
+      <Button
+        variant="contained"
+        onClick={handleClickOpen}
 
       >
-        {props.open_button} 
+        {props.open_button}
       </Button>
 
       <BootstrapDialog
@@ -112,22 +112,22 @@ export function ModalTransferList({...props}) {
         </BootstrapDialogTitle>
         <DialogContent dividers>
 
-          <TransferList 
-          axios_url = {props.data_source} 
-          right_items = {{state: selectedItems, setter: setSelectedItems}} 
+          <TransferList
+            axios_url={props.data_source}
+            right_items={{ state: selectedItems, setter: setSelectedItems }}
           />
 
         </DialogContent>
 
-        {displayAlert.display && 
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert> 
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
         }
 
         <DialogActions>
-          <Button variant = "outlined" onClick={handleClose}>
+          <Button variant="outlined" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant = "contained" autoFocus onClick={handleSubmitList}>
+          <Button variant="contained" autoFocus onClick={handleSubmitList}>
             Salvar alterações
           </Button>
         </DialogActions>

@@ -1,12 +1,8 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
+import React from 'react';
 
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+export function NotFound() {
 
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
-
-export function NotFound(){
-
-    return(
+    return (
         <>
             <h1>NOT FOUND</h1>
         </>

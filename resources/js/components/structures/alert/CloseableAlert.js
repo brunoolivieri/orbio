@@ -1,5 +1,6 @@
-// REACT
-import React from 'react';
+// React
+import * as React from 'react';
+// Material UI
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
@@ -9,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 export const CloseableAlert = React.memo((props) => {
 
   return (
-    <Box sx={{ width: '100%'}}>
+    <Box sx={{ width: '100%' }}>
       <Collapse in={props.open}>
         <Alert
           severity={props.severity}
@@ -33,5 +34,5 @@ export const CloseableAlert = React.memo((props) => {
       </Collapse>
     </Box>
   );
-  
+
 })

@@ -2,7 +2,7 @@
 import * as React from 'react';
 // Custom
 import { usePagination } from '../../../context/Pagination/PaginationContext';
-import {HeaderMenu} from "../../../structures/header_menu/HeaderMenu";
+import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";
 import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 // Material UI
 import PropTypes from 'prop-types';
@@ -29,7 +29,7 @@ export const Header = React.memo((props) => {
 
   const { onDrawerToggle } = props;
 
-  const {actualPage}= usePagination();
+  const { actualPage } = usePagination();
 
   // Classes do objeto makeStyles
   const classes = useStyles();

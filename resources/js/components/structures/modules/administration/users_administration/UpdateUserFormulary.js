@@ -90,7 +90,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
     function submitedDataValidate(formData){
 
-      const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
       const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
       const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
@@ -126,7 +126,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
             status: isChecked,
             profile_id: data.get("select_profile")
         })
-        .then((response) => {
+        .then(() => {
 
             successServerResponseTreatment();  
 

@@ -1,5 +1,5 @@
 // IMPORTAÇÃO DOS COMPONENTES REACT
-import { useState} from 'react';
+import { useState } from 'react';
 import * as React from 'react';
 
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -23,84 +23,84 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 
-export function GenerateReportFormulary({...props}){
+export function GenerateReportFormulary({ ...props }) {
 
-// ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
-    const {AuthData, setAuthData} = useAuthentication();
+  // Utilizador do state global de autenticação
+  const { AuthData, setAuthData } = useAuthentication();
 
-    // States do formulário
-    const [open, setOpen] = useState(false);
+  // States do formulário
+  const [open, setOpen] = useState(false);
 
-    // State do tipo de relatório
-    const [reportType, setReportType] = useState("BASIC");
+  // State do tipo de relatório
+  const [reportType, setReportType] = useState("BASIC");
 
-    // State da mensagem do alerta
-    const [displayAlert, setDisplayAlert] = useState({display: false, type: "", message: ""});
+  // State da mensagem do alerta
+  const [displayAlert, setDisplayAlert] = useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = useState(false);
+  // State da acessibilidade do botão de executar o registro
+  const [disabledButton, setDisabledButton] = useState(false);
 
-// ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
-    const handleClickOpen = () => {
-      setOpen(true);
-    }
+  // Função para abrir o modal
+  const handleClickOpen = () => {
+    setOpen(true);
+  }
 
-    // Função para fechar o modal
-    const handleClose = () => {
+  // Função para fechar o modal
+  const handleClose = () => {
 
-        setDisplayAlert({display: false, type: "", message: ""});
-        setDisabledButton(false);
-  
-        setOpen(false);
+    setDisplayAlert({ display: false, type: "", message: "" });
+    setDisabledButton(false);
 
-    };
+    setOpen(false);
 
-    // Função para atualizar o registro
-    const handleSubmitOperation = (event) => {
-        event.preventDefault();
+  };
 
-        const data = new FormData(event.currentTarget);
+  // Função para atualizar o registro
+  const handleSubmitOperation = (event) => {
+    event.preventDefault();
 
-        if(dataValidate(data)){
+    const data = new FormData(event.currentTarget);
 
-        setDisabledButton(true);
+    if (dataValidate(data)) {
 
-        requestServerOperation(data, operation);
+      setDisabledButton(true);
 
-    }
-
+      requestServerOperation(data, operation);
 
     }
 
-    function dataValidate(formData){
+
+  }
+
+  function dataValidate(formData) {
 
 
-    }
+  }
 
-    function requestServerOperation(data){
+  function requestServerOperation(data) {
 
 
-    }
+  }
 
-    function serverResponseTreatment(response){
+  function serverResponseTreatment(response) {
 
-    }
+  }
 
-// ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
   return (
     <>
 
       <Tooltip title="Baixar relatório">
         <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faFileArrowDown} size = "sm" color={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? "green" : "#808991"} />
+          <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["4"].profile_powers.ler == 1 ? "green" : "#808991"} />
         </IconButton>
-      </Tooltip> 
-      
+      </Tooltip>
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>DOWNLOAD DO RELATÓRIO</DialogTitle>
 
@@ -114,17 +114,17 @@ export function GenerateReportFormulary({...props}){
 
           </DialogContent>
 
-          {displayAlert.display && 
-              <Alert severity={displayAlert.type} variant="filled">{displayAlert.message}</Alert> 
+          {displayAlert.display &&
+            <Alert severity={displayAlert.type} variant="filled">{displayAlert.message}</Alert>
           }
-          
+
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
           </DialogActions>
 
         </Box>
 
-        
+
       </Dialog>
     </>
 
