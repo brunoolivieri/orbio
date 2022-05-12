@@ -41,6 +41,7 @@ export const BasicDataPanel = React.memo((props) => {
     // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
+    // Snackbar
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -66,7 +67,7 @@ export const BasicDataPanel = React.memo((props) => {
     function disableAccount() {
 
         AxiosApi.post(`/api/desactivate-account/${props.userid}`)
-            .then(function (response) {
+            .then(function () {
 
                 handleOpenSnackbar("Conta desativada com sucesso!", "success");
 
@@ -112,7 +113,7 @@ export const BasicDataPanel = React.memo((props) => {
     function formDataValidate(formData) {
 
         // Regex para validação
-        const emailPattern = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
         const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
@@ -224,19 +225,13 @@ export const BasicDataPanel = React.memo((props) => {
 
                 handleOpenSnackbar("Erro! O email já existe", "error");
 
-                setDisabledButton(false);
-
             } else if (response.data.error === "wrong_password") {
 
                 handleOpenSnackbar("Erro! A senha está incorreta", "error");
 
-                setDisabledButton(false);
-
             } else {
 
                 handleOpenSnackbar("Erro do servidor!", "error");
-
-                setDisabledButton(false);
 
             }
 
@@ -248,7 +243,7 @@ export const BasicDataPanel = React.memo((props) => {
 
         enqueueSnackbar(text, { variant });
 
-    };
+    }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 

@@ -24,13 +24,13 @@ class TokenForChangePasswordEvent
      *
      * @return void
      */
-    public function __construct(object $user, string $token)
+    public function __construct(array $data)
     {
-        $name_parts = explode(" ", $user->nome);
+        $name_parts = explode(" ", $data["name"]);
 
         $this->name = $name_parts[0];
-        $this->email = $user->email;
-        $this->token = $token;
+        $this->email = $data["email"];
+        $this->token = $data["token"];
         $this->datetime = date("d-m-Y H:i:s");
     }
 

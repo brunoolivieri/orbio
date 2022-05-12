@@ -11,6 +11,7 @@ import { Switcher } from "../../../structures/switcher/Switcher";
 import Paper from '@mui/material/Paper';
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
+import { useSnackbar } from 'notistack';
 
 export function Account() {
 
@@ -31,6 +32,10 @@ export function Account() {
   // State para os valores dos campos editáveis 
   const [formularyData, setFormularyData] = React.useState({ status: false });
 
+  // Snackbar
+  const { enqueueSnackbar } = useSnackbar();
+
+
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
@@ -41,55 +46,52 @@ export function Account() {
 
   React.useEffect(() => {
 
-    // Comunicação com o backend
-    // Para recuperação dos dados que formam o painel de gerenciamento de usuários
+    // Get the user atualized data
     AxiosApi.get(`/api/user-account-data?user_id=${AuthData.data.id}`, {
       access: AuthData.data.access
     })
       .then(function (response) {
 
-        if (response.status === 200) {
-
-          setFormularyData({
-            status: true,
-            error: false,
-            userid: AuthData.data.id,
-            complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
-            address_id: AuthData.data.user_address_data.user_address_id,
-            name: response.data.data["0"].nome,
-            email: response.data.data["0"].email,
-            profile: AuthData.data.profile,
-            last_access: AuthData.data.last_access,
-            last_update: AuthData.data.last_update,
-            habANAC: response.data.data["0"].habANAC,
-            cpf: response.data.data["0"].CPF,
-            cnpj: response.data.data["0"].CNPJ,
-            telephone: response.data.data["0"].telefone,
-            cellphone: response.data.data["0"].celular,
-            razaoSocial: response.data.data["0"].razaoSocial,
-            nomeFantasia: response.data.data["0"].nomeFantasia,
-            logradouro: response.data.data["0"].logradouro,
-            numero: response.data.data["0"].numero,
-            cep: response.data.data["0"].cep,
-            cidade: response.data.data["0"].cidade,
-            estado: response.data.data["0"].estado,
-            complemento: response.data.data["0"].complemento
-          });
-
-        } else {
-
-          // ALERTA DE ERRO
-
-        }
+        setFormularyData({
+          status: true,
+          error: false,
+          userid: AuthData.data.id,
+          complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
+          address_id: AuthData.data.user_address_data.user_address_id,
+          name: response.data.data["0"].nome,
+          email: response.data.data["0"].email,
+          profile: AuthData.data.profile,
+          last_access: AuthData.data.last_access,
+          last_update: AuthData.data.last_update,
+          habANAC: response.data.data["0"].habANAC,
+          cpf: response.data.data["0"].CPF,
+          cnpj: response.data.data["0"].CNPJ,
+          telephone: response.data.data["0"].telefone,
+          cellphone: response.data.data["0"].celular,
+          razaoSocial: response.data.data["0"].razaoSocial,
+          nomeFantasia: response.data.data["0"].nomeFantasia,
+          logradouro: response.data.data["0"].logradouro,
+          numero: response.data.data["0"].numero,
+          cep: response.data.data["0"].cep,
+          cidade: response.data.data["0"].cidade,
+          estado: response.data.data["0"].estado,
+          complemento: response.data.data["0"].complemento
+        });
 
       })
       .catch(function () {
 
-        // ALERTA DE ERRO
+        handleOpenSnackbar("Erro! Os dados do perfil não foram carregados.", "error");
 
       });
 
-  }, [reloadForm])
+  }, [reloadForm]);
+
+  function handleOpenSnackbar(text, variant) {
+
+    enqueueSnackbar(text, { variant });
+
+  }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 

@@ -17,6 +17,8 @@ use App\Http\Requests\Auth\ForgotPassword\SendTokenToEmailRequest;
 use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
 // Log
 use Illuminate\Support\Facades\Log;
+// Jobs
+use App\Jobs\SendEmailJob;
 
 class ForgotPasswordController extends Controller
 {
@@ -43,8 +45,13 @@ class ForgotPasswordController extends Controller
 
                 UserModel::where('email', $user->email)->update(['token' => $random_integer_token]);
 
-                // Send token event
-                event(new TokenForChangePasswordEvent($user, $random_integer_token));
+                $data_for_email = [
+                    "token" => $random_integer_token,
+                    "name" => $user->nome,
+                    "email" => $user->email
+                ];
+
+                SendEmailJob::dispatch("App\Events\Auth\TokenForChangePasswordEvent", $data_for_email);
 
                 Log::channel('mail')->info("[Email enviado com sucesso | Alteração da senha] - Destinatário: ".$request->email);
 

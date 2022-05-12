@@ -142,7 +142,7 @@ class UserModel extends Authenticatable
     function loadUsersWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
-
+            
             $data = DB::table('users')
             ->join('profile', 'users.id_perfil', '=', 'profile.id')
             ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')

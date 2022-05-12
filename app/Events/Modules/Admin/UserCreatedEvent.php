@@ -25,17 +25,16 @@ class UserCreatedEvent
      *
      * @return void
      */
-    public function __construct(string $name, string $profile_name, string $email, string $password)
+    public function __construct(array $data)
     {
-
-        $name_parts = explode(" ", $name);
+        $name_parts = explode(" ", $data["name"]);
         $first_name = $name_parts[0];
 
         $this->name = $first_name;
-        $this->email = $email;
-        $this->profile = $profile_name;
+        $this->email = $data["email"];
+        $this->profile = $data["profile"];
         $this->datetime = date("d-m-Y H:i:s");
-        $this->password = $password;
+        $this->password = $data["password"];
     }
 
     /**

@@ -1,14 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Facades\DB;
-// Models utilizados
+// Models
 use App\Models\Auth\AuthenticationModel;
 use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\User\UserModel;
@@ -18,6 +17,8 @@ use App\Http\Requests\Auth\Login\LoginRequest;
 use App\Events\Auth\UserLoggedInEvent;
 // Log
 use Illuminate\Support\Facades\Log;
+// Jobs
+use App\Jobs\SendEmailJob;
 
 class LoginController extends Controller
 {
@@ -37,7 +38,14 @@ class LoginController extends Controller
             // Case 1: User account is active
             if(Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
 
-                event(new UserLoggedInEvent($request));
+                $data_for_email = [
+                    "id" => Auth::user()->id, 
+                    "name" => Auth::user()->nome, 
+                    "email" => Auth::user()->email, 
+                    "profile" => Auth::user()->profile->nome
+                ];
+
+                SendEmailJob::dispatch("App\Events\Auth\UserLoggedInEvent", $data_for_email);
 
                 Log::channel('login_action')->info("[Acesso realizado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
 
@@ -48,7 +56,14 @@ class LoginController extends Controller
 
                 if($this->activateAccountBeforeLogin()){
 
-                    event(new UserLoggedInEvent($request));
+                    $data_for_email = [
+                        "id" => Auth::user()->id, 
+                        "name" => Auth::user()->nome, 
+                        "email" => Auth::user()->email, 
+                        "profile" => Auth::user()->profile->nome
+                    ];
+    
+                    SendEmailJob::dispatch("App\Events\Auth\UserLoggedInEvent", $data_for_email);
 
                     Log::channel('login_action')->info("[Acesso realizado | Conta ativada] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
 
@@ -60,7 +75,7 @@ class LoginController extends Controller
 
                 }
 
-             // Case 3: User account is disabled or deleted
+            // Case 3: User account is disabled or deleted
             }else if((!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso) || (!empty(Auth::user()->deleted_at)))){
 
                 Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada ou removida do sistema.");

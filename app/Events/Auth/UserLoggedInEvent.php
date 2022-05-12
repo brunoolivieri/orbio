@@ -11,6 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+// 
 
 class UserLoggedInEvent
 {
@@ -28,15 +29,14 @@ class UserLoggedInEvent
      * @param $request from login request maded to LoginController
      * @return void
      */
-    public function __construct(Request $request)
+    public function __construct(array $data)
     {
-
-        $name_parts = explode(" ", Auth::user()->nome);
-
-        $this->user_id = Auth::user()->id;
+        $name_parts = explode(" ", $data["name"]);
+        
+        $this->user_id = $data["id"];
         $this->name = $name_parts[0];
-        $this->email = Auth::user()->email;
-        $this->profile = Auth::user()->profile->nome;
+        $this->email = $data["email"];
+        $this->profile = $data["profile"];
         $this->datetime = date("d-m-Y H:i:s");
     }
 

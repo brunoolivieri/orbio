@@ -20,6 +20,8 @@ use App\Models\ProfileAndModule\ProfileModel;
 use  App\Models\Orders\ServiceOrdersModel;
 // Events
 use App\Events\Modules\Admin\UserCreatedEvent;
+// Jobs
+use App\Jobs\SendEmailJob;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -154,18 +156,23 @@ class AdministrationModuleUserPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $user_model = new UserModel();
+                $user = new UserModel();
 
-                $user_model->id_perfil = intval($request->profile_id);
-                $user_model->nome = $request->name;
-                $user_model->email = $request->email;
-                $user_model->senha = Hash::make($request->password);
+                $user->id_perfil = intval($request->profile_id);
+                $user->nome = $request->name;
+                $user->email = $request->email;
+                $user->senha = Hash::make($request->password);
         
-                $user_model->save();
+                $user->save();
 
-                $profile_name = $user_model->profile->nome;
-        
-                event(new UserCreatedEvent($request->name, $profile_name, $request->email, $request->password));
+                $data_for_email = [
+                    "name" => $user->nome,
+                    "email" => $user->email,
+                    "profile" => $user->profile->nome,
+                    "password" => $request->password
+                ];
+
+                SendEmailJob::dispatch("App\Events\Modules\Admin\UserCreatedEvent", $data_for_email);
 
                 Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$request->email);
                 Log::channel('administration_action')->info("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Usuário criado com sucesso - Email do usuário: ".$request->email." - Perfil do usuário: ". $request->profile_id);
