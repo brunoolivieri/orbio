@@ -42,6 +42,7 @@ export const Header = React.memo((props) => {
           </Grid>
         </Toolbar>
       </AppBar>
+
       <AppBar
         component="div"
         color="primary"

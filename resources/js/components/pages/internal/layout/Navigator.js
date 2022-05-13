@@ -60,7 +60,9 @@ const item = {
   px: 3,
   '&:hover, &:focus': {
     bgcolor: '#E3EEFA',
-    color: '#2065D1'
+    color: '#2065D1',
+    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
+    borderRight: '3px solid #2065D1'
   }
 };
 
@@ -95,31 +97,30 @@ export const Navigator = React.memo((props) => {
             ORBIO
           </Box>
         </ListItem>
-        <Divider />
         <ListItem>
           <Box sx={{py: 2, bgcolor: '#EDEFF2', borderRadius: 2, flexGrow: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <FontAwesomeIcon icon={faIdCardClip} /> <Typography sx={{marginLeft:1}}>{AuthData.data.profile}</Typography>
           </Box>
         </ListItem>
-        <Divider />
-
+        <Divider variant="middle" />
+       
         {categories.map(({ id, children }) => (
           <Box key={id}>
             <ListItem>
-              <ListItemText sx={{ color: "#222" }}>{id}</ListItemText>
+              <ListItemText sx={{ color: "#222" }}><b>{id}</b></ListItemText>
             </ListItem>
             {children.map(({ id: childId, icon, active }) => (
               (userCategoriesAccess.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
-              <ListItem key={childId}>
+              <ListItem key={childId} disablePadding>
                 <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className={style.navigator_navlink}>
-                  <ListItemButton selected={active} sx={{ ...item, borderRadius: 2 }}>
+                  <ListItemButton selected={active} sx={{ ...item }}>
                     <ListItemIcon sx={{ color: '#00713A' }}>{icon}</ListItemIcon>
                     <ListItemText sx={{ color: '#637381' }}>{childId}</ListItemText>
                   </ListItemButton>
                 </Link>
               </ListItem>
             ))}
-            <Divider />
+            <Divider variant="middle" />
           </Box>
         ))}
 

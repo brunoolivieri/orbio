@@ -17,7 +17,7 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 import AxiosApi from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 export const DeleteUserFormulary = React.memo(({...props}) => {
 

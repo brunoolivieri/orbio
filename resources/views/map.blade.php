@@ -4,6 +4,9 @@
  	<meta charset="UTF-8">
  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+	 <!-- FONT -->
+	 <link rel="preconnect" href="https://fonts.googleapis.com">
+
  	<!-- FAVICON -->
  	<link rel='shortcut icon' type='image/x-icon' href="{{ asset('images/map/favicon/favicon.ico') }}">
  	<link rel="android-chrome" sizes="192x192" href="{{ asset('images/map/favicon/android-chrome-192x192.png') }}">

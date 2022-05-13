@@ -13,7 +13,7 @@ import { IconButton } from '@mui/material';
 import { Tooltip } from "@mui/material";
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
 // Custom
@@ -218,7 +218,7 @@ export function UpdateIncidentFormulary({ ...props }) {
     <>
       <Tooltip title="Editar">
         <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 

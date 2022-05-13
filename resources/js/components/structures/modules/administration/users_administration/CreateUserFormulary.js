@@ -14,7 +14,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from '../../../../../services/AxiosApi';
 import { GenericSelect } from '../../../input_select/GenericSelect';
@@ -213,7 +213,7 @@ export function CreateUserFormulary({ ...props }) {
       {/* Botão para abrir o formulário */}
       <Tooltip title="Novo Usuário">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
-          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 

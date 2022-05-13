@@ -10,30 +10,14 @@ import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLo
 import { GenericModalDialog } from "../../../structures/generic_modal_dialog/GenericModalDialog";
 // Material UI
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import { useTheme } from "@emotion/react";
 // Assets
 import error_image from "../../../assets/images/error/error.png";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary" align="center">
-      <Link color="inherit" href="https://www.embrapa.br/">
-        Embrapa
-      </Link>{' '}
-      {new Date().getFullYear()}.
-    </Typography>
-  );
-}
 
 const drawerWidth = 265;
 
 export function Layout() {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
-
-  const theme = useTheme();
 
   // Utilizador do state global de autenticação
   const { AuthData, setAuthData } = useAuthentication();
@@ -131,8 +115,8 @@ export function Layout() {
               }
 
             </Box>
-            <Box component="footer" sx={{ p: 2, bgcolor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919' }}>
-              <Copyright />
+            <Box component="footer">
+              {/* <Copyright /> */}
             </Box>
           </Box>
         </Box>

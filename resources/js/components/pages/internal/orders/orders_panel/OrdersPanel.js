@@ -10,7 +10,7 @@ import { BadgeIcon } from "../../../../structures/badge_icon/BadgeIcon";
 // MaterialUI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { Tooltip } from '@mui/material';
@@ -31,33 +31,19 @@ import FormControl from '@mui/material/FormControl';
 import TablePagination from '@mui/material/TablePagination';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#0F408F",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+const StyledHeadTableCell = styled(TableCell)({
+  color: '#fff',
+  fontWeight: 700
+});
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
 
 export function OrdersPanel() {
 
@@ -271,13 +257,11 @@ export function OrdersPanel() {
 
   }
 
-  function handleClickRadio(event, row) {
+  function handleClickRadio(event) {
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
-      //console.log(panelData.response.records[selectedRecordIndex])
-      //console.log(panelData.response.records[event.target.value])
       setSelectedRecordIndex(event.target.value);
     }
 
@@ -287,7 +271,7 @@ export function OrdersPanel() {
 
     enqueueSnackbar(text, { variant });
 
-  };
+  }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
@@ -303,7 +287,7 @@ export function OrdersPanel() {
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
               <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -330,7 +314,7 @@ export function OrdersPanel() {
         <Grid item>
           <Tooltip title="Reload">
             <IconButton onClick={reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+            <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
         </Grid>
@@ -384,23 +368,23 @@ export function OrdersPanel() {
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell>ID</StyledTableCell>
-                  <StyledTableCell align="center">Status</StyledTableCell>
-                  <StyledTableCell align="center">Planos de Vôo</StyledTableCell>
-                  <StyledTableCell align="center">NumOS</StyledTableCell>
-                  <StyledTableCell align="center">Criador</StyledTableCell>
-                  <StyledTableCell align="center">Piloto</StyledTableCell>
-                  <StyledTableCell align="center">Cliente</StyledTableCell>
-                  <StyledTableCell align="center">Observação</StyledTableCell>
-                  <StyledTableCell align="center">Data do início</StyledTableCell>
-                  <StyledTableCell align="center">Data do fim</StyledTableCell>
+                  <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Planos de Vôo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">NumOS</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data do início</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data do fim</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
                     <TableRow key={row.order_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(event) }} />} label={row.order_id} /></TableCell>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.order_id} /></TableCell>
                       <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
                         <BadgeIcon number={row.flight_plans.length} color={"primary"} />

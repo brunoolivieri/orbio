@@ -9,7 +9,7 @@ import { DeleteIncidentFormulary } from "../../../../structures/modules/incident
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { Tooltip } from '@mui/material';
@@ -29,33 +29,19 @@ import FormControl from '@mui/material/FormControl';
 import TablePagination from '@mui/material/TablePagination';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#0F408F",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+const StyledHeadTableCell = styled(TableCell)({
+  color: '#fff',
+  fontWeight: 700
+});
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
 
 export function IncidentsPanel() {
 
@@ -279,7 +265,7 @@ export function IncidentsPanel() {
 
     enqueueSnackbar(text, { variant });
 
-  };
+  }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
@@ -295,7 +281,7 @@ export function IncidentsPanel() {
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
               <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -322,7 +308,7 @@ export function IncidentsPanel() {
         <Grid item>
           <Tooltip title="Reload">
             <IconButton onClick={reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+              <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
         </Grid>
@@ -376,10 +362,10 @@ export function IncidentsPanel() {
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell>ID</StyledTableCell>
-                  <StyledTableCell align="center">Tipo do incidente</StyledTableCell>
-                  <StyledTableCell align="center">Descrição</StyledTableCell>
-                  <StyledTableCell align="center">Data do incidente</StyledTableCell>
+                  <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Tipo do incidente</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data do incidente</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">

@@ -7,15 +7,15 @@ import { CreateProfileFormulary } from "../../../../structures/modules/administr
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
 // Material UI
+import styled from "@emotion/styled";
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
@@ -31,20 +31,16 @@ import { useSnackbar } from 'notistack';
 import TablePagination from '@mui/material/TablePagination';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
-const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#0F408F",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+const StyledHeadTableCell = styled(TableCell)({
+  color: '#fff',
+  fontWeight: 700
+});
+
 
 export function ProfilesPanel() {
 
@@ -287,7 +283,7 @@ export function ProfilesPanel() {
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -316,7 +312,7 @@ export function ProfilesPanel() {
         <Grid item>
           <Tooltip title="Reload">
             <IconButton onClick={reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+              <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
         </Grid>
@@ -384,13 +380,13 @@ export function ProfilesPanel() {
                     <TableRow key={row.profile_id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.profile_id} /></TableCell>
                       <TableCell align="center">{row.profile_name}</TableCell>
-                      <TableCell align="center">
+                      <TableCell>
                         <FormGroup>
                           <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
                           <FormControlLabel control={<Checkbox defaultChecked={row.modules["1"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
-                      <TableCell align="center">
+                      <TableCell>
                         <FormGroup>
                           <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
                           <FormControlLabel control={<Checkbox defaultChecked={row.modules["2"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />

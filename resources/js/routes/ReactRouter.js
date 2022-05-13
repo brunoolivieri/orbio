@@ -11,7 +11,7 @@ import { Dashboard } from "../components/pages/internal/Dashboard/Dashboard";
 import { Plans } from "../components/pages/internal/plans/Plans";
 import { Reports } from "../components/pages/internal/reports/Reports";
 import { Account } from "../components/pages/internal/account/Account";
-import { AdministrationPanel } from "../components/pages/internal/administration/AdministrationPanel";
+import { Administration } from "../components/pages/internal/administration/Administration";
 import { Configurations } from "../components/pages/internal/configurations/Configurations";
 import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
@@ -48,7 +48,7 @@ export function InternalRoutes() {
             <Route exact path="relatorios" element={<Reports />} />
             <Route exact path="conta" element={<Account />} />
             <Route exact path="configuracoes" element={<Configurations />} />
-            <Route exact path="administracao" element={<AdministrationPanel />} />
+            <Route exact path="administracao" element={<Administration />} />
             <Route exact path="suporte" element={<Support />} />
             <Route exact path="ordens" element={<ServiceOrders />} />
             <Route exact path="incidentes" element={<Incidents />} />

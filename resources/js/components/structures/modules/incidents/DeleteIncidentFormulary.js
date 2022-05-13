@@ -13,7 +13,7 @@ import { IconButton } from '@mui/material';
 import { Tooltip } from "@mui/material";
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';

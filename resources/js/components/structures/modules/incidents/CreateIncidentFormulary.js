@@ -15,7 +15,7 @@ import { Alert } from '@mui/material';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
 // Custom
@@ -213,7 +213,7 @@ export const CreateIncidentFormulary = React.memo(({...props}) => {
 
       <Tooltip title="Novo incidente">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
-          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 

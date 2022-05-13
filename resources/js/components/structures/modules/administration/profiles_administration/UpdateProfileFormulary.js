@@ -22,7 +22,7 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 import AxiosApi from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
@@ -362,7 +362,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
         <>
             <Tooltip title="Editar">
                 <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 

@@ -8,7 +8,7 @@ import { DeletePlanFormulary } from "../../../../structures/modules/plans/Delete
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import { Tooltip } from '@mui/material';
@@ -33,23 +33,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import { useSnackbar } from 'notistack';
 
-const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "#0F408F",
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
+const StyledHeadTableCell = styled(TableCell)({
+  color: '#fff',
+  fontWeight: 700
+});
+
 
 export function PlansPanel() {
 
@@ -333,7 +329,7 @@ export function PlansPanel() {
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
               <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPenToSquare} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -362,7 +358,7 @@ export function PlansPanel() {
         <Grid item>
           <Tooltip title="Reload">
             <IconButton onClick={reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+              <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
         </Grid>

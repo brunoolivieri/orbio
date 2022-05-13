@@ -24,7 +24,7 @@ import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { ModalTransferList } from "../../modal_with_transfer_list/ModalTransferList";
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
@@ -300,7 +300,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     <>
       <Tooltip title="Nova ordem de serviço">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true}>
-          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
