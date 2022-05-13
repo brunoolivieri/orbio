@@ -258,8 +258,7 @@ export function UsersPanel() {
 
   }
 
-  function handleClickRadio(event, row) {
-    //console.log(event.target.value)
+  function handleClickRadio(event) {
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
@@ -275,7 +274,7 @@ export function UsersPanel() {
 
     enqueueSnackbar(text, { variant });
 
-  };
+  }
 
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -388,7 +387,7 @@ export function UsersPanel() {
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
                     <TableRow key={row.user_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e, row) }} />} label={row.user_id} /></TableCell>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.user_id} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.email}</TableCell>
                       <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>

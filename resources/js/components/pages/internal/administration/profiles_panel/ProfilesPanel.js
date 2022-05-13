@@ -46,8 +46,6 @@ const StyledHeadTableCell = styled(TableCell)(({ theme }) => ({
   },
 }));
 
-const native_profiles = [1, 2, 3, 4, 5];
-
 export function ProfilesPanel() {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -68,7 +66,7 @@ export function ProfilesPanel() {
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
   // State da deleção permitida
-  const [deleteAvailable, setDeleteAvailable] = React.useState(true);
+  const [deleteAvailable] = React.useState(true);
 
   // context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -257,14 +255,11 @@ export function ProfilesPanel() {
 
   };
 
-  function handleClickRadio(event, row) {
-    //console.log(event.target.value)
+  function handleClickRadio(event) {
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
-      //console.log(panelData.response.records[selectedRecordIndex])
-      //console.log(panelData.response.records[event.target.value])
       setSelectedRecordIndex(event.target.value);
     }
 
@@ -274,7 +269,7 @@ export function ProfilesPanel() {
 
     enqueueSnackbar(text, { variant });
 
-  };
+  }
 
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -384,12 +379,10 @@ export function ProfilesPanel() {
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
-                {/* Geração das linhas da tabela de perfis- depende dos dados retornados pelo servidor */}
-                {/* A função map() serve para percorrer arrays - neste caso, um array de objetos */}
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
                     <TableRow key={row.profile_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e, row) }} />} label={row.profile_id} /></TableCell>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.profile_id} /></TableCell>
                       <TableCell align="center">{row.profile_name}</TableCell>
                       <TableCell align="center">
                         <FormGroup>

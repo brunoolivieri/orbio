@@ -30,7 +30,6 @@ export function AdministrationPanel() {
     <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
       <Grid container spacing={1} alignItems="center">
         <Grid item xs>
-          {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
           <Switcher panelStateSetter={setActualPanel} options={[{ page: "users", title: "Gerenciamento dos usuários", icon: <FontAwesomeIcon icon={faUsers} /> }, { page: "profiles", title: "Gerenciamento dos perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }]} />
         </Grid>
       </Grid>

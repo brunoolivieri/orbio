@@ -13,7 +13,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { useTheme } from "@emotion/react";
-import { makeStyles } from "@mui/styles";
 // Assets
 import error_image from "../../../assets/images/error/error.png";
 
@@ -28,17 +27,7 @@ function Copyright() {
   );
 }
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    backgroundColor: theme.palette.mode == 'light' ? '#eaeff1' : '#1A1919',
-    "&.MuiPaper-root": {
-      backgroundColor: "#333" // Teste
-    }
-  }
-}))
-
-
-const drawerWidth = 256;
+const drawerWidth = 265;
 
 export function Layout() {
 
@@ -52,9 +41,6 @@ export function Layout() {
   // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
   // Neste caso, a operação é a verificação do token JWT
   const [operationStatus, setOperationStatus] = React.useState({ type: null, title: null, message: null, image: null });
-
-  // Classes do objeto makeStyles
-  const classes = useStyles();
 
   const [menuOpen, setMenuOpen] = React.useState(false);
 
@@ -137,7 +123,7 @@ export function Layout() {
           </Box>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             <Header onDrawerToggle={handleDrawerToggle} />
-            <Box component="main" sx={{ flex: 1, py: 6, px: 4 }} className={classes.root}>
+            <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
 
               {/* Conteúdo variável de cada página */}
               {AuthData.status &&

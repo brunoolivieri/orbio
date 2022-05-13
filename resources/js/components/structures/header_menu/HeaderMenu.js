@@ -4,7 +4,9 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+// Fonts Awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 
 export function HeaderMenu() {
 
@@ -21,13 +23,11 @@ export function HeaderMenu() {
     <div>
       <Button
         id="basic-button"
-        aria-controls="basic-menu"
-        aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
         style={{ backgroundColor: "transparent" }}
       >
-        <ExitToAppIcon style={{ fill: "white" }} />
+        <FontAwesomeIcon icon = {faCircleUser} color={"#fff"} size={'2x'} />
       </Button>
       <Menu
         id="basic-menu"

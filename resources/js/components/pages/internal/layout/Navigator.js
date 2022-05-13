@@ -1,7 +1,7 @@
 // IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
 import { useRef } from "react";
 // IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import layoutStyle from "./layout.module.css";
+import style from "./layout.module.css";
 import { Link } from 'react-router-dom';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // IMPORTAÇÃO DOS COMPONENTES MATERIALUI
@@ -22,8 +22,11 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import { makeStyles } from "@mui/styles";
 import ReportIcon from '@mui/icons-material/Report';
+// Fonts Awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faIdCardClip } from "@fortawesome/free-solid-svg-icons";
+import { Typography } from "@mui/material";
 
 const categories = [
   {
@@ -45,33 +48,21 @@ const categories = [
   {
     id: 'Outros',
     children: [
-      { id: 'Conta', icon: <AccountCircleIcon />, default_allowed_profiles: [2, 3, 4] },
-      { id: 'Configurações', icon: <SettingsIcon />, default_allowed_profiles: [1, 2, 3, 4] },
-      { id: 'Suporte', icon: <HelpIcon />, default_allowed_profiles: [1, 4, 3, 4, 5] },
+      { id: 'Conta', icon: <AccountCircleIcon /> },
+      { id: 'Configurações', icon: <SettingsIcon /> },
+      { id: 'Suporte', icon: <HelpIcon /> },
     ],
   },
 ];
 
 const item = {
-  py: '2px',
+  py: 0.8,
   px: 3,
-  color: 'rgba(255, 255, 255, 0.7)',
   '&:hover, &:focus': {
-    bgcolor: 'rgba(255, 255, 255, 0.08)',
+    bgcolor: '#E3EEFA',
+    color: '#2065D1'
   }
 };
-
-const itemCategory = {
-  boxShadow: '0 -1px 0 rgb(255,255,255,0.1) inset',
-  py: 1.5,
-  px: 3,
-};
-
-const useStyles = makeStyles(() => ({
-  nav_background: {
-    backgroundColor: '#081627'
-  }
-}))
 
 export const Navigator = React.memo((props) => {
 
@@ -80,63 +71,55 @@ export const Navigator = React.memo((props) => {
 
   // Organização dos valores dos poderes do usuário
   // Cada item desses será acessado na função .map() 
-  const refUserPowers = useRef({
+  const userCategoriesAccess = useRef({
+    dashboard: true,
     administracao: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false,
     planos: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
     ordens: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
     relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false,
-    incidentes: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false
+    incidentes: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false,
+    conta: AuthData.data.profile_id != 1,
+    configuracoes: true,
+    suporte: true
   });
 
-  // Classes do objeto makeStyles
-  const classes = useStyles();
-
-  /*
-
-  - Geração do menu
-  - categories.map() produz os menus em si - o superior e o inferior
-  - children.map() produz as opções de cada menu
-  - Antes da geração da opção existe o filtro do valor do acesso
-    - Se o valor do acesso do state global é igual ou maior do que o valor de acesso necessário para gerar a opção, ela será gerado
-    - Lembrando que a lógica do valor do acesso é: quanto maior, maior o acesso (3 - admin; 2 - piloto; 1 - cliente; 0 - usuário)
-
-  */
-
   return (
-    <Drawer {...other}
-      PaperProps={{ sx: { backgroundColor: "#081627" } }}
-    >
+    <Drawer {...other}>
+      <List disablePadding>
 
-      <List disablePadding className={classes.nav_background}>
-
-        <ListItem sx={{ ...item, ...itemCategory, fontSize: 20, color: '#fff', display: "flex", justifyContent: "center" }}>
-          ORBIO
+        <ListItem sx={{ fontSize: 20, display: 'flex' }}>
+          <Box sx={{py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right'}}>
+            SVG
+          </Box>
+          <Box sx={{py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left'}}>
+            ORBIO
+          </Box>
         </ListItem>
-        <ListItem sx={{ ...item, ...itemCategory }}>
-          <ListItemText>{AuthData.data.profile} - {AuthData.data.name}</ListItemText>
+        <Divider />
+        <ListItem>
+          <Box sx={{py: 2, bgcolor: '#EDEFF2', borderRadius: 2, flexGrow: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <FontAwesomeIcon icon={faIdCardClip} /> <Typography sx={{marginLeft:1}}>{AuthData.data.profile}</Typography>
+          </Box>
         </ListItem>
+        <Divider />
 
         {categories.map(({ id, children }) => (
-          <Box key={id} sx={{ bgcolor: '#101F33' }}>
-            <ListItem sx={{ py: 2, px: 3 }}>
-              <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
+          <Box key={id}>
+            <ListItem>
+              <ListItemText sx={{ color: "#222" }}>{id}</ListItemText>
             </ListItem>
-
-            {/* Geração do menu de opções com base no id do perfil do usuário */}
             {children.map(({ id: childId, icon, active }) => (
-              /* Se o seu poder de acesso (ler) em relação ao módulo é 'true' */
-              (refUserPowers.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
-              <ListItem disablePadding key={childId}>
-                {/* O nome da página, na barra de navegação, é utilizada também no nome da rota, e por isso deve ser adaptada */}
-                <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className={layoutStyle.navigator_navlink}>
-                  <ListItemButton selected={active} sx={item}>
-                    <ListItemIcon sx={{ color: "#fff" }}>{icon}</ListItemIcon>
-                    <ListItemText sx={{ color: "#fff" }}>{childId}</ListItemText>
+              (userCategoriesAccess.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
+              <ListItem key={childId}>
+                <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className={style.navigator_navlink}>
+                  <ListItemButton selected={active} sx={{ ...item, borderRadius: 2 }}>
+                    <ListItemIcon sx={{ color: '#00713A' }}>{icon}</ListItemIcon>
+                    <ListItemText sx={{ color: '#637381' }}>{childId}</ListItemText>
                   </ListItemButton>
                 </Link>
               </ListItem>
             ))}
-            <Divider sx={{ mt: 2 }} />
+            <Divider />
           </Box>
         ))}
 

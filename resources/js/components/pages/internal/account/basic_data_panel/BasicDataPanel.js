@@ -41,7 +41,6 @@ export const BasicDataPanel = React.memo((props) => {
     // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
-    // Snackbar
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //

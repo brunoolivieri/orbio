@@ -38,7 +38,6 @@ export const ComplementaryDataPanel = ((props) => {
 
     // State do input de estado e de cidade
     const [inputState, setInputState] = React.useState(props.estado);
-    const [inputCity, setInputCity] = React.useState(props.cidade);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -153,9 +152,9 @@ export const ComplementaryDataPanel = ((props) => {
     function dataValidate(formData) {
 
         const habAnacPattern = /^\d{6}$/;
-        const cpfPattern = /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/;
-        const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
-        const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}\-\d{4})/;
+        const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+        const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
+        const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
         const adressNumberPattern = /^\d+$/;
         const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
@@ -319,7 +318,7 @@ export const ComplementaryDataPanel = ((props) => {
 
         enqueueSnackbar(text, { variant });
 
-    };
+    }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 

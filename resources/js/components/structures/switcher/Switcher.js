@@ -1,6 +1,7 @@
 import * as React from 'react';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import { Typography } from '@mui/material';
 
 export function Switcher({ ...props }) {
 
@@ -21,8 +22,8 @@ export function Switcher({ ...props }) {
       fullWidth
     >
       {props.options.map((item, index) => (
-        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex", flexDirection: "column" }} key={index}>
-          {item.title.toUpperCase()} {item.icon}
+        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex" }} key={index}>
+          <Typography marginRight={2}>{item.title.toUpperCase()}</Typography> {item.icon}
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
