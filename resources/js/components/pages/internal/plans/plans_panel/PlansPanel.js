@@ -419,7 +419,6 @@ export function PlansPanel() {
                   <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Última atualização</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
@@ -460,7 +459,6 @@ export function PlansPanel() {
                       <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
                       <TableCell align="center">{row.plan_description}</TableCell>
                       <TableCell align="center">{row.created_at}</TableCell>
-                      <TableCell align="center">{row.updated_at}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
