@@ -314,7 +314,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
       </Tooltip>
 
       {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
           <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.order_id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >

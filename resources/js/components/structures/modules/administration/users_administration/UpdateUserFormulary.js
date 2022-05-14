@@ -208,12 +208,10 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
           </IconButton>
       </Tooltip>
 
-    {(props.record != null && open) && 
-      
-      <Dialog open={open} onClose={handleClose}>
+      {(props.record != null && open) &&
+      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
         <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 
-        {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
           <DialogContent>

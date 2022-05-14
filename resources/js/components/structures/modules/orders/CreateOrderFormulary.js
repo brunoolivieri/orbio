@@ -304,10 +304,9 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
         <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
 
-        {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
 
           <DialogContent>

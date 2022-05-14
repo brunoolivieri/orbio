@@ -217,7 +217,7 @@ export function CreateUserFormulary({ ...props }) {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

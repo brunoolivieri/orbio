@@ -3,7 +3,6 @@ import * as React from 'react';
 // Custom
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 import { BackdropLoading } from '../../../structures/backdrop_loading/BackdropLoading';
 import { GenericModalDialog } from '../../../structures/generic_modal_dialog/GenericModalDialog';
 // Material UI
@@ -331,9 +330,6 @@ export function ForgotPassword() {
     return (
 
         <>
-            <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
-                <ColorModeToggle />
-            </Box>
 
             {operationStatus.type == "loading" &&
                 <BackdropLoading />

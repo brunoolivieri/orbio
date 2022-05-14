@@ -142,7 +142,7 @@ export function DeleteIncidentFormulary({ ...props }) {
 
       {(props.record != null && open) &&
 
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
           <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.incident_id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

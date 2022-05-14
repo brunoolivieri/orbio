@@ -101,7 +101,7 @@ export function GenerateReportFormulary({ ...props }) {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
         <DialogTitle>DOWNLOAD DO RELATÓRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

@@ -220,11 +220,9 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       </Tooltip>
 
       {(props.record != null && open) &&
-
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
           <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
 
-          {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
             <DialogContent>
 

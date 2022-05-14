@@ -257,7 +257,7 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
       {(props.selected_record.dom != null && open) &&
 
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
           <DialogTitle>ATUALIZAÇÃO | RELATÓRIO (ID: {props.selected_record.data_cells.report_id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

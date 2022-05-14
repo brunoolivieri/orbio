@@ -3,7 +3,6 @@ import * as React from 'react';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
-import { ColorModeToggle } from '../../../structures/color_mode/ToggleColorMode';
 // Material UI
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -196,9 +195,6 @@ export function Login() {
     return (
 
         <>
-            <Box sx={{ position: 'absolute', right: '10px', top: '10px' }}>
-                <ColorModeToggle />
-            </Box>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <Grid
                     item
