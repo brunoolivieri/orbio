@@ -61,8 +61,7 @@ const item = {
   '&:hover, &:focus': {
     bgcolor: '#E3EEFA',
     color: '#2065D1',
-    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px',
-    borderRight: '3px solid #2065D1'
+    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
   }
 };
 
@@ -111,7 +110,7 @@ export const Navigator = React.memo((props) => {
             </ListItem>
             {children.map(({ id: childId, icon, active }) => (
               (userCategoriesAccess.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
-              <ListItem key={childId} disablePadding>
+              <ListItem key={childId}>
                 <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className={style.navigator_navlink}>
                   <ListItemButton selected={active} sx={{ ...item }}>
                     <ListItemIcon sx={{ color: '#00713A' }}>{icon}</ListItemIcon>
