@@ -8,9 +8,7 @@ export function Switcher({ ...props }) {
   const [alignment, setAlignment] = React.useState(0);
 
   const handleChange = (event, newAlignment) => {
-
     setAlignment(newAlignment);
-
   };
 
   return (
@@ -22,8 +20,8 @@ export function Switcher({ ...props }) {
       fullWidth
     >
       {props.options.map((item, index) => (
-        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex" }} key={index}>
-          <Typography marginRight={2}>{item.title.toUpperCase()}</Typography> {item.icon}
+        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex", border: 'none' }} key={index}>
+          <Typography sx={{ marginRight: 2 }}>{item.title.toUpperCase()}</Typography> {item.icon}
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
