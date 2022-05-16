@@ -11,7 +11,7 @@ import { GenericModalDialog } from "../../../structures/generic_modal_dialog/Gen
 // Material UI
 import Box from '@mui/material/Box';
 // Assets
-import error_image from "../../../assets/images/error/error.png";
+import { ErrorAnimation } from '../../../assets/lotties/ErrorLottie';
 
 const drawerWidth = 265;
 
@@ -73,7 +73,8 @@ export function Layout() {
         <GenericModalDialog
           modal_controller={{ state: true, setModalState: null, counter: { required: false } }}
           title={{ top: { required: true, text: operationStatus.title }, middle: { required: false } }}
-          image={{ required: true, src: operationStatus.image }}
+          image={{ required: false }}
+          lottie={{ required: true, lottie: ErrorAnimation }}
           content_text={operationStatus.message}
           actions={{
             required: false,

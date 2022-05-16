@@ -17,11 +17,11 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
 // Assets
-import success_image from "../../../assets/images/success/success.png";
-import email_image from "../../../assets/images/email/email.png";
-import error_image from "../../../assets/images/error/error.png";
+import { SuccessAnimation } from '../../../assets/lotties/SuccessLottie';
+import { ErrorAnimation } from '../../../assets/lotties/ErrorLottie';
 // Raect Router
 import { Link } from 'react-router-dom';
+// Lottie
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -212,7 +212,7 @@ export function ForgotPassword() {
     */
     function sendCodeSuccessServerResponseTreatment() {
 
-        setOperationStatus({ type: "processed", title: "Código enviado!", message: "O código para alteração da senha foi enviado para o seu email.", image: email_image });
+        setOperationStatus({ type: "processed", title: "Código enviado!", message: "Sucesso! Confira o seu e-mail.", animation: SuccessAnimation });
 
         setTimer(60);
         setCodeSent(true);
@@ -229,7 +229,7 @@ export function ForgotPassword() {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro no envio do email. Tente novamente.";
 
-        setOperationStatus({ type: "processed", title: "Erro no envio do código!", message: error_message, image: error_image });
+        setOperationStatus({ type: "processed", title: "Erro no envio do código!", message: error_message, animation: ErrorAnimation });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
@@ -259,7 +259,7 @@ export function ForgotPassword() {
 
     function changePasswordSuccessServerResponseTreatment() {
 
-        setOperationStatus({ type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", image: success_image });
+        setOperationStatus({ type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", animation: SuccessAnimation });
 
         setTimeout(() => {
 
@@ -276,7 +276,7 @@ export function ForgotPassword() {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na alteração da senha. Tente novamente.";
 
-        setOperationStatus({ type: "processed", title: "Erro na alteração da senha!", message: error_message, image: error_image });
+        setOperationStatus({ type: "processed", title: "Erro na alteração da senha!", message: error_message, animation: ErrorAnimation });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
@@ -339,7 +339,8 @@ export function ForgotPassword() {
                 <GenericModalDialog
                     modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
                     title={{ top: { required: false }, middle: { required: true, text: operationStatus.message } }}
-                    image={{ required: true, src: operationStatus.image }}
+                    image={{required: false}}
+                    lottie = {{required: true, animation: operationStatus.animation()}}
                     content_text=""
                     actions={{
                         required: false,

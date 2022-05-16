@@ -39,6 +39,7 @@ export const GenericModalDialog = React.memo(({ ...props }) => {
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                PaperProps = {{style: { borderRadius: 15 }}}
             >
 
                 {props.title.top.required &&
@@ -51,6 +52,13 @@ export const GenericModalDialog = React.memo(({ ...props }) => {
                         {props.image.required &&
                             <Box sx={{ margin: "auto", mb: 3, width: "max-content" }} justifyContent="center" >
                                 <img src={props.image.src} width={100} />
+                            </Box>
+                        }
+
+                        {
+                            props.lottie.required &&
+                            <Box sx={{ margin: "auto", mb: 3, width: "max-content" }} justifyContent="center" >
+                               {props.lottie.animation}
                             </Box>
                         }
 

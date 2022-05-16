@@ -18,7 +18,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
 // Assets
-import dangerImage from "../../../../assets/images/Error/error.png";
+import ErrorAnimation from "../../../../assets/lotties/ErrorLottie";
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -278,7 +278,8 @@ export const BasicDataPanel = React.memo((props) => {
                     <GenericModalDialog
                         modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
                         title={{ top: { required: false }, middle: { required: false } }}
-                        image={{ required: true, src: dangerImage }}
+                        image={{ required: false }}
+                        lottie={{required: true, animation: ErrorAnimation}}
                         content_text={"A desativação é imediata. O login ainda será possível, mas a conta terá acesso mínimo ao sistema."}
                         actions={{
                             required: true,
