@@ -98,11 +98,11 @@ export function Account() {
 
   return (
     <>
-      <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden', borderRadius: 5, bgcolor: '#EDF4FC' }}>
+      <Paper sx={{ maxWidth: '95%', margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-            <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "dados pessoais básicos", icon: "" }, { page: "complementary", title: "dados complementares", icon: "" }, {page: "account_configuration", title: "configurações"}]} />
+            <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, {page: "account_configuration", title: "configurações"}]} />
           </Grid>
         </Grid>
 

@@ -89,20 +89,22 @@ export const Navigator = React.memo((props) => {
       <List disablePadding>
 
         <ListItem sx={{ fontSize: 20, display: 'flex' }}>
-          <Box sx={{py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right'}}>
+          <Box sx={{ py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right' }}>
             SVG
           </Box>
-          <Box sx={{py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left'}}>
+          <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left' }}>
             ORBIO
           </Box>
         </ListItem>
+        <Divider variant="middle" />
+
         <ListItem>
-          <Box sx={{py: 2, bgcolor: '#EDEFF2', borderRadius: 2, flexGrow: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <FontAwesomeIcon icon={faIdCardClip} /> <Typography sx={{marginLeft:1}}>{AuthData.data.profile}</Typography>
+          <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <FontAwesomeIcon icon={faIdCardClip} color = {'#00713A'} /> <Typography sx={{ marginLeft: 1, fontWeight: 600 }}>Perfil: {AuthData.data.profile}</Typography>
           </Box>
         </ListItem>
         <Divider variant="middle" />
-       
+
         {categories.map(({ id, children }) => (
           <Box key={id}>
             <ListItem>

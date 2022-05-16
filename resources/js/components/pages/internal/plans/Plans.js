@@ -21,7 +21,7 @@ export function Plans() {
   }, []);
 
   return (
-    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+    <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
       <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
 
         <PlansPanel />

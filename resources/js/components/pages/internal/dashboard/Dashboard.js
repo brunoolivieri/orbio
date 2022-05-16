@@ -21,7 +21,7 @@ export function Dashboard() {
   }, []);
 
   return (
-    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+    <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
       
         <Toolbar>
           <Grid container spacing={2} alignItems="center">

@@ -32,7 +32,7 @@ import TablePagination from '@mui/material/TablePagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -319,7 +319,7 @@ export function PlansPanel() {
           <Tooltip title="Novo Plano">
             <Link href={`/sistema/mapa?userid=${AuthData.data.id}`} target="_blank">
               <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size="sm" />
               </IconButton>
             </Link>
           </Tooltip>

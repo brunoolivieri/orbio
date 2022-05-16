@@ -46,7 +46,7 @@ export function Layout() {
 
         console.log(error)
 
-        setOperationStatus({ type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: error_image });
+        setOperationStatus({ type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", animation: ErrorAnimation });
 
         setTimeout(() => {
           window.document.href = "/sistema/sair";
@@ -92,7 +92,7 @@ export function Layout() {
       }
 
       {AuthData.status &&
-        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#F3F6F8' }}>
           <Box
             component="nav"
             sx={{ flexShrink: { sm: 0 } }}

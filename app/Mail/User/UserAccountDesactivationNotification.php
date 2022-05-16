@@ -36,6 +36,6 @@ class UserAccountDesactivationNotification extends Mailable
      */
     public function build()
     {
-        return $this->subject($this->subject)->view('users.account_desactivation')->with($this->data);
+        return $this->subject($this->subject)->view('user.account_desactivation')->with($this->data);
     }
 }
