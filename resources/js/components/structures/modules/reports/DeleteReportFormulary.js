@@ -13,7 +13,7 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
@@ -87,7 +87,7 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
     let module_action = "escrever";
 
     AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
-      .then(function (response) {
+      .then(function () {
 
         successServerResponseTreatment();
 

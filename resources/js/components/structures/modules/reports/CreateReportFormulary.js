@@ -20,7 +20,7 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faWifi } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
@@ -91,9 +91,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
       // EXTRAÇÃO DOS DADOS RELEVANTES DO ARQUIVO PARA O STATE
       // LIBERAÇÃO DO FORMULÁRIO DE GERAÇÃO DO RELATÓRIO
 
-      let filename = "";
-      let filecontent = "";
-
       // Report generation is released
       setLogUploaded({ status: true, file: file_uploaded });
 
@@ -145,8 +142,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
   */
   function dataValidate(formData) {
 
-    const logPattern = "";
-
     // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
@@ -195,7 +190,7 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
   * Comunicação AJAX com o Laravel utilizando AXIOS
   * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
   */
-  function requestServerOperation(data, formated_dates) {
+  function requestServerOperation(data) {
 
     // Dados para o middleware de autenticação 
     let logged_user_id = AuthData.data.id;
@@ -209,7 +204,7 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
       flight_log_file: data.get("flight_log_file"),
       observation: data.get("report_note")
     })
-      .then(function (response) {
+      .then(function () {
 
         successServerResponseTreatment();
 
@@ -291,11 +286,11 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
       {/* Botão para abrir o formulário */}
       <Tooltip title="Novo relatório">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true}>
-          <FontAwesomeIcon icon={faSquarePlus} color={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE RELATÓRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
@@ -311,7 +306,7 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
               <label htmlFor="contained-button-file">
                 <Input accept=".txt" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleFileUploadedValidateItAndReleaseFormulary} />
                 <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faWifi} color={"#fff"} size="sm" />}>
-                  {errorDetected.flight_log ? errorDetected.flight_log : "Upload do Log"}
+                  {errorDetected.flight_log ? errorDetected.flight_log : "Conectar"}
                 </Button>
               </label>
             </Box>

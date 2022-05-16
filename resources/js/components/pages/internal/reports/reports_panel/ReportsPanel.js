@@ -24,7 +24,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
@@ -293,9 +293,9 @@ export function ReportsPanel() {
         </Grid>
 
         <Grid item>
-          <Tooltip title="Reload">
+          <Tooltip title="Carregar">
             <IconButton onClick={reloadTable}>
-              <FontAwesomeIcon icon={faArrowRotateRight} size="sm" id="reload_icon" />
+              <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color={'#00713A'} />
             </IconButton>
           </Tooltip>
         </Grid>

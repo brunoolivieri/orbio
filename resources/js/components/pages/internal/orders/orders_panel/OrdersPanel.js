@@ -312,7 +312,7 @@ export function OrdersPanel() {
         </Grid>
 
         <Grid item>
-          <Tooltip title="Reload">
+          <Tooltip title="Carregar">
             <IconButton onClick={reloadTable}>
             <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>

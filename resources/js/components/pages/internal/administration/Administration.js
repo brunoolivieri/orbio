@@ -29,7 +29,7 @@ export function Administration() {
     <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
       <Grid container spacing={1} alignItems="center">
         <Grid item xs>
-          <Switcher panelStateSetter={setActualPanel} options={[{ page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> }, { page: "profiles", title: "Perfis de usuário", icon: <FontAwesomeIcon icon={faIdCardClip} /> }]} />
+          <Switcher panelStateSetter={setActualPanel} options={[{ page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> }, { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }]} />
         </Grid>
       </Grid>
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">

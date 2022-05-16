@@ -10,8 +10,8 @@ import { Box } from '@mui/system';
 import { Typography } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -337,15 +337,15 @@ export const ComplementaryDataPanel = ((props) => {
                 <Grid item>
                     <Tooltip title="Editar">
                         <IconButton onClick={enableFieldsEdition}>
-                            <FontAwesomeIcon icon={faPenToSquare} size="sm" />
+                            <FontAwesomeIcon icon={faPen} size="sm" color={'#007937'} />
                         </IconButton>
                     </Tooltip>
                 </Grid>
 
                 <Grid item>
-                    <Tooltip title="Reload">
+                    <Tooltip title="Carregar">
                         <IconButton onClick={reloadFormulary}>
-                            <FontAwesomeIcon icon={faArrowRotateRight} size="sm" />
+                            <FontAwesomeIcon icon={faArrowsRotate} size="sm" color={'#007937'} />
                         </IconButton>
                     </Tooltip>
                 </Grid>

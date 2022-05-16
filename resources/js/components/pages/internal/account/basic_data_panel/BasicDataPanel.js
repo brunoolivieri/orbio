@@ -11,8 +11,8 @@ import { Button } from '@mui/material';
 import { Typography } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
-import { faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -261,15 +261,15 @@ export const BasicDataPanel = React.memo((props) => {
                 <Grid item>
                     <Tooltip title="Editar">
                         <IconButton onClick={enableFieldsEdition}>
-                            <FontAwesomeIcon icon={faPenToSquare} size="sm" />
+                            <FontAwesomeIcon icon={faPen} size="sm" color={'#007937'} />
                         </IconButton>
                     </Tooltip>
                 </Grid>
 
                 <Grid item>
-                    <Tooltip title="Reload">
+                    <Tooltip title="Carregar">
                         <IconButton onClick={reloadFormulary}>
-                            <FontAwesomeIcon icon={faArrowRotateRight} size="sm" />
+                            <FontAwesomeIcon icon={faArrowsRotate} size="sm" color={'#007937'} />
                         </IconButton>
                     </Tooltip>
                 </Grid>
@@ -279,7 +279,7 @@ export const BasicDataPanel = React.memo((props) => {
                         modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
                         title={{ top: { required: false }, middle: { required: false } }}
                         image={{ required: false }}
-                        lottie={{required: true, animation: ErrorAnimation}}
+                        lottie={{ required: true, animation: ErrorAnimation }}
                         content_text={"A desativação é imediata. O login ainda será possível, mas a conta terá acesso mínimo ao sistema."}
                         actions={{
                             required: true,
