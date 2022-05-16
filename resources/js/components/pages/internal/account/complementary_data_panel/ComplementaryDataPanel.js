@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import { Typography } from '@mui/material';
+import Paper from '@mui/material/Paper';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -329,7 +330,7 @@ export const ComplementaryDataPanel = ((props) => {
                 {saveNecessary && <Grid item>
                     <Tooltip title="Salvar Alterações">
                         <IconButton form="user_account_complementary_form" type="submit">
-                            <PublishedWithChangesIcon />
+                            <PublishedWithChangesIcon color={'#007937'}/>
                         </IconButton>
                     </Tooltip>
                 </Grid>}
@@ -353,243 +354,241 @@ export const ComplementaryDataPanel = ((props) => {
             </Grid>
 
             <Box component="form" id="user_account_complementary_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
+                <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_habanac"
+                                name="user_habanac"
+                                label="Habilitação ANAC"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.habANAC}
+                                helperText={errorMessage.habANAC}
+                                error={errorDetected.habANAC}
+                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "HAB_ANAC"); }}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
 
-                <Grid container spacing={3}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_cpf"
+                                name="user_cpf"
+                                label="CPF"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.cpf}
+                                helperText={errorMessage.cpf}
+                                error={errorDetected.cpf}
+                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "CPF"); }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    maxLength: 14
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_habanac"
-                            name="user_habanac"
-                            label="Habilitação ANAC"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.habANAC}
-                            helperText={errorMessage.habANAC}
-                            error={errorDetected.habANAC}
-                            onChange={(event) => { enableSaveButton(); inputSetMask(event, "HAB_ANAC"); }}
-                            InputProps={{
-                                readOnly: !editMode,
-                            }}
-                            focused={editMode}
-                        />
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_cnpj"
+                                name="user_cnpj"
+                                label="CNPJ"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.cnpj}
+                                helperText={errorMessage.cnpj}
+                                error={errorDetected.cnpj}
+                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "CNPJ"); }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    maxLength: 18
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_telephone"
+                                name="user_telephone"
+                                label="Telefone (com DDD)"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.telephone}
+                                helperText={errorMessage.telephone}
+                                error={errorDetected.telephone}
+                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "PHONE"); }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    maxLength: 14
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_cellphone"
+                                name="user_cellphone"
+                                label="Celular (com DDD)"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.cellphone}
+                                helperText={errorMessage.cellphone}
+                                error={errorDetected.cellphone}
+                                onChange={(event,) => { enableSaveButton(); inputSetMask(event, "PHONE"); }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    maxLength: 14
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_rsocial"
+                                name="user_rsocial"
+                                label="Razão Social"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.razaoSocial}
+                                helperText={errorMessage.razaoSocial}
+                                error={errorDetected.razaoSocial}
+                                onChange={enableSaveButton}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_nfantasia"
+                                name="user_nfantasia"
+                                label="Nome Fantasia"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.nomeFantasia}
+                                helperText={errorMessage.nomeFantasia}
+                                error={errorDetected.nomeFantasia}
+                                onChange={enableSaveButton}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
                     </Grid>
 
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_cpf"
-                            name="user_cpf"
-                            label="CPF"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.cpf}
-                            helperText={errorMessage.cpf}
-                            error={errorDetected.cpf}
-                            onChange={(event) => { enableSaveButton(); inputSetMask(event, "CPF"); }}
-                            onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            InputProps={{
-                                readOnly: !editMode,
-                                maxLength: 14
-                            }}
-                            focused={editMode}
-                        />
+                    <Box >
+                        <Typography variant="inherit" sx={{ m: "10px 0px 10px 0px" }}>Preenchimento dos dados de localização.</Typography>
+                    </Box>
+
+                    <Grid container spacing={3}>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_cep"
+                                name="user_cep"
+                                label="CEP"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.cep}
+                                helperText={errorMessage.cep}
+                                error={errorDetected.cep}
+                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "CEP"); }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                    maxLength: 9
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <SelectStates default={props.estado} state_input_setter={setInputState} error={errorDetected.estado} error_message={errorMessage.estado} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
+                            <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_logradouro"
+                                name="user_logradouro"
+                                label="Logradouro"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.logradouro}
+                                helperText={errorMessage.logradouro}
+                                error={errorDetected.logradouro}
+                                onChange={enableSaveButton}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_numero"
+                                name="user_numero"
+                                label="Numero"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.numero}
+                                helperText={errorMessage.numero}
+                                error={errorDetected.numero}
+                                onChange={enableSaveButton}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="user_complemento"
+                                name="user_complemento"
+                                label="Complemento"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.complemento}
+                                helperText={errorMessage.complemento}
+                                error={errorDetected.complemento}
+                                onChange={enableSaveButton}
+                                InputProps={{
+                                    readOnly: !editMode,
+                                }}
+                                focused={editMode}
+                            />
+                        </Grid>
                     </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_cnpj"
-                            name="user_cnpj"
-                            label="CNPJ"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.cnpj}
-                            helperText={errorMessage.cnpj}
-                            error={errorDetected.cnpj}
-                            onChange={(event) => { enableSaveButton(); inputSetMask(event, "CNPJ"); }}
-                            onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            InputProps={{
-                                readOnly: !editMode,
-                                maxLength: 18
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_telephone"
-                            name="user_telephone"
-                            label="Telefone (com DDD)"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.telephone}
-                            helperText={errorMessage.telephone}
-                            error={errorDetected.telephone}
-                            onChange={(event) => { enableSaveButton(); inputSetMask(event, "PHONE"); }}
-                            onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            InputProps={{
-                                readOnly: !editMode,
-                                maxLength: 14
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_cellphone"
-                            name="user_cellphone"
-                            label="Celular (com DDD)"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.cellphone}
-                            helperText={errorMessage.cellphone}
-                            error={errorDetected.cellphone}
-                            onChange={(event,) => { enableSaveButton(); inputSetMask(event, "PHONE"); }}
-                            onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            InputProps={{
-                                readOnly: !editMode,
-                                maxLength: 14
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_rsocial"
-                            name="user_rsocial"
-                            label="Razão Social"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.razaoSocial}
-                            helperText={errorMessage.razaoSocial}
-                            error={errorDetected.razaoSocial}
-                            onChange={enableSaveButton}
-                            InputProps={{
-                                readOnly: !editMode,
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_nfantasia"
-                            name="user_nfantasia"
-                            label="Nome Fantasia"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.nomeFantasia}
-                            helperText={errorMessage.nomeFantasia}
-                            error={errorDetected.nomeFantasia}
-                            onChange={enableSaveButton}
-                            InputProps={{
-                                readOnly: !editMode,
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                </Grid>
-
-                <Box >
-                    <Typography variant="inherit" sx={{ m: "10px 0px 10px 0px" }}>Preenchimento dos dados de localização.</Typography>
-                </Box>
-
-                <Grid container spacing={3}>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_cep"
-                            name="user_cep"
-                            label="CEP"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.cep}
-                            helperText={errorMessage.cep}
-                            error={errorDetected.cep}
-                            onChange={(event) => { enableSaveButton(); inputSetMask(event, "CEP"); }}
-                            onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            InputProps={{
-                                readOnly: !editMode,
-                                maxLength: 9
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <SelectStates default={props.estado} state_input_setter={setInputState} error={errorDetected.estado} error_message={errorMessage.estado} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
-                        <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_logradouro"
-                            name="user_logradouro"
-                            label="Logradouro"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.logradouro}
-                            helperText={errorMessage.logradouro}
-                            error={errorDetected.logradouro}
-                            onChange={enableSaveButton}
-                            InputProps={{
-                                readOnly: !editMode,
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_numero"
-                            name="user_numero"
-                            label="Numero"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.numero}
-                            helperText={errorMessage.numero}
-                            error={errorDetected.numero}
-                            onChange={enableSaveButton}
-                            InputProps={{
-                                readOnly: !editMode,
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            required
-                            id="user_complemento"
-                            name="user_complemento"
-                            label="Complemento"
-                            fullWidth
-                            variant="outlined"
-                            defaultValue={props.complemento}
-                            helperText={errorMessage.complemento}
-                            error={errorDetected.complemento}
-                            onChange={enableSaveButton}
-                            InputProps={{
-                                readOnly: !editMode,
-                            }}
-                            focused={editMode}
-                        />
-                    </Grid>
-
-                </Grid>
-
+                </Paper>
             </Box>
         </>
 

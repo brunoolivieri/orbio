@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
+// Jobs
+use App\Jobs\SendEmailJob;
 
 class AccountSectionController extends Controller
 {
@@ -194,7 +196,14 @@ class AccountSectionController extends Controller
 
         try{
 
-            UserModel::where("id", $user_id)->update(["status" => false]);
+            $user = UserModel::find($user_id);
+
+            $user->update(["status" => false]);
+
+            SendEmailJob::dispatch("App\Events\User\UserAccountDesactivatedEvent", [
+                "name" => $user->nome, 
+                "email" => $user->email
+            ]);
 
             return response("", 200);
 

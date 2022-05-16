@@ -26,7 +26,7 @@ export function Administration() {
   }, []);
 
   return (
-    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
+    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
       <Grid container spacing={1} alignItems="center">
         <Grid item xs>
           <Switcher panelStateSetter={setActualPanel} options={[{ page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> }, { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }]} />

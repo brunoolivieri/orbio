@@ -31,7 +31,7 @@ export const Header = React.memo((props) => {
             sx={{ mr: 2 }}
             onClick={onDrawerToggle}
           >
-            <FontAwesomeIcon icon={faBars} />
+           <FontAwesomeIcon icon={faBars} /> 
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Typography variant="h1" sx={{ fontSize: '20px', color: '#fff' }}>{actualPage}</Typography>

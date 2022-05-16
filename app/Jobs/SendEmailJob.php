@@ -13,6 +13,7 @@ use App\Events\Auth\UserLoggedInEvent;
 use App\Events\Auth\TokenForChangePasswordEvent;
 use App\Events\User\UserPasswordChangedEvent;
 use App\Events\Modules\Admin\UserCreatedEvent;
+use App\Events\User\UserAccountDesactivatedEvent;
 
 class SendEmailJob implements ShouldQueue
 {

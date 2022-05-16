@@ -11,7 +11,7 @@ class SendCodeToChangePassword extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $title;
+    private $subject;
     private $text;
     private $name;
     private $email;
@@ -40,7 +40,6 @@ class SendCodeToChangePassword extends Mailable
      */
     public function build()
     {
-
         $view_data = [
             "text" => $this->text,
             "name" => $this->name,

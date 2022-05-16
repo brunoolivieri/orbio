@@ -4,6 +4,7 @@ import * as React from 'react';
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { BasicDataPanel } from "./basic_data_panel/BasicDataPanel";
 import { ComplementaryDataPanel } from "./complementary_data_panel/ComplementaryDataPanel";
+import { AccountConfiguration } from './account_configuration/AccountConfiguration';
 import AxiosApi from "../../../../services/AxiosApi";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
 import { Switcher } from "../../../structures/switcher/Switcher";
@@ -97,18 +98,21 @@ export function Account() {
 
   return (
     <>
-      <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
+      <Paper sx={{ maxWidth: 1500, margin: 'auto', overflow: 'hidden', borderRadius: 5, bgcolor: '#EDF4FC' }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-            <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "cadastro básico", icon: "" }, { page: "complementary", title: "cadastro complementar", icon: "" }]} />
+            <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "dados pessoais básicos", icon: "" }, { page: "complementary", title: "dados complementares", icon: "" }, {page: "account_configuration", title: "configurações"}]} />
           </Grid>
         </Grid>
 
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {formularyData.status ? (actualPanel === "basic" ? <BasicDataPanel {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} />
-            : <ComplementaryDataPanel {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} />) : "CARREGANDO"}
+            {formularyData.status ? (actualPanel === "basic" ? <BasicDataPanel {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} />
+              : (actualPanel === "complementary" ? <ComplementaryDataPanel {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} /> 
+              : <AccountConfiguration {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} />)) 
+              : "CARREGANDO"
+            }
 
         </Box>
 

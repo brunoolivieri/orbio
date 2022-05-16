@@ -23,7 +23,7 @@ export function Support() {
 
   return (
 
-    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>
+    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
       <AppBar
         position="static"
         color="default"

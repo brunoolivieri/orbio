@@ -11,7 +11,7 @@ class SendAccessDataToCreatedUser extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $title;
+    private $subject;
     private $text;
     private $link;
     private $datetime;

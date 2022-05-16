@@ -21,7 +21,7 @@ class PasswordChangedNotification extends Mailable
     public function __construct(string $name, string $datetime)
     {
         $this->data = [
-            "subject" => "LARAV-REACT - Senha alterada",
+            "subject" => env("APP_NAME")." - Senha alterada",
             "title" => "Olá $name,",
             "header_text" => "Sua senha foi alterada no dia e hora ".$datetime,
             "footer_text" => "Se não foi você quem solicitou e realizou a operação, contate o suporte."
