@@ -1,11 +1,10 @@
-// IMPORTAÇÃO DOS COMPONENTES NATIVOS DO REACT
-import { useRef } from "react";
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
+// React
+import * as React from 'react';
+// Custom
 import style from "./layout.module.css";
 import { Link } from 'react-router-dom';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
-import * as React from 'react';
+// Material UI
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
@@ -23,6 +22,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ReportIcon from '@mui/icons-material/Report';
+import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIdCardClip } from "@fortawesome/free-solid-svg-icons";
@@ -42,6 +42,7 @@ const categories = [
       { id: 'Ordens', icon: <AssignmentIcon /> },
       { id: 'Planos', icon: <MapIcon /> },
       { id: 'Relatórios', icon: <AssessmentIcon /> },
+      { id: 'Equipamentos', icon: <HomeRepairServiceIcon /> },
       { id: 'Incidentes', icon: <ReportIcon /> }
     ],
   },
@@ -72,13 +73,14 @@ export const Navigator = React.memo((props) => {
 
   // Organização dos valores dos poderes do usuário
   // Cada item desses será acessado na função .map() 
-  const userCategoriesAccess = useRef({
+  const userCategoriesAccess = React.useRef({
     dashboard: true,
     administracao: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false,
     planos: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
     ordens: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
     relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false,
     incidentes: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false,
+    equipamentos: AuthData.data.user_powers["6"].profile_powers.ler == 1 ? true : false,
     conta: AuthData.data.profile_id != 1,
     configuracoes: true,
     suporte: true
@@ -100,7 +102,7 @@ export const Navigator = React.memo((props) => {
 
         <ListItem>
           <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <FontAwesomeIcon icon={faIdCardClip} color = {'#00713A'} /> <Typography sx={{ marginLeft: 1, fontWeight: 600 }}>Perfil: {AuthData.data.profile}</Typography>
+            <FontAwesomeIcon icon={faIdCardClip} color={'#00713A'} /> <Typography sx={{ marginLeft: 1, fontWeight: 600 }}>{AuthData.data.profile}</Typography>
           </Box>
         </ListItem>
         <Divider variant="middle" />

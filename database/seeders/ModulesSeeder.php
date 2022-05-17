@@ -21,7 +21,8 @@ class ModulesSeeder extends Seeder
             ["nome" => "Planos de voo"],
             ["nome" => "Ordens de serviço"],
             ["nome" => "Relatórios pós-voo"],
-            ["nome" => "Incidentes"]
+            ["nome" => "Incidentes"],
+            ["nome" => "Equipamentos"]
         ];
 
         DB::table("module")->insert($data);

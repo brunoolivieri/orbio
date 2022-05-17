@@ -31,7 +31,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 2, "id_perfil" => 1, "ler" => true, "escrever" => true],
             ["id_modulo" => 3, "id_perfil" => 1, "ler" => true, "escrever" => true],
             ["id_modulo" => 4, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 5, "id_perfil" => 1, "ler" => true, "escrever" => true]  
+            ["id_modulo" => 5, "id_perfil" => 1, "ler" => true, "escrever" => true],
+            ["id_modulo" => 6, "id_perfil" => 1, "ler" => true, "escrever" => true]   
         ];
 
         DB::table("profile_has_module")->insert($superAdminModulesRelationship);
@@ -41,7 +42,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 2, "id_perfil" => 2, "ler" => true, "escrever" => true],
             ["id_modulo" => 3, "id_perfil" => 2, "ler" => true, "escrever" => true],
             ["id_modulo" => 4, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 5, "id_perfil" => 2, "ler" => true, "escrever" => true]    
+            ["id_modulo" => 5, "id_perfil" => 2, "ler" => true, "escrever" => true],
+            ["id_modulo" => 6, "id_perfil" => 2, "ler" => true, "escrever" => true]    
         ];
 
         DB::table("profile_has_module")->insert($subAdminModulesRelationship);
@@ -51,7 +53,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 2, "id_perfil" => 3, "ler" => true, "escrever" => false],
             ["id_modulo" => 3, "id_perfil" => 3, "ler" => false, "escrever" => false],
             ["id_modulo" => 4, "id_perfil" => 3, "ler" => false, "escrever" => false],
-            ["id_modulo" => 5, "id_perfil" => 3, "ler" => true, "escrever" => true]   
+            ["id_modulo" => 5, "id_perfil" => 3, "ler" => true, "escrever" => true],
+            ["id_modulo" => 6, "id_perfil" => 3, "ler" => true, "escrever" => true]   
         ];
 
         DB::table("profile_has_module")->insert($pilotModulesRelationship);
@@ -61,7 +64,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 2, "id_perfil" => 4, "ler" => false, "escrever" => false],
             ["id_modulo" => 3, "id_perfil" => 4, "ler" => false, "escrever" => false],
             ["id_modulo" => 4, "id_perfil" => 4, "ler" => true, "escrever" => false],
-            ["id_modulo" => 5, "id_perfil" => 4, "ler" => false, "escrever" => false]  
+            ["id_modulo" => 5, "id_perfil" => 4, "ler" => false, "escrever" => false],
+            ["id_modulo" => 6, "id_perfil" => 4, "ler" => false, "escrever" => false]  
         ];
 
         DB::table("profile_has_module")->insert($clientModulesRelationship);
@@ -71,7 +75,8 @@ class ProfilesModulesRelationshipSeeder extends Seeder
             ["id_modulo" => 2, "id_perfil" => 5, "ler" => false, "escrever" => false],
             ["id_modulo" => 3, "id_perfil" => 5, "ler" => false, "escrever" => false],
             ["id_modulo" => 4, "id_perfil" => 5, "ler" => false, "escrever" => false],
-            ["id_modulo" => 5, "id_perfil" => 5, "ler" => false, "escrever" => false]    
+            ["id_modulo" => 5, "id_perfil" => 5, "ler" => false, "escrever" => false],
+            ["id_modulo" => 6, "id_perfil" => 5, "ler" => false, "escrever" => false]    
         ];
 
         DB::table("profile_has_module")->insert($visitorModulesRelationship);

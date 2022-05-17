@@ -17,6 +17,9 @@ use App\Http\Controllers\Modules\Report\ReportModuleController;
 use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
 use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
+use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteriePanelController;
+use App\Http\Controllers\Modules\Equipment\EquipmentModuleDronePanelController;
+use App\Http\Controllers\Modules\Equipment\EquipmentModuleEquipmentPanelController;
 
 // Views externas
 Route::get('/', function(){ return redirect("/acessar"); }); 
@@ -54,6 +57,9 @@ Route::middleware(["session.auth", "modules.common.authorization"])->group(funct
     Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlanFile"]);
     Route::resource("/api/orders-module", ServiceOrderModuleController::class);
     Route::resource("/api/incidents-module", IncidentModuleController::class);
+    Route::resource("/api/equipments-module-drone", EquipmentModuleDronePanelController::class);
+    Route::resource("/api/equipments-module-battery", EquipmentModuleBatteriePanelController::class);
+    Route::resource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
 });
 
 

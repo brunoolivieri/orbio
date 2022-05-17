@@ -371,6 +371,7 @@ export function ProfilesPanel() {
                   <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatórios</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Equipamentos</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
@@ -402,6 +403,12 @@ export function ProfilesPanel() {
                         <FormGroup>
                           <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
                           <FormControlLabel control={<Checkbox defaultChecked={row.modules["4"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                        </FormGroup>
+                      </TableCell>
+                      <TableCell align="center">
+                        <FormGroup>
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["6"].profile_powers.ler == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={row.modules["6"].profile_powers.escrever == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                       <TableCell align="center">

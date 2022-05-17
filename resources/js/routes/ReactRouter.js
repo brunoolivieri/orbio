@@ -16,6 +16,7 @@ import { Configurations } from "../components/pages/internal/configurations/Conf
 import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
 import { Incidents } from "../components/pages/internal/incidents/Incidents";
+import { Equipments } from "../components/pages/internal/equipments/Equipments";
 // Provider da paginação
 import { PaginationProvider } from "../components/context/Pagination/PaginationContext";
 
@@ -52,6 +53,7 @@ export function InternalRoutes() {
             <Route exact path="suporte" element={<Support />} />
             <Route exact path="ordens" element={<ServiceOrders />} />
             <Route exact path="incidentes" element={<Incidents />} />
+            <Route exact path="equipamentos" element={<Equipments />} />
         </Routes>
 
     )

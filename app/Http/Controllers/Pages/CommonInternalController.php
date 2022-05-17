@@ -113,11 +113,11 @@ class CommonInternalController extends Controller
 
             $module_name = $record->id_modulo === 1 ? 
             "Administração" 
-            : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatórios" : "Incidentes")));
+            : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatórios" : ($record->id_modulo === 5 ? "Incidentes" : "Equipamentos"))));
 
             $current_record_data[$record->id_modulo] = ["module" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
        
-            if($record->id_modulo === 5){
+            if($record->id_modulo === 6){
 
                 $arr_data = $current_record_data;
 

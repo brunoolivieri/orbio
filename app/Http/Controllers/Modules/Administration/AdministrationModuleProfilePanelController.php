@@ -85,11 +85,11 @@ class AdministrationModuleProfilePanelController extends Controller
 
             // Agora são recuperados os dados do relacionamento do perfil atual com o módulo atual, que é alterado a cada loop
             // O perfil se mantém por 5 loops, cada loop é o relacionamento dele com um dos módulos
-            $module_name = $record->id_modulo == 1 ? "Administração" : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatorios" : "Incidentes")));
+            $module_name = $record->id_modulo == 1 ? "Administração" : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatorios" : ($record->id_modulo === 5 ? "Incidentes" : "Equipamentos"))));
             $relationship_of_current_profile_with_modules[$record->id_modulo] = ["module_name" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
 
             // Se o módulo atual for 5, já foram percorridos os 5 registros do perfil com 5 loops
-            if($record->id_modulo == 5){
+            if($record->id_modulo == 6){
 
                 // Os dados dos 5 loops, reunidos a cada loop, são persistidos em uma única posição
                 // Essa fase, agora, é a transformação final dos dados dos 5 registros em uma única linha
