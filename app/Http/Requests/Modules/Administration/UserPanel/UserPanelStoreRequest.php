@@ -27,7 +27,7 @@ class UserPanelStoreRequest extends FormRequest
     {
         return [
                 'name' => 'bail|required',
-                'email' => 'bail|required|email|unique:users,email,',
+                'email' => 'bail|required|email|unique:users,email',
                 'profile_id' => 'bail|required|numeric',
                 'password' => 'bail|required'
             ];  
