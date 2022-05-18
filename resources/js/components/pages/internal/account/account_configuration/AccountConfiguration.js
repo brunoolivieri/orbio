@@ -18,6 +18,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faComputer } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
+import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 //import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
 // Assets
@@ -35,6 +36,9 @@ const PaperStyled = styled(Paper)({
 export const AccountConfiguration = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
+    // Utilizador do state global de autenticação
+    const { AuthData } = useAuthentication();
 
     // States referentes ao formulário
     const [saveNecessary, setSaveNecessary] = React.useState(false);
@@ -72,7 +76,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     function disableAccount() {
 
-        AxiosApi.post(`/api/desactivate-account/${props.userid}`)
+        AxiosApi.post(`/api/desactivate-account/${AuthData.data.id}`)
             .then(function () {
 
                 handleOpenSnackbar("Conta desativada com sucesso!", "success");
@@ -208,7 +212,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                     <Typography>A conta será desativada, o perfil será alterado para visitante, e todos os dados cadastrados serão preservados. Para que seja novamente reativada, o usuário deve entrar em contato com o suporte.</Typography>
                                 </Paper>
                                 <Paper sx={{ boxShadow: 'none' }}>
-                                    <Button variant="contained" color="error" onClick={() => disableAccount}>
+                                    <Button variant="contained" color="error" onClick={() => { disableAccount() }}>
                                         Desativar conta temporariamente
                                     </Button>
                                 </Paper>
