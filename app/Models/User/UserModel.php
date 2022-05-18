@@ -182,11 +182,9 @@ class UserModel extends Authenticatable
     }
 
     /**
-     * Método realizar um SELECT COM WHERE na tabela "users"
-     * Traz todos os dados vinculados a um usuário
+     * Get all user data.
      *
-     * @param int $offset
-     * @param int $limit
+     * @param int $user_id
      * @return array
      */
     function loadAllUserData(int $user_id) : array {

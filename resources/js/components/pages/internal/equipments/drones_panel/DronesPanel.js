@@ -20,7 +20,6 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -76,7 +75,7 @@ export function DronesPanel() {
 
         if (!paginationParams.where) {
 
-            requestToGetAllUsers(module_middleware);
+            requestToGetAllDrones(module_middleware);
 
         } else {
 
@@ -91,7 +90,7 @@ export function DronesPanel() {
      * Carregamento de todos os registros de drone
      * 
      */
-    function requestToGetAllUsers(module_middleware) {
+    function requestToGetAllDrones(module_middleware) {
 
         // This receives: limit clause, where clause and the page number
         const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
@@ -277,7 +276,7 @@ export function DronesPanel() {
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
-                    {/* <CreateDroneFormulary reload_table={reloadTable} /> */}
+                    <CreateDroneFormulary reload_table={reloadTable} /> 
                 </Grid>
 
                 <Grid item>
@@ -379,7 +378,20 @@ export function DronesPanel() {
                                 </TableRow>
                             </TableHead>
                             <TableBody className="tbody">
-                            
+                                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                                    panelData.response.records.map((row, index) => (
+                                        <TableRow key={row.drone_id}>
+                                            <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.drone_id} /></TableCell>
+                                            <TableCell align="center">{row.image}</TableCell>
+                                            <TableCell align="center">{row.name}</TableCell>
+                                            <TableCell align="center">{row.manufacturer}</TableCell>
+                                            <TableCell align="center">{row.model}</TableCell>
+                                            <TableCell align="center">{row.record_number}</TableCell>
+                                            <TableCell align="center">{row.serial_number}</TableCell>
+                                            <TableCell align="center">{row.weight}</TableCell>
+                                            <TableCell align="center">{row.observation}</TableCell>
+                                        </TableRow>
+                                    ))}
                             </TableBody>
                         </Table>
                     </TableContainer>

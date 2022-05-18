@@ -8,11 +8,10 @@ use App\Models\ProfileAndModule\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
-// Log
-use Illuminate\Support\Facades\Log;
 
 class AdministrationModuleProfilePanelController extends Controller
 {

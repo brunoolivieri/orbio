@@ -20,7 +20,6 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -35,6 +34,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import { useSnackbar } from 'notistack';
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -96,7 +96,7 @@ export function EquipmentPanel() {
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/equipments-module-equipments?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/equipments-module-equipment?args=${select_query_params}&auth=${module_middleware}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -277,7 +277,7 @@ export function EquipmentPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          {/* <CreateEquipmentFormulary reload_table={reloadTable} /> */}
+          <CreateEquipmentFormulary reload_table={reloadTable} /> 
         </Grid>
 
         <Grid item>
@@ -380,7 +380,21 @@ export function EquipmentPanel() {
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
-
+                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                  panelData.response.records.map((row, index) => (
+                    <TableRow key={row.equipment_id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.equipment_id} /></TableCell>
+                      <TableCell align="center">{row.image}</TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.manufacturer}</TableCell>
+                      <TableCell align="center">{row.model}</TableCell>
+                      <TableCell align="center">{row.record_number}</TableCell>
+                      <TableCell align="center">{row.serial_number}</TableCell>
+                      <TableCell align="center">{row.weight}</TableCell>
+                      <TableCell align="center">{moment(row.purchase_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{row.observation}</TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

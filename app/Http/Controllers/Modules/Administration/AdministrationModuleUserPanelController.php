@@ -8,11 +8,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 // Classes de validação das requisições store/update
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
-// Log
-use Illuminate\Support\Facades\Log;
 // Models
 use App\Models\Orders\ServiceOrderHasUserModel;
 use App\Models\User\UserModel;
@@ -172,7 +171,7 @@ class AdministrationModuleUserPanelController extends Controller
                     "password" => $request->password
                 ];
 
-                SendEmailJob::dispatch("App\Events\Modules\Admin\UserCreatedEvent", $data_for_email);
+                event(new UserCreatedEvent($data_for_email));
 
                 Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$request->email);
                 Log::channel('administration_action')->info("[Método: Store][Controlador: AdministrationModuleUserPanelController] - Usuário criado com sucesso - Email do usuário: ".$request->email." - Perfil do usuário: ". $request->profile_id);

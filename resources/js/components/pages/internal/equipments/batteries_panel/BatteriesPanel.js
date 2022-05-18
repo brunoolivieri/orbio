@@ -20,7 +20,6 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
 import { InputAdornment } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -35,6 +34,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import { useSnackbar } from 'notistack';
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
     color: '#fff',
@@ -277,7 +277,7 @@ export function BatteriesPanel() {
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
-                    {/* <CreateBatterieFormulary reload_table={reloadTable} /> */}
+                    {/* <CreateBatteryFormulary reload_table={reloadTable} /> */}
                 </Grid>
 
                 <Grid item>
@@ -373,12 +373,22 @@ export function BatteriesPanel() {
                                     <StyledHeadTableCell align="center">Fabricante</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Modelo</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Número Serial</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Peso</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Última carga</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody className="tbody">
-                                
+                                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+                                    panelData.response.records.map((row, index) => (
+                                        <TableRow key={row.battery_id}>
+                                            <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.battery_id} /></TableCell>
+                                            <TableCell align="center">{row.image}</TableCell>
+                                            <TableCell align="center">{row.name}</TableCell>
+                                            <TableCell align="center">{row.manufacturer}</TableCell>
+                                            <TableCell align="center">{row.model}</TableCell>
+                                            <TableCell align="center">{row.serial_number}</TableCell>
+                                            <TableCell align="center">{moment(row.last_charge).format('DD-MM-YYYY hh:mm')}</TableCell>
+                                        </TableRow>
+                                    ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
