@@ -31,11 +31,10 @@ export function Account() {
   const [reloadForm, setReloadForm] = React.useState(false);
 
   // State para os valores dos campos editáveis 
-  const [formularyData, setFormularyData] = React.useState({ status: false });
+  const [accountData, setAccountData] = React.useState({ status: false, error: false, data: {basic: [], complementary: [], sessions: []} });
 
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
-
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -53,30 +52,36 @@ export function Account() {
     })
       .then(function (response) {
 
-        setFormularyData({
+        setAccountData({
           status: true,
           error: false,
-          userid: AuthData.data.id,
-          complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
-          address_id: AuthData.data.user_address_data.user_address_id,
-          name: response.data.data["0"].nome,
-          email: response.data.data["0"].email,
-          profile: AuthData.data.profile,
-          last_access: AuthData.data.last_access,
-          last_update: AuthData.data.last_update,
-          habANAC: response.data.data["0"].habANAC,
-          cpf: response.data.data["0"].CPF,
-          cnpj: response.data.data["0"].CNPJ,
-          telephone: response.data.data["0"].telefone,
-          cellphone: response.data.data["0"].celular,
-          razaoSocial: response.data.data["0"].razaoSocial,
-          nomeFantasia: response.data.data["0"].nomeFantasia,
-          logradouro: response.data.data["0"].logradouro,
-          numero: response.data.data["0"].numero,
-          cep: response.data.data["0"].cep,
-          cidade: response.data.data["0"].cidade,
-          estado: response.data.data["0"].estado,
-          complemento: response.data.data["0"].complemento
+          data: {
+            basic: {
+              name: response.data["0"].nome,
+              email: response.data["0"].email,
+              profile: AuthData.data.profile,
+              last_access: AuthData.data.last_access,
+              last_update: AuthData.data.last_update
+            },
+            complementary: {
+              complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
+              address_id: AuthData.data.user_address_data.user_address_id,
+              habANAC: response.data["0"].habANAC,
+              cpf: response.data["0"].CPF,
+              cnpj: response.data["0"].CNPJ,
+              telephone: response.data["0"].telefone,
+              cellphone: response.data["0"].celular,
+              razaoSocial: response.data["0"].razaoSocial,
+              nomeFantasia: response.data["0"].nomeFantasia,
+              logradouro: response.data["0"].logradouro,
+              numero: response.data["0"].numero,
+              cep: response.data["0"].cep,
+              cidade: response.data["0"].cidade,
+              estado: response.data["0"].estado,
+              complemento: response.data["0"].complemento
+            },
+            sessions: response.data["0"].active_sessions
+          }
         });
 
       })
@@ -102,17 +107,17 @@ export function Account() {
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
-            <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, {page: "account_configuration", title: "configurações"}]} />
+            <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }]} />
           </Grid>
         </Grid>
 
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-            {formularyData.status ? (actualPanel === "basic" ? <BasicDataPanel {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} />
-              : (actualPanel === "complementary" ? <ComplementaryDataPanel {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} /> 
-              : <AccountConfiguration {...formularyData} reload_state={reloadForm} reload_setter={setReloadForm} />)) 
-              : "CARREGANDO"
-            }
+          {accountData.status ? (actualPanel === "basic" ? <BasicDataPanel {...accountData.data.basic} reload_state={reloadForm} reload_setter={setReloadForm} />
+            : (actualPanel === "complementary" ? <ComplementaryDataPanel {...accountData.data.complementary} reload_state={reloadForm} reload_setter={setReloadForm} />
+              : <AccountConfiguration data = {accountData.data.sessions} reload_state={reloadForm} reload_setter={setReloadForm} />))
+            : "CARREGANDO"
+          }
 
         </Box>
 

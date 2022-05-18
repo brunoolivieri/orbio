@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Session;
 // Custom Models
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
@@ -41,6 +42,15 @@ class UserModel extends Authenticatable
     function complementary_data(){
 
         return $this->belongsTo("App\Models\User\UserComplementaryDataModel", "id_dados_complementares");
+
+    }
+
+    /*
+    * Relationship with sessions table
+    */
+    function sessions(){
+
+        return $this->hasMany("App\Models\SessionModel", "user_id");
 
     }
 
@@ -183,29 +193,25 @@ class UserModel extends Authenticatable
 
         try{
 
-            $data = DB::table('users')
-            ->join('user_complementary_data', 'users.id_dados_complementares', '=', 'user_complementary_data.id')
-            ->join('address', 'user_complementary_data.id_endereco', '=', 'address.id')
-            ->where('users.id', '=', $user_id)
-            ->select(
-                'users.nome', 
-                'users.email', 
-                'users.senha',
-                'user_complementary_data.habANAC',
-                'user_complementary_data.CPF',
-                'user_complementary_data.CNPJ',
-                'user_complementary_data.telefone',
-                'user_complementary_data.celular',
-                'user_complementary_data.razaoSocial',
-                'user_complementary_data.nomeFantasia',
-                'address.logradouro',
-                'address.numero',
-                'address.cep',
-                'address.cidade',
-                'address.estado',
-                'address.complemento'     
-                )
-            ->get();
+            $user = UserModel::find($user_id);
+
+            $data = [
+                'nome' => $user->nome, 
+                'email' => $user->email, 
+                'habANAC' => $user->complementary_data->habANAC,
+                'CPF' => $user->complementary_data->CPF,
+                'CNPJ' => $user->complementary_data->CNPJ,
+                'telefone' => $user->complementary_data->telefone,
+                'celular' => $user->complementary_data->celular,
+                'razaoSocial' => $user->complementary_data->razaoSocial,
+                'nomeFantasia' => $user->complementary_data->nomeFantasia,
+                'logradouro' => $user->complementary_data->address->logradouro,
+                'numero' => $user->complementary_data->address->numero,
+                'cep' => $user->complementary_data->address->cep,
+                'cidade' => $user->complementary_data->address->cidade,
+                'estado' => $user->complementary_data->address->estado,
+                'complemento' => $user->complementary_data->address->complemento
+            ];
 
             return ["status" => true, "error" => false, "account_data" => $data];
 

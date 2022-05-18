@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
 // Model utilizado
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
@@ -20,21 +22,42 @@ class AccountSectionController extends Controller
      */
     function loadUserAccountData() : \Illuminate\Http\Response {
 
-        $user_id = request()->user_id;
+        if(request()->user_id == Auth::user()->id){
 
-        $model = new UserModel();
+            $model = new UserModel();
 
-        $response = $model->loadAllUserData((int) $user_id);
+            $response = $model->loadAllUserData((int) Auth::user()->id);
 
-        if($response["status"] && !$response["error"]){
+            if($response["status"] && !$response["error"]){
 
-            return response(["data" => $response["account_data"]], 200);
+                $active_sessions = [];
+                for($count = 0; $count < count(Auth::user()->sessions); $count++){
 
-        }else if(!$response["status"] && $response["error"]){
+                    $user_agent_array = explode(" ", Auth::user()->sessions[$count]->user_agent);
+                    $browser = $user_agent_array[count($user_agent_array) - 1];
 
-            return response("", 200);
+                    $active_sessions[$count] = [
+                        "id" => Auth::user()->sessions[$count]->id,
+                        "user_agent" => $browser,
+                        "ip" => Auth::user()->sessions[$count]->ip_address,
+                        "last_activity" => date('d-m-Y H:i:s', strtotime(Auth::user()->sessions[$count]->last_activity))
+                    ];
+                }
 
-        }
+                $response["account_data"]["active_sessions"] = $active_sessions;
+
+                return response([$response["account_data"]], 200);
+
+            }else if(!$response["status"] && $response["error"]){
+
+                return response("", 500);
+
+            }
+
+        }else{
+
+            return response("", 500);
+        } 
 
     }
 
