@@ -43,19 +43,9 @@ export const theme = createTheme({
         MuiBackdrop: {
             styleOverrides: {
                 root: {
-                    boxShadow: 'none',
-                    backdropFilter: 'blur(10px)',
-                    WebkitBackdropFilter: 'blur(8px)'
+                    boxShadow: 'none'
                 }
             }
-        },
-        MuiDialog: {
-            styleOverrides: {
-                root: {
-                    backdropFilter: "blur(5px)",
-                    backgroundColor: 'rgba(0,0,0,0.8)'
-                }
-            },
         }
     }
 });
