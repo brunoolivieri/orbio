@@ -120,6 +120,18 @@ return [
             'level' => "error",
         ],
 
+        'equipment_action' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/equipments/action.log'),
+            'level' => "info",
+        ],
+
+        'equipment_error' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/modules/equipments/error.log'),
+            'level' => "error",
+        ],
+
         'reports_action' => [
             'driver' => 'single',
             'path' => storage_path('logs/modules/reports/actions.log'),

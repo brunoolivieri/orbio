@@ -8,6 +8,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 // Models
 use App\Models\Drones\DronesModel;
+// Form Request
+use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
+use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 
 class EquipmentModuleDronePanelController extends Controller
 {
@@ -16,7 +19,7 @@ class EquipmentModuleDronePanelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -106,9 +109,25 @@ class EquipmentModuleDronePanelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(StoreDroneRequest $request) : \Illuminate\Http\Response
+    {dd("ok");
+        try{
+
+            DB::transaction(function () use ($request) {
+
+                DroneModel::create($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+
+            });
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            Log::channel('equipment_error')->error("[Método: Store][Controlador: EquipmentModuleDronePanelController] - Falha na criação do drone - Erro: ".$e->getMessage());
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }       
     }
 
     /**
@@ -117,7 +136,7 @@ class EquipmentModuleDronePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : \Illuminate\Http\Response
     {
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -138,7 +157,7 @@ class EquipmentModuleDronePanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->info("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Nenhum registro de usuário encontrado no sistema");
+                Log::channel('equipment_error')->info("[Método: Index][Controlador: EquipmentModuleDronePanelController] - Nenhum registro de drone encontrado no sistema");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -146,7 +165,7 @@ class EquipmentModuleDronePanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
+            Log::channel('equipment_error')->error("[Método: Index][Controlador: EquipmentModuleDronePanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -171,9 +190,23 @@ class EquipmentModuleDronePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateDroneRequest $request, $id) : \Illuminate\Http\Response
     {
-        //
+        try{
+
+            UserModel::where('id', $id)->update($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+
+            Log::channel('equipment_action')->info("[Método: Update][Controlador: EquipmentModuleDronePanelController] - Drone atualizado com sucesso - ID do drone: ".$id);
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            Log::channel('equipment_error')->error("[Método: Update][Controlador: EquipmentModuleDronePanelController] - Falha na atualização do drone - Erro: ".$e->getMessage());
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }
     }
 
     /**
@@ -182,8 +215,23 @@ class EquipmentModuleDronePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : \Illuminate\Http\Response
     {
-        //
+        try{
+
+            DroneModel::where("id", $id)->delete();
+
+            Log::channel('equipment_action')->info("[Método: Destroy][Controlador: EquipmentModuleDronePanelController] - Drone removido com sucesso - ID do drone: ".$id);
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            Log::channel('equipment_error')->error("[Método: Destroy][Controlador: EquipmentModuleDronePanelController] - Drone não foi removido - ID do drone: ".$id." - Erro: ".$e->getMessage());
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }
+
     }
 }
