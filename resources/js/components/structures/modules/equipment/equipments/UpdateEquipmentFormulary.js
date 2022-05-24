@@ -52,6 +52,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     // States dos inputs de data
     const [purchaseDate, setPurchaseDate] = React.useState(moment());
 
+    // State of uploaded image
+    const [uploadedImage, setUploadedImage] = React.useState(null);
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -88,7 +91,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     function handleUploadedImage(event) {
 
-        console.log(event.value)
+        if (event.currentTarget.files && event.currentTarget.files[0]) {
+            setUploadedImage(URL.createObjectURL(event.target.files[0]));
+        }
 
     }
 
@@ -105,9 +110,10 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
         let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
         let purchaseValidation = purchaseDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
+        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
 
         setErrorDetected({
-            image: false,
+            image: imageValidation.error,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -119,7 +125,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         });
 
         setErrorMessage({
-            image: "",
+            image: imageValidation.message,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -130,7 +136,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: purchaseValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error) {
+        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error || imageValidation.error) {
 
             return false;
 
@@ -155,7 +161,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
         AxiosApi.patch(`/api/equipments-module-equipment/${data.get("equipment_id")}`, {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: "",
+            image: uploadedImage,
             name: data.get("name"),
             manufacturer: data.get("manufacturer"),
             model: data.get("model"),

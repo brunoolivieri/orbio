@@ -10,6 +10,8 @@ class BatteriesModel extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     /**
      * Carrega os registros no formato de paginação
      * A claúsula where é opcional

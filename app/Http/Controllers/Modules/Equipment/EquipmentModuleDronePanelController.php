@@ -110,7 +110,7 @@ class EquipmentModuleDronePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreDroneRequest $request) : \Illuminate\Http\Response
-    {
+    {dd($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
         try{
 
             DB::transaction(function () use ($request) {

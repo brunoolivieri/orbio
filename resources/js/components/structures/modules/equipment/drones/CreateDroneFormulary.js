@@ -46,6 +46,9 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
+    // State of uploaded image
+    const [uploadedImage, setUploadedImage] = React.useState(null);
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -82,7 +85,9 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
 
     function handleUploadedImage(event) {
 
-        console.log(event.value)
+        if (event.currentTarget.files && event.currentTarget.files[0]) {
+            setUploadedImage(URL.createObjectURL(event.target.files[0]));
+        }
 
     }
 
@@ -98,9 +103,10 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
         let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
         let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
         let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
+        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
 
         setErrorDetected({
-            image: false,
+            image: imageValidation.error,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -112,7 +118,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
 
 
         setErrorMessage({
-            image: "",
+            image: imageValidation.message,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -122,7 +128,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
             observation: observationValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error) {
+        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || imageValidation.error) {
 
             return false;
 
@@ -145,9 +151,11 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
+        console.log(data.getAll())
+
         AxiosApi.post(`/api/equipments-module-drone`, {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: "",
+            image: uploadedImage,
             name: data.get("name"),
             manufacturer: data.get("manufacturer"),
             model: data.get("model"),

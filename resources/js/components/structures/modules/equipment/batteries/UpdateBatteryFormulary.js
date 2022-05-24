@@ -52,6 +52,9 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     // States dos inputs de data
     const [chargeDate, setChargeDate] = React.useState(moment());
 
+    // State of uploaded image
+    const [uploadedImage, setUploadedImage] = React.useState(null);
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -88,7 +91,9 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     function handleUploadedImage(event) {
 
-        console.log(event.value)
+        if (event.currentTarget.files && event.currentTarget.files[0]) {
+            setUploadedImage(URL.createObjectURL(event.target.files[0]));
+        }
 
     }
 
@@ -102,9 +107,10 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
         let modelValidation = FormValidation(formData.get("model"), null, null, null, null);
         let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
         let lastChargeValidation = chargeDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
+        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
 
         setErrorDetected({
-            image: false,
+            image: imageValidation.error,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -114,7 +120,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
 
         setErrorMessage({
-            image: "",
+            image: imageValidation.message,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -122,7 +128,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             last_charge: lastChargeValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || serialNumberValidation.error || lastChargeValidation.error) {
+        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || serialNumberValidation.error || lastChargeValidation.error || imageValidation.error) {
 
             return false;
 
@@ -147,7 +153,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
         AxiosApi.post(`/api/equipments-module-battery`, {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: "",
+            image: uploadedImage,
             name: data.get("name"),
             manufacturer: data.get("manufacturer"),
             model: data.get("model"),
