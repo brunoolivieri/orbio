@@ -135,7 +135,7 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>DELEÇÃO | DRONE (ID: {props.record.drone_id})</DialogTitle>
+                <DialogTitle>DELEÇÃO | ID: {props.record.drone_id}</DialogTitle>
 
                 {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleDroneDeleteSubmit} >

@@ -252,7 +252,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>ATUALIZAÇÃO | DRONE (ID: {props.record.drone_id})</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.drone_id}</DialogTitle>
 
                 {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleDroneUpdateSubmit} >

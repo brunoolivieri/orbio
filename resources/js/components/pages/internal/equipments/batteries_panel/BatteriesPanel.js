@@ -3,9 +3,9 @@ import * as React from 'react';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
-import CreateBatteryFormulary from "../../../../structures/modules/equipment/batteries/CreateBatteryFormulary";
 import { DeleteBatteryFormulary } from '../../../../structures/modules/equipment/batteries/DeleteBatteryFormulary';
 import { UpdateBatteryFormulary } from '../../../../structures/modules/equipment/batteries/UpdateBatteryFormulary';
+import { CreateBatteryFormulary } from "../../../../structures/modules/equipment/batteries/CreateBatteryFormulary";
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -277,7 +277,7 @@ export function BatteriesPanel() {
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
-                    {/* <CreateBatteryFormulary reload_table={reloadTable} /> */}
+                    <CreateBatteryFormulary reload_table={reloadTable} />
                 </Grid>
 
                 <Grid item>
