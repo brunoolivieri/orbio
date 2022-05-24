@@ -8,10 +8,13 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 // Models
 use App\Models\Batteries\BatteriesModel;
+// Form Request
+use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
+use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
 
-class EquipmentModuleBatteriePanelController extends Controller
+class EquipmentModuleBatteryPanelController extends Controller
 {
-    /**
+     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -37,7 +40,7 @@ class EquipmentModuleBatteriePanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->info("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Nenhum registro de usuário encontrado no sistema");
+                Log::channel('equipment_error')->info("[Método: Index][Controlador: EquipmentModuleBatteryPanelController] - Nenhum registro de bateria encontrado no sistema");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -45,7 +48,7 @@ class EquipmentModuleBatteriePanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
+            Log::channel('equipment_error')->error("[Método: Index][Controlador: EquipmentModuleBatteryPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -104,9 +107,25 @@ class EquipmentModuleBatteriePanelController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreBatteryRequest $request)
     {
-        //
+        try{
+
+            DB::transaction(function () use ($request) {
+
+                BatteriesModel::create($request->only(["image", "name", "manufacturer", "model", "serial_number", "last_charge"]));
+
+            });
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            Log::channel('equipment_error')->error("[Método: Store][Controlador: EquipmentModuleBatteryPanelController] - Falha na criação da bateria - Erro: ".$e->getMessage());
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }    
     }
 
     /**
@@ -136,7 +155,7 @@ class EquipmentModuleBatteriePanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->info("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Nenhum registro de usuário encontrado no sistema");
+                Log::channel('equipment_error')->info("[Método: Index][Controlador: EquipmentModuleBatteryPanelController] - Nenhum registro de bateria encontrado no sistema");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -144,7 +163,7 @@ class EquipmentModuleBatteriePanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
+            Log::channel('equipment_error')->error("[Método: Index][Controlador: EquipmentModuleBatteryPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -169,9 +188,23 @@ class EquipmentModuleBatteriePanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateBatteryRequest $request, $id)
     {
-        //
+        try{
+
+            BatteriesModel::where('id', $id)->update($request->only(["image", "name", "manufacturer", "model", "serial_number", "last_charge"]));
+
+            Log::channel('equipment_action')->info("[Método: Update][Controlador: EquipmentModuleBatteryPanelController] - Bateria atualizado com sucesso - ID da bateria: ".$id);
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            Log::channel('equipment_error')->error("[Método: Update][Controlador: EquipmentModuleBatteryPanelController] - Falha na atualização da bateria - Erro: ".$e->getMessage());
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }
     }
 
     /**
@@ -182,6 +215,20 @@ class EquipmentModuleBatteriePanelController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+
+            BatteriesModel::where("id", $id)->delete();
+
+            Log::channel('equipment_action')->info("[Método: Destroy][Controlador: EquipmentModuleBatteryPanelController] - Bateria removida com sucesso - ID da bateria: ".$id);
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            Log::channel('equipment_error')->error("[Método: Destroy][Controlador: EquipmentModuleBatteryPanelController] - Falha na deleção do registro da bateria - ID da bateria: ".$id." - Erro: ".$e->getMessage());
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }
     }
 }

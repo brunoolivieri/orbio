@@ -199,6 +199,9 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             helperText={errorMessage.name}
                             error={errorDetected.name}
                             defaultValue={props.record.name}
+                            InputProps={{
+                                readOnly: true,
+                            }}
                         />
 
                         <TextField
@@ -213,6 +216,9 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             helperText={errorMessage.manufacturer}
                             error={errorDetected.manufacturer}
                             defaultValue={props.record.manufacturer}
+                            InputProps={{
+                                readOnly: true,
+                            }}
                         />
 
                         <TextField
@@ -227,6 +233,9 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             helperText={errorMessage.model}
                             error={errorDetected.model}
                             defaultValue={props.record.model}
+                            InputProps={{
+                                readOnly: true,
+                            }}
                         />
 
                         <TextField
@@ -241,6 +250,9 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             helperText={errorMessage.serial_number}
                             error={errorDetected.serial_number}
                             defaultValue={props.record.serial_number}
+                            InputProps={{
+                                readOnly: true,
+                            }}
                         />
 
                     </DialogContent>

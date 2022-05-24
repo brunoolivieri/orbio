@@ -110,7 +110,7 @@ class EquipmentModuleDronePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreDroneRequest $request) : \Illuminate\Http\Response
-    {dd("ok");
+    {
         try{
 
             DB::transaction(function () use ($request) {

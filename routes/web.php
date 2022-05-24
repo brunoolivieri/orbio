@@ -17,7 +17,7 @@ use App\Http\Controllers\Modules\Report\ReportModuleController;
 use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
 use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
-use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteriePanelController;
+use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteryPanelController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleDronePanelController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleEquipmentPanelController;
 
@@ -58,7 +58,7 @@ Route::middleware(["session.auth", "modules.common.authorization"])->group(funct
     Route::resource("/api/orders-module", ServiceOrderModuleController::class);
     Route::resource("/api/incidents-module", IncidentModuleController::class);
     Route::resource("/api/equipments-module-drone", EquipmentModuleDronePanelController::class);
-    Route::resource("/api/equipments-module-battery", EquipmentModuleBatteriePanelController::class);
+    Route::resource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::resource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
 });
 
