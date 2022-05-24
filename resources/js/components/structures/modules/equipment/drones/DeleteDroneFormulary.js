@@ -26,10 +26,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
     // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
-    const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
@@ -48,8 +44,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
     // Função para fechar o modal
     const handleClose = () => {
-        setErrorDetected({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
-        setErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
         setDisplayAlert({ display: false, type: "", message: "" });
         setDisabledButton(false);
         setOpen(false);
@@ -137,7 +131,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                 <DialogTitle>DELEÇÃO | ID: {props.record.drone_id}</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleDroneDeleteSubmit} >
 
                     <DialogContent>
@@ -155,8 +148,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="drone_id"
                             name="drone_id"
-                            helperText={errorMessage.name}
-                            error={errorDetected.name}
                             defaultValue={props.record.drone_id}
                             InputProps={{
                                 readOnly: true
@@ -172,8 +163,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="name"
                             name="name"
-                            helperText={errorMessage.name}
-                            error={errorDetected.name}
                             defaultValue={props.record.name}
                             InputProps={{
                                 readOnly: true
@@ -189,8 +178,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="manufacturer"
                             name="manufacturer"
-                            helperText={errorMessage.manufacturer}
-                            error={errorDetected.manufacturer}
                             defaultValue={props.record.manufacturer}
                             InputProps={{
                                 readOnly: true
@@ -206,8 +193,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="model"
                             name="model"
-                            helperText={errorMessage.model}
-                            error={errorDetected.model}
                             defaultValue={props.record.model}
                             InputProps={{
                                 readOnly: true
@@ -223,8 +208,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="record_number"
                             name="record_number"
-                            helperText={errorMessage.record_number}
-                            error={errorDetected.record_number}
                             defaultValue={props.record.record_number}
                             InputProps={{
                                 readOnly: true
@@ -240,8 +223,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="serial_number"
                             name="serial_number"
-                            helperText={errorMessage.serial_number}
-                            error={errorDetected.serial_number}
                             defaultValue={props.record.serial_number}
                             InputProps={{
                                 readOnly: true
@@ -257,8 +238,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="weight"
                             name="weight"
-                            helperText={errorMessage.weight}
-                            error={errorDetected.weight}
                             defaultValue={props.record.weight}
                             InputProps={{
                                 readOnly: true

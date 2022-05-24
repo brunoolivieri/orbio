@@ -152,7 +152,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             manufacturer: data.get("manufacturer"),
             model: data.get("model"),
             serial_number: data.get("serial_number"),
-            last_charge: data.get("last_charge")
+            last_charge: chargeDate
         })
             .then(function () {
 
@@ -245,7 +245,6 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                 <DialogTitle>CADASTRO DE BATERIA | ID: {props.record.battery_id}</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
 
                     <DialogContent>

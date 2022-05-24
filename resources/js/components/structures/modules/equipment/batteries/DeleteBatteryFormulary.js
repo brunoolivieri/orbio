@@ -12,18 +12,12 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import styled from '@emotion/styled';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
-import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-
-const Input = styled('input')({
-    display: 'none',
-});
 
 export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
@@ -31,10 +25,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
     // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
-
-    // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
-    const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: false });
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -54,8 +44,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
     // Função para fechar o modal
     const handleClose = () => {
-        setErrorDetected({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
-        setErrorMessage({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" });
         setDisplayAlert({ display: false, type: "", message: "" });
         setDisabledButton(false);
         setOpen(false);
@@ -74,13 +62,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
         requestServerOperation(data);
 
     }
-
-    function handleUploadedImage(event) {
-
-        console.log(event.value)
-
-    }
-
 
     /*
     * Rotina 3
@@ -154,23 +135,13 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                 <DialogTitle>DELEÇÃO DE BATERIA | ID: {props.record.battery_id}</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
 
                     <DialogContent>
 
                         <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para criação de uma bateria.
+                            Formulário para deleção de uma bateria.
                         </DialogContentText>
-
-                        <Box sx={{ mb: 3 }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
 
                         <TextField
                             type="text"
@@ -196,8 +167,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             required
                             id="name"
                             name="name"
-                            helperText={errorMessage.name}
-                            error={errorDetected.name}
                             defaultValue={props.record.name}
                             InputProps={{
                                 readOnly: true,
@@ -213,8 +182,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             required
                             id="manufacturer"
                             name="manufacturer"
-                            helperText={errorMessage.manufacturer}
-                            error={errorDetected.manufacturer}
                             defaultValue={props.record.manufacturer}
                             InputProps={{
                                 readOnly: true,
@@ -230,8 +197,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             required
                             id="model"
                             name="model"
-                            helperText={errorMessage.model}
-                            error={errorDetected.model}
                             defaultValue={props.record.model}
                             InputProps={{
                                 readOnly: true,
@@ -247,8 +212,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                             required
                             id="serial_number"
                             name="serial_number"
-                            helperText={errorMessage.serial_number}
-                            error={errorDetected.serial_number}
                             defaultValue={props.record.serial_number}
                             InputProps={{
                                 readOnly: true,

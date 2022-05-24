@@ -145,9 +145,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        AxiosApi.patch(`/api/equipments-module-drone/${data.get("id_input")}`, {
+        AxiosApi.patch(`/api/equipments-module-drone/${data.get("drone_id")}`, {
             auth: `${logged_user_id}.${module_id}.${module_action}`,
-            id: data.get("drone_id"),
             image: "",
             name: data.get("name"),
             manufacturer: data.get("manufacturer"),
@@ -254,7 +253,6 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                 <DialogTitle>ATUALIZAÇÃO | ID: {props.record.drone_id}</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleDroneUpdateSubmit} >
 
                     <DialogContent>
