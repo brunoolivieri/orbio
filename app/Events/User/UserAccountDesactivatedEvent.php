@@ -25,13 +25,13 @@ class UserAccountDesactivatedEvent
      *
      * @return void
      */
-    public function __construct(array $data)
+    public function __construct(object $user)
     {
-        $name_parts = explode(" ", $data["name"]);
+        $name_parts = explode(" ", $user->nome);
         $first_name = $name_parts[0];
 
         $this->name = $first_name;
-        $this->email = $data["email"];
+        $this->email = $user->email;
         $this->datetime = date("d-m-Y H:i:s");
     }
 

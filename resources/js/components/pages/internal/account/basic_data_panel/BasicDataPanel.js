@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import { Paper } from '@mui/material';
+import { Button } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -15,6 +16,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
+import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -22,6 +24,9 @@ import { useSnackbar } from 'notistack';
 export const BasicDataPanel = React.memo((props) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+
+    // Utilizador do state global de autenticação
+    const { AuthData } = useAuthentication();
 
     // States referentes ao formulário
     const [editMode, setEditMode] = React.useState(false);
@@ -115,7 +120,7 @@ export const BasicDataPanel = React.memo((props) => {
             name: data.get("user_fullname")
         };
 
-        AxiosApi.patch(`/api/update-basic-data/${props.userid}`, request_data)
+        AxiosApi.patch(`/api/update-basic-data/${AuthData.data.id}`, request_data)
             .then(function (response) {
 
                 serverResponseTreatment(response);
@@ -178,7 +183,7 @@ export const BasicDataPanel = React.memo((props) => {
                 {saveNecessary && <Grid item>
                     <Tooltip title="Salvar Alterações">
                         <IconButton form="user_account_basic_form" type="submit">
-                            <PublishedWithChangesIcon color={'#007937'}/>
+                            <PublishedWithChangesIcon color={'#007937'} />
                         </IconButton>
                     </Tooltip>
                 </Grid>}
@@ -201,7 +206,7 @@ export const BasicDataPanel = React.memo((props) => {
 
             </Grid>
 
-            <Box component="form" id="user_account_basic_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
+            <Box component="form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6}>
@@ -216,9 +221,6 @@ export const BasicDataPanel = React.memo((props) => {
                                 helperText={errorMessage.name}
                                 error={errorDetected.name}
                                 onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
                                 focused={editMode}
                             />
                         </Grid>
@@ -235,9 +237,6 @@ export const BasicDataPanel = React.memo((props) => {
                                 helperText={errorMessage.email}
                                 error={errorDetected.email}
                                 onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
                                 focused={editMode}
                             />
                         </Grid>
@@ -251,8 +250,8 @@ export const BasicDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.profile}
-                                InputProps={{
-                                    readOnly: true,
+                                inputProps={{
+                                    readOnly: true
                                 }}
                             />
                         </Grid>
@@ -266,8 +265,8 @@ export const BasicDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={moment(props.last_access).format('DD-MM-YYYY hh:mm')}
-                                InputProps={{
-                                    readOnly: true,
+                                inputProps={{
+                                    readOnly: true
                                 }}
                             />
                         </Grid>
@@ -281,12 +280,17 @@ export const BasicDataPanel = React.memo((props) => {
                                 fullWidth
                                 defaultValue={moment(props.last_update).format('DD-MM-YYYY hh:mm')}
                                 variant="outlined"
-                                InputProps={{
-                                    readOnly: true,
+                                inputProps={{
+                                    readOnly: true
                                 }}
                             />
                         </Grid>
                     </Grid>
+
+                    <Button variant="contained" color="primary" disabled={!saveNecessary} sx={{ mt: 2 }}>
+                        Atualizar
+                    </Button>
+
                 </Paper>
             </Box>
 

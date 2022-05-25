@@ -5,10 +5,10 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import { Button } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { SelectStates } from '../../../../structures/input_select/InputSelectStates';
 import { SelectCities } from '../../../../structures/input_select/SelectCities';
+import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
 // Libs
 import { useSnackbar } from 'notistack';
 
@@ -25,14 +26,17 @@ export const ComplementaryDataPanel = ((props) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
+    // Utilizador do state global de autenticação
+    const { AuthData } = useAuthentication();
+
     // States referentes ao formulário
     // const [dataChanged, setDataChanged] = useState(false);
-    const [editMode, setEditMode] = React.useState(false);
-    const [saveNecessary, setSaveNecessary] = React.useState(false);
+    const [editMode, setEditMode] = React.useState({ documents: false, address: false });
+    const [saveNecessary, setSaveNecessary] = React.useState({ documents: false, address: false });
 
     // States de validação dos campos
-    const [errorDetected, setErrorDetected] = React.useState({ habANAC: false, cpf: false, cnpj: false, telephone: false, cellphone: false, razaoSocial: false, nomeFantasia: false, logradouro: false, numero: false, cep: false, cidade: false, estado: false, complemento: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ habANAC: null, cpf: null, cnpj: null, telephone: null, cellphone: null, razaoSocial: null, nomeFantasia: null, logradouro: null, numero: null, cep: null, cidade: null, estado: null, complemento: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({ habANAC: false, cpf: false, cnpj: false, telephone: false, cellphone: false, razaoSocial: false, nomeFantasia: false, logradouro: false, numero: false, cep: false, cidade: false, estado: false, complemento: false });
+    const [errorMessage, setErrorMessage] = React.useState({ habANAC: null, cpf: null, cnpj: null, telephone: null, cellphone: null, razaoSocial: null, nomeFantasia: null, logradouro: null, numero: null, cep: null, cidade: null, estado: null, complemento: null });
 
     // State key Down
     const [keyPressed, setKeyPressed] = React.useState();
@@ -47,12 +51,6 @@ export const ComplementaryDataPanel = ((props) => {
     function enableFieldsEdition() {
 
         setEditMode(!editMode);
-
-    }
-
-    function enableSaveButton() {
-
-        setSaveNecessary(true);
 
     }
 
@@ -127,51 +125,53 @@ export const ComplementaryDataPanel = ((props) => {
 
     /*
     * Rotina 1
-    * Ponto inicial do processamento do envio do formulário 
-    * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */
-    function handleSubmitForm(event) {
+    function handleAddressSubmitForm(event) {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
 
-        if (dataValidate(data)) {
+        if (formAddressValidate(data)) {
 
-            requestServerOperation(data);
+            requestServerOperationAddress(data, "ADDRESS");
 
         }
 
     }
 
     /*
-    * Rotina 2
-    * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
+    * Rotina 1
     */
-    function dataValidate(formData) {
+    function handleDocumentsSubmitForm(event) {
+        event.preventDefault();
+
+        const data = new FormData(event.currentTarget);
+
+        if (formDocumentsValidate(data)) {
+
+            requestServerOperationComplementaryData(data);
+
+        }
+
+    }
+
+    /*
+    * Rotina 2A
+    */
+    function formDocumentsValidate(data) {
 
         const habAnacPattern = /^\d{6}$/;
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
         const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
-        const adressNumberPattern = /^\d+$/;
-        const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
-        const habanacValidate = FormValidation(formData.get("user_habanac"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
-        const cpfValidate = FormValidation(formData.get("user_cpf"), null, null, cpfPattern, "CPF");
-        const cnpjValidate = FormValidation(formData.get("user_cnpj"), null, null, cnpjPattern, "CNPJ");
-        const telephoneValidate = FormValidation(formData.get("user_telephone"), null, null, phonePattern, "NÚMERO DE TELEFONE");
-        const cellphoneValidate = FormValidation(formData.get("user_cellphone"), null, null, phonePattern, "NÚMERO DE CELULAR");
-        const rsocialValidate = FormValidation(formData.get("user_rsocial"), 3, null, null);
-        const nfantasiaValidate = FormValidation(formData.get("user_nfantasia"), 3, null, null);
-        const logradouroValidate = FormValidation(formData.get("user_logradouro"), 3, null, null);
-        const numeroValidate = FormValidation(formData.get("user_numero"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
-        const cepValidate = FormValidation(formData.get("user_cep"), null, null, cepPattern, "CEP");
-        const cidadeValidate = formData.get("select_city_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
-        const estadoValidate = formData.get("select_state_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
-        const complementoValidate = FormValidation(formData.get("user_complemento"), null, null, null);
+        const habanacValidate = FormValidation(data.get("habanac"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
+        const cpfValidate = FormValidation(data.get("cpf"), null, null, cpfPattern, "CPF");
+        const cnpjValidate = FormValidation(data.get("cnpj"), null, null, cnpjPattern, "CNPJ");
+        const telephoneValidate = FormValidation(data.get("telephone"), null, null, phonePattern, "NÚMERO DE TELEFONE");
+        const cellphoneValidate = FormValidation(data.get("cellphone"), null, null, phonePattern, "NÚMERO DE CELULAR");
+        const rsocialValidate = FormValidation(data.get("rsocial"), 3, null, null);
+        const nfantasiaValidate = FormValidation(data.get("nfantasia"), 3, null, null);
 
         setErrorDetected(
             {
@@ -182,13 +182,14 @@ export const ComplementaryDataPanel = ((props) => {
                 cellphone: cellphoneValidate.error,
                 razaoSocial: rsocialValidate.error,
                 nomeFantasia: nfantasiaValidate.error,
-                logradouro: logradouroValidate.error,
-                numero: numeroValidate.error,
-                cep: cepValidate.error,
-                cidade: cidadeValidate.error,
-                estado: estadoValidate.error,
-                complemento: complementoValidate.error
-            });
+                logradouro: false,
+                numero: false,
+                cep: false,
+                cidade: false,
+                estado: false,
+                complemento: false
+            }
+        );
 
         setErrorMessage(
             {
@@ -199,15 +200,16 @@ export const ComplementaryDataPanel = ((props) => {
                 cellphone: cellphoneValidate.message,
                 razaoSocial: rsocialValidate.message,
                 nomeFantasia: nfantasiaValidate.message,
-                logradouro: logradouroValidate.message,
-                numero: numeroValidate.message,
-                cep: cepValidate.message,
-                cidade: cidadeValidate.message,
-                estado: estadoValidate.message,
-                complemento: complementoValidate.message
-            });
+                logradouro: "",
+                numero: "",
+                cep: "",
+                cidade: "",
+                estado: "",
+                complemento: ""
+            }
+        );
 
-        if (habanacValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || rsocialValidate.error || nfantasiaValidate.error || logradouroValidate.error || numeroValidate.error || cepValidate.error || cidadeValidate.error || estadoValidate.error || complementoValidate.error) {
+        if (habanacValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || rsocialValidate.error || nfantasiaValidate.error) {
 
             return false;
 
@@ -220,28 +222,102 @@ export const ComplementaryDataPanel = ((props) => {
     }
 
     /*
-  * Rotina 3
-  * Comunicação AJAX com o Laravel utilizando AXIOS
-  * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
-  */
-    function requestServerOperation(data) {
+    * Rotina 2B
+    */
+    function formAddressValidate(data) {
 
-        AxiosApi.patch(`/api/update-complementary-data/${props.userid}`, {
+        const adressNumberPattern = /^\d+$/;
+        const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
+
+        const logradouroValidate = FormValidation(data.get("logradouro"), 3, null, null);
+        const numeroValidate = FormValidation(data.get("numero"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
+        const cepValidate = FormValidation(data.get("cep"), null, null, cepPattern, "CEP");
+        const cidadeValidate = data.get("select_city_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
+        const estadoValidate = data.get("select_state_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
+        const complementoValidate = FormValidation(data.get("complemento"), null, null, null);
+
+        setErrorDetected(
+            {
+                habANAC: false,
+                cpf: false,
+                cnpj: false,
+                telephone: false,
+                cellphone: false,
+                razaoSocial: false,
+                nomeFantasia: false,
+                logradouro: logradouroValidate.error,
+                numero: numeroValidate.error,
+                cep: cepValidate.error,
+                cidade: cidadeValidate.error,
+                estado: estadoValidate.error,
+                complemento: complementoValidate.error
+            }
+        );
+
+        setErrorMessage(
+            {
+                habANAC: "",
+                cpf: "",
+                cnpj: "",
+                telephone: "",
+                cellphone: "",
+                razaoSocial: "",
+                nomeFantasia: "",
+                logradouro: logradouroValidate.message,
+                numero: numeroValidate.message,
+                cep: cepValidate.message,
+                cidade: cidadeValidate.message,
+                estado: estadoValidate.message,
+                complemento: complementoValidate.message
+            }
+        );
+
+        if (logradouroValidate.error || numeroValidate.error || cepValidate.error || cidadeValidate.error || estadoValidate.error || complementoValidate.error) {
+
+            return false;
+
+        } else {
+
+            return true;
+
+        }
+    }
+
+    function requestServerOperationComplementaryData(data) {
+
+        AxiosApi.patch(`/api/update-complementary-data/${AuthData.data.id}`, {
             complementary_data_id: props.complementary_data_id,
             address_id: props.address_id,
-            habAnac: data.get("user_habanac"),
-            cpf: data.get("user_cpf"),
-            cnpj: data.get("user_cnpj"),
-            telephone: data.get("user_telephone"),
-            cellphone: data.get("user_cellphone"),
-            rSocial: data.get("user_rsocial"),
-            nFantasia: data.get("user_nfantasia"),
-            logradouro: data.get("user_logradouro"),
-            address_number: data.get("user_numero"),
-            cep: data.get("user_cep"),
+            habAnac: data.get("habanac"),
+            cpf: data.get("cpf"),
+            cnpj: data.get("cnpj"),
+            telephone: data.get("telephone"),
+            cellphone: data.get("cellphone"),
+            rSocial: data.get("rsocial"),
+            nFantasia: data.get("nfantasia")
+        })
+            .then(function (response) {
+
+                serverResponseTreatment(response);
+
+            })
+            .catch(function (error) {
+
+                serverResponseTreatment(error.response);
+
+            });
+
+    }
+
+    function requestServerOperationAddress(data) {
+
+        AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
+            logradouro: data.get("logradouro"),
+            address_number: data.get("numero"),
+            cep: data.get("cep"),
             city: data.get("select_city_input"),
             state: data.get("select_state_input"),
-            complemento: data.get("user_complemento")
+            complemento: data.get("complemento")
         })
             .then(function (response) {
 
@@ -257,10 +333,8 @@ export const ComplementaryDataPanel = ((props) => {
     }
 
     /*
-  * Rotina 4
-  * Tratamento da resposta do servidor
-  * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
-  */
+    * Rotina 4
+    */
     function serverResponseTreatment(response) {
 
         if (response.status === 200) {
@@ -327,14 +401,6 @@ export const ComplementaryDataPanel = ((props) => {
         <>
             <Grid container spacing={1} alignItems="center">
 
-                {saveNecessary && <Grid item>
-                    <Tooltip title="Salvar Alterações">
-                        <IconButton form="user_account_complementary_form" type="submit">
-                            <PublishedWithChangesIcon color={'#007937'}/>
-                        </IconButton>
-                    </Tooltip>
-                </Grid>}
-
                 <Grid item>
                     <Tooltip title="Editar">
                         <IconButton onClick={enableFieldsEdition}>
@@ -353,9 +419,13 @@ export const ComplementaryDataPanel = ((props) => {
 
             </Grid>
 
-            <Box component="form" id="user_account_complementary_form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+            <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >
+                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 0px' }}>
+
+                    <Typography variant="h5" marginBottom={2}>Documentos</Typography>
+
                     <Grid container spacing={3}>
+
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
@@ -367,11 +437,8 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.habANAC}
                                 helperText={errorMessage.habANAC}
                                 error={errorDetected.habANAC}
-                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "HAB_ANAC"); }}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
-                                focused={editMode}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "HAB_ANAC"); }}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -386,13 +453,9 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.cpf}
                                 helperText={errorMessage.cpf}
                                 error={errorDetected.cpf}
-                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "CPF"); }}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CPF"); }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                    maxLength: 14
-                                }}
-                                focused={editMode}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -407,13 +470,12 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.cnpj}
                                 helperText={errorMessage.cnpj}
                                 error={errorDetected.cnpj}
-                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "CNPJ"); }}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CNPJ"); }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
-                                    readOnly: !editMode,
                                     maxLength: 18
                                 }}
-                                focused={editMode}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -428,13 +490,12 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.telephone}
                                 helperText={errorMessage.telephone}
                                 error={errorDetected.telephone}
-                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "PHONE"); }}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "PHONE"); }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
-                                    readOnly: !editMode,
                                     maxLength: 14
                                 }}
-                                focused={editMode}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -449,13 +510,12 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.cellphone}
                                 helperText={errorMessage.cellphone}
                                 error={errorDetected.cellphone}
-                                onChange={(event,) => { enableSaveButton(); inputSetMask(event, "PHONE"); }}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "PHONE"); }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
-                                    readOnly: !editMode,
                                     maxLength: 14
                                 }}
-                                focused={editMode}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -470,11 +530,8 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.razaoSocial}
                                 helperText={errorMessage.razaoSocial}
                                 error={errorDetected.razaoSocial}
-                                onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
-                                focused={editMode}
+                                onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -489,105 +546,105 @@ export const ComplementaryDataPanel = ((props) => {
                                 defaultValue={props.nomeFantasia}
                                 helperText={errorMessage.nomeFantasia}
                                 error={errorDetected.nomeFantasia}
-                                onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
-                                focused={editMode}
+                                onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
+                                focused={editMode.documents}
                             />
                         </Grid>
-
-                    </Grid>
-
-                    <Box >
-                        <Typography variant="inherit" sx={{ m: "10px 0px 10px 0px" }}>Preenchimento dos dados de localização.</Typography>
-                    </Box>
-
-                    <Grid container spacing={3}>
 
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_cep"
-                                name="user_cep"
+                                id="cep"
+                                name="cep"
                                 label="CEP"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.cep}
                                 helperText={errorMessage.cep}
                                 error={errorDetected.cep}
-                                onChange={(event) => { enableSaveButton(); inputSetMask(event, "CEP"); }}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CEP"); }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
-                                    readOnly: !editMode,
                                     maxLength: 9
                                 }}
-                                focused={editMode}
+                                focused={editMode.documents}
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                    </Grid>
+
+                    <Button variant="contained" color="primary" disabled={!saveNecessary.documents} sx={{ mt: 2 }}>
+                        Atualizar
+                    </Button>
+                </Paper>
+            </Box>
+
+            <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
+                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+
+                    <Typography variant="h5" marginBottom={2}>Endereço</Typography>
+
+                    <Grid container spacing={3}>
+
+                        <Grid item xs={12} sm={12}>
                             <SelectStates default={props.estado} state_input_setter={setInputState} error={errorDetected.estado} error_message={errorMessage.estado} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
                             <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12}>
                             <TextField
                                 required
-                                id="user_logradouro"
-                                name="user_logradouro"
+                                id="logradouro"
+                                name="logradouro"
                                 label="Logradouro"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.logradouro}
                                 helperText={errorMessage.logradouro}
                                 error={errorDetected.logradouro}
-                                onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
-                                focused={editMode}
+                                onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
+                                focused={editMode.address}
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12}>
                             <TextField
                                 required
-                                id="user_numero"
-                                name="user_numero"
+                                id="numero"
+                                name="numero"
                                 label="Numero"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.numero}
                                 helperText={errorMessage.numero}
                                 error={errorDetected.numero}
-                                onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
-                                focused={editMode}
+                                onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
+                                focused={editMode.address}
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} sm={12}>
                             <TextField
                                 required
-                                id="user_complemento"
-                                name="user_complemento"
+                                id="complemento"
+                                name="complemento"
                                 label="Complemento"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.complemento}
                                 helperText={errorMessage.complemento}
                                 error={errorDetected.complemento}
-                                onChange={enableSaveButton}
-                                InputProps={{
-                                    readOnly: !editMode,
-                                }}
-                                focused={editMode}
+                                onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
+                                focused={editMode.address}
                             />
                         </Grid>
+
                     </Grid>
+
+                    <Button variant="contained" color="primary" disabled={!saveNecessary.address} sx={{ mt: 2 }}>
+                        Atualizar
+                    </Button>
+
                 </Paper>
             </Box>
         </>

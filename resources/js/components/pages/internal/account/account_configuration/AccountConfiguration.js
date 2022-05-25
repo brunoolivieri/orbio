@@ -44,11 +44,8 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
     const [saveNecessary, setSaveNecessary] = React.useState(false);
 
     // States de validação dos campos
-    const [errorDetected] = React.useState({ actual_password: false, new_password: false }); // State para o efeito de erro - true ou false
-    const [errorMessage] = React.useState({ actual_password: "", new_password: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
-
-    // States dos inputs de senha
-    const [password, setPassword] = React.useState({ update: false, actual_password: null, new_password: null });
+    const [errorDetected] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
+    const [errorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
@@ -57,15 +54,24 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    function handleChangePassword(event, type) {
+    function handleSubmitChangePassword(event) {
 
-        setSaveNecessary(true);
+        event.preventDefault();
 
-        if (type == "ACTUAL_PASSWORD") {
-            setPassword({ update: false, actual_password: event.currentTarget.value, new_password: password.new_password });
-        } else if (type == "NEW_PASSWORD") {
-            setPassword({ update: false, actual_password: password.actual_password, new_password: event.currentTarget.value });
-        }
+        const data = new FormData(event.currentTarget);
+
+        AxiosApi.post(`/api/update-password/${AuthData.data.id}`, data)
+            .then(function () {
+
+                handleOpenSnackbar("Senha alterada com sucesso!", "success");
+
+            })
+            .catch(function (error) {
+
+                console.log(error)
+                handleOpenSnackbar("Erro! Tente novamente.", "error");
+
+            });
     }
 
     function reloadFormulary() {
@@ -142,7 +148,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
             </Grid>
 
-            <Box sx={{ mt: 2 }} >
+            <Box component="form" onSubmit={handleSubmitChangePassword} sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
                     <Stack
                         direction="column"
@@ -152,25 +158,36 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                         <PaperStyled sx={{ maxWidth: '800px' }}>
                             <Typography variant="h5" marginBottom={2}>Alteração da senha</Typography>
                             <TextField
-                                id="actual_password"
                                 label="Informe a senha atual"
+                                name="actual_password"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={""}
                                 helperText={errorMessage.actual_password}
                                 error={errorDetected.actual_password}
-                                onChange={(event) => { handleChangePassword(event, "ACTUAL_PASSWORD") }}
+                                onChange={() => { setSaveNecessary(true) }}
                                 sx={{ marginBottom: 2 }}
                             />
                             <TextField
-                                id="new_password"
-                                label="Informe a nova senha"
+                                label="Digite a nova senha"
+                                name="new_password"
                                 fullWidth
                                 defaultValue={""}
                                 variant="outlined"
                                 helperText={errorMessage.new_password}
                                 error={errorDetected.new_password}
-                                onChange={(event) => { handleChangePassword(event, "NEW_PASSWORD") }}
+                                onChange={() => { setSaveNecessary(true) }}
+                                sx={{ marginBottom: 2 }}
+                            />
+                            <TextField
+                                label="Confirme a nova senha"
+                                name="new_password_confirmation"
+                                fullWidth
+                                defaultValue={""}
+                                variant="outlined"
+                                helperText={errorMessage.new_password_confirmation}
+                                error={errorDetected.new_password_confirmation}
+                                onChange={() => { setSaveNecessary(true) }}
                                 sx={{ marginBottom: 2 }}
                             />
                             <Button variant="contained" color="primary" disabled={!saveNecessary}>

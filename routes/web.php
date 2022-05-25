@@ -45,7 +45,9 @@ Route::middleware(["session.auth"])->group(function(){
     Route::get('/api/user-account-data', [AccountSectionController::class, "loadUserAccountData"]);
     Route::patch('/api/update-basic-data/{id}', [AccountSectionController::class, "userBasicDataUpdate"]);
     Route::patch('/api/update-complementary-data/{id}', [AccountSectionController::class, "userComplementaryDataUpdate"]);
+    Route::patch('/api/update-address-data/{id}', [AccountSectionController::class, "userAddressDataUpdate"]);
     Route::post("/api/desactivate-account/{id}", [AccountSectionController::class, "userAccountDesactivation"]);
+    Route::post("/api/update-password/{id}", [AccountSectionController::class, "userAccountDesactivation"]);
 });
 
 // Operações dos módulos

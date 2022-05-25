@@ -136,6 +136,8 @@ class AccountSectionController extends Controller
 
     function userPasswordUpdate(Request $request){
 
+        dd($request->all());
+
         try{
 
             $user = UserModel::find(Auth::user()->id);
@@ -175,10 +177,7 @@ class AccountSectionController extends Controller
 
             $user->update(["status" => false]);
 
-            event(new UserAccountDesactivatedEvent([
-                "name" => $user->nome, 
-                "email" => $user->email
-            ]));
+            event(new UserAccountDesactivatedEvent($user));
 
             return response("", 200);
 
