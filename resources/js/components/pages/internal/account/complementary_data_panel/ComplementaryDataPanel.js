@@ -359,8 +359,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_habanac"
-                                name="user_habanac"
+                                id="habanac"
+                                name="habANAC"
                                 label="Habilitação ANAC"
                                 fullWidth
                                 variant="outlined"
@@ -378,8 +378,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_cpf"
-                                name="user_cpf"
+                                id="cpf"
+                                name="cpf"
                                 label="CPF"
                                 fullWidth
                                 variant="outlined"
@@ -399,8 +399,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_cnpj"
-                                name="user_cnpj"
+                                id="cnpj"
+                                name="cnpj"
                                 label="CNPJ"
                                 fullWidth
                                 variant="outlined"
@@ -420,8 +420,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_telephone"
-                                name="user_telephone"
+                                id="telephone"
+                                name="telephone"
                                 label="Telefone (com DDD)"
                                 fullWidth
                                 variant="outlined"
@@ -441,8 +441,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_cellphone"
-                                name="user_cellphone"
+                                id="celular"
+                                name="celular"
                                 label="Celular (com DDD)"
                                 fullWidth
                                 variant="outlined"
@@ -462,8 +462,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_rsocial"
-                                name="user_rsocial"
+                                id="razaoSocial"
+                                name="razaoSocial"
                                 label="Razão Social"
                                 fullWidth
                                 variant="outlined"
@@ -481,8 +481,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_nfantasia"
-                                name="user_nfantasia"
+                                id="nomeFantasia"
+                                name="nomeFantasia"
                                 label="Nome Fantasia"
                                 fullWidth
                                 variant="outlined"

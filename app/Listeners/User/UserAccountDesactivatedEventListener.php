@@ -29,6 +29,6 @@ class UserAccountDesactivatedEventListener
      */
     public function handle(UserAccountDesactivatedEvent $event)
     {
-        Mail::to($event->email)->send(new UserAccountDesactivationNotification($event->name, $event->email, $event->datetime));
+        Mail::to($event->email)->queue(new UserAccountDesactivationNotification($event->name, $event->email, $event->datetime));
     }
 }

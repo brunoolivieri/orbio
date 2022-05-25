@@ -29,6 +29,6 @@ class UserChangedPasswordEventListener
      */
     public function handle(UserPasswordChangedEvent $event)
     {
-        Mail::to($event->email)->send(new PasswordChangedNotification($event->name, $event->datetime));
+        Mail::to($event->email)->queue(new PasswordChangedNotification($event->name, $event->datetime));
     }
 }

@@ -43,6 +43,7 @@ class UpdateEquipmentRequest extends FormRequest
     */
     public function messages()
     {
+        dd("ok");
         return [
             'image.required' => 'A imagem do drone deve ser enviada',
             'name.required' => 'O nome do drone deve ser informado',

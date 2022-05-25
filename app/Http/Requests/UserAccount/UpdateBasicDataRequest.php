@@ -13,7 +13,7 @@ class UpdateBasicDataRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -26,9 +26,7 @@ class UpdateBasicDataRequest extends FormRequest
 
         return [
             "name" => ["required"],
-            "email" => ["required", "unique:users, email"],
-            "actual_password" => ["string"],
-            "new_password" => []
+            "email" => ["required", "unique:users, email"]
         ];
 
     }
@@ -41,10 +39,9 @@ class UpdateBasicDataRequest extends FormRequest
     public function messages()
     {
         return [
-            "name" => "",
-            "email" => "",
-            "actual_password" => "",
-            "new_password" => ""
+            "name.required" => "O nome deve ser informado",
+            "email.required" => "O email deve ser informado",
+            "email.unique" => "Esse email já está cadastrado"
         ];
     }
 }

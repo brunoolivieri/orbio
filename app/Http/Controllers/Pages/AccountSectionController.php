@@ -10,8 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
-// Jobs
-use App\Jobs\SendEmailJob;
+// Events
+use App\Events\User\UserPasswordChangedEvent;
+use App\Events\User\UserAccountDesactivatedEvent;
 
 class AccountSectionController extends Controller
 {
@@ -63,150 +64,101 @@ class AccountSectionController extends Controller
 
     function userBasicDataUpdate(Request $request, $id) : \Illuminate\Http\Response {
 
-        $check_data_response = $this->checkIfBasicDataAlreadyExists($request);
+        try{
 
-        if($check_data_response["status"] && !$check_data_response["error"]){
+            $user = UserModel::find(Auth::user()->id);
 
-            try{
+            $user->update([
+                "nome" => $request->name,
+                "email" => $request->email
+            ]);
 
-                if(isset($request->actual_password) && isset($request->new_password)){
+            return response("", 200);
 
-                    $user_record = UserModel::select('senha')->where('id', $id)->get();
-    
-                    if(password_verify($request->actual_password, $user_record[0]->senha)){
-        
-                        $update = UserModel::where('id', $id)->update([
-                            "nome" => $request->name,
-                            "email" => $request->email,
-                            "senha" => password_hash($request->new_password, PASSWORD_DEFAULT)
-                        ]);
-        
-                        return response("", 200);
-        
-                    }else{
+        }catch(\Exception $e){
 
-                        return response(["error" => "wrong_password"], 500);
-                    }
-
-                }else{
-
-                    $update = UserModel::where('id', $id)->update([
-                        "nome" => $request->name,
-                        "email" => $request->email
-                    ]);
-
-                    return response("", 200);
-
-                }
-    
-            }catch(\Exception $e){
-
-                return response(["error" => $e->getMessage()], 200);
-    
-            }
-
-        }else if(!$check_data_response["status"] && $check_data_response["error"]){
-
-            return $check_data_response;
+            return response(["error" => $e->getMessage()], 200);
 
         }
 
+    }
+
+    function userComplementaryDataUpdate(Request $request) : \Illuminate\Http\Response {
+
+        try{
+
+            $user = UserModel::find(Auth::user()->id);
+
+            $user->complementary_data->update([
+                "habANAC" => $request->habAnac,
+                "cpf" => $request->cpf,
+                "cnpj" => $request->cnpj,
+                "telefone" => $request->telephone,
+                "celular" => $request->cellphone,
+                "razaoSocial" => $request->rSocial,
+                "nomeFantasia" => $request->nFantasia
+            ]);
+
+            return response("", 200);
+
+        }catch(\Exception $e){
+
+            return response(["error" => $e->getMessage()], 500);
+
+        }
 
     }
 
-    function userComplementaryDataUpdate(Request $request, $id) : \Illuminate\Http\Response {
+    function userAddressDataUpdate(Request $request){
 
-        $checkDataResponse = $this->checkIfComplementaryDataAlreadyExists($request);
+        try{
 
-        if($checkDataResponse["status"] && !$checkDataResponse["error"]){
+            $user = UserModel::find(Auth::user()->id);
 
-            try{
+            $user->address->update([
+                "logradouro" => $request->logradouro,
+                "numero" => $request->address_number,
+                "cep" => $request->cep,
+                "cidade" => $request->city,
+                "estado" => $request->state,
+                "complemento" => $request->complemento
+            ]);
 
-                DB::beginTransaction();
-    
-                UserComplementaryDataModel::where('id', $request->complementary_data_id)->update(
-                    [
-                        "habANAC" => $request->habAnac,
-                        "cpf" => $request->cpf,
-                        "cnpj" => $request->cnpj,
-                        "telefone" => $request->telephone,
-                        "celular" => $request->cellphone,
-                        "razaoSocial" => $request->rSocial,
-                        "nomeFantasia" => $request->nFantasia,
-                    ]
-                );
+            return response("", 200);
 
-                UserAddressModel::where('id', $request->address_id)->update(
-                    [
-                        "logradouro" => $request->logradouro,
-                        "numero" => $request->address_number,
-                        "cep" => $request->cep,
-                        "cidade" => $request->city,
-                        "estado" => $request->state,
-                        "complemento" => $request->complemento
-                    ]
-                );
+        }catch(\Exception $e){
 
-                DB::commit();
+            return response(["error" => $e->getMessage()], 500);
+
+        }
+
+    }
+
+    function userPasswordUpdate(Request $request){
+
+        try{
+
+            $user = UserModel::find(Auth::user()->id);
+
+            if(Hash::check($request->actual_password, $user->senha)){
+
+                $user->update(["senha" => Hash::make($request->new_password)]);
+
+                event(new UserPasswordChangedEvent($user));
 
                 return response("", 200);
-    
-            }catch(\Exception $e){
-    
-                DB::rollBack();
 
-                return response(["error" => $e->getMessage()], 500);
-    
+            }else{
+
+                return response(["error" => "Senha incorreta"], 500);
+
             }
 
-        }else if(!$checkDataResponse["status"] && $checkDataResponse["error"]){
+        }catch(\Exception $e){
 
-            return $checkDataResponse;
-
-        }
-
-    }
-
-    private function checkIfBasicDataAlreadyExists(Request $request) : array {
-
-        $check = [];
-        
-        $check["email"] = UserModel::where('id', '!=', $request->id)->where('email', $request->email)->exists() ? "Esse email já existe" : false;
-
-        if($check["email"]){
-
-            return ["status" => false, "error" => $check];
-
-        }else{
-
-            return ["status" => true, "error" => false];
+            return response(["error" => $e->getMessage()], 500);
 
         }
-
-    }
-
-    private function checkIfComplementaryDataAlreadyExists(Request $request) : array {
-
-        $check = [];
-
-        $check["habAnac"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('habANAC', $request->habAnac)->exists() ? "Essa habilitação já existe" : false;
-        $check["cpf"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('cpf', $request->cpf)->exists() ? "Esse CPF já existe" : false;
-        $check["cnpj"] =  UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('cnpj', $request->cnpj)->exists() ? "Esse CNPJ já existe" : false;
-        $check["cellphone"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('celular', $request->cellphone)->exists() ? "Esse número de celular já existe" : false;
-        $check["telephone"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('telefone', $request->telephone)->exists() ? "Esse número de telefone já existe" : false;
-        $check["rSocial"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('razaoSocial', $request->rSocial)->exists() ? "Essa razão social já existe" : false;
-        $check["nFantasia"] = UserComplementaryDataModel::where('id', '!=', $request->complementary_data_id)->where('nomeFantasia', $request->nFantasia)->exists() ? "Esse nome fantasia já existe" : false;
-
-        if($check["cpf"] || $check["cnpj"] || $check["habAnac"] || $check["cellphone"] || $check["telephone"] || $check["rSocial"] || $check["nFantasia"]){
-
-            return ["status" => false, "error" => $check];
-
-        }else{
-
-            return ["status" => true, "error" => false];
-
-        }
-
     }
 
     /**
@@ -223,10 +175,10 @@ class AccountSectionController extends Controller
 
             $user->update(["status" => false]);
 
-            SendEmailJob::dispatch("App\Events\User\UserAccountDesactivatedEvent", [
+            event(new UserAccountDesactivatedEvent([
                 "name" => $user->nome, 
                 "email" => $user->email
-            ]);
+            ]));
 
             return response("", 200);
 
