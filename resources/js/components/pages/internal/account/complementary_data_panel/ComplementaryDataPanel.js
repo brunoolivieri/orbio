@@ -11,7 +11,6 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -29,9 +28,6 @@ export const ComplementaryDataPanel = ((props) => {
     // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States referentes ao formulário
-    // const [dataChanged, setDataChanged] = useState(false);
-    const [editMode, setEditMode] = React.useState({ documents: false, address: false });
     const [saveNecessary, setSaveNecessary] = React.useState({ documents: false, address: false });
 
     // States de validação dos campos
@@ -47,12 +43,6 @@ export const ComplementaryDataPanel = ((props) => {
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
-
-    function enableFieldsEdition() {
-
-        setEditMode(!editMode);
-
-    }
 
     function reloadFormulary() {
 
@@ -343,8 +333,6 @@ export const ComplementaryDataPanel = ((props) => {
 
             props.reload_setter(!props.reload_state);
 
-            setEditMode(false);
-
         } else {
 
             setErrorDetected(
@@ -402,14 +390,6 @@ export const ComplementaryDataPanel = ((props) => {
             <Grid container spacing={1} alignItems="center">
 
                 <Grid item>
-                    <Tooltip title="Editar">
-                        <IconButton onClick={enableFieldsEdition}>
-                            <FontAwesomeIcon icon={faPen} size="sm" color={'#007937'} />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-
-                <Grid item>
                     <Tooltip title="Carregar">
                         <IconButton onClick={reloadFormulary}>
                             <FontAwesomeIcon icon={faArrowsRotate} size="sm" color={'#007937'} />
@@ -438,7 +418,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 helperText={errorMessage.habANAC}
                                 error={errorDetected.habANAC}
                                 onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "HAB_ANAC"); }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -455,7 +434,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 error={errorDetected.cpf}
                                 onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CPF"); }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -475,7 +453,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 InputProps={{
                                     maxLength: 18
                                 }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -495,7 +472,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 InputProps={{
                                     maxLength: 14
                                 }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -515,7 +491,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 InputProps={{
                                     maxLength: 14
                                 }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -531,7 +506,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 helperText={errorMessage.razaoSocial}
                                 error={errorDetected.razaoSocial}
                                 onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -547,7 +521,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 helperText={errorMessage.nomeFantasia}
                                 error={errorDetected.nomeFantasia}
                                 onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -567,7 +540,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 InputProps={{
                                     maxLength: 9
                                 }}
-                                focused={editMode.documents}
                             />
                         </Grid>
 
@@ -587,8 +559,8 @@ export const ComplementaryDataPanel = ((props) => {
                     <Grid container spacing={3}>
 
                         <Grid item xs={12} sm={12}>
-                            <SelectStates default={props.estado} state_input_setter={setInputState} error={errorDetected.estado} error_message={errorMessage.estado} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
-                            <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={editMode} save_necessary_setter={setSaveNecessary} />
+                            <SelectStates default={props.estado} state_input_setter={setInputState} error={errorDetected.estado} error_message={errorMessage.estado} edit_mode={true} save_necessary_setter={setSaveNecessary} />
+                            <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={true} save_necessary_setter={setSaveNecessary} />
                         </Grid>
 
                         <Grid item xs={12} sm={12}>
@@ -603,7 +575,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 helperText={errorMessage.logradouro}
                                 error={errorDetected.logradouro}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
-                                focused={editMode.address}
                             />
                         </Grid>
 
@@ -619,7 +590,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 helperText={errorMessage.numero}
                                 error={errorDetected.numero}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
-                                focused={editMode.address}
                             />
                         </Grid>
 
@@ -635,7 +605,6 @@ export const ComplementaryDataPanel = ((props) => {
                                 helperText={errorMessage.complemento}
                                 error={errorDetected.complemento}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
-                                focused={editMode.address}
                             />
                         </Grid>
 

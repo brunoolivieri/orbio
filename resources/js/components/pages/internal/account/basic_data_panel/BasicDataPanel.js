@@ -5,13 +5,11 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import { Box } from '@mui/system';
 import { Paper } from '@mui/material';
 import { Button } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
@@ -39,12 +37,6 @@ export const BasicDataPanel = React.memo((props) => {
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
-
-    function enableFieldsEdition() {
-
-        setEditMode(!editMode);
-
-    }
 
     function enableSaveButton() {
 
@@ -179,22 +171,6 @@ export const BasicDataPanel = React.memo((props) => {
     return (
         <>
             <Grid container spacing={1} alignItems="center">
-
-                {saveNecessary && <Grid item>
-                    <Tooltip title="Salvar Alterações">
-                        <IconButton form="user_account_basic_form" type="submit">
-                            <PublishedWithChangesIcon color={'#007937'} />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>}
-
-                <Grid item>
-                    <Tooltip title="Editar">
-                        <IconButton onClick={enableFieldsEdition}>
-                            <FontAwesomeIcon icon={faPen} size="sm" color={'#007937'} />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
 
                 <Grid item>
                     <Tooltip title="Carregar">
