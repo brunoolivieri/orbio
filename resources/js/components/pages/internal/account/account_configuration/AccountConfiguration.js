@@ -19,7 +19,7 @@ import { faComputer } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-//import { FormValidation } from '../../../../../utils/FormValidation';
+import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
 // Assets
 import ErrorAnimation from "../../../../assets/lotties/ErrorLottie";
@@ -44,8 +44,8 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
     const [saveNecessary, setSaveNecessary] = React.useState(false);
 
     // States de validação dos campos
-    const [errorDetected] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
-    const [errorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
@@ -60,6 +60,53 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
         const data = new FormData(event.currentTarget);
 
+        if (formChangePasswordValidate(data)) {
+
+            requestServerOperation(data);
+
+        }
+
+
+    }
+
+    function formChangePasswordValidate(data) {
+
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+
+        const actualPasswordValidate = FormValidation(data.get("actual_password"), null, null, null, null);
+        const newPasswordValidate = FormValidation(data.get("new_password"), null, null, passwordPattern, "PASSWORD");
+        const newPasswordConfirmationValidate = data.get("new_password") != data.get("new_password_confirmation") ? { error: true, message: "As senhas são incompátiveis" } : { error: false, message: "" };
+
+        setErrorDetected(
+            {
+                actual_password: actualPasswordValidate.error,
+                new_password: newPasswordValidate.error,
+                new_password_confirmation: newPasswordConfirmationValidate.error
+            }
+        );
+
+        setErrorMessage(
+            {
+                actual_password: actualPasswordValidate.message,
+                new_password: newPasswordValidate.message,
+                new_password_confirmation: newPasswordConfirmationValidate.message
+            }
+        );
+
+        if (actualPasswordValidate.error || newPasswordValidate.error || newPasswordConfirmationValidate.error) {
+
+            return false;
+
+        } else {
+
+            return true;
+
+        }
+
+    }
+
+    function requestServerOperation(data) {
+
         AxiosApi.post(`/api/update-password/${AuthData.data.id}`, data)
             .then(function () {
 
@@ -68,10 +115,46 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
             })
             .catch(function (error) {
 
-                console.log(error)
-                handleOpenSnackbar("Erro! Tente novamente.", "error");
+                requestErrorServerOperation(error.response.data);
 
             });
+
+    }
+
+    function requestErrorServerOperation(response_data) {
+
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        handleOpenSnackbar(error_message, "error");
+
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            actual_password: { error: false, message: null },
+            new_password: { error: false, message: null },
+            new_password_confirmation: { error: false, message: null }
+        }
+
+        // Coleta dos objetos de erro existentes na response
+        for (let prop in response_data.errors) {
+
+            input_errors[prop] = {
+                error: true,
+                message: response_data.errors[prop][0]
+            }
+
+        }
+
+        setErrorDetected({
+            actual_password: input_errors.actual_password.error,
+            new_password: input_errors.new_password.error,
+            new_password_confirmation: input_errors.new_password_confirmation.error
+        });
+
+        setErrorMessage({
+            actual_password: input_errors.actual_password.message,
+            new_password: input_errors.new_password.message,
+            new_password_confirmation: input_errors.new_password_confirmation.message
+        });
+
     }
 
     function reloadFormulary() {
@@ -85,6 +168,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         AxiosApi.post(`/api/desactivate-account/${AuthData.data.id}`)
             .then(function () {
 
+                setOpenGenericModal(false);
                 handleOpenSnackbar("Conta desativada com sucesso!", "success");
 
                 setTimeout(() => {
@@ -160,9 +244,9 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                             <TextField
                                 label="Informe a senha atual"
                                 name="actual_password"
+                                type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={""}
                                 helperText={errorMessage.actual_password}
                                 error={errorDetected.actual_password}
                                 onChange={() => { setSaveNecessary(true) }}
@@ -171,8 +255,8 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                             <TextField
                                 label="Digite a nova senha"
                                 name="new_password"
+                                type={"password"}
                                 fullWidth
-                                defaultValue={""}
                                 variant="outlined"
                                 helperText={errorMessage.new_password}
                                 error={errorDetected.new_password}
@@ -182,15 +266,15 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                             <TextField
                                 label="Confirme a nova senha"
                                 name="new_password_confirmation"
+                                type={"password"}
                                 fullWidth
-                                defaultValue={""}
                                 variant="outlined"
                                 helperText={errorMessage.new_password_confirmation}
                                 error={errorDetected.new_password_confirmation}
                                 onChange={() => { setSaveNecessary(true) }}
                                 sx={{ marginBottom: 2 }}
                             />
-                            <Button variant="contained" color="primary" disabled={!saveNecessary}>
+                            <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary}>
                                 Alterar senha
                             </Button>
                         </PaperStyled>
@@ -229,7 +313,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                     <Typography>A conta será desativada, o perfil será alterado para visitante, e todos os dados cadastrados serão preservados. Para que seja novamente reativada, o usuário deve entrar em contato com o suporte.</Typography>
                                 </Paper>
                                 <Paper sx={{ boxShadow: 'none' }}>
-                                    <Button variant="contained" color="error" onClick={() => { disableAccount() }}>
+                                    <Button variant="contained" color="error" onClick={() => { setOpenGenericModal(true) }}>
                                         Desativar conta temporariamente
                                     </Button>
                                 </Paper>

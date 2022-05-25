@@ -219,12 +219,12 @@ export const ComplementaryDataPanel = ((props) => {
         const adressNumberPattern = /^\d+$/;
         const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
-        const logradouroValidate = FormValidation(data.get("logradouro"), 3, null, null);
-        const numeroValidate = FormValidation(data.get("numero"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
+        const logradouroValidate = FormValidation(data.get("street_name"), 3, null, null);
+        const numeroValidate = FormValidation(data.get("number"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
         const cepValidate = FormValidation(data.get("cep"), null, null, cepPattern, "CEP");
         const cidadeValidate = data.get("select_city_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
         const estadoValidate = data.get("select_state_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
-        const complementoValidate = FormValidation(data.get("complemento"), null, null, null);
+        const complementoValidate = FormValidation(data.get("complement"), null, null, null);
 
         setErrorDetected(
             {
@@ -308,12 +308,12 @@ export const ComplementaryDataPanel = ((props) => {
     function formAddressRequestServerOperation(data) {
 
         AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
-            street_name: data.get("logradouro"),
-            number: data.get("numero"),
+            street_name: data.get("street_name"),
+            number: data.get("number"),
             cep: data.get("cep"),
             city: data.get("select_city_input"),
             state: data.get("select_state_input"),
-            complement: data.get("complemento")
+            complement: data.get("complement")
         })
             .then(function (response) {
 
@@ -623,25 +623,6 @@ export const ComplementaryDataPanel = ((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="cep"
-                                name="cep"
-                                label="CEP"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.cep}
-                                helperText={errorMessage.cep}
-                                error={errorDetected.cep}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CEP"); }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                InputProps={{
-                                    maxLength: 9
-                                }}
-                            />
-                        </Grid>
-
                     </Grid>
 
                     <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary.documents} sx={{ mt: 2 }}>
@@ -662,7 +643,26 @@ export const ComplementaryDataPanel = ((props) => {
                             <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={true} save_necessary_setter={setSaveNecessary} />
                         </Grid>
 
-                        <Grid item xs={12} sm={12}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                required
+                                id="cep"
+                                name="cep"
+                                label="CEP"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.cep}
+                                helperText={errorMessage.cep}
+                                error={errorDetected.cep}
+                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CEP"); }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                InputProps={{
+                                    maxLength: 9
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 required
                                 id="street_name"
@@ -677,7 +677,7 @@ export const ComplementaryDataPanel = ((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={12}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 required
                                 id="number"
@@ -692,7 +692,7 @@ export const ComplementaryDataPanel = ((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={12}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 required
                                 id="complement"

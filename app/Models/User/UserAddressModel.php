@@ -13,7 +13,7 @@ class UserAddressModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "address";
-    public $timestamps = ["deleted_at"];
+    public $timestamps = false;
 
     /*
     * Relationship with user_complementary_data table

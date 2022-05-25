@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 // Model utilizado
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
@@ -17,6 +18,7 @@ use App\Events\User\UserAccountDesactivatedEvent;
 use App\Http\Requests\UserAccount\UpdateBasicDataRequest;
 use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
 use App\Http\Requests\UserAccount\UpdateAddressRequest;
+use App\Http\Requests\UserAccount\UpdatePasswordRequest;
 
 class AccountSectionController extends Controller
 {
@@ -117,7 +119,7 @@ class AccountSectionController extends Controller
 
             $user = UserModel::find(Auth::user()->id);
 
-            UserAddressModel::where("id", $user->address->id)->update([
+            UserAddressModel::where("id", $user->complementary_data->address->id)->update([
                 "logradouro" => $request->street_name,
                 "numero" => $request->number,
                 "cep" => $request->cep,
@@ -136,27 +138,17 @@ class AccountSectionController extends Controller
 
     }
 
-    function userPasswordUpdate(Request $request){
-
-        dd($request->all());
+    function userPasswordUpdate(UpdatePasswordRequest $request){
 
         try{
 
             $user = UserModel::find(Auth::user()->id);
 
-            if(Hash::check($request->actual_password, $user->senha)){
+            $user->update(["senha" => Hash::make($request->new_password)]);
 
-                $user->update(["senha" => Hash::make($request->new_password)]);
+            event(new UserPasswordChangedEvent($user));
 
-                event(new UserPasswordChangedEvent($user));
-
-                return response("", 200);
-
-            }else{
-
-                return response(["error" => "Senha incorreta"], 500);
-
-            }
+            return response("", 200);
 
         }catch(\Exception $e){
 
