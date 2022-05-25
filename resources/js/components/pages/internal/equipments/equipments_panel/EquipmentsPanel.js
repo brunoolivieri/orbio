@@ -386,7 +386,7 @@ export function EquipmentPanel() {
                   panelData.response.records.map((row, index) => (
                     <TableRow key={row.equipment_id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.equipment_id} /></TableCell>
-                      <TableCell align="center">{row.image}</TableCell>
+                      <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '80px' }} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>

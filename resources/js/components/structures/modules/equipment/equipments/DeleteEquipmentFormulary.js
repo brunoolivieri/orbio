@@ -72,17 +72,7 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        AxiosApi.patch(`/api/equipments-module-equipment/${data.get("equipment_id")}`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: "",
-            name: data.get("name"),
-            manufacturer: data.get("manufacturer"),
-            model: data.get("model"),
-            record_number: data.get("record_number"),
-            serial_number: data.get("serial_number"),
-            weight: data.get("weight"),
-            observation: data.get("observation")
-        })
+        AxiosApi.delete(`/api/equipments-module-equipment/${data.get("equipment_id")}}?auth=${logged_user_id}.${module_id}.${module_action}`)
             .then(function () {
 
                 successServerResponseTreatment();

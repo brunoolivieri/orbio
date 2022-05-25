@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 // Models
 use App\Models\Equipments\EquipmentsModel;
 // Form Request
@@ -71,6 +73,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
             
             $arr_with_formated_data["records"][$row] = array(
                 "equipment_id" => $record->id,
+                "image_url" => Storage::url("images/equipments/".$record->image),
                 "image" => $record->image,
                 "name" => $record->name,
                 "manufacturer" => $record->manufacturer,
@@ -116,7 +119,12 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                EquipmentsModel::create($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
+                $filename = $request->image->getClientOriginalName();
+                $storage_folder = "public/images/equipments/";
+
+                EquipmentsModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
+
+                $path = $request->file('image')->storeAs($storage_folder, $filename);
 
             });
 
@@ -195,7 +203,20 @@ class EquipmentModuleEquipmentPanelController extends Controller
     {
         try{
 
-            EquipmentsModel::where('id', $id)->update($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
+            DB::transaction(function () use ($request, $id) {
+
+                $equipment = EquipmentsModel::find($id);
+
+                Storage::disk('public')->delete("images/equipments/".$equipment->image);
+
+                $filename = $request->image->getClientOriginalName();
+                $storage_folder = "public/images/equipments/";
+
+                $equipment->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
+
+                $path = $request->file('image')->storeAs($storage_folder, $filename);
+
+            });
 
             Log::channel('equipment_action')->info("[Método: Update][Controlador: EquipmentModuleDronePanelController] - Equipamento atualizado com sucesso - ID do equipamento: ".$id);
 
@@ -220,7 +241,15 @@ class EquipmentModuleEquipmentPanelController extends Controller
     {
         try{
 
-            EquipmentsModel::where("id", $id)->delete();
+            DB::transaction(function () use ($id) {
+
+                $equipment = EquipmentsModel::find($id);
+
+                Storage::disk('public')->delete("images/equipments/".$equipment->image);
+
+                $equipment->delete();
+
+            });
 
             Log::channel('equipment_action')->info("[Método: Destroy][Controlador: EquipmentModuleDronePanelController] - Equipamento removido com sucesso - ID do equipamento: ".$id);
 

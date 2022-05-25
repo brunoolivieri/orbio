@@ -116,8 +116,8 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
         let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
         let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
         let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
-        let purchaseValidation = purchaseDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
         let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
+        let purchaseValidation = purchaseDate == null ? { error: true, message: "A data da compra precisa ser informada" } : { error: false, message: "" }
 
         setErrorDetected({
             image: imageValidation.error,
@@ -166,18 +166,11 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        AxiosApi.post(`/api/equipments-module-equipment`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: uploadedImage,
-            name: data.get("name"),
-            manufacturer: data.get("manufacturer"),
-            model: data.get("model"),
-            record_number: data.get("record_number"),
-            serial_number: data.get("serial_number"),
-            weight: data.get("weight"),
-            observation: data.get("observation"),
-            purchase_date: purchaseDate
-        })
+        data.append("auth", `${logged_user_id}.${module_id}.${module_action}`);
+        data.append("image", uploadedImage);
+        data.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
+
+        AxiosApi.post(`/api/equipments-module-equipment`, data)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -337,7 +330,7 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                         <TextField
                             type="text"
                             margin="dense"
-                            label="Número serial"
+                            label="Número Serial"
                             fullWidth
                             variant="outlined"
                             required
@@ -358,6 +351,19 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             name="weight"
                             helperText={errorMessage.weight}
                             error={errorDetected.weight}
+                        />
+
+                        <TextField
+                            type="text"
+                            margin="dense"
+                            label="Observação"
+                            fullWidth
+                            variant="outlined"
+                            required
+                            id="observation"
+                            name="observation"
+                            helperText={errorMessage.observation}
+                            error={errorDetected.observation}
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>

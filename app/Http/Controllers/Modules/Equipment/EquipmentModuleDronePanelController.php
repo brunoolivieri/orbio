@@ -199,14 +199,14 @@ class EquipmentModuleDronePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateDroneRequest $request, $id) : \Illuminate\Http\Response
-    {dd("ok");
+    {
         try{
 
             DB::transaction(function () use ($request, $id) {
 
                 $drone = DronesModel::find($id);
 
-                Storage::disk('public')->delete("images/drones".$drone->image);
+                Storage::disk('public')->delete("images/drones/".$drone->image);
 
                 $filename = $request->image->getClientOriginalName();
                 $storage_folder = "public/images/drones/";
