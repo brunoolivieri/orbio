@@ -243,6 +243,8 @@ export function EquipmentPanel() {
    */
   function reloadTable() {
 
+    setSelectedRecordIndex(null);
+
     setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
     setPaginationParams({
@@ -277,7 +279,7 @@ export function EquipmentPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateEquipmentFormulary reload_table={reloadTable} /> 
+          <CreateEquipmentFormulary reload_table={reloadTable} />
         </Grid>
 
         <Grid item>

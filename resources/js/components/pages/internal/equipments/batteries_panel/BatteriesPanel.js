@@ -243,6 +243,8 @@ export function BatteriesPanel() {
      */
     function reloadTable() {
 
+        setSelectedRecordIndex(null);
+        
         setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
         setPaginationParams({
@@ -381,7 +383,7 @@ export function BatteriesPanel() {
                                     panelData.response.records.map((row, index) => (
                                         <TableRow key={row.battery_id}>
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.battery_id} /></TableCell>
-                                            <TableCell align="center">{row.image}</TableCell>
+                                            <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '80px' }} /></TableCell>
                                             <TableCell align="center">{row.name}</TableCell>
                                             <TableCell align="center">{row.manufacturer}</TableCell>
                                             <TableCell align="center">{row.model}</TableCell>

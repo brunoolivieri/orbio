@@ -24,7 +24,7 @@ class UpdateDroneRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'bail|required|file|mimes:png,jpg,svg',
+            'image' => 'bail|required',
             'name' => 'bail|required|unique:drones,name',
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
@@ -41,11 +41,9 @@ class UpdateDroneRequest extends FormRequest
     * @return array
     */
     public function messages()
-    {
+    {dd("ok");
         return [
             'image.required' => 'A imagem do drone deve ser enviada',
-            'image.file' => 'Deve ser um arquivo',
-            'image.mimes' => 'Deve ser uma imagem .png, .svg ou .jpg',
             'name.required' => 'O nome do drone deve ser informado',
             'name.unique' => 'Já existe um drone com esse nome',
             'manufacturer.required' => 'O fabricante do drone deve ser informado',

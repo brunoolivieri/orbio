@@ -69,7 +69,7 @@ export function ReportsPanel() {
    * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
    * 
    */
-   React.useEffect(() => {
+  React.useEffect(() => {
 
     const module_middleware = `${AuthData.data.id}.${4}.${"ler"}`;
 
@@ -230,6 +230,8 @@ export function ReportsPanel() {
    * 
    */
   function reloadTable() {
+
+    setSelectedRecordIndex(null);
 
     setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 

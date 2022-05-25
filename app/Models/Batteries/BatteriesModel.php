@@ -11,6 +11,7 @@ class BatteriesModel extends Model
     use HasFactory;
 
     protected $guarded = [];
+    public $table = "batteries";
 
     /**
      * Carrega os registros no formato de paginação

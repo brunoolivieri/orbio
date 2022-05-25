@@ -65,7 +65,6 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
         // Deselecionar registro na tabela
         props.record_setter(null);
-        // Outros
         setErrorDetected({ profile_name: false });
         setErrorMessage({ profile_name: null });
         setDisplayAlert({ display: false, type: "", message: "" });
@@ -367,7 +366,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
             </Tooltip>
 
             {(props.record != null && open) &&
-                <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+                <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                     <DialogTitle>EDIÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
 
                     <Box component="form" noValidate onSubmit={handleSubmitOperation} >

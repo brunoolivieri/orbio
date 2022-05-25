@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -140,10 +139,6 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
                 <Box component="form" noValidate onSubmit={handleEquipmentDeleteSubmit} >
 
                     <DialogContent>
-
-                        <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para deleção do registro do equipamento.
-                        </DialogContentText>
 
                         <TextField
                             type="text"

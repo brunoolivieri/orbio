@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -55,6 +54,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     // State of uploaded image
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
+    // Referencia ao componente de imagem
+    const htmlImage = React.useRef();
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -91,8 +93,15 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     function handleUploadedImage(event) {
 
-        if (event.currentTarget.files && event.currentTarget.files[0]) {
-            setUploadedImage(URL.createObjectURL(event.target.files[0]));
+        const uploaded_file = event.currentTarget.files[0];
+
+        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+
+            htmlImage.current.src = URL.createObjectURL(uploaded_file);
+
+            const file = new File([uploaded_file], uploaded_file.name);
+
+            setUploadedImage(file);
         }
 
     }
@@ -275,19 +284,6 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
                     <DialogContent>
 
-                        <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para atualização do registro do equipamento.
-                        </DialogContentText>
-
-                        <Box sx={{ mb: 3 }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
-
                         <TextField
                             type="text"
                             margin="dense"
@@ -411,6 +407,19 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                                 operation={"create"}
                                 read_only={false}
                             />
+                        </Box>
+
+                        <Box sx={{ mt: 2, display: 'flex' }}>
+                            <label htmlFor="contained-button-file">
+                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
+                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
+                                </Button>
+                            </label>
+                        </Box>
+
+                        <Box sx={{ mt: 2 }}>
+                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }}></img>
                         </Box>
 
                     </DialogContent>

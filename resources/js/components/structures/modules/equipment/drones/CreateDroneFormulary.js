@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -49,6 +48,9 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     // State of uploaded image
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
+    // Referencia ao componente de imagem
+    const htmlImage = React.useRef();
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -85,8 +87,13 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
 
     function handleUploadedImage(event) {
 
-        if (event.currentTarget.files && event.currentTarget.files[0]) {
-            setUploadedImage(URL.createObjectURL(event.target.files[0]));
+        const uploaded_file = event.currentTarget.files[0];
+
+        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+
+            htmlImage.current.src = URL.createObjectURL(uploaded_file);
+
+            setUploadedImage(uploaded_file);
         }
 
     }
@@ -151,30 +158,16 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        console.log(data.getAll())
+        data.append("auth", `${logged_user_id}.${module_id}.${module_action}`);
+        data.append("image", uploadedImage);
 
-        AxiosApi.post(`/api/equipments-module-drone`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: uploadedImage,
-            name: data.get("name"),
-            manufacturer: data.get("manufacturer"),
-            model: data.get("model"),
-            record_number: data.get("record_number"),
-            serial_number: data.get("serial_number"),
-            weight: data.get("weight"),
-            observation: data.get("observation")
-        })
+        AxiosApi.post(`/api/equipments-module-drone`, data)
             .then(function () {
-
                 successServerResponseTreatment();
-
             })
             .catch(function (error) {
-
                 errorServerResponseTreatment(error.response.data);
-
             });
-
     }
 
     /*
@@ -264,19 +257,6 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
 
                     <DialogContent>
-
-                        <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para criação de um registro de drone.
-                        </DialogContentText>
-
-                        <Box sx={{ mb: 3 }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
 
                         <TextField
                             type="text"
@@ -368,6 +348,19 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
                             helperText={errorMessage.observation}
                             error={errorDetected.observation}
                         />
+
+                        <Box sx={{ mt: 2, display: 'flex' }}>
+                            <label htmlFor="contained-button-file">
+                                <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
+                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
+                                </Button>
+                            </label>
+                        </Box>
+
+                        <Box sx={{ mt: 2 }}>
+                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />
+                        </Box>
 
                     </DialogContent>
 

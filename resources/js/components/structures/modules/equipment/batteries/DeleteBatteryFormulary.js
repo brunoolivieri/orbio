@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -73,15 +72,7 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        AxiosApi.post(`/api/equipments-module-battery`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: "",
-            name: data.get("name"),
-            manufacturer: data.get("manufacturer"),
-            model: data.get("model"),
-            serial_number: data.get("serial_number"),
-            last_charge: data.get("last_charge")
-        })
+        AxiosApi.delete(`/api/equipments-module-battery/${data.get("battery_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -138,10 +129,6 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
 
                     <DialogContent>
-
-                        <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para deleção de uma bateria.
-                        </DialogContentText>
 
                         <TextField
                             type="text"

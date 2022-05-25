@@ -243,6 +243,8 @@ export function UsersPanel() {
    */
   function reloadTable() {
 
+    setSelectedRecordIndex(null);
+
     setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
     setPaginationParams({

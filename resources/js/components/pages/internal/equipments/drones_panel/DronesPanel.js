@@ -242,6 +242,8 @@ export function DronesPanel() {
      */
     function reloadTable() {
 
+        setSelectedRecordIndex(null);
+
         setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
         setPaginationParams({
@@ -276,7 +278,7 @@ export function DronesPanel() {
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
-                    <CreateDroneFormulary reload_table={reloadTable} /> 
+                    <CreateDroneFormulary reload_table={reloadTable} />
                 </Grid>
 
                 <Grid item>
@@ -382,7 +384,7 @@ export function DronesPanel() {
                                     panelData.response.records.map((row, index) => (
                                         <TableRow key={row.drone_id}>
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.drone_id} /></TableCell>
-                                            <TableCell align="center">{row.image}</TableCell>
+                                            <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '80px' }} /></TableCell>
                                             <TableCell align="center">{row.name}</TableCell>
                                             <TableCell align="center">{row.manufacturer}</TableCell>
                                             <TableCell align="center">{row.model}</TableCell>

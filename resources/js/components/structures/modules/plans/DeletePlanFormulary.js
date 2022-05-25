@@ -43,9 +43,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
   // Função para fechar o modal
   const handleClose = () => {
 
-    // Deselecionar registro na tabela
     props.record_setter(null);
-    // Outros
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
 
@@ -111,9 +109,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
 
     setTimeout(() => {
 
-      // Deselecionar registro na tabela
       props.record_setter(null);
-      // Outros
       props.reload_table();
       setDisabledButton(false);
       handleClose();
@@ -144,7 +140,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
       </Tooltip>
 
       {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >

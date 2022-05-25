@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 // Models
 use App\Models\Drones\DronesModel;
 // Form Request
@@ -40,7 +42,7 @@ class EquipmentModuleDronePanelController extends Controller
 
             }else{
 
-                Log::channel('administration_error')->info("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Nenhum registro de usuário encontrado no sistema");
+                Log::channel('equipment_error')->info("[Método: Index][Controlador: EquipmentModuleDronePanelController] - Nenhum registro de drone encontrado no sistema");
 
                 return response(["error" => "records_not_founded"], 404);
 
@@ -48,7 +50,7 @@ class EquipmentModuleDronePanelController extends Controller
 
         }else if(!$model_response["status"] && $model_response["error"]){
 
-            Log::channel('administration_error')->error("[Método: Index][Controlador: AdministrationModuleUserPanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
+            Log::channel('equipment_error')->error("[Método: Index][Controlador: EquipmentModuleDronePanelController] - Os registros não foram carregados - Erro: ".$model_response["error"]);
 
             return response(["error" => $model_response->content()], 500);
 
@@ -71,6 +73,7 @@ class EquipmentModuleDronePanelController extends Controller
             
             $arr_with_formated_data["records"][$row] = array(
                 "drone_id" => $record->id,
+                "image_url" => Storage::url("images/drones/".$record->image),
                 "image" => $record->image,
                 "name" => $record->name,
                 "manufacturer" => $record->manufacturer,
@@ -110,12 +113,17 @@ class EquipmentModuleDronePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(StoreDroneRequest $request) : \Illuminate\Http\Response
-    {dd($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+    {
         try{
 
             DB::transaction(function () use ($request) {
 
-                DroneModel::create($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+                $filename = $request->image->getClientOriginalName();
+                $storage_folder = "public/images/drones/";
+
+                DronesModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
+
+                $path = $request->file('image')->storeAs($storage_folder, $filename);
 
             });
 
@@ -191,10 +199,23 @@ class EquipmentModuleDronePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateDroneRequest $request, $id) : \Illuminate\Http\Response
-    {
+    {dd("ok");
         try{
 
-            UserModel::where('id', $id)->update($request->only(["image", "name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+            DB::transaction(function () use ($request, $id) {
+
+                $drone = DronesModel::find($id);
+
+                Storage::disk('public')->delete("images/drones".$drone->image);
+
+                $filename = $request->image->getClientOriginalName();
+                $storage_folder = "public/images/drones/";
+
+                $drone->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
+
+                $path = $request->file('image')->storeAs($storage_folder, $filename);
+
+            });
 
             Log::channel('equipment_action')->info("[Método: Update][Controlador: EquipmentModuleDronePanelController] - Drone atualizado com sucesso - ID do drone: ".$id);
 
@@ -219,7 +240,15 @@ class EquipmentModuleDronePanelController extends Controller
     {
         try{
 
-            DroneModel::where("id", $id)->delete();
+            DB::transaction(function () use ($id) {
+
+                $drone = DronesModel::find($id);
+
+                Storage::disk('public')->delete("images/drones/".$drone->image);
+
+                $drone->delete();
+
+            });
 
             Log::channel('equipment_action')->info("[Método: Destroy][Controlador: EquipmentModuleDronePanelController] - Drone removido com sucesso - ID do drone: ".$id);
 

@@ -56,9 +56,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
     // Função para fechar o modal
     const handleClose = () => {
 
-      // Deselecionar registro na tabela
       props.record_setter(null);
-      // Outros
       setErrorDetected({email: false, name: false, profile: false, status: false});
       setErrorMessage({email: null, name: null, profile: null, status: null});
       setDisplayAlert({display: false, type: "", message: ""});

@@ -67,9 +67,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
   // Função para fechar o modal
   const handleClose = () => {
 
-    // Deselecionar registro na tabela
     props.record_setter(null);
-    // Outros
     setErrorDetected({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
     setErrorMessage({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
     setDisplayAlert({ display: false, type: "", message: "" });

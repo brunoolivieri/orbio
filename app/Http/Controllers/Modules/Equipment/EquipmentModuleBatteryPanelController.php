@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 // Models
 use App\Models\Batteries\BatteriesModel;
 // Form Request
@@ -71,7 +73,7 @@ class EquipmentModuleBatteryPanelController extends Controller
             
             $arr_with_formated_data["records"][$row] = array(
                 "battery_id" => $record->id,
-                "image" => $record->image,
+                "image_url" => Storage::url("images/batteries/".$record->image),
                 "name" => $record->name,
                 "manufacturer" => $record->manufacturer,
                 "model" => $record->model,
@@ -113,7 +115,12 @@ class EquipmentModuleBatteryPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                BatteriesModel::create($request->only(["image", "name", "manufacturer", "model", "serial_number", "last_charge"]));
+                $filename = $request->image->getClientOriginalName();
+                $storage_folder = "public/images/batteries/";
+
+                BatteriesModel::create([...$request->only(["name", "manufacturer", "model", "serial_number", "last_charge"]), "image" => $filename]);
+
+                $path = $request->file('image')->storeAs($storage_folder, $filename);
 
             });
 
@@ -189,10 +196,23 @@ class EquipmentModuleBatteryPanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateBatteryRequest $request, $id)
-    {
+    {dd($request->all());
         try{
 
-            BatteriesModel::where('id', $id)->update($request->only(["image", "name", "manufacturer", "model", "serial_number", "last_charge"]));
+            DB::transaction(function () use ($request, $id) {
+
+                $battery = BatteriesModel::find($id);
+
+                Storage::disk('public')->delete("images/batteries/".$battery->image);
+
+                $filename = $request->image->getClientOriginalName();
+                $storage_folder = "public/images/batteries/";
+
+                $battery->update([...$request->only(["name", "manufacturer", "model", "serial_number", "last_charge"]), "image" => $filename]);
+
+                $path = $request->file('image')->storeAs($storage_folder, $filename);
+
+            });
 
             Log::channel('equipment_action')->info("[Método: Update][Controlador: EquipmentModuleBatteryPanelController] - Bateria atualizado com sucesso - ID da bateria: ".$id);
 
@@ -215,9 +235,18 @@ class EquipmentModuleBatteryPanelController extends Controller
      */
     public function destroy($id)
     {
+
         try{
 
-            BatteriesModel::where("id", $id)->delete();
+            DB::transaction(function () use ($id) {
+
+                $battery = BatteriesModel::find($id);
+
+                Storage::disk('public')->delete("images/batteries/".$battery->image);
+
+                $battery->delete();
+
+            });
 
             Log::channel('equipment_action')->info("[Método: Destroy][Controlador: EquipmentModuleBatteryPanelController] - Bateria removida com sucesso - ID da bateria: ".$id);
 

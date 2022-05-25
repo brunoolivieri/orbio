@@ -45,9 +45,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
   // Função para fechar o modal
   const handleClose = () => {
 
-    // Deselecionar registro na tabela
     props.record_setter(null);
-    // Outros
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
 

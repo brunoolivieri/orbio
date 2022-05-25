@@ -55,9 +55,6 @@ export function UpdateIncidentFormulary({ ...props }) {
   // Função para fechar o modal
   const handleClose = () => {
 
-    // Deselecionar registro na tabela
-    props.record_setter(null);
-    // Outros
     setErrorDetected({ incident_date: false, incident_type: false, description: false });
     setErrorMessage({ incident_date: "", incident_type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
@@ -158,9 +155,7 @@ export function UpdateIncidentFormulary({ ...props }) {
 
     setTimeout(() => {
 
-      // Deselecionar registro na tabela
       props.record_setter(null);
-      // Outros
       props.reload_table();
       setDisabledButton(false);
       handleClose();
@@ -224,7 +219,7 @@ export function UpdateIncidentFormulary({ ...props }) {
 
       {(props.record != null && open) &&
 
-        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>ATUALIZAÇÃO | INCIDENTE (ID: {props.record.incident_id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

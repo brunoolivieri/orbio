@@ -13,7 +13,7 @@ class UpdateEquipmentRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,7 @@ class UpdateEquipmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'bail|required|file|mimes:png,jpg,svg',
+            'image' => 'bail|required|image|mimes:png,jpg,svg',
             'name' => 'bail|required|unique:drones,name',
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
@@ -45,7 +45,7 @@ class UpdateEquipmentRequest extends FormRequest
     {
         return [
             'image.required' => 'A imagem do drone deve ser enviada',
-            'image.file' => 'Deve ser um arquivo',
+            'image.image' => 'Deve ser um arquivo de imagem',
             'image.mimes' => 'Deve ser uma imagem .png, .svg ou .jpg',
             'name.required' => 'O nome do drone deve ser informado',
             'name.unique' => 'Já existe um drone com esse nome',

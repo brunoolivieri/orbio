@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -74,10 +73,7 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        AxiosApi.patch(`/api/equipments-module-drone/${data.get("drone_id")}?auth=${logged_user_id}.${module_id}.${module_action}`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            id: data.get("drone_id")
-        })
+        AxiosApi.delete(`/api/equipments-module-drone/${data.get("drone_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -100,6 +96,9 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
         setTimeout(() => {
 
+            // Deselecionar registro na tabela
+            props.record_setter(null);
+            // Outros
             props.reload_table();
             setDisabledButton(false);
             handleClose();
@@ -134,10 +133,6 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                 <Box component="form" noValidate onSubmit={handleDroneDeleteSubmit} >
 
                     <DialogContent>
-
-                        <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para deleção do registro do drone.
-                        </DialogContentText>
 
                         <TextField
                             type="text"

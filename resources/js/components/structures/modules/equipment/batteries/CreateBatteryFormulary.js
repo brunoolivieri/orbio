@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -22,7 +21,7 @@ import moment from 'moment';
 // Custom
 import { DateTimeInput } from '../../../date_picker/DateTimeInput';
 import AxiosApi from '../../../../../services/AxiosApi';
-import FormValidation from "../../../../../utils/FormValidation";
+import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
 const Input = styled('input')({
@@ -55,6 +54,9 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
     // State of uploaded image
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
+    // Referencia ao componente de imagem
+    const htmlImage = React.useRef();
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
@@ -74,7 +76,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 1
     */
-    function handleDroneRegistrationSubmit(event) {
+    function handleBatteryRegistrationSubmit(event) {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -91,8 +93,13 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     function handleUploadedImage(event) {
 
-        if (event.currentTarget.files && event.currentTarget.files[0]) {
-            setUploadedImage(URL.createObjectURL(event.target.files[0]));
+        const uploaded_file = event.currentTarget.files[0];
+
+        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+
+            htmlImage.current.src = URL.createObjectURL(uploaded_file);
+
+            setUploadedImage(uploaded_file);
         }
 
     }
@@ -106,8 +113,8 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
         let manufacturerValidation = FormValidation(formData.get("manufacturer"), 3, null, null, null);
         let modelValidation = FormValidation(formData.get("model"), null, null, null, null);
         let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
-        let lastChargeValidation = chargeDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
         let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
+        let lastChargeValidation = chargeDate == null ? { error: true, message: "A data da última carga precisa ser informada" } : { error: false, message: "" };
 
         setErrorDetected({
             image: imageValidation.error,
@@ -151,15 +158,11 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
         const module_id = 6;
         const module_action = "escrever";
 
-        AxiosApi.post(`/api/equipments-module-battery`, {
-            auth: `${logged_user_id}.${module_id}.${module_action}`,
-            image: uploadedImage,
-            name: data.get("name"),
-            manufacturer: data.get("manufacturer"),
-            model: data.get("model"),
-            serial_number: data.get("serial_number"),
-            last_charge: chargeDate
-        })
+        data.append("auth", `${logged_user_id}.${module_id}.${module_action}`);
+        data.append("image", uploadedImage);
+        data.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
+
+        AxiosApi.post("/api/equipments-module-battery", data)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -251,22 +254,9 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                 <DialogTitle>CADASTRO DE BATERIA</DialogTitle>
 
-                <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
+                <Box component="form" noValidate onSubmit={handleBatteryRegistrationSubmit} >
 
                     <DialogContent>
-
-                        <DialogContentText sx={{ mb: 3 }}>
-                            Formulário para criação de uma bateria.
-                        </DialogContentText>
-
-                        <Box sx={{ mb: 3 }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
 
                         <TextField
                             type="text"
@@ -330,6 +320,19 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
                                 operation={"create"}
                                 read_only={false}
                             />
+                        </Box>
+
+                        <Box sx={{ mt: 2, display: 'flex' }}>
+                            <label htmlFor="contained-button-file">
+                                <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
+                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
+                                </Button>
+                            </label>
+                        </Box>
+
+                        <Box sx={{ mt: 2 }}>
+                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />
                         </Box>
 
                     </DialogContent>

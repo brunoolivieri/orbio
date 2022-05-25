@@ -247,6 +247,8 @@ export function OrdersPanel() {
    */
   function reloadTable() {
 
+    setSelectedRecordIndex(null);
+
     setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
     setPaginationParams({
@@ -314,7 +316,7 @@ export function OrdersPanel() {
         <Grid item>
           <Tooltip title="Carregar">
             <IconButton onClick={reloadTable}>
-            <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
+              <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
         </Grid>
