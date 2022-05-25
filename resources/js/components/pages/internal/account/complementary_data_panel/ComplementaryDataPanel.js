@@ -31,8 +31,8 @@ export const ComplementaryDataPanel = ((props) => {
     const [saveNecessary, setSaveNecessary] = React.useState({ documents: false, address: false });
 
     // States de validação dos campos
-    const [errorDetected, setErrorDetected] = React.useState({ habANAC: false, cpf: false, cnpj: false, telephone: false, cellphone: false, razaoSocial: false, nomeFantasia: false, logradouro: false, numero: false, cep: false, cidade: false, estado: false, complemento: false });
-    const [errorMessage, setErrorMessage] = React.useState({ habANAC: null, cpf: null, cnpj: null, telephone: null, cellphone: null, razaoSocial: null, nomeFantasia: null, logradouro: null, numero: null, cep: null, cidade: null, estado: null, complemento: null });
+    const [errorDetected, setErrorDetected] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, street_name: false, number: false, cep: false, city: false, state: false, complement: false });
+    const [errorMessage, setErrorMessage] = React.useState({ anac_license: null, cpf: null, cnpj: null, telephone: null, cellphone: null, company_name: null, trading_name: null, street_name: null, number: null, cep: null, city: null, state: null, complement: null });
 
     // State key Down
     const [keyPressed, setKeyPressed] = React.useState();
@@ -123,7 +123,7 @@ export const ComplementaryDataPanel = ((props) => {
 
         if (formAddressValidate(data)) {
 
-            requestServerOperationAddress(data, "ADDRESS");
+            formAddressRequestServerOperation(data);
 
         }
 
@@ -139,7 +139,7 @@ export const ComplementaryDataPanel = ((props) => {
 
         if (formDocumentsValidate(data)) {
 
-            requestServerOperationComplementaryData(data);
+            formDocumentsRequestServerOperation(data);
 
         }
 
@@ -155,47 +155,47 @@ export const ComplementaryDataPanel = ((props) => {
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
         const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
 
-        const habanacValidate = FormValidation(data.get("habanac"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
+        const habanacValidate = FormValidation(data.get("anac_license"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
         const cpfValidate = FormValidation(data.get("cpf"), null, null, cpfPattern, "CPF");
         const cnpjValidate = FormValidation(data.get("cnpj"), null, null, cnpjPattern, "CNPJ");
         const telephoneValidate = FormValidation(data.get("telephone"), null, null, phonePattern, "NÚMERO DE TELEFONE");
         const cellphoneValidate = FormValidation(data.get("cellphone"), null, null, phonePattern, "NÚMERO DE CELULAR");
-        const rsocialValidate = FormValidation(data.get("rsocial"), 3, null, null);
-        const nfantasiaValidate = FormValidation(data.get("nfantasia"), 3, null, null);
+        const rsocialValidate = FormValidation(data.get("company_name"), 3, null, null);
+        const nfantasiaValidate = FormValidation(data.get("trading_name"), 3, null, null);
 
         setErrorDetected(
             {
-                habANAC: habanacValidate.error,
+                anac_license: habanacValidate.error,
                 cpf: cpfValidate.error,
                 cnpj: cnpjValidate.error,
                 telephone: telephoneValidate.error,
                 cellphone: cellphoneValidate.error,
-                razaoSocial: rsocialValidate.error,
-                nomeFantasia: nfantasiaValidate.error,
-                logradouro: false,
-                numero: false,
+                company_name: rsocialValidate.error,
+                trading_name: nfantasiaValidate.error,
+                street_name: false,
+                number: false,
                 cep: false,
-                cidade: false,
-                estado: false,
-                complemento: false
+                city: false,
+                state: false,
+                complement: false
             }
         );
 
         setErrorMessage(
             {
-                habANAC: habanacValidate.message,
+                anac_license: habanacValidate.message,
                 cpf: cpfValidate.message,
                 cnpj: cnpjValidate.message,
                 telephone: telephoneValidate.message,
                 cellphone: cellphoneValidate.message,
-                razaoSocial: rsocialValidate.message,
-                nomeFantasia: nfantasiaValidate.message,
-                logradouro: "",
-                numero: "",
+                company_name: rsocialValidate.message,
+                trading_name: nfantasiaValidate.message,
+                street_name: "",
+                number: "",
                 cep: "",
-                cidade: "",
-                estado: "",
-                complemento: ""
+                city: "",
+                state: "",
+                complement: ""
             }
         );
 
@@ -228,37 +228,37 @@ export const ComplementaryDataPanel = ((props) => {
 
         setErrorDetected(
             {
-                habANAC: false,
+                anac_license: false,
                 cpf: false,
                 cnpj: false,
                 telephone: false,
                 cellphone: false,
-                razaoSocial: false,
-                nomeFantasia: false,
-                logradouro: logradouroValidate.error,
-                numero: numeroValidate.error,
+                company_name: false,
+                trading_name: false,
+                street_name: logradouroValidate.error,
+                number: numeroValidate.error,
                 cep: cepValidate.error,
-                cidade: cidadeValidate.error,
-                estado: estadoValidate.error,
-                complemento: complementoValidate.error
+                city: cidadeValidate.error,
+                state: estadoValidate.error,
+                complement: complementoValidate.error
             }
         );
 
         setErrorMessage(
             {
-                habANAC: "",
+                anac_license: "",
                 cpf: "",
                 cnpj: "",
                 telephone: "",
                 cellphone: "",
-                razaoSocial: "",
-                nomeFantasia: "",
-                logradouro: logradouroValidate.message,
-                numero: numeroValidate.message,
+                company_name: "",
+                trading_name: "",
+                street_name: logradouroValidate.message,
+                number: numeroValidate.message,
                 cep: cepValidate.message,
-                cidade: cidadeValidate.message,
-                estado: estadoValidate.message,
-                complemento: complementoValidate.message
+                city: cidadeValidate.message,
+                state: estadoValidate.message,
+                complement: complementoValidate.message
             }
         );
 
@@ -273,108 +273,207 @@ export const ComplementaryDataPanel = ((props) => {
         }
     }
 
-    function requestServerOperationComplementaryData(data) {
+    /*
+    * Rotina 3A
+    */
+    function formDocumentsRequestServerOperation(data) {
 
-        AxiosApi.patch(`/api/update-complementary-data/${AuthData.data.id}`, {
+        AxiosApi.patch(`/api/update-documents-data/${AuthData.data.id}`, {
             complementary_data_id: props.complementary_data_id,
             address_id: props.address_id,
-            habAnac: data.get("habanac"),
+            anac_license: data.get("anac_license"),
             cpf: data.get("cpf"),
             cnpj: data.get("cnpj"),
             telephone: data.get("telephone"),
             cellphone: data.get("cellphone"),
-            rSocial: data.get("rsocial"),
-            nFantasia: data.get("nfantasia")
+            company_name: data.get("company_name"),
+            trading_name: data.get("trading_name")
         })
             .then(function (response) {
 
-                serverResponseTreatment(response);
+                formDocumentsSuccessRequestServerOperation(response);
 
             })
             .catch(function (error) {
 
-                serverResponseTreatment(error.response);
-
-            });
-
-    }
-
-    function requestServerOperationAddress(data) {
-
-        AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
-            logradouro: data.get("logradouro"),
-            address_number: data.get("numero"),
-            cep: data.get("cep"),
-            city: data.get("select_city_input"),
-            state: data.get("select_state_input"),
-            complemento: data.get("complemento")
-        })
-            .then(function (response) {
-
-                serverResponseTreatment(response);
-
-            })
-            .catch(function (error) {
-
-                serverResponseTreatment(error.response);
+                formDocumentsErrorRequestServerOperation(error.response.data);
 
             });
 
     }
 
     /*
-    * Rotina 4
+    * Rotina 3B
     */
-    function serverResponseTreatment(response) {
+    function formAddressRequestServerOperation(data) {
 
-        if (response.status === 200) {
+        AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
+            street_name: data.get("logradouro"),
+            number: data.get("numero"),
+            cep: data.get("cep"),
+            city: data.get("select_city_input"),
+            state: data.get("select_state_input"),
+            complement: data.get("complemento")
+        })
+            .then(function (response) {
 
-            handleOpenSnackbar("Dados atualizados com sucesso!", "success");
+                formAddressSuccessRequestServerOperation(response);
 
-            props.reload_setter(!props.reload_state);
+            })
+            .catch(function (error) {
 
-        } else {
+                formAddressErrorRequestServerOperation(error.response.data);
 
-            setErrorDetected(
-                {
-                    habANAC: response.data.error.habAnac ? true : false,
-                    cpf: response.data.error.cpf ? true : false,
-                    cnpj: response.data.error.cnpj ? true : false,
-                    telephone: response.data.error.telephone ? true : false,
-                    cellphone: response.data.error.cellphone ? true : false,
-                    razaoSocial: response.data.error.rSocial ? true : false,
-                    nomeFantasia: response.data.error.nFantasia ? true : false,
-                    logradouro: false,
-                    numero: false,
-                    cep: false,
-                    cidade: false,
-                    estado: false,
-                    complemento: false
-                }
-            );
+            });
 
-            setErrorMessage(
-                {
-                    habANAC: response.data.error.habAnac,
-                    cpf: response.data.error.cpf,
-                    cnpj: response.data.error.cnpj,
-                    telephone: response.data.error.telephone,
-                    cellphone: response.data.error.cellphone,
-                    razaoSocial: response.data.error.rSocial,
-                    nomeFantasia: response.data.error.nFantasia,
-                    logradouro: null,
-                    numero: null,
-                    cep: null,
-                    cidade: null,
-                    estado: null,
-                    complemento: null
-                }
-            );
+    }
 
-            handleOpenSnackbar("Erro! Dados inválidos", "error");
+    /*
+    * Rotina 4A
+    */
+    function formDocumentsSuccessRequestServerOperation() {
+
+        handleOpenSnackbar("Documentos atualizados com sucesso!", "success");
+
+        props.reload_setter(!props.reload_state);
+
+
+    }
+
+    /*
+    * Rotina 4B
+    */
+    function formAddressSuccessRequestServerOperation() {
+
+        handleOpenSnackbar("Endereço atualizado com sucesso!", "success");
+
+        props.reload_setter(!props.reload_state);
+
+    }
+
+    /*
+    * Rotina 4AA
+    */
+    function formDocumentsErrorRequestServerOperation(response_data) {
+
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        handleOpenSnackbar(error_message, "error");
+
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            anac_license: { error: false, message: null },
+            cpf: { error: false, message: null },
+            cnpj: { error: false, message: null },
+            telephone: { error: false, message: null },
+            cellphone: { error: false, message: null },
+            company_name: { error: false, message: null },
+            trading_name: { error: false, message: null }
+        }
+
+        // Coleta dos objetos de erro existentes na response
+        for (let prop in response_data.errors) {
+
+            input_errors[prop] = {
+                error: true,
+                message: response_data.errors[prop][0]
+            }
 
         }
 
+        setErrorDetected({
+            anac_license: input_errors.anac_license.error,
+            cpf: input_errors.cpf.error,
+            cnpj: input_errors.cnpj.error,
+            telephone: input_errors.telephone.error,
+            cellphone: input_errors.cellphone.error,
+            company_name: input_errors.company_name.error,
+            trading_name: input_errors.trading_name.error,
+            street_name: "",
+            number: "",
+            cep: "",
+            city: "",
+            state: "",
+            complement: ""
+        });
+
+        setErrorMessage({
+            anac_license: input_errors.anac_license.message,
+            cpf: input_errors.cpf.message,
+            cnpj: input_errors.cnpj.message,
+            telephone: input_errors.telephone.message,
+            cellphone: input_errors.cellphone.message,
+            company_name: input_errors.company_name.message,
+            trading_name: input_errors.trading_name.message,
+            street_name: "",
+            number: "",
+            cep: "",
+            city: "",
+            state: "",
+            complement: ""
+        });
+
+
+    }
+
+    /*
+    * Rotina 4BB
+    */
+    function formAddressErrorRequestServerOperation(response_data) {
+
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        handleOpenSnackbar(error_message, "error");
+
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            street_name: { error: false, message: null },
+            number: { error: false, message: null },
+            cep: { error: false, message: null },
+            city: { error: false, message: null },
+            state: { error: false, message: null },
+            complement: { error: false, message: null }
+        }
+
+        // Coleta dos objetos de erro existentes na response
+        for (let prop in response_data.errors) {
+
+            input_errors[prop] = {
+                error: true,
+                message: response_data.errors[prop][0]
+            }
+
+        }
+
+        setErrorDetected({
+            anac_license: false,
+            cpf: false,
+            cnpj: false,
+            telephone: false,
+            cellphone: false,
+            company_name: false,
+            trading_name: false,
+            street_name: input_errors.street_name.error,
+            number: input_errors.number.error,
+            cep: input_errors.cep.error,
+            city: input_errors.city.error,
+            state: input_errors.state.error,
+            complement: input_errors.complement.error
+        });
+
+        setErrorMessage({
+            anac_license: "",
+            cpf: "",
+            cnpj: "",
+            telephone: "",
+            cellphone: "",
+            company_name: "",
+            trading_name: "",
+            street_name: input_errors.street_name.message,
+            number: input_errors.number.message,
+            cep: input_errors.cep.message,
+            city: input_errors.city.message,
+            state: input_errors.state.message,
+            complement: input_errors.complement.message
+        });
     }
 
     function handleOpenSnackbar(text, variant) {
@@ -409,14 +508,14 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="habanac"
-                                name="habANAC"
+                                id="anac_license"
+                                name="anac_license"
                                 label="Habilitação ANAC"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.habANAC}
-                                helperText={errorMessage.habANAC}
-                                error={errorDetected.habANAC}
+                                helperText={errorMessage.anac_license}
+                                error={errorDetected.anac_license}
                                 onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "HAB_ANAC"); }}
                             />
                         </Grid>
@@ -478,8 +577,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="celular"
-                                name="celular"
+                                id="cellphone"
+                                name="cellphone"
                                 label="Celular (com DDD)"
                                 fullWidth
                                 variant="outlined"
@@ -497,8 +596,8 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="razaoSocial"
-                                name="razaoSocial"
+                                id="company_name"
+                                name="company_name"
                                 label="Razão Social"
                                 fullWidth
                                 variant="outlined"
@@ -512,14 +611,14 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="nomeFantasia"
-                                name="nomeFantasia"
+                                id="trading_name"
+                                name="trading_name"
                                 label="Nome Fantasia"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.nomeFantasia}
-                                helperText={errorMessage.nomeFantasia}
-                                error={errorDetected.nomeFantasia}
+                                helperText={errorMessage.company_name}
+                                error={errorDetected.company_name}
                                 onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
                             />
                         </Grid>
@@ -545,7 +644,7 @@ export const ComplementaryDataPanel = ((props) => {
 
                     </Grid>
 
-                    <Button variant="contained" color="primary" disabled={!saveNecessary.documents} sx={{ mt: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary.documents} sx={{ mt: 2 }}>
                         Atualizar
                     </Button>
                 </Paper>
@@ -566,14 +665,14 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={12}>
                             <TextField
                                 required
-                                id="logradouro"
-                                name="logradouro"
+                                id="street_name"
+                                name="street_name"
                                 label="Logradouro"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.logradouro}
-                                helperText={errorMessage.logradouro}
-                                error={errorDetected.logradouro}
+                                helperText={errorMessage.street_name}
+                                error={errorDetected.street_name}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
                             />
                         </Grid>
@@ -581,14 +680,14 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={12}>
                             <TextField
                                 required
-                                id="numero"
-                                name="numero"
+                                id="number"
+                                name="number"
                                 label="Numero"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.numero}
-                                helperText={errorMessage.numero}
-                                error={errorDetected.numero}
+                                helperText={errorMessage.number}
+                                error={errorDetected.number}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
                             />
                         </Grid>
@@ -596,21 +695,21 @@ export const ComplementaryDataPanel = ((props) => {
                         <Grid item xs={12} sm={12}>
                             <TextField
                                 required
-                                id="complemento"
-                                name="complemento"
+                                id="complement"
+                                name="complement"
                                 label="Complemento"
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.complemento}
-                                helperText={errorMessage.complemento}
-                                error={errorDetected.complemento}
+                                helperText={errorMessage.complement}
+                                error={errorDetected.complement}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
                             />
                         </Grid>
 
                     </Grid>
 
-                    <Button variant="contained" color="primary" disabled={!saveNecessary.address} sx={{ mt: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary.address} sx={{ mt: 2 }}>
                         Atualizar
                     </Button>
 

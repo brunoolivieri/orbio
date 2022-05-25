@@ -15,7 +15,8 @@ class UserComplementaryDataModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "user_complementary_data";
-    public $timestamps = ["deleted_at"];
+    public $timestamps = false;
+    protected $fillable = ["*"];
 
     /*
     * Relationship with users table

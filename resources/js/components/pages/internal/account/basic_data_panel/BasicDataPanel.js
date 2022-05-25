@@ -27,7 +27,6 @@ export const BasicDataPanel = React.memo((props) => {
     const { AuthData } = useAuthentication();
 
     // States referentes ao formulário
-    const [editMode, setEditMode] = React.useState(false);
     const [saveNecessary, setSaveNecessary] = React.useState(false);
 
     // States de validação dos campos
@@ -52,11 +51,8 @@ export const BasicDataPanel = React.memo((props) => {
 
     /*
     * Rotina 1
-    * Ponto inicial do processamento do envio do formulário 
-    * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */
-    function handleSubmitForm(event) {
+    function handleSubmitBasicDataForm(event) {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -70,18 +66,15 @@ export const BasicDataPanel = React.memo((props) => {
     }
 
     /*
-    * Rotina 2
-    * Validação dos dados no frontend
-    * Recebe o objeto da classe FormData criado na rotina 1
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
+    * Rotina 2 
     */
     function formDataValidate(formData) {
 
         // Regex para validação
         const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-        const nameValidate = FormValidation(formData.get("user_fullname"), 3, null, null, null);
-        const emailValidate = FormValidation(formData.get("user_email"), null, null, emailPattern, "EMAIL");
+        const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
+        const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
 
         setErrorDetected({ name: nameValidate.error, email: emailValidate.error });
         setErrorMessage({ name: nameValidate.message, email: emailValidate.message });
@@ -100,63 +93,74 @@ export const BasicDataPanel = React.memo((props) => {
 
     /*
     * Rotina 3
-    * Comunicação AJAX com o Laravel utilizando AXIOS
-    * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
     function requestServerOperation(data) {
 
         let request_data = {};
 
         request_data = {
-            email: data.get("user_email"),
-            name: data.get("user_fullname")
+            email: data.get("email"),
+            name: data.get("name")
         };
 
         AxiosApi.patch(`/api/update-basic-data/${AuthData.data.id}`, request_data)
             .then(function (response) {
 
-                serverResponseTreatment(response);
+                serverSuccessResponseTreatment(response);
 
             })
             .catch(function (error) {
 
-                serverResponseTreatment(error.response);
+                serverErrorResponseTreatment(error.response.data);
 
             });
 
     }
 
     /*
-  * Rotina 4
-  * Tratamento da resposta do servidor
-  * Se for um sucesso, aparece, mo modal, um alerta com a mensagem de sucesso, e o novo registro na tabela de usuários
-  */
-    function serverResponseTreatment(response) {
+    * Rotina 4A 
+    */
+    function serverSuccessResponseTreatment() {
 
-        if (response.status === 200) {
+        handleOpenSnackbar("Dados atualizados com sucesso!", "success");
 
-            handleOpenSnackbar("Dados atualizados com sucesso!", "success");
+        props.reload_setter(!props.reload_state);
 
-            props.reload_setter(!props.reload_state);
+    }
 
-            setEditMode(false);
+    /*
+   * Rotina 4B
+   */
+    function serverErrorResponseTreatment(response_data) {
 
-        } else {
+        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        handleOpenSnackbar(error_message, "error");
 
-            if (response.data.error === "email_already_exists") {
+        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+        let input_errors = {
+            name: { error: false, message: null },
+            email: { error: false, message: null }
+        }
 
-                setErrorDetected({ name: false, email: true });
-                setErrorMessage({ name: null, email: "Esse email já existe" });
+        // Coleta dos objetos de erro existentes na response
+        for (let prop in response_data.errors) {
 
-                handleOpenSnackbar("Erro! O email já existe", "error");
-
-            } else {
-
-                handleOpenSnackbar("Erro do servidor!", "error");
-
+            input_errors[prop] = {
+                error: true,
+                message: response_data.errors[prop][0]
             }
 
         }
+
+        setErrorDetected({
+            name: input_errors.name.error,
+            email: input_errors.email.error
+        });
+
+        setErrorMessage({
+            name: input_errors.name.message,
+            email: input_errors.email.message
+        });
 
     }
 
@@ -182,14 +186,14 @@ export const BasicDataPanel = React.memo((props) => {
 
             </Grid>
 
-            <Box component="form" noValidate onSubmit={handleSubmitForm} sx={{ mt: 2 }} >
+            <Box component="form" noValidate onSubmit={handleSubmitBasicDataForm} sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_fullname"
-                                name="user_fullname"
+                                id="name"
+                                name="name"
                                 label="Nome completo"
                                 fullWidth
                                 variant="outlined"
@@ -197,15 +201,14 @@ export const BasicDataPanel = React.memo((props) => {
                                 helperText={errorMessage.name}
                                 error={errorDetected.name}
                                 onChange={enableSaveButton}
-                                focused={editMode}
                             />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_email"
-                                name="user_email"
+                                id="email"
+                                name="email"
                                 label="Email"
                                 fullWidth
                                 variant="outlined"
@@ -213,15 +216,12 @@ export const BasicDataPanel = React.memo((props) => {
                                 helperText={errorMessage.email}
                                 error={errorDetected.email}
                                 onChange={enableSaveButton}
-                                focused={editMode}
                             />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="profile_type"
-                                name="profile_type"
                                 label="Perfil de usuário"
                                 fullWidth
                                 variant="outlined"
@@ -235,8 +235,6 @@ export const BasicDataPanel = React.memo((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_last_access"
-                                name="user_last_access"
                                 label="Data do último acesso"
                                 fullWidth
                                 variant="outlined"
@@ -250,8 +248,6 @@ export const BasicDataPanel = React.memo((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="user_last_update"
-                                name="user_last_update"
                                 label="Data da última atualização"
                                 fullWidth
                                 defaultValue={moment(props.last_update).format('DD-MM-YYYY hh:mm')}
@@ -263,7 +259,7 @@ export const BasicDataPanel = React.memo((props) => {
                         </Grid>
                     </Grid>
 
-                    <Button variant="contained" color="primary" disabled={!saveNecessary} sx={{ mt: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary} sx={{ mt: 2 }}>
                         Atualizar
                     </Button>
 

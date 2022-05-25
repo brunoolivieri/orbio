@@ -13,6 +13,10 @@ use App\Models\User\UserAddressModel;
 // Events
 use App\Events\User\UserPasswordChangedEvent;
 use App\Events\User\UserAccountDesactivatedEvent;
+// Requests
+use App\Http\Requests\UserAccount\UpdateBasicDataRequest;
+use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
+use App\Http\Requests\UserAccount\UpdateAddressRequest;
 
 class AccountSectionController extends Controller
 {
@@ -62,13 +66,11 @@ class AccountSectionController extends Controller
 
     }
 
-    function userBasicDataUpdate(Request $request, $id) : \Illuminate\Http\Response {
+    function userBasicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
 
         try{
 
-            $user = UserModel::find(Auth::user()->id);
-
-            $user->update([
+            UserModel::where("id", Auth::user()->id)->update([
                 "nome" => $request->name,
                 "email" => $request->email
             ]);
@@ -83,20 +85,20 @@ class AccountSectionController extends Controller
 
     }
 
-    function userComplementaryDataUpdate(Request $request) : \Illuminate\Http\Response {
+    function userDocumentsUpdate(UpdateDocumentsRequest $request) : \Illuminate\Http\Response {
 
         try{
 
             $user = UserModel::find(Auth::user()->id);
 
-            $user->complementary_data->update([
-                "habANAC" => $request->habAnac,
+            UserComplementaryDataModel::where("id", $user->complementary_data->id)->update([
+                "habANAC" => $request->anac_license,
                 "cpf" => $request->cpf,
                 "cnpj" => $request->cnpj,
                 "telefone" => $request->telephone,
                 "celular" => $request->cellphone,
-                "razaoSocial" => $request->rSocial,
-                "nomeFantasia" => $request->nFantasia
+                "razaoSocial" => $request->company_name,
+                "nomeFantasia" => $request->trading_name
             ]);
 
             return response("", 200);
@@ -109,19 +111,19 @@ class AccountSectionController extends Controller
 
     }
 
-    function userAddressDataUpdate(Request $request){
+    function userAddressUpdate(UpdateAddressRequest $request){
 
         try{
 
             $user = UserModel::find(Auth::user()->id);
 
-            $user->address->update([
-                "logradouro" => $request->logradouro,
-                "numero" => $request->address_number,
+            UserAddressModel::where("id", $user->address->id)->update([
+                "logradouro" => $request->street_name,
+                "numero" => $request->number,
                 "cep" => $request->cep,
                 "cidade" => $request->city,
                 "estado" => $request->state,
-                "complemento" => $request->complemento
+                "complemento" => $request->complement
             ]);
 
             return response("", 200);
