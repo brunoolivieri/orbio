@@ -40,56 +40,36 @@ class UserModel extends Authenticatable
     * Relationship with user_complementary_data table
     */
     function complementary_data(){
-
         return $this->belongsTo("App\Models\User\UserComplementaryDataModel", "id_dados_complementares");
-
     }
 
     /*
     * Relationship with sessions table
     */
     function sessions(){
-
         return $this->hasMany("App\Models\SessionModel", "user_id");
-
     }
 
     /*
     * Relationship with profile table
     */
     function profile(){
-
         return $this->belongsTo("App\Models\ProfileAndModule\ProfileModel", "id_perfil");
-
     }
 
      /**
      * Distant relationship with profile_has_module table through profile table
      */
     function profile_modules_relationship(){
-
         return $this->hasManyThrough(ProfileHasModuleModel::class, ProfileModel::class);
-
-    }
-
-    /**
-     * Distant relationship with address table through user_complementary_data table
-     */
-    function address()
-    {
-        return $this->hasOneThrough(UserAddressModel::class, UserComplementaryDataModel::class, "id_endereco");
     }
 
     /*
     * Relationship with service_order_has_user table
     */
     function service_order_has_user(){
-
         return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "id_usuario");
-
     }
-
-    
 
     /**
      * Factory that uses this model for generate random users
