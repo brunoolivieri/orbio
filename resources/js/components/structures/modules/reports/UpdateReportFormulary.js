@@ -158,13 +158,7 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 4;
-    let module_action = "escrever";
-
     AxiosApi.patch(`/api/reports-module/${data.get("id_input")}`, {
-      auth: `${logged_user_id}.${module_id}.${module_action}`,
       flight_initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       flight_final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       flight_log_file: data.get("flight_log"),

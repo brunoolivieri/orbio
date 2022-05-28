@@ -80,14 +80,9 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação
-    let logged_user_id = AuthData.data.id;
-    let module_id = 1;
-    let action = "escrever";
-
     setDisabledButton(false);
 
-    AxiosApi.delete(`/api/admin-module-profile/${data.get("profile_id")}?auth=${logged_user_id}.${module_id}.${action}`)
+    AxiosApi.delete(`/api/admin-module-profile/${data.get("profile_id")}`)
       .then(function () {
 
         successServerResponseTreatment();

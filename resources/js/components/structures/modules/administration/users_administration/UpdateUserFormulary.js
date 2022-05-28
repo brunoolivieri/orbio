@@ -112,13 +112,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
     function requestServerOperation(data){
 
-        // Dados para o middleware de autenticação
-        let logged_user_id = AuthData.data.id; 
-        let module_id = 1; 
-        let action = "escrever"; 
-
         AxiosApi.patch(`/api/admin-module-user/${data.get("user_id")}`, {
-            auth: `${logged_user_id}.${module_id}.${action}`,
             name: data.get("name_input"),
             email: data.get("email_input"),
             status: isChecked,

@@ -81,12 +81,7 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 4;
-    let module_action = "escrever";
-
-    AxiosApi.delete(`/api/reports-module/${data.get("id_input")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+    AxiosApi.delete(`/api/reports-module/${data.get("id_input")}`)
       .then(function () {
 
         successServerResponseTreatment();

@@ -184,11 +184,6 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 3;
-    let module_action = "escrever";
-
     // Para recuperar os ids dos planos selecionados
     let arr = [];
     let obj_with_arr_of_ids = {};
@@ -200,7 +195,6 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     obj_with_arr_of_ids["flight_plans_ids"] = arr;
 
     AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
-      auth: `${logged_user_id}.${module_id}.${module_action}`,
       initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: data.get("select_pilot_name"),

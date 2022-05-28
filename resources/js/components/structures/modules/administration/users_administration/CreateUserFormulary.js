@@ -116,14 +116,9 @@ export function CreateUserFormulary({ ...props }) {
   */
   function requestServerOperation(data) {
 
-    let user_id = AuthData.data.id;
-    let module_id = 1;
-    let action = "escrever";
-
     const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
 
     AxiosApi.post(`/api/admin-module-user`, {
-      auth: `${user_id}.${module_id}.${action}`,
       email: data.get("registration_email_input"),
       name: data.get("registration_name_input"),
       profile_id: data.get("select_profile"),

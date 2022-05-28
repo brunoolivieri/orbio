@@ -121,13 +121,7 @@ export function UpdateIncidentFormulary({ ...props }) {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 5;
-    let module_action = "escrever";
-
     AxiosApi.patch(`/api/incidents-module/${data.get("incident_id")}`, {
-      auth: `${logged_user_id}.${module_id}.${module_action}`,
       incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
       incident_type: data.get("incident_type"),
       description: data.get("description"),

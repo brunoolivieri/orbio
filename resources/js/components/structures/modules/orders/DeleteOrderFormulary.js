@@ -76,12 +76,7 @@ export function DeleteOrderFormulary({ ...props }) {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 3;
-    let module_action = "escrever";
-
-    AxiosApi.delete(`/api/orders-module/${data.get("order_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+    AxiosApi.delete(`/api/orders-module/${data.get("order_id")}`)
       .then(function () {
 
         successServerResponseTreatment();

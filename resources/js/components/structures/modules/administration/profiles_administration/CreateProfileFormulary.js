@@ -117,12 +117,7 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
   */
   function requestServerOperation(data) {
 
-    let user_id = AuthData.data.id;
-    let module_id = 1;
-    let action = "escrever";
-
     AxiosApi.post("/api/admin-module-profile", {
-      auth: `${user_id}.${module_id}.${action}`,
       name: data.get("registration_name_input")
     })
       .then(function () {

@@ -184,11 +184,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
   */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 3;
-    let module_action = "escrever";
-
     let arr = [];
     let obj_with_arr_of_ids = {};
 
@@ -199,7 +194,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     obj_with_arr_of_ids["flight_plans_ids"] = arr;
 
     AxiosApi.post(`/api/orders-module`, {
-      auth: `${logged_user_id}.${module_id}.${module_action}`,
       initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: data.get("select_pilot_name"),

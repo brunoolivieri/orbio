@@ -126,13 +126,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     */
     function requestServerOperation(data) {
 
-        // Dados para o middleware de autenticação
-        let logged_user_id = AuthData.data.id;
-        let module_id = 1;
-        let action = "escrever";
-
         AxiosApi.patch(`/api/admin-module-profile/${data.get("profile_id")}`, {
-            auth: `${logged_user_id}.${module_id}.${action}`,
             profile_name: data.get("profile_name"),
             profile_modules_relationship: modulePowers
         })

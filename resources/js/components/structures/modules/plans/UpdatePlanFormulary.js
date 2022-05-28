@@ -120,13 +120,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 2;
-    let module_action = "escrever";
-
     AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
-      auth: `${logged_user_id}.${module_id}.${module_action}`,
       report_id: data.get("select_report"),
       incident_id: data.get("select_incident"),
       status: isChecked,

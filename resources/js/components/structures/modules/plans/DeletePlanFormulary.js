@@ -78,14 +78,9 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    // Dados para o middleware de autenticação 
-    let logged_user_id = AuthData.data.id;
-    let module_id = 2;
-    let module_action = "escrever";
-
     setDisabledButton(false);
 
-    AxiosApi.delete(`/api/plans-module/${data.get("plan_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+    AxiosApi.delete(`/api/plans-module/${data.get("plan_id")}`)
       .then(function () {
 
         successServerResponseTreatment();
