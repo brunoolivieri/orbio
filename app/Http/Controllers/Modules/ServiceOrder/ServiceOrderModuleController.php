@@ -8,7 +8,8 @@ use App\Models\Orders\ServiceOrdersModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-// Classes de validação das requisições store/update
+use Illuminate\Support\Facades\Gate;
+// Form Request
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 // Models
@@ -27,6 +28,7 @@ class ServiceOrderModuleController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+        Gate::authorize('service_orders_read');
 
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -42,8 +44,6 @@ class ServiceOrderModuleController extends Controller
             if($model_response["data"]->total() > 0){
 
                 $data_formated = $this->formatDataForTable($model_response["data"]);
-
-                dd($data_formated);
 
                 return response($data_formated, 200);
 
@@ -184,7 +184,6 @@ class ServiceOrderModuleController extends Controller
      */
     public function create() : \Illuminate\Http\Response
     {
-
         $where = isset(request()->where) ? explode(".", request()->where) : false;
         $select = explode(".", request()->select_columns);
 
@@ -213,6 +212,7 @@ class ServiceOrderModuleController extends Controller
      */
     public function store(ServiceOrderStoreRequest $request) : \Illuminate\Http\Response
     {
+        Gate::authorize('service_orders_write');
 
         try{
 
@@ -282,6 +282,7 @@ class ServiceOrderModuleController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('service_orders_read');
         
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -327,6 +328,7 @@ class ServiceOrderModuleController extends Controller
      */
     public function update(ServiceOrderUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
+        Gate::authorize('service_orders_write');
 
         try{
 
@@ -397,6 +399,7 @@ class ServiceOrderModuleController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('service_orders_write');
         
         try{
 

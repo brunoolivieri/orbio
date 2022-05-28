@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Incidents\IncidentsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
-// Classes de validação das requisições store/update
+use Illuminate\Support\Facades\Gate;
+// Form Requests
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
 // Log
@@ -19,8 +20,10 @@ class IncidentModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
+        Gate::authorize('incidents_read');
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -92,8 +95,10 @@ class IncidentModuleController extends Controller
      * @param  App\Http\Requests\Modules\Incidents\IncidentStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(IncidentStoreRequest $request)
+    public function store(IncidentStoreRequest $request) : \Illuminate\Http\Response
     {
+        Gate::authorize('incidents_write');
+
         try{
 
             IncidentsModel::create([
@@ -121,8 +126,10 @@ class IncidentModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('incidents_read');
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -164,8 +171,10 @@ class IncidentModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(IncidentUpdateRequest $request, $id)
+    public function update(IncidentUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
+        Gate::authorize('incidents_write');
+
         try{
 
             IncidentsModel::where('id', $id)->update([
@@ -193,8 +202,10 @@ class IncidentModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('incidents_write');
+        
         try{
 
             IncidentsModel::where('id', $id)->delete();

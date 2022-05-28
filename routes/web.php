@@ -51,7 +51,7 @@ Route::middleware(["session.auth"])->group(function(){
 });
 
 // Operações dos módulos
-Route::middleware(["session.auth", "modules.common.authorization"])->group(function(){
+Route::middleware(["session.auth"])->group(function(){
     Route::resource("/api/admin-module-user", AdministrationModuleUserPanelController::class);
     Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class);
     Route::resource("/api/reports-module", ReportModuleController::class);

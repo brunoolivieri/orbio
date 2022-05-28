@@ -8,6 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 // Models
 use App\Models\Equipments\EquipmentsModel;
 // Form Request
@@ -21,8 +22,10 @@ class EquipmentModuleEquipmentPanelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index() : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_read");
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -98,23 +101,15 @@ class EquipmentModuleEquipmentPanelController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEquipmentRequest $request)
+    public function store(StoreEquipmentRequest $request) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_write");
+
         try{
 
             DB::transaction(function () use ($request) {
@@ -145,8 +140,10 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_read");
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -182,25 +179,16 @@ class EquipmentModuleEquipmentPanelController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEquipmentRequest $request, $id)
+    public function update(UpdateEquipmentRequest $request, $id) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_write");
+
         try{
 
             DB::transaction(function () use ($request, $id) {
@@ -237,8 +225,10 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_write");
+
         try{
 
             DB::transaction(function () use ($id) {

@@ -8,6 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Gate;
 // Models
 use App\Models\Drones\DronesModel;
 // Form Request
@@ -23,6 +24,8 @@ class EquipmentModuleDronePanelController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_read");
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -97,16 +100,6 @@ class EquipmentModuleDronePanelController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -114,6 +107,8 @@ class EquipmentModuleDronePanelController extends Controller
      */
     public function store(StoreDroneRequest $request) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_write");
+
         try{
 
             DB::transaction(function () use ($request) {
@@ -146,6 +141,8 @@ class EquipmentModuleDronePanelController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_read");
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -181,17 +178,6 @@ class EquipmentModuleDronePanelController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -200,6 +186,8 @@ class EquipmentModuleDronePanelController extends Controller
      */
     public function update(UpdateDroneRequest $request, $id) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_write");
+
         try{
 
             DB::transaction(function () use ($request, $id) {
@@ -238,6 +226,8 @@ class EquipmentModuleDronePanelController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+        Gate::authorize("equipments_write");
+
         try{
 
             DB::transaction(function () use ($id) {

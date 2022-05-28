@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
-// Classes de validação das requisições store/update
+use Illuminate\Support\Facades\Gate;
+// Form Request
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 // Log
@@ -21,6 +22,7 @@ class ReportModuleController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+        Gate::authorize('reports_read');
 
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -103,6 +105,7 @@ class ReportModuleController extends Controller
      */
     public function store(ReportStoreRequest $request) : \Illuminate\Http\Response
     {
+        Gate::authorize('reports_write');
         
         try{
 
@@ -135,6 +138,7 @@ class ReportModuleController extends Controller
      */
     public function show($request) : \Illuminate\Http\Response
     {
+        Gate::authorize('reports_read');
 
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -180,6 +184,7 @@ class ReportModuleController extends Controller
      */
     public function update(ReportUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
+        Gate::authorize('reports_write');
         
         try{
 
@@ -212,6 +217,7 @@ class ReportModuleController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('reports_write');
         
         try{
 

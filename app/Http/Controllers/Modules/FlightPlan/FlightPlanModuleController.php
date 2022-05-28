@@ -10,7 +10,8 @@ use App\Models\Incidents\IncidentsModel;
 use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
-// Classes de validação das requisições store/update
+use Illuminate\Support\Facades\Gate;
+// Form Requests
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 // Log
@@ -25,6 +26,7 @@ class FlightPlanModuleController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+        Gate::authorize('flight_plans_read');
 
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -103,6 +105,8 @@ class FlightPlanModuleController extends Controller
      */
     public function downloadFlightPlanFile(string $filename) : \Illuminate\Http\Response {
 
+        Gate::authorize('flight_plans_read');
+
         try{
 
             if(Storage::disk("public")->exists("flight_plans/$filename")){
@@ -168,6 +172,7 @@ class FlightPlanModuleController extends Controller
      */
     public function store(Request $request) : \Illuminate\Http\Response
     {
+        Gate::authorize('flight_plans_write');
 
         try{
 
@@ -218,6 +223,8 @@ class FlightPlanModuleController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('flight_plans_read');
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -262,6 +269,7 @@ class FlightPlanModuleController extends Controller
      */
     public function update(FlightPlanUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
+        Gate::authorize('flight_plans_write');
 
         try{
 
@@ -293,6 +301,7 @@ class FlightPlanModuleController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('flight_plans_write');
 
         try{
 

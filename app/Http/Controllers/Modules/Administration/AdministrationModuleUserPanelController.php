@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-// Classes de validação das requisições store/update
+use Illuminate\Support\Facades\Gate;
+// Form Requests
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 // Models
@@ -19,8 +20,6 @@ use App\Models\ProfileAndModule\ProfileModel;
 use  App\Models\Orders\ServiceOrdersModel;
 // Events
 use App\Events\Modules\Admin\UserCreatedEvent;
-// Jobs
-use App\Jobs\SendEmailJob;
 
 class AdministrationModuleUserPanelController extends Controller
 {
@@ -32,6 +31,8 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+
+        Gate::authorize('administration_read');
 
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
@@ -151,6 +152,8 @@ class AdministrationModuleUserPanelController extends Controller
     public function store(UserPanelStoreRequest $request) : \Illuminate\Http\Response
     {
 
+        Gate::authorize('administration_write');
+
         try{
 
             DB::transaction(function () use ($request) {
@@ -200,6 +203,8 @@ class AdministrationModuleUserPanelController extends Controller
     public function show($id) : \Illuminate\Http\Response
     {
 
+        Gate::authorize('administration_read');
+
         $args = explode(".", request()->args);
         $limit = (int) $args[0];
         $where_value = $args[1];
@@ -245,6 +250,8 @@ class AdministrationModuleUserPanelController extends Controller
     public function update(UserPanelUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
 
+        Gate::authorize('administration_write');
+
         try{
 
             UserModel::where('id', $id)->update([
@@ -276,6 +283,8 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+
+        Gate::authorize('administration_write');
 
         try{
 

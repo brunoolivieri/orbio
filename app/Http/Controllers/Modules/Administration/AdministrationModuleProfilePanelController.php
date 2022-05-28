@@ -9,7 +9,8 @@ use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-// Classes de validação das requisições store/update
+use Illuminate\Support\Facades\Gate;
+// Form Requests
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
 
@@ -23,6 +24,8 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function index() : \Illuminate\Http\Response
     {
+
+        Gate::authorize('administration_read');
 
         $args = explode(".", request()->args);
         $limit = (int) $args[0]*5;
@@ -65,7 +68,8 @@ class AdministrationModuleProfilePanelController extends Controller
      * @param object $data
      * @return array
      */
-    private function formatDataForTable(LengthAwarePaginator $data) : array {
+    private function formatDataForTable(LengthAwarePaginator $data) : array 
+    {
 
         $arr_with_formated_records = [];
 
@@ -117,7 +121,8 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function store(ProfilePanelStoreRequest $request) : \Illuminate\Http\Response
     {
-        
+        Gate::authorize('administration_write');
+
         $model = new ProfileModel();
 
         $model_response = $model->newProfile($request->except("auth"));
@@ -146,6 +151,7 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function show($id) : \Illuminate\Http\Response
     {
+        Gate::authorize('administration_read');
         
         $args = explode(".", request()->args);
         $limit = (int) $args[0]*5;
@@ -191,7 +197,8 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function update(ProfilePanelUpdateRequest $request, $id) : \Illuminate\Http\Response
     {
-        
+        Gate::authorize('administration_write');
+
         $model = new ProfileModel();
 
         $model_response = $model->updateProfile((int) $id, $request->profile_name, $request->profile_modules_relationship);
@@ -220,6 +227,8 @@ class AdministrationModuleProfilePanelController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
+
+        Gate::authorize('administration_write');
 
         try{
 
