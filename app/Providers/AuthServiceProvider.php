@@ -28,85 +28,85 @@ class AuthServiceProvider extends ServiceProvider
 
         // === ADMINISTRATION GATES === //
 
-        Gate::define("administration_read", function(UserModel $user) : bool {
+        Gate::define("administration_read", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[0]["ler"];
+            return $logged_user->profile->module_privileges[0]["ler"];
 
         }); 
 
-        Gate::define("administration_write", function(UserModel $user) : bool {
+        Gate::define("administration_write", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[0]["escrever"];
+            return $logged_user->profile->module_privileges[0]["escrever"];
 
         }); 
 
         // === FLIGHT PLANS GATES === //
 
-        Gate::define("flight_plans_read", function(UserModel $user) : bool {
+        Gate::define("flight_plans_read", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[1]["ler"];
+            return $logged_user->profile->module_privileges[1]["ler"];
 
         }); 
 
-        Gate::define("flight_plans_write", function(UserModel $user) : bool {
+        Gate::define("flight_plans_write", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[1]["escrever"];
+            return $logged_user->profile->module_privileges[1]["escrever"];
 
         }); 
 
         // === SERVICE ORDERS GATES === //
 
-        Gate::define("service_orders_read", function(UserModel $user) : bool {
+        Gate::define("service_orders_read", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[2]["ler"];
+            return $logged_user->profile->module_privileges[2]["ler"];
 
         }); 
 
-        Gate::define("service_orders_write", function(UserModel $user) : bool {
+        Gate::define("service_orders_write", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[2]["escrever"];
+            return $logged_user->profile->module_privileges[2]["escrever"];
 
         }); 
 
         // === REPORTS GATES === //
 
-        Gate::define("reports_read", function(UserModel $user) : bool {
+        Gate::define("reports_read", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[3]["ler"];
+            return $logged_user->profile->module_privileges[3]["ler"];
 
         }); 
 
-        Gate::define("reports_write", function(UserModel $user) : bool {
+        Gate::define("reports_write", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[3]["escrever"];
+            return $logged_user->profile->module_privileges[3]["escrever"];
 
         }); 
 
         // === INCIDENTS GATES === //
 
-        Gate::define("incidents_read", function(UserModel $user) : bool {
+        Gate::define("incidents_read", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[4]["ler"];
+            return $logged_user->profile->module_privileges[4]["ler"];
 
         }); 
 
-        Gate::define("incidents_write", function(UserModel $user) : bool {
+        Gate::define("incidents_write", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[4]["escrever"];
+            return $logged_user->profile->module_privileges[4]["escrever"];
 
         }); 
 
         // === EQUIPMENTS GATES === //
 
-        Gate::define("equipments_read", function(UserModel $user) : bool {
+        Gate::define("equipments_read", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[5]["ler"];
+            return $logged_user->profile->module_privileges[5]["ler"];
 
         }); 
 
-        Gate::define("equipments_write", function(UserModel $user) : bool {
+        Gate::define("equipments_write", function(UserModel $logged_user) : bool {
 
-            return $user->profile->module_privileges[5]["escrever"];
+            return $logged_user->profile->module_privileges[5]["escrever"];
 
         }); 
 
