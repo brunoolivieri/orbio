@@ -21,7 +21,7 @@ class LogInNotification extends Mailable
     public function __construct(string $name, string $email, string $datetime)
     {
         $this->data = [
-            "subject" => "LARAV-REACT - Notificação de Login",
+            "subject" => "ORBIO - Notificação de Login",
             "title" => "Olá $name,",
             "header_text" => "Você acessou o sistema no dia e hora ".$datetime,
             "footer_text" => "Se não foi você quem realizou o acesso, contate o suporte."

@@ -103,10 +103,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 3
-  * Comunicação AJAX com o Laravel utilizando AXIOS
-  * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
   */
-  function requestServerOperation(data) {
+  const requestServerOperation = React.useCallback((data) => {
 
     const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
 
@@ -127,12 +125,12 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
       });
 
-  }
+  });
 
   /*
   * Rotina 4A
   */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = React.useCallback(() => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -146,12 +144,12 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
     }, 2000);
 
-  }
+  });
 
   /*
   * Rotina 4B
   */
-  function errorServerResponseTreatment(response_data) {
+  const errorServerResponseTreatment = React.useCallback((response_data) => {
 
     setDisabledButton(false);
 
@@ -187,7 +185,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
       profile: input_errors.profile_id.message
     });
 
-  }
+  });
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 

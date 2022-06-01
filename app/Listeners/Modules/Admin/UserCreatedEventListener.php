@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Modules\Admin;
 
+use App\Events\Modules\Admin\UserCreatedEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
@@ -26,8 +27,8 @@ class UserCreatedEventListener
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(UserCreatedEvent $event)
     {
-        Mail::to($event->email)->send(new CreatedNewUserData($event->name, $event->email, $event->profile, $event->password, $event->datetime));
+        Mail::to($event->email)->queue(new CreatedNewUserData($event->name, $event->email, $event->profile, $event->password, $event->datetime));
     }
 }

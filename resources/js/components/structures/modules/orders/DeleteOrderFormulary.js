@@ -36,13 +36,11 @@ export function DeleteOrderFormulary({ ...props }) {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
 
     props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
@@ -50,11 +48,10 @@ export function DeleteOrderFormulary({ ...props }) {
 
     setOpen(false);
 
-  };
+  });
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
@@ -70,11 +67,9 @@ export function DeleteOrderFormulary({ ...props }) {
 
   /*
  * Rotina 2
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
-  function requestServerOperation(data) {
+  const requestServerOperation = React.useCallback((data) => {
 
     AxiosApi.delete(`/api/orders-module/${data.get("order_id")}`)
       .then(function () {
@@ -88,13 +83,12 @@ export function DeleteOrderFormulary({ ...props }) {
 
       });
 
-  }
+  });
 
   /*
   * Rotina 5A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = React.useCallback(() => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -109,11 +103,10 @@ export function DeleteOrderFormulary({ ...props }) {
 
     }, 2000);
 
-  }
+  });
 
   /*
   * Rotina 5B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 

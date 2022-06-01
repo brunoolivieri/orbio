@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Modules\ServiceOrder;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Orders\ServiceOrdersModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -13,11 +12,15 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 // Models
+use App\Models\Orders\ServiceOrdersModel;
 use App\Models\Orders\ServiceOrderHasUserModel;
 use App\Models\Orders\ServiceOrderHasFlightPlansModel;
 use App\Models\User\UserModel;
 // Log
 use Illuminate\Support\Facades\Log;
+// Events
+use App\Events\Modules\Orders\OrderCreatedEvent;
+
 
 class ServiceOrderModuleController extends Controller
 {
@@ -191,7 +194,8 @@ class ServiceOrderModuleController extends Controller
 
             $data = DB::table(request()->table)->when( $where, function($query, $where){
 
-                $query->where($where[0], $where[1]);
+                $query->where($where[0], $where[1])
+                ->where("deleted_at", null);
 
             })->select($select[0], $select[1])->get();
 
@@ -216,47 +220,62 @@ class ServiceOrderModuleController extends Controller
 
         try{
 
-            DB::beginTransaction();
+            DB::transaction(function () use ($request) {
 
-            $pilot_data = UserModel::find($request->pilot_id);
-            $client_data = UserModel::find($request->client_id);
+                $pilot = UserModel::findOrFail($request->pilot_id);
+                $client = UserModel::findOrFail($request->client_id);
 
-            // Cria a ordem de serviço
-            $new_service_order_id = DB::table("service_orders")->insertGetId(
-                [
-                    "dh_inicio" => $request->initial_date,
-                    "dh_fim" => $request->final_date,
-                    "numOS" => "os.".time(),
-                    "nome_criador" => Auth::user()->nome,
-                    "nome_piloto" => $pilot_data->nome,
-                    "nome_cliente" => $client_data->nome,
-                    "observacao" => $request->observation,
-                    "status" => $request->status
-                ]
-            ); 
+                $new_service_order = ServiceOrdersModel::create(
+                    [
+                        "dh_inicio" => $request->initial_date,
+                        "dh_fim" => $request->final_date,
+                        "numOS" => "os.".time(),
+                        "nome_criador" => Auth::user()->nome,
+                        "nome_piloto" => $pilot->nome,
+                        "nome_cliente" => $client->nome,
+                        "observacao" => $request->observation,
+                        "status" => $request->status
+                    ]
+                );
 
-            // Cria as relações com cada usuário envolvido na ordem de serviço (criador, piloto e cliente)
-            ServiceOrderHasUserModel::insert([
-                ["id_ordem_servico" => $new_service_order_id,"id_usuario" => Auth::user()->id], 
-                ["id_ordem_servico" => $new_service_order_id,"id_usuario" => $request->pilot_id],
-                ["id_ordem_servico" => $new_service_order_id,"id_usuario" => $request->client_id]
-            ]);
+                ServiceOrderHasUserModel::insert([
+                    ["id_ordem_servico" => $new_service_order->id,"id_usuario" => Auth::user()->id], 
+                    ["id_ordem_servico" => $new_service_order->id,"id_usuario" => $request->pilot_id],
+                    ["id_ordem_servico" => $new_service_order->id,"id_usuario" => $request->client_id]
+                ]);
 
-            // Cria as relações com cada plano de vôo envolvido na ordem de serviço
-            $arr_plans_ids = json_decode($request->fligth_plans_ids, true);
+                $arr_plans_ids = json_decode($request->fligth_plans_ids, true);
 
-            foreach($arr_plans_ids as $i => $value){
-                foreach($value as $j => $plan_id){
+                foreach($arr_plans_ids as $i => $value){
+                    foreach($value as $j => $plan_id){
 
-                    ServiceOrderHasFlightPlansModel::insert([
-                        "id_ordem_servico" => $new_service_order_id,
-                        "id_plano_voo" => $plan_id
-                    ]);
+                        ServiceOrderHasFlightPlansModel::insert([
+                            "id_ordem_servico" => $new_service_order->id,
+                            "id_plano_voo" => $plan_id
+                        ]);
 
+                    }
                 }
-            }
-           
-            DB::commit();
+
+                event(new OrderCreatedEvent([
+                    "initial_date" => $request->initial_date,
+                    "final_date" =>  $request->final_date,
+                    "creator" => [
+                        "name" => Auth::user()->nome,
+                        "email" => Auth::user()->email
+                    ],
+                    "pilot" => [
+                        "name" => $pilot->nome,
+                        "email" => $pilot->email
+                    ],
+                    "client" => [
+                        "name" => $client->nome,
+                        "email" => $client->email
+                    ],
+                    "observation" => $request->observation
+                ]));
+
+            });
 
             Log::channel('service_orders_action')->info("[Método: Store][Controlador: ReportModuleController] - Ordem de serviço criada com sucesso");
 

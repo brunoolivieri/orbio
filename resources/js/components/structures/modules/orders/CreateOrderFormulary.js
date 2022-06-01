@@ -60,13 +60,11 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
 
     setIsChecked(null);
     setErrorDetected({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false });
@@ -76,12 +74,10 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     setOpen(false);
 
-  };
+  });
 
   /*
   * Rotina 1
-  * Ponto inicial do processamento do envio do formulário de registro
-  * Recebe os dados do formulário, e transforma em um objeto da classe FormData
   */
   function handleRegistrationSubmit(event) {
     event.preventDefault();
@@ -108,11 +104,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 2
-  * Validação dos dados no frontend
-  * Recebe o objeto da classe FormData criado na rotina 1
-  * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
   */
-  function dataValidate(formData) {
+  const dataValidate = React.useCallback((formData) => {
 
     // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
@@ -153,13 +146,10 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     }
 
-  }
+  });
 
   /*
   * Rotina 3
-  * As datas retornadas do componente DateTimePicker do Material UI são formatadas
-  * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
-  * Também ocorre a verificação da diferença entre as datas
   * 
   */
   function verifyDateInterval() {
@@ -179,10 +169,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 4
-  * Comunicação AJAX com o Laravel utilizando AXIOS
-  * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
   */
-  function requestServerOperation(data) {
+  const requestServerOperation = React.useCallback((data) => {
 
     let arr = [];
     let obj_with_arr_of_ids = {};
@@ -213,13 +201,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
       });
 
-  }
+  });
 
   /*
   * Rotina 5A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = React.useCallback(() => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -232,13 +219,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     }, 2000);
 
-  }
+  });
 
   /*
   * Rotina 5B
-  * Tratamento da resposta de uma requisição falha
   */
-  function errorServerResponseTreatment(response_data) {
+  const errorServerResponseTreatment = React.useCallback((response_data) => {
 
     setDisabledButton(false);
 
@@ -286,7 +272,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       status: input_errors.status.message
     });
 
-  }
+  });
 
   // ============================================================================== ESTRUTURAÇÃO ============================================================================== //
 

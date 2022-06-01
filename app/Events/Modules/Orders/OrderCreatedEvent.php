@@ -14,14 +14,37 @@ class OrderCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $initial_date;
+    public $final_date;
+    public $creator;
+    public $pilot;
+    public $observation;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $data)
     {
-        //
+        $this->initial_date = $data["initial_date"];
+        $this->final_date = $data["final_date"];
+        $this->creator = [
+            "fullname" => $data["creator"]["name"],
+            "first_name" =>  explode(" ", $data["creator"]["name"])[0],
+            "email" => $data["creator"]["email"]
+        ];
+        $this->pilot = [
+            "fullname" => $data["pilot"]["name"],
+            "first_name" => explode(" ", $data["pilot"]["name"])[0],
+            "email" => $data["pilot"]["email"]
+        ];
+        $this->client = [
+            "fullname" => $data["client"]["name"],
+            "first_name" => explode(" ", $data["client"]["name"])[0],
+            "email" => $data["client"]["email"]
+        ];
+        $this->observation = $data["observation"];
     }
 
     /**

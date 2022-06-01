@@ -59,13 +59,11 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
 
     props.record_setter(null);
     setErrorDetected({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
@@ -75,11 +73,10 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     setOpen(false);
 
-  };
+  });
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
@@ -107,11 +104,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 2
- * Validação dos dados no frontend
- * Recebe o objeto da classe FormData criado na rotina 1
- * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
  */
-  function submitedDataValidate(formData) {
+  const submitedDataValidate = React.useCallback((formData) => {
 
     // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
@@ -152,7 +146,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     }
 
-  }
+  });
 
   /*
  * Rotina 3
@@ -178,11 +172,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 4
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
-  function requestServerOperation(data) {
+  const requestServerOperation = React.useCallback((data) => {
 
     // Para recuperar os ids dos planos selecionados
     let arr = [];
@@ -214,13 +206,13 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
       });
 
-  }
+  });
 
   /*
   * Rotina 5A
   * Tratamento da resposta de uma requisição bem sucedida
   */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = React.useCallback(() => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -235,7 +227,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     }, 2000);
 
-  }
+  });
 
   /*
   * Rotina 5B

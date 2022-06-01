@@ -21,7 +21,7 @@ class TokenForChangePasswordMail extends Mailable
     public function __construct(string $name, string $token, string $datetime)
     {
         $this->data = [
-            "subject" => "LARAV-REACT - Código para alteração da senha",
+            "subject" => "ORBIO - Código para alteração da senha",
             "title" => "Olá $name,",
             "token" => $token,
             "header_text" => "Você solicitou uma alteração da sua senha no dia e hora ".$datetime,
