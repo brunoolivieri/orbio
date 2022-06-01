@@ -12,12 +12,14 @@ use App\Events\Auth\TokenForChangePasswordEvent;
 use App\Events\User\UserPasswordChangedEvent;
 use App\Events\Modules\Admin\UserCreatedEvent;
 use App\Events\User\UserAccountDesactivatedEvent;
+use  App\Events\Modules\Orders\OrderCreatedEvent;
 // Custom Listeners
 use App\Listeners\Auth\UserLoggedInEventListener;
 use App\Listeners\Auth\TokenForChangePasswordEventListener;
 use App\Listeners\User\UserChangedPasswordEventListener;
 use App\Listeners\Modules\Admin\UserCreatedEventListener;
 use App\Listeners\User\UserAccountDesactivatedEventListener;
+use App\Listeners\Modules\Orders\OrderCreatedEventListener;
 // Custom Observers
 use App\Observers\UserModelObserver;
 // Custom Model
@@ -45,7 +47,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserAccountDesactivatedEvent::class => [
             UserAccountDesactivatedEventListener::class
+        ],
+        OrderCreatedEvent::class => [
+            OrderCreatedEventListener::class
         ]
+
     ];
 
     /**

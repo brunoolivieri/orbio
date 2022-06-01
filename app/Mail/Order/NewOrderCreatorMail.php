@@ -23,6 +23,7 @@ class NewOrderCreatorMail extends Mailable
         $this->data = [
             "subject" => "ORBIO - Nova ordem de serviço",
             "title" => "Olá ".$creator["first_name"].",",
+            "header_text" => "Você está recebendo esse e-mail porque foi vinculado a uma ordem de serviço.",
             "body" => [
                 "initial_date" => $initial_date,
                 "final_date" => $final_date,
