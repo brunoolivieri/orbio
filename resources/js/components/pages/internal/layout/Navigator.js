@@ -28,8 +28,9 @@ import { faIdCardClip } from "@fortawesome/free-solid-svg-icons";
 import { Typography } from "@mui/material";
 
 const item = {
-  py: 0.8,
+  py: 1.2,
   px: 3,
+  borderRadius: 2,
   '&:hover, &:focus': {
     bgcolor: '#E3EEFA',
     color: '#2065D1',
@@ -75,10 +76,10 @@ export const Navigator = React.memo((props) => {
 
         <ListItem sx={{ fontSize: 20, display: 'flex' }}>
           <Box sx={{ py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right' }}>
-            [SVG]
+            [SVG
           </Box>
           <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left' }}>
-            ORBIO
+            ORBIO]
           </Box>
         </ListItem>
         <Divider variant="middle" />
