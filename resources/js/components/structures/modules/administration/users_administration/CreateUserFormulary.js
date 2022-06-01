@@ -21,7 +21,7 @@ import { GenericSelect } from '../../../input_select/GenericSelect';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 
-export function CreateUserFormulary({ ...props }) {
+export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -277,4 +277,4 @@ export function CreateUserFormulary({ ...props }) {
       </Dialog>
     </div>
   );
-}
+});

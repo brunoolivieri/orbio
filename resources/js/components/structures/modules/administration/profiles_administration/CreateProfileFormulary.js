@@ -42,12 +42,10 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
   const handleClose = () => {
 
     setErrorDetected({ name: false });

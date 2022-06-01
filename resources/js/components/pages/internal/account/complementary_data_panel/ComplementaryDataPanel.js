@@ -21,7 +21,7 @@ import { useAuthentication } from "../../../../../components/context/InternalRou
 // Libs
 import { useSnackbar } from 'notistack';
 
-export const ComplementaryDataPanel = ((props) => {
+export const ComplementaryDataPanel = React.memo((props) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 

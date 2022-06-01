@@ -60,17 +60,12 @@ export function ForgotPassword() {
 
     /*
     * Rotina 1A
-    * Ponto inicial do processamento do envio do formulário de envio do código para o email
-    * Recebe os dados do formulário respectivo, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */
     function handleCodeSubmit(event) {
         event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
         const data = new FormData(event.currentTarget);
 
-        // dataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")
         if (formDataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")) {
 
             sendCodeRequestServerOperation(data);
@@ -81,9 +76,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 1B
-    * Ponto inicial do processamento do envio do formulário da alteração da senha
-    * Recebe os dados do formulário respectivo, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
     */
     function handleChangePasswordSubmit(event) {
         event.preventDefault();
@@ -101,9 +93,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 2AB
-    * Validação dos dados no frontend
-    * Recebe o objeto Event do evento onSubmit, e o formulário a ser validado
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
     function formDataValidate(formData, formulary) {
 
@@ -153,8 +142,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 3A
-    * Comunicação com o backend 
-    * Envio do código de alteração da senha para o email do usuário
     * 
     */
     function sendCodeRequestServerOperation(data) {
@@ -178,8 +165,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 3B
-    * Comunicação com o backend 
-    * Alteração da senha a partir do código enviado para o email do usuário
     * 
     */
     function changePasswordRequestServerOperation(data) {
@@ -205,9 +190,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 4A
-    * Tratamento da resposta do servidor para o envio do código para o usuário
-    * Se a resposta for de sucesso, o formulário de alteração da senha será liberado
-    * Além disso, o botão de envio do código será desabilitado por 60 segundos
     * 
     */
     function sendCodeSuccessServerResponseTreatment() {
@@ -231,12 +213,10 @@ export function ForgotPassword() {
 
         setOperationStatus({ type: "processed", title: "Erro no envio do código!", message: error_message, animation: ErrorAnimation });
 
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
             email: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response_data.errors) {
 
             input_errors[prop] = {
@@ -409,7 +389,7 @@ export function ForgotPassword() {
                             label="Código recebido"
                             type="text"
                             id="code"
-                            disabled={!codeSent} // Disabled recebe a negação do state codeSent
+                            disabled={!codeSent} 
                             error={errorDetected.code}
                             helperText={errorMessage.code}
                         />
@@ -422,7 +402,7 @@ export function ForgotPassword() {
                             name="new_password"
                             type="password"
                             autoFocus
-                            disabled={!codeSent} // Disabled recebe a negação do state codeSent
+                            disabled={!codeSent} 
                             helperText={errorMessage.password}
                             error={errorDetected.password}
                         />
@@ -435,7 +415,7 @@ export function ForgotPassword() {
                             name="new_password_confirmation"
                             type="password"
                             autoFocus
-                            disabled={!codeSent} // Disabled recebe a negação do state codeSent
+                            disabled={!codeSent} 
                             helperText={errorMessage.confirm_password}
                             error={errorDetected.confirm_password}
                         />
