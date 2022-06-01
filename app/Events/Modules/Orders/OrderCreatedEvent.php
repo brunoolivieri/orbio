@@ -14,11 +14,11 @@ class OrderCreatedEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $initial_date;
-    public $final_date;
-    public $creator;
-    public $pilot;
-    public $observation;
+    public string $initial_date;
+    public string $final_date;
+    public array $creator;
+    public array $pilot;
+    public string $observation;
 
     /**
      * Create a new event instance.

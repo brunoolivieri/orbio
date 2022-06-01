@@ -7,7 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 // Custom Mail
-use App\Mail\Order\CreatedNewOrderMail;
+use App\Mail\Order\NewOrderCreatorMail;
+use App\Mail\Order\NewOrderPilotMail;
+use App\Mail\Order\NewOrderClientMail;
 
 class OrderCreatedEventListener
 {
@@ -30,8 +32,8 @@ class OrderCreatedEventListener
      */
     public function handle(OrderCreatedEvent $event)
     {
-        Mail::to($event->creator["email"])->queue(new CreatedNewOrderMail($person = $event->creator["first_name"], $event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
-        Mail::to($event->pilot["email"])->queue(new CreatedNewOrderMail($person = $event->pilot["first_name"], $event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
-        Mail::to($event->client["email"])->queue(new CreatedNewOrderMail($person = $event->client["first_name"], $event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
+        Mail::to($event->creator["email"])->queue(new NewOrderCreatorMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
+        Mail::to($event->pilot["email"])->queue(new NewOrderPilotMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
+        Mail::to($event->client["email"])->queue(new NewOrderClientMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
     }
 }

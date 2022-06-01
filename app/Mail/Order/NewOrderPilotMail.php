@@ -7,22 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class CreatedNewOrderMail extends Mailable
+class NewOrderPilotMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     private $data = [];
 
-    /**
+     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(string $person, string $initial_date, string $final_date, array $creator, array $pilot, array $client, string $observation)
+    public function __construct(string $initial_date, string $final_date, array $creator, array $pilot, array $client, string $observation)
     {
         $this->data = [
             "subject" => "ORBIO - Nova ordem de serviço",
-            "title" => "Olá ".$person.",",
+            "title" => "Olá ".$pilot["first_name"].",",
             "body" => [
                 "initial_date" => $initial_date,
                 "final_date" => $final_date,
