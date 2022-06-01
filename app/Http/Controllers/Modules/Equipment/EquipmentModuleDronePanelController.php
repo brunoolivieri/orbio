@@ -113,7 +113,8 @@ class EquipmentModuleDronePanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $filename = $request->image->getClientOriginalName();
+                $extension = pathinfo($request->image->getClientOriginalName(), PATHINFO_EXTENSION);
+                $filename = time().".$extension";
                 $storage_folder = "public/images/drones/";
 
                 DronesModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);

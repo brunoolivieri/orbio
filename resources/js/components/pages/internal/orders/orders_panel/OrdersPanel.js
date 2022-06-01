@@ -45,7 +45,7 @@ const StyledHeadTableCell = styled(TableCell)({
 });
 
 
-export function OrdersPanel() {
+export const OrdersPanel = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -75,15 +75,13 @@ export function OrdersPanel() {
    */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${3}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllServiceOrders(module_middleware);
+      requestToGetAllServiceOrders();
 
     } else {
 
-      requestToGetSearchedServiceOrders(module_middleware);
+      requestToGetSearchedServiceOrders();
 
     }
 
@@ -93,12 +91,12 @@ export function OrdersPanel() {
   * Carregamento de todos os registros de ordens de serviço
   * 
   */
-  function requestToGetAllServiceOrders(module_middleware) {
+  function requestToGetAllServiceOrders() {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/orders-module?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/orders-module?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -145,12 +143,12 @@ export function OrdersPanel() {
    * Carregamento dos registros de ordens de serviço compátiveis com a pesquisa realizada
    * 
    */
-  function requestToGetSearchedServiceOrders(module_middleware) {
+  function requestToGetSearchedServiceOrders() {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/orders-module/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/orders-module/show?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -420,4 +418,4 @@ export function OrdersPanel() {
 
     </>
   );
-}
+});

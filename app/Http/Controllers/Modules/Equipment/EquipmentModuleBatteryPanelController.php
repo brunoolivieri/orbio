@@ -110,7 +110,8 @@ class EquipmentModuleBatteryPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $filename = $request->image->getClientOriginalName();
+                $extension = pathinfo($request->image->getClientOriginalName(), PATHINFO_EXTENSION);
+                $filename = time().".$extension";
                 $storage_folder = "public/images/batteries/";
 
                 BatteriesModel::create([...$request->only(["name", "manufacturer", "model", "serial_number", "last_charge"]), "image" => $filename]);

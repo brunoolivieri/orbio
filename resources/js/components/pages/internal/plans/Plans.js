@@ -16,7 +16,7 @@ export function Plans() {
 
   useEffect(() => {
 
-    setActualPage("PLANOS DE VÔO");
+    setActualPage("PLANOS DE VOO");
 
   }, []);
 

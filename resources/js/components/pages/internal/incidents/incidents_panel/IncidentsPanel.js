@@ -43,7 +43,7 @@ const StyledHeadTableCell = styled(TableCell)({
 });
 
 
-export function IncidentsPanel() {
+export const IncidentsPanel = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -73,15 +73,13 @@ export function IncidentsPanel() {
    */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${5}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllIncidents(module_middleware);
+      requestToGetAllIncidents();
 
     } else {
 
-      requestToGetSearchedIncidents(module_middleware);
+      requestToGetSearchedIncidents();
 
     }
 
@@ -91,11 +89,11 @@ export function IncidentsPanel() {
   * Carregamento de todos os registros de incidentes
   * 
   */
-  function requestToGetAllIncidents(module_middleware) {
+  function requestToGetAllIncidents() {
 
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/incidents-module?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/incidents-module?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -141,11 +139,11 @@ export function IncidentsPanel() {
   * Carregamento dos registros de incidentes compátiveis com a pesquisa realizada
   * 
   */
-  function requestToGetSearchedIncidents(module_middleware) {
+  function requestToGetSearchedIncidents() {
 
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/incidents-module/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/incidents-module/show?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -392,4 +390,4 @@ export function IncidentsPanel() {
       </FormControl>
     </>
   );
-}
+});

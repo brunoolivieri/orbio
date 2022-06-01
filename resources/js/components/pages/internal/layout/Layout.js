@@ -15,7 +15,7 @@ import { ErrorAnimation } from '../../../assets/lotties/ErrorLottie';
 
 const drawerWidth = 265;
 
-export function Layout() {
+export const Layout = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -126,4 +126,4 @@ export function Layout() {
 
   )
 
-}
+});

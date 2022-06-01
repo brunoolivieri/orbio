@@ -14,7 +14,7 @@ import { EquipmentPanel } from './equipments_panel/EquipmentsPanel';
 // Fonts Awesome
 //import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export function Equipments() {
+export const Equipments = React.memo(() => {
 
   const [actualPanel, setActualPanel] = React.useState("drones");
   const { setActualPage } = usePagination();
@@ -44,4 +44,4 @@ export function Equipments() {
       </Box>
     </Paper>
   )
-}
+});

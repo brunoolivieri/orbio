@@ -1,7 +1,6 @@
 // React
 import * as React from 'react';
 // Custom
-import style from "./layout.module.css";
 import { Link } from 'react-router-dom';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Material UI
@@ -28,34 +27,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIdCardClip } from "@fortawesome/free-solid-svg-icons";
 import { Typography } from "@mui/material";
 
-const categories = [
-  {
-    id: 'Menu de operações',
-    children: [
-      {
-        id: 'Dashboard',
-        icon: <DashboardIcon />,
-        active: false,
-        default_allowed_profiles: [1, 4, 3, 4, 5]
-      },
-      { id: 'Administração', icon: <AdminPanelSettingsIcon /> },
-      { id: 'Ordens', icon: <AssignmentIcon /> },
-      { id: 'Planos', icon: <MapIcon /> },
-      { id: 'Relatórios', icon: <AssessmentIcon /> },
-      { id: 'Equipamentos', icon: <HomeRepairServiceIcon /> },
-      { id: 'Incidentes', icon: <ReportIcon /> }
-    ],
-  },
-  {
-    id: 'Outros',
-    children: [
-      { id: 'Conta', icon: <AccountCircleIcon /> },
-      { id: 'Configurações', icon: <SettingsIcon /> },
-      { id: 'Suporte', icon: <HelpIcon /> },
-    ],
-  },
-];
-
 const item = {
   py: 0.8,
   px: 3,
@@ -68,31 +39,43 @@ const item = {
 
 export const Navigator = React.memo((props) => {
 
-  const { ...other } = props;
   const { AuthData } = useAuthentication();
 
-  // Organização dos valores dos poderes do usuário
-  // Cada item desses será acessado na função .map() 
-  const userCategoriesAccess = React.useRef({
-    dashboard: true,
-    administracao: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false,
-    planos: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false,
-    ordens: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false,
-    relatorios: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false,
-    incidentes: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false,
-    equipamentos: AuthData.data.user_powers["6"].profile_powers.ler == 1 ? true : false,
-    conta: AuthData.data.profile_id != 1,
-    configuracoes: true,
-    suporte: true
-  });
+  const categories = React.useMemo(() => ([
+    {
+      id: 'Menu de operações',
+      children: [
+        {
+          id: 'Dashboard',
+          icon: <DashboardIcon />,
+          active: false,
+          access: true
+        },
+        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false },
+        { id: 'Planos', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false },
+        { id: 'Ordens', icon: <AssignmentIcon />, access: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false },
+        { id: 'Relatórios', icon: <AssessmentIcon />, access: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false },
+        { id: 'Incidentes', icon: <ReportIcon />, access: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false },
+        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: AuthData.data.user_powers["6"].profile_powers.ler == 1 ? true : false }
+      ],
+    },
+    {
+      id: 'Outros',
+      children: [
+        { id: 'Conta', icon: <AccountCircleIcon />, access: AuthData.data.profile_id != 1 ? true : false },
+        { id: 'Configurações', icon: <SettingsIcon />, access: true },
+        { id: 'Suporte', icon: <HelpIcon />, access: true },
+      ],
+    },
+  ]), []);
 
   return (
-    <Drawer {...other}>
+    <Drawer {...props}>
       <List disablePadding>
 
         <ListItem sx={{ fontSize: 20, display: 'flex' }}>
           <Box sx={{ py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right' }}>
-            SVG
+            [SVG]
           </Box>
           <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left' }}>
             ORBIO
@@ -112,10 +95,10 @@ export const Navigator = React.memo((props) => {
             <ListItem>
               <ListItemText sx={{ color: "#222" }}><b>{id}</b></ListItemText>
             </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
-              (userCategoriesAccess.current[`${childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")}`]) &&
+            {children.map(({ id: childId, icon, active, access }) => (
+              access &&
               <ListItem key={childId}>
-                <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} className={style.navigator_navlink}>
+                <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} style={{ width: '100%', display: 'block' }}>
                   <ListItemButton selected={active} sx={{ ...item }}>
                     <ListItemIcon sx={{ color: '#00713A' }}>{icon}</ListItemIcon>
                     <ListItemText sx={{ color: '#637381' }}>{childId}</ListItemText>

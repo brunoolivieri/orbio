@@ -27,7 +27,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
 import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
@@ -46,9 +45,6 @@ const StyledHeadTableCell = styled(TableCell)({
 export function ReportsPanel() {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
-
-  // Utilizador do state global de autenticação
-  const { AuthData } = useAuthentication();
 
   // State do carregamento dos dados
   // Enquanto for false, irá aparecer "carregando" no painel
@@ -71,15 +67,13 @@ export function ReportsPanel() {
    */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${4}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllReports(module_middleware);
+      requestToGetAllReports();
 
     } else {
 
-      requestToGetSearchedReports(module_middleware);
+      requestToGetSearchedReports();
 
     }
 
@@ -89,12 +83,12 @@ export function ReportsPanel() {
    * Carregamento de todos os registros de relatórios
    * 
    */
-  function requestToGetAllReports(module_middleware) {
+  function requestToGetAllReports() {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/reports-module?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/reports-module?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -230,8 +224,6 @@ export function ReportsPanel() {
    * 
    */
   function reloadTable() {
-
-    setSelectedRecordIndex(null);
 
     setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 

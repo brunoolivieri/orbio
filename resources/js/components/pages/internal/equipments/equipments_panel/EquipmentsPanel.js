@@ -41,7 +41,7 @@ const StyledHeadTableCell = styled(TableCell)({
   fontWeight: 700
 });
 
-export function EquipmentPanel() {
+export const EquipmentPanel = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -72,15 +72,13 @@ export function EquipmentPanel() {
  */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${6}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllUsers(module_middleware);
+      requestToGetAllUsers();
 
     } else {
 
-      requestToGetSearchedEquipments(module_middleware);
+      requestToGetSearchedEquipments();
 
     }
 
@@ -91,12 +89,12 @@ export function EquipmentPanel() {
    * Carregamento de todos os registros de equipamento
    * 
    */
-  function requestToGetAllUsers(module_middleware) {
+  function requestToGetAllUsers() {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/equipments-module-equipment?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/equipments-module-equipment?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -142,12 +140,12 @@ export function EquipmentPanel() {
    * Carregamento dos registros de equipamentos compátiveis com a pesquisa realizada
    * 
    */
-  function requestToGetSearchedEquipments(module_middleware) {
+  function requestToGetSearchedEquipments() {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/equipments-module-equipment/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/equipments-module-equipment/show?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -386,7 +384,7 @@ export function EquipmentPanel() {
                   panelData.response.records.map((row, index) => (
                     <TableRow key={row.equipment_id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.equipment_id} /></TableCell>
-                      <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '80px' }} /></TableCell>
+                      <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>
                       <TableCell align="center">{row.model}</TableCell>
@@ -404,4 +402,4 @@ export function EquipmentPanel() {
       </FormControl>
     </>
   )
-}
+});

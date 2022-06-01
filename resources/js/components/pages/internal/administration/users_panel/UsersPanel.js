@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // React
 import * as React from 'react';
 // Custom
@@ -60,43 +61,42 @@ export function UsersPanel() {
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
+  // State do valor procurado
+  const [value_searched, setValueSearched] = React.useState("");
+
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   /**
-   * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
-   * Esses valores são: limit, where e número da página atual
+   * First load
    * 
    */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllUsers(module_middleware);
+      requestToGetAllUsers();
 
     } else {
 
-      requestToGetSearchedUsers(module_middleware);
+      requestToGetSearchedUsers();
 
     }
 
   }, [paginationParams]);
 
-
   /**
    * Carregamento de todos os registros de usuário
    * 
    */
-  function requestToGetAllUsers(module_middleware) {
+  function requestToGetAllUsers() {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/admin-module-user?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-user?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -142,12 +142,12 @@ export function UsersPanel() {
    * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
    * 
    */
-  function requestToGetSearchedUsers(module_middleware) {
+  function requestToGetSearchedUsers() {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -227,8 +227,6 @@ export function UsersPanel() {
   function handleSearchSubmit(event) {
     event.preventDefault();
 
-    let value_searched = window.document.getElementById("search_input").value;
-
     setPaginationParams({
       page: 1,
       limit: paginationParams.limit,
@@ -280,7 +278,7 @@ export function UsersPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateUserFormulary reload_table={reloadTable} /> 
+          <CreateUserFormulary reload_table={reloadTable} />
         </Grid>
 
         <Grid item>
@@ -288,7 +286,7 @@ export function UsersPanel() {
             <Tooltip title="Selecione um registro para editar">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
                 <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
-              </IconButton> 
+              </IconButton>
             </Tooltip>
           }
 
@@ -325,6 +323,7 @@ export function UsersPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
+            onChange={(e) => setValueSearched(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">

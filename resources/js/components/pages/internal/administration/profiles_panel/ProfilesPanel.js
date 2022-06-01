@@ -41,7 +41,6 @@ const StyledHeadTableCell = styled(TableCell)({
   fontWeight: 700
 });
 
-
 export function ProfilesPanel() {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -63,6 +62,9 @@ export function ProfilesPanel() {
 
   // State da deleção permitida
   const [deleteAvailable] = React.useState(true);
+
+  // State do valor procurado
+  const [value_searched, setValueSearched] = React.useState("");
 
   // context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -90,8 +92,6 @@ export function ProfilesPanel() {
    */
   function handleSearchSubmit(event) {
     event.preventDefault();
-
-    let value_searched = window.document.getElementById("search_input").value;
 
     setPaginationParams({
       page: 1,
@@ -121,30 +121,28 @@ export function ProfilesPanel() {
    */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${1}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllProfiles(module_middleware);
+      requestToGetAllProfiles();
 
     } else {
 
-      requestToGetSearchedProfiles(module_middleware);
+      requestToGetSearchedProfiles();
 
     }
 
   }, [paginationParams]);
 
-  /**
+ /**
  * Carregamento de todos os registros de usuário
  * 
  */
-  function requestToGetAllProfiles(module_middleware) {
+  const requestToGetAllProfiles = React.useCallback(() => {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -185,18 +183,18 @@ export function ProfilesPanel() {
       });
 
 
-  }
+  }, []);
 
   /**
   * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
   * 
   */
-  function requestToGetSearchedProfiles(module_middleware) {
+  const requestToGetSearchedProfiles = React.useCallback(() => {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -241,7 +239,7 @@ export function ProfilesPanel() {
 
       });
 
-  }
+  });
 
   const handleChangeRowsPerPage = (event) => {
 
@@ -323,6 +321,7 @@ export function ProfilesPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar perfil por ID"}
+            onChange={(e) => setValueSearched(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
@@ -362,7 +361,6 @@ export function ProfilesPanel() {
           name="radio-buttons-group"
           value={selectedRecordIndex}
         >
-
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>
@@ -424,10 +422,8 @@ export function ProfilesPanel() {
               </TableBody>
             </Table>
           </TableContainer>
-
         </RadioGroup>
       </FormControl>
-
     </>
   )
 }

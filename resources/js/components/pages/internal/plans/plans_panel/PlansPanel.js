@@ -77,15 +77,13 @@ export function PlansPanel() {
    */
   React.useEffect(() => {
 
-    const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
-
     if (!paginationParams.where) {
 
-      requestToGetAllFlightPlans(module_middleware);
+      requestToGetAllFlightPlans();
 
     } else {
 
-      requestToGetSearchedFlightPlans(module_middleware);
+      requestToGetSearchedFlightPlans();
 
     }
 
@@ -95,12 +93,12 @@ export function PlansPanel() {
   * Carregamento de todos os registros de planos de vôo
   * 
   */
-  function requestToGetAllFlightPlans(module_middleware) {
+  function requestToGetAllFlightPlans() {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/plans-module?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/plans-module?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {
@@ -147,11 +145,11 @@ export function PlansPanel() {
  * Carregamento dos registros de planos de vôo compátiveis com a pesquisa realizada
  * 
  */
-  function requestToGetSearchedFlightPlans(module_middleware) {
+  function requestToGetSearchedFlightPlans() {
 
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-    AxiosApi.get(`/api/plans-module/show?args=${select_query_params}&auth=${module_middleware}`)
+    AxiosApi.get(`/api/plans-module/show?args=${select_query_params}`)
       .then(function (response) {
 
         if (response.status === 200) {

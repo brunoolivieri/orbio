@@ -40,7 +40,7 @@ const StyledHeadTableCell = styled(TableCell)({
     fontWeight: 700
 });
 
-export function DronesPanel() {
+export const DronesPanel = React.memo(() => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -71,15 +71,13 @@ export function DronesPanel() {
    */
     React.useEffect(() => {
 
-        const module_middleware = `${AuthData.data.id}.${6}.${"ler"}`;
-
         if (!paginationParams.where) {
 
-            requestToGetAllDrones(module_middleware);
+            requestToGetAllDrones();
 
         } else {
 
-            requestToGetSearchedDrones(module_middleware);
+            requestToGetSearchedDrones();
 
         }
 
@@ -90,12 +88,12 @@ export function DronesPanel() {
      * Carregamento de todos os registros de drone
      * 
      */
-    function requestToGetAllDrones(module_middleware) {
+    function requestToGetAllDrones() {
 
         // This receives: limit clause, where clause and the page number
         const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-        AxiosApi.get(`/api/equipments-module-drone?args=${select_query_params}&auth=${module_middleware}`)
+        AxiosApi.get(`/api/equipments-module-drone?args=${select_query_params}`)
             .then(function (response) {
 
                 if (response.status === 200) {
@@ -141,12 +139,12 @@ export function DronesPanel() {
      * Carregamento dos registros de drones compátiveis com a pesquisa realizada
      * 
      */
-    function requestToGetSearchedDrones(module_middleware) {
+    function requestToGetSearchedDrones() {
 
         // Essa variável recebe: limit clause, where clause and the page number
         const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
-        AxiosApi.get(`/api/equipments-module-drone/show?args=${select_query_params}&auth=${module_middleware}`)
+        AxiosApi.get(`/api/equipments-module-drone/show?args=${select_query_params}`)
             .then(function (response) {
 
                 if (response.status === 200) {
@@ -384,7 +382,7 @@ export function DronesPanel() {
                                     panelData.response.records.map((row, index) => (
                                         <TableRow key={row.drone_id}>
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.drone_id} /></TableCell>
-                                            <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '80px' }} /></TableCell>
+                                            <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} /></TableCell>
                                             <TableCell align="center">{row.name}</TableCell>
                                             <TableCell align="center">{row.manufacturer}</TableCell>
                                             <TableCell align="center">{row.model}</TableCell>
@@ -401,4 +399,4 @@ export function DronesPanel() {
             </FormControl>
         </>
     )
-}
+});
