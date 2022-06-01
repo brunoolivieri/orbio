@@ -49,12 +49,12 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     // Função para abrir o modal
-    const handleClickOpen = () => {
+    const handleClickOpen = (() => {
       setOpen(true);
-    };
+    });
 
     // Função para fechar o modal
-    const handleClose = () => {
+    const handleClose = React.useCallback(() => {
 
       props.record_setter(null);
       setErrorDetected({email: false, name: false, profile: false, status: false});
@@ -64,11 +64,10 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
       setOpen(false);
 
-    };
+    });
 
      /*
       * Rotina 1
-      * Captura do envio do formulário
       * 
       */ 
      const handleSubmitOperation = (event) => {
@@ -86,7 +85,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
   
     }
 
-    function submitedDataValidate(formData){
+    const submitedDataValidate = React.useCallback((formData) => {
 
       const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -108,9 +107,9 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
       }
 
-    }
+    });
 
-    function requestServerOperation(data){
+    const requestServerOperation = React.useCallback((data) => {
 
         AxiosApi.patch(`/api/admin-module-user/${data.get("user_id")}`, {
             name: data.get("name_input"),
@@ -129,9 +128,9 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
         });
 
-    }
+    });
 
-    function successServerResponseTreatment(){
+    const successServerResponseTreatment = React.useCallback(() => {
 
       setDisplayAlert({display: true, type: "success", message: "Operação realizada com sucesso!"});
 
@@ -146,9 +145,9 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
 
       }, 2000);
 
-    }
+    },[]);
 
-    function errorServerResponseTreatment(response_data){
+    const errorServerResponseTreatment = React.useCallback((response_data) => {
 
       setDisabledButton(false);
 
@@ -187,7 +186,7 @@ export const UpdateUserFormulary = React.memo(({...props}) => {
         status: input_errors.status.message
       });
 
-    }
+    });
 
 // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 

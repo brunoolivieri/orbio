@@ -43,13 +43,11 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
 
     setErrorDetected({ name: false, email: false, profile: false });
     setErrorMessage({ name: null, email: null, profile: null });
@@ -57,13 +55,10 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     setDisabledButton(false);
     setOpen(false);
 
-  };
+  },[]);
 
   /*
   * Rotina 1
-  * Ponto inicial do processamento do envio do formulário de registro
-  * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-  * A próxima rotina, 2, validará esses dados
   */
   function handleRegistrationSubmit(event) {
     event.preventDefault();
@@ -82,9 +77,6 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 2
-  * Validação dos dados no frontend
-  * Recebe o objeto da classe FormData criado na rotina 1
-  * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
   */
   function dataValidate(formData) {
 
@@ -139,7 +131,6 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 4A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -159,8 +150,6 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 4B
-  * Tratamento da resposta de uma requisição falha
-  * Os erros relacionados aos parâmetros enviados são recuperados com o for in
   */
   function errorServerResponseTreatment(response_data) {
 
@@ -221,7 +210,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
           <DialogContent>
 
             <DialogContentText mb={2}>
-              O usuário criado receberá um e-mail com dados de acesso padrão.
+              O usuário criado receberá um e-mail com os dados de acesso padrão.
             </DialogContentText>
 
             <TextField

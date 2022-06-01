@@ -46,7 +46,7 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
 
     setErrorDetected({ name: false });
     setErrorMessage({ name: null });
@@ -55,26 +55,20 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
     setOpen(false);
 
-  };
+  });
 
   /*
   * Rotina 1
-  * Ponto inicial do processamento do envio do formulário de registro
   */
   const handleRegistrationProfile = (event) => {
     event.preventDefault();
 
-    // Instância da classe JS FormData - para trabalhar os dados do formulário
     const data = new FormData(event.currentTarget);
 
-    // Validação dos dados do formulário
-    // A comunicação com o backend só é realizada se o retorno for true
     if (dataValidate(data)) {
 
-      // Botão é desabilitado
       setDisabledButton(true);
 
-      // Inicialização da requisição para o servidor
       requestServerOperation(data);
 
     }
@@ -83,13 +77,9 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 2
-  * Validação dos dados no frontend
   */
   function dataValidate(formData) {
 
-    // Validação dos dados - true para presença de erro e false para ausência
-    // O valor final é um objeto com dois atributos: "erro" e "message"
-    // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
 
     // Atualização dos estados responsáveis por manipular os inputs
@@ -111,7 +101,6 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 3
-  * Comunicação AJAX com o Laravel utilizando AXIOS
   */
   function requestServerOperation(data) {
 
@@ -133,7 +122,6 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 4A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -151,9 +139,8 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 4B
-  * Tratamento da resposta de uma requisição falha
   */
-  function errorServerResponseTreatment(response_data) {
+  const errorServerResponseTreatment = React.useCallback((response_data) => {
 
     setDisabledButton(false);
 
@@ -178,7 +165,7 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
     setErrorDetected({ name: input_errors.name.error });
     setErrorMessage({ name: input_errors.name.message });
 
-  }
+  });
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 

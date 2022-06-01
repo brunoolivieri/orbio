@@ -37,13 +37,11 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  // Função para fechar o modal
-  const handleClose = () => {
+  const handleClose = React.useCallback(() => {
 
     props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
@@ -51,31 +49,25 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
     setOpen(false);
 
-  };
+  });
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    // Instância da classe JS FormData - para trabalhar os dados do formulário
     const data = new FormData(event.currentTarget);
 
-    // Botão é desabilitado
     setDisabledButton(true);
 
-    // Inicialização da requisição para o servidor
     requestServerOperation(data);
 
   }
 
   /*
  * Rotina 3
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
   function requestServerOperation(data) {
@@ -98,9 +90,8 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 4A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = React.useCallback(() => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -115,11 +106,10 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
     }, 2000);
 
-  }
+  });
 
   /*
   * Rotina 4B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 

@@ -37,11 +37,11 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
 
 // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-     const handleClickOpen = () => {
+     const handleClickOpen = React.useCallback(() => {
         setOpen(true);
-    };
+    });
 
-    const handleClose = () => {
+    const handleClose = React.useCallback(() => {
 
       props.record_setter(null);
       setDisplayAlert({display: false, type: "", message: ""});
@@ -49,7 +49,7 @@ export const DeleteUserFormulary = React.memo(({...props}) => {
 
       setOpen(false);
 
-    };
+    });
   
        /*
       * Rotina 1
