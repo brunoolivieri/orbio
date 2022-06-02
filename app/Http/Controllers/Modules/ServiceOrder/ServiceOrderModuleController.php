@@ -20,7 +20,8 @@ use App\Models\User\UserModel;
 use Illuminate\Support\Facades\Log;
 // Events
 use App\Events\Modules\Orders\OrderCreatedEvent;
-
+use App\Events\Modules\Orders\OrderUpdatedEvent;
+use App\Events\Modules\Orders\OrderDeletedEvent;
 
 class ServiceOrderModuleController extends Controller
 {
@@ -357,7 +358,7 @@ class ServiceOrderModuleController extends Controller
             $client_data = UserModel::find($request->client_id);
 
             // Update da ordem de serviço
-            ServiceOrdersModel::where('id', $id)->update(
+            $order = ServiceOrdersModel::where('id', $id)->update(
                 [
                     "dh_inicio" => $request->initial_date,
                     "dh_fim" => $request->final_date,
@@ -392,6 +393,8 @@ class ServiceOrderModuleController extends Controller
 
                 }
             }
+
+            //event(new OrderUpdatedEvent($order));
 
             Log::channel('service_orders_action')->info("[Método: Update][Controlador: ReportModuleController] - Ordem de serviço atualizada com sucesso - ID da ordem de serviço: ".$id);
 
@@ -435,6 +438,8 @@ class ServiceOrderModuleController extends Controller
             $service_order->service_order_has_user()->delete();
 
             $service_order->delete();
+
+            //event(new OrderDeletedEvent($service_order));
 
             Log::channel('service_orders_action')->info("[Método: Destroy][Controlador: ReportModuleController] - Ordem de serviço removido com sucesso - ID da ordem de serviço: ".$id);
 
