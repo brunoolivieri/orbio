@@ -372,11 +372,11 @@ export const EquipmentPanel = React.memo(() => {
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Fabricante</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Modelo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Número do Registro</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Número Serial</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Peso</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Nº do Registro</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Nº Serial</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Peso (kg)</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Data da compra</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Compra</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">

@@ -372,8 +372,8 @@ export const BatteriesPanel = React.memo(() => {
                                     <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Fabricante</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Modelo</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Número Serial</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Última carga</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Nº Serial</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Carga</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody className="tbody">

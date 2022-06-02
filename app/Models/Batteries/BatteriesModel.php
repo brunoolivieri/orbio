@@ -26,7 +26,7 @@ class BatteriesModel extends Model
 
         try{
 
-            $cached_data = Cache::remember('drones_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
+            $cached_data = Cache::remember('batteries_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
 
                 return DB::table('batteries')
                 ->where("batteries.deleted_at", null)

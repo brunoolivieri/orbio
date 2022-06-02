@@ -69,6 +69,9 @@ export function PlansPanel() {
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
+  // State do valor procurado
+  const [value_searched, setValueSearched] = React.useState("");
+
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   /**
@@ -93,7 +96,7 @@ export function PlansPanel() {
   * Carregamento de todos os registros de planos de vôo
   * 
   */
-  function requestToGetAllFlightPlans() {
+  const requestToGetAllFlightPlans = React.useCallback(() => {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
@@ -139,13 +142,13 @@ export function PlansPanel() {
       });
 
 
-  }
+  });
 
   /**
  * Carregamento dos registros de planos de vôo compátiveis com a pesquisa realizada
  * 
  */
-  function requestToGetSearchedFlightPlans() {
+  const requestToGetSearchedFlightPlans = React.useCallback(() => {
 
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
@@ -195,7 +198,7 @@ export function PlansPanel() {
 
       });
 
-  }
+  });
 
   /**
   * Função para processar a alteração da página da tabela
@@ -218,8 +221,6 @@ export function PlansPanel() {
    */
   function handleSearchSubmit(event) {
     event.preventDefault();
-
-    let value_searched = window.document.getElementById("search_input").value;
 
     setPaginationParams({
       page: 1,
@@ -271,7 +272,7 @@ export function PlansPanel() {
    * Função para processar o download do arquivo com as coordenadas do plano de vôo
    * 
    */
-  function handleDownloadFlightPlan(filename) {
+  const handleDownloadFlightPlan = React.useCallback((filename) => {
 
     const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
 
@@ -301,7 +302,7 @@ export function PlansPanel() {
 
       });
 
-  }
+  });
 
   function handleOpenSnackbar(text, variant) {
 
@@ -367,6 +368,7 @@ export function PlansPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar plano por ID"}
+            onChange={(e) => setValueSearched(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">

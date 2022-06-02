@@ -103,7 +103,7 @@ class FlightPlanModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function downloadFlightPlanFile(string $filename) : \Illuminate\Http\Response {
+    public function getFlightPlanFile(string $filename) : \Illuminate\Http\Response {
 
         Gate::authorize('flight_plans_read');
 

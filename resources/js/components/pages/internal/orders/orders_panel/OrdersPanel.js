@@ -387,7 +387,7 @@ export const OrdersPanel = React.memo(() => {
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.order_id} /></TableCell>
                       <TableCell align="center">{row.order_status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
-                        <BadgeIcon number={row.flight_plans.length} color={"primary"} />
+                        <BadgeIcon number={row.flight_plans.length} color={"success"} />
                       </TableCell>
                       <TableCell align="center">{row.numOS}</TableCell>
                       <TableCell align="center">
