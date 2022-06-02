@@ -1476,7 +1476,7 @@ function openTxtFile(file, source) {
 
 		};
 
-	} else {
+	} else if (source === "STORAGE") {
 
 		// Conteúdo completo do arquivo
 		var contents = file;
