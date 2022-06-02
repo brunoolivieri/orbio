@@ -5,6 +5,7 @@ namespace App\Models\ProfileAndModule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ProfileHasModuleModel extends Model
 {
@@ -48,25 +49,29 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            $data = DB::table('profile_has_module')
-            ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
-            ->where('profile.deleted_at', null)
-            ->when($where_value, function ($query, $where_value) {
+            $cached_data = Cache::remember('profiles_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
 
-                $query->when(is_numeric($where_value), function($query) use ($where_value){
+                return DB::table('profile_has_module')
+                ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
+                ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
+                ->where('profile.deleted_at', null)
+                ->when($where_value, function ($query, $where_value) {
 
-                    $query->where('profile_has_module.id_perfil', '=', $where_value);
+                    $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                }, function($query) use ($where_value){
+                        $query->where('profile_has_module.id_perfil', '=', $where_value);
 
-                    $query->where('profile.nome', 'LIKE', '%'.$where_value.'%');
+                    }, function($query) use ($where_value){
 
-                });
+                        $query->where('profile.nome', 'LIKE', '%'.$where_value.'%');
 
-            })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+                    });
 
-            return ["status" => true, "error" => false, "data" => $data];
+                })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            });
+
+            return ["status" => true, "error" => false, "data" => $cached_data];
 
         }catch(\Exception $e){
 

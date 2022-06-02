@@ -5,6 +5,7 @@ namespace App\Models\Batteries;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class BatteriesModel extends Model
 {
@@ -24,27 +25,31 @@ class BatteriesModel extends Model
     function loadBatteriesWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
+
+            $cached_data = Cache::remember('drones_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
+
+                return DB::table('batteries')
+                ->where("batteries.deleted_at", null)
+                ->when($where_value, function ($query, $where_value) {
+
+                    $query->when(is_numeric($where_value), function($query) use ($where_value){
+
+                        $query->where('batteries.id', $where_value);
+
+                    }, function($query) use ($where_value){
+
+                        $query->where('batteries.name', 'LIKE', '%'.$where_value.'%')
+                        ->orWhere('batteries.manufacturer', 'LIKE', '%'.$where_value.'%')
+                        ->orWhere('batteries.model', 'LIKE', '%'.$where_value.'%')
+                        ->orWhere('batteries.serial_number', 'LIKE', '%'.$where_value.'%');
+
+                    });
+
+                })->orderBy('batteries.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            });
             
-            $data = DB::table('batteries')
-            ->where("batteries.deleted_at", null)
-            ->when($where_value, function ($query, $where_value) {
-
-                $query->when(is_numeric($where_value), function($query) use ($where_value){
-
-                    $query->where('batteries.id', $where_value);
-
-                }, function($query) use ($where_value){
-
-                    $query->where('batteries.name', 'LIKE', '%'.$where_value.'%')
-                    ->orWhere('batteries.manufacturer', 'LIKE', '%'.$where_value.'%')
-                    ->orWhere('batteries.model', 'LIKE', '%'.$where_value.'%')
-                    ->orWhere('batteries.serial_number', 'LIKE', '%'.$where_value.'%');
-
-                });
-
-            })->orderBy('batteries.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            return ["status" => true, "error" => false, "data" => $data];
+            return ["status" => true, "error" => false, "data" => $cached_data];
 
         }catch(\Exception $e){
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class ServiceOrdersModel extends Model
 {
@@ -56,15 +57,19 @@ class ServiceOrdersModel extends Model
 
         try{
 
-            $data = DB::table('service_orders')
-            ->where("service_orders.deleted_at", null)
-            ->when($where_value, function ($query, $where_value) {
+            $cached_data = Cache::remember('service_orders_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
 
-                $query->where('service_orders.id', $where_value);
+                return DB::table('service_orders')
+                ->where("service_orders.deleted_at", null)
+                ->when($where_value, function ($query, $where_value) {
 
-            })->orderBy('service_orders.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+                    $query->where('service_orders.id', $where_value);
 
-            return ["status" => true, "error" => false, "data" => $data];
+                })->orderBy('service_orders.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            });
+
+            return ["status" => true, "error" => false, "data" => $cached_data];
 
         }catch(\Exception $e){
 

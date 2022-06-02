@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cache;
 // Custom Models
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
@@ -99,7 +100,6 @@ class UserModel extends Authenticatable
 
                 $new_user_data = UserModel::find($new_user_id);
 
-                // Envio do email de registro para o novo usuário
                 Mail::to($new_user_data->email)->send(new SendAccessDataToCreatedUser([
                     "name" =>  $new_user_data->nome,
                     "email" =>  $new_user_data->email,
@@ -132,26 +132,30 @@ class UserModel extends Authenticatable
     function loadUsersWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
         try{
+
+            $cached_data = Cache::remember('users_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
+
+                return DB::table('users')
+                ->join('profile', 'users.id_perfil', '=', 'profile.id')
+                ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
+                ->where("users.deleted_at", null)
+                ->when($where_value, function ($query, $where_value) {
+
+                    $query->when(is_numeric($where_value), function($query) use ($where_value){
+
+                        $query->where('users.id', $where_value);
+
+                    }, function($query) use ($where_value){
+
+                        $query->where('users.nome', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
+
+                    });
+
+                })->orderBy('users.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            });
             
-            $data = DB::table('users')
-            ->join('profile', 'users.id_perfil', '=', 'profile.id')
-            ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
-            ->where("users.deleted_at", null)
-            ->when($where_value, function ($query, $where_value) {
-
-                $query->when(is_numeric($where_value), function($query) use ($where_value){
-
-                    $query->where('users.id', $where_value);
-
-                }, function($query) use ($where_value){
-
-                    $query->where('users.nome', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
-
-                });
-
-            })->orderBy('users.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            return ["status" => true, "error" => false, "data" => $data];
+            return ["status" => true, "error" => false, "data" => $cached_data];
 
         }catch(\Exception $e){
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 
 class FlightPlansModel extends Model
 {
@@ -66,16 +67,20 @@ class FlightPlansModel extends Model
 
         try{
 
-            $data = DB::table('flight_plans')
-            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao', 'deleted_at')
-            ->where("flight_plans.deleted_at", null)
-            ->when($where_value, function ($query, $where_value) {
+            $cached_data = Cache::remember('flight_plans_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
 
-                $query->where('id', $where_value);
+                return DB::table('flight_plans')
+                ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao', 'deleted_at')
+                ->where("flight_plans.deleted_at", null)
+                ->when($where_value, function ($query, $where_value) {
 
-            })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+                    $query->where('id', $where_value);
 
-            return ["status" => true, "error" => false, "data" => $data];
+                })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+
+            });
+
+            return ["status" => true, "error" => false, "data" => $cached_data];
 
         }catch(\Exception $e){
 
