@@ -40,18 +40,15 @@ Route::post('/api/enviar-codigo', [ForgotPasswordController::class, "generateAnd
 Route::post('/api/alterar-senha', [ForgotPasswordController::class, "passwordChangeProcessing"]); 
 Route::post('/api/get-auth-data', [CommonInternalController::class, "getUserAuthenticatedData"])->middleware(["session.auth"]); 
 
-// Operações da seção "minha conta"
 Route::middleware(["session.auth"])->group(function(){
+    // Operações da seção "minha conta"
     Route::get('/api/user-account-data', [AccountSectionController::class, "loadUserAccountData"]);
     Route::patch('/api/update-basic-data/{id}', [AccountSectionController::class, "userBasicDataUpdate"]);
     Route::patch('/api/update-documents-data/{id}', [AccountSectionController::class, "userDocumentsUpdate"]);
     Route::patch('/api/update-address-data/{id}', [AccountSectionController::class, "userAddressUpdate"]);
     Route::post("/api/desactivate-account/{id}", [AccountSectionController::class, "userAccountDesactivation"]);
     Route::post("/api/update-password/{id}", [AccountSectionController::class, "userPasswordUpdate"]);
-});
-
-// Operações dos módulos
-Route::middleware(["session.auth"])->group(function(){
+    // Operações dos módulos
     Route::resource("/api/admin-module-user", AdministrationModuleUserPanelController::class);
     Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class);
     Route::resource("/api/reports-module", ReportModuleController::class);
