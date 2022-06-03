@@ -26,30 +26,26 @@ class BatteriesModel extends Model
 
         try{
 
-            $cached_data = Cache::remember('batteries_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
+            $data = DB::table('batteries')
+            ->where("batteries.deleted_at", null)
+            ->when($where_value, function ($query, $where_value) {
 
-                return DB::table('batteries')
-                ->where("batteries.deleted_at", null)
-                ->when($where_value, function ($query, $where_value) {
+                $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                    $query->when(is_numeric($where_value), function($query) use ($where_value){
+                    $query->where('batteries.id', $where_value);
 
-                        $query->where('batteries.id', $where_value);
+                }, function($query) use ($where_value){
 
-                    }, function($query) use ($where_value){
+                    $query->where('batteries.name', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('batteries.manufacturer', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('batteries.model', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('batteries.serial_number', 'LIKE', '%'.$where_value.'%');
 
-                        $query->where('batteries.name', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('batteries.manufacturer', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('batteries.model', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('batteries.serial_number', 'LIKE', '%'.$where_value.'%');
+                });
 
-                    });
-
-                })->orderBy('batteries.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            });
+            })->orderBy('batteries.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
             
-            return ["status" => true, "error" => false, "data" => $cached_data];
+            return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){
 

@@ -96,7 +96,7 @@ export function PlansPanel() {
   * Carregamento de todos os registros de planos de vôo
   * 
   */
-  const requestToGetAllFlightPlans = React.useCallback(() => {
+  const requestToGetAllFlightPlans = (() => {
 
     // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
@@ -148,7 +148,7 @@ export function PlansPanel() {
  * Carregamento dos registros de planos de vôo compátiveis com a pesquisa realizada
  * 
  */
-  const requestToGetSearchedFlightPlans = React.useCallback(() => {
+  const requestToGetSearchedFlightPlans = (() => {
 
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
@@ -272,7 +272,7 @@ export function PlansPanel() {
    * Função para processar o download do arquivo com as coordenadas do plano de vôo
    * 
    */
-  const handleDownloadFlightPlan = React.useCallback((filename) => {
+  const handleDownloadFlightPlan = ((filename) => {
 
     const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
 

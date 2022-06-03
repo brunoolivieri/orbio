@@ -47,27 +47,22 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   // Função para fechar o modal
   const handleClose = () => {
-
     props.record_setter(null);
     setErrorDetected({ status: false, description: false });
     setErrorMessage({ status: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
   };
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
@@ -87,13 +82,9 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 2
- * Validação dos dados no frontend
- * Recebe o objeto da classe FormData criado na rotina 1
- * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
  */
   function submitedDataValidate(formData) {
 
-    // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const descriptionValidate = FormValidation(formData.get("description"), 3, null, null, null);
     const statusValidate = (Number(isChecked) == 0 || Number(isChecked) == 1) ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
 
@@ -114,8 +105,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 3
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
   function requestServerOperation(data) {
@@ -141,7 +130,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 4A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -162,7 +150,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 4B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 

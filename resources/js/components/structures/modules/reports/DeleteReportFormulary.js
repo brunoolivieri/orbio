@@ -38,35 +38,28 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
 
   // Função para abrir o modal
   const handleClickOpen = () => {
-    if (props.selected_record.dom != null) {
-      setOpen(true);
-    }
-  };
+    setOpen(true);
+  }
 
   // Função para fechar o modal
   const handleClose = () => {
-
+    props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
   };
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    // Instância da classe JS FormData - para trabalhar os dados do formulário
     const data = new FormData(event.currentTarget);
 
     setDisabledButton(true);
 
-    // Inicialização da requisição para o servidor
     requestServerOperation(data);
 
 
@@ -75,8 +68,6 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 2
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
   function requestServerOperation(data) {
@@ -97,7 +88,6 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 3A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -115,7 +105,6 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 3B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 
@@ -138,7 +127,7 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
 
       {(props.selected_record.dom != null && open) &&
 
-        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.selected_record.data_cells.report_id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

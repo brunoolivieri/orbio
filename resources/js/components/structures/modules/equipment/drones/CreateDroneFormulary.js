@@ -70,7 +70,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 1
     */
-    function handleDroneRegistrationSubmit(event) {
+    const handleDroneRegistrationSubmit = (event) => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -85,7 +85,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
 
     }
 
-    function handleUploadedImage(event) {
+    const handleUploadedImage = (event) => {
 
         const uploaded_file = event.currentTarget.files[0];
 
@@ -101,7 +101,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 2
     */
-    function formValidate(formData) {
+    const formValidate = (formData) => {
 
         let nameValidation = FormValidation(formData.get("name"), 3, null, null, null);
         let manufacturerValidation = FormValidation(formData.get("manufacturer"), 3, null, null, null);
@@ -151,14 +151,8 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    function requestServerOperation(data) {
+    const requestServerOperation = (data) => {
 
-        // Dados para o middleware de autenticação 
-        const logged_user_id = AuthData.data.id;
-        const module_id = 6;
-        const module_action = "escrever";
-
-        data.append("auth", `${logged_user_id}.${module_id}.${module_action}`);
         data.append("image", uploadedImage);
 
         AxiosApi.post(`/api/equipments-module-drone`, data)
@@ -173,7 +167,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3A
     */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = () => {
 
         setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -190,7 +184,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3B
     */
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response_data) => {
 
         setDisabledButton(false);
 

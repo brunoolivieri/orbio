@@ -61,19 +61,16 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  const handleClose = React.useCallback(() => {
-
+  const handleClose = () => {
     props.record_setter(null);
     setErrorDetected({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
     setErrorMessage({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
-  });
+  }
 
   /*
  * Rotina 1
@@ -105,9 +102,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
   /*
  * Rotina 2
  */
-  const submitedDataValidate = React.useCallback((formData) => {
+  const submitedDataValidate = (formData) => {
 
-    // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const pilotNameValidate = formData.get("select_pilot_name") != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
@@ -146,18 +142,14 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     }
 
-  });
+  }
 
   /*
  * Rotina 3
- * Ocorre a verificação do intervalo de tempo entre as datas
- * As datas retornadas do componente DateTimePicker do Material UI são formatadas
- * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
  * 
  */
   function verifyDateInterval() {
 
-    // Verificação da diferença das datas
     if (moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')) {
 
       return true;
@@ -174,9 +166,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
  * Rotina 4
  * 
  */
-  const requestServerOperation = React.useCallback((data) => {
+  const requestServerOperation = (data) => {
 
-    // Para recuperar os ids dos planos selecionados
     let arr = [];
     let obj_with_arr_of_ids = {};
 
@@ -206,13 +197,12 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
       });
 
-  });
+  }
 
   /*
   * Rotina 5A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
-  const successServerResponseTreatment = React.useCallback(() => {
+  const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -227,11 +217,10 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     }, 2000);
 
-  });
+  }
 
   /*
   * Rotina 5B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 

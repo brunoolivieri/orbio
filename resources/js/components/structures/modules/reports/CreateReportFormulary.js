@@ -61,27 +61,21 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
   // Function por open the modal
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
   // Function for close the modal
   const handleClose = () => {
-
     setErrorDetected({ flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false });
     setErrorMessage({ flight_start_date: "", flight_end_date: "", flight_log: "", report_note: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
-  };
+  }
 
   /*
   * Rotina 1
-  * Validation of the file selected and release, if its valid, of the report generation
-  * Its content will have part of the data for the report generation
   */
   function handleFileUploadedValidateItAndReleaseFormulary(event) {
-    //console.log(event.target.files[0])
 
     let file_uploaded = event.target.files[0];
     let file_extension = event.target.files[0].name.split('.').pop().toLowerCase();
@@ -91,12 +85,10 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
       // EXTRAÇÃO DOS DADOS RELEVANTES DO ARQUIVO PARA O STATE
       // LIBERAÇÃO DO FORMULÁRIO DE GERAÇÃO DO RELATÓRIO
 
-      // Report generation is released
       setLogUploaded({ status: true, file: file_uploaded });
 
     } else {
 
-      // Report generation is closed
       setLogUploaded({ status: false, file: null });
 
       setErrorDetected({ flight_start_date: false, flight_end_date: false, flight_log: true, report_note: false });
@@ -108,8 +100,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 2
-  * Initial point for the report creation formulary process
-  * Its receives the formulary data and transforms into an object of the FormData class
   */
   function handleRegistrationSubmit(event) {
     event.preventDefault();
@@ -136,9 +126,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 2
-  * Validação dos dados no frontend
-  * Recebe o objeto da classe FormData criado na rotina 1
-  * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
   */
   function dataValidate(formData) {
 
@@ -165,9 +152,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 3
-  * As datas retornadas do componente DateTimePicker do Material UI são formatadas
-  * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
-  * Também ocorre a verificação da diferença entre as datas
   * 
   */
   function verifyDateInterval() {
@@ -187,8 +171,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 4
-  * Comunicação AJAX com o Laravel utilizando AXIOS
-  * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
   */
   function requestServerOperation(data) {
 
@@ -213,7 +195,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 5A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -231,7 +212,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 5B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 

@@ -85,7 +85,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
                 "serial_number" => $record->serial_number,
                 "weight" => $record->weight,
                 "observation" => $record->observation,
-                "purchate_date" => $record->purchase_date,
+                "purchase_date" => $record->purchase_date,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated
             );

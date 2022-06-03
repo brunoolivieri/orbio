@@ -125,7 +125,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
         $model = new ProfileModel();
 
-        $model_response = $model->newProfile($request->except("auth"));
+        $model_response = $model->newProfile($request->name);
 
         if($model_response["status"] === true && !$model_response["error"]){
 

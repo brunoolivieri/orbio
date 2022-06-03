@@ -38,17 +38,14 @@ export function DeleteOrderFormulary({ ...props }) {
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  const handleClose = React.useCallback(() => {
-
+  const handleClose = () => {
     props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
-  });
+  }
 
   /*
  * Rotina 1
@@ -69,7 +66,7 @@ export function DeleteOrderFormulary({ ...props }) {
  * Rotina 2
  * 
  */
-  const requestServerOperation = React.useCallback((data) => {
+  const requestServerOperation = (data) => {
 
     AxiosApi.delete(`/api/orders-module/${data.get("order_id")}`)
       .then(function () {
@@ -83,12 +80,12 @@ export function DeleteOrderFormulary({ ...props }) {
 
       });
 
-  });
+  }
 
   /*
   * Rotina 5A
   */
-  const successServerResponseTreatment = React.useCallback(() => {
+  const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -103,7 +100,7 @@ export function DeleteOrderFormulary({ ...props }) {
 
     }, 2000);
 
-  });
+  }
 
   /*
   * Rotina 5B
@@ -111,7 +108,6 @@ export function DeleteOrderFormulary({ ...props }) {
   function errorServerResponseTreatment(response_data) {
 
     setDisabledButton(false);
-
     let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 

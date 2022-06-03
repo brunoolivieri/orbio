@@ -71,11 +71,6 @@ export function ProfilesPanel() {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  /**
-   * Função para processar a alteração da página da tabela
-   * paginationParams é a dependência do useEffect
-   * 
-   */
   const handleTablePageChange = (event, value) => {
 
     setPaginationParams({
@@ -86,10 +81,6 @@ export function ProfilesPanel() {
 
   };
 
-  /**
-   * Função para processar a pesquisa de usuários no input de pesquisa
-   * 
-   */
   function handleSearchSubmit(event) {
     event.preventDefault();
 
@@ -133,11 +124,11 @@ export function ProfilesPanel() {
 
   }, [paginationParams]);
 
- /**
- * Carregamento de todos os registros de usuário
- * 
- */
-  const requestToGetAllProfiles = React.useCallback(() => {
+  /**
+  * Carregamento de todos os registros de usuário
+  * 
+  */
+  const requestToGetAllProfiles = () => {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
@@ -183,13 +174,13 @@ export function ProfilesPanel() {
       });
 
 
-  }, []);
+  }
 
   /**
   * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
   * 
   */
-  const requestToGetSearchedProfiles = React.useCallback(() => {
+  const requestToGetSearchedProfiles = () => {
 
     // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
@@ -239,7 +230,7 @@ export function ProfilesPanel() {
 
       });
 
-  });
+  }
 
   const handleChangeRowsPerPage = (event) => {
 
@@ -249,7 +240,7 @@ export function ProfilesPanel() {
       where: paginationParams.where
     });
 
-  };
+  }
 
   function handleClickRadio(event) {
 

@@ -47,7 +47,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     setOpen(true);
   };
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = () => {
 
     setErrorDetected({ name: false, email: false, profile: false });
     setErrorMessage({ name: null, email: null, profile: null });
@@ -55,7 +55,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     setDisabledButton(false);
     setOpen(false);
 
-  },[]);
+  }
 
   /*
   * Rotina 1
@@ -104,7 +104,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
   /*
   * Rotina 3
   */
-  const requestServerOperation = React.useCallback((data) => {
+  const requestServerOperation = (data) => {
 
     const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
 
@@ -125,31 +125,27 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
       });
 
-  });
+  }
 
   /*
   * Rotina 4A
   */
-  const successServerResponseTreatment = React.useCallback(() => {
+  const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
     setTimeout(() => {
-
       props.reload_table();
-
       setDisabledButton(false);
-
       handleClose();
-
     }, 2000);
 
-  });
+  }
 
   /*
   * Rotina 4B
   */
-  const errorServerResponseTreatment = React.useCallback((response_data) => {
+  const errorServerResponseTreatment = (response_data) => {
 
     setDisabledButton(false);
 
@@ -185,7 +181,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
       profile: input_errors.profile_id.message
     });
 
-  });
+  }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
@@ -199,7 +195,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

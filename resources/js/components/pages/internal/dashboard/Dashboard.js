@@ -1,14 +1,20 @@
 import React from 'react';
 // Material UI
 import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
+import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
 // Custom
 import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useEffect } from "react";
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
 
 export function Dashboard() {
 
@@ -21,33 +27,21 @@ export function Dashboard() {
   }, []);
 
   return (
-    <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
-      
-        <Toolbar>
-          <Grid container spacing={2} alignItems="center">
-            <Grid item>
-              <SearchIcon color="inherit" sx={{ display: 'block' }} />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                fullWidth
-                placeholder="Pesquisar"
-                InputProps={{
-                  disableUnderline: true,
-                  sx: { fontSize: 'default' },
-                }}
-                variant="standard"
-              />
-            </Grid>
-            <Grid item>
-            </Grid>
+    <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5, padding: 3 }}>
+
+      <Toolbar>
+        <Grid container spacing={2} columns={12}>
+          <Grid item xs={12} md={6} lg={6}>
+            <Item>ITEM A</Item>
           </Grid>
-        </Toolbar>
-      <Typography sx={{ my: 5, mx: 2 }} color="text.secondary" align="center">
-
-        PAINEL DA DASHBOARD
-
-      </Typography>
+          <Grid item xs={12} md={6} lg={6}>
+            <Item>ITEM B</Item>
+          </Grid>
+          <Grid item xs={12} md={12} lg={12}>
+            <Item>ITEM C</Item>
+          </Grid>
+        </Grid>
+      </Toolbar>
     </Paper>
   )
 }

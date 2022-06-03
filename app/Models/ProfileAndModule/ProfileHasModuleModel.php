@@ -5,7 +5,6 @@ namespace App\Models\ProfileAndModule;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
 class ProfileHasModuleModel extends Model
 {
@@ -21,18 +20,18 @@ class ProfileHasModuleModel extends Model
         $this->belongsTo("App\Models\ProfileAndModule\ProfileModel", "id_perfil");
         
     }
-
     
-    function newProfileRelationship(int $new_profile_id) : array {
+    function newProfileRelationship(int $profile_id) : array {
 
         try{
 
             ProfileHasModuleModel::insert([
-                ["id_modulo"=> 1, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 2, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 3, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 4, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0],
-                ["id_modulo"=> 5, "id_perfil"=> $new_profile_id, "ler"=> 0, "escrever"=> 0]
+                ["id_modulo"=> 1, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
+                ["id_modulo"=> 2, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
+                ["id_modulo"=> 3, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
+                ["id_modulo"=> 4, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
+                ["id_modulo"=> 5, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
+                ["id_modulo"=> 6, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false]
             ]);
 
             return ["status" => true, "error" => false];
@@ -49,29 +48,25 @@ class ProfileHasModuleModel extends Model
 
         try{
 
-            $cached_data = Cache::remember('profiles_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
+            $data = DB::table('profile_has_module')
+            ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
+            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
+            ->where('profile.deleted_at', null)
+            ->when($where_value, function ($query, $where_value) {
 
-                return DB::table('profile_has_module')
-                ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-                ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
-                ->where('profile.deleted_at', null)
-                ->when($where_value, function ($query, $where_value) {
+                $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                    $query->when(is_numeric($where_value), function($query) use ($where_value){
+                    $query->where('profile_has_module.id_perfil', '=', $where_value);
 
-                        $query->where('profile_has_module.id_perfil', '=', $where_value);
+                }, function($query) use ($where_value){
 
-                    }, function($query) use ($where_value){
+                    $query->where('profile.nome', 'LIKE', '%'.$where_value.'%');
 
-                        $query->where('profile.nome', 'LIKE', '%'.$where_value.'%');
+                });
 
-                    });
+            })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
-                })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            });
-
-            return ["status" => true, "error" => false, "data" => $cached_data];
+            return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){
 

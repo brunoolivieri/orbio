@@ -40,17 +40,17 @@ class ProfileModel extends Model
 
     // ================================================ //
 
-    function newProfile(array $data) : array {
+    function newProfile(string $profile_name) : array {
 
         try{
 
             DB::beginTransaction();
 
-            $new_profile_id = DB::table("profile")->insertGetId(["nome" => $data["name"]]);
+            $new_profile = ProfileModel::create(["nome" => $profile_name]);
 
             $model = new ProfileHasModuleModel();
 
-            $model_response = $model->newProfileRelationship((int) $new_profile_id);
+            $model_response = $model->newProfileRelationship((int) $new_profile->id);
 
             if($model_response["status"] && !$model_response["error"]){
 

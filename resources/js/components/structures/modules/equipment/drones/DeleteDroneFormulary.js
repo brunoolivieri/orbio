@@ -68,12 +68,7 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
     */
     function requestServerOperation(data) {
 
-        // Dados para o middleware de autenticação 
-        const logged_user_id = AuthData.data.id;
-        const module_id = 6;
-        const module_action = "escrever";
-
-        AxiosApi.delete(`/api/equipments-module-drone/${data.get("drone_id")}?auth=${logged_user_id}.${module_id}.${module_action}`)
+        AxiosApi.delete(`/api/equipments-module-drone/${data.get("drone_id")}`)
             .then(function () {
 
                 successServerResponseTreatment();

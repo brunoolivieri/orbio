@@ -62,19 +62,16 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  const handleClose = React.useCallback(() => {
-
+  const handleClose = () => {
     setIsChecked(null);
     setErrorDetected({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false });
     setErrorMessage({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
-  });
+  };
 
   /*
   * Rotina 1
@@ -105,7 +102,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
   /*
   * Rotina 2
   */
-  const dataValidate = React.useCallback((formData) => {
+  const dataValidate = (formData) => {
 
     // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
@@ -146,7 +143,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     }
 
-  });
+  };
 
   /*
   * Rotina 3
@@ -154,7 +151,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
   */
   function verifyDateInterval() {
 
-    // Verificação da diferença das datas
     if (moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')) {
 
       return true;
@@ -170,7 +166,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
   /*
   * Rotina 4
   */
-  const requestServerOperation = React.useCallback((data) => {
+  const requestServerOperation = (data) => {
 
     let arr = [];
     let obj_with_arr_of_ids = {};
@@ -201,12 +197,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
       });
 
-  });
+  }
 
   /*
   * Rotina 5A
   */
-  const successServerResponseTreatment = React.useCallback(() => {
+  const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -219,12 +215,12 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
 
     }, 2000);
 
-  });
+  }
 
   /*
   * Rotina 5B
   */
-  const errorServerResponseTreatment = React.useCallback((response_data) => {
+  const errorServerResponseTreatment = (response_data) => {
 
     setDisabledButton(false);
 
@@ -272,7 +268,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       status: input_errors.status.message
     });
 
-  });
+  }
 
   // ============================================================================== ESTRUTURAÇÃO ============================================================================== //
 

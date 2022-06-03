@@ -5,7 +5,6 @@ namespace App\Models\Drones;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
 class DronesModel extends Model
 {
@@ -24,35 +23,31 @@ class DronesModel extends Model
      */
     function loadDronesWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
 
-        try{
+        try{   
 
-            $cached_data = Cache::remember('drones_table', $time = 60 * 60, function () use ($limit, $current_page, $where_value) {
+            $data = DB::table('drones')
+            ->where("drones.deleted_at", null)
+            ->when($where_value, function ($query, $where_value) {
 
-                return DB::table('drones')
-                ->where("drones.deleted_at", null)
-                ->when($where_value, function ($query, $where_value) {
+                $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                    $query->when(is_numeric($where_value), function($query) use ($where_value){
+                    $query->where('drones.id', $where_value)
+                    ->orWhere('drones.weight', $where_value);
 
-                        $query->where('drones.id', $where_value)
-                        ->orWhere('drones.weight', $where_value);
+                }, function($query) use ($where_value){
 
-                    }, function($query) use ($where_value){
-
-                        $query->where('drones.name', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('drones.manufacturer', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('drones.model', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('drones.record_number', 'LIKE', '%'.$where_value.'%')
-                        ->orWhere('drones.serial_number', 'LIKE', '%'.$where_value.'%');
+                    $query->where('drones.name', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('drones.manufacturer', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('drones.model', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('drones.record_number', 'LIKE', '%'.$where_value.'%')
+                    ->orWhere('drones.serial_number', 'LIKE', '%'.$where_value.'%');
 
 
-                    });
+                });
 
-                })->orderBy('drones.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            });
-
-            return ["status" => true, "error" => false, "data" => $cached_data];
+            })->orderBy('drones.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+           
+            return ["status" => true, "error" => false, "data" => $data];
 
         }catch(\Exception $e){
 

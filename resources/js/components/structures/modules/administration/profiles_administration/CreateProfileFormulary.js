@@ -20,7 +20,7 @@ import { Alert } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-export const CreateProfileFormulary = React.memo(({...props}) => {
+export const CreateProfileFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -44,18 +44,17 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = () => {
 
     setErrorDetected({ name: false });
     setErrorMessage({ name: null });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
 
-  });
+  }
 
   /*
   * Rotina 1
@@ -128,11 +127,9 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
     setTimeout(() => {
-
       props.reload_table();
       setDisabledButton(false);
       handleClose();
-
     }, 2000);
 
   }
@@ -140,7 +137,7 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
   /*
   * Rotina 4B
   */
-  const errorServerResponseTreatment = React.useCallback((response_data) => {
+  const errorServerResponseTreatment = (response_data) => {
 
     setDisabledButton(false);
 
@@ -165,7 +162,7 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
     setErrorDetected({ name: input_errors.name.error });
     setErrorMessage({ name: input_errors.name.message });
 
-  });
+  }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
 
@@ -177,7 +174,7 @@ export const CreateProfileFormulary = React.memo(({...props}) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE PERFIL</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleRegistrationProfile} >

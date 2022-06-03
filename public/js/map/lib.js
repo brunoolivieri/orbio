@@ -1239,9 +1239,12 @@ function savePath() {
 
 	var blob = new Blob([content],
 		{ type: "text/plain;charset=utf-8" });
+	
+	const custom_name = prompt('Digite um nome para o plano de voo');
+	const timestamp = new Date().getTime();
 
 	// Nome do arquivo com data em milissegundos decorridos
-	fileName = new Date().getTime() + ".txt";
+	fileName = custom_name + "." + timestamp + ".txt";
 
 	//Criação de um novo registro na tabela de planos de vôo
 	generateNewFlightPlanRecord(fileName, blob);
@@ -1275,7 +1278,7 @@ function generateNewFlightPlanRecord(fileName, blob) {
 
 	}).catch((error) => {
 
-		console.log(error.response)
+		console.log(error.response);
 		alert("Erro! Tente novamente.");
 
 	})

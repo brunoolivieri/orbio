@@ -39,9 +39,9 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  const handleClose = React.useCallback(() => {
+  const handleClose = () => {
 
     props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
@@ -49,7 +49,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
     setOpen(false);
 
-  });
+  }
 
   /*
  * Rotina 1
@@ -91,7 +91,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
   /*
   * Rotina 4A
   */
-  const successServerResponseTreatment = React.useCallback(() => {
+  const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -106,7 +106,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
     }, 2000);
 
-  });
+  }
 
   /*
   * Rotina 4B
@@ -128,7 +128,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         {(props.record != null && open) && (native_profiles.indexOf(props.record.profile_id) == -1) &&
           <>
             <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>

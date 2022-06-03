@@ -36,12 +36,10 @@ export function DeleteIncidentFormulary({ ...props }) {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  // Função para fechar o modal
   const handleClose = () => {
 
     props.record_setter(null);
@@ -49,30 +47,25 @@ export function DeleteIncidentFormulary({ ...props }) {
     setDisabledButton(false);
     setOpen(false);
 
-  };
+  }
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    // Instância da classe JS FormData - para trabalhar os dados do formulário
     const data = new FormData(event.currentTarget);
 
     setDisabledButton(true);
 
-    // Inicialização da requisição para o servidor
     requestServerOperation(data);
 
   }
 
   /*
  * Rotina 2
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
   function requestServerOperation(data) {
@@ -93,7 +86,6 @@ export function DeleteIncidentFormulary({ ...props }) {
 
   /*
   * Rotina 3A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -111,8 +103,6 @@ export function DeleteIncidentFormulary({ ...props }) {
 
   /*
   * Rotina 3B
-  * Tratamento da resposta de uma requisição falha
-  * Os erros relacionados aos parâmetros enviados são recuperados com o for in
   */
   function errorServerResponseTreatment(response_data) {
 

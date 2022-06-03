@@ -25,7 +25,7 @@ class StoreEquipmentRequest extends FormRequest
     {
         return [
             'image' => 'bail|required|image|mimes:png,jpg,svg',
-            'name' => 'bail|required|unique:drones,name',
+            'name' => 'bail|required|unique:equipments,name',
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
             'record_number' => 'bail|required',
@@ -48,7 +48,7 @@ class StoreEquipmentRequest extends FormRequest
             'image.image' => 'Deve ser um arquivo de imagem',
             'image.mimes' => 'Deve ser uma imagem .png, .svg ou .jpg',
             'name.required' => 'O nome do drone deve ser informado',
-            'name.unique' => 'Já existe um drone com esse nome',
+            'name.unique' => 'Já existe um equipamento com esse nome',
             'manufacturer.required' => 'O fabricante do drone deve ser informado',
             'model.required' => 'O modelo do drone deve ser informado',
             'record_number.required' => 'O número do registro deve ser informado',

@@ -47,22 +47,17 @@ export function UpdateIncidentFormulary({ ...props }) {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  // Função para fechar o modal
   const handleClose = () => {
-
     setErrorDetected({ incident_date: false, incident_type: false, description: false });
     setErrorMessage({ incident_date: "", incident_type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
-  };
+  }
 
   /*
  * Rotina 1
@@ -86,18 +81,13 @@ export function UpdateIncidentFormulary({ ...props }) {
 
   /*
  * Rotina 2
- * Validação dos dados no frontend
- * Recebe o objeto da classe FormData criado na rotina 1
- * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
  */
   function submitedDataValidate(formData) {
 
-    // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const incidentDateValidate = incidentDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
     const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
 
-    // Atualização dos estados responsáveis por manipular os inputs
     setErrorDetected({ incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, description: incidentNoteValidate.error });
     setErrorMessage({ incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, description: incidentNoteValidate.message });
 
@@ -115,8 +105,6 @@ export function UpdateIncidentFormulary({ ...props }) {
 
   /*
  * Rotina 4
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
   function requestServerOperation(data) {
@@ -141,7 +129,6 @@ export function UpdateIncidentFormulary({ ...props }) {
 
   /*
   * Rotina 4A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 

@@ -23,7 +23,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 
-export const CreateIncidentFormulary = React.memo(({...props}) => {
+export const CreateIncidentFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -48,28 +48,20 @@ export const CreateIncidentFormulary = React.memo(({...props}) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  // Função para fechar o modal
   const handleClose = () => {
-
     setErrorDetected({ incident_date: false, incident_type: false, description: false });
     setErrorMessage({ incident_date: "", incident_type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
-  };
+  }
 
   /*
   * Rotina 1
-  * Ponto inicial do processamento do envio do formulário de registro
-  * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-  * A próxima rotina, 2, validará esses dados
   */
   function handleRegistrationSubmit(event) {
     event.preventDefault();
@@ -87,11 +79,8 @@ export const CreateIncidentFormulary = React.memo(({...props}) => {
   }
 
   /*
-* Rotina 2
-* Validação dos dados no frontend
-* Recebe o objeto da classe FormData criado na rotina 1
-* Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
-*/
+  * Rotina 2
+  */
   function dataValidate(formData) {
 
     const incidentDateValidate = incidentDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
@@ -116,8 +105,6 @@ export const CreateIncidentFormulary = React.memo(({...props}) => {
 
   /*
   * Rotina 3
-  * Comunicação AJAX com o Laravel utilizando AXIOS
-  * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
   */
   function requestServerOperation(data) {
 
@@ -211,7 +198,7 @@ export const CreateIncidentFormulary = React.memo(({...props}) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

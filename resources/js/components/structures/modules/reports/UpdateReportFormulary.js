@@ -48,46 +48,33 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
-    if (props.selected_record.dom != null) {
-      setOpen(true);
-    }
+    setOpen(true);
   }
 
   // Função para fechar o modal
   const handleClose = () => {
-
     setErrorDetected({ flight_start_date: false, flight_end_date: false, flight_log: false, report_note: false });
     setErrorMessage({ flight_start_date: "", flight_end_date: "", flight_log: "", report_note: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
   };
 
   /*
  * Rotina 1
- * Captura do envio do formulário
  * 
  */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    // Instância da classe JS FormData - para trabalhar os dados do formulário
     const data = new FormData(event.currentTarget);
 
-    // Validação dos dados do formulário
-    // A comunicação com o backend só é realizada se o retorno for true
     if (submitedDataValidate(data)) {
 
       if (verifyDateInterval()) {
 
-        // Botão é desabilitado
         setDisabledButton(true);
-
-        // Inicialização da requisição para o servidor
         requestServerOperation(data);
 
       } else {
@@ -102,13 +89,9 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 2
- * Validação dos dados no frontend
- * Recebe o objeto da classe FormData criado na rotina 1
- * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
  */
   function submitedDataValidate(formData) {
 
-    // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const noteValidate = FormValidation(formData.get("report_note"), 3, null, null, null);
@@ -130,14 +113,10 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 3
- * Ocorre a verificação do intervalo de tempo entre as datas
- * As datas retornadas do componente DateTimePicker do Material UI são formatadas
- * A formatação ocorre com a biblioteca Moment.js - https://momentjs.com/
  * 
  */
   function verifyDateInterval() {
 
-    // Verificação da diferença das datas
     if (moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')) {
 
       return true;
@@ -152,8 +131,6 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
   /*
  * Rotina 4
- * Realização da requisição AXIOS
- * Possui dois casos: o Update e o Delete
  * 
  */
   function requestServerOperation(data) {
@@ -179,7 +156,6 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 5A
-  * Tratamento da resposta de uma requisição bem sucedida
   */
   function successServerResponseTreatment() {
 
@@ -197,7 +173,6 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
   /*
   * Rotina 5B
-  * Tratamento da resposta de uma requisição falha
   */
   function errorServerResponseTreatment(response_data) {
 

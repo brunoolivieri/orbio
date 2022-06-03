@@ -163,14 +163,8 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     */
     function requestServerOperation(data) {
 
-        // Dados para o middleware de autenticação 
-        const logged_user_id = AuthData.data.id;
-        const module_id = 6;
-        const module_action = "escrever";
-
         const image = uploadedImage == null ? props.record.image : uploadedImage;
 
-        data.append("auth", `${logged_user_id}.${module_id}.${module_action}`);
         data.append("image", image);
         data.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
 
@@ -402,6 +396,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                                 operation={"create"}
                                 read_only={false}
                             />
+                            {console.log(props.record)}
                         </Box>
 
                         <Box sx={{ mt: 2, display: 'flex' }}>

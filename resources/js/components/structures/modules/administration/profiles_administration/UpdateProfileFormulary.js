@@ -68,7 +68,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
         setOpen(true);
     };
 
-    const handleClose = React.useCallback(() => {
+    const handleClose = () => {
 
         // Deselecionar registro na tabela
         props.record_setter(null);
@@ -79,7 +79,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
         setOpen(false);
 
-    });
+    }
 
     /*
     * Rotina 1
@@ -124,7 +124,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    const requestServerOperation = React.useCallback((data) => {
+    const requestServerOperation = (data) => {
 
         AxiosApi.patch(`/api/admin-module-profile/${data.get("profile_id")}`, {
             profile_name: data.get("profile_name"),
@@ -141,12 +141,12 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
             });
 
-    });
+    }
 
     /*
     * Rotina 4A
     */
-    const successServerResponseTreatment = React.useCallback(() => {
+    const successServerResponseTreatment = () => {
 
         setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -161,12 +161,12 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
         }, 2000);
 
-    });
+    }
 
     /*
     * Rotina 4B
     */
-    const errorServerResponseTreatment = React.useCallback((response_data) => {
+    const errorServerResponseTreatment = (response_data) => {
 
         setDisabledButton(false);
 
@@ -191,7 +191,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
         setErrorDetected({ profile_name: input_errors.profile_name.error });
         setErrorMessage({ profile_name: input_errors.profile_name.message });
 
-    });
+    }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
