@@ -22,7 +22,7 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
 // Assets
-import ErrorAnimation from "../../../../assets/lotties/ErrorLottie";
+import AlertImage from "../../../../assets/images/Alert/Alert_md.png";
 // Libs
 import { useSnackbar } from 'notistack';
 import styled from '@emotion/styled';
@@ -209,8 +209,8 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                     <GenericModalDialog
                         modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
                         title={{ top: { required: false }, middle: { required: false } }}
-                        image={{ required: false }}
-                        lottie={{ required: true, animation: ErrorAnimation }}
+                        image={{ required: true, src: AlertImage }}
+                        lottie={{ required: false }}
                         content_text={"A desativação é imediata. O login ainda será possível, mas a conta terá acesso mínimo ao sistema."}
                         actions={{
                             required: true,

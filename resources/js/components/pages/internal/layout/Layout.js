@@ -11,7 +11,7 @@ import { GenericModalDialog } from "../../../structures/generic_modal_dialog/Gen
 // Material UI
 import Box from '@mui/material/Box';
 // Assets
-import { ErrorAnimation } from '../../../assets/lotties/ErrorLottie';
+import ErrorImage from "../../../assets/images/Error/Error_md.png";
 
 const drawerWidth = 265;
 
@@ -19,14 +19,13 @@ export const Layout = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData, setAuthData } = useAuthentication();
 
-  // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
-  // Neste caso, a operação é a verificação do token JWT
   const [operationStatus, setOperationStatus] = React.useState({ type: null, title: null, message: null, image: null });
 
   const [menuOpen, setMenuOpen] = React.useState(false);
+
+  const [page, setPage] = React.useState("Dashboard");
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -42,11 +41,9 @@ export const Layout = React.memo(() => {
         setAuthData({ status: true, data: response.data });
 
       })
-      .catch(function (error) {
+      .catch(() => {
 
-        console.log(error)
-
-        setOperationStatus({ type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", animation: ErrorAnimation });
+        setOperationStatus({ type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: ErrorImage });
 
         setTimeout(() => {
           window.document.href = "/sistema/sair";
@@ -73,8 +70,8 @@ export const Layout = React.memo(() => {
         <GenericModalDialog
           modal_controller={{ state: true, setModalState: null, counter: { required: false } }}
           title={{ top: { required: true, text: operationStatus.title }, middle: { required: false } }}
-          image={{ required: false }}
-          lottie={{ required: true, lottie: ErrorAnimation }}
+          image={{ required: true, src: operationStatus.image }}
+          lottie={{ required: false }}
           content_text={operationStatus.message}
           actions={{
             required: false,
@@ -107,12 +104,12 @@ export const Layout = React.memo(() => {
 
           </Box>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Header onDrawerToggle={handleDrawerToggle} />
+            <Header onDrawerToggle={handleDrawerToggle} actual_page = {page} />
             <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
 
               {/* Conteúdo variável de cada página */}
               {AuthData.status &&
-                <InternalRoutes />
+                <InternalRoutes setPage = {setPage} />
               }
 
             </Box>
