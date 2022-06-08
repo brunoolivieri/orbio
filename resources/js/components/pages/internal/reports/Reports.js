@@ -1,13 +1,5 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useEffect } from "react";
-
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { usePagination } from "../../../context/Pagination/PaginationContext";
-import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
-import { ReportsPanel } from "./reports_panel/ReportsPanel";
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
+// Material UI
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
@@ -16,25 +8,18 @@ import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import { Box } from "@mui/system";
 import PostAddIcon from '@mui/icons-material/PostAdd';
+// Custom
+import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
+import { ReportsPanel } from "./reports_panel/ReportsPanel";
 
-export function Reports() {
-
-  // Atualização do state global da páginação
-  const { actualPage, setActualPage } = usePagination();
+export const Reports = React.memo(({ ...props }) => {
 
   // Utilizador do state global de autenticação
-  const { AuthData, setAuthData } = useAuthentication();
+  //const { AuthData, setAuthData } = useAuthentication();
 
-  /*
-  * Atualização do state global da página atual
-  */
-  useEffect(() => {
-
-    setActualPage("RELATÓRIOS");
-
-    // AXIOS PARA RECUPERAR RELATÓRIOS VINCULADOS AO USUÁRIOS
-
-  })
+  React.useEffect(() => {
+    props.setPage("RELATÓRIOS");
+  }, []);
 
   return (
     <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
@@ -45,4 +30,5 @@ export function Reports() {
       </Box>
     </Paper>
   )
-}
+
+});

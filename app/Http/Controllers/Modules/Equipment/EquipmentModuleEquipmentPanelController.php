@@ -114,13 +114,17 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $extension = pathinfo($request->image->getClientOriginalName(), PATHINFO_EXTENSION);
-                $filename = time().".$extension";
+                // Filename is the hash of the content
+                $content_hash = md5(file_get_contents($request->file('image'))); 
+                $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/equipments/";
 
                 EquipmentsModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
 
-                $path = $request->file('image')->storeAs($storage_folder, $filename);
+                // Image is stored just if does not already exists
+                if (!Storage::disk('public')->exists($storage_folder.$filename)) {
+                    $path = $request->file('image')->storeAs($storage_folder, $filename);
+                }
 
             });
 
@@ -196,14 +200,25 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
                 $equipment = EquipmentsModel::find($id);
 
-                Storage::disk('public')->delete("images/equipments/".$equipment->image);
+                if(!empty($request->image)){
 
-                $filename = $request->image->getClientOriginalName();
-                $storage_folder = "public/images/equipments/";
+                    // Filename is the hash of the content
+                    $content_hash = md5(file_get_contents($request->file('image'))); 
+                    $filename = "$content_hash.jpg";
+                    $storage_folder = "public/images/equipments/";
 
-                $equipment->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
+                    $equipment->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
 
-                $path = $request->file('image')->storeAs($storage_folder, $filename);
+                    // Image is stored just if does not already exists
+                    if (!Storage::disk('public')->exists($storage_folder.$filename)) {
+                        $path = $request->file('image')->storeAs($storage_folder, $filename);
+                    }
+
+                }else{
+
+                    $equipment->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"])]);
+
+                }
 
             });
 

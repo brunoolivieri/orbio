@@ -341,9 +341,10 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
                             name="observation"
                             helperText={errorMessage.observation}
                             error={errorDetected.observation}
+                            sx={{ mb: 2 }}
                         />
 
-                        <Box sx={{ mt: 2, display: 'flex' }}>
+                        <Box sx={{ mt: 2, mb: 2, display: 'flex' }}>
                             <label htmlFor="contained-button-file">
                                 <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
                                 <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>

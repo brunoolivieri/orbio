@@ -1,7 +1,6 @@
 // React
 import * as React from 'react';
 // Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { UsersPanel } from "./users_panel/UsersPanel";
 import { ProfilesPanel } from "./profiles_panel/ProfilesPanel";
 // Material UI
@@ -14,15 +13,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 
-export function Administration() {
+export const Administration = React.memo(({...props}) => {
 
-  const { setActualPage } = usePagination();
   const [actualPanel, setActualPanel] = React.useState("users");
 
   React.useEffect(() => {
-
-    setActualPage("ADMINISTRAÇÃO");
-
+    props.setPage("ADMINISTRAÇÃO");
   }, []);
 
   return (
@@ -40,4 +36,5 @@ export function Administration() {
       </Box>
     </Paper>
   )
-}
+
+});

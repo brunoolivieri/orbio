@@ -26,6 +26,8 @@ import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faIdCardClip } from "@fortawesome/free-solid-svg-icons";
 import { Typography } from "@mui/material";
+// Assets
+import EmbrapaLogo from "../../../assets/images/Logos/Embrapa.png";
 
 const item = {
   py: 1.2,
@@ -74,13 +76,12 @@ export const Navigator = React.memo((props) => {
     <Drawer {...props}>
       <List disablePadding>
 
-        <ListItem sx={{ fontSize: 20, display: 'flex' }}>
-          <Box sx={{ py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right' }}>
-            [SVG
+        <ListItem sx={{ fontSize: 20, display: 'flex', justifyContent: 'center' }}>
+          <img src={EmbrapaLogo} width={110} />
+          { /* <Box sx={{ py: 2, borderRadius: 2, mr: 1, flexGrow: 1, textAlign: 'right' }}>
           </Box>
           <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left' }}>
-            ORBIO]
-          </Box>
+          </Box> */}
         </ListItem>
         <Divider variant="middle" />
 

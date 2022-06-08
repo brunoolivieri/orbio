@@ -13,7 +13,7 @@ class UpdateDroneRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
      /**
@@ -24,7 +24,6 @@ class UpdateDroneRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'bail|required',
             'name' => 'bail|required|unique:drones,name',
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
@@ -41,16 +40,16 @@ class UpdateDroneRequest extends FormRequest
     * @return array
     */
     public function messages()
-    {dd("ok");
+    {
         return [
-            'image.required' => 'A imagem do drone deve ser enviada',
             'name.required' => 'O nome do drone deve ser informado',
-            'name.unique' => 'Já existe um drone com esse nome',
+            'name.unique' => 'Um drone já foi cadastrado com esse nome',
             'manufacturer.required' => 'O fabricante do drone deve ser informado',
             'model.required' => 'O modelo do drone deve ser informado',
             'record_number.required' => 'O número do registro deve ser informado',
             'serial_number.required' => 'O número do serial deve ser informado',
-            'weight.required' => 'O peso do drone deve ser informado'
+            'weight.required' => 'O peso do drone deve ser informado',
+            'observation' => 'Uma observação é necessária'
         ];
     }
 }

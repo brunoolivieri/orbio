@@ -113,13 +113,17 @@ class EquipmentModuleDronePanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $extension = pathinfo($request->image->getClientOriginalName(), PATHINFO_EXTENSION);
-                $filename = time().".$extension";
+                // Filename is the hash of the content
+                $content_hash = md5(file_get_contents($request->file('image'))); 
+                $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/drones/";
 
                 DronesModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
 
-                $path = $request->file('image')->storeAs($storage_folder, $filename);
+                // Image is stored just if does not already exists
+                if (!Storage::disk('public')->exists($storage_folder.$filename)) {
+                    $path = $request->file('image')->storeAs($storage_folder, $filename);
+                }
 
             });
 
@@ -187,6 +191,7 @@ class EquipmentModuleDronePanelController extends Controller
      */
     public function update(UpdateDroneRequest $request, $id) : \Illuminate\Http\Response
     {
+
         Gate::authorize("equipments_write");
 
         try{
@@ -195,14 +200,25 @@ class EquipmentModuleDronePanelController extends Controller
 
                 $drone = DronesModel::find($id);
 
-                Storage::disk('public')->delete("images/drones/".$drone->image);
+                if(!empty($request->image)){
 
-                $filename = $request->image->getClientOriginalName();
-                $storage_folder = "public/images/drones/";
+                    // Filename is the hash of the content
+                    $content_hash = md5(file_get_contents($request->file('image'))); 
+                    $filename = "$content_hash.jpg";
+                    $storage_folder = "public/images/drones/";
 
-                $drone->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
+                    // Image is stored just if does not already exists
+                    if (!Storage::disk('public')->exists($storage_folder.$filename)) {
+                        $path = $request->file('image')->storeAs($storage_folder, $filename);
+                    }
 
-                $path = $request->file('image')->storeAs($storage_folder, $filename);
+                    $drone->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
+
+                }else{
+
+                    $drone->update([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])]);
+
+                }  
 
             });
 

@@ -50,7 +50,8 @@ class ProfileHasModuleModel extends Model
 
             $data = DB::table('profile_has_module')
             ->join('profile', 'profile_has_module.id_perfil', '=', 'profile.id')
-            ->select('profile_has_module.id_modulo', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
+            ->join('module', 'profile_has_module.id_modulo', '=', 'module.id')
+            ->select('profile_has_module.id_modulo', 'module.nome', 'profile_has_module.id_perfil', 'profile.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
             ->where('profile.deleted_at', null)
             ->when($where_value, function ($query, $where_value) {
 

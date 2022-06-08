@@ -17,8 +17,6 @@ import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
 import { Incidents } from "../components/pages/internal/incidents/Incidents";
 import { Equipments } from "../components/pages/internal/equipments/Equipments";
-// Provider da paginação
-import { PaginationProvider } from "../components/context/Pagination/PaginationContext";
 
 export function ReactRoutes() {
 
@@ -28,7 +26,7 @@ export function ReactRoutes() {
             <Routes>
                 <Route path="/acessar" element={<Login />} />
                 <Route path="/recuperarsenha" element={<ForgotPassword />} />
-                <Route exact path="/sistema/*" element={<PaginationProvider><Layout /></PaginationProvider>} />
+                <Route exact path="/sistema/*" element={<Layout />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
@@ -37,23 +35,21 @@ export function ReactRoutes() {
 
 }
 
-export function InternalRoutes() {
-
-    // CRIAR ROTAS PRIVADAS
+export function InternalRoutes({ ...props }) {
 
     return (
 
         <Routes>
-            <Route index element={<Dashboard />} />
-            <Route exact path="planos" element={<Plans />} />
-            <Route exact path="relatorios" element={<Reports />} />
-            <Route exact path="conta" element={<Account />} />
-            <Route exact path="configuracoes" element={<Configurations />} />
-            <Route exact path="administracao" element={<Administration />} />
-            <Route exact path="suporte" element={<Support />} />
-            <Route exact path="ordens" element={<ServiceOrders />} />
-            <Route exact path="incidentes" element={<Incidents />} />
-            <Route exact path="equipamentos" element={<Equipments />} />
+            <Route index element={<Dashboard setPage={props.setPage} />} />
+            <Route exact path="planos" element={<Plans setPage={props.setPage} />} />
+            <Route exact path="relatorios" element={<Reports setPage={props.setPage} />} />
+            <Route exact path="conta" element={<Account setPage={props.setPage} />} />
+            <Route exact path="configuracoes" element={<Configurations setPage={props.setPage} />} />
+            <Route exact path="administracao" element={<Administration setPage={props.setPage} />} />
+            <Route exact path="suporte" element={<Support setPage={props.setPage} />} />
+            <Route exact path="ordens" element={<ServiceOrders setPage={props.setPage} />} />
+            <Route exact path="incidentes" element={<Incidents setPage={props.setPage} />} />
+            <Route exact path="equipamentos" element={<Equipments setPage={props.setPage} />} />
         </Routes>
 
     )

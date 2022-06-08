@@ -1,7 +1,6 @@
 // React 
 import * as React from 'react';
 // Custom
-import { usePagination } from '../../../context/Pagination/PaginationContext';
 import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";
 // Material UI
 import PropTypes from 'prop-types';
@@ -13,11 +12,9 @@ import { Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
-export const Header = React.memo((props) => {
+export const Header = React.memo(({...props}) => {
 
   const { onDrawerToggle } = props;
-
-  const { actualPage } = usePagination();
 
   return (
     <>
@@ -34,7 +31,7 @@ export const Header = React.memo((props) => {
            <FontAwesomeIcon icon={faBars} /> 
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Typography variant="h1" sx={{ fontSize: '20px', color: '#fff' }}>{actualPage}</Typography>
+            <Typography variant="h1" sx={{ fontSize: '20px', color: '#fff' }}>{props.page}</Typography>
           </Typography>
             <HeaderMenu />
         </Toolbar>

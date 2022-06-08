@@ -1,7 +1,5 @@
 // React
 import * as React from 'react';
-// Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
 // Material UI
 import Paper from '@mui/material/Paper';
 import { Grid } from "@mui/material";
@@ -11,22 +9,14 @@ import { Switcher } from "../../../structures/switcher/Switcher";
 import { DronesPanel } from './drones_panel/DronesPanel';
 import { BatteriesPanel } from './batteries_panel/BatteriesPanel';
 import { EquipmentPanel } from './equipments_panel/EquipmentsPanel';
-// Fonts Awesome
-//import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-export const Equipments = React.memo(() => {
+export const Equipments = React.memo(({...props}) => {
 
   const [actualPanel, setActualPanel] = React.useState("drones");
-  const { setActualPage } = usePagination();
 
-  /*
-  * Atualização do state global da página atual
-  */
   React.useEffect(() => {
-
-    setActualPage("DRONES E EQUIPAMENTOS");
-
-  });
+    props.setPage("DRONES, BATERIAS E EQUIPAMENTOS");
+  },[]);
 
   return (
 

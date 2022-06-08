@@ -79,13 +79,13 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     function handleEquipmentUpdateSubmit(event) {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        const formData = new FormData(event.currentTarget);
 
-        if (formValidate(data)) {
+        if (formValidate(formData)) {
 
             setDisabledButton(true);
 
-            requestServerOperation(data);
+            requestServerOperation(formData);
 
         }
 
@@ -119,10 +119,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
         let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
         let purchaseValidation = purchaseDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
-        let imageValidation = (uploadedImage == null && htmlImage.current.src == null) ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
 
         setErrorDetected({
-            image: imageValidation.error,
+            image: false,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -134,7 +133,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         });
 
         setErrorMessage({
-            image: imageValidation.message,
+            image: false,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -145,7 +144,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: purchaseValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error || imageValidation.error) {
+        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error) {
 
             return false;
 
@@ -161,14 +160,14 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    function requestServerOperation(data) {
+    function requestServerOperation(formData) {
 
         const image = uploadedImage == null ? props.record.image : uploadedImage;
 
-        data.append("image", image);
-        data.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
+        formData.append("image", image);
+        formData.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
 
-        AxiosApi.patch(`/api/equipments-module-equipment/${data.get("equipment_id")}`, data)
+        AxiosApi.patch(`/api/equipments-module-equipment/${formData.get("equipment_id")}`, formData)
             .then(function () {
 
                 successServerResponseTreatment();

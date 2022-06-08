@@ -3,17 +3,13 @@ import React from 'react';
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 // Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
-import { useEffect } from "react";
 import { IncidentsPanel } from './incidents_panel/IncidentsPanel';
 
-export function Incidents() {
+export const Incidents = React.memo(({...props}) => {
 
-  const { setActualPage } = usePagination();
-
-  useEffect(() => {
-    setActualPage("INCIDENTES");
-  });
+  React.useEffect(() => {
+    props.setPage("INCIDENTES");
+  },[]);
 
   return (
     <>
@@ -24,4 +20,5 @@ export function Incidents() {
       </Paper>
     </>
   );
-}
+
+});

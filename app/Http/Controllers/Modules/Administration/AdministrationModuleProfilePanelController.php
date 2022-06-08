@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Gate;
 // Form Requests
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
+// Models
+use App\Models\ProfileAndModule\ModuleModel;
 
 class AdministrationModuleProfilePanelController extends Controller
 {
@@ -64,6 +66,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
     /**
      * Função para formatação dos dados para a tabela de perfis
+     * Cada relacionamento de um perfil com N módulos é convertida para uma linha
      *
      * @param object $data
      * @return array
@@ -72,30 +75,29 @@ class AdministrationModuleProfilePanelController extends Controller
     {
 
         $arr_with_formated_records = [];
+        $modules_count = ModuleModel::all()->count();
 
         $row = 0;
         $relationship_of_current_profile_with_modules = [];
         $profile_row_counter = 0;
 
-        // Cada um tem ou não os privilégios de "ler" e "escrever" em relação a cada um dos 5 módulos
-        // Na tabela do banco de dados, cada perfil aparece 5 vezes, porque cada linha é a relação do perfil com 1 dos módulos
-        // Aqui cada um desses conjunto de 5 registros é agrupado em um só
+        // Cada um tem ou não os privilégios de "ler" e "escrever" em relação a cada um dos módulos
+        // Na tabela do banco de dados, cada perfil aparece $modules_count vezes, porque cada linha é a relação do perfil com 1 dos módulos
         foreach($data->items() as $row => $record){
 
             // Esse array recebe os dados básicos do perfil atualmente percorrido
-            // Se hipoteticamente esse fosse o primeiro loop, esses dados seriam do primeiro perfil, e não mudariam nos próximos 4 loops (porque cada perfil tem 5 registros na tabela)
+            // Se hipoteticamente esse fosse o primeiro loop, esses dados seriam do primeiro perfil, e não mudariam nos próximos $modules_count loops 
             $arr_with_formated_records[$profile_row_counter] = ["profile_id" => $record->id_perfil, "profile_name" =>  $record->nome_perfil, "modules" => array()]; 
 
             // Agora são recuperados os dados do relacionamento do perfil atual com o módulo atual, que é alterado a cada loop
-            // O perfil se mantém por 5 loops, cada loop é o relacionamento dele com um dos módulos
-            $module_name = $record->id_modulo == 1 ? "Administração" : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatorios" : ($record->id_modulo === 5 ? "Incidentes" : "Equipamentos"))));
+            $module_name = explode(" ", $record->nome)[0];
             $relationship_of_current_profile_with_modules[$record->id_modulo] = ["module_name" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
 
-            // Se o módulo atual for 5, já foram percorridos os 5 registros do perfil com 5 loops
-            if($record->id_modulo == 6){
+            // Se o id do módulo atual for $modules_count, esse é o último módulo
+            if($record->id_modulo == $modules_count){
 
-                // Os dados dos 5 loops, reunidos a cada loop, são persistidos em uma única posição
-                // Essa fase, agora, é a transformação final dos dados dos 5 registros em uma única linha
+                // Foram agrupados todos os relacionamento do perfil atual com os módulos existentes na variável $relationship_of_current_profile_with_modules
+                // Agora esses valores são persistidos em uma posição da matriz final
                 $arr_with_formated_records[$profile_row_counter]["modules"] = $relationship_of_current_profile_with_modules;
 
                 $profile_row_counter += 1;
@@ -105,8 +107,8 @@ class AdministrationModuleProfilePanelController extends Controller
         }
 
         $return_array["records"] = $arr_with_formated_records;
-        $return_array["total_records_founded"] = $data->total()/5;
-        $return_array["records_per_page"] = $data->perPage()/5;
+        $return_array["total_records_founded"] = $data->total()/$modules_count;
+        $return_array["records_per_page"] = $data->perPage()/$modules_count;
         $return_array["total_pages"] = $data->lastPage();
 
         return $return_array;

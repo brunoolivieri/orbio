@@ -1,25 +1,15 @@
 // React
 import * as React from 'react';
-// Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
 // Material UI
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 
-export function Support() {
+export const Support = React.memo(({...props}) => {
 
-  // Atualização do state global da páginação
-  const { setActualPage } = usePagination();
-
-  /*
-  * Atualização do state global da página atual
-  */
   React.useEffect(() => {
-
-    setActualPage("SUPORTE AO USUÁRIO");
-
-  });
+    props.setPage("SUPORTE");
+  },[]);
 
   return (
 
@@ -38,4 +28,5 @@ export function Support() {
       </Typography>
     </Paper>
   )
-}
+
+});

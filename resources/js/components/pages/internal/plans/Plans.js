@@ -1,23 +1,15 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
-import { useEffect } from "react";
 
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { usePagination } from "../../../context/Pagination/PaginationContext";
-import { PlansPanel } from "./plans_panel/PlansPanel";
-
-// IMPORTAÇÃO DOS COMPONENTES MATERIALUI
 import * as React from 'react';
+// Material UI
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
+// Custom
+import { PlansPanel } from "./plans_panel/PlansPanel";
 
-export function Plans() {
+export const Plans = React.memo(({ ...props }) => {
 
-  const { setActualPage } = usePagination();
-
-  useEffect(() => {
-
-    setActualPage("PLANOS DE VOO");
-
+  React.useEffect(() => {
+    props.setPage("PLANOS DE VOO");
   }, []);
 
   return (
@@ -29,4 +21,5 @@ export function Plans() {
       </Box>
     </Paper>
   )
-}
+
+});

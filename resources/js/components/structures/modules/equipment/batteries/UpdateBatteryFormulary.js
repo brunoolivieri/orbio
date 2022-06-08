@@ -21,7 +21,7 @@ import moment from 'moment';
 // Custom
 import { DateTimeInput } from '../../../date_picker/DateTimeInput';
 import AxiosApi from '../../../../../services/AxiosApi';
-import FormValidation from "../../../../../utils/FormValidation";
+import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
 const Input = styled('input')({
@@ -76,16 +76,16 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 1
     */
-    function handleDroneRegistrationSubmit(event) {
+    function handleBatteryUpdateSubmit(event) {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        const formData = new FormData(event.currentTarget);
 
-        if (formValidate(data)) {
+        if (formValidate(formData)) {
 
             setDisabledButton(true);
 
-            requestServerOperation(data);
+            requestServerOperation(formData);
 
         }
 
@@ -115,10 +115,9 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
         let modelValidation = FormValidation(formData.get("model"), null, null, null, null);
         let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
         let lastChargeValidation = chargeDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
-        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
 
         setErrorDetected({
-            image: imageValidation.error,
+            image: false,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -128,7 +127,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
 
         setErrorMessage({
-            image: imageValidation.message,
+            image: false,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -136,7 +135,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             last_charge: lastChargeValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || serialNumberValidation.error || lastChargeValidation.error || imageValidation.error) {
+        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || serialNumberValidation.error || lastChargeValidation.error) {
 
             return false;
 
@@ -152,14 +151,14 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    function requestServerOperation(data) {
+    function requestServerOperation(formData) {
 
         const image = uploadedImage == null ? props.record.image : uploadedImage;
 
-        data.append("image", image);
-        data.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
+        formData.append("image", image);
+        formData.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
 
-        AxiosApi.post(`/api/equipments-module-battery/${data.get("battery_id")}`, data)
+        AxiosApi.patch(`/api/equipments-module-battery/${formData.get("battery_id")}`, formData)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -249,9 +248,9 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>CADASTRO DE BATERIA | ID: {props.record.battery_id}</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.battery_id}</DialogTitle>
 
-                <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
+                <Box component="form" noValidate onSubmit={handleBatteryUpdateSubmit} >
 
                     <DialogContent>
 

@@ -1,7 +1,6 @@
 // React
 import * as React from 'react';
 // Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { BasicDataPanel } from "./basic_data_panel/BasicDataPanel";
 import { ComplementaryDataPanel } from "./complementary_data_panel/ComplementaryDataPanel";
 import { AccountConfiguration } from './account_configuration/AccountConfiguration';
@@ -14,15 +13,12 @@ import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 import { useSnackbar } from 'notistack';
 
-export function Account() {
+export function Account({ ...props }) {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
-
-  // Utilizador do state global da páginação 
-  const { setActualPage } = usePagination();
 
   // State para alternância do painel de administrador
   const [actualPanel, setActualPanel] = React.useState("basic");
@@ -31,7 +27,7 @@ export function Account() {
   const [reloadForm, setReloadForm] = React.useState(false);
 
   // State para os valores dos campos editáveis 
-  const [accountData, setAccountData] = React.useState({ status: false, error: false, data: {basic: [], complementary: [], sessions: []} });
+  const [accountData, setAccountData] = React.useState({ status: false, error: false, data: { basic: [], complementary: [], sessions: [] } });
 
   // Snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -39,9 +35,7 @@ export function Account() {
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
-
-    setActualPage("MINHA CONTA");
-
+    props.setPage("MINHA CONTA");
   }, []);
 
   React.useEffect(() => {
@@ -115,7 +109,7 @@ export function Account() {
 
           {accountData.status ? (actualPanel === "basic" ? <BasicDataPanel {...accountData.data.basic} reload_state={reloadForm} reload_setter={setReloadForm} />
             : (actualPanel === "complementary" ? <ComplementaryDataPanel {...accountData.data.complementary} reload_state={reloadForm} reload_setter={setReloadForm} />
-              : <AccountConfiguration data = {accountData.data.sessions} reload_state={reloadForm} reload_setter={setReloadForm} />))
+              : <AccountConfiguration data={accountData.data.sessions} reload_state={reloadForm} reload_setter={setReloadForm} />))
             : "CARREGANDO"
           }
 

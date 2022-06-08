@@ -24,7 +24,6 @@ class UpdateEquipmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'bail|required',
             'name' => 'bail|required|unique:drones,name',
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
@@ -44,7 +43,6 @@ class UpdateEquipmentRequest extends FormRequest
     public function messages()
     {
         return [
-            'image.required' => 'A imagem do drone deve ser enviada',
             'name.required' => 'O nome do drone deve ser informado',
             'name.unique' => 'Já existe um drone com esse nome',
             'manufacturer.required' => 'O fabricante do drone deve ser informado',
@@ -53,7 +51,8 @@ class UpdateEquipmentRequest extends FormRequest
             'serial_number.required' => 'O número do serial deve ser informado',
             'weight.required' => 'O peso do drone deve ser informado',
             'purchase_date.required' => 'A data da última carga deve ser informada',
-            'purchase_date.date' => 'Informe uma data válida'
+            'purchase_date.date' => 'Informe uma data válida',
+            'observation.required' => 'Uma observação é necessária'
         ];
     }
 }

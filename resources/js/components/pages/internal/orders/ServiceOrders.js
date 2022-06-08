@@ -3,17 +3,13 @@ import * as React from 'react';
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 // Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
-import { useEffect } from "react";
 import { OrdersPanel } from './orders_panel/OrdersPanel';
 
-export function ServiceOrders() {
+export function ServiceOrders({...props}) {
 
-    const { setActualPage } = usePagination();
-
-    useEffect(() => {
-        setActualPage("ORDENS DE SERVIÇO");
-    });
+    React.useEffect(() => {
+        props.setPage("ORDENS DE SERVIÇO");
+    }, []);
 
     return (
         <>

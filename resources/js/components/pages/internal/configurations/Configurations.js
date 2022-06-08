@@ -1,22 +1,14 @@
-// IMPORTAÇÃO DOS COMPONENTES REACT
 import * as React from 'react';
+// Material UI
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 
-// IMPORTAÇÃO DOS COMPONENTES CUSTOMIZADOS
-import { usePagination } from "../../../context/Pagination/PaginationContext";
-import { useEffect } from "react";
+export function Configurations({...props}) {
 
-export function Configurations() {
-
-  const { setActualPage } = usePagination();
-
-  useEffect(() => {
-
-    setActualPage("CONFIGURAÇÕES");
-
-  });
+  React.useEffect(() => {
+    props.setPage("CONFIGURAÇÕES");
+  },[]);
 
   return (
     <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: "10px" }}>

@@ -70,16 +70,16 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 1
     */
-    function handleDroneUpdateSubmit(event) {
+    const handleDroneUpdateSubmit = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        const formData = new FormData(event.currentTarget);
 
-        if (formValidate(data)) {
+        if (formValidate(formData)) {
 
             setDisabledButton(true);
 
-            requestServerOperation(data);
+            requestServerOperation(formData);
 
         }
 
@@ -111,10 +111,9 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
         let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
         let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
-        let imageValidation = (uploadedImage == null && htmlImage.current.src == null) ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
 
         setErrorDetected({
-            image: imageValidation.error,
+            image: false,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -126,7 +125,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
 
         setErrorMessage({
-            image: imageValidation.message,
+            image: false,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -136,7 +135,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             observation: observationValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || imageValidation.error) {
+        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error) {
 
             return false;
 
@@ -152,13 +151,11 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    function requestServerOperation(data) {
+    function requestServerOperation(formData) {
 
-        const image = uploadedImage == null ? props.record.image : uploadedImage;
+        formData.append("image", uploadedImage);
 
-        data.append("image", image);
-
-        AxiosApi.patch(`/api/equipments-module-drone/${data.get("drone_id")}`, data)
+        AxiosApi.patch(`/api/equipments-module-drone/${formData.get("drone_id")}`, formData)
             .then(function () {
 
                 successServerResponseTreatment();

@@ -5,7 +5,6 @@ import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 // Custom
-import { usePagination } from "../../../context/Pagination/PaginationContext";
 import { useEffect } from "react";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -16,14 +15,10 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-export function Dashboard() {
-
-  const { setActualPage } = usePagination();
+export const Dashboard = React.memo(({...props}) => {
 
   useEffect(() => {
-
-    setActualPage("DASHBOARD");
-
+    props.setPage("DASHBOARD");
   }, []);
 
   return (
@@ -44,4 +39,5 @@ export function Dashboard() {
       </Toolbar>
     </Paper>
   )
-}
+  
+});
