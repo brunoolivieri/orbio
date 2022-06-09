@@ -35,6 +35,17 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
+    // Controlled inputs
+    const [formData, setFormData] = React.useState({
+        id: props.record.battery_id,
+        image: false,
+        name: props.record.name,
+        manufacturer: props.record.manufacturer,
+        model: props.record.model,
+        serial_number: props.record.serial_number,
+        last_charge: props.record.last_charge
+    });
+    
     // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
     const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: false });
@@ -51,20 +62,15 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     // States dos inputs de data
     const [chargeDate, setChargeDate] = React.useState(moment());
 
-    // State of uploaded image
-    const [uploadedImage, setUploadedImage] = React.useState(null);
-
     // Referencia ao componente de imagem
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
     const handleClose = () => {
         setErrorDetected({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
         setErrorMessage({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" });
@@ -73,19 +79,21 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
         setOpen(false);
     };
 
+    const handleInputChange = (event) => {
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value })
+    }
+
     /*
     * Rotina 1
     */
     function handleBatteryUpdateSubmit(event) {
         event.preventDefault();
 
-        const formData = new FormData(event.currentTarget);
-
-        if (formValidate(formData)) {
+        if (formValidate()) {
 
             setDisabledButton(true);
 
-            requestServerOperation(formData);
+            requestServerOperation();
 
         }
 
@@ -100,7 +108,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
 
-            setUploadedImage(uploaded_file);
+            setFormData({ ...formData, ["image"]: uploaded_file });
         }
 
     }
@@ -108,12 +116,12 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 2
     */
-    function formValidate(formData) {
+    function formValidate() {
 
-        let nameValidation = FormValidation(formData.get("name"), 3, null, null, null);
-        let manufacturerValidation = FormValidation(formData.get("manufacturer"), 3, null, null, null);
-        let modelValidation = FormValidation(formData.get("model"), null, null, null, null);
-        let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
+        let nameValidation = FormValidation(formData.name, 3, null, null, null);
+        let manufacturerValidation = FormValidation(formData.manufacturer, 3, null, null, null);
+        let modelValidation = FormValidation(formData.model, null, null, null, null);
+        let serialNumberValidation = FormValidation(formData.serial_number, null, null, null, null);
         let lastChargeValidation = chargeDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
 
         setErrorDetected({
@@ -151,14 +159,11 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    function requestServerOperation(formData) {
+    function requestServerOperation() {
 
-        const image = uploadedImage == null ? props.record.image : uploadedImage;
+        setFormData({ ...formData, ["last_charge"]: moment(chargeDate).format('YYYY-MM-DD hh:mm:ss') });
 
-        formData.append("image", image);
-        formData.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
-
-        AxiosApi.patch(`/api/equipments-module-battery/${formData.get("battery_id")}`, formData)
+        AxiosApi.patch(`/api/equipments-module-battery/${formData.id}`, formData)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -248,7 +253,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.battery_id}</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO | ID: {formData.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleBatteryUpdateSubmit} >
 
@@ -261,9 +266,9 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="battery_id"
-                            name="battery_id"
-                            defaultValue={props.record.battery_id}
+                            id="id"
+                            name="id"
+                            defaultValue={formData.id}
                             InputProps={{
                                 readOnly: true,
                             }}
@@ -280,7 +285,8 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
                             name="name"
                             helperText={errorMessage.name}
                             error={errorDetected.name}
-                            defaultValue={props.record.name}
+                            defaultValue={formData.name}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -294,7 +300,8 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
                             name="manufacturer"
                             helperText={errorMessage.manufacturer}
                             error={errorDetected.manufacturer}
-                            defaultValue={props.record.manufacturer}
+                            defaultValue={formData.manufacturer}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -308,7 +315,8 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
                             name="model"
                             helperText={errorMessage.model}
                             error={errorDetected.model}
-                            defaultValue={props.record.model}
+                            defaultValue={formData.model}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -322,7 +330,8 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
                             name="serial_number"
                             helperText={errorMessage.serial_number}
                             error={errorDetected.serial_number}
-                            defaultValue={props.record.serial_number}
+                            defaultValue={formData.serial_number}
+                            onChange={handleInputChange}
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
@@ -331,7 +340,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
                                 label={"Data da última carga"}
                                 helperText={errorMessage.last_charge}
                                 error={errorDetected.last_charge}
-                                defaultValue={props.record.last_charge}
+                                defaultValue={formData.last_charge}
                                 operation={"create"}
                                 read_only={false}
                             />
@@ -339,7 +348,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
                         <Box sx={{ mt: 2, display: 'flex' }}>
                             <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
+                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
                                 <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
                                     {errorDetected.image ? errorMessage.image : "Escolher imagem"}
                                 </Button>

@@ -32,7 +32,19 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States utilizados nas validações dos campos 
+    // Controlled inputs
+    const [formData, setFormData] = React.useState({
+        id: props.record.drone_id,
+        image: null,
+        name: props.record.name,
+        manufacturer: props.record.manufacturer,
+        model: props.record.model,
+        record_number: props.record.record_number,
+        serial_number: props.record.serial_number,
+        weight: props.record.weight,
+        observation: props.record.observation
+    });
+    
     const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
     const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
 
@@ -45,20 +57,15 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     // States do formulário
     const [open, setOpen] = React.useState(false);
 
-    // State of uploaded image
-    const [uploadedImage, setUploadedImage] = React.useState(null);
-
     // Referencia ao componente de imagem
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
     const handleClose = () => {
         setErrorDetected({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
         setErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
@@ -67,19 +74,21 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         setOpen(false);
     };
 
+    const handleInputChange = (event) => {
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value })
+    }
+
     /*
     * Rotina 1
     */
     const handleDroneUpdateSubmit = (event) => {
         event.preventDefault();
 
-        const formData = new FormData(event.currentTarget);
-
-        if (formValidate(formData)) {
+        if (formValidate()) {
 
             setDisabledButton(true);
 
-            requestServerOperation(formData);
+            requestServerOperation();
 
         }
 
@@ -94,7 +103,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
 
-            setUploadedImage(uploaded_file);
+            setFormData({ ...formData, ["image"]: uploaded_file });
         }
 
     }
@@ -102,15 +111,15 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 2
     */
-    function formValidate(formData) {
+    function formValidate() {
 
-        let nameValidation = FormValidation(formData.get("name"), 3, null, null, null);
-        let manufacturerValidation = FormValidation(formData.get("manufacturer"), 3, null, null, null);
-        let modelValidation = FormValidation(formData.get("model"), null, null, null, null);
-        let recordNumberValidation = FormValidation(formData.get("record_number"), null, null, null, null);
-        let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
-        let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
-        let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
+        let nameValidation = FormValidation(formData.name, 3, null, null, null);
+        let manufacturerValidation = FormValidation(formData.manufacturer, 3, null, null, null);
+        let modelValidation = FormValidation(formData.model, null, null, null, null);
+        let recordNumberValidation = FormValidation(formData.record_number, null, null, null, null);
+        let serialNumberValidation = FormValidation(formData.serial_number, null, null, null, null);
+        let weightValidation = FormValidation(formData.weight, null, null, null, null);
+        let observationValidation = FormValidation(formData.observation, 3, null, null, null);
 
         setErrorDetected({
             image: false,
@@ -122,7 +131,6 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             weight: weightValidation.error,
             observation: observationValidation.error
         });
-
 
         setErrorMessage({
             image: false,
@@ -151,11 +159,9 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 3
     */
-    function requestServerOperation(formData) {
+    function requestServerOperation() {
 
-        formData.append("image", uploadedImage);
-
-        AxiosApi.patch(`/api/equipments-module-drone/${formData.get("drone_id")}`, formData)
+        AxiosApi.patch(`/api/equipments-module-drone/${formData.id}`, formData)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -271,7 +277,10 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="drone_id"
                             helperText={errorMessage.name}
                             error={errorDetected.name}
-                            defaultValue={props.record.drone_id}
+                            defaultValue={formData.id}
+                            InputProps={{
+                                readOnly: true,
+                            }}
                         />
 
                         <TextField
@@ -285,7 +294,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="name"
                             helperText={errorMessage.name}
                             error={errorDetected.name}
-                            defaultValue={props.record.name}
+                            defaultValue={formData.name}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -299,7 +309,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="manufacturer"
                             helperText={errorMessage.manufacturer}
                             error={errorDetected.manufacturer}
-                            defaultValue={props.record.manufacturer}
+                            defaultValue={formData.manufacturer}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -313,7 +324,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="model"
                             helperText={errorMessage.model}
                             error={errorDetected.model}
-                            defaultValue={props.record.model}
+                            defaultValue={formData.model}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -327,7 +339,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="record_number"
                             helperText={errorMessage.record_number}
                             error={errorDetected.record_number}
-                            defaultValue={props.record.record_number}
+                            defaultValue={formData.record_number}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -341,7 +354,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="serial_number"
                             helperText={errorMessage.serial_number}
                             error={errorDetected.serial_number}
-                            defaultValue={props.record.serial_number}
+                            defaultValue={formData.serial_number}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -355,7 +369,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             name="weight"
                             helperText={errorMessage.weight}
                             error={errorDetected.weight}
-                            defaultValue={props.record.weight}
+                            defaultValue={formData.weight}
+                            onChange={handleInputChange}
                         />
 
                         <TextField
@@ -370,6 +385,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             helperText={errorMessage.observation}
                             error={errorDetected.observation}
                             defaultValue={props.record.observation}
+                            onChange={handleInputChange}
                         />
 
                         <Box sx={{ mt: 2, display: 'flex' }}>

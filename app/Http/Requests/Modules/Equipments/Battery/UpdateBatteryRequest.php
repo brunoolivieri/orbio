@@ -27,7 +27,6 @@ class UpdateBatteryRequest extends FormRequest
             'name' => 'bail|required|unique:batteries,name',
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
-            'record_number' => 'bail|required',
             'serial_number' => 'bail|required',
             'last_charge' => 'bail|required|date'
         ]; 
