@@ -11,14 +11,12 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-import { Switch } from '@mui/material';
-import { FormGroup } from '@mui/material';
-import { FormControlLabel } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { GenericSelect } from '../../input_select/GenericSelect';
+import { RadioInput } from '../../radio_group/RadioInput';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -42,9 +40,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   // State da acessibilidade do botão de executar o registro
   const [disabledButton, setDisabledButton] = React.useState(false);
 
-  // Switch state
-  const [isChecked, setIsChecked] = React.useState(props.record.plan_status == 1 ? true : false);
-
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   const handleClickOpen = () => {
@@ -53,7 +48,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   // Função para fechar o modal
   const handleClose = () => {
-    props.record_setter(null);
     setErrorDetected({ status: false, description: false });
     setErrorMessage({ status: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
@@ -86,7 +80,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   function submitedDataValidate(formData) {
 
     const descriptionValidate = FormValidation(formData.get("description"), 3, null, null, null);
-    const statusValidate = (Number(isChecked) == 0 || Number(isChecked) == 1) ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
+    const statusValidate = (Number(formData.get("status")) == 0 || Number(formData.get("status")) == 1) ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
 
     setErrorDetected({ description: descriptionValidate.error, status: statusValidate.error });
     setErrorMessage({ description: descriptionValidate.message, status: statusValidate.message });
@@ -112,7 +106,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
       report_id: data.get("select_report"),
       incident_id: data.get("select_incident"),
-      status: isChecked,
+      status: data.get("status"),
       description: data.get("description"),
     })
       .then(function () {
@@ -199,7 +193,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       </Tooltip>
 
       {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -254,10 +248,8 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                 error={errorDetected.description}
               />
 
-              <Box sx={{ marginTop: 3 }}>
-                <FormGroup>
-                  <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => { setIsChecked(event.currentTarget.checked) }} />} label={isChecked ? "Ativo" : "Inativo"} />
-                </FormGroup>
+              <Box>
+                <RadioInput title={"Status"} name={"status"} default_value={props.record.status} options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]} />
               </Box>
 
             </DialogContent>

@@ -158,7 +158,7 @@ class ServiceOrderModuleController extends Controller
 
             $arr_with_formated_data["records"][$row] = array(
                 "order_id" => $record->id,
-                "order_status" => $record->status,
+                "status" => $record->status,
                 "numOS" => $record->numOS,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,

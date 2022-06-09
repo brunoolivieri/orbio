@@ -11,14 +11,12 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
-import { Switch } from '@mui/material';
-import { FormGroup } from '@mui/material';
-import { FormControlLabel } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericSelect } from '../../../input_select/GenericSelect';
 import AxiosApi from '../../../../../services/AxiosApi';
+import { RadioInput } from '../../../radio_group/RadioInput';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -43,9 +41,6 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
   // State da acessibilidade do botão de executar o registro
   const [disabledButton, setDisabledButton] = React.useState(false);
 
-  // Switch state
-  const [isChecked, setIsChecked] = React.useState(props.record.status == 1 ? true : false);
-
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   // Função para abrir o modal
@@ -55,15 +50,11 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   // Função para fechar o modal
   const handleClose = () => {
-
-    props.record_setter(null);
     setErrorDetected({ email: false, name: false, profile: false, status: false });
     setErrorMessage({ email: null, name: null, profile: null, status: null });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
-
     setOpen(false);
-
   }
 
   /*
@@ -92,7 +83,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
     const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
     const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
     const profileValidate = Number(formData.get("select_profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
-    const statusValidate = Number(isChecked) != 0 && Number(isChecked) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
+    const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setErrorDetected({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error });
     setErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message, status: statusValidate.message });
@@ -114,7 +105,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
     AxiosApi.patch(`/api/admin-module-user/${data.get("user_id")}`, {
       name: data.get("name_input"),
       email: data.get("email_input"),
-      status: isChecked,
+      status: data.get("status"),
       profile_id: data.get("select_profile")
     })
       .then(() => {
@@ -248,20 +239,20 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
                 sx={{ mb: 2 }}
               />
 
-              <GenericSelect
-                label_text={"Perfil"}
-                data_source={"/api/admin-module-user/create?auth=none"}
-                primary_key={"id"}
-                key_content={"nome"}
-                error={errorDetected.profile}
-                default={props.record.access}
-                name={"select_profile"}
-              />
+              <Box sx={{ width: "auto", mb: 2 }}>
+                <GenericSelect
+                  label_text={"Perfil"}
+                  data_source={"/api/admin-module-user/create?auth=none"}
+                  primary_key={"id"}
+                  key_content={"nome"}
+                  error={errorDetected.profile}
+                  default={props.record.access}
+                  name={"select_profile"}
+                />
+              </Box>
 
-              <Box sx={{ marginTop: 3 }}>
-                <FormGroup>
-                  <FormControlLabel control={<Switch defaultChecked={isChecked} onChange={(event) => { setIsChecked(event.currentTarget.checked) }} />} label={isChecked ? "Ativo" : "Inativo"} />
-                </FormGroup>
+              <Box>
+                <RadioInput title={"Status"} name={"status"} default_value={props.record.status} options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]} />
               </Box>
 
             </DialogContent>

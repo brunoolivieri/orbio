@@ -12,9 +12,6 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import { Switch } from '@mui/material';
-import { FormGroup } from '@mui/material';
-import { FormControlLabel } from '@mui/material';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -22,13 +19,14 @@ import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { ModalTransferList } from "../../modal_with_transfer_list/ModalTransferList";
+import { RadioInput } from '../../radio_group/RadioInput';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-export const CreateOrderFormulary = React.memo(({...props}) => {
+export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
@@ -55,9 +53,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
   // State dos planos de vôo selecionados
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
-  // Switch state
-  const [isChecked, setIsChecked] = React.useState(false);
-
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
   const handleClickOpen = () => {
@@ -65,7 +60,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
   }
 
   const handleClose = () => {
-    setIsChecked(null);
     setErrorDetected({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false });
     setErrorMessage({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
@@ -111,7 +105,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     const clientNameValidate = formData.get("select_client_name") != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
     const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
-    const statusValidate = Number(isChecked) != 0 && Number(isChecked) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
+    const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setErrorDetected({
       order_start_date: startDateValidate.error,
@@ -183,7 +177,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
       pilot_id: data.get("select_pilot_name"),
       client_id: data.get("select_client_name"),
       observation: data.get("order_note"),
-      status: isChecked,
+      status: data.get("status"),
       fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
     })
       .then(function () {
@@ -209,7 +203,6 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
     setTimeout(() => {
 
       props.reload_table();
-      setIsChecked(null);
       setDisabledButton(false);
       handleClose();
 
@@ -280,7 +273,7 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
@@ -292,24 +285,28 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
             </DialogContentText>
 
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-              <DateTimeInput
-                event={setStartDate}
-                label={"Inicio da ordem de serviço"}
-                helperText={errorMessage.flight_start_date}
-                error={errorDetected.flight_start_date}
-                defaultValue={moment()}
-                operation={"create"}
-                read_only={false}
-              />
-              <DateTimeInput
-                event={setEndDate}
-                label={"Término da ordem de serviço"}
-                helperText={errorMessage.flight_end_date}
-                error={errorDetected.flight_end_date}
-                defaultValue={moment()}
-                operation={"create"}
-                read_only={false}
-              />
+              <Box sx={{ mr: 1 }}>
+                <DateTimeInput
+                  event={setStartDate}
+                  label={"Inicio da ordem de serviço"}
+                  helperText={errorMessage.flight_start_date}
+                  error={errorDetected.flight_start_date}
+                  defaultValue={moment()}
+                  operation={"create"}
+                  read_only={false}
+                />
+              </Box>
+              <Box>
+                <DateTimeInput
+                  event={setEndDate}
+                  label={"Término da ordem de serviço"}
+                  helperText={errorMessage.flight_end_date}
+                  error={errorDetected.flight_end_date}
+                  defaultValue={moment()}
+                  operation={"create"}
+                  read_only={false}
+                />
+              </Box>
             </Box>
 
             <Box sx={{ mb: 2 }}>
@@ -363,10 +360,8 @@ export const CreateOrderFormulary = React.memo(({...props}) => {
               sx={{ mb: 2 }}
             />
 
-            <Box sx={{ marginTop: 3 }}>
-              <FormGroup>
-                <FormControlLabel control={<Switch defaultChecked={false} onChange={(event) => { setIsChecked(event.currentTarget.checked) }} />} label={isChecked ? "Ativo" : "Inativo"} />
-              </FormGroup>
+            <Box>
+              <RadioInput title={"Status"} name={"status"} default_value={"1"} options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]} />
             </Box>
 
           </DialogContent>

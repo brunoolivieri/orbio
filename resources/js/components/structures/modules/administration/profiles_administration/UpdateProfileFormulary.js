@@ -69,16 +69,11 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     };
 
     const handleClose = () => {
-
-        // Deselecionar registro na tabela
-        props.record_setter(null);
         setErrorDetected({ profile_name: false });
         setErrorMessage({ profile_name: null });
         setDisplayAlert({ display: false, type: "", message: "" });
         setDisabledButton(false);
-
         setOpen(false);
-
     }
 
     /*

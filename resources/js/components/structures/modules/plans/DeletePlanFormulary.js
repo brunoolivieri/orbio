@@ -40,7 +40,6 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
     setOpen(false);

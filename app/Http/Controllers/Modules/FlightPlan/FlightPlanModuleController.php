@@ -83,7 +83,7 @@ class FlightPlanModuleController extends Controller
                 "incident_id" => $record->id_incidente,
                 "plan_file" => $record->arquivo,
                 "plan_description" => $record->descricao,
-                "plan_status" => $record->status,
+                "status" => $record->status,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated
             );
