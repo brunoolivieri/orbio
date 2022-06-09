@@ -69,11 +69,9 @@ class ServiceOrderModuleController extends Controller
     }
 
     /**
-     * Função para formatação dos dados para o painel de relatórios
-     * Os dados são tratados e persistidos em uma matriz
-     * 
+     * Method for organize data for the frontend table.
      *
-     * @param object $data
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
@@ -212,7 +210,7 @@ class ServiceOrderModuleController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(ServiceOrderStoreRequest $request) : \Illuminate\Http\Response
@@ -297,7 +295,7 @@ class ServiceOrderModuleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -342,8 +340,8 @@ class ServiceOrderModuleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(ServiceOrderUpdateRequest $request, $id) : \Illuminate\Http\Response
@@ -416,7 +414,7 @@ class ServiceOrderModuleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response

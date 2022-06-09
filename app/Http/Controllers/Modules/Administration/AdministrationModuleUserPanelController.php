@@ -72,7 +72,9 @@ class AdministrationModuleUserPanelController extends Controller
     /**
      * Form data for frontend table.
      *
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
+     * 
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
 
@@ -146,7 +148,7 @@ class AdministrationModuleUserPanelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(UserPanelStoreRequest $request) : \Illuminate\Http\Response
@@ -197,7 +199,7 @@ class AdministrationModuleUserPanelController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -243,8 +245,8 @@ class AdministrationModuleUserPanelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(UserPanelUpdateRequest $request, $id) : \Illuminate\Http\Response
@@ -278,7 +280,7 @@ class AdministrationModuleUserPanelController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response

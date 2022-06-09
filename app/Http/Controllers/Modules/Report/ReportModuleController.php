@@ -59,10 +59,10 @@ class ReportModuleController extends Controller
 
     }
 
-    /**
-     * Data is formated for the frontend reports table
+     /**
+     * Method for organize data for the frontend table.
      *
-     * @param object $data
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {

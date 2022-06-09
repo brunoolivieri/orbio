@@ -61,8 +61,9 @@ class EquipmentModuleBatteryPanelController extends Controller
     }
 
     /**
-     * Form data for frontend table.
+     * Method for organize data for the frontend table.
      *
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
@@ -99,7 +100,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreBatteryRequest $request) : \Illuminate\Http\Response
@@ -138,7 +139,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -182,8 +183,8 @@ class EquipmentModuleBatteryPanelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest  $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateBatteryRequest $request, $id) : \Illuminate\Http\Response
@@ -234,7 +235,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response

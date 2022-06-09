@@ -59,11 +59,9 @@ class IncidentModuleController extends Controller
     }
 
     /**
-     * Função para formatação dos dados para o painel de incidentes
-     * Os dados são tratados e persistidos em uma matriz
-     * 
+     * Method for organize data for the frontend table.
      *
-     * @param object $data
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
@@ -123,7 +121,7 @@ class IncidentModuleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -167,8 +165,8 @@ class IncidentModuleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  App\Http\Requests\Modules\Incidents\IncidentUpdateRequest  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\Incidents\IncidentUpdateRequest  $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(IncidentUpdateRequest $request, $id) : \Illuminate\Http\Response
@@ -199,7 +197,7 @@ class IncidentModuleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response

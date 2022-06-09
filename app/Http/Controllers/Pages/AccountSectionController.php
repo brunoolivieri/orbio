@@ -23,11 +23,11 @@ use App\Http\Requests\UserAccount\UpdatePasswordRequest;
 class AccountSectionController extends Controller
 {
     /**
-     * Método para processar a requisição dos dados do usuário
+     * Method for load user account data.
      * 
      * @return \Illuminate\Http\Response
      */
-    function loadUserAccountData() : \Illuminate\Http\Response {
+    function loadAccountData() : \Illuminate\Http\Response {
 
         if(request()->user_id == Auth::user()->id){
 
@@ -68,7 +68,13 @@ class AccountSectionController extends Controller
 
     }
 
-    function userBasicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
+    /**
+     * Method for update user basic data.
+     * 
+     * @param  App\Http\Requests\UserAccount\UpdateBasicDataRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    function basicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
 
         try{
 
@@ -87,7 +93,13 @@ class AccountSectionController extends Controller
 
     }
 
-    function userDocumentsUpdate(UpdateDocumentsRequest $request) : \Illuminate\Http\Response {
+    /**
+     * Method for update user documents data.
+     * 
+     * @param  App\Http\Requests\UserAccount\UpdateDocumentsRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    function documentsUpdate(UpdateDocumentsRequest $request) : \Illuminate\Http\Response {
 
         try{
 
@@ -113,7 +125,13 @@ class AccountSectionController extends Controller
 
     }
 
-    function userAddressUpdate(UpdateAddressRequest $request){
+    /**
+     * Method for update user location data.
+     * 
+     * @param App\Http\Requests\UserAccount\UpdateAddressRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    function addressUpdate(UpdateAddressRequest $request) : \Illuminate\Http\Response {
 
         try{
 
@@ -138,7 +156,13 @@ class AccountSectionController extends Controller
 
     }
 
-    function userPasswordUpdate(UpdatePasswordRequest $request){
+    /**
+     * Method for update user password.
+     * 
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
+    function passwordUpdate(UpdatePasswordRequest $request){
 
         try{
 
@@ -158,16 +182,16 @@ class AccountSectionController extends Controller
     }
 
     /**
-     * Método para processar a deleção da conta do usuário
-     * Utilizado no caso em que o próprio usuário requisita a desativação da sua conta
+     * Method for desactivate the user account.
      * 
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    function userAccountDesactivation($user_id) : \Illuminate\Http\Response {
+    function accountDesactivation($id) : \Illuminate\Http\Response {
 
         try{
 
-            $user = UserModel::find($user_id);
+            $user = UserModel::find($id);
 
             $user->update(["status" => false]);
 

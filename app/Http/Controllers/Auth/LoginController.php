@@ -27,7 +27,7 @@ class LoginController extends Controller
      * Method for login processing
      * Exists 3 cases for valid credentials: user active, user inactive or user disabled
      * 
-     * @param object Illuminate\Http\Request
+     * @param Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     function index(LoginRequest $request) :  \Illuminate\Http\Response {

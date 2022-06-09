@@ -65,10 +65,10 @@ class AdministrationModuleProfilePanelController extends Controller
     }
 
     /**
-     * Função para formatação dos dados para a tabela de perfis
-     * Cada relacionamento de um perfil com N módulos é convertida para uma linha
+     * Method for organize data for the frontend table.
+     * The relationship of each profile with the modules is grouped in one row.
      *
-     * @param object $data
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array 
@@ -118,7 +118,7 @@ class AdministrationModuleProfilePanelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(ProfilePanelStoreRequest $request) : \Illuminate\Http\Response
@@ -148,7 +148,7 @@ class AdministrationModuleProfilePanelController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -193,8 +193,8 @@ class AdministrationModuleProfilePanelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(ProfilePanelUpdateRequest $request, $id) : \Illuminate\Http\Response
@@ -224,7 +224,7 @@ class AdministrationModuleProfilePanelController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response

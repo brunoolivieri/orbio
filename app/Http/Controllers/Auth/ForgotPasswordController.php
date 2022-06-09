@@ -26,7 +26,7 @@ class ForgotPasswordController extends Controller
     /**
      * Método para processar o envio do código necessário para alteração da senha
      * 
-     * @param object Illuminate\Http\Request
+     * @param App\Http\Requests\Auth\ForgotPassword\SendTokenToEmailRequest $request
      * @return \Illuminate\Http\Response
      */
     function generateAndSendPasswordChangeToken(SendTokenToEmailRequest $request) : \Illuminate\Http\Response {
@@ -82,7 +82,7 @@ class ForgotPasswordController extends Controller
     /**
      * Método para processar a alteração da senha 
      * 
-     * @param object Illuminate\Http\Request
+     * @param App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest $request
      * @return \Illuminate\Http\Response
      */
     function passwordChangeProcessing(UpdatePasswordRequest $request) : \Illuminate\Http\Response {

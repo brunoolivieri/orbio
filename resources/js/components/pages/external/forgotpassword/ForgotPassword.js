@@ -92,7 +92,7 @@ export function ForgotPassword() {
     }
 
     /*
-    * Rotina 2AB
+    * Rotina 2
     */
     function formDataValidate(formData, formulary) {
 
@@ -142,7 +142,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 3A
-    * 
     */
     function sendCodeRequestServerOperation(data) {
 
@@ -165,7 +164,6 @@ export function ForgotPassword() {
 
     /*
     * Rotina 3B
-    * 
     */
     function changePasswordRequestServerOperation(data) {
 

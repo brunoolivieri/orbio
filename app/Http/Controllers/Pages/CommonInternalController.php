@@ -26,8 +26,8 @@ class CommonInternalController extends Controller
     }
 
     /**
-     * Método para processar refresh realizado dentro do sistema.
-     * Qualquer requisição para uma subrota de "/sistema" redirecionar para "/sistema".
+     * Method for refresh internal system.
+     * Every internal reload go to /sistema.
      * 
      * @return redirect
      */
@@ -40,7 +40,7 @@ class CommonInternalController extends Controller
     /**
      * Método para recuperar os dados do usuário autenticado.
      * 
-     * @param object Illuminate\Http\Request
+     * @param object Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     function getUserAuthenticatedData(Request $request) : \Illuminate\Http\Response {
@@ -100,8 +100,9 @@ class CommonInternalController extends Controller
     }
 
     /**
-    * Method to organize the data regarding the privileges of the authenticated user's profile
-    * 
+    * Method to format the user privileges data.
+    *
+    * @return array
     */
     private function modulesProfileRelationshipFormated() : array {
 
@@ -132,6 +133,7 @@ class CommonInternalController extends Controller
     /**
      * Método para deslogar do sistema.
      * 
+     * @param \Illuminate\Http\Request $request
      * @return Redirect
      */
     function logout(Request $request) {

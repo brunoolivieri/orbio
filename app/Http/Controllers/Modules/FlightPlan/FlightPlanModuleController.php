@@ -62,10 +62,10 @@ class FlightPlanModuleController extends Controller
         }  
     }
 
-    /**
-     * Data is formated for the frontend plans table
+   /**
+     * Method for organize data for the frontend table.
      *
-     * @param object $data
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
      * @return array
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
@@ -100,7 +100,7 @@ class FlightPlanModuleController extends Controller
 
     /**
      * Download the flight plan file
-     *
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function getFlightPlanFile(string $filename) : \Illuminate\Http\Response {
@@ -218,7 +218,7 @@ class FlightPlanModuleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -263,8 +263,8 @@ class FlightPlanModuleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(FlightPlanUpdateRequest $request, $id) : \Illuminate\Http\Response

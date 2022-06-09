@@ -49,10 +49,7 @@ export function Login() {
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     /*
-    * Rotina 1A
-    * Ponto inicial do processamento do envio do formulário de login
-    * Recebe os dados do formulário, e transforma em um objeto da classe FormData
-    * A próxima rotina, 2, validará esses dados
+    * Rotina 1
     */
     function handleLoginSubmit(event) {
         event.preventDefault();
@@ -71,9 +68,6 @@ export function Login() {
 
     /*
     * Rotina 2
-    * Validação dos dados no frontend
-    * Recebe o objeto Event do evento onSubmit, e o formulário a ser validado
-    * Se a validação não falhar, a próxima rotina, 3, é a da comunicação com o Laravel 
     */
     function dataValidate(formData) {
 
@@ -99,8 +93,6 @@ export function Login() {
 
     /*
     * Rotina 3
-    * Comunicação AJAX com o Laravel utilizando AXIOS
-    * Após o recebimento da resposta, é chamada próxima rotina, 4, de tratamento da resposta do servidor
     */
     function requestServerOperation(data) {
 
@@ -123,7 +115,6 @@ export function Login() {
 
     /*
     * Rotina 4A
-    * Tratamento da requisição bem sucedida
     */
     function successServerResponseTreatment(response_data) {
 
@@ -137,13 +128,10 @@ export function Login() {
 
     /*
     * Rotina 4B
-    * Tratamento da requisição que falhou
     */
     function errorServerResponseTreatment(response_data) {
 
         setDisabled(false);
-
-        // Erros automatizados
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
@@ -163,8 +151,6 @@ export function Login() {
 
         setErrorDetected({ email: input_errors.email.error, password: input_errors.password.error });
         setErrorMessage({ email: input_errors.email.message, password: input_errors.password.message });
-
-        // Erros customizados
 
         if (response_data.error == "activation") {
 

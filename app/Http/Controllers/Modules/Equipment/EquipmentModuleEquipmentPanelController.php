@@ -60,10 +60,11 @@ class EquipmentModuleEquipmentPanelController extends Controller
         } 
     }
 
-    /**
-     * Form data for frontend table.
+     /**
+     * Store a newly created resource in storage.
      *
-     * @return array
+     * @param App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest $request
+     * @return \Illuminate\Http\Response
      */
     private function formatDataForTable(LengthAwarePaginator $data) : array {
 
@@ -103,7 +104,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreEquipmentRequest $request) : \Illuminate\Http\Response
@@ -142,7 +143,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
@@ -186,8 +187,8 @@ class EquipmentModuleEquipmentPanelController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest $request
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateEquipmentRequest $request, $id) : \Illuminate\Http\Response
@@ -238,7 +239,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param string $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) : \Illuminate\Http\Response
