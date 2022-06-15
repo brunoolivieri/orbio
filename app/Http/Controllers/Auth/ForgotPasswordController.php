@@ -4,20 +4,15 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-// Models
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+// Custom
 use App\Models\User\UserModel;
-// Events
 use App\Events\Auth\TokenForChangePasswordEvent;
 use App\Events\User\UserPasswordChangedEvent;
-// Email
 use App\Mail\User\SendCodeToChangePassword;
-use Illuminate\Support\Facades\Mail;
-// Form Requests
 use App\Http\Requests\Auth\ForgotPassword\SendTokenToEmailRequest;
 use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
-// Log
-use Illuminate\Support\Facades\Log;
-// Jobs
 use App\Jobs\SendEmailJob;
 
 class ForgotPasswordController extends Controller

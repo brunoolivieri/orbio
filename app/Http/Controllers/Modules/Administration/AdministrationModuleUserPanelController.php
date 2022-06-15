@@ -10,19 +10,30 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
-// Form Requests
-use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
-use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
-// Models
+// Custom
 use App\Models\Orders\ServiceOrderHasUserModel;
 use App\Models\User\UserModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use  App\Models\Orders\ServiceOrdersModel;
-// Events
+use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
+use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Events\Modules\Admin\UserCreatedEvent;
 
 class AdministrationModuleUserPanelController extends Controller
 {
+
+    private UserModel $user_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\ProfileAndModule\ModuleModel $module
+     * @param App\Models\ProfileAndModule\ProfileModel $profile
+     * @param App\Models\User\UserModel $user
+     */
+    public function __construct(UserModel $user){
+        $this->user_model = $user;
+    }
     
     /**
      * Display a listing of the resource.
@@ -38,10 +49,8 @@ class AdministrationModuleUserPanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new UserModel();
             
-        $model_response = $model->loadUsersWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->user_model->loadUsersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -160,19 +169,17 @@ class AdministrationModuleUserPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $user = new UserModel();
-
-                $user->id_perfil = intval($request->profile_id);
-                $user->nome = $request->name;
-                $user->email = $request->email;
-                $user->senha = Hash::make($request->password);
+                $this->user_model->id_perfil = intval($request->profile_id);
+                $this->user_model->nome = $request->name;
+                $this->user_model->email = $request->email;
+                $this->user_model->senha = Hash::make($request->password);
         
-                $user->save();
+                $this->user_model->save();
 
                 $data_for_email = [
-                    "name" => $user->nome,
-                    "email" => $user->email,
-                    "profile" => $user->profile->nome,
+                    "name" => $this->user_model->nome,
+                    "email" => $this->user_model->email,
+                    "profile" => $this->user_model->profile->nome,
                     "password" => $request->password
                 ];
 
@@ -211,10 +218,8 @@ class AdministrationModuleUserPanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-        
-        $model = new UserModel();
             
-        $model_response = $model->loadUsersWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->user_model->loadUsersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 

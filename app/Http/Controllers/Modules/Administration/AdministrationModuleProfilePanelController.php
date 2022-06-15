@@ -4,20 +4,32 @@ namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\ProfileAndModule\ProfileHasModuleModel;
-use App\Models\ProfileAndModule\ProfileModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
-// Form Requests
+// Custom
+use App\Models\ProfileAndModule\ProfileHasModuleModel;
+use App\Models\ProfileAndModule\ProfileModel;
+use App\Models\ProfileAndModule\ModuleModel;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
-// Models
-use App\Models\ProfileAndModule\ModuleModel;
 
 class AdministrationModuleProfilePanelController extends Controller
 {
+    private ProfileModel $profile_model;
+    private ProfileHasModuleModel $profile_module_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\ProfileAndModule\ProfileModel $profile
+     * @param App\Models\User\UserModel $user
+     */
+    public function __construct(ProfileModel $profile, ProfileHasModuleModel $profile_module){
+        $this->profile_model = $profile;
+        $this->profile_module_model = $profile_module;
+    }
     
     /**
      * Display a listing of the resource.
@@ -34,9 +46,7 @@ class AdministrationModuleProfilePanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new ProfileHasModuleModel();
-
-        $model_response = $model->loadProfilesModulesRelationshipWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->profile_module_model->loadProfilesModulesRelationshipWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -125,9 +135,7 @@ class AdministrationModuleProfilePanelController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $model = new ProfileModel();
-
-        $model_response = $model->newProfile($request->name);
+        $model_response = $this->profile_model->newProfile($request->name);
 
         if($model_response["status"] === true && !$model_response["error"]){
 
@@ -160,9 +168,7 @@ class AdministrationModuleProfilePanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new ProfileHasModuleModel();
-
-        $model_response = $model->loadProfilesModulesRelationshipWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->profile_module_model->loadProfilesModulesRelationshipWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
             
@@ -201,9 +207,7 @@ class AdministrationModuleProfilePanelController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $model = new ProfileModel();
-
-        $model_response = $model->updateProfile((int) $id, $request->profile_name, $request->profile_modules_relationship);
+        $model_response = $this->profile_model->updateProfile((int) $id, $request->profile_name, $request->profile_modules_relationship);
 
         if($model_response["status"] && !$model_response["error"]){
 

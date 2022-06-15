@@ -7,25 +7,30 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 use Illuminate\Support\Facades\DB;
-// Models
-use App\Models\Auth\AuthenticationModel;
-use App\Models\ProfileAndModule\ProfileHasModuleModel;
-use App\Models\User\UserModel;
-// Form Requests
-use App\Http\Requests\Auth\Login\LoginRequest;
-// Events
-use App\Events\Auth\UserLoggedInEvent;
-// Log
 use Illuminate\Support\Facades\Log;
-// Jobs
+// Custom
+use App\Models\User\UserModel;
+use App\Http\Requests\Auth\Login\LoginRequest;
+use App\Events\Auth\UserLoggedInEvent;
 use App\Jobs\SendEmailJob;
 
 class LoginController extends Controller
 {
+
+    private UserModel $user_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\User\UserModel $user
+     */
+    public function __construct(UserModel $user){
+        $this->user_model = $user;
+    }
     
     /**
      * Method for login processing
-     * Exists 3 cases for valid credentials: user active, user inactive or user disabled
+     * Exists 3 cases for valid credentials: user active, user inactive or user disabled.
      * 
      * @param Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
@@ -99,9 +104,7 @@ class LoginController extends Controller
      */
     private function activateAccountBeforeLogin() : bool {
 
-        $model = new UserModel();
-
-        $response = $model->accountActivation();
+        $response = $this->user_model->accountActivation();
 
         if($response["status"] && !$response["error"]){
 
