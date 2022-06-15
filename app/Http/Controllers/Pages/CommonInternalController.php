@@ -6,11 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
-// Model da tabela de usuário
-use App\Models\User\UserModel;
-// Classes da lib JWT
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 class CommonInternalController extends Controller
 {

@@ -22,6 +22,18 @@ use App\Http\Requests\UserAccount\UpdatePasswordRequest;
 
 class AccountSectionController extends Controller
 {
+
+    private UserModel $user_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\User\UserModel $user
+     */
+    public function __construct(UserModel $user){
+        $this->user_model = $user;
+    }
+
     /**
      * Method for load user account data.
      * 
@@ -31,9 +43,7 @@ class AccountSectionController extends Controller
 
         if(request()->user_id == Auth::user()->id){
 
-            $model = new UserModel();
-
-            $response = $model->loadAllUserData((int) Auth::user()->id);
+            $response =  $this->user_model->loadAllUserData((int) Auth::user()->id);
 
             if($response["status"] && !$response["error"]){
 
