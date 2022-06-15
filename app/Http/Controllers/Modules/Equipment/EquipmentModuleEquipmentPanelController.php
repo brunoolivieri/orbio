@@ -9,14 +9,25 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-// Models
+// Custom
 use App\Models\Equipments\EquipmentsModel;
-// Form Request
 use App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest;
 
 class EquipmentModuleEquipmentPanelController extends Controller
 {
+
+    private EquipmentsModel $equipment_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Equipments\EquipmentsModel $equipment
+     */
+    public function __construct(EquipmentsModel $equipment){
+        $this->equipment_model = $equipment;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,10 +41,8 @@ class EquipmentModuleEquipmentPanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new EquipmentsModel();
             
-        $model_response = $model->loadEquipmentsWithPagination($limit, $actual_page, $where_value);
+        $model_response =  $this->equipment_model->loadEquipmentsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -154,10 +163,8 @@ class EquipmentModuleEquipmentPanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new EquipmentsModel();
             
-        $model_response = $model->loadEquipmentsWithPagination($limit, $actual_page, $where_value);
+        $model_response =  $this->equipment_model->loadEquipmentsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 

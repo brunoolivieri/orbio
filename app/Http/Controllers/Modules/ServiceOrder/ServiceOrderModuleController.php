@@ -8,23 +8,32 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-// Form Request
-use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
-use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
-// Models
+use Illuminate\Support\Facades\Log;
+// Custom
 use App\Models\Orders\ServiceOrdersModel;
 use App\Models\Orders\ServiceOrderHasUserModel;
 use App\Models\Orders\ServiceOrderHasFlightPlansModel;
 use App\Models\User\UserModel;
-// Log
-use Illuminate\Support\Facades\Log;
-// Events
+use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
+use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 use App\Events\Modules\Orders\OrderCreatedEvent;
 use App\Events\Modules\Orders\OrderUpdatedEvent;
 use App\Events\Modules\Orders\OrderDeletedEvent;
 
 class ServiceOrderModuleController extends Controller
 {
+
+    private ServiceOrdersModel $service_order_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Orders\ServiceOrdersModel $service_order
+     */
+    public function __construct(ServiceOrdersModel $service_order){
+        $this->service_order_model = $service_order;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -39,9 +48,7 @@ class ServiceOrderModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new ServiceOrdersModel();
-
-        $model_response = $model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->service_order_model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -307,9 +314,7 @@ class ServiceOrderModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new ServiceOrdersModel();
-
-        $model_response = $model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->service_order_model->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     

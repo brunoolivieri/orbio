@@ -5,20 +5,30 @@ namespace App\Http\Controllers\Modules\FlightPlan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Plans\FlightPlansModel;
-use App\Models\Incidents\IncidentsModel;
-use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
-// Form Requests
+use Illuminate\Support\Facades\Log;
+// Custom
+use App\Models\Plans\FlightPlansModel;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
-// Log
-use Illuminate\Support\Facades\Log;
+
 
 class FlightPlanModuleController extends Controller
 {
+
+    private FlightPlansModel $flight_plan_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Plans\FlightPlansModel $flight
+     */
+    public function __construct(FlightPlansModel $flight){
+        $this->flight_plan_model = $flight;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -33,9 +43,7 @@ class FlightPlanModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new FlightPlansModel();
-
-        $model_response = $model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->flight_plan_model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
@@ -230,9 +238,7 @@ class FlightPlanModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new FlightPlansModel();
-
-        $model_response = $model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->flight_plan_model->loadFlightPlansWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     

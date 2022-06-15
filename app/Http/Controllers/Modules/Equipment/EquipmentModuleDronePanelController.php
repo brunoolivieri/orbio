@@ -9,14 +9,25 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
-// Models
+// Custom
 use App\Models\Drones\DronesModel;
-// Form Request
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 
 class EquipmentModuleDronePanelController extends Controller
 {
+
+    private DronesModel $drone_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Drones\DronesModel $drone
+     */
+    public function __construct(DronesModel $drone){
+        $this->drone_model = $drone;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,10 +41,8 @@ class EquipmentModuleDronePanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new DronesModel();
             
-        $model_response = $model->loadDronesWithPagination($limit, $actual_page, $where_value);
+        $model_response =  $this->drone_model->loadDronesWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -153,10 +162,8 @@ class EquipmentModuleDronePanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new DronesModel();
             
-        $model_response = $model->loadDronesWithPagination($limit, $actual_page, $where_value);
+        $model_response =  $this->drone_model->loadDronesWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 

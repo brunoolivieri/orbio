@@ -9,14 +9,25 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
-// Models
+// Custom
 use App\Models\Batteries\BatteriesModel;
-// Form Request
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
 use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
 
 class EquipmentModuleBatteryPanelController extends Controller
 {
+
+    private BatteriesModel $batterie_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Batteries\BatteriesModel $battery
+     */
+    public function __construct(BatteriesModel $battery){
+        $this->batterie_model = $battery;
+    }
+
      /**
      * Display a listing of the resource.
      *
@@ -30,10 +41,8 @@ class EquipmentModuleBatteryPanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new BatteriesModel();
             
-        $model_response = $model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->batterie_model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
@@ -150,10 +159,8 @@ class EquipmentModuleBatteryPanelController extends Controller
         $limit = (int) $args[0];
         $where_value = $args[1];
         $actual_page = (int) $args[2];
-
-        $model = new BatteriesModel();
             
-        $model_response = $model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->batterie_model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 

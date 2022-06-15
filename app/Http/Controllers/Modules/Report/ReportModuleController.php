@@ -4,17 +4,29 @@ namespace App\Http\Controllers\Modules\Report;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Reports\ReportsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
-// Form Request
+use Illuminate\Support\Facades\Log;
+// Custom
+use App\Models\Reports\ReportsModel;
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
-// Log
-use Illuminate\Support\Facades\Log;
+
 
 class ReportModuleController extends Controller
 {
+
+    private ReportsModel $report_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Reports\ReportsModel $report
+     */
+    public function __construct(ReportsModel $report){
+        $this->report_model = $report;
+    }
+
     /**
      * Display a listing of the resource.
      * 
@@ -29,9 +41,7 @@ class ReportModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new ReportsModel();
-
-        $model_response = $model->loadAReportsWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->report_model->loadAReportsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
@@ -145,9 +155,7 @@ class ReportModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new ReportsModel();
-
-        $model_response = $model->loadAReportsWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->report_model->loadAReportsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     

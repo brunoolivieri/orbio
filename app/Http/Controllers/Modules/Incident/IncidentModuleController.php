@@ -4,17 +4,29 @@ namespace App\Http\Controllers\Modules\Incident;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Incidents\IncidentsModel;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
-// Form Requests
+use Illuminate\Support\Facades\Log;
+// Custom
+use App\Models\Incidents\IncidentsModel;
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
-// Log
-use Illuminate\Support\Facades\Log;
+
 
 class IncidentModuleController extends Controller
 {
+
+    private IncidentsModel $incident_model;
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Incidents\IncidentsModel $incident
+     */
+    public function __construct(IncidentsModel $incident){
+        $this->incident_model = $incident;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -29,9 +41,7 @@ class IncidentModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new IncidentsModel();
-
-        $model_response = $model->loadIncidentsWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->incident_model->loadIncidentsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
@@ -133,9 +143,7 @@ class IncidentModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        $model = new IncidentsModel();
-
-        $model_response = $model->loadIncidentsWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->incident_model->loadIncidentsWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
     
