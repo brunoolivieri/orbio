@@ -28,7 +28,6 @@ class AdministrationModuleUserPanelController extends Controller
      * Dependency injection.
      * 
      * @param App\Models\ProfileAndModule\ModuleModel $module
-     * @param App\Models\ProfileAndModule\ProfileModel $profile
      * @param App\Models\User\UserModel $user
      */
     public function __construct(UserModel $user){

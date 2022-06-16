@@ -160,7 +160,7 @@ class AdministrationModuleProfilePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
-    {
+    {dd("ok");
         Gate::authorize('administration_read');
         
         $args = explode(".", request()->args);

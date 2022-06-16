@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProfile extends Migration
+class CreateModulesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateProfile extends Migration
      */
     public function up()
     {
-        Schema::create('profiles', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id();
-            $table->string("nome");
-            $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_criacao")->useCurrent();
+            $table->string('nome');
             $table->softDeletes();
         });
     }
@@ -29,6 +27,6 @@ class CreateProfile extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('profiles');
+        Schema::dropIfExists('modules');
     }
 }

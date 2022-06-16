@@ -26,7 +26,7 @@ class ProfilePanelStoreRequest extends FormRequest
     {
 
         return [
-            'name' => 'bail|required|string|unique:profile,nome'
+            'name' => 'bail|required|string|unique:profiles,nome'
         ];
     }
 
