@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Log;
 // Custom Models
-use App\Models\ProfileAndModule\ProfileModel;
+use App\Models\Profiles\ProfileModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
 use App\Models\Pivot\ProfileHasModuleModel;
@@ -51,7 +51,7 @@ class UserModel extends Authenticatable
     * Relationship with profile table
     */
     function profile(){
-        return $this->belongsTo("App\Models\ProfileAndModule\ProfileModel", "id_perfil");
+        return $this->belongsTo("App\Models\Profiles\ProfileModel", "id_perfil");
     }
 
      /**

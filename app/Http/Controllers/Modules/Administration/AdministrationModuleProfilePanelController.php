@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Models\Pivot\ProfileHasModuleModel;
-use App\Models\ProfileAndModule\ProfileModel;
-use App\Models\ProfileAndModule\ModuleModel;
+use App\Models\Profiles\ProfileModel;
+use App\Models\Modules\ModuleModel;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
 

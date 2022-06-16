@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Models\User\UserModel;
-use App\Models\ProfileAndModule\ProfileModel;
+use App\Models\Profiles\ProfileModel;
 use  App\Models\Orders\ServiceOrderModel;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
@@ -27,7 +27,6 @@ class AdministrationModuleUserPanelController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\ProfileAndModule\ModuleModel $module
      * @param App\Models\User\UserModel $user
      */
     public function __construct(UserModel $user){

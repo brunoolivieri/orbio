@@ -17,7 +17,7 @@ class ProfileHasModuleModel extends Model
 
     function profile(){
 
-        $this->belongsTo("App\Models\ProfileAndModule\ProfileModel", "id_perfil");
+        $this->belongsTo("App\Models\Profiles\ProfileModel", "id_perfil");
         
     }
     
