@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 // Custom
-use App\Models\Reports\ReportsModel;
+use App\Models\Reports\ReportModel;
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 
@@ -16,14 +16,14 @@ use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 class ReportModuleController extends Controller
 {
 
-    private ReportsModel $report_model;
+    private ReportModel $report_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Reports\ReportsModel $report
+     * @param App\Models\Reports\ReportModel $report
      */
-    public function __construct(ReportsModel $report){
+    public function __construct(ReportModel $report){
         $this->report_model = $report;
     }
 
@@ -119,7 +119,7 @@ class ReportModuleController extends Controller
         
         try{
 
-            ReportsModel::insert([
+            ReportModel::insert([
                 "dh_inicio_voo" => $request->flight_initial_date,
                 "dh_fim_voo" => $request->flight_final_date,
                 "log_voo" => $request->flight_log_file,
@@ -196,7 +196,7 @@ class ReportModuleController extends Controller
         
         try{
 
-            ReportsModel::where('id', $id)->update([
+            ReportModel::where('id', $id)->update([
                 "dh_inicio_voo" => $request->flight_initial_date,
                 "dh_fim_voo" => $request->flight_final_date,
                 "log_voo" => $request->flight_log_file,
@@ -229,7 +229,7 @@ class ReportModuleController extends Controller
         
         try{
 
-            ReportsModel::where('id', $id)->delete();
+            ReportModel::where('id', $id)->delete();
 
             Log::channel('reports_action')->info("[Método: Destroy][Controlador: ReportModuleController] - Relatório removido com sucesso - ID do relatório: ".$id);
 

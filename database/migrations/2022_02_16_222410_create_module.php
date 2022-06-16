@@ -13,7 +13,7 @@ class CreateModule extends Migration
      */
     public function up()
     {
-        Schema::create('module', function (Blueprint $table) {
+        Schema::create('modules', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
             $table->softDeletes();
@@ -27,6 +27,6 @@ class CreateModule extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('module');
+        Schema::dropIfExists('modules');
     }
 }

@@ -10,21 +10,21 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\Equipments\EquipmentsModel;
+use App\Models\Equipments\EquipmentModel;
 use App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest;
 
 class EquipmentModuleEquipmentPanelController extends Controller
 {
 
-    private EquipmentsModel $equipment_model;
+    private EquipmentModel $equipment_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Equipments\EquipmentsModel $equipment
+     * @param App\Models\Equipments\EquipmentModel $equipment
      */
-    public function __construct(EquipmentsModel $equipment){
+    public function __construct(EquipmentModel $equipment){
         $this->equipment_model = $equipment;
     }
 
@@ -129,7 +129,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
                 $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/equipments/";
 
-                EquipmentsModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
+                EquipmentModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]), "image" => $filename]);
 
                 // Image is stored just if does not already exists
                 if (!Storage::disk('public')->exists($storage_folder.$filename)) {
@@ -206,7 +206,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
             DB::transaction(function () use ($request, $id) {
 
-                $equipment = EquipmentsModel::find($id);
+                $equipment = EquipmentModel::find($id);
 
                 if(!empty($request->image)){
 
@@ -257,7 +257,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
             DB::transaction(function () use ($id) {
 
-                $equipment = EquipmentsModel::find($id);
+                $equipment = EquipmentModel::find($id);
 
                 Storage::disk('public')->delete("images/equipments/".$equipment->image);
 

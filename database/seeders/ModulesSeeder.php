@@ -24,7 +24,7 @@ class ModulesSeeder extends Seeder
             ["nome" => "Equipamentos"]
         ];
 
-        DB::table("module")->insert($data);
+        DB::table("modules")->insert($data);
 
     }
 }

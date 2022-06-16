@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Models
-use App\Models\ProfileAndModule\ProfileHasModuleModel;
+// Custom
+use App\Models\Pivot\ProfileHasModuleModel;
 use  App\Models\User\UserModel;
 
 class ProfileModel extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "profile";
+    protected $table = "profiles";
     const CREATED_AT = "dh_criacao";
     const UPDATED_AT = "dh_atualizacao";
     protected $guarded = [];
@@ -34,7 +34,7 @@ class ProfileModel extends Model
     */
     function module_privileges(){
 
-        return $this->hasMany("App\Models\ProfileAndModule\ProfileHasModuleModel", "id_perfil");
+        return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "id_perfil");
 
     }
 

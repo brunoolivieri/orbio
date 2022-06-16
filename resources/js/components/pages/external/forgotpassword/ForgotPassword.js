@@ -147,7 +147,7 @@ export function ForgotPassword() {
 
         setOperationStatus({ type: "loading", title: null, message: null, image: null });
 
-        AxiosApi.post("/api/enviar-codigo", {
+        AxiosApi.post("/api/auth/password-token", {
             email: data.get("email")
         })
             .then(function () {
@@ -169,7 +169,7 @@ export function ForgotPassword() {
 
         setOperationStatus({ type: "loading", title: null, message: null, image: null });
 
-        AxiosApi.post("/api/alterar-senha", {
+        AxiosApi.post("/api/auth/change-password", {
             token: data.get("code"),
             new_password: data.get("new_password"),
             new_password_confirmation: data.get("new_password")
@@ -428,7 +428,7 @@ export function ForgotPassword() {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link to="/acessar" className={classes.hiperlink}>
+                                <Link to="/login" className={classes.hiperlink}>
                                     Voltar para a página de acesso
                                 </Link>
                             </Grid>

@@ -1,16 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-// Controladores de autenticação
+// \Auth Controllers
 use App\Http\Controllers\Auth\LoginController; 
-use App\Http\Controllers\Auth\RegistrationController; 
 use App\Http\Controllers\Auth\ForgotPasswordController; 
-// Controlador da entrada para o sistema interno
-use App\Http\Controllers\Pages\CommonInternalController; 
-// Controlador da seção interna "minha conta"
-use App\Http\Controllers\Pages\AccountSectionController;
-// Controladores dos módulos
+use App\Http\Controllers\Auth\LogoutController;
+// \Internal Controller
+use App\Http\Controllers\Internal\MainInternalController; 
+use App\Http\Controllers\Internal\MyAccountController; 
+use App\Http\Controllers\Internal\SupportController; 
+// \Modules
 use App\Http\Controllers\Modules\Administration\AdministrationModuleUserPanelController;
 use App\Http\Controllers\Modules\Administration\AdministrationModuleProfilePanelController;
 use App\Http\Controllers\Modules\Report\ReportModuleController;
@@ -21,34 +20,31 @@ use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteryPanelController
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleDronePanelController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleEquipmentPanelController;
 
-// Views externas
-Route::get('/', function(){ return redirect("/acessar"); }); 
-Route::view('/acessar', "react_root"); 
-Route::view('/recuperarsenha', "react_root"); 
+// External Views
+Route::get('/', function(){ return redirect("/login"); }); 
+Route::view('/login', "react_root"); 
+Route::view('/forgot-password', "react_root"); 
 
-// Rotas internas, do mapa e de logout 
-Route::get('/sistema', [CommonInternalController::class, "index"])->middleware(["session.auth"]); 
-Route::get('/sistema/{internalpage?}', [CommonInternalController::class, "refreshInternalSystem"])->where(["internalpage" => "^(?!sair|mapa).*$"]); 
-Route::get('/sistema/sair', [CommonInternalController::class, "logout"]); 
-Route::view('/sistema/mapa', "map")->middleware(["session.auth"]); 
-
-// ===================================================================== ROTAS "/API/" ===================================================================== //
-
-// Operações de autenticação básicas
-Route::post('/api/acessar', [LoginController::class, "index"]); 
-Route::post('/api/enviar-codigo', [ForgotPasswordController::class, "generateAndSendPasswordChangeToken"]); 
-Route::post('/api/alterar-senha', [ForgotPasswordController::class, "passwordChangeProcessing"]); 
-Route::post('/api/get-auth-data', [CommonInternalController::class, "getUserAuthenticatedData"])->middleware(["session.auth"]); 
+// Auth operations
+Route::post('/api/auth/login', [LoginController::class, "index"]); 
+Route::post('/api/auth/password-token', [ForgotPasswordController::class, "generateAndSendPasswordChangeToken"]); 
+Route::post('/api/auth/change-password', [ForgotPasswordController::class, "passwordChangeProcessing"]); 
 
 Route::middleware(["session.auth"])->group(function(){
-    // Operações da seção "minha conta"
-    Route::get('/api/user-account-data', [AccountSectionController::class, "loadAccountData"]);
-    Route::patch('/api/update-basic-data/{id}', [AccountSectionController::class, "basicDataUpdate"]);
-    Route::patch('/api/update-documents-data/{id}', [AccountSectionController::class, "documentsUpdate"]);
-    Route::patch('/api/update-address-data/{id}', [AccountSectionController::class, "addressUpdate"]);
-    Route::post("/api/desactivate-account/{id}", [AccountSectionController::class, "accountDesactivation"]);
-    Route::post("/api/update-password/{id}", [AccountSectionController::class, "passwordUpdate"]);
-    // Operações dos módulos
+    // Internal simple operations
+    Route::get('/internal', [MainInternalController::class, "index"]); 
+    Route::get('/internal/{internalpage?}', [MainInternalController::class, "refreshInternalSystem"])->where(["internalpage" => "^(?!auth|map).*$"]); 
+    Route::get('/api/auth/logout', [LogoutController::class, "logout"]); 
+    Route::view('/internal/map', "map"); 
+    Route::post('/api/get-auth-data', [MainInternalController::class, "getUserAuthenticatedData"]); 
+    // Internal "MyAccount" operations
+    Route::get('/api/user-account-data', [MyAccountController::class, "loadAccountData"]);
+    Route::patch('/api/update-basic-data/{id}', [MyAccountController::class, "basicDataUpdate"]);
+    Route::patch('/api/update-documents-data/{id}', [MyAccountController::class, "documentsUpdate"]);
+    Route::patch('/api/update-address-data/{id}', [MyAccountController::class, "addressUpdate"]);
+    Route::post("/api/desactivate-account/{id}", [MyAccountController::class, "accountDesactivation"]);
+    Route::post("/api/update-password/{id}", [MyAccountController::class, "passwordUpdate"]);
+    // Internal Modules operations
     Route::resource("/api/admin-module-user", AdministrationModuleUserPanelController::class);
     Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class);
     Route::resource("/api/reports-module", ReportModuleController::class);

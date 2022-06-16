@@ -100,7 +100,7 @@ export const Navigator = React.memo((props) => {
             {children.map(({ id: childId, icon, active, access }) => (
               access &&
               <ListItem key={childId}>
-                <Link to={childId == "Dashboard" ? "/sistema" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} style={{ width: '100%', display: 'block' }}>
+                <Link to={childId == "Dashboard" ? "/internal" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} style={{ width: '100%', display: 'block' }}>
                   <ListItemButton selected={active} sx={{ ...item }}>
                     <ListItemIcon sx={{ color: '#00713A' }}>{icon}</ListItemIcon>
                     <ListItemText sx={{ color: '#637381' }}>{childId}</ListItemText>

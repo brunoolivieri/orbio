@@ -8,7 +8,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 // Custom
-use App\Models\Incidents\IncidentsModel;
+use App\Models\Incidents\IncidentModel;
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
 
@@ -16,14 +16,14 @@ use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
 class IncidentModuleController extends Controller
 {
 
-    private IncidentsModel $incident_model;
+    private IncidentModel $incident_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Incidents\IncidentsModel $incident
+     * @param App\Models\Incidents\IncidentModel $incident
      */
-    public function __construct(IncidentsModel $incident){
+    public function __construct(IncidentModel $incident){
         $this->incident_model = $incident;
     }
 
@@ -109,7 +109,7 @@ class IncidentModuleController extends Controller
 
         try{
 
-            IncidentsModel::create([
+            IncidentModel::create([
                 "tipo_incidente" => $request->incident_type,
                 "descricao" => $request->description,
                 "dh_incidente" => $request->incident_date
@@ -183,7 +183,7 @@ class IncidentModuleController extends Controller
 
         try{
 
-            IncidentsModel::where('id', $id)->update([
+            IncidentModel::where('id', $id)->update([
                 "tipo_incidente" => $request->incident_type,
                 "descricao" => $request->description,
                 "dh_incidente" => $request->incident_date
@@ -214,7 +214,7 @@ class IncidentModuleController extends Controller
         
         try{
 
-            IncidentsModel::where('id', $id)->delete();
+            IncidentModel::where('id', $id)->delete();
 
             Log::channel('incidents_action')->info("[Método: Destroy][Controlador: IncidentModuleController] - Incidente removido com sucesso - ID do incidente: ".$id);
 

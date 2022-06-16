@@ -24,9 +24,9 @@ export function ReactRoutes() {
 
         <BrowserRouter>
             <Routes>
-                <Route path="/acessar" element={<Login />} />
-                <Route path="/recuperarsenha" element={<ForgotPassword />} />
-                <Route exact path="/sistema/*" element={<Layout />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route exact path="/internal/*" element={<Layout />} />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>

@@ -21,7 +21,7 @@ class SessionAuthMiddleware
         if (!Auth::check()) {
 
             // Interromper requisição e deslogar
-            return redirect("/sistema/sair");
+            return redirect("/api/auth/logout");
 
         }
 

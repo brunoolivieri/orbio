@@ -172,7 +172,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                 handleOpenSnackbar("Conta desativada com sucesso!", "success");
 
                 setTimeout(() => {
-                    window.location.href = "/sistema/sair";
+                    window.location.href = "/api/auth/logout";
                 }, [2000])
 
             })

@@ -10,21 +10,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\Drones\DronesModel;
+use App\Models\Drones\DroneModel;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 
 class EquipmentModuleDronePanelController extends Controller
 {
 
-    private DronesModel $drone_model;
+    private DroneModel $drone_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Drones\DronesModel $drone
+     * @param App\Models\Drones\DroneModel $drone
      */
-    public function __construct(DronesModel $drone){
+    public function __construct(DroneModel $drone){
         $this->drone_model = $drone;
     }
 
@@ -128,7 +128,7 @@ class EquipmentModuleDronePanelController extends Controller
                 $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/drones/";
 
-                DronesModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
+                DroneModel::create([...$request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), "image" => $filename]);
 
                 // Image is stored just if does not already exists
                 if (!Storage::disk('public')->exists($storage_folder.$filename)) {
@@ -206,7 +206,7 @@ class EquipmentModuleDronePanelController extends Controller
 
             DB::transaction(function () use ($request, $id) {
 
-                $drone = DronesModel::find($id);
+                $drone = DroneModel::find($id);
 
                 if(!empty($request->image)){
 
@@ -257,7 +257,7 @@ class EquipmentModuleDronePanelController extends Controller
 
             DB::transaction(function () use ($id) {
 
-                $drone = DronesModel::find($id);
+                $drone = DroneModel::find($id);
 
                 Storage::disk('public')->delete("images/drones/".$drone->image);
 

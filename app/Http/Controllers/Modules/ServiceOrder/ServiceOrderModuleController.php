@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 // Custom
-use App\Models\Orders\ServiceOrdersModel;
-use App\Models\Orders\ServiceOrderHasUserModel;
-use App\Models\Orders\ServiceOrderHasFlightPlansModel;
+use App\Models\Orders\ServiceOrderModel;
+use App\Models\Pivot\ServiceOrderHasUserModel;
+use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
 use App\Models\User\UserModel;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
@@ -23,14 +23,14 @@ use App\Events\Modules\Orders\OrderDeletedEvent;
 class ServiceOrderModuleController extends Controller
 {
 
-    private ServiceOrdersModel $service_order_model;
+    private ServiceOrderModel $service_order_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Orders\ServiceOrdersModel $service_order
+     * @param App\Models\Orders\ServiceOrderModel $service_order
      */
-    public function __construct(ServiceOrdersModel $service_order){
+    public function __construct(ServiceOrderModel $service_order){
         $this->service_order_model = $service_order;
     }
 
@@ -95,11 +95,11 @@ class ServiceOrderModuleController extends Controller
             // ====== Formatação dos dados dos planos de voo vinculados ====== //
 
             // Recuperação dos ids dos planos de voo relacionados à ordem de serviço
-            $service_order_related_flight_plans_ids = ServiceOrderHasFlightPlansModel::where("id_ordem_servico", $record->id)->get();
+            $service_order_related_flight_plans_ids = ServiceOrderHasFlightPlanModel::where("id_ordem_servico", $record->id)->get();
             $arr_flight_plans = [];
             for($count = 0; $count < count($service_order_related_flight_plans_ids); $count++){
 
-                 // Os dados de cada plano de voo são recuperado pela função de relacionamento "flight_plans()" que existe em "ServiceOrderHasFlightPlansModel"
+                 // Os dados de cada plano de voo são recuperado pela função de relacionamento "flight_plans()" que existe em "ServiceOrderHasFlightPlanModel"
                 $arr_flight_plans[$count]["id"] = $service_order_related_flight_plans_ids[$count]->flight_plans->id;
                 $arr_flight_plans[$count]["arquivo"] = $service_order_related_flight_plans_ids[$count]->flight_plans->arquivo;
                 $arr_flight_plans[$count]["status"] = $service_order_related_flight_plans_ids[$count]->flight_plans->status;
@@ -231,7 +231,7 @@ class ServiceOrderModuleController extends Controller
                 $pilot = UserModel::findOrFail($request->pilot_id);
                 $client = UserModel::findOrFail($request->client_id);
 
-                $new_service_order = ServiceOrdersModel::create(
+                $new_service_order = ServiceOrderModel::create(
                     [
                         "dh_inicio" => $request->initial_date,
                         "dh_fim" => $request->final_date,
@@ -255,7 +255,7 @@ class ServiceOrderModuleController extends Controller
                 foreach($arr_plans_ids as $i => $value){
                     foreach($value as $j => $plan_id){
 
-                        ServiceOrderHasFlightPlansModel::insert([
+                        ServiceOrderHasFlightPlanModel::insert([
                             "id_ordem_servico" => $new_service_order->id,
                             "id_plano_voo" => $plan_id
                         ]);
@@ -361,7 +361,7 @@ class ServiceOrderModuleController extends Controller
             $client_data = UserModel::find($request->client_id);
 
             // Update da ordem de serviço
-            $order = ServiceOrdersModel::where('id', $id)->update(
+            $order = ServiceOrderModel::where('id', $id)->update(
                 [
                     "dh_inicio" => $request->initial_date,
                     "dh_fim" => $request->final_date,
@@ -383,13 +383,13 @@ class ServiceOrderModuleController extends Controller
             ]);
 
              // Deleta as relações atuais com os planos de vôo - é mais fácil desse modo
-             ServiceOrderHasFlightPlansModel::where("id_ordem_servico", $id)->delete();
+             ServiceOrderHasFlightPlanModel::where("id_ordem_servico", $id)->delete();
             // Cria novamente as relações com cada plano de vôo envolvido na ordem de serviço
             $arr_plans_ids = json_decode($request->fligth_plans_ids, true);
             foreach($arr_plans_ids as $i => $value){
                 foreach($value as $j => $plan_id){
 
-                    ServiceOrderHasFlightPlansModel::insert([
+                    ServiceOrderHasFlightPlanModel::insert([
                         "id_ordem_servico" => (int) $id,
                         "id_plano_voo" => (int) $plan_id
                     ]);
@@ -430,7 +430,7 @@ class ServiceOrderModuleController extends Controller
 
             DB::BeginTransaction();
 
-            $service_order = ServiceOrdersModel::find($id);
+            $service_order = ServiceOrderModel::find($id);
 
             // Desvinculation with flight_plans through service_order_has_flight_plan table
             if(!empty($service_order->service_order_has_flight_plan)){ 

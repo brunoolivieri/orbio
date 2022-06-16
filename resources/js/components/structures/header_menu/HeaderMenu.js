@@ -38,7 +38,7 @@ export function HeaderMenu() {
           'aria-labelledby': 'basic-button',
         }}
       >
-        <MenuItem onClick={handleClose}><a href="/sistema/sair">Terminar sessão</a></MenuItem>
+        <MenuItem onClick={handleClose}><a href="/api/auth/logout">Terminar sessão</a></MenuItem>
       </Menu>
     </div>
   );

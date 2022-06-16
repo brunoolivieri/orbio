@@ -9,6 +9,6 @@ class ModuleModel extends Model
 {
     use HasFactory;
 
-    public $table = "module";
+    public $table = "modules";
     
 }

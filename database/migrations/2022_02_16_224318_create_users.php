@@ -15,7 +15,7 @@ class CreateUsers extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_perfil')->constrained('profile');
+            $table->foreignId('id_perfil')->constrained('profiles');
             $table->foreignId('id_dados_complementares')->nullable(true)->constrained('user_complementary_data')->onDelete('cascade');
             $table->string("nome");
             $table->string("email");

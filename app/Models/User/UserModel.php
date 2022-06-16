@@ -10,16 +10,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 // Custom Models
+use App\Models\ProfileAndModule\ProfileModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
-use App\Models\ProfileAndModule\ProfileHasModuleModel;
-use App\Models\ProfileAndModule\ProfileModel;
-// Custom Emails
+use App\Models\Pivot\ProfileHasModuleModel;
 use App\Mail\User\SendAccessDataToCreatedUser;
-// Log
-use Illuminate\Support\Facades\Log;
-// Factory
 use Database\Factories\UserFactory;
 
 class UserModel extends Authenticatable
@@ -133,8 +130,8 @@ class UserModel extends Authenticatable
         try{
 
             $data = DB::table('users')
-            ->join('profile', 'users.id_perfil', '=', 'profile.id')
-            ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profile.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
+            ->join('profiles', 'users.id_perfil', '=', 'profiles.id')
+            ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profiles.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
             ->where("users.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\ProfileAndModule\ProfileHasModuleModel;
+use App\Models\Pivot\ProfileHasModuleModel;
 use App\Models\ProfileAndModule\ProfileModel;
 use App\Models\ProfileAndModule\ModuleModel;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
@@ -23,7 +23,7 @@ class AdministrationModuleProfilePanelController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\ProfileAndModule\ProfileModel $profile
+     * @param App\Models\Pivot\ProfileModel $profile
      * @param App\Models\User\UserModel $user
      */
     public function __construct(ProfileModel $profile, ProfileHasModuleModel $profile_module){

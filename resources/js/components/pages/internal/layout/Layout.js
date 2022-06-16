@@ -46,7 +46,7 @@ export const Layout = React.memo(() => {
         setOperationStatus({ type: "error", title: "Acesso não autorizado!", message: "Houve um erro na sua autenticação. Tente novamente ou contate o suporte.", image: ErrorImage });
 
         setTimeout(() => {
-          window.document.href = "/sistema/sair";
+          window.document.href = "/api/auth/logout";
         }, [3000]);
 
       });
@@ -104,12 +104,12 @@ export const Layout = React.memo(() => {
 
           </Box>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Header onDrawerToggle={handleDrawerToggle} page = {page} />
+            <Header onDrawerToggle={handleDrawerToggle} page={page} />
             <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
 
               {/* Conteúdo variável de cada página */}
               {AuthData.status &&
-                <InternalRoutes setPage = {setPage} />
+                <InternalRoutes setPage={setPage} />
               }
 
             </Box>

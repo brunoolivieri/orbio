@@ -96,7 +96,7 @@ export function Login() {
     */
     function requestServerOperation(data) {
 
-        AxiosApi.post("/api/acessar", {
+        AxiosApi.post("/api/auth/login", {
             email: data.get("login_email_input"),
             password: data.get("login_password_input")
         })
@@ -121,7 +121,7 @@ export function Login() {
         setDisplayAlert({ display: true, type: "success", message: response_data.message });
 
         setTimeout(() => {
-            window.location.href = "/sistema";
+            window.location.href = "/internal";
         }, [1000])
 
     }
@@ -252,7 +252,7 @@ export function Login() {
                             </Button>
                             <Grid container sx={{ mb: 2 }}>
                                 <Grid item xs >
-                                    <Link to="/recuperarsenha" className={classes.hiperlink}>
+                                    <Link to="/forgot-password" className={classes.hiperlink}>
                                         Esqueceu a senha?
                                     </Link>
                                 </Grid>

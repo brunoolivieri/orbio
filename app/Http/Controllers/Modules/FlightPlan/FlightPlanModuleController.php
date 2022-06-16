@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 // Custom
-use App\Models\Plans\FlightPlansModel;
+use App\Models\FlightPlans\FlightPlanModel;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 
@@ -18,15 +18,15 @@ use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 class FlightPlanModuleController extends Controller
 {
 
-    private FlightPlansModel $flight_plan_model;
+    private FlightPlanModel $flight_plan_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Plans\FlightPlansModel $flight
+     * @param App\Models\FlightPlans\FlightPlanModel $flight_plan
      */
-    public function __construct(FlightPlansModel $flight){
-        $this->flight_plan_model = $flight;
+    public function __construct(FlightPlanModel $flight_plan){
+        $this->flight_plan_model = $flight_plan;
     }
 
     /**
@@ -89,7 +89,7 @@ class FlightPlanModuleController extends Controller
                 "plan_id" => $record->id,
                 "report_id" => $record->id_relatorio,
                 "incident_id" => $record->id_incidente,
-                "plan_file" => $record->arquivo,
+                "file" => $record->arquivo,
                 "plan_description" => $record->descricao,
                 "status" => $record->status,
                 "created_at" => $created_at_formated,
@@ -187,7 +187,7 @@ class FlightPlanModuleController extends Controller
             $file_name = $request->flight_plan->getClientOriginalName();
             $storage_folder = "public/flight_plans";
 
-            FlightPlansModel::create([
+            FlightPlanModel::create([
                 "id_relatorio" => null,
                 "id_incidente" => null,
                 "arquivo" => $file_name,
@@ -279,7 +279,7 @@ class FlightPlanModuleController extends Controller
 
         try{
 
-            FlightPlansModel::where('id', $id)->update([
+            FlightPlanModel::where('id', $id)->update([
                 "id_relatorio" => $request->report_id == 0 ? null : $request->report_id,
                 "id_incidente" => $request->incident_id == 0 ? null : $request->incident_id,
                 "descricao" => $request->description,
@@ -313,7 +313,7 @@ class FlightPlanModuleController extends Controller
 
             DB::BeginTransaction();
 
-            $flight_plan = FlightPlansModel::find($id);
+            $flight_plan = FlightPlanModel::find($id);
 
             // Desvinculation with incidents table
             if(!empty($flight_plan->incidents)){ 

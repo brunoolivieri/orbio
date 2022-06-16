@@ -10,21 +10,21 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\Batteries\BatteriesModel;
+use App\Models\Batteries\BatteryModel;
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
 use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
 
 class EquipmentModuleBatteryPanelController extends Controller
 {
 
-    private BatteriesModel $batterie_model;
+    private BatteryModel $batterie_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Batteries\BatteriesModel $battery
+     * @param App\Models\Batteries\BatteryModel $battery
      */
-    public function __construct(BatteriesModel $battery){
+    public function __construct(BatteryModel $battery){
         $this->batterie_model = $battery;
     }
 
@@ -125,7 +125,7 @@ class EquipmentModuleBatteryPanelController extends Controller
                 $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/batteries/";
 
-                BatteriesModel::create([...$request->only(["name", "manufacturer", "model", "serial_number", "last_charge"]), "image" => $filename]);
+                BatteryModel::create([...$request->only(["name", "manufacturer", "model", "serial_number", "last_charge"]), "image" => $filename]);
 
                 // Image is stored just if does not already exists
                 if (!Storage::disk('public')->exists($storage_folder.$filename)) {
@@ -202,7 +202,7 @@ class EquipmentModuleBatteryPanelController extends Controller
 
             DB::transaction(function () use ($request, $id) {
 
-                $battery = BatteriesModel::find($id);
+                $battery = BatteryModel::find($id);
 
                 if(!empty($request->image)){
 
@@ -253,7 +253,7 @@ class EquipmentModuleBatteryPanelController extends Controller
 
             DB::transaction(function () use ($id) {
 
-                $battery = BatteriesModel::find($id);
+                $battery = BatteryModel::find($id);
 
                 Storage::disk('public')->delete("images/batteries/".$battery->image);
 

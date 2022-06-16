@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Models
+// Custom
 use App\Models\User\UserModel;
 
 class UserComplementaryDataModel extends Model

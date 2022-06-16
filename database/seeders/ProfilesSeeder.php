@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-
 use Illuminate\Support\Facades\DB;
 
 class ProfilesSeeder extends Seeder
@@ -25,7 +24,7 @@ class ProfilesSeeder extends Seeder
         ];
 
 
-        DB::table("profile")->insert($data);
+        DB::table("profiles")->insert($data);
 
     }
 }

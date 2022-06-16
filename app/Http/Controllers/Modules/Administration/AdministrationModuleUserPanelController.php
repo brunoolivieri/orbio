@@ -11,10 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\Orders\ServiceOrderHasUserModel;
+use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Models\User\UserModel;
 use App\Models\ProfileAndModule\ProfileModel;
-use  App\Models\Orders\ServiceOrdersModel;
+use  App\Models\Orders\ServiceOrderModel;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Events\Modules\Admin\UserCreatedEvent;
@@ -309,21 +309,21 @@ class AdministrationModuleUserPanelController extends Controller
                     // If user is a pilot and his name is the same of the pilot of the actual service order
                     if($user->id_perfil == 3 && ($record->service_order->nome_piloto === $user->nome)){
 
-                        ServiceOrdersModel::where("id", $record->id_ordem_servico)
+                        ServiceOrderModel::where("id", $record->id_ordem_servico)
                         ->where("nome_piloto", $user->nome)
                         ->update(["nome_piloto" => null]);
                     
                     // If user is a client and his name is the same of the client of the actual service order
                     }else if($user->id_perfil == 4 && ($record->service_order->nome_cliente === $user->nome)){
 
-                        ServiceOrdersModel::where("id", $record->id_ordem_servico)
+                        ServiceOrderModel::where("id", $record->id_ordem_servico)
                         ->where("nome_cliente", $user->nome)
                         ->update(["nome_cliente" => null]);
                     
                     // If the name of the user is the same of the creator of the actual service order
                     }else if(($record->service_order->nome_criador === $user->nome)){
 
-                        ServiceOrdersModel::where("id", $record->id_ordem_servico)
+                        ServiceOrderModel::where("id", $record->id_ordem_servico)
                         ->where("nome_criador", $user->nome)
                         ->update(["nome_criador" => null]);
 
