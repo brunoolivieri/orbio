@@ -87,9 +87,8 @@ class AdministrationModuleProfilePanelController extends Controller
         $arr_with_formated_records = [];
         $modules_count = ModuleModel::all()->count();
 
-        $row = 0;
         $relationship_of_current_profile_with_modules = [];
-        $profile_row_counter = 0;
+        $profile_counter = 0;
 
         // Cada um tem ou não os privilégios de "ler" e "escrever" em relação a cada um dos módulos
         // Na tabela do banco de dados, cada perfil aparece $modules_count vezes, porque cada linha é a relação do perfil com 1 dos módulos
@@ -97,7 +96,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             // Esse array recebe os dados básicos do perfil atualmente percorrido
             // Se hipoteticamente esse fosse o primeiro loop, esses dados seriam do primeiro perfil, e não mudariam nos próximos $modules_count loops 
-            $arr_with_formated_records[$profile_row_counter] = ["profile_id" => $record->id_perfil, "profile_name" =>  $record->nome_perfil, "modules" => array()]; 
+            $arr_with_formated_records[$profile_counter] = ["profile_id" => $record->id_perfil, "profile_name" =>  $record->nome_perfil, "modules" => array()]; 
 
             // Agora são recuperados os dados do relacionamento do perfil atual com o módulo atual, que é alterado a cada loop
             $module_name = explode(" ", $record->nome)[0];
@@ -108,9 +107,9 @@ class AdministrationModuleProfilePanelController extends Controller
 
                 // Foram agrupados todos os relacionamento do perfil atual com os módulos existentes na variável $relationship_of_current_profile_with_modules
                 // Agora esses valores são persistidos em uma posição da matriz final
-                $arr_with_formated_records[$profile_row_counter]["modules"] = $relationship_of_current_profile_with_modules;
+                $arr_with_formated_records[$profile_counter]["modules"] = $relationship_of_current_profile_with_modules;
 
-                $profile_row_counter += 1;
+                $profile_counter += 1;
 
             }
             
