@@ -18,10 +18,12 @@ use  App\Models\Orders\ServiceOrderModel;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Events\Modules\Admin\UserCreatedEvent;
+use App\Services\FormatDataService;
 
 class AdministrationModuleUserPanelController extends Controller
 {
 
+    private FormatDataService $format_data_service;
     private UserModel $user_model;
 
     /**
@@ -29,7 +31,8 @@ class AdministrationModuleUserPanelController extends Controller
      * 
      * @param App\Models\User\UserModel $user
      */
-    public function __construct(UserModel $user){
+    public function __construct(FormatDataService $service, UserModel $user){
+        $this->format_data_service = $service;
         $this->user_model = $user;
     }
     

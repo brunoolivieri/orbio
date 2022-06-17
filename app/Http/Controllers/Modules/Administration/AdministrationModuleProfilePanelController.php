@@ -14,19 +14,23 @@ use App\Models\Profiles\ProfileModel;
 use App\Models\Modules\ModuleModel;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
+use App\Services\FormatDataService;
 
 class AdministrationModuleProfilePanelController extends Controller
 {
+    private FormatDataService $format_data_service;
     private ProfileModel $profile_model;
     private ProfileHasModuleModel $profile_module_model;
 
     /**
      * Dependency injection.
      * 
+     * @param App\Services\FormatDataService $service
      * @param App\Models\Pivot\ProfileModel $profile
      * @param App\Models\User\UserModel $user
      */
-    public function __construct(ProfileModel $profile, ProfileHasModuleModel $profile_module){
+    public function __construct(FormatDataService $service, ProfileModel $profile, ProfileHasModuleModel $profile_module){
+        $this->format_data_service = $service;
         $this->profile_model = $profile;
         $this->profile_module_model = $profile_module;
     }
@@ -52,7 +56,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->profilePanelDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -72,56 +76,6 @@ class AdministrationModuleProfilePanelController extends Controller
 
         } 
         
-    }
-
-    /**
-     * Method for organize data for the frontend table.
-     * The relationship of each profile with the modules is grouped in one row.
-     *
-     * @param Illuminate\Pagination\LengthAwarePaginator $data
-     * @return array
-     */
-    private function formatDataForTable(LengthAwarePaginator $data) : array 
-    {
-
-        $arr_with_formated_records = [];
-        $modules_count = ModuleModel::all()->count();
-
-        $relationship_of_current_profile_with_modules = [];
-        $profile_counter = 0;
-
-        // Cada um tem ou não os privilégios de "ler" e "escrever" em relação a cada um dos módulos
-        // Na tabela do banco de dados, cada perfil aparece $modules_count vezes, porque cada linha é a relação do perfil com 1 dos módulos
-        foreach($data->items() as $row => $record){
-
-            // Esse array recebe os dados básicos do perfil atualmente percorrido
-            // Se hipoteticamente esse fosse o primeiro loop, esses dados seriam do primeiro perfil, e não mudariam nos próximos $modules_count loops 
-            $arr_with_formated_records[$profile_counter] = ["profile_id" => $record->id_perfil, "profile_name" =>  $record->nome_perfil, "modules" => array()]; 
-
-            // Agora são recuperados os dados do relacionamento do perfil atual com o módulo atual, que é alterado a cada loop
-            $module_name = explode(" ", $record->nome)[0];
-            $relationship_of_current_profile_with_modules[$record->id_modulo] = ["module_name" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
-
-            // Se o id do módulo atual for $modules_count, esse é o último módulo
-            if($record->id_modulo == $modules_count){
-
-                // Foram agrupados todos os relacionamento do perfil atual com os módulos existentes na variável $relationship_of_current_profile_with_modules
-                // Agora esses valores são persistidos em uma posição da matriz final
-                $arr_with_formated_records[$profile_counter]["modules"] = $relationship_of_current_profile_with_modules;
-
-                $profile_counter += 1;
-
-            }
-            
-        }
-
-        $return_array["records"] = $arr_with_formated_records;
-        $return_array["total_records_founded"] = $data->total()/$modules_count;
-        $return_array["records_per_page"] = $data->perPage()/$modules_count;
-        $return_array["total_pages"] = $data->lastPage();
-
-        return $return_array;
-
     }
 
     /**
@@ -159,7 +113,7 @@ class AdministrationModuleProfilePanelController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id) : \Illuminate\Http\Response
-    {dd("ok");
+    {
         Gate::authorize('administration_read');
         
         $args = explode(".", request()->args);
@@ -173,7 +127,7 @@ class AdministrationModuleProfilePanelController extends Controller
             
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->profilePanelDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
