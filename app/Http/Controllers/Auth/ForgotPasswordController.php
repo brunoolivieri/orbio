@@ -39,7 +39,8 @@ class ForgotPasswordController extends Controller
             // If doesn't has soft deleted
             if(!$user->trashed()){
 
-                PasswordResetModel::create(["email" => $user->email, "token" => $random_integer_token]);
+                PasswordResetModel::where("user_id", $user->id)->delete();
+                PasswordResetModel::create(["user_id" => $user->id, "token" => $random_integer_token]);
 
                 $data_for_email = [
                     "token" => $random_integer_token,
@@ -85,9 +86,11 @@ class ForgotPasswordController extends Controller
 
         try{
 
-            $token = PasswordReset::where("token", $request->token)->firstOrFail();
+            $token = PasswordResetModel::where("token", $request->token)->firstOrFail();
 
-            $token->user()->update(["password" => Hash::make($request->new_password, PASSWORD_DEFAULT)]);
+            $token->user()->update(["password" => Hash::make($request->new_password)]);
+
+            PasswordResetModel::where("user_id", $token->user_id)->delete();
 
             event(new UserPasswordChangedEvent($token->user->name, $token->user->email));
 

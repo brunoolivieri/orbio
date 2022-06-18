@@ -172,7 +172,7 @@ export function ForgotPassword() {
         AxiosApi.post("/api/auth/change-password", {
             token: data.get("code"),
             new_password: data.get("new_password"),
-            new_password_confirmation: data.get("new_password")
+            new_password_confirmation: data.get("new_password_confirmation")
         })
             .then(function () {
 
@@ -201,7 +201,7 @@ export function ForgotPassword() {
 
             setOperationStatus({ type: null, title: null, message: null, image: null });
 
-        }, 4000)
+        }, 3000)
 
     }
 
@@ -231,7 +231,7 @@ export function ForgotPassword() {
 
             setOperationStatus({ type: null, title: null, message: null, image: null });
 
-        }, 4000);
+        }, 3000);
 
     }
 
@@ -243,7 +243,7 @@ export function ForgotPassword() {
 
             setOperationStatus({ type: null, title: null, message: null, image: null });
 
-            window.location.href = "/acessar";
+            window.location.href = "/login";
 
         }, 4000)
 
@@ -317,8 +317,8 @@ export function ForgotPassword() {
                 <GenericModalDialog
                     modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
                     title={{ top: { required: false }, middle: { required: true, text: operationStatus.message } }}
-                    image={{required: true, src: operationStatus.image}}
-                    lottie = {{required: false}}
+                    image={{ required: true, src: operationStatus.image }}
+                    lottie={{ required: false }}
                     content_text=""
                     actions={{
                         required: false,
@@ -387,7 +387,7 @@ export function ForgotPassword() {
                             label="Código recebido"
                             type="text"
                             id="code"
-                            disabled={!codeSent} 
+                            disabled={!codeSent}
                             error={errorDetected.code}
                             helperText={errorMessage.code}
                         />
@@ -400,7 +400,7 @@ export function ForgotPassword() {
                             name="new_password"
                             type="password"
                             autoFocus
-                            disabled={!codeSent} 
+                            disabled={!codeSent}
                             helperText={errorMessage.password}
                             error={errorDetected.password}
                         />
@@ -413,7 +413,7 @@ export function ForgotPassword() {
                             name="new_password_confirmation"
                             type="password"
                             autoFocus
-                            disabled={!codeSent} 
+                            disabled={!codeSent}
                             helperText={errorMessage.confirm_password}
                             error={errorDetected.confirm_password}
                         />

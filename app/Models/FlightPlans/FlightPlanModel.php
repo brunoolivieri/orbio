@@ -12,7 +12,7 @@ class FlightPlanModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "flight_plans";
-    protected $fillable = ["*"];
+    protected $guarded = [];
 
     /*
     * Relationship with incidents table

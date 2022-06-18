@@ -117,7 +117,7 @@ class AdministrationModuleUserPanelController extends Controller
             DB::transaction(function () use ($request) {
 
                 $this->user_model->profile_id = intval($request->profile_id);
-                $this->user_model->nane = $request->name;
+                $this->user_model->name = $request->name;
                 $this->user_model->email = $request->email;
                 $this->user_model->password = Hash::make($request->password);
         

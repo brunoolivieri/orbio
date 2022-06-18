@@ -329,8 +329,8 @@ export function PlansPanel() {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
-              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -344,8 +344,8 @@ export function PlansPanel() {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -461,7 +461,7 @@ export function PlansPanel() {
                       </TableCell>
                       <TableCell align="center">{row.status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
-                      <TableCell align="center">{row.plan_description}</TableCell>
+                      <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">{row.created_at}</TableCell>
                     </TableRow>
                   ))}
@@ -469,7 +469,7 @@ export function PlansPanel() {
             </Table>
 
             {(!panelData.status.loading && !panelData.status.success && panelData.status.error) &&
-              <Areadt severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Areadt>
+              <Alert severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Alert>
             }
 
           </TableContainer>

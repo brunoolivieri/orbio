@@ -11,7 +11,8 @@ class PasswordResetModel extends Model
     use HasFactory;
 
     protected $table = "password_resets";
-    protected $fillable = ["*"];
+    protected $guarded = [];
+    const UPDATED_AT = null;
 
     public function user(){
         return $this->belongsTo(UserModel::class, "user_id");

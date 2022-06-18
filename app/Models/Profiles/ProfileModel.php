@@ -16,7 +16,7 @@ class ProfileModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "profiles";
-    protected $fillable = ["*"];
+    protected $guarded=[];
 
     /*
     * Relationship with user table
@@ -44,7 +44,7 @@ class ProfileModel extends Model
 
             DB::beginTransaction();
 
-            $new_profile = ProfileModel::create(["name" => $profile_name]);
+            $new_profile = ProfileModel::create(['name' => $profile_name]);
 
             $model = new ProfileHasModuleModel();
 
@@ -65,6 +65,8 @@ class ProfileModel extends Model
             }
 
         }catch(\Exception $e){
+
+            dd($e);
 
             DB::rollBack();
 

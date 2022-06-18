@@ -79,7 +79,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
   */
   function dataValidate(formData) {
 
-    const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
+    const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
 
     // Atualização dos estados responsáveis por manipular os inputs
     setErrorDetected({ name: nameValidate.error });
@@ -104,7 +104,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
   function requestServerOperation(data) {
 
     AxiosApi.post("/api/admin-module-profile", {
-      name: data.get("registration_name_input")
+      name: data.get("name")
     })
       .then(function () {
 
@@ -187,13 +187,14 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
 
             <TextField
               margin="dense"
-              id="registration_name_input"
-              name="registration_name_input"
-              label="Nome do novo perfil"
+              id="name"
+              name="name"
+              label="Nome do perfil"
               fullWidth
               variant="outlined"
               helperText={errorMessage.name}
               error={errorDetected.name}
+              sx={{ mt: 3 }}
             />
           </DialogContent>
 

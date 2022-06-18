@@ -178,6 +178,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
     });
 
   }
+  console.log(props.record)
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
@@ -192,7 +193,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
       {(props.record != null && open) &&
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
+          <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 

@@ -23,10 +23,10 @@ class FormatDataService {
 
             foreach($record as $column => $value){
 
-                if($column == "created_at" || $column == "updated_at" || $column == "deleted_at" || "last_access" || "start_date" || "end_date" || "last_charge" || "purchase_date"){
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem dados" : $this->formatTimestamps($value);
+                if($column == "created_at" || $column == "updated_at" || $column == "deleted_at" || $column ==  "last_access" || $column == "start_date" || $column == "end_date" || $column == "last_charge" || $column == "purchase_date"){
+                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
                 }else{
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem dados" : $value;
+                    $this->formated_data["records"][$row][$column] = $value;
                 }
 
             }
@@ -72,10 +72,10 @@ class FormatDataService {
 
             foreach($record as $column => $value){
 
-                if($column == "created_at" || $column == "updated_at" || $column == "deleted_at"){
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem dados" : $this->formatTimestamps($value);
+                if($column === "created_at" || $column === "updated_at" || $column === "deleted_at" || $column === "last_access"){
+                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
                 }else{
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem dados" : $value;
+                    $this->formated_data["records"][$row][$column] = $value;
                 }
 
             }
@@ -161,9 +161,9 @@ class FormatDataService {
             foreach($record as $column => $value){
 
                 if($column == "created_at" || $column == "updated_at" || $column == "deleted_at" || $column == "start_date" || $column == "end_date"){
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem dados" : $this->formatTimestamps($value);
+                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
                 }else{
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem dados" : $value;
+                    $this->formated_data["records"][$row][$column] = $value;
                 }
 
             }
@@ -244,12 +244,6 @@ class FormatDataService {
         return $this->formated_data;
 
     }
-
-    private function formatTimestamps($datetime){
-        return date( 'd-m-Y h:i', strtotime($datetime));
-    }
-
-
 
 
 }

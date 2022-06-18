@@ -99,7 +99,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     */
     function submitedDataValidate(formData) {
 
-        const nameValidate = FormValidation(formData.get("profile_name"), 3, null, null, null);
+        const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
 
         setErrorDetected({ profile_name: nameValidate.error });
         setErrorMessage({ profile_name: nameValidate.message });
@@ -121,8 +121,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     */
     const requestServerOperation = (data) => {
 
-        AxiosApi.patch(`/api/admin-module-profile/${data.get("profile_id")}`, {
-            profile_name: data.get("profile_name"),
+        AxiosApi.patch(`/api/admin-module-profile/${data.get("id")}`, {
+            profile_name: data.get("name"),
             profile_modules_relationship: privileges
         })
             .then(function () {
@@ -209,8 +209,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.profile_id}
-                                id="profile_id"
-                                name="profile_id"
+                                id="id"
+                                name="id"
                                 label="ID do perfil"
                                 fullWidth
                                 variant="outlined"
@@ -223,8 +223,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.profile_name}
-                                id="profile_name"
-                                name="profile_name"
+                                id="name"
+                                name="name"
                                 label="Nome do perfil"
                                 fullWidth
                                 variant="outlined"

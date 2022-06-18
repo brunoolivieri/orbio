@@ -90,7 +90,7 @@ class ProfileHasModuleModel extends Model
                 ->update(
                     [
                     'read' => $module_privileges["read"], 
-                    'wrie' => $module_privileges["write"]
+                    'write' => $module_privileges["write"]
                     ]
                 );
             }
