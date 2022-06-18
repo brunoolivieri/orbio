@@ -51,8 +51,7 @@ export function Account({ ...props }) {
           error: false,
           data: {
             basic: {
-              name: response.data["0"].nome,
-              email: response.data["0"].email,
+              ...response.data["0"].basic,
               profile: AuthData.data.profile,
               last_access: AuthData.data.last_access,
               last_update: AuthData.data.last_update
@@ -60,19 +59,8 @@ export function Account({ ...props }) {
             complementary: {
               complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
               address_id: AuthData.data.user_address_data.user_address_id,
-              habANAC: response.data["0"].habANAC,
-              cpf: response.data["0"].CPF,
-              cnpj: response.data["0"].CNPJ,
-              telephone: response.data["0"].telefone,
-              cellphone: response.data["0"].celular,
-              razaoSocial: response.data["0"].razaoSocial,
-              nomeFantasia: response.data["0"].nomeFantasia,
-              logradouro: response.data["0"].logradouro,
-              numero: response.data["0"].numero,
-              cep: response.data["0"].cep,
-              cidade: response.data["0"].cidade,
-              estado: response.data["0"].estado,
-              complemento: response.data["0"].complemento
+              ...response.data["0"].complementary,
+              ...response.data["0"].address,
             },
             sessions: response.data["0"].active_sessions
           }

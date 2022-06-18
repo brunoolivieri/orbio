@@ -31,14 +31,14 @@ export const ComplementaryDataPanel = React.memo((props) => {
     const [saveNecessary, setSaveNecessary] = React.useState({ documents: false, address: false });
 
     // States de validação dos campos
-    const [errorDetected, setErrorDetected] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, street_name: false, number: false, cep: false, city: false, state: false, complement: false });
-    const [errorMessage, setErrorMessage] = React.useState({ anac_license: null, cpf: null, cnpj: null, telephone: null, cellphone: null, company_name: null, trading_name: null, street_name: null, number: null, cep: null, city: null, state: null, complement: null });
+    const [errorDetected, setErrorDetected] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
+    const [errorMessage, setErrorMessage] = React.useState({ anac_license: null, cpf: null, cnpj: null, telephone: null, cellphone: null, company_name: null, trading_name: null, address: null, number: null, cep: null, city: null, state: null, complement: null });
 
     // State key Down
     const [keyPressed, setKeyPressed] = React.useState();
 
     // State do input de estado e de cidade
-    const [inputState, setInputState] = React.useState(props.estado);
+    const [inputState, setInputState] = React.useState(props.state);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -172,7 +172,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 cellphone: cellphoneValidate.error,
                 company_name: rsocialValidate.error,
                 trading_name: nfantasiaValidate.error,
-                street_name: false,
+                address: false,
                 number: false,
                 cep: false,
                 city: false,
@@ -190,7 +190,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 cellphone: cellphoneValidate.message,
                 company_name: rsocialValidate.message,
                 trading_name: nfantasiaValidate.message,
-                street_name: "",
+                address: "",
                 number: "",
                 cep: "",
                 city: "",
@@ -219,7 +219,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
         const adressNumberPattern = /^\d+$/;
         const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
-        const logradouroValidate = FormValidation(data.get("street_name"), 3, null, null);
+        const logradouroValidate = FormValidation(data.get("address"), 3, null, null);
         const numeroValidate = FormValidation(data.get("number"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
         const cepValidate = FormValidation(data.get("cep"), null, null, cepPattern, "CEP");
         const cidadeValidate = data.get("select_city_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
@@ -235,7 +235,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 cellphone: false,
                 company_name: false,
                 trading_name: false,
-                street_name: logradouroValidate.error,
+                address: logradouroValidate.error,
                 number: numeroValidate.error,
                 cep: cepValidate.error,
                 city: cidadeValidate.error,
@@ -253,7 +253,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 cellphone: "",
                 company_name: "",
                 trading_name: "",
-                street_name: logradouroValidate.message,
+                address: logradouroValidate.message,
                 number: numeroValidate.message,
                 cep: cepValidate.message,
                 city: cidadeValidate.message,
@@ -308,7 +308,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
     function formAddressRequestServerOperation(data) {
 
         AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
-            street_name: data.get("street_name"),
+            address: data.get("address"),
             number: data.get("number"),
             cep: data.get("cep"),
             city: data.get("select_city_input"),
@@ -388,7 +388,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             cellphone: input_errors.cellphone.error,
             company_name: input_errors.company_name.error,
             trading_name: input_errors.trading_name.error,
-            street_name: "",
+            address: "",
             number: "",
             cep: "",
             city: "",
@@ -404,7 +404,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             cellphone: input_errors.cellphone.message,
             company_name: input_errors.company_name.message,
             trading_name: input_errors.trading_name.message,
-            street_name: "",
+            address: "",
             number: "",
             cep: "",
             city: "",
@@ -425,7 +425,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
-            street_name: { error: false, message: null },
+            address: { error: false, message: null },
             number: { error: false, message: null },
             cep: { error: false, message: null },
             city: { error: false, message: null },
@@ -451,7 +451,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             cellphone: false,
             company_name: false,
             trading_name: false,
-            street_name: input_errors.street_name.error,
+            address: input_errors.address.error,
             number: input_errors.number.error,
             cep: input_errors.cep.error,
             city: input_errors.city.error,
@@ -467,7 +467,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             cellphone: "",
             company_name: "",
             trading_name: "",
-            street_name: input_errors.street_name.message,
+            address: input_errors.address.message,
             number: input_errors.number.message,
             cep: input_errors.cep.message,
             city: input_errors.city.message,
@@ -513,7 +513,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 label="Habilitação ANAC"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.habANAC}
+                                defaultValue={props.anac_license}
                                 helperText={errorMessage.anac_license}
                                 error={errorDetected.anac_license}
                                 onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "HAB_ANAC"); }}
@@ -601,9 +601,9 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 label="Razão Social"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.razaoSocial}
-                                helperText={errorMessage.razaoSocial}
-                                error={errorDetected.razaoSocial}
+                                defaultValue={props.company_name}
+                                helperText={errorMessage.company_name}
+                                error={errorDetected.company_name}
                                 onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
                             />
                         </Grid>
@@ -616,9 +616,9 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 label="Nome Fantasia"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.nomeFantasia}
-                                helperText={errorMessage.company_name}
-                                error={errorDetected.company_name}
+                                defaultValue={props.trading_name}
+                                helperText={errorMessage.trading_name}
+                                error={errorDetected.trading_name}
                                 onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
                             />
                         </Grid>
@@ -639,8 +639,8 @@ export const ComplementaryDataPanel = React.memo((props) => {
                     <Grid container spacing={3}>
 
                         <Grid item xs={12} sm={12}>
-                            <SelectStates default={props.estado} state_input_setter={setInputState} error={errorDetected.estado} error_message={errorMessage.estado} edit_mode={true} save_necessary_setter={setSaveNecessary} />
-                            <SelectCities default={props.cidade} choosen_state={inputState} error={errorDetected.cidade} error_message={errorMessage.cidade} edit_mode={true} save_necessary_setter={setSaveNecessary} />
+                            <SelectStates default={props.state} state_input_setter={setInputState} error={errorDetected.state} error_message={errorMessage.state} edit_mode={true} save_necessary_setter={setSaveNecessary} />
+                            <SelectCities default={props.city} choosen_state={inputState} error={errorDetected.city} error_message={errorMessage.city} edit_mode={true} save_necessary_setter={setSaveNecessary} />
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
@@ -665,14 +665,14 @@ export const ComplementaryDataPanel = React.memo((props) => {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 required
-                                id="street_name"
-                                name="street_name"
+                                id="address"
+                                name="address"
                                 label="Logradouro"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.logradouro}
-                                helperText={errorMessage.street_name}
-                                error={errorDetected.street_name}
+                                defaultValue={props.address}
+                                helperText={errorMessage.address}
+                                error={errorDetected.address}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
                             />
                         </Grid>
@@ -685,7 +685,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 label="Numero"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.numero}
+                                defaultValue={props.number}
                                 helperText={errorMessage.number}
                                 error={errorDetected.number}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
@@ -700,7 +700,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 label="Complemento"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.complemento}
+                                defaultValue={props.complement}
                                 helperText={errorMessage.complement}
                                 error={errorDetected.complement}
                                 onChange={() => { setSaveNecessary({ documents: false, address: true }) }}

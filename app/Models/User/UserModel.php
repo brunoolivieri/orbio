@@ -168,21 +168,27 @@ class UserModel extends Authenticatable
             $user = UserModel::find($user_id);
 
             $data = [
-                'name' => $user->name, 
-                'email' => $user->email, 
-                'habANAC' => $user->complementary_data->habANAC,
-                'CPF' => $user->complementary_data->CPF,
-                'CNPJ' => $user->complementary_data->CNPJ,
-                'telefone' => $user->complementary_data->telephone,
-                'celular' => $user->complementary_data->cellphone,
-                'company_name' => $user->complementary_data->company_name,
-                'trading_name' => $user->complementary_data->trading_name,
-                'address' => $user->complementary_data->address->address,
-                'number' => $user->complementary_data->address->number,
-                'cep' => $user->complementary_data->address->cep,
-                'city' => $user->complementary_data->address->city,
-                'state' => $user->complementary_data->address->state,
-                'complement' => $user->complementary_data->address->complement
+                "basic" => [
+                    'name' => $user->name, 
+                    'email' => $user->email 
+                ],
+                "complementary" => [
+                    'anac_license' => $user->complementary_data->habANAC,
+                    'cpf' => $user->complementary_data->CPF,
+                    'cnpj' => $user->complementary_data->CNPJ,
+                    'telefone' => $user->complementary_data->telephone,
+                    'celular' => $user->complementary_data->cellphone,
+                    'company_name' => $user->complementary_data->company_name,
+                    'trading_name' => $user->complementary_data->trading_name
+                ],
+                "address" => [
+                    'address' => $user->complementary_data->address->address,
+                    'number' => $user->complementary_data->address->number,
+                    'cep' => $user->complementary_data->address->cep,
+                    'city' => $user->complementary_data->address->city,
+                    'state' => $user->complementary_data->address->state,
+                    'complement' => $user->complementary_data->address->complement
+                ]    
             ];
 
             return ["status" => true, "error" => false, "account_data" => $data];
@@ -203,23 +209,23 @@ class UserModel extends Authenticatable
 
             $new_address_id = DB::table("address")->insertGetId(
                 [
-                    "address" => NULL,
-                    "number" => NULL,
-                    "cep" => NULL,
-                    "city" => NULL,
-                    "state" => NULL,
-                    "complement" => NULL
+                    "address" => null,
+                    "number" => null,
+                    "cep" => null,
+                    "city" => null,
+                    "state" => null,
+                    "complement" => null
                 ]
             );
 
             $new_comp_data_id = DB::table("user_complementary_data")->insertGetId([
-                "habANAC" => NULL,
-                "CPF" => NULL,
-                "CNPJ" => NULL,
-                "telephone" => NULL,
-                "cellphone" => NULL,
-                "company_name" => NULL,
-                "trading_name" => NULL,
+                "anac_license" => null,
+                "CPF" => null,
+                "CNPJ" => null,
+                "telephone" => null,
+                "cellphone" => null,
+                "company_name" => null,
+                "trading_name" => null,
                 "address_id" => $new_address_id
             ]);
 

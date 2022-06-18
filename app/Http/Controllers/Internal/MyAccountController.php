@@ -112,7 +112,7 @@ class MyAccountController extends Controller
             $user = UserModel::find(Auth::user()->id);
 
             UserComplementaryDataModel::where("id", $user->complementary_data->id)->update([
-                "habANAC" => $request->anac_license,
+                "anac_license" => $request->anac_license,
                 "cpf" => $request->cpf,
                 "cnpj" => $request->cnpj,
                 "telefone" => $request->telephone,
