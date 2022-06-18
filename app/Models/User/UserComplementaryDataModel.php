@@ -22,14 +22,14 @@ class UserComplementaryDataModel extends Model
     * Relationship with users table
     */
     function user(){
-        return $this->hasOne("App\Models\User\UserModel", "id_dados_complementares");
+        return $this->hasOne("App\Models\User\UserModel", "complementary_data_id");
     }
 
     /*
     * Relationship with address table
     */
     function address(){
-        return $this->belongsTo("App\Models\User\UserAddressModel", "id_endereco");
+        return $this->belongsTo("App\Models\User\UserAddressModel", "address_id");
     }
 
 }

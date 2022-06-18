@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Hash;
 // Custom
 use App\Models\User\UserModel;
+use App\Models\PasswordReset\PasswordResetModel;
 use App\Events\Auth\TokenForChangePasswordEvent;
 use App\Events\User\UserPasswordChangedEvent;
 use App\Mail\User\SendCodeToChangePassword;
@@ -34,15 +36,14 @@ class ForgotPasswordController extends Controller
 
             $user = UserModel::where("email", $request->email)->firstOrFail();
 
+            // If doesn't has soft deleted
             if(!$user->trashed()){
 
-                $user->update(['token' => $random_integer_token]);
-
-                UserModel::where('email', $user->email)->update(['token' => $random_integer_token]);
+                PasswordResetModel::create(["email" => $user->email, "token" => $random_integer_token]);
 
                 $data_for_email = [
                     "token" => $random_integer_token,
-                    "name" => $user->nome,
+                    "name" => $user->name,
                     "email" => $user->email
                 ];
 
@@ -84,11 +85,11 @@ class ForgotPasswordController extends Controller
 
         try{
 
-            $user = UserModel::where('token', $request->token)->firstOrFail();
+            $token = PasswordReset::where("token", $request->token)->firstOrFail();
 
-            $user->update(['senha' => password_hash($request->new_password, PASSWORD_DEFAULT)]);
+            $token->user()->update(["password" => Hash::make($request->new_password, PASSWORD_DEFAULT)]);
 
-            event(new UserPasswordChangedEvent($user));
+            event(new UserPasswordChangedEvent($token->user->name, $token->user->email));
 
             Log::channel('user')->info("[Senha alterada com sucesso | Recuperação da conta] - Token utilizado: ".$request->token);
 

@@ -5,9 +5,17 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\FormatDataService;
 
 class MainInternalController extends Controller
 {
+
+    private FormatDataService $format_data_service;
+
+    public function __construct(FormatDataService $service){
+        $this->format_data_service = $service;
+    }
+
     /**
      * Método para retornar o layout blade.
      * 
@@ -40,50 +48,52 @@ class MainInternalController extends Controller
     function getUserAuthenticatedData(Request $request) : \Illuminate\Http\Response {
 
         // If logged user is the Super Admin
-        if(Auth::user()->id_perfil == 1 && Auth::user()->profile->nome == "Super-Admin"){
+        if(Auth::user()->profile_id == 1 && Auth::user()->profile->name == "Super-Admin"){
 
             $data = [
                 "id" => Auth::user()->id, 
-                "name"=> Auth::user()->nome,  
+                "name"=> Auth::user()->name,  
                 "email"=> Auth::user()->email, 
-                "profile_id" => Auth::user()->id_perfil,
-                "profile" => Auth::user()->profile->nome,
-                "complementary_data" => Auth::user()->id_dados_complementares,
-                "last_access" => Auth::user()->dh_ultimo_acesso,
-                "last_update" => Auth::user()->dh_atualizacao,
+                "profile_id" => Auth::user()->profile_id,
+                "profile" => Auth::user()->profile->name,
+                "complementary_data" => Auth::user()->complementary_data_id,
+                "last_access" => Auth::user()->last_access,
+                "last_update" => Auth::user()->updated_at,
                 "user_powers" => $this->modulesProfileRelationshipFormated()
             ];
 
         // If the logged user is not the Super Admin
-        }else if(Auth::user()->id_perfil != 1){
+        }else if(Auth::user()->profile_id != 1){
 
             $data = array(
                 "id" => Auth::user()->id, 
-                "name"=> Auth::user()->nome, 
+                "name"=> Auth::user()->name, 
                 "email"=> Auth::user()->email, 
-                "profile_id" => Auth::user()->id_perfil, 
-                "profile" => Auth::user()->profile->nome,
+                "profile_id" => Auth::user()->profile_id, 
+                "profile" => Auth::user()->profile->name,
                 "user_complementary_data" => array(
                     "complementary_data_id" => Auth::user()->complementary_data->id,
                     "habANAC" => Auth::user()->complementary_data->habANAC,
                     "CPF" => Auth::user()->complementary_data->CPF,
                     "CNPJ" => Auth::user()->complementary_data->CNPJ,
-                    "telephone" => Auth::user()->complementary_data->telefone,
-                    "cellphone" => Auth::user()->complementary_data->celular,
-                    "razaoSocial" => Auth::user()->complementary_data->razaoSocial,
-                    "nomeFantasia" => Auth::user()->complementary_data->nomeFantasia
+                    "country_code" => Auth::user()->complementary_data->country_code,
+                    "area_code" => Auth::user()->complementary_data->area_code,
+                    "telephone" => Auth::user()->complementary_data->telephone,
+                    "cellphone" => Auth::user()->complementary_data->cellphone,
+                    "company_name" => Auth::user()->complementary_data->company_name,
+                    "trading_name" => Auth::user()->complementary_data->trading_name
                 ),
                 "user_address_data" => array(
                     "user_address_id" => Auth::user()->complementary_data->address->id,
-                    "logradouro" => Auth::user()->complementary_data->address->logradouro,
-                    "numero" => Auth::user()->complementary_data->address->numero,
+                    "address" => Auth::user()->complementary_data->address->address,
+                    "number" => Auth::user()->complementary_data->address->number,
                     "cep" => Auth::user()->complementary_data->address->cep,
-                    "cidade" => Auth::user()->complementary_data->address->cidade,
-                    "estado" => Auth::user()->complementary_data->address->estado,
-                    "complemento" => Auth::user()->complementary_data->address->complemento
+                    "city" => Auth::user()->complementary_data->address->city,
+                    "state" => Auth::user()->complementary_data->address->state,
+                    "complement" => Auth::user()->complementary_data->address->complement
                 ),
-                "last_access" => Auth::user()->dh_ultimo_acesso,
-                "last_update" => Auth::user()->dh_atualizacao,
+                "last_access" => Auth::user()->last_access,
+                "last_update" => Auth::user()->updated_at,
                 "user_powers" => $this->modulesProfileRelationshipFormated()
             );
 
@@ -100,27 +110,26 @@ class MainInternalController extends Controller
     */
     private function modulesProfileRelationshipFormated() : array {
 
-        $arr_data = [];
-        $row = 0;
+        /*$arr_data = [];
         $current_record_data = array();
 
         foreach(Auth::user()->profile->module_privileges as $row => $record){
 
-            $module_name = $record->id_modulo === 1 ? 
+            $module_name = $record->module_id === 1 ? 
             "Administração" 
-            : ($record->id_modulo === 2 ? "Planos" : ($record->id_modulo === 3 ? "Ordens" : ($record->id_modulo === 4 ? "Relatórios" : ($record->id_modulo === 5 ? "Incidentes" : "Equipamentos"))));
+            : ($record->module_id === 2 ? "Planos" : ($record->module_id === 3 ? "Ordens" : ($record->module_id === 4 ? "Relatórios" : ($record->module_id === 5 ? "Incidentes" : "Equipamentos"))));
 
-            $current_record_data[$record->id_modulo] = ["module" => $module_name, "profile_powers" => ["ler" => $record->ler, "escrever" => $record->escrever]];
+            $current_record_data[$record->module_id] = ["module" => $module_name, "profile_powers" => ["read" => $record->read, "write" => $record->write]];
        
-            if($record->id_modulo === 6){
+            if($record->module_id === 6){
 
                 $arr_data = $current_record_data;
 
             }
 
-        }
+        }*/
 
-        return $arr_data;
+        return $this->format_data_service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges);
 
     }
 }

@@ -15,9 +15,8 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->string("nome");
-            $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_criacao")->useCurrent();
+            $table->string("name");
+            $table->timestamps();
             $table->softDeletes();
         });
     }

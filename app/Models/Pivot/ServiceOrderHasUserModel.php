@@ -14,10 +14,10 @@ class ServiceOrderHasUserModel extends Model
     protected $guarded = [];
 
     function users(){
-        return $this->belongsTo("App\Models\User\UserModel", "id_usuario");
+        return $this->belongsTo("App\Models\User\UserModel", "user_id");
     }
 
     function service_order(){
-        return $this->belongsTo("App\Models\Orders\ServiceOrderModel", "id_ordem_servico");
+        return $this->belongsTo("App\Models\Orders\ServiceOrderModel", "service_order_id");
     }
 }

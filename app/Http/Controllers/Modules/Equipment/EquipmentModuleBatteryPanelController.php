@@ -13,19 +13,22 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Batteries\BatteryModel;
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
 use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
+use App\Services\FormatDataService;
 
 class EquipmentModuleBatteryPanelController extends Controller
 {
 
-    private BatteryModel $batterie_model;
+    private FormatDataService $format_data_service;
+    private BatteryModel $battery_model;
 
     /**
      * Dependency injection.
      * 
      * @param App\Models\Batteries\BatteryModel $battery
      */
-    public function __construct(BatteryModel $battery){
-        $this->batterie_model = $battery;
+    public function __construct(FormatDataService $service, BatteryModel $battery){
+        $this->format_data_service = $service;
+        $this->battery_model = $battery;
     }
 
      /**
@@ -42,13 +45,13 @@ class EquipmentModuleBatteryPanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
             
-        $model_response = $this->batterie_model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->battery_model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -160,13 +163,13 @@ class EquipmentModuleBatteryPanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
             
-        $model_response = $this->batterie_model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
+        $model_response = $this->battery_model->loadBatteriesWithPagination($limit, $actual_page, $where_value);
 
         if($model_response["status"] && !$model_response["error"]){
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 

@@ -37,7 +37,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     // Controlled inputs
     const [formData, setFormData] = React.useState({
-        id: props.record.battery_id,
+        id: props.record.id,
         image: false,
         name: props.record.name,
         manufacturer: props.record.manufacturer,
@@ -247,8 +247,8 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 

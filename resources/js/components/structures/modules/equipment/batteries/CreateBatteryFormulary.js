@@ -240,8 +240,8 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Nova bateria">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 

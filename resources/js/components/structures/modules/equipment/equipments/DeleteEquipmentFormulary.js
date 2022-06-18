@@ -67,7 +67,7 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
     */
     function requestServerOperation(data) {
 
-        AxiosApi.delete(`/api/equipments-module-equipment/${data.get("equipment_id")}}`)
+        AxiosApi.delete(`/api/equipments-module-equipment/${data.get("id")}}`)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -113,13 +113,13 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.read == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>DELEÇÃO | ID: {props.record.equipment_id}</DialogTitle>
+                <DialogTitle>DELEÇÃO | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleEquipmentDeleteSubmit} >
 
@@ -132,9 +132,9 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="equipment_id"
-                            name="equipment_id"
-                            defaultValue={props.record.equipment_id}
+                            id="id"
+                            name="id"
+                            defaultValue={props.record.id}
                             InputProps={{
                                 readOnly: true,
                             }}

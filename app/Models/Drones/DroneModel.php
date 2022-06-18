@@ -10,8 +10,8 @@ class DroneModel extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
     public $table = "drones";
+    protected $fillable = ["*"];
 
     /**
      * Carrega os registros no formato de paginação

@@ -13,19 +13,22 @@ use Illuminate\Support\Facades\Log;
 use App\Models\FlightPlans\FlightPlanModel;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
-
+use App\Services\FormatDataService;
 
 class FlightPlanModuleController extends Controller
 {
 
+    private FormatDataService $format_data_service;
     private FlightPlanModel $flight_plan_model;
 
     /**
      * Dependency injection.
      * 
+     * @param App\Services\FormatDataService $service
      * @param App\Models\FlightPlans\FlightPlanModel $flight_plan
      */
-    public function __construct(FlightPlanModel $flight_plan){
+    public function __construct(FormatDataService $service, FlightPlanModel $flight_plan){
+        $this->format_data_service = $service;
         $this->flight_plan_model = $flight_plan;
     }
 
@@ -49,7 +52,7 @@ class FlightPlanModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -68,42 +71,6 @@ class FlightPlanModuleController extends Controller
             return response(["status" => false, "error" => $model_response->content()], 500);
 
         }  
-    }
-
-   /**
-     * Method for organize data for the frontend table.
-     *
-     * @param Illuminate\Pagination\LengthAwarePaginator $data
-     * @return array
-     */
-    private function formatDataForTable(LengthAwarePaginator $data) : array {
-
-        $arr_with_formated_data = [];
-
-        foreach($data->items() as $row => $record){
-
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
-            $updated_at_formated = $record->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
-            
-            $arr_with_formated_data["records"][$row] = array(
-                "plan_id" => $record->id,
-                "report_id" => $record->id_relatorio,
-                "incident_id" => $record->id_incidente,
-                "file" => $record->arquivo,
-                "plan_description" => $record->descricao,
-                "status" => $record->status,
-                "created_at" => $created_at_formated,
-                "updated_at" => $updated_at_formated
-            );
-
-        }
-
-        $arr_with_formated_data["total_records_founded"] = $data->total();
-        $arr_with_formated_data["records_per_page"] = $data->perPage();
-        $arr_with_formated_data["total_pages"] = $data->lastPage();
-
-        return $arr_with_formated_data;
-
     }
 
     /**
@@ -188,10 +155,10 @@ class FlightPlanModuleController extends Controller
             $storage_folder = "public/flight_plans";
 
             FlightPlanModel::create([
-                "id_relatorio" => null,
-                "id_incidente" => null,
-                "arquivo" => $file_name,
-                "descricao" => $request->description,
+                "report_id" => null,
+                "incident_id" => null,
+                "file" => $file_name,
+                "description" => $request->description,
                 "status" => 0
             ]);
 
@@ -244,7 +211,7 @@ class FlightPlanModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -280,9 +247,9 @@ class FlightPlanModuleController extends Controller
         try{
 
             FlightPlanModel::where('id', $id)->update([
-                "id_relatorio" => $request->report_id == 0 ? null : $request->report_id,
-                "id_incidente" => $request->incident_id == 0 ? null : $request->incident_id,
-                "descricao" => $request->description,
+                "report_id" => $request->report_id == 0 ? null : $request->report_id,
+                "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
+                "description" => $request->description,
                 "status" => $request->status
             ]);
 
@@ -335,7 +302,7 @@ class FlightPlanModuleController extends Controller
 
             $flight_plan->delete();
 
-            Log::channel('flight_plans_action')->info("[Método: Destroy][Controlador: FlightPlanModuleController] - Plano de vôo removido com sucesso - Incidentes e relatórios relacionados foram deletados - Arquivo 'flight_plans/".$flight_plan->arquivo." deletado - ID do plano de vôo: ".$id);
+            Log::channel('flight_plans_action')->info("[Método: Destroy][Controlador: FlightPlanModuleController] - Plano de vôo removido com sucesso - Incidentes e relatórios relacionados foram deletados - Arquivo 'flight_plans/".$flight_plan->file." deletado - ID do plano de vôo: ".$id);
 
             DB::Commit();
 

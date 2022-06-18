@@ -11,19 +11,22 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Reports\ReportModel;
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
-
+use App\Services\FormatDataTable;
 
 class ReportModuleController extends Controller
 {
 
+    private FormatDataTable $format_data_service;
     private ReportModel $report_model;
 
     /**
      * Dependency injection.
      * 
+     * @param App\Services\FormatDataTable $service
      * @param App\Models\Reports\ReportModel $report
      */
-    public function __construct(ReportModel $report){
+    public function __construct(FormatDataTable $service, ReportModel $report){
+        $this->format_data_service = $service;
         $this->report_model = $report;
     }
 
@@ -47,7 +50,8 @@ class ReportModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
+                //$data_formated = $this->formatDataForTable($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -82,19 +86,19 @@ class ReportModuleController extends Controller
         foreach($data->items() as $row => $record){
 
             // O tratamento do formato das datas é realizado no frontend, com a lib moment.js, para evitar erros 
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
-            $updated_at_formated = $record->dh_atualizacao === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
-            $flight_start_date = $record->dh_inicio_voo === NULL ? "Sem dados" : $record->dh_inicio_voo;
-            $flight_end_date = $record->dh_fim_voo === NULL ? "Sem dados" : $record->dh_fim_voo;
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->created_at));
+            $updated_at_formated = $record->updated_at === NULL ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->updated_at));
+            $flight_start_date = $record->start_date === NULL ? "Sem dados" : $record->start_date;
+            $flight_end_date = $record->end_date === NULL ? "Sem dados" : $record->end_date;
             
             $arr_with_formated_data["records"][$row] = array(
                 "report_id" => $record->id,
-                "flight_log" => $record->log_voo,
-                "report_note" => $record->observacao,
+                "flight_log" => $record->flight_log,
+                "observation" => $record->observation,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,
-                "flight_start_date" => $flight_start_date,
-                "flight_end_date" => $flight_end_date
+                "start_date" => $flight_start_date,
+                "end_date" => $flight_end_date
             );
 
         }
@@ -119,12 +123,7 @@ class ReportModuleController extends Controller
         
         try{
 
-            ReportModel::insert([
-                "dh_inicio_voo" => $request->flight_initial_date,
-                "dh_fim_voo" => $request->flight_final_date,
-                "log_voo" => $request->flight_log_file,
-                "observacao" => $request->observation
-            ]);
+            ReportModel::create($request->only(["start_date", "end_date", "flight_log", "observation"]));
 
             Log::channel('reports_action')->info("[Método: Store][Controlador: ReportModuleController] - Relatório criado com sucesso");
 
@@ -161,7 +160,8 @@ class ReportModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
+                //$data_formated = $this->formatDataForTable($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -196,12 +196,7 @@ class ReportModuleController extends Controller
         
         try{
 
-            ReportModel::where('id', $id)->update([
-                "dh_inicio_voo" => $request->flight_initial_date,
-                "dh_fim_voo" => $request->flight_final_date,
-                "log_voo" => $request->flight_log_file,
-                "observacao" => $request->observation
-            ]);
+            ReportModel::where('id', $id)->update($request->only(["start_date", "end_date", "flight_log", "observation"]));
 
             Log::channel('reports_action')->info("[Método: Update][Controlador: ReportModuleController] - Relatório atualizado com sucesso - ID do relatório: ".$id);
 

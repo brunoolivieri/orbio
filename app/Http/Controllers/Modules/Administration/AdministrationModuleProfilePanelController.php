@@ -197,7 +197,7 @@ class AdministrationModuleProfilePanelController extends Controller
 
             // Desvinculation with user table
             if(!empty($profile->user)){ 
-                $profile->user()->update(["id_perfil" => 5]);
+                $profile->user()->update(["profile_id" => 5]);
             }
 
             // Desvinculation with profile_has_module table

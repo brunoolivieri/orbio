@@ -283,8 +283,8 @@ export const EquipmentPanel = React.memo(() => {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
-              <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -298,8 +298,8 @@ export const EquipmentPanel = React.memo(() => {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -382,8 +382,8 @@ export const EquipmentPanel = React.memo(() => {
               <TableBody className="tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
-                    <TableRow key={row.equipment_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.equipment_id} /></TableCell>
+                    <TableRow key={row.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.manufacturer}</TableCell>

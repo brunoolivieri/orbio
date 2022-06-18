@@ -19,7 +19,7 @@ class UserAddressModel extends Model
     * Relationship with user_complementary_data table
     */
     function complementary_data(){
-        $this->hasOne("App\Models\User\UserComplementaryDataModel", "id_endereco");
+        $this->hasOne("App\Models\User\UserComplementaryDataModel", "address_id");
     }
 
 }

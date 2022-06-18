@@ -15,12 +15,11 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->dateTime("dh_criacao")->useCurrent();
-            $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_inicio_voo");
-            $table->dateTime("dh_fim_voo");
-            $table->mediumText("log_voo");
-            $table->text("observacao");
+            $table->dateTime("start_date");
+            $table->dateTime("end_date");
+            $table->mediumText("flight_log");
+            $table->text("observation");
+            $table->timestamps();
             $table->softDeletes();
         });
     }

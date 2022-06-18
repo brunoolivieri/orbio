@@ -16,67 +16,57 @@ class ProfilesModulesRelationshipSeeder extends Seeder
     public function run()
     {
 
-        /*
-
-        - Módulo 1: Administração
-        - Módulo 2: Planos de voo
-        - Módulo 3: Ordens de serviço
-        - Módulo 4: Relatórios pós-voo
-        - Módulo 5: Incidentes
-
-        */
-
         $superAdminModulesRelationship = [
-            ["id_modulo" => 1, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 2, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 3, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 4, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 5, "id_perfil" => 1, "ler" => true, "escrever" => true],
-            ["id_modulo" => 6, "id_perfil" => 1, "ler" => true, "escrever" => true]   
+            ["module_id" => 1, "profile_id" => 1, "read" => true, "write" => true],
+            ["module_id" => 2, "profile_id" => 1, "read" => true, "write" => true],
+            ["module_id" => 3, "profile_id" => 1, "read" => true, "write" => true],
+            ["module_id" => 4, "profile_id" => 1, "read" => true, "write" => true],
+            ["module_id" => 5, "profile_id" => 1, "read" => true, "write" => true],
+            ["module_id" => 6, "profile_id" => 1, "read" => true, "write" => true]   
         ];
 
         DB::table("profile_has_module")->insert($superAdminModulesRelationship);
 
         $subAdminModulesRelationship = [
-            ["id_modulo" => 1, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 2, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 3, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 4, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 5, "id_perfil" => 2, "ler" => true, "escrever" => true],
-            ["id_modulo" => 6, "id_perfil" => 2, "ler" => true, "escrever" => true]    
+            ["module_id" => 1, "profile_id" => 2, "read" => true, "write" => true],
+            ["module_id" => 2, "profile_id" => 2, "read" => true, "write" => true],
+            ["module_id" => 3, "profile_id" => 2, "read" => true, "write" => true],
+            ["module_id" => 4, "profile_id" => 2, "read" => true, "write" => true],
+            ["module_id" => 5, "profile_id" => 2, "read" => true, "write" => true],
+            ["module_id" => 6, "profile_id" => 2, "read" => true, "write" => true]    
         ];
 
         DB::table("profile_has_module")->insert($subAdminModulesRelationship);
 
         $pilotModulesRelationship = [
-            ["id_modulo" => 1, "id_perfil" => 3, "ler" => false, "escrever" => false],
-            ["id_modulo" => 2, "id_perfil" => 3, "ler" => true, "escrever" => false],
-            ["id_modulo" => 3, "id_perfil" => 3, "ler" => false, "escrever" => false],
-            ["id_modulo" => 4, "id_perfil" => 3, "ler" => false, "escrever" => false],
-            ["id_modulo" => 5, "id_perfil" => 3, "ler" => true, "escrever" => true],
-            ["id_modulo" => 6, "id_perfil" => 3, "ler" => true, "escrever" => true]   
+            ["module_id" => 1, "profile_id" => 3, "read" => false, "write" => false],
+            ["module_id" => 2, "profile_id" => 3, "read" => true, "write" => false],
+            ["module_id" => 3, "profile_id" => 3, "read" => false, "write" => false],
+            ["module_id" => 4, "profile_id" => 3, "read" => false, "write" => false],
+            ["module_id" => 5, "profile_id" => 3, "read" => true, "write" => true],
+            ["module_id" => 6, "profile_id" => 3, "read" => true, "write" => true]   
         ];
 
         DB::table("profile_has_module")->insert($pilotModulesRelationship);
 
         $clientModulesRelationship = [
-            ["id_modulo" => 1, "id_perfil" => 4, "ler" => false, "escrever" => false],
-            ["id_modulo" => 2, "id_perfil" => 4, "ler" => false, "escrever" => false],
-            ["id_modulo" => 3, "id_perfil" => 4, "ler" => false, "escrever" => false],
-            ["id_modulo" => 4, "id_perfil" => 4, "ler" => true, "escrever" => false],
-            ["id_modulo" => 5, "id_perfil" => 4, "ler" => false, "escrever" => false],
-            ["id_modulo" => 6, "id_perfil" => 4, "ler" => false, "escrever" => false]  
+            ["module_id" => 1, "profile_id" => 4, "read" => false, "write" => false],
+            ["module_id" => 2, "profile_id" => 4, "read" => false, "write" => false],
+            ["module_id" => 3, "profile_id" => 4, "read" => false, "write" => false],
+            ["module_id" => 4, "profile_id" => 4, "read" => true, "write" => false],
+            ["module_id" => 5, "profile_id" => 4, "read" => false, "write" => false],
+            ["module_id" => 6, "profile_id" => 4, "read" => false, "write" => false]  
         ];
 
         DB::table("profile_has_module")->insert($clientModulesRelationship);
 
         $visitorModulesRelationship = [
-            ["id_modulo" => 1, "id_perfil" => 5, "ler" => false, "escrever" => false],
-            ["id_modulo" => 2, "id_perfil" => 5, "ler" => false, "escrever" => false],
-            ["id_modulo" => 3, "id_perfil" => 5, "ler" => false, "escrever" => false],
-            ["id_modulo" => 4, "id_perfil" => 5, "ler" => false, "escrever" => false],
-            ["id_modulo" => 5, "id_perfil" => 5, "ler" => false, "escrever" => false],
-            ["id_modulo" => 6, "id_perfil" => 5, "ler" => false, "escrever" => false]    
+            ["module_id" => 1, "profile_id" => 5, "read" => false, "write" => false],
+            ["module_id" => 2, "profile_id" => 5, "read" => false, "write" => false],
+            ["module_id" => 3, "profile_id" => 5, "read" => false, "write" => false],
+            ["module_id" => 4, "profile_id" => 5, "read" => false, "write" => false],
+            ["module_id" => 5, "profile_id" => 5, "read" => false, "write" => false],
+            ["module_id" => 6, "profile_id" => 5, "read" => false, "write" => false]    
         ];
 
         DB::table("profile_has_module")->insert($visitorModulesRelationship);

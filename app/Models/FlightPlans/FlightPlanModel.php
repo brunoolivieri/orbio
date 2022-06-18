@@ -12,16 +12,14 @@ class FlightPlanModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "flight_plans";
-    const CREATED_AT = "dh_criacao";
-    const UPDATED_AT = "dh_atualizacao";
-    protected $guarded = [];
+    protected $fillable = ["*"];
 
     /*
     * Relationship with incidents table
     */
     function incidents(){
 
-        return $this->belongsTo("App\Models\Incidents\IncidentModel", "id_incidente");
+        return $this->belongsTo("App\Models\Incidents\IncidentModel", "incident_id");
 
     }
 
@@ -30,7 +28,7 @@ class FlightPlanModel extends Model
     */
     function reports(){
 
-        return $this->belongsTo("App\Models\Reports\ReportModel", "id_relatorio");
+        return $this->belongsTo("App\Models\Reports\ReportModel", "report_id");
 
     }
 
@@ -39,7 +37,7 @@ class FlightPlanModel extends Model
     */
     function service_orders(){
 
-        return $this->hasMany("App\Models\Orders\ServiceOrderModel", "id_plano_voo");
+        return $this->hasMany("App\Models\Orders\ServiceOrderModel", "flight_plan_id");
 
     }
 
@@ -48,7 +46,7 @@ class FlightPlanModel extends Model
     */
     function service_order_has_flight_plan(){
 
-        return $this->hasMany("App\Models\Pivot\ServiceOrdersHasFlightPlansModel", "id_plano_voo");
+        return $this->hasMany("App\Models\Pivot\ServiceOrdersHasFlightPlansModel", "flight_plan_id");
 
     }
 
@@ -65,7 +63,7 @@ class FlightPlanModel extends Model
         try{
 
             $data = DB::table('flight_plans')
-            ->select('id', 'id_relatorio', 'id_incidente', 'arquivo', 'descricao', 'status', 'dh_criacao', 'dh_atualizacao', 'deleted_at')
+            ->select('id', 'report_id', 'incident_id', 'file', 'description', 'status', 'created_at', 'updated_at', 'deleted_at')
             ->where("flight_plans.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 

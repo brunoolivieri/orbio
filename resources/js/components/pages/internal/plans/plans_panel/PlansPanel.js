@@ -274,7 +274,7 @@ export function PlansPanel() {
    */
   const handleDownloadFlightPlan = ((filename) => {
 
-    const module_middleware = `${AuthData.data.id}.${2}.${"ler"}`;
+    const module_middleware = `${AuthData.data.id}.${2}.${"read"}`;
 
     AxiosApi.get(`/api/plans-module-download/${filename}?auth=${module_middleware}`, null, {
       responseType: 'blob'
@@ -319,8 +319,8 @@ export function PlansPanel() {
         <Grid item>
           <Tooltip title="Novo Plano">
             <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
-              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
               </IconButton>
             </Link>
           </Tooltip>
@@ -433,16 +433,16 @@ export function PlansPanel() {
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${row.file}`} target="_blank">
                           <Tooltip title="Ver plano">
-                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#00713A" : "#808991"} size="sm" />
+                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
                             </IconButton>
                           </Tooltip>
                         </Link>
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Baixar plano">
-                          <IconButton onClick={() => handleDownloadFlightPlan(row.file)} disabled={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? false : true}>
-                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.ler == 1 ? "#007937" : "#808991"} />
+                          <IconButton onClick={() => handleDownloadFlightPlan(row.file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
                           </IconButton>
                         </Tooltip>
                       </TableCell>
@@ -469,7 +469,7 @@ export function PlansPanel() {
             </Table>
 
             {(!panelData.status.loading && !panelData.status.success && panelData.status.error) &&
-              <Alert severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Alert>
+              <Areadt severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Areadt>
             }
 
           </TableContainer>

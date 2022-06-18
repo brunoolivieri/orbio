@@ -16,16 +16,14 @@ class ProfileModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "profiles";
-    const CREATED_AT = "dh_criacao";
-    const UPDATED_AT = "dh_atualizacao";
-    protected $guarded = [];
+    protected $fillable = ["*"];
 
     /*
     * Relationship with user table
     */
     function user(){
 
-        return $this->hasMany("App\Models\User\UserModel", "id_perfil");
+        return $this->hasMany("App\Models\User\UserModel", "profile_id");
 
     }
 
@@ -34,7 +32,7 @@ class ProfileModel extends Model
     */
     function module_privileges(){
 
-        return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "id_perfil");
+        return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "profile_id");
 
     }
 
@@ -46,7 +44,7 @@ class ProfileModel extends Model
 
             DB::beginTransaction();
 
-            $new_profile = ProfileModel::create(["nome" => $profile_name]);
+            $new_profile = ProfileModel::create(["name" => $profile_name]);
 
             $model = new ProfileHasModuleModel();
 
@@ -98,7 +96,7 @@ class ProfileModel extends Model
 
             DB::beginTransaction();
 
-            ProfileModel::where('id', $profile_id)->update(["nome" => $profile_name]);
+            ProfileModel::where('id', $profile_id)->update(["name" => $profile_name]);
 
             $model = new ProfileHasModuleModel();
 

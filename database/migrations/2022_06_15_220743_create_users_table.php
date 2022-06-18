@@ -15,16 +15,14 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_perfil')->constrained('profiles');
-            $table->foreignId('id_dados_complementares')->nullable(true)->constrained('user_complementary_data')->onDelete('cascade');
-            $table->string("nome");
+            $table->foreignId('profile_id')->constrained('profiles');
+            $table->foreignId('complementary_data_id')->nullable(true)->constrained('user_complementary_data')->onDelete('cascade');
+            $table->string("name");
             $table->string("email");
-            $table->string("senha");
+            $table->string("password");
             $table->boolean("status")->default(false);
-            $table->string("token")->nullable(true);
-            $table->dateTime("dh_ultimo_acesso")->nullable(true);
-            $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_criacao")->useCurrent();   
+            $table->dateTime("last_access")->nullable(true);
+            $table->timestamps();   
             $table->softDeletes();
         });
     }

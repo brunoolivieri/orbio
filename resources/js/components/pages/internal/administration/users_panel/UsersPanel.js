@@ -284,8 +284,8 @@ export function UsersPanel() {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -299,8 +299,8 @@ export function UsersPanel() {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -380,12 +380,12 @@ export function UsersPanel() {
               <TableBody className="tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
-                    <TableRow key={row.user_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.user_id} /></TableCell>
+                    <TableRow key={row.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">{row.email}</TableCell>
                       <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
-                      <TableCell align="center">{row.profile_name}</TableCell>
+                      <TableCell align="center">{row.profile_id}</TableCell>
                       <TableCell align="center">{row.last_access}</TableCell>
                     </TableRow>
                   ))}

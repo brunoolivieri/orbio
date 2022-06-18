@@ -37,7 +37,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     // Controlled inputs
     const [formData, setFormData] = React.useState({
-        id: props.record.equipment_id,
+        id: props.record.id,
         image: null,
         name: props.record.name,
         manufacturer: props.record.manufacturer,
@@ -267,13 +267,13 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.read == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.equipment_id}</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleEquipmentUpdateSubmit} >
 
@@ -286,8 +286,8 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="equipment_id"
-                            name="equipment_id"
+                            id="id"
+                            name="id"
                             defaultValue={formData.id}
                             InputProps={{
                                 readOnly: true,

@@ -54,12 +54,12 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
     // Reducer
     const [privileges, dispatch] = React.useReducer(privilegesReducer, {
-        "1": { read: props.record.modules["1"].profile_powers.ler === 1 ? true : false, write: props.record.modules["1"].profile_powers.escrever === 1 ? true : false },
-        "2": { read: props.record.modules["2"].profile_powers.ler === 1 ? true : false, write: props.record.modules["2"].profile_powers.escrever === 1 ? true : false },
-        "3": { read: props.record.modules["3"].profile_powers.ler === 1 ? true : false, write: props.record.modules["3"].profile_powers.escrever === 1 ? true : false },
-        "4": { read: props.record.modules["4"].profile_powers.ler === 1 ? true : false, write: props.record.modules["4"].profile_powers.escrever === 1 ? true : false },
-        "5": { read: props.record.modules["5"].profile_powers.ler === 1 ? true : false, write: props.record.modules["5"].profile_powers.escrever === 1 ? true : false },
-        "6": { read: props.record.modules["6"].profile_powers.ler === 1 ? true : false, write: props.record.modules["6"].profile_powers.escrever === 1 ? true : false }
+        "1": { read: props.record.modules["1"].profile_powers.ler === 1 ? true : false, write: props.record.modules["1"].profile_powers.write === 1 ? true : false },
+        "2": { read: props.record.modules["2"].profile_powers.ler === 1 ? true : false, write: props.record.modules["2"].profile_powers.write === 1 ? true : false },
+        "3": { read: props.record.modules["3"].profile_powers.ler === 1 ? true : false, write: props.record.modules["3"].profile_powers.write === 1 ? true : false },
+        "4": { read: props.record.modules["4"].profile_powers.ler === 1 ? true : false, write: props.record.modules["4"].profile_powers.write === 1 ? true : false },
+        "5": { read: props.record.modules["5"].profile_powers.ler === 1 ? true : false, write: props.record.modules["5"].profile_powers.write === 1 ? true : false },
+        "6": { read: props.record.modules["6"].profile_powers.ler === 1 ? true : false, write: props.record.modules["6"].profile_powers.write === 1 ? true : false }
     });
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -193,8 +193,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 

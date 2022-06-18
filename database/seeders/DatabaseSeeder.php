@@ -18,11 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ProfilesModulesRelationshipSeeder::class); // Geração da relação Perfis-Módulos 
         $this->call(SuperAdminSeeder::class); // Geração do Super-Admin 
         // $this->call(UsersSeeder::class); // Geração de usuários a partir do UserFactory
-        // $this->call(ReportsSeeder::class); // Geração dos relatórios
-        // $this->call(IncidentsSeeder::class); // Geração dos Incidentes
-        // $this->call(FlightPlansSeeder::class); // Geração dos planos de voo
-        // $this->call(ServiceOrdersSeeder::class); // Geração das ordens de serviço
-        // $this->call(OrdersUsersRelationshipSeeder::class); // Geração da relação dos usuários com as ordens de serviço
 
     }
 }

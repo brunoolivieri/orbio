@@ -30,19 +30,19 @@ class OrderUpdatedEventListener
      */
     public function handle(OrderUpdatedEvent $event)
     {
-        if($event->service_order->wasChanged('dh_inicio')){
+        if($event->service_order->wasChanged('start_date')){
 
             Mail::to()->cc([])->queue(new OrderUpdatedMail());
 
-        }if($event->service_order->wasChanged('dh_fim')){
+        }if($event->service_order->wasChanged('end_date')){
 
             Mail::to()->cc([])->queue(new OrderUpdatedMail());
 
-        }else if($event->service_order->wasChanged('nome_piloto')){
+        }else if($event->service_order->wasChanged('pilot_name')){
 
             Mail::to()->cc([])->queue(new OrderUpdatedMail());
 
-        }else if($event->service_order->wasChanged('nome_cliente')){
+        }else if($event->service_order->wasChanged('client_name')){
 
             Mail::to()->cc([])->queue(new OrderUpdatedMail());
 

@@ -23,14 +23,14 @@ class UserPasswordChangedEvent
      *
      * @return void
      */
-    public function __construct(object $user)
+    public function __construct(string $name, string $email)
     {
 
-        $name_parts = explode(" ", $user->nome);
+        $name_parts = explode(" ", $name);
         $first_name = $name_parts[0];
 
         $this->name = $first_name;
-        $this->email = $user->email;
+        $this->email = $email;
         $this->datetime = date("d-m-Y H:i:s");
     }
 

@@ -24,20 +24,18 @@ class UserModel extends Authenticatable
     use HasFactory, SoftDeletes;
 
     protected $table = "users";
-    const CREATED_AT = "dh_criacao";
-    const UPDATED_AT = "dh_atualizacao";
     protected $fillable = ["*"];
 
-    // For Auth::attempt works
+    /*// For Auth::attempt works
     function getAuthPassword() {
         return $this->senha;
-    }
+    }*/
 
     /*
     * Relationship with user_complementary_data table
     */
     function complementary_data(){
-        return $this->belongsTo("App\Models\User\UserComplementaryDataModel", "id_dados_complementares");
+        return $this->belongsTo("App\Models\User\UserComplementaryDataModel", "complementary_data_id");
     }
 
     /*
@@ -51,7 +49,7 @@ class UserModel extends Authenticatable
     * Relationship with profile table
     */
     function profile(){
-        return $this->belongsTo("App\Models\Profiles\ProfileModel", "id_perfil");
+        return $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
     }
 
      /**
@@ -65,7 +63,7 @@ class UserModel extends Authenticatable
     * Relationship with service_order_has_user table
     */
     function service_order_has_user(){
-        return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "id_usuario");
+        return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "user_id");
     }
 
     /**
@@ -97,9 +95,9 @@ class UserModel extends Authenticatable
                 $new_user_data = UserModel::find($new_user_id);
 
                 Mail::to($new_user_data->email)->send(new SendAccessDataToCreatedUser([
-                    "name" =>  $new_user_data->nome,
+                    "name" =>  $new_user_data->name,
                     "email" =>  $new_user_data->email,
-                    "profile" =>  $new_user_data->profile->nome,
+                    "profile" =>  $new_user_data->profile->name,
                     "unencrypted_password" => $unencrypted_password
                 ]));
 
@@ -130,8 +128,8 @@ class UserModel extends Authenticatable
         try{
 
             $data = DB::table('users')
-            ->join('profiles', 'users.id_perfil', '=', 'profiles.id')
-            ->select('users.id', 'users.nome', 'users.email', 'users.id_perfil', 'profiles.nome as nome_perfil' , 'users.status', 'users.dh_criacao', 'users.dh_atualizacao', 'users.dh_ultimo_acesso')
+            ->join('profiles', 'users.profile_id', '=', 'profiles.id')
+            ->select('users.id', 'users.name', 'users.email', 'users.profile_id', 'profiles.name as profile_name' , 'users.status', 'users.created_at', 'users.updated_at', 'users.last_access')
             ->where("users.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 
@@ -141,7 +139,7 @@ class UserModel extends Authenticatable
 
                 }, function($query) use ($where_value){
 
-                    $query->where('users.nome', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
+                    $query->where('users.name', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
 
                 });
 
@@ -170,21 +168,21 @@ class UserModel extends Authenticatable
             $user = UserModel::find($user_id);
 
             $data = [
-                'nome' => $user->nome, 
+                'name' => $user->name, 
                 'email' => $user->email, 
                 'habANAC' => $user->complementary_data->habANAC,
                 'CPF' => $user->complementary_data->CPF,
                 'CNPJ' => $user->complementary_data->CNPJ,
-                'telefone' => $user->complementary_data->telefone,
-                'celular' => $user->complementary_data->celular,
-                'razaoSocial' => $user->complementary_data->razaoSocial,
-                'nomeFantasia' => $user->complementary_data->nomeFantasia,
-                'logradouro' => $user->complementary_data->address->logradouro,
-                'numero' => $user->complementary_data->address->numero,
+                'telefone' => $user->complementary_data->telephone,
+                'celular' => $user->complementary_data->cellphone,
+                'company_name' => $user->complementary_data->company_name,
+                'trading_name' => $user->complementary_data->trading_name,
+                'address' => $user->complementary_data->address->address,
+                'number' => $user->complementary_data->address->number,
                 'cep' => $user->complementary_data->address->cep,
-                'cidade' => $user->complementary_data->address->cidade,
-                'estado' => $user->complementary_data->address->estado,
-                'complemento' => $user->complementary_data->address->complemento
+                'city' => $user->complementary_data->address->city,
+                'state' => $user->complementary_data->address->state,
+                'complement' => $user->complementary_data->address->complement
             ];
 
             return ["status" => true, "error" => false, "account_data" => $data];
@@ -205,12 +203,12 @@ class UserModel extends Authenticatable
 
             $new_address_id = DB::table("address")->insertGetId(
                 [
-                    "logradouro" => NULL,
-                    "numero" => NULL,
+                    "address" => NULL,
+                    "number" => NULL,
                     "cep" => NULL,
-                    "cidade" => NULL,
-                    "estado" => NULL,
-                    "complemento" => NULL
+                    "city" => NULL,
+                    "state" => NULL,
+                    "complement" => NULL
                 ]
             );
 
@@ -218,14 +216,14 @@ class UserModel extends Authenticatable
                 "habANAC" => NULL,
                 "CPF" => NULL,
                 "CNPJ" => NULL,
-                "telefone" => NULL,
-                "celular" => NULL,
-                "razaoSocial" => NULL,
-                "nomeFantasia" => NULL,
-                "id_endereco" => $new_address_id
+                "telephone" => NULL,
+                "cellphone" => NULL,
+                "company_name" => NULL,
+                "trading_name" => NULL,
+                "address_id" => $new_address_id
             ]);
 
-            UserModel::where('id', Auth::user()->id)->update(["id_dados_complementares" => $new_comp_data_id]);
+            UserModel::where('id', Auth::user()->id)->update(["complementary_data_id" => $new_comp_data_id]);
 
             return ["status" => true, "error" => false];
 

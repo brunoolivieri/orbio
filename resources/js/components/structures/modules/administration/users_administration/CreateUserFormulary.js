@@ -82,8 +82,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
     const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-    const nameValidate = FormValidation(formData.get("registration_name_input"), 3, null, null, null);
-    const emailValidate = FormValidation(formData.get("registration_email_input"), null, null, emailPattern, "EMAIL");
+    const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
+    const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
     const profileValidate = Number(formData.get("select_profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
 
     setErrorDetected({ name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error });
@@ -109,8 +109,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
 
     AxiosApi.post(`/api/admin-module-user`, {
-      email: data.get("registration_email_input"),
-      name: data.get("registration_name_input"),
+      email: data.get("email"),
+      name: data.get("name"),
       profile_id: data.get("select_profile"),
       password: random_pass
     })
@@ -190,8 +190,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
       {/* Botão para abrir o formulário */}
       <Tooltip title="Novo Usuário">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} >
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -214,7 +214,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               variant="outlined"
               required
               id="registration_name_input"
-              name="registration_name_input"
+              name="name"
               helperText={errorMessage.name}
               error={errorDetected.name}
               sx={{ mb: 2 }}
@@ -227,8 +227,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               fullWidth
               variant="outlined"
               required
-              id="registration_email_input"
-              name="registration_email_input"
+              id="email"
+              name="email"
               helperText={errorMessage.email}
               error={errorDetected.email}
               sx={{ mb: 2 }}
@@ -236,9 +236,9 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
             <GenericSelect
               label_text={"Perfil"}
-              data_source={"/api/admin-module-user/create?auth=none"}
+              data_source={"/api/admin-module-user/create"}
               primary_key={"id"}
-              key_content={"nome"}
+              key_content={"name"}
               error={errorDetected.profile}
               default={0}
               name={"select_profile"}

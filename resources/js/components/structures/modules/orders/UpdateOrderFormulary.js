@@ -36,8 +36,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
   const [open, setOpen] = React.useState(false);
 
   // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
-  const [errorMessage, setErrorMessage] = React.useState({ order_start_date: "", order_end_date: "", creator_name: "", pilot_name: "", client_name: "", order_note: "", flight_plan: "", status: "" });
+  const [errorDetected, setErrorDetected] = React.useState({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
+  const [errorMessage, setErrorMessage] = React.useState({ order_start_date: "", order_end_date: "", creator_name: "", pilot_name: "", client_name: "", observation: "", flight_plan: "", status: "" });
 
   // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -59,8 +59,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    setErrorDetected({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
-    setErrorMessage({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, order_note: false, flight_plan: false, status: false });
+    setErrorDetected({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
+    setErrorMessage({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
     setOpen(false);
@@ -102,7 +102,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const pilotNameValidate = formData.get("select_pilot_name") != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = formData.get("select_client_name") != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
-    const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
+    const orderNoteValidate = FormValidation(formData.get("observation"), 3, null, null, null);
     const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
@@ -111,7 +111,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
       order_end_date: endDateValidate.error,
       pilot_name: pilotNameValidate.error,
       client_name: clientNameValidate.error,
-      order_note: orderNoteValidate.error,
+      observation: orderNoteValidate.error,
       flight_plan: fligthPlansValidate.error,
       status: statusValidate.error
     });
@@ -121,7 +121,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
       order_end_date: endDateValidate.message,
       pilot_name: pilotNameValidate.message,
       client_name: clientNameValidate.message,
-      order_note: orderNoteValidate.message,
+      observation: orderNoteValidate.message,
       flight_plan: fligthPlansValidate.message,
       status: statusValidate.message
     });
@@ -171,12 +171,12 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     obj_with_arr_of_ids["flight_plans_ids"] = arr;
 
-    AxiosApi.patch(`/api/orders-module/${data.get("order_id")}`, {
+    AxiosApi.patch(`/api/orders-module/${data.get("id")}`, {
       initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: data.get("select_pilot_name"),
       client_id: data.get("select_client_name"),
-      observation: data.get("order_note"),
+      observation: data.get("observation"),
       status: data.get("status"),
       fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
     })
@@ -251,7 +251,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
       creator_name: input_errors.creator_name.error,
       pilot_name: input_errors.pilot_name.error,
       client_name: input_errors.client_name.error,
-      order_note: input_errors.observation.error,
+      observation: input_errors.observation.error,
       flight_plans: input_errors.fligth_plans_ids.error,
       status: input_errors.status.error
     });
@@ -262,7 +262,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
       creator_name: input_errors.creator_name.message,
       pilot_name: input_errors.pilot_name.message,
       client_name: input_errors.client_name.message,
-      order_note: input_errors.observation.message,
+      observation: input_errors.observation.message,
       flight_plans: input_errors.fligth_plans_ids.message,
       status: input_errors.status.message
     });
@@ -275,14 +275,14 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     <>
 
       <Tooltip title="Editar">
-        <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
       {(props.record != null && open) &&
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.order_id})</DialogTitle>
+          <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
@@ -295,9 +295,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                 fullWidth
                 variant="outlined"
                 required
-                id="order_id"
-                name="order_id"
-                defaultValue={props.record.order_id}
+                id="id"
+                name="id"
+                defaultValue={props.record.id}
                 sx={{ mb: 2 }}
                 InputProps={{
                   readOnly: true
@@ -332,7 +332,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
               <Box sx={{ mb: 2 }}>
                 <GenericSelect
                   label_text="Piloto"
-                  data_source={"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"}
+                  data_source={"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome"}
                   primary_key={"id"}
                   key_content={"nome"}
                   helperText={errorMessage.pilot_name}
@@ -345,7 +345,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
               <Box sx={{ mb: 2 }}>
                 <GenericSelect
                   label_text="Cliente"
-                  data_source={"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"}
+                  data_source={"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome"}
                   primary_key={"id"}
                   key_content={"nome"}
                   helperText={errorMessage.client_name}
@@ -360,7 +360,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                 <ModalTransferList
                   open_button={"Selecionar planos de vôo"}
                   modal_title={"Seleção de Planos de Vôo"}
-                  data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status&auth=none"}
+                  data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status"}
                   set_selected_items={setFlightPlansSelected}
                   selected_items={props.record.flight_plans}
                 />
@@ -374,11 +374,11 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                 fullWidth
                 variant="outlined"
                 required
-                id="order_note"
-                name="order_note"
-                helperText={errorMessage.order_note}
-                error={errorDetected.order_note}
-                defaultValue={props.record.order_note}
+                id="observation"
+                name="observation"
+                helperText={errorMessage.observation}
+                error={errorDetected.observation}
+                defaultValue={props.record.observation}
                 sx={{ mb: 2 }}
               />
 

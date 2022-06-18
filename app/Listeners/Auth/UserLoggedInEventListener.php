@@ -34,7 +34,7 @@ class UserLoggedInEventListener
      */
     public function handle(UserLoggedInEvent $event)
     {    
-        UserModel::where("id", $event->user_id)->update(["dh_ultimo_acesso" => date("Y-m-d H:i:s")]);
+        UserModel::where("id", $event->user_id)->update(["last_access" => date("Y-m-d H:i:s")]);
 
         Mail::to($event->email)->send(new LogInNotification($event->name, $event->profile, $event->datetime));
     }

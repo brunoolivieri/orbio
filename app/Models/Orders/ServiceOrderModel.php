@@ -12,16 +12,14 @@ class ServiceOrderModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "service_orders";
-    const CREATED_AT = "dh_criacao";
-    const UPDATED_AT = "dh_atualizacao";
-    protected $guarded = []; 
+    protected $fillable = ["*"];
 
     /*
     * Relationship with flight_plans table
     */
     function flight_plans(){
 
-        return $this->belongsTo("App\Models\Plans\FlightPlanModel", "id_plano_voo");
+        return $this->belongsTo("App\Models\Plans\FlightPlanModel", "flight_plan_id");
 
     }
 
@@ -30,7 +28,7 @@ class ServiceOrderModel extends Model
     */
     function service_order_has_user(){
 
-        return $this->hasOne("App\Models\Orders\ServiceOrderHasUserModel", "id_ordem_servico");
+        return $this->hasOne("App\Models\Orders\ServiceOrderHasUserModel", "service_order_id");
 
     }
 
@@ -39,7 +37,7 @@ class ServiceOrderModel extends Model
     */
     function service_order_has_flight_plan(){
 
-        return $this->hasMany("App\Models\Orders\ServiceOrderHasFlightPlansModel", "id_ordem_servico");
+        return $this->hasMany("App\Models\Orders\ServiceOrderHasFlightPlansModel", "service_order_id");
 
     }
 

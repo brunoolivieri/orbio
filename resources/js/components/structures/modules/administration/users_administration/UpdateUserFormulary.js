@@ -80,8 +80,8 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
     const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-    const emailValidate = FormValidation(formData.get("email_input"), null, null, emailPattern, "EMAIL");
-    const nameValidate = FormValidation(formData.get("name_input"), 3, null, null, null);
+    const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
+    const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
     const profileValidate = Number(formData.get("select_profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
@@ -102,9 +102,9 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   const requestServerOperation = (data) => {
 
-    AxiosApi.patch(`/api/admin-module-user/${data.get("user_id")}`, {
-      name: data.get("name_input"),
-      email: data.get("email_input"),
+    AxiosApi.patch(`/api/admin-module-user/${data.get("id")}`, {
+      name: data.get("name"),
+      email: data.get("email"),
       status: data.get("status"),
       profile_id: data.get("select_profile")
     })
@@ -185,8 +185,8 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
     <>
 
       <Tooltip title="Editar">
-        <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -200,13 +200,13 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="user_id"
-                name="user_id"
+                id="id"
+                name="id"
                 label="ID"
                 type="email"
                 fullWidth
                 variant="outlined"
-                defaultValue={props.record.user_id}
+                defaultValue={props.record.id}
                 inputProps={{
                   readOnly: true
                 }}
@@ -215,8 +215,8 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="name_input"
-                name="name_input"
+                id="name"
+                name="name"
                 label="Nome completo"
                 fullWidth
                 variant="outlined"
@@ -227,8 +227,8 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
               />
               <TextField
                 margin="dense"
-                id="email_input"
-                name="email_input"
+                id="email"
+                name="email"
                 label="Endereço de email"
                 type="email"
                 fullWidth
@@ -242,11 +242,11 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
               <Box sx={{ width: "auto", mb: 2 }}>
                 <GenericSelect
                   label_text={"Perfil"}
-                  data_source={"/api/admin-module-user/create?auth=none"}
+                  data_source={"/api/admin-module-user/create"}
                   primary_key={"id"}
-                  key_content={"nome"}
+                  key_content={"name"}
                   error={errorDetected.profile}
-                  default={props.record.access}
+                  default={props.record.profile_id}
                   name={"select_profile"}
                 />
               </Box>

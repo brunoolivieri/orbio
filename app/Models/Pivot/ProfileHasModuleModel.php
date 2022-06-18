@@ -17,7 +17,7 @@ class ProfileHasModuleModel extends Model
 
     function profile(){
 
-        $this->belongsTo("App\Models\Profiles\ProfileModel", "id_perfil");
+        $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
         
     }
     
@@ -26,12 +26,12 @@ class ProfileHasModuleModel extends Model
         try{
 
             ProfileHasModuleModel::insert([
-                ["id_modulo"=> 1, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
-                ["id_modulo"=> 2, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
-                ["id_modulo"=> 3, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
-                ["id_modulo"=> 4, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
-                ["id_modulo"=> 5, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false],
-                ["id_modulo"=> 6, "id_perfil"=> $profile_id, "ler"=> false, "escrever"=> false]
+                ["module_id"=> 1, "profile_id"=> $profile_id, "read"=> false, "write"=> false],
+                ["module_id"=> 2, "profile_id"=> $profile_id, "read"=> false, "write"=> false],
+                ["module_id"=> 3, "profile_id"=> $profile_id, "read"=> false, "write"=> false],
+                ["module_id"=> 4, "profile_id"=> $profile_id, "read"=> false, "write"=> false],
+                ["module_id"=> 5, "profile_id"=> $profile_id, "read"=> false, "write"=> false],
+                ["module_id"=> 6, "profile_id"=> $profile_id, "read"=> false, "write"=> false]
             ]);
 
             return ["status" => true, "error" => false];
@@ -49,19 +49,19 @@ class ProfileHasModuleModel extends Model
         try{
 
             $data = DB::table('profile_has_module')
-            ->join('profiles', 'profile_has_module.id_perfil', '=', 'profiles.id')
-            ->join('modules', 'profile_has_module.id_modulo', '=', 'modules.id')
-            ->select('profile_has_module.id_modulo', 'modules.nome', 'profile_has_module.id_perfil', 'profiles.nome as nome_perfil', 'profile_has_module.ler', 'profile_has_module.escrever')
+            ->join('profiles', 'profile_has_module.profile_id', '=', 'profiles.id')
+            ->join('modules', 'profile_has_module.module_id', '=', 'modules.id')
+            ->select('profile_has_module.module_id', 'modules.name', 'profile_has_module.profile_id', 'profiles.name as profile_name', 'profile_has_module.read', 'profile_has_module.write')
             ->where('profiles.deleted_at', null)
             ->when($where_value, function ($query, $where_value) {
 
                 $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                    $query->where('profile_has_module.id_perfil', '=', $where_value);
+                    $query->where('profile_has_module.profile_id', '=', $where_value);
 
                 }, function($query) use ($where_value){
 
-                    $query->where('profiles.nome', 'LIKE', '%'.$where_value.'%');
+                    $query->where('profiles.name', 'LIKE', '%'.$where_value.'%');
 
                 });
 
@@ -85,12 +85,12 @@ class ProfileHasModuleModel extends Model
 
             foreach($data as $module_id => $module_privileges){
 
-                ProfileHasModuleModel::where('id_perfil', $profile_id)
-                ->where('id_modulo', $module_id)
+                ProfileHasModuleModel::where('profile_id', $profile_id)
+                ->where('module_id', $module_id)
                 ->update(
                     [
-                    'ler' => $module_privileges["read"], 
-                    'escrever' => $module_privileges["write"]
+                    'read' => $module_privileges["read"], 
+                    'wrie' => $module_privileges["write"]
                     ]
                 );
             }

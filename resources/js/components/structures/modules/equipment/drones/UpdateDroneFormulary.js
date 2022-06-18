@@ -34,7 +34,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
     // Controlled inputs
     const [formData, setFormData] = React.useState({
-        id: props.record.drone_id,
+        id: props.record.id,
         image: null,
         name: props.record.name,
         manufacturer: props.record.manufacturer,
@@ -254,13 +254,13 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.drone_id}</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleDroneUpdateSubmit} >
 
@@ -273,8 +273,8 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="drone_id"
-                            name="drone_id"
+                            id="id"
+                            name="id"
                             helperText={errorMessage.name}
                             error={errorDetected.name}
                             defaultValue={formData.id}

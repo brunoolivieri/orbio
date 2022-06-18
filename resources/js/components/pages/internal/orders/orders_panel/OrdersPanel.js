@@ -286,8 +286,8 @@ export const OrdersPanel = React.memo(() => {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
-              <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -300,8 +300,8 @@ export const OrdersPanel = React.memo(() => {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -370,14 +370,14 @@ export const OrdersPanel = React.memo(() => {
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Planos de Vôo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">NumOS</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Data do início</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Data do fim</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Início</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Fim</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
@@ -408,7 +408,7 @@ export const OrdersPanel = React.memo(() => {
             </Table>
 
             {(!panelData.status.loading && !panelData.status.success && panelData.status.error) &&
-              <Alert severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Alert>
+              <Areadt severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Areadt>
             }
 
           </TableContainer>

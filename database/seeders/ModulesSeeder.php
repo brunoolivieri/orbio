@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Modules\ModuleModel;
 
 class ModulesSeeder extends Seeder
 {
@@ -16,15 +16,15 @@ class ModulesSeeder extends Seeder
     {
 
         $data = [
-            ["nome" => "Administração"],
-            ["nome" => "Planos de voo"],
-            ["nome" => "Ordens de serviço"],
-            ["nome" => "Relatórios pós-voo"],
-            ["nome" => "Incidentes"],
-            ["nome" => "Equipamentos"]
+            ["name" => "Administração"],
+            ["name" => "Planos de voo"],
+            ["name" => "Ordens de serviço"],
+            ["name" => "Relatórios pós-voo"],
+            ["name" => "Incidentes"],
+            ["name" => "Equipamentos"]
         ];
 
-        DB::table("modules")->insert($data);
+        ModuleModel::insert($data);
 
     }
 }

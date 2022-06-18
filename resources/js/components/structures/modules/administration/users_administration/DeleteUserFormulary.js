@@ -70,7 +70,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
     setDisabledButton(false);
 
-    AxiosApi.delete(`/api/admin-module-user/${data.get("user_id")}`)
+    AxiosApi.delete(`/api/admin-module-user/${data.get("id")}`)
       .then(function () {
 
         successServerResponseTreatment();
@@ -119,8 +119,8 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -140,8 +140,8 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="user_id"
-                name="user_id"
+                id="id"
+                name="id"
                 label="ID do usuário"
                 type="text"
                 fullWidth
@@ -149,7 +149,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
                 inputProps={{
                   readOnly: true
                 }}
-                value={props.record.user_id}
+                value={props.record.id}
                 sx={{ mb: 2 }}
               />
 

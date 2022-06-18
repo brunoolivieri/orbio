@@ -20,12 +20,13 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'id_perfil' => Arr::random([1, 2, 3, 4, 5]),
-            'nome' => $this->faker->name(),
+            'profile_id' => Arr::random([1, 2, 3, 4, 5]),
+            'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
-            'senha' => Hash::make("123456789User"),
+            'password' => Hash::make("123456789User"),
             'status' => (bool) Arr::random([0, 1]),
-            'dh_atualizacao' => Arr::random([now(), null]),
+            'last_acess' => Arr::random([now(), null]),
+            'updated_at' => null,
         ];
     }
 }

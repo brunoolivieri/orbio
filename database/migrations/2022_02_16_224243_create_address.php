@@ -15,12 +15,12 @@ class CreateAddress extends Migration
     {
         Schema::create('address', function (Blueprint $table) {
             $table->id();
-            $table->string("logradouro")->nullable(true);
-            $table->string("numero")->nullable(true);
+            $table->string("address")->nullable(true);
+            $table->string("number")->nullable(true);
             $table->string("cep")->nullable(true);
-            $table->string("cidade")->nullable(true);
-            $table->string("estado")->nullable(true);
-            $table->string("complemento")->nullable(true);
+            $table->string("city")->nullable(true);
+            $table->string("state")->nullable(true);
+            $table->string("complement")->nullable(true);
             $table->softDeletes();
         });
     }

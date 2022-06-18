@@ -68,7 +68,7 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
     */
     function requestServerOperation(data) {
 
-        AxiosApi.delete(`/api/equipments-module-drone/${data.get("drone_id")}`)
+        AxiosApi.delete(`/api/equipments-module-drone/${data.get("id")}`)
             .then(function () {
 
                 successServerResponseTreatment();
@@ -117,13 +117,13 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                    <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
                 </IconButton>
             </Tooltip>
 
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-                <DialogTitle>DELEÇÃO | ID: {props.record.drone_id}</DialogTitle>
+                <DialogTitle>DELEÇÃO | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleDroneDeleteSubmit} >
 
@@ -136,9 +136,9 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="drone_id"
-                            name="drone_id"
-                            defaultValue={props.record.drone_id}
+                            id="id"
+                            name="id"
+                            defaultValue={props.record.id}
                             InputProps={{
                                 readOnly: true
                             }}

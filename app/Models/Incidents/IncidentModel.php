@@ -12,9 +12,7 @@ class IncidentModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "incidents";
-    const CREATED_AT = "dh_criacao";
-    const UPDATED_AT = "dh_atualizacao";
-    protected $guarded = [];
+    protected $fillable = ["*"];
 
     /**
      * Método realizar um SELECT SEM WHERE na tabela "incidents"

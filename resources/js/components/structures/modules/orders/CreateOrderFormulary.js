@@ -37,8 +37,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   const [open, setOpen] = React.useState(false);
 
   // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false });
-  const [errorMessage, setErrorMessage] = React.useState({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: "" });
+  const [errorDetected, setErrorDetected] = React.useState({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, observation: false, flight_plans: false, status: false });
+  const [errorMessage, setErrorMessage] = React.useState({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", observation: "", flight_plans: "", status: "" });
 
   // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -60,8 +60,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    setErrorDetected({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, order_note: false, flight_plans: false, status: false });
-    setErrorMessage({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", order_note: "", flight_plans: "", status: "" });
+    setErrorDetected({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, observation: false, flight_plans: false, status: false });
+    setErrorMessage({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", observation: "", flight_plans: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
     setOpen(false);
@@ -103,7 +103,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const pilotNameValidate = formData.get("select_pilot_name") != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = formData.get("select_client_name") != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
-    const orderNoteValidate = FormValidation(formData.get("order_note"), 3, null, null, null);
+    const orderNoteValidate = FormValidation(formData.get("observation"), 3, null, null, null);
     const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
@@ -112,7 +112,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
       order_end_date: endDateValidate.error,
       pilot_name: pilotNameValidate.error,
       client_name: clientNameValidate.error,
-      order_note: orderNoteValidate.error,
+      observation: orderNoteValidate.error,
       flight_plans: fligthPlansValidate.error,
       status: statusValidate.error
     });
@@ -122,7 +122,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
       order_end_date: endDateValidate.message,
       pilot_name: pilotNameValidate.message,
       client_name: clientNameValidate.message,
-      order_note: orderNoteValidate.message,
+      observation: orderNoteValidate.message,
       flight_plans: fligthPlansValidate.message,
       status: statusValidate.message
     });
@@ -176,7 +176,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
       final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: data.get("select_pilot_name"),
       client_id: data.get("select_client_name"),
-      observation: data.get("order_note"),
+      observation: data.get("observation"),
       status: data.get("status"),
       fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
     })
@@ -246,7 +246,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
       order_end_date: input_errors.final_date.error,
       pilot_name: input_errors.pilot_name.error,
       client_name: input_errors.client_name.error,
-      order_note: input_errors.observation.error,
+      observation: input_errors.observation.error,
       flight_plans: input_errors.fligth_plans_ids.error,
       status: input_errors.status.error
     });
@@ -256,7 +256,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
       order_end_date: input_errors.final_date.message,
       pilot_name: input_errors.pilot_name.message,
       client_name: input_errors.client_name.message,
-      order_note: input_errors.observation.message,
+      observation: input_errors.observation.message,
       flight_plans: input_errors.fligth_plans_ids.message,
       status: input_errors.status.message
     });
@@ -268,8 +268,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   return (
     <>
       <Tooltip title="Nova ordem de serviço">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? false : true}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.escrever == 1 ? "#00713A" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.read == 1 ? false : true}>
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -353,10 +353,10 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
               label="Observação"
               fullWidth
               variant="outlined"
-              id="order_note"
-              name="order_note"
-              helperText={errorMessage.order_note}
-              error={errorDetected.order_note}
+              id="observation"
+              name="observation"
+              helperText={errorMessage.observation}
+              error={errorDetected.observation}
               sx={{ mb: 2 }}
             />
 

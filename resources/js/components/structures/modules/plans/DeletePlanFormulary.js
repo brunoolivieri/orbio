@@ -71,7 +71,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
 
     setDisabledButton(false);
 
-    AxiosApi.delete(`/api/plans-module/${data.get("plan_id")}`)
+    AxiosApi.delete(`/api/plans-module/${data.get("id")}`)
       .then(function () {
 
         successServerResponseTreatment();
@@ -118,14 +118,14 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
       {(props.record != null && open) &&
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
+          <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
@@ -133,8 +133,8 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="plan_id"
-                name="plan_id"
+                id="id"
+                name="id"
                 label="ID do plano"
                 type="text"
                 fullWidth
@@ -142,7 +142,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
                 inputProps={{
                   readOnly: true
                 }}
-                value={props.record.plan_id}
+                value={props.record.id}
                 sx={{ mb: 2 }}
               />
 

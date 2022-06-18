@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Models\User\UserModel;
 use App\Models\Profiles\ProfileModel;
-use  App\Models\Orders\ServiceOrderModel;
+use App\Models\Orders\ServiceOrderModel;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Events\Modules\Admin\UserCreatedEvent;
@@ -57,7 +57,7 @@ class AdministrationModuleUserPanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->userPanelDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -92,19 +92,19 @@ class AdministrationModuleUserPanelController extends Controller
 
         foreach($data->items() as $row => $record){
 
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->dh_criacao));
-            $updated_at_formated = $record->dh_atualizacao == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_atualizacao));
-            $last_access_formated = $record->dh_ultimo_acesso == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->dh_ultimo_acesso));
+            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->created_at));
+            $updated_at_formated = $record->updated_at == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->updated_at));
+            $last_access_formated = $record->last_access == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->last_access));
             
             if($record->status == 1){
 
                 $badge_status = ["Ativo", "success"];
             
-            }else if($record->status == 0 && $record->dh_ultimo_acesso == null){
+            }else if($record->status == 0 && $record->last_access == null){
 
                 $badge_status = ["Inativo", "error"];
             
-            }else if($record->status == 0 && $record->dh_ultimo_acesso != null){
+            }else if($record->status == 0 && $record->last_access != null){
 
                 $badge_status = ["Desativado", "error"];
 
@@ -112,12 +112,12 @@ class AdministrationModuleUserPanelController extends Controller
 
             $arr_with_formated_data["records"][$row] = array(
                 "user_id" => $record->id,
-                "name" => $record->nome,
+                "name" => $record->name,
                 "email" => $record->email,
                 "status_badge" => $badge_status,
                 "status" => $record->status,
-                "access" => $record->id_perfil,
-                "profile_name" => $record->nome_perfil,
+                "access" => $record->profile_id,
+                "profile_name" => $record->profile_name,
                 "created_at" => $created_at_formated,
                 "updated_at" => $updated_at_formated,
                 "last_access" => $last_access_formated
@@ -170,17 +170,17 @@ class AdministrationModuleUserPanelController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $this->user_model->id_perfil = intval($request->profile_id);
-                $this->user_model->nome = $request->name;
+                $this->user_model->profile_id = intval($request->profile_id);
+                $this->user_model->nane = $request->name;
                 $this->user_model->email = $request->email;
-                $this->user_model->senha = Hash::make($request->password);
+                $this->user_model->password = Hash::make($request->password);
         
                 $this->user_model->save();
 
                 $data_for_email = [
-                    "name" => $this->user_model->nome,
+                    "name" => $this->user_model->name,
                     "email" => $this->user_model->email,
-                    "profile" => $this->user_model->profile->nome,
+                    "profile" => $this->user_model->profile->name,
                     "password" => $request->password
                 ];
 
@@ -226,7 +226,7 @@ class AdministrationModuleUserPanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->userPanelDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -262,12 +262,7 @@ class AdministrationModuleUserPanelController extends Controller
 
         try{
 
-            UserModel::where('id', $id)->update([
-                "nome" => $request->name,
-                "email" => $request->email,
-                "id_perfil" => $request->profile_id,
-                "status" => $request->status
-            ]);
+            UserModel::where('id', $id)->update($request->only(["name", "email", "profile_id", "status"]));
 
             Log::channel('administration_action')->info("[Método: Update][Controlador: AdministrationModuleUserPanelController] - Usuário atualizado com sucesso - ID do usuário: ".$id);
 
@@ -308,25 +303,25 @@ class AdministrationModuleUserPanelController extends Controller
                 foreach($user->service_order_has_user as $index => $record){
 
                     // If user is a pilot and his name is the same of the pilot of the actual service order
-                    if($user->id_perfil == 3 && ($record->service_order->nome_piloto === $user->nome)){
+                    if($user->profile_id == 3 && ($record->service_order->pilot_name === $user->name)){
 
-                        ServiceOrderModel::where("id", $record->id_ordem_servico)
-                        ->where("nome_piloto", $user->nome)
-                        ->update(["nome_piloto" => null]);
+                        ServiceOrderModel::where("id", $record->service_order_id)
+                        ->where("pilot_name", $user->name)
+                        ->update(["pilot_name" => null]);
                     
                     // If user is a client and his name is the same of the client of the actual service order
-                    }else if($user->id_perfil == 4 && ($record->service_order->nome_cliente === $user->nome)){
+                    }else if($user->profile_id == 4 && ($record->service_order->client_name === $user->name)){
 
-                        ServiceOrderModel::where("id", $record->id_ordem_servico)
-                        ->where("nome_cliente", $user->nome)
-                        ->update(["nome_cliente" => null]);
+                        ServiceOrderModel::where("id", $record->service_order_id)
+                        ->where("client_name", $user->name)
+                        ->update(["client_name" => null]);
                     
                     // If the name of the user is the same of the creator of the actual service order
-                    }else if(($record->service_order->nome_criador === $user->nome)){
+                    }else if(($record->service_order->creator_name === $user->name)){
 
-                        ServiceOrderModel::where("id", $record->id_ordem_servico)
-                        ->where("nome_criador", $user->nome)
-                        ->update(["nome_criador" => null]);
+                        ServiceOrderModel::where("id", $record->service_order_id)
+                        ->where("creator_name", $user->name)
+                        ->update(["creator_name" => null]);
 
                     }
 

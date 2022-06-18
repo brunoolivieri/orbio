@@ -27,7 +27,7 @@ class UserAccountDesactivatedEvent
      */
     public function __construct(object $user)
     {
-        $name_parts = explode(" ", $user->nome);
+        $name_parts = explode(" ", $user->name);
         $first_name = $name_parts[0];
 
         $this->name = $first_name;

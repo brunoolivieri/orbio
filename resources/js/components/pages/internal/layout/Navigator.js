@@ -54,12 +54,12 @@ export const Navigator = React.memo((props) => {
           active: false,
           access: true
         },
-        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: AuthData.data.user_powers["1"].profile_powers.ler == 1 ? true : false },
-        { id: 'Planos', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.ler == 1 ? true : false },
-        { id: 'Ordens', icon: <AssignmentIcon />, access: AuthData.data.user_powers["3"].profile_powers.ler == 1 ? true : false },
-        { id: 'Relatórios', icon: <AssessmentIcon />, access: AuthData.data.user_powers["4"].profile_powers.ler == 1 ? true : false },
-        { id: 'Incidentes', icon: <ReportIcon />, access: AuthData.data.user_powers["5"].profile_powers.ler == 1 ? true : false },
-        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: AuthData.data.user_powers["6"].profile_powers.ler == 1 ? true : false }
+        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: AuthData.data.user_powers["1"].profile_powers.read == 1 ? true : false },
+        { id: 'Planos', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.read == 1 ? true : false },
+        { id: 'Ordens', icon: <AssignmentIcon />, access: AuthData.data.user_powers["3"].profile_powers.read == 1 ? true : false },
+        { id: 'Relatórios', icon: <AssessmentIcon />, access: AuthData.data.user_powers["4"].profile_powers.read == 1 ? true : false },
+        { id: 'Incidentes', icon: <ReportIcon />, access: AuthData.data.user_powers["5"].profile_powers.read == 1 ? true : false },
+        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: AuthData.data.user_powers["6"].profile_powers.read == 1 ? true : false }
       ],
     },
     {

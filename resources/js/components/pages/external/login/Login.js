@@ -73,8 +73,8 @@ export function Login() {
 
         const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-        const emailValidate = FormValidation(formData.get("login_email_input"), null, null, emailPattern, "EMAIL");
-        const passwordValidate = FormValidation(formData.get("login_password_input"), null, null, null, null);
+        const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
+        const passwordValidate = FormValidation(formData.get("password"), null, null, null, null);
 
         setErrorDetected({ email: emailValidate.error, password: passwordValidate.error });
         setErrorMessage({ email: emailValidate.message, password: passwordValidate.message });
@@ -97,8 +97,8 @@ export function Login() {
     function requestServerOperation(data) {
 
         AxiosApi.post("/api/auth/login", {
-            email: data.get("login_email_input"),
-            password: data.get("login_password_input")
+            email: data.get("email"),
+            password: data.get("password")
         })
             .then(function (response) {
 
@@ -217,9 +217,9 @@ export function Login() {
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="login_email_input"
+                                id="email"
                                 label="Digite o seu email"
-                                name="login_email_input"
+                                name="email"
                                 autoFocus
                                 helperText={errorMessage.email}
                                 error={errorDetected.email}
@@ -228,10 +228,10 @@ export function Login() {
                                 margin="normal"
                                 required
                                 fullWidth
-                                name="login_password_input"
+                                name="password"
                                 label="Digite a sua senha"
                                 type="password"
-                                id="login_password_input"
+                                id="password"
                                 helperText={errorMessage.password}
                                 error={errorDetected.password}
                             />

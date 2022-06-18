@@ -67,7 +67,7 @@ export function DeleteIncidentFormulary({ ...props }) {
  */
   function requestServerOperation(data) {
 
-    AxiosApi.delete(`/api/incidents-module/${data.get("incident_id")}`)
+    AxiosApi.delete(`/api/incidents-module/${data.get("id")}`)
       .then(function () {
 
         successServerResponseTreatment();
@@ -115,15 +115,15 @@ export function DeleteIncidentFormulary({ ...props }) {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
       {(props.record != null && open) &&
 
         <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
-          <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.incident_id})</DialogTitle>
+          <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -137,12 +137,12 @@ export function DeleteIncidentFormulary({ ...props }) {
                 fullWidth
                 variant="outlined"
                 required
-                id="incident_id"
-                name="incident_id"
+                id="id"
+                name="id"
                 InputProps={{
                   readOnly: true
                 }}
-                defaultValue={props.record.incident_id}
+                defaultValue={props.record.id}
                 sx={{ mb: 2 }}
               />
 

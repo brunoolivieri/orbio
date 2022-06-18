@@ -15,14 +15,14 @@ class CreateUserComplementaryData extends Migration
     {
         Schema::create('user_complementary_data', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_endereco')->nullable(true)->constrained('address')->onDelete('cascade');
+            $table->foreignId('address_id')->nullable(true)->constrained('address')->onDelete('cascade');
             $table->string("habANAC")->nullable(true);
             $table->string("CPF")->nullable(true);
             $table->string("CNPJ")->nullable(true);
-            $table->string("telefone")->nullable(true);
-            $table->string("celular")->nullable(true);
-            $table->string("razaoSocial")->nullable(true);
-            $table->string("nomeFantasia")->nullable(true);
+            $table->string("telephone")->nullable(true);
+            $table->string("cellphone")->nullable(true);
+            $table->string("company_name")->nullable(true);
+            $table->string("trading_name")->nullable(true);
             $table->softDeletes();
         });
     }

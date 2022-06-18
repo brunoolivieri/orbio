@@ -30,13 +30,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("administration_read", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[0]["ler"];
+            return $logged_user->profile->module_privileges[0]["read"];
 
         }); 
 
         Gate::define("administration_write", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[0]["escrever"];
+            return $logged_user->profile->module_privileges[0]["write"];
 
         }); 
 
@@ -44,13 +44,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("flight_plans_read", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[1]["ler"];
+            return $logged_user->profile->module_privileges[1]["read"];
 
         }); 
 
         Gate::define("flight_plans_write", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[1]["escrever"];
+            return $logged_user->profile->module_privileges[1]["write"];
 
         }); 
 
@@ -58,13 +58,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("service_orders_read", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[2]["ler"];
+            return $logged_user->profile->module_privileges[2]["read"];
 
         }); 
 
         Gate::define("service_orders_write", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[2]["escrever"];
+            return $logged_user->profile->module_privileges[2]["write"];
 
         }); 
 
@@ -72,13 +72,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("reports_read", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[3]["ler"];
+            return $logged_user->profile->module_privileges[3]["read"];
 
         }); 
 
         Gate::define("reports_write", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[3]["escrever"];
+            return $logged_user->profile->module_privileges[3]["write"];
 
         }); 
 
@@ -86,13 +86,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("incidents_read", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[4]["ler"];
+            return $logged_user->profile->module_privileges[4]["read"];
 
         }); 
 
         Gate::define("incidents_write", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[4]["escrever"];
+            return $logged_user->profile->module_privileges[4]["write"];
 
         }); 
 
@@ -100,13 +100,13 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("equipments_read", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[5]["ler"];
+            return $logged_user->profile->module_privileges[5]["read"];
 
         }); 
 
         Gate::define("equipments_write", function(UserModel $logged_user) : bool {
 
-            return $logged_user->profile->module_privileges[5]["escrever"];
+            return $logged_user->profile->module_privileges[5]["write"];
 
         }); 
 

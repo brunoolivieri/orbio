@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Profiles\ProfileModel;
 
 class ProfilesSeeder extends Seeder
 {
@@ -16,15 +17,15 @@ class ProfilesSeeder extends Seeder
     {
 
         $data = [
-            ["nome" => "Super-Admin", "dh_criacao" => date("Y-m-d H:i:s")],
-            ["nome" => "Sub-Admin", "dh_criacao" => date("Y-m-d H:i:s")],
-            ["nome" => "Piloto", "dh_criacao" => date("Y-m-d H:i:s")],
-            ["nome" => "Cliente", "dh_criacao" => date("Y-m-d H:i:s")],
-            ["nome" => "Visitante", "dh_criacao" => date("Y-m-d H:i:s")]
+            ["name" => "Super-Admin"],
+            ["name" => "Sub-Admin"],
+            ["name" => "Piloto"],
+            ["name" => "Cliente"],
+            ["name" => "Visitante"]
         ];
 
 
-        DB::table("profiles")->insert($data);
+        ProfileModel::insert($data);
 
     }
 }

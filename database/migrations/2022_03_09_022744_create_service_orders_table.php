@@ -16,15 +16,14 @@ class CreateServiceOrdersTable extends Migration
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
             $table->string("numOS");
-            $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_criacao")->useCurrent();
-            $table->dateTime("dh_inicio");
-            $table->dateTime("dh_fim");
+            $table->dateTime("start_date");
+            $table->dateTime("end_date");
             $table->boolean("status")->default(false);
-            $table->string("nome_criador")->nullable(true);
-            $table->string("nome_piloto")->nullable(true);
-            $table->string("nome_cliente")->nullable(true);
-            $table->text("observacao");
+            $table->string("creator_name")->nullable(true);
+            $table->string("pilot_name")->nullable(true);
+            $table->string("client_name")->nullable(true);
+            $table->text("observation");
+            $table->timestamps();
             $table->softDeletes();
         });
     }

@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Drones\DroneModel;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
+use App\Services\FormatDataService;
 
 class EquipmentModuleDronePanelController extends Controller
 {
 
+    private FormatDataService $format_data_service;
     private DroneModel $drone_model;
 
     /**
@@ -24,7 +26,8 @@ class EquipmentModuleDronePanelController extends Controller
      * 
      * @param App\Models\Drones\DroneModel $drone
      */
-    public function __construct(DroneModel $drone){
+    public function __construct(FormatDataService $service, DroneModel $drone){
+        $this->format_data_service = $service;
         $this->drone_model = $drone;
     }
 
@@ -48,7 +51,7 @@ class EquipmentModuleDronePanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -169,7 +172,7 @@ class EquipmentModuleDronePanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 

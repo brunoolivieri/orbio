@@ -15,13 +15,12 @@ class CreateFlightPlansTable extends Migration
     {
         Schema::create('flight_plans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_relatorio')->nullable(true)->constrained('reports')->onDelete('cascade');
-            $table->foreignId('id_incidente')->nullable(true)->constrained('incidents')->onDelete('cascade');
-            $table->text("arquivo");
-            $table->text("descricao");
+            $table->foreignId('report_id')->nullable(true)->constrained('reports')->onDelete('cascade');
+            $table->foreignId('incident_id')->nullable(true)->constrained('incidents')->onDelete('cascade');
+            $table->text("file");
+            $table->text("description");
             $table->boolean("status")->default(false);
-            $table->dateTime("dh_atualizacao")->nullable(true);
-            $table->dateTime("dh_criacao")->useCurrent();
+            $table->timestamps();
             $table->softDeletes();
         });
     }

@@ -12,8 +12,6 @@ class ReportModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "reports";
-    const CREATED_AT = "dh_criacao";
-    const UPDATED_AT = "dh_atualizacao";
     protected $fillable = ["*"];
 
      /**
@@ -30,7 +28,7 @@ class ReportModel extends Model
         try{
 
             $data = DB::table('reports')
-            ->select('reports.id', 'reports.dh_criacao', 'reports.dh_atualizacao', 'reports.dh_inicio_voo', 'reports.dh_fim_voo', 'reports.log_voo', 'reports.observacao')
+            ->select('reports.id', 'reports.created_at', 'reports.updated_at', 'reports.start_date', 'reports.end_date', 'reports.flight_log', 'reports.observation')
             ->where("reports.deleted_at", null)
             ->when($where_value, function ($query, $where_value) {
 

@@ -280,8 +280,8 @@ export const IncidentsPanel = React.memo(() => {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para editar">
-              <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -294,8 +294,8 @@ export const IncidentsPanel = React.memo(() => {
         <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -371,11 +371,11 @@ export const IncidentsPanel = React.memo(() => {
               <TableBody className="tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
-                    <TableRow key={row.incident_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.incident_id} /></TableCell>
-                      <TableCell align="center">{row.incident_type}</TableCell>
+                    <TableRow key={row.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
+                      <TableCell align="center">{row.type}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
-                      <TableCell align="center">{moment(row.incident_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{moment(row.date).format('DD-MM-YYYY hh:mm')}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

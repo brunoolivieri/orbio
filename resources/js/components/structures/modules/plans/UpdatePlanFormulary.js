@@ -103,7 +103,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    AxiosApi.patch(`/api/plans-module/${data.get("plan_id")}`, {
+    AxiosApi.patch(`/api/plans-module/${data.get("id")}`, {
       report_id: data.get("select_report"),
       incident_id: data.get("select_incident"),
       status: data.get("status"),
@@ -187,27 +187,27 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
       {(props.record != null && open) &&
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.plan_id})</DialogTitle>
+          <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
             <DialogContent>
 
               <TextField
                 margin="dense"
-                id="plan_id"
-                name="plan_id"
+                id="id"
+                name="id"
                 label="ID do plano"
                 type="text"
                 fullWidth
                 variant="outlined"
-                defaultValue={props.record.plan_id}
+                defaultValue={props.record.id}
                 inputProps={{
                   readOnly: true
                 }}

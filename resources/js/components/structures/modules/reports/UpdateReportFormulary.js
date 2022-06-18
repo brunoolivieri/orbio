@@ -135,7 +135,7 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
  */
   function requestServerOperation(data) {
 
-    AxiosApi.patch(`/api/reports-module/${data.get("id_input")}`, {
+    AxiosApi.patch(`/api/reports-module/${data.get("id")}`, {
       flight_initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       flight_final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       flight_log_file: data.get("flight_log"),
@@ -219,8 +219,8 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
     <>
 
       <Tooltip title="Editar">
-        <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["4"].profile_powers.escrever == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -236,8 +236,8 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="id_input"
-                name="id_input"
+                id="id"
+                name="id"
                 label="ID"
                 type="text"
                 fullWidth

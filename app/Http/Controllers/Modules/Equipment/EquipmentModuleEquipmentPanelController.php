@@ -13,10 +13,12 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Equipments\EquipmentModel;
 use App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest;
+use App\Services\FormatDataService;
 
 class EquipmentModuleEquipmentPanelController extends Controller
 {
 
+    private FormatDataService $format_data_service;
     private EquipmentModel $equipment_model;
 
     /**
@@ -24,7 +26,8 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * 
      * @param App\Models\Equipments\EquipmentModel $equipment
      */
-    public function __construct(EquipmentModel $equipment){
+    public function __construct(FormatDataService $service, EquipmentModel $equipment){
+        $this->format_data_service = $service;
         $this->equipment_model = $equipment;
     }
 
@@ -48,7 +51,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -170,7 +173,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 

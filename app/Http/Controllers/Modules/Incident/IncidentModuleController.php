@@ -11,19 +11,22 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Incidents\IncidentModel;
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
-
+use App\Services\FormatDataService;
 
 class IncidentModuleController extends Controller
 {
 
+    private FormatDataService $format_data_service;
     private IncidentModel $incident_model;
 
     /**
      * Dependency injection.
      * 
+     * @param App\Services\FormatDataService $service
      * @param App\Models\Incidents\IncidentModel $incident
      */
-    public function __construct(IncidentModel $incident){
+    public function __construct(FormatDataService $service, IncidentModel $incident){
+        $this->format_data_service = $service;
         $this->incident_model = $incident;
     }
 
@@ -47,7 +50,7 @@ class IncidentModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -81,10 +84,10 @@ class IncidentModuleController extends Controller
         foreach($data->items() as $row => $record){
             
             $arr_with_formated_data["records"][$row] = array(
-                "incident_id" => $record->id,
-                "incident_type" => $record->tipo_incidente,
-                "description" => $record->descricao,
-                "incident_date" => $record->dh_incidente
+                "id" => $record->id,
+                "type" => $record->type,
+                "description" => $record->description,
+                "date" => $record->date
             );
 
         }
@@ -109,11 +112,7 @@ class IncidentModuleController extends Controller
 
         try{
 
-            IncidentModel::create([
-                "tipo_incidente" => $request->incident_type,
-                "descricao" => $request->description,
-                "dh_incidente" => $request->incident_date
-            ]);
+            IncidentModel::create($request->only(["type", "description", "date"]));
 
             Log::channel('incidents_action')->info("[Método: Store][Controlador: IncidentModuleController] - Incidente criado com sucesso");
 
@@ -149,7 +148,7 @@ class IncidentModuleController extends Controller
     
             if($model_response["data"]->total() > 0){
 
-                $data_formated = $this->formatDataForTable($model_response["data"]);
+                $data_formated = $this->format_data_service->genericDataFormatting($model_response["data"]);
 
                 return response($data_formated, 200);
 
@@ -183,11 +182,7 @@ class IncidentModuleController extends Controller
 
         try{
 
-            IncidentModel::where('id', $id)->update([
-                "tipo_incidente" => $request->incident_type,
-                "descricao" => $request->description,
-                "dh_incidente" => $request->incident_date
-            ]);
+            IncidentModel::where('id', $id)->update($request->only(["type", "description", "date"]));
 
             Log::channel('incidents_action')->info("[Método: Update][Controlador: IncidentModuleController] - Incidente atualizado com sucesso - ID do incidente: ".$id);
 

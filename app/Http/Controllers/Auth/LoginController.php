@@ -38,17 +38,16 @@ class LoginController extends Controller
      */
     function index(LoginRequest $request) :  \Illuminate\Http\Response {
 
-        // Password is converted to "senha" - this is defined in the model "UserModel"
-        if($user = Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if($user = Auth::attempt($request->only(["email", "password"]))){
 
             // Case 1: User account is active
-            if(Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso)){
+            if(Auth::user()->status && !empty(Auth::user()->last_access)){
 
                 $data_for_email = [
                     "id" => Auth::user()->id, 
-                    "name" => Auth::user()->nome, 
+                    "name" => Auth::user()->name, 
                     "email" => Auth::user()->email, 
-                    "profile" => Auth::user()->profile->nome
+                    "profile" => Auth::user()->profile->name
                 ];
 
                 SendEmailJob::dispatch("App\Events\Auth\UserLoggedInEvent", $data_for_email);
@@ -64,9 +63,9 @@ class LoginController extends Controller
 
                     $data_for_email = [
                         "id" => Auth::user()->id, 
-                        "name" => Auth::user()->nome, 
+                        "name" => Auth::user()->name, 
                         "email" => Auth::user()->email, 
-                        "profile" => Auth::user()->profile->nome
+                        "profile" => Auth::user()->profile->name
                     ];
     
                     SendEmailJob::dispatch("App\Events\Auth\UserLoggedInEvent", $data_for_email);
@@ -82,7 +81,7 @@ class LoginController extends Controller
                 }
 
             // Case 3: User account is disabled or deleted
-            }else if((!Auth::user()->status && !empty(Auth::user()->dh_ultimo_acesso) || (!empty(Auth::user()->deleted_at)))){
+            }else if((!Auth::user()->status && !empty(Auth::user()->last_access) || (!empty(Auth::user()->deleted_at)))){
 
                 Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada ou removida do sistema.");
 

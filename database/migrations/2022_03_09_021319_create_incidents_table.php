@@ -15,11 +15,10 @@ class CreateIncidentsTable extends Migration
     {
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
-            $table->string("tipo_incidente");
-            $table->text("descricao");
-            $table->dateTime("dh_incidente")->useCurrent();
-            $table->dateTime("dh_criacao")->useCurrent();
-            $table->dateTime("dh_atualizacao")->nullable(true);
+            $table->string("type");
+            $table->text("description");
+            $table->dateTime("date")->useCurrent();
+            $table->timestamps();
             $table->softDeletes();
         });
     }

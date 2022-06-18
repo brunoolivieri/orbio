@@ -14,8 +14,8 @@ class CreateServiceOrderHasFlightPlan extends Migration
     public function up()
     {
         Schema::create('service_order_has_flight_plan', function (Blueprint $table) {
-            $table->foreignId("id_ordem_servico")->constrained('service_orders');
-            $table->foreignId("id_plano_voo")->constrained('flight_plans');
+            $table->foreignId("service_order_id")->constrained('service_orders');
+            $table->foreignId("flight_plan_id")->constrained('flight_plans');
         });
     }
 
