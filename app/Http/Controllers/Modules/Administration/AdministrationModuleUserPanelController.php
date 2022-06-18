@@ -80,60 +80,6 @@ class AdministrationModuleUserPanelController extends Controller
     }
 
     /**
-     * Form data for frontend table.
-     *
-     * @param Illuminate\Pagination\LengthAwarePaginator $data
-     * @return array
-     * 
-     */
-    private function formatDataForTable(LengthAwarePaginator $data) : array {
-
-        $arr_with_formated_data = [];
-
-        foreach($data->items() as $row => $record){
-
-            $created_at_formated = date( 'd-m-Y h:i', strtotime($record->created_at));
-            $updated_at_formated = $record->updated_at == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->updated_at));
-            $last_access_formated = $record->last_access == null ? "Sem dados" : date( 'd-m-Y h:i', strtotime($record->last_access));
-            
-            if($record->status == 1){
-
-                $badge_status = ["Ativo", "success"];
-            
-            }else if($record->status == 0 && $record->last_access == null){
-
-                $badge_status = ["Inativo", "error"];
-            
-            }else if($record->status == 0 && $record->last_access != null){
-
-                $badge_status = ["Desativado", "error"];
-
-            }
-
-            $arr_with_formated_data["records"][$row] = array(
-                "user_id" => $record->id,
-                "name" => $record->name,
-                "email" => $record->email,
-                "status_badge" => $badge_status,
-                "status" => $record->status,
-                "access" => $record->profile_id,
-                "profile_name" => $record->profile_name,
-                "created_at" => $created_at_formated,
-                "updated_at" => $updated_at_formated,
-                "last_access" => $last_access_formated
-            );
-
-        }
-
-        $arr_with_formated_data["total_records_founded"] = $data->total();
-        $arr_with_formated_data["records_per_page"] = $data->perPage();
-        $arr_with_formated_data["total_pages"] = $data->lastPage();
-
-        return $arr_with_formated_data;
-
-    }
-
-    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
