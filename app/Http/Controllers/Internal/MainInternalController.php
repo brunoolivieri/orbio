@@ -59,7 +59,7 @@ class MainInternalController extends Controller
                 "complementary_data" => Auth::user()->complementary_data_id,
                 "last_access" => Auth::user()->last_access,
                 "last_update" => Auth::user()->updated_at,
-                "user_powers" => $this->modulesProfileRelationshipFormated()
+                "user_powers" => $this->format_data_service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges)
             ];
 
         // If the logged user is not the Super Admin
@@ -94,42 +94,12 @@ class MainInternalController extends Controller
                 ),
                 "last_access" => Auth::user()->last_access,
                 "last_update" => Auth::user()->updated_at,
-                "user_powers" => $this->modulesProfileRelationshipFormated()
+                "user_powers" => $this->format_data_service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges)
             );
 
         }
 
         return response($data, 200);
-
-    }
-
-    /**
-    * Method to format the user privileges data.
-    *
-    * @return array
-    */
-    private function modulesProfileRelationshipFormated() : array {
-
-        /*$arr_data = [];
-        $current_record_data = array();
-
-        foreach(Auth::user()->profile->module_privileges as $row => $record){
-
-            $module_name = $record->module_id === 1 ? 
-            "Administração" 
-            : ($record->module_id === 2 ? "Planos" : ($record->module_id === 3 ? "Ordens" : ($record->module_id === 4 ? "Relatórios" : ($record->module_id === 5 ? "Incidentes" : "Equipamentos"))));
-
-            $current_record_data[$record->module_id] = ["module" => $module_name, "profile_powers" => ["read" => $record->read, "write" => $record->write]];
-       
-            if($record->module_id === 6){
-
-                $arr_data = $current_record_data;
-
-            }
-
-        }*/
-
-        return $this->format_data_service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges);
 
     }
 }

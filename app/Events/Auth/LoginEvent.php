@@ -10,13 +10,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TokenForChangePasswordEvent
+class LoginEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $user_id;
     public $name;
     public $email;
-    public $token;
+    public $profile;
     public $datetime;
 
     /**
@@ -27,10 +28,11 @@ class TokenForChangePasswordEvent
     public function __construct(array $data)
     {
         $name_parts = explode(" ", $data["name"]);
-
+        
+        $this->user_id = $data["id"];
         $this->name = $name_parts[0];
         $this->email = $data["email"];
-        $this->token = $data["token"];
+        $this->profile = $data["profile"];
         $this->datetime = date("d-m-Y H:i:s");
     }
 

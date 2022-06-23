@@ -2,7 +2,6 @@
 
 namespace App\Listeners\Auth;
 
-use App\Events\Auth\UserLoggedInEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
@@ -11,8 +10,7 @@ use App\Models\User\UserModel;
 // Custom Mail
 use App\Mail\Auth\LogInNotification;
 
-
-class UserLoggedInEventListener
+class LoginEventListener
 {
     /**
      * Create the event listener.
@@ -26,16 +24,13 @@ class UserLoggedInEventListener
 
     /**
      * Handle the event.
-     * Update the last access of the user that made the login.
-     * Send notification of the login for him.
      *
-     * @param  \App\Events\UserLoggedInEvent  $event
+     * @param  object  $event
      * @return void
      */
-    public function handle(UserLoggedInEvent $event)
-    {    
+    public function handle($event)
+    {
         UserModel::where("id", $event->user_id)->update(["last_access" => date("Y-m-d H:i:s")]);
-
-        Mail::to($event->email)->send(new LogInNotification($event->name, $event->profile, $event->datetime));
+        Mail::to($event->email)->queue(new LogInNotification($event->name, $event->profile, $event->datetime));
     }
 }

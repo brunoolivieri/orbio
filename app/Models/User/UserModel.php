@@ -201,46 +201,4 @@ class UserModel extends Authenticatable
 
     }
 
-    function accountActivation() : array {
-
-        try{
-
-            UserModel::where("id", Auth::user()->id)->update(["status" => 1]);
-
-            $new_address_id = DB::table("address")->insertGetId(
-                [
-                    "address" => null,
-                    "number" => null,
-                    "cep" => null,
-                    "city" => null,
-                    "state" => null,
-                    "complement" => null
-                ]
-            );
-
-            $new_comp_data_id = DB::table("user_complementary_data")->insertGetId([
-                "anac_license" => null,
-                "CPF" => null,
-                "CNPJ" => null,
-                "telephone" => null,
-                "cellphone" => null,
-                "company_name" => null,
-                "trading_name" => null,
-                "address_id" => $new_address_id
-            ]);
-
-            UserModel::where('id', Auth::user()->id)->update(["complementary_data_id" => $new_comp_data_id]);
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-
-            Log::channel('login_error')->error("[Acesso negado | Ativação da conta falhou] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: ".$e->getMessage());
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
 }

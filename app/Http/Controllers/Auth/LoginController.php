@@ -12,110 +12,40 @@ use Illuminate\Support\Facades\Log;
 // Custom
 use App\Models\User\UserModel;
 use App\Http\Requests\Auth\Login\LoginRequest;
-use App\Events\Auth\UserLoggedInEvent;
-use App\Jobs\SendEmailJob;
+use App\Events\Auth\LoginEvent;
+use App\Services\Auth\LoginService;
 
 class LoginController extends Controller
 {
 
     private UserModel $user_model;
+    private LoginService $service;
 
     /**
      * Dependency injection.
      * 
+     * @param App\Services\Auth\LoginService $login_service
      * @param App\Models\User\UserModel $user
      */
-    public function __construct(UserModel $user){
+    public function __construct(UserModel $user, LoginService $service){
         $this->user_model = $user;
+        $this->service = $service;
     }
     
     /**
      * Method for login processing
-     * Exists 3 cases for valid credentials: user active, user inactive or user disabled.
      * 
      * @param Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     function index(LoginRequest $request) :  \Illuminate\Http\Response {
 
-        if($user = Auth::attempt($request->only(["email", "password"]))){
+        $response = $this->service->login($request);
 
-            // Case 1: User account is active
-            if(Auth::user()->status && !empty(Auth::user()->last_access)){
-
-                $data_for_email = [
-                    "id" => Auth::user()->id, 
-                    "name" => Auth::user()->name, 
-                    "email" => Auth::user()->email, 
-                    "profile" => Auth::user()->profile->name
-                ];
-
-                SendEmailJob::dispatch("App\Events\Auth\UserLoggedInEvent", $data_for_email);
-
-                Log::channel('login_action')->info("[Acesso realizado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
-
-                return response(["message" => "Acesso autorizado!"], 200);
-            
-            // Case 2: User account is inactive
-            }else if(!Auth::user()->status && empty(Auth::user()->dh_ultimo_acesso)){
-
-                if($this->activateAccountBeforeLogin()){
-
-                    $data_for_email = [
-                        "id" => Auth::user()->id, 
-                        "name" => Auth::user()->name, 
-                        "email" => Auth::user()->email, 
-                        "profile" => Auth::user()->profile->name
-                    ];
-    
-                    SendEmailJob::dispatch("App\Events\Auth\UserLoggedInEvent", $data_for_email);
-
-                    Log::channel('login_action')->info("[Acesso realizado | Conta ativada] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email);
-
-                    return response(["message" => "Acesso autorizado!"], 200);
-
-                }else{
-
-                    return response(["error" => "activation"], 500);
-
-                }
-
-            // Case 3: User account is disabled or deleted
-            }else if((!Auth::user()->status && !empty(Auth::user()->last_access) || (!empty(Auth::user()->deleted_at)))){
-
-                Log::channel('login_error')->error("[Acesso negado] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: Conta desabilitada ou removida do sistema.");
-
-                return  response(["error" => "account_disabled"], 500);
-
-            }
-
-        }
-
-        Log::channel('login_error')->error("[Acesso negado] - Email informado: ".$request->email." | Erro: Credenciais incorretas");
-
-        return response(["error" => "invalid_credentials"], 500);
-
-    }
-
-    /**
-     * Method for activate user account
-     * 
-     * @return bool
-     */
-    private function activateAccountBeforeLogin() : bool {
-
-        $response = $this->user_model->accountActivation();
-
-        if($response["status"] && !$response["error"]){
-
-            return $response["status"];
-
-        }else if(!$response["status"] && $response["error"]){
-
-            Log::channel('login_error')->error("[Acesso negado | Ativação da conta falhou] - ID do usuário: ".Auth::user()->id." | Email:".Auth::user()->email."| Erro: ".$response["error"]);
-
-            return $response["status"];
-
+        if($response["status"]){
+            return response(["message" => $response["message"]], 200);
+        }else{
+            return response(["error" => $response["message"]], 500);
         }
 
     }

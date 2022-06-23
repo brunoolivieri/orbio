@@ -2,14 +2,13 @@
 
 namespace App\Listeners\Auth;
 
-use App\Events\Auth\TokenForChangePasswordEvent;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 // Custom Mail
 use App\Mail\Auth\TokenForChangePasswordMail;
 
-class TokenForChangePasswordEventListener
+class RequestedTokenEventListener
 {
     /**
      * Create the event listener.
@@ -21,14 +20,14 @@ class TokenForChangePasswordEventListener
         //
     }
 
-    /**
+     /**
      * Handle the event.
      *
-     * @param  \App\Events\TokenForChangePasswordEvent  $event
+     * @param  \App\Events\RequestedTokenEvent $event
      * @return void
      */
-    public function handle(TokenForChangePasswordEvent $event)
+    public function handle($event)
     {
-        Mail::to($event->email)->send(new TokenForChangePasswordMail($event->name, $event->token, $event->datetime));
+        Mail::to($event->email)->queue(new TokenForChangePasswordMail($event->name, $event->token, $event->datetime));
     }
 }

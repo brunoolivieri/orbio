@@ -7,15 +7,15 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 // Custom Events
-use App\Events\Auth\UserLoggedInEvent;
-use App\Events\Auth\TokenForChangePasswordEvent;
+use App\Events\Auth\LoginEvent;
+use App\Events\Auth\RequestedTokenEvent;
 use App\Events\User\UserPasswordChangedEvent;
 use App\Events\Modules\Admin\UserCreatedEvent;
 use App\Events\User\UserAccountDesactivatedEvent;
 use  App\Events\Modules\Orders\OrderCreatedEvent;
 // Custom Listeners
-use App\Listeners\Auth\UserLoggedInEventListener;
-use App\Listeners\Auth\TokenForChangePasswordEventListener;
+use App\Listeners\Auth\LoginEventListener;
+use App\Listeners\Auth\RequestedTokenEventListener;
 use App\Listeners\User\UserChangedPasswordEventListener;
 use App\Listeners\Modules\Admin\UserCreatedEventListener;
 use App\Listeners\User\UserAccountDesactivatedEventListener;
@@ -33,11 +33,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        UserLoggedInEvent::class => [
-            UserLoggedInEventListener::class
+        LoginEvent::class => [
+            LoginEventListener::class
         ],
-        TokenForChangePasswordEvent::class => [
-            TokenForChangePasswordEventListener::class
+        RequestdTokenEvent::class => [
+            RequestdTokenEventListener::class
         ],
         UserPasswordChangedEvent::class => [
             UserChangedPasswordEventListener::class

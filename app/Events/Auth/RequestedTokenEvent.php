@@ -9,34 +9,28 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-// 
 
-class UserLoggedInEvent
+class RequestedTokenEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $user_id;
     public $name;
     public $email;
-    public $profile;
+    public $token;
     public $datetime;
 
     /**
      * Create a new event instance.
      *
-     * @param $request from login request maded to LoginController
      * @return void
      */
-    public function __construct(array $data)
+    public function __construct()
     {
         $name_parts = explode(" ", $data["name"]);
-        
-        $this->user_id = $data["id"];
+
         $this->name = $name_parts[0];
         $this->email = $data["email"];
-        $this->profile = $data["profile"];
+        $this->token = $data["token"];
         $this->datetime = date("d-m-Y H:i:s");
     }
 
