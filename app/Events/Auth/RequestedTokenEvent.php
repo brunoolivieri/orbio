@@ -24,7 +24,7 @@ class RequestedTokenEvent
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(array $data)
     {
         $name_parts = explode(" ", $data["name"]);
 

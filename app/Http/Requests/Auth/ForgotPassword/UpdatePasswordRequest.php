@@ -26,7 +26,7 @@ class UpdatePasswordRequest extends FormRequest
 
         return [
             "new_password" => "required|confirmed",
-            "token" => "required|numeric"
+            "token" => "required|string"
         ];
 
     }
@@ -41,8 +41,8 @@ class UpdatePasswordRequest extends FormRequest
         return [
             "new_password.required" => "A nova senha precisa ser informada",
             "new_password.confirmed" => "As senhas são incompátiveis",
-            "token.required" => "O token precisa ser informado",
-            "token.numeric" => "Token inválido"
+            "token.required" => "O código precisa ser informado",
+            "token.string" => "Código inválido"
         ];
     }
 }

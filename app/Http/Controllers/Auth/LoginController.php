@@ -5,14 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
 use App\User;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 // Custom
-use App\Models\User\UserModel;
 use App\Http\Requests\Auth\Login\LoginRequest;
-use App\Events\Auth\LoginEvent;
 use App\Services\Auth\LoginService;
 
 class LoginController extends Controller

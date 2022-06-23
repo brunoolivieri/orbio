@@ -116,10 +116,9 @@ export function ForgotPassword() {
 
         } else if (formulary === "CHANGE_PASSWORD_FORMULARY_VALIDATION") {
 
-            const codePattern = /^[0-9]{4}$/;
             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-            const codeValidate = FormValidation(formData.get("code"), 4, 4, codePattern, "CODE");
+            const codeValidate = formData.get("code").length == 10 ? {error: false, message: ""} : {error: true, message: "Código inválido"};
             const passwordValidate = FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD");
             const passconfirmValidate = formData.get("new_password_confirmation") == formData.get("new_password") ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
 
@@ -158,7 +157,7 @@ export function ForgotPassword() {
 
                 sendCodeErrorServerResponseTreatment(error.response.data);
 
-            })
+            });
 
     }
 
@@ -182,7 +181,7 @@ export function ForgotPassword() {
 
                 changePasswordErrorServerResponseTreatment(error.response.data);
 
-            })
+            });
 
     }
 
@@ -201,7 +200,7 @@ export function ForgotPassword() {
 
             setOperationStatus({ type: null, title: null, message: null, image: null });
 
-        }, 3000)
+        }, 2000);
 
     }
 
@@ -231,7 +230,7 @@ export function ForgotPassword() {
 
             setOperationStatus({ type: null, title: null, message: null, image: null });
 
-        }, 3000);
+        }, 2000);
 
     }
 
@@ -245,7 +244,7 @@ export function ForgotPassword() {
 
             window.location.href = "/login";
 
-        }, 4000)
+        }, 2000);
 
 
     }
@@ -280,7 +279,7 @@ export function ForgotPassword() {
 
             setOperationStatus({ type: null, title: null, message: null, image: null });
 
-        }, 4000);
+        }, 2000);
 
     }
 
@@ -296,7 +295,7 @@ export function ForgotPassword() {
 
                 setTimer(codeTimer - 1);
 
-            }, 1000)
+            }, 1000);
 
         }
 
@@ -384,7 +383,7 @@ export function ForgotPassword() {
                             required
                             fullWidth
                             name="code"
-                            label="Código recebido"
+                            label="Código"
                             type="text"
                             id="code"
                             disabled={!codeSent}

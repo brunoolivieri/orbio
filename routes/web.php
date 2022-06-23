@@ -3,7 +3,8 @@
 use Illuminate\Support\Facades\Route;
 // \Auth Controllers
 use App\Http\Controllers\Auth\LoginController; 
-use App\Http\Controllers\Auth\ForgotPasswordController; 
+use App\Http\Controllers\Auth\PasswordResetTokenController; 
+use App\Http\Controllers\Auth\PasswordResetController; 
 use App\Http\Controllers\Auth\LogoutController;
 // \Internal Controller
 use App\Http\Controllers\Internal\MainInternalController; 
@@ -27,8 +28,8 @@ Route::view('/forgot-password', "react_root");
 
 // Auth operations
 Route::post('/api/auth/login', [LoginController::class, "index"]); 
-Route::post('/api/auth/password-token', [ForgotPasswordController::class, "generateAndSendPasswordChangeToken"]); 
-Route::post('/api/auth/change-password', [ForgotPasswordController::class, "passwordChangeProcessing"]); 
+Route::post('/api/auth/password-token', [PasswordResetTokenController::class, "index"]); 
+Route::post('/api/auth/change-password', [PasswordResetController::class, "index"]); 
 
 Route::middleware(["session.auth"])->group(function(){
     // Internal simple operations

@@ -36,8 +36,8 @@ class EventServiceProvider extends ServiceProvider
         LoginEvent::class => [
             LoginEventListener::class
         ],
-        RequestdTokenEvent::class => [
-            RequestdTokenEventListener::class
+        RequestedTokenEvent::class => [
+            RequestedTokenEventListener::class
         ],
         UserPasswordChangedEvent::class => [
             UserChangedPasswordEventListener::class
