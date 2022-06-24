@@ -114,7 +114,7 @@ class ProfilePanelService{
     * Update profile.
     *
     * @param $request
-    * @param $id
+    * @param $profile_id
     * @return \Illuminate\Http\Response
     */
     public function updateProfile($request, $profile_id) {

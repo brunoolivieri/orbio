@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\Profiles\ProfileModel;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
 use App\Services\Modules\Administration\ProfilePanelService;
@@ -17,17 +16,14 @@ use App\Services\Modules\Administration\ProfilePanelService;
 class AdministrationModuleProfilePanelController extends Controller
 {
     private ProfilePanelService $service;
-    private ProfileModel $profile_model;
 
     /**
      * Dependency injection.
      * 
      * @param  App\Services\Administration\ProfilePanelService $service
-     * @param App\Models\Pivot\ProfileModel $profile
      */
-    public function __construct(ProfilePanelService $service, ProfileModel $profile){
+    public function __construct(ProfilePanelService $service){
         $this->service = $service;
-        $this->profile_model = $profile;
     }
     
     /**

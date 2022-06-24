@@ -7,9 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Models\User\UserModel;
-use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Models\Profiles\ProfileModel;
-use App\Models\Orders\ServiceOrderModel;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;

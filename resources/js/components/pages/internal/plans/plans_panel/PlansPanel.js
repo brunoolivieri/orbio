@@ -172,9 +172,9 @@ export function PlansPanel() {
           });
 
           if (response.data.total_records_founded > 1) {
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de vôo`, "success");
+            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de voo`, "success");
           } else {
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de vôo`, "success");
+            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de voo`, "success");
           }
 
         }
@@ -184,13 +184,11 @@ export function PlansPanel() {
 
         if (error.response.status == 404) {
 
-          handleOpenSnackbar("Nenhum registro de plano de vôo encontrado!", "error");
+          handleOpenSnackbar("Nenhum registro de plano de voo encontrado!", "error");
 
         } else {
 
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de vôo!", "error");
-
-          console.log(error.message);
+          handleOpenSnackbar("Erro no carregamento dos dados do painel de planos de voo!", "error");
 
           setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 

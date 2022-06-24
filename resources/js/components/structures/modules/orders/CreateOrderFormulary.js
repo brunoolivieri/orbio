@@ -101,8 +101,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     // Se o atributo "erro" for true, um erro foi detectado, e o atributo "message" terá a mensagem sobre a natureza do erro
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
-    const pilotNameValidate = formData.get("select_pilot_name") != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
-    const clientNameValidate = formData.get("select_client_name") != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
+    const pilotNameValidate = formData.get("pilot_name") != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
+    const clientNameValidate = formData.get("client_name") != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const orderNoteValidate = FormValidation(formData.get("observation"), 3, null, null, null);
     const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
@@ -174,8 +174,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     AxiosApi.post(`/api/orders-module`, {
       initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-      pilot_id: data.get("select_pilot_name"),
-      client_id: data.get("select_client_name"),
+      pilot_id: data.get("pilot_name"),
+      client_id: data.get("client_name"),
       observation: data.get("observation"),
       status: data.get("status"),
       fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
@@ -312,35 +312,35 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
             <Box sx={{ mb: 2 }}>
               <GenericSelect
                 label_text="Piloto"
-                data_source={"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome&auth=none"}
+                data_source={"/api/orders-module/create?table=users&where=profile_id.3&select_columns=id.name"}
                 primary_key={"id"}
-                key_content={"nome"}
+                key_content={"name"}
                 helperText={errorMessage.pilot_name}
                 error={errorDetected.pilot_name}
                 default={0}
-                name={"select_pilot_name"}
+                name={"pilot_name"}
               />
             </Box>
 
             <Box sx={{ mb: 2 }}>
               <GenericSelect
                 label_text="Cliente"
-                data_source={"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome&auth=none"}
+                data_source={"/api/orders-module/create?table=users&where=profile_id.4&select_columns=id.name"}
                 primary_key={"id"}
-                key_content={"nome"}
+                key_content={"name"}
                 helperText={errorMessage.client_name}
                 error={errorDetected.client_name}
                 default={0}
-                name={"select_client_name"}
+                name={"client_name"}
               />
             </Box>
 
             <Box sx={{ mb: 2 }}>
 
               <ModalTransferList
-                open_button={"Selecionar planos de vôo"}
-                modal_title={"Seleção de Planos de Vôo"}
-                data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status&auth=none"}
+                open_button={"Planos de voo"}
+                modal_title={"Seleção de Planos de Voo"}
+                data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.file.status"}
                 set_selected_items={setFlightPlansSelected}
                 selected_items={flightPlansSelected}
               />

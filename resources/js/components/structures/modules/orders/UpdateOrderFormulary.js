@@ -332,9 +332,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
               <Box sx={{ mb: 2 }}>
                 <GenericSelect
                   label_text="Piloto"
-                  data_source={"/api/orders-module/create?table=users&where=id_perfil.3&select_columns=id.nome"}
+                  data_source={"/api/orders-module/create?table=users&where=profile_id.3&select_columns=id.name"}
                   primary_key={"id"}
-                  key_content={"nome"}
+                  key_content={"name"}
                   helperText={errorMessage.pilot_name}
                   error={errorDetected.pilot_name}
                   default={props.record.pilot.id}
@@ -345,9 +345,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
               <Box sx={{ mb: 2 }}>
                 <GenericSelect
                   label_text="Cliente"
-                  data_source={"/api/orders-module/create?table=users&where=id_perfil.4&select_columns=id.nome"}
+                  data_source={"/api/orders-module/create?table=users&where=profile_id.4&select_columns=id.name"}
                   primary_key={"id"}
-                  key_content={"nome"}
+                  key_content={"name"}
                   helperText={errorMessage.client_name}
                   error={errorDetected.client_name}
                   default={props.record.client.id}
@@ -358,9 +358,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
               <Box sx={{ mb: 2 }}>
 
                 <ModalTransferList
-                  open_button={"Selecionar planos de vôo"}
-                  modal_title={"Seleção de Planos de Vôo"}
-                  data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.arquivo.status"}
+                  open_button={"Planos de voo"}
+                  modal_title={"Seleção de Planos de Voo"}
+                  data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.file.status"}
                   set_selected_items={setFlightPlansSelected}
                   selected_items={props.record.flight_plans}
                 />

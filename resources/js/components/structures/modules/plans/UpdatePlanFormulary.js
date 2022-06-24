@@ -243,7 +243,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                 type="text"
                 fullWidth
                 variant="outlined"
-                defaultValue={props.record.plan_description}
+                defaultValue={props.record.description}
                 helperText={errorMessage.description}
                 error={errorDetected.description}
               />
