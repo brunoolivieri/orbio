@@ -115,7 +115,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
       })
       .catch((error) => {
 
-        errorServerResponseTreatment(error.response.data);
+        errorServerResponseTreatment(error.response);
 
       });
 
@@ -138,11 +138,11 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   }
 
-  const errorServerResponseTreatment = (response_data) => {
+  const errorServerResponseTreatment = (response) => {
 
     setDisabledButton(false);
 
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -154,11 +154,11 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
     }
 
     // Coleta dos objetos de erro existentes na response
-    for (let prop in response_data.errors) {
+    for (let prop in response.data.errors) {
 
       input_errors[prop] = {
         error: true,
-        message: response_data.errors[prop][0]
+        message: response.data.errors[prop][0]
       }
 
     }

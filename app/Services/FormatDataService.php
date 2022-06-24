@@ -140,7 +140,7 @@ class FormatDataService {
         }
 
         // If each group of $number_of_modules rows is transformed into one, the total records need to be divided by $number_of_modules 
-        $this->formated_data["total_records_founded"] = $data->total()/$number_of_modules;
+        $this->formated_data["total_records"] = $data->total()/$number_of_modules;
         $this->formated_data["records_per_page"] = $data->perPage()/$number_of_modules;
         $this->formated_data["total_pages"] = $data->lastPage();
 

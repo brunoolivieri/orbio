@@ -29,7 +29,7 @@ class ProfilePanelUpdateRequest extends FormRequest
         $profile_id_parameter = $this->route("admin_module_profile");
 
         return [
-            'profile_name' => 'bail|required|string|unique:profiles,name,'.$profile_id_parameter
+            'name' => 'bail|required|string|unique:profiles,name,'.$profile_id_parameter
         ];
     }
 
@@ -41,9 +41,9 @@ class ProfilePanelUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'profile_name.required' => 'O nome do perfil deve ser informado',
-            'profile_name.string' => 'O nome do perfil deve ser textual',
-            'profile_name.unique' => 'Já existe um perfil com esse nome'
+            'name.required' => 'O nome do perfil deve ser informado',
+            'name.string' => 'O nome do perfil deve ser textual',
+            'name.unique' => 'Já existe um perfil com esse nome'
         ];
     }
 

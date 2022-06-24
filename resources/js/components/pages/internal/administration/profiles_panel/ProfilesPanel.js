@@ -136,8 +136,6 @@ export function ProfilesPanel() {
     AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
-
           setPanelData({
             status: {
               loading: false,
@@ -146,13 +144,11 @@ export function ProfilesPanel() {
             },
             response: {
               records: response.data.records,
-              total_records: response.data.total_records_founded,
+              total_records: response.data.total_records,
               records_per_page: response.data.records_per_page,
               total_pages: response.data.total_pages
             }
           });
-
-        }
 
       })
       .catch(function (error) {
@@ -188,8 +184,6 @@ export function ProfilesPanel() {
     AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
-
           setPanelData({
             status: {
               loading: false,
@@ -198,19 +192,17 @@ export function ProfilesPanel() {
             },
             response: {
               records: response.data.records,
-              total_records: response.data.total_records_founded,
+              total_records: response.data.total_records,
               records_per_page: response.data.records_per_page,
               total_pages: response.data.total_pages
             }
           });
 
-          if (response.data.total_records_founded > 1) {
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} perfis`, "success");
+          if (response.data.total_records > 1) {
+            handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
           } else {
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} perfil`, "success");
+            handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
           }
-
-        }
 
       }).catch((error) => {
 
@@ -221,8 +213,6 @@ export function ProfilesPanel() {
         } else {
 
           handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
-
-          console.log(error.message);
 
           setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 

@@ -44,39 +44,6 @@ class ProfileHasModuleModel extends Model
         
     }
 
-    function loadProfilesModulesRelationshipWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
-
-        try{
-
-            $data = DB::table('profile_has_module')
-            ->join('profiles', 'profile_has_module.profile_id', '=', 'profiles.id')
-            ->join('modules', 'profile_has_module.module_id', '=', 'modules.id')
-            ->select('profile_has_module.module_id', 'modules.name', 'profile_has_module.profile_id', 'profiles.name as profile_name', 'profile_has_module.read', 'profile_has_module.write')
-            ->where('profiles.deleted_at', null)
-            ->when($where_value, function ($query, $where_value) {
-
-                $query->when(is_numeric($where_value), function($query) use ($where_value){
-
-                    $query->where('profile_has_module.profile_id', '=', $where_value);
-
-                }, function($query) use ($where_value){
-
-                    $query->where('profiles.name', 'LIKE', '%'.$where_value.'%');
-
-                });
-
-            })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            return ["status" => true, "error" => false, "data" => $data];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
     function updateProfileModuleRelationship(int $profile_id, $data) : array {
 
         try{

@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+// Custom
 use App\Services\FormatDataService;
 
 class MainInternalController extends Controller
 {
 
-    private FormatDataService $format_data_service;
+    private FormatDataService $service;
 
     public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
+        $this->service = $service;
     }
 
     /**
@@ -59,7 +60,7 @@ class MainInternalController extends Controller
                 "complementary_data" => Auth::user()->complementary_data_id,
                 "last_access" => Auth::user()->last_access,
                 "last_update" => Auth::user()->updated_at,
-                "user_powers" => $this->format_data_service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges)
+                "user_powers" => $this->service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges)
             ];
 
         // If the logged user is not the Super Admin
@@ -94,7 +95,7 @@ class MainInternalController extends Controller
                 ),
                 "last_access" => Auth::user()->last_access,
                 "last_update" => Auth::user()->updated_at,
-                "user_powers" => $this->format_data_service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges)
+                "user_powers" => $this->service->modulesProfileDataFormatting(Auth::user()->profile->module_privileges)
             );
 
         }

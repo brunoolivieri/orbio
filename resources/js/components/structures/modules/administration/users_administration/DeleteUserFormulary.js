@@ -78,7 +78,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
       })
       .catch(function (error) {
 
-        errorServerResponseTreatment(error.response.data);
+        errorServerResponseTreatment(error.response);
 
       });
 
@@ -105,11 +105,11 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   /*
   * Rotina 2B
   */
-  function errorServerResponseTreatment(response_data) {
+  function errorServerResponseTreatment(response) {
 
     setDisabledButton(false);
 
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
   }

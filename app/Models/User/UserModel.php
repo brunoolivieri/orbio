@@ -26,11 +26,6 @@ class UserModel extends Authenticatable
     protected $table = "users";
     protected $fillable = ["*"];
 
-    /*// For Auth::attempt works
-    function getAuthPassword() {
-        return $this->senha;
-    }*/
-
     /*
     * Relationship with user_complementary_data table
     */
@@ -77,83 +72,6 @@ class UserModel extends Authenticatable
     }
 
     // ================================================ //
-
-    /**
-     * Create User and send access data for his email
-     *
-     * @param array $data
-     * @return array
-     */
-    function createUserAndSendEmail(array $data, string $unencrypted_password) : array {
-
-        try{ 
-
-            DB::transaction(function () use ($data, $unencrypted_password) {
-
-                $new_user_id = DB::table("users")->insertGetId($data);
-
-                $new_user_data = UserModel::find($new_user_id);
-
-                Mail::to($new_user_data->email)->send(new SendAccessDataToCreatedUser([
-                    "name" =>  $new_user_data->name,
-                    "email" =>  $new_user_data->email,
-                    "profile" =>  $new_user_data->profile->name,
-                    "unencrypted_password" => $unencrypted_password
-                ]));
-
-                Log::channel('mail')->info("[Método: createUser][Model: UserModel] - Dados de acesso do novo usuário enviados com sucesso - Destinatário: ".$data["email"]);
-
-            });
-
-            return ["status" => true, "error" => false];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
-    /**
-     * Carrega os registros no formato de paginação
-     * A claúsula where é opcional
-     * A claúsula when() permite criar queries condicionais
-     *
-     * @param array $data
-     * @return array
-     */
-    function loadUsersWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
-
-        try{
-
-            $data = DB::table('users')
-            ->join('profiles', 'users.profile_id', '=', 'profiles.id')
-            ->select('users.id', 'users.name', 'users.email', 'users.profile_id', 'profiles.name as profile_name' , 'users.status', 'users.created_at', 'users.updated_at', 'users.last_access')
-            ->where("users.deleted_at", null)
-            ->when($where_value, function ($query, $where_value) {
-
-                $query->when(is_numeric($where_value), function($query) use ($where_value){
-
-                    $query->where('users.id', $where_value);
-
-                }, function($query) use ($where_value){
-
-                    $query->where('users.name', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
-
-                });
-
-            })->orderBy('users.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-            
-            return ["status" => true, "error" => false, "data" => $data];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
 
     /**
      * Get all user data.

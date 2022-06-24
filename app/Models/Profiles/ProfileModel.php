@@ -38,44 +38,6 @@ class ProfileModel extends Model
 
     // ================================================ //
 
-    function newProfile(string $profile_name) : array {
-
-        try{
-
-            DB::beginTransaction();
-
-            $new_profile = ProfileModel::create(['name' => $profile_name]);
-
-            $model = new ProfileHasModuleModel();
-
-            $model_response = $model->newProfileRelationship((int) $new_profile->id);
-
-            if($model_response["status"] && !$model_response["error"]){
-
-                DB::commit();
-
-                return ["status" => true, "error" => false];
-
-            }else if(!$model_response["status"] && $model_response["error"]){
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => $model_response["error"]];
-
-            }
-
-        }catch(\Exception $e){
-
-            dd($e);
-
-            DB::rollBack();
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
-
     function loadAllProfiles() : array {
 
         try{

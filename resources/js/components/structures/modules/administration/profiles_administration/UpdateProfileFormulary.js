@@ -35,8 +35,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     const [open, setOpen] = React.useState(false);
 
     // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({ profile_name: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ profile_name: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({ name: false }); // State para o efeito de erro - true ou false
+    const [errorMessage, setErrorMessage] = React.useState({ name: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
     // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -54,12 +54,12 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
     // Reducer
     const [privileges, dispatch] = React.useReducer(privilegesReducer, {
-        "1": { read: props.record.modules["1"].profile_powers.ler === 1 ? true : false, write: props.record.modules["1"].profile_powers.write === 1 ? true : false },
-        "2": { read: props.record.modules["2"].profile_powers.ler === 1 ? true : false, write: props.record.modules["2"].profile_powers.write === 1 ? true : false },
-        "3": { read: props.record.modules["3"].profile_powers.ler === 1 ? true : false, write: props.record.modules["3"].profile_powers.write === 1 ? true : false },
-        "4": { read: props.record.modules["4"].profile_powers.ler === 1 ? true : false, write: props.record.modules["4"].profile_powers.write === 1 ? true : false },
-        "5": { read: props.record.modules["5"].profile_powers.ler === 1 ? true : false, write: props.record.modules["5"].profile_powers.write === 1 ? true : false },
-        "6": { read: props.record.modules["6"].profile_powers.ler === 1 ? true : false, write: props.record.modules["6"].profile_powers.write === 1 ? true : false }
+        "1": { read: props.record.modules["1"].profile_powers.read === 1 ? true : false, write: props.record.modules["1"].profile_powers.write === 1 ? true : false },
+        "2": { read: props.record.modules["2"].profile_powers.read === 1 ? true : false, write: props.record.modules["2"].profile_powers.write === 1 ? true : false },
+        "3": { read: props.record.modules["3"].profile_powers.read === 1 ? true : false, write: props.record.modules["3"].profile_powers.write === 1 ? true : false },
+        "4": { read: props.record.modules["4"].profile_powers.read === 1 ? true : false, write: props.record.modules["4"].profile_powers.write === 1 ? true : false },
+        "5": { read: props.record.modules["5"].profile_powers.read === 1 ? true : false, write: props.record.modules["5"].profile_powers.write === 1 ? true : false },
+        "6": { read: props.record.modules["6"].profile_powers.read === 1 ? true : false, write: props.record.modules["6"].profile_powers.write === 1 ? true : false }
     });
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -69,8 +69,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     };
 
     const handleClose = () => {
-        setErrorDetected({ profile_name: false });
-        setErrorMessage({ profile_name: null });
+        setErrorDetected({ name: false });
+        setErrorMessage({ name: null });
         setDisplayAlert({ display: false, type: "", message: "" });
         setDisabledButton(false);
         setOpen(false);
@@ -101,8 +101,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
         const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
 
-        setErrorDetected({ profile_name: nameValidate.error });
-        setErrorMessage({ profile_name: nameValidate.message });
+        setErrorDetected({ name: nameValidate.error });
+        setErrorMessage({ name: nameValidate.message });
 
         if (nameValidate.error === true) {
 
@@ -122,8 +122,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     const requestServerOperation = (data) => {
 
         AxiosApi.patch(`/api/admin-module-profile/${data.get("id")}`, {
-            profile_name: data.get("name"),
-            profile_modules_relationship: privileges
+            name: data.get("name"),
+            privileges: privileges
         })
             .then(function () {
 
@@ -132,7 +132,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
             })
             .catch(function (error) {
 
-                errorServerResponseTreatment(error.response.data);
+                errorServerResponseTreatment(error.response);
 
             });
 
@@ -161,30 +161,30 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     /*
     * Rotina 4B
     */
-    const errorServerResponseTreatment = (response_data) => {
+    const errorServerResponseTreatment = (response) => {
 
         setDisabledButton(false);
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
-            profile_name: { error: false, message: null }
+            name: { error: false, message: null }
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
             input_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({ profile_name: input_errors.profile_name.error });
-        setErrorMessage({ profile_name: input_errors.profile_name.message });
+        setErrorDetected({ name: input_errors.name.error });
+        setErrorMessage({ name: input_errors.name.message });
 
     }
 
@@ -228,8 +228,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
                                 label="Nome do perfil"
                                 fullWidth
                                 variant="outlined"
-                                helperText={errorMessage.profile_name}
-                                error={errorDetected.profile_name}
+                                helperText={errorMessage.name}
+                                error={errorDetected.name}
                             />
 
                         </DialogContent>

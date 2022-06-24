@@ -12,8 +12,6 @@ use App\Services\Auth\LoginService;
 
 class LoginController extends Controller
 {
-
-    private UserModel $user_model;
     private LoginService $service;
 
     /**
@@ -22,8 +20,7 @@ class LoginController extends Controller
      * @param App\Services\Auth\LoginService $login_service
      * @param App\Models\User\UserModel $user
      */
-    public function __construct(UserModel $user, LoginService $service){
-        $this->user_model = $user;
+    public function __construct(LoginService $service){
         $this->service = $service;
     }
     

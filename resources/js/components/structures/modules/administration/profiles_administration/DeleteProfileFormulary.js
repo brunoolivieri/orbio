@@ -72,7 +72,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
     setDisabledButton(false);
 
-    AxiosApi.delete(`/api/admin-module-profile/${data.get("profile_id")}`)
+    AxiosApi.delete(`/api/admin-module-profile/${data.get("id")}`)
       .then(function () {
 
         successServerResponseTreatment();
@@ -80,7 +80,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
       })
       .catch(function (error) {
 
-        errorServerResponseTreatment(error.response.data);
+        errorServerResponseTreatment(error.response);
 
       });
 
@@ -109,9 +109,9 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
   /*
   * Rotina 4B
   */
-  function errorServerResponseTreatment(response_data) {
+  function errorServerResponseTreatment(response) {
 
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da deleção!";
+    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da deleção!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
   }
@@ -138,8 +138,8 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
                 <TextField
                   margin="dense"
                   defaultValue={props.record.profile_id}
-                  id="profile_id"
-                  name="profile_id"
+                  id="id"
+                  name="id"
                   label="ID do perfil"
                   fullWidth
                   variant="outlined"
@@ -152,8 +152,8 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
                 <TextField
                   margin="dense"
                   defaultValue={props.record.profile_name}
-                  id="profile_name"
-                  name="profile_name"
+                  id="name"
+                  name="name"
                   label="Nome do perfil"
                   fullWidth
                   variant="outlined"
