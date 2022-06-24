@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\LengthAwarePaginator;
+// Custom
 use App\Models\Modules\ModuleModel;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
@@ -235,6 +237,38 @@ class FormatDataService {
 
             }
             
+        }
+
+        $this->formated_data["total_records_founded"] = $data->total();
+        $this->formated_data["records_per_page"] = $data->perPage();
+        $this->formated_data["total_pages"] = $data->lastPage();
+
+        return $this->formated_data;
+
+    }
+
+    /**
+     * Method for organize data for drones, batteries and equipment tables.
+     *
+     * @param Illuminate\Pagination\LengthAwarePaginator $data
+     * @param string $type 
+     * @return array $this->formated_data
+     */
+    public function genericEquipmentDataFormatting(LengthAwarePaginator $data, string $equipment){
+
+        foreach($data->items() as $row => $record){
+
+            foreach($record as $column => $value){
+
+                if($column == "created_at" || $column == "updated_at" || $column == "deleted_at" || $column ==  "last_access" || $column == "start_date" || $column == "end_date"){
+                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
+                }else if($column == "image"){
+                    $this->formated_data["records"][$row]["image_url"] = Storage::url("images/$equipment/".$value);
+                }else{
+                    $this->formated_data["records"][$row][$column] = $value;
+                }
+
+            }
         }
 
         $this->formated_data["total_records_founded"] = $data->total();
