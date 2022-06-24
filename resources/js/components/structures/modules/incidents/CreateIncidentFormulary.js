@@ -31,8 +31,8 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
   const { AuthData } = useAuthentication();
 
   // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ incident_date: false, incident_type: false, description: false });
-  const [errorMessage, setErrorMessage] = React.useState({ incident_date: "", incident_type: "", description: "" });
+  const [errorDetected, setErrorDetected] = React.useState({ date: false, type: false, description: false });
+  const [errorMessage, setErrorMessage] = React.useState({ date: "", type: "", description: "" });
 
   // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -53,8 +53,8 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    setErrorDetected({ incident_date: false, incident_type: false, description: false });
-    setErrorMessage({ incident_date: "", incident_type: "", description: "" });
+    setErrorDetected({ date: false, type: false, description: false });
+    setErrorMessage({ date: "", type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
     setOpen(false);
@@ -84,11 +84,11 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
   function dataValidate(formData) {
 
     const incidentDateValidate = incidentDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const incidentTypeValidate = FormValidation(formData.get("incident_type"), 2, null, null, null);
+    const incidentTypeValidate = FormValidation(formData.get("type"), 2, null, null, null);
     const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
 
-    setErrorDetected({ incident_date: incidentDateValidate.error, incident_type: incidentTypeValidate.error, description: incidentNoteValidate.error });
-    setErrorMessage({ incident_date: incidentDateValidate.message, incident_type: incidentTypeValidate.message, description: incidentNoteValidate.message });
+    setErrorDetected({ date: incidentDateValidate.error, type: incidentTypeValidate.error, description: incidentNoteValidate.error });
+    setErrorMessage({ date: incidentDateValidate.message, type: incidentTypeValidate.message, description: incidentNoteValidate.message });
 
     if (incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error) {
 
@@ -109,8 +109,8 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
   function requestServerOperation(data) {
 
     AxiosApi.post(`/api/incidents-module`, {
-      incident_date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-      incident_type: data.get("incident_type"),
+      date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+      type: data.get("type"),
       description: data.get("description"),
     })
       .then(function () {
@@ -158,8 +158,8 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
     let input_errors = {
-      incident_date: { error: false, message: null },
-      incident_type: { error: false, message: null },
+      date: { error: false, message: null },
+      type: { error: false, message: null },
       description: { error: false, message: null }
     }
 
@@ -174,14 +174,14 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
     }
 
     setErrorDetected({
-      incident_date: input_errors.incident_date.error,
-      incident_type: input_errors.incident_type.error,
+      date: input_errors.date.error,
+      type: input_errors.type.error,
       description: input_errors.description.error
     });
 
     setErrorMessage({
-      incident_date: input_errors.incident_date.message,
-      incident_type: input_errors.incident_type.message,
+      date: input_errors.date.message,
+      type: input_errors.type.message,
       description: input_errors.description.message
     });
 
@@ -214,8 +214,8 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
               <DateTimeInput
                 event={setIncidentDate}
                 label={"Data do incidente"}
-                helperText={errorMessage.incident_date}
-                error={errorDetected.incident_date}
+                helperText={errorMessage.date}
+                error={errorDetected.date}
                 defaultValue={moment()}
                 operation={"create"}
                 read_only={false}
@@ -229,10 +229,10 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
               fullWidth
               variant="outlined"
               required
-              id="incident_type"
-              name="incident_type"
-              helperText={errorMessage.incident_type}
-              error={errorDetected.incident_type}
+              id="type"
+              name="type"
+              helperText={errorMessage.type}
+              error={errorDetected.type}
               sx={{ mb: 2 }}
             />
 

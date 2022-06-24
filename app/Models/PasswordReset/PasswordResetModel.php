@@ -4,7 +4,6 @@ namespace App\Models\PasswordReset;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User\UserModel;
 
 class PasswordResetModel extends Model
 {
@@ -15,6 +14,6 @@ class PasswordResetModel extends Model
     const UPDATED_AT = null;
 
     public function user(){
-        return $this->belongsTo(UserModel::class, "user_id");
+        return $this->belongsTo("App\Models\User\UserModel", "user_id");
     }
 }

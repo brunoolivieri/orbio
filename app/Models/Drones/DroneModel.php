@@ -11,7 +11,7 @@ class DroneModel extends Model
     use HasFactory;
 
     public $table = "drones";
-    protected $fillable = ["*"];
+    protected $guarded = [];
 
     /**
      * Carrega os registros no formato de paginação

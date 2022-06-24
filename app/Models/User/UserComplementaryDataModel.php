@@ -4,19 +4,15 @@ namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Custom
-use App\Models\User\UserModel;
 
 class UserComplementaryDataModel extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $table = "user_complementary_data";
+    protected $guarded = [];
     public $timestamps = false;
-    protected $fillable = ["*"];
 
     /*
     * Relationship with users table

@@ -153,9 +153,9 @@ export function DeleteIncidentFormulary({ ...props }) {
                 fullWidth
                 variant="outlined"
                 required
-                id="incident_type"
-                name="incident_type"
-                defaultValue={props.record.incident_type}
+                id="type"
+                name="type"
+                defaultValue={props.record.type}
                 InputProps={{
                   readOnly: true
                 }}

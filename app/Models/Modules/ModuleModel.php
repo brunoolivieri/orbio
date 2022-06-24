@@ -10,4 +10,5 @@ class ModuleModel extends Model
     use HasFactory;
 
     public $table = "modules";
+    protected $guarded = [];
 }

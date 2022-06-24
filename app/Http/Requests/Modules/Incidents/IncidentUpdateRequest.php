@@ -25,8 +25,8 @@ class IncidentUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "incident_date" => "required|date",
-            "incident_type" => "required",
+            "date" => "required|date",
+            "type" => "required",
             "description" => "required|string"
         ];
     }
@@ -39,9 +39,9 @@ class IncidentUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            "incident_date.required" => "A data do incidente deve ser definida",
-            "incident_date.date" => "Deve ser um formato de data válido",
-            "incident_type.required" => "O tipo do incidente deve ser informado",
+            "date.required" => "A data do incidente deve ser definida",
+            "date.date" => "Deve ser um formato de data válido",
+            "type.required" => "O tipo do incidente deve ser informado",
             "description.required" => "A descrição deve ser informada"
         ];
     }

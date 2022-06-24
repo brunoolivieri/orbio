@@ -12,7 +12,7 @@ class ServiceOrderModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "service_orders";
-    protected $fillable = ["*"];
+    protected $guarded = [];
 
     /*
     * Relationship with flight_plans table
@@ -38,37 +38,6 @@ class ServiceOrderModel extends Model
     function service_order_has_flight_plan(){
 
         return $this->hasMany("App\Models\Orders\ServiceOrderHasFlightPlansModel", "service_order_id");
-
-    }
-
-    /**
-     * Carrega os registros no formato de paginação
-     * A claúsula where é opcional
-     * A claúsula when() permite criar queries condicionais
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return array
-     */
-    function loadServiceOrdersWithPagination(int $limit, int $current_page, bool|string $where_value) : array {
-
-        try{
-
-            $data = DB::table('service_orders')
-            ->where("service_orders.deleted_at", null)
-            ->when($where_value, function ($query, $where_value) {
-
-                $query->where('service_orders.id', $where_value);
-
-            })->orderBy('service_orders.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
-            return ["status" => true, "error" => false, "data" => $data];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
 
     }
 }

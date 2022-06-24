@@ -4,19 +4,9 @@ namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Log;
 // Custom Models
-use App\Models\Profiles\ProfileModel;
-use App\Models\User\UserComplementaryDataModel;
-use App\Models\User\UserAddressModel;
-use App\Models\Pivot\ProfileHasModuleModel;
-use App\Mail\User\SendAccessDataToCreatedUser;
 use Database\Factories\UserFactory;
 
 class UserModel extends Authenticatable
@@ -24,7 +14,7 @@ class UserModel extends Authenticatable
     use HasFactory, SoftDeletes;
 
     protected $table = "users";
-    protected $fillable = ["*"];
+    protected $guarded = [];
 
     /*
     * Relationship with user_complementary_data table
@@ -51,7 +41,7 @@ class UserModel extends Authenticatable
      * Distant relationship with profile_has_module table through profile table
      */
     function profile_modules_relationship(){
-        return $this->hasManyThrough(ProfileHasModuleModel::class, ProfileModel::class);
+        return $this->hasManyThrough("App\Models\Pivot\ProfileHasModuleModel", "App\Models\Profiles\ProfileModel");
     }
 
     /*
@@ -81,41 +71,33 @@ class UserModel extends Authenticatable
      */
     function loadAllUserData(int $user_id) : array {
 
-        try{
+        $user = UserModel::find($user_id);
 
-            $user = UserModel::find($user_id);
+        $data = [
+            "basic" => [
+                'name' => $user->name, 
+                'email' => $user->email 
+            ],
+            "complementary" => [
+                'anac_license' => $user->complementary_data->habANAC,
+                'cpf' => $user->complementary_data->CPF,
+                'cnpj' => $user->complementary_data->CNPJ,
+                'telefone' => $user->complementary_data->telephone,
+                'celular' => $user->complementary_data->cellphone,
+                'company_name' => $user->complementary_data->company_name,
+                'trading_name' => $user->complementary_data->trading_name
+            ],
+            "address" => [
+                'address' => $user->complementary_data->address->address,
+                'number' => $user->complementary_data->address->number,
+                'cep' => $user->complementary_data->address->cep,
+                'city' => $user->complementary_data->address->city,
+                'state' => $user->complementary_data->address->state,
+                'complement' => $user->complementary_data->address->complement
+            ]    
+        ];
 
-            $data = [
-                "basic" => [
-                    'name' => $user->name, 
-                    'email' => $user->email 
-                ],
-                "complementary" => [
-                    'anac_license' => $user->complementary_data->habANAC,
-                    'cpf' => $user->complementary_data->CPF,
-                    'cnpj' => $user->complementary_data->CNPJ,
-                    'telefone' => $user->complementary_data->telephone,
-                    'celular' => $user->complementary_data->cellphone,
-                    'company_name' => $user->complementary_data->company_name,
-                    'trading_name' => $user->complementary_data->trading_name
-                ],
-                "address" => [
-                    'address' => $user->complementary_data->address->address,
-                    'number' => $user->complementary_data->address->number,
-                    'cep' => $user->complementary_data->address->cep,
-                    'city' => $user->complementary_data->address->city,
-                    'state' => $user->complementary_data->address->state,
-                    'complement' => $user->complementary_data->address->complement
-                ]    
-            ];
-
-            return ["status" => true, "error" => false, "account_data" => $data];
-
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
+        return ["status" => true, "error" => false, "account_data" => $data];
 
     }
 

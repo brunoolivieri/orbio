@@ -12,7 +12,7 @@ class ReportModel extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "reports";
-    protected $fillable = ["*"];
+    protected $guarded = [];
 
      /**
      * Método realizar um SELECT SEM WHERE na tabela "reports"
