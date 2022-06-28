@@ -104,8 +104,8 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   function requestServerOperation(data) {
 
     AxiosApi.patch(`/api/plans-module/${data.get("id")}`, {
-      report_id: data.get("select_report"),
-      incident_id: data.get("select_incident"),
+      report_id: data.get("report"),
+      incident_id: data.get("incident"),
       status: data.get("status"),
       description: data.get("description"),
     })
@@ -217,21 +217,21 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
               <Box sx={{ mb: 2 }}>
                 <GenericSelect
                   label_text={"Relatório"}
-                  data_source={"/api/plans-module/create?table=reports&auth=none"}
+                  data_source={"/api/load-reports"}
                   primary_key={"id"}
                   key_content={"id"}
                   error={null}
                   default={props.record.report_id != null ? props.record.report_id : 0}
-                  name={"select_report"}
+                  name={"report"}
                 />
                 <GenericSelect
                   label_text={"Incidente"}
-                  data_source={"/api/plans-module/create?table=incidents&auth=none"}
+                  data_source={"/api/load-incidents"}
                   primary_key={"id"}
                   key_content={"id"}
                   error={null}
                   default={props.record.incident_id != null ? props.record.incident_id : 0}
-                  name={"select_incident"}
+                  name={"incident"}
                 />
               </Box>
 

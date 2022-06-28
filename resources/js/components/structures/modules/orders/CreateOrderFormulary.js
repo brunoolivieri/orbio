@@ -312,7 +312,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
             <Box sx={{ mb: 2 }}>
               <GenericSelect
                 label_text="Piloto"
-                data_source={"/api/orders-module/create?table=users&where=profile_id.3&select_columns=id.name"}
+                data_source={"/api/load-users?where=profile_id.3"}
                 primary_key={"id"}
                 key_content={"name"}
                 helperText={errorMessage.pilot_name}
@@ -325,7 +325,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
             <Box sx={{ mb: 2 }}>
               <GenericSelect
                 label_text="Cliente"
-                data_source={"/api/orders-module/create?table=users&where=profile_id.4&select_columns=id.name"}
+                data_source={"/api/load-users?where=profile_id.4"}
                 primary_key={"id"}
                 key_content={"name"}
                 helperText={errorMessage.client_name}
@@ -340,7 +340,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
               <ModalTransferList
                 open_button={"Planos de voo"}
                 modal_title={"Seleção de Planos de Voo"}
-                data_source={"/api/orders-module/create?table=flight_plans&select_columns=id.file.status"}
+                data_source={"/api/load-flight_plans"}
                 set_selected_items={setFlightPlansSelected}
                 selected_items={flightPlansSelected}
               />

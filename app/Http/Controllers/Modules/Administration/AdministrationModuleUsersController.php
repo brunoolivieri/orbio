@@ -12,9 +12,8 @@ use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;
 
-class AdministrationModuleUserPanelController extends Controller
+class AdministrationModuleUsersController extends Controller
 {
-
     private UserPanelService $service;
 
     /**
@@ -25,7 +24,7 @@ class AdministrationModuleUserPanelController extends Controller
     public function __construct(UserPanelService $service){
         $this->service = $service;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -43,17 +42,6 @@ class AdministrationModuleUserPanelController extends Controller
 
         return $this->service->loadUsersWithPagination($limit, $current_page, $where_value);
 
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() : \Illuminate\Http\Response
-    {
-        $profiles = ProfileModel::all();
-        return response($data, 200);  
     }
 
     /**
@@ -121,5 +109,4 @@ class AdministrationModuleUserPanelController extends Controller
         return $this->service->deleteUser($id);
 
     }
-    
 }

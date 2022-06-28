@@ -11,8 +11,8 @@ use App\Http\Controllers\Internal\MainInternalController;
 use App\Http\Controllers\Internal\MyAccountController; 
 use App\Http\Controllers\Internal\SupportController; 
 // \Modules
-use App\Http\Controllers\Modules\Administration\AdministrationModuleUserPanelController;
-use App\Http\Controllers\Modules\Administration\AdministrationModuleProfilePanelController;
+use App\Http\Controllers\Modules\Administration\AdministrationModuleUsersController;
+use App\Http\Controllers\Modules\Administration\AdministrationModuleProfilesController;
 use App\Http\Controllers\Modules\Report\ReportModuleController;
 use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
 use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
@@ -52,16 +52,22 @@ Route::middleware(["session.auth"])->group(function(){
     Route::post("/api/desactivate-account/{id}", [MyAccountController::class, "accountDesactivation"]);
     Route::post("/api/update-password/{id}", [MyAccountController::class, "passwordUpdate"]);
     // Internal Modules operations
-    Route::resource("/api/admin-module-user", AdministrationModuleUserPanelController::class);
-    Route::resource("/api/admin-module-profile", AdministrationModuleProfilePanelController::class);
-    Route::resource("/api/reports-module", ReportModuleController::class);
-    Route::resource("/api/plans-module", FlightPlanModuleController::class);
+    Route::ApiResource("/api/admin-module-user", AdministrationModuleUsersController::class);
+    Route::ApiResource("/api/admin-module-profile", AdministrationModuleProfilesController::class);
+    Route::ApiResource("/api/reports-module", ReportModuleController::class);
+    Route::ApiResource("/api/plans-module", FlightPlanModuleController::class);
     Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "getFlightPlanFile"]);
-    Route::resource("/api/orders-module", ServiceOrderModuleController::class);
-    Route::resource("/api/incidents-module", IncidentModuleController::class);
-    Route::resource("/api/equipments-module-drone", EquipmentModuleDronePanelController::class);
-    Route::resource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
-    Route::resource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
+    Route::ApiResource("/api/orders-module", ServiceOrderModuleController::class);
+    Route::ApiResource("/api/incidents-module", IncidentModuleController::class);
+    Route::ApiResource("/api/equipments-module-drone", EquipmentModuleDronePanelController::class);
+    Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
+    Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
+    // Actions
+    Route::get("/api/load-users", LoadUsersController::class);
+    Route::get("/api/load-profiles", LoadProfilesController::class);
+    Route::get("/api/load-flight_plans", LoadFlightPlansController::class);
+    Route::get("/api/load-incidents", LoadIncidentsController::class);
+    Route::get("/api/load-reports", LoadReportsController::class);
 });
 
 

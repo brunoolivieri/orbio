@@ -59,20 +59,6 @@ class FlightPlanModuleController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() : \Illuminate\Http\Response
-    {
-        $table = request()->table;
-
-        $data = DB::table($table)->get();
-
-        return response($data, 200);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

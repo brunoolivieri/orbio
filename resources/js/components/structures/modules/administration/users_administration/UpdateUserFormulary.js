@@ -82,7 +82,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
     const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
     const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
-    const profileValidate = Number(formData.get("select_profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
+    const profileValidate = Number(formData.get("profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setErrorDetected({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error });
@@ -106,7 +106,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
       name: data.get("name"),
       email: data.get("email"),
       status: data.get("status"),
-      profile_id: data.get("select_profile")
+      profile_id: data.get("profile")
     })
       .then(() => {
 
@@ -243,12 +243,12 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
               <Box sx={{ width: "auto", mb: 2 }}>
                 <GenericSelect
                   label_text={"Perfil"}
-                  data_source={"/api/admin-module-user/create"}
+                  data_source={"/api/load-profiles"}
                   primary_key={"id"}
                   key_content={"name"}
                   error={errorDetected.profile}
                   default={props.record.profile_id}
-                  name={"select_profile"}
+                  name={"profile"}
                 />
               </Box>
 

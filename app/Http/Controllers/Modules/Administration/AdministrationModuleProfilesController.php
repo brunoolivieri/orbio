@@ -4,16 +4,13 @@ namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
 use App\Services\Modules\Administration\ProfilePanelService;
 
-class AdministrationModuleProfilePanelController extends Controller
+class AdministrationModuleProfilesController extends Controller
 {
     private ProfilePanelService $service;
 
@@ -107,5 +104,4 @@ class AdministrationModuleProfilePanelController extends Controller
         return $this->service->deleteProfile($id);
 
     }
-    
 }

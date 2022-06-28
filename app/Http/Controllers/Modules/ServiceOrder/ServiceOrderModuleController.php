@@ -46,33 +46,6 @@ class ServiceOrderModuleController extends Controller
     }
 
     /**
-     * Get data to fill the select inputs that exists in create and update formulary.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create() : \Illuminate\Http\Response
-    {
-        $where = isset(request()->where) ? explode(".", request()->where) : false;
-        $select = explode(".", request()->select_columns);
-
-        try{
-
-            $data = DB::table(request()->table)->where("deleted_at", null)->when( $where, function($query, $where){
-
-                $query->where($where[0], $where[1]);
-
-            })->select($select[0], $select[1])->get();
-
-            return response($data, 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()]);
-
-        }
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest $request

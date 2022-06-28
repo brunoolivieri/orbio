@@ -84,7 +84,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
     const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
     const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
-    const profileValidate = Number(formData.get("select_profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
+    const profileValidate = Number(formData.get("profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
 
     setErrorDetected({ name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error });
     setErrorMessage({ name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message });
@@ -111,7 +111,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     AxiosApi.post(`/api/admin-module-user`, {
       email: data.get("email"),
       name: data.get("name"),
-      profile_id: data.get("select_profile"),
+      profile_id: data.get("profile"),
       password: random_pass
     })
       .then(function () {
@@ -236,12 +236,12 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
             <GenericSelect
               label_text={"Perfil"}
-              data_source={"/api/admin-module-user/create"}
+              data_source={"/api/load-profiles"}
               primary_key={"id"}
               key_content={"name"}
               error={errorDetected.profile}
               default={0}
-              name={"select_profile"}
+              name={"profile"}
             />
 
           </DialogContent>
