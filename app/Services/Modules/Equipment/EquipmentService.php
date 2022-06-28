@@ -31,7 +31,7 @@ class EquipmentService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination($limit, $current_page, $where_value){
+    public function loadEquipmentsWithPagination($limit, $current_page, $where_value){
 
         $data = DB::table('equipments')
         ->where("equipments.deleted_at", null)

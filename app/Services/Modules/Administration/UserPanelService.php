@@ -34,7 +34,7 @@ class UserPanelService{
      * @param int|string $where_value
      * @return \Illuminate\Http\Response
      */
-    public function loadPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadUsersWithPagination(int $limit, int $current_page, int|string $where_value) : \Illuminate\Http\Response {
 
         $data = DB::table('users')
         ->join('profiles', 'users.profile_id', '=', 'profiles.id')
@@ -74,7 +74,7 @@ class UserPanelService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createUser($request) {
+    public function createUser($request) : \Illuminate\Http\Response {
 
         DB::transaction(function () use ($request) {
 
@@ -100,13 +100,27 @@ class UserPanelService{
 
     }
 
+     /**
+     * Update User.
+     *
+     * @param $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateUser($request, $user_id) : \Illuminate\Http\Response{
+
+        UserModel::where('id', $id)->update($request->only(["name", "email", "profile_id", "status"]));
+
+        return response(["message" => "Usuário atualizado com sucesso!"], 200); 
+
+    }
+
     /**
      * Soft delete user.
      *
      * @param $id
      * @return \Illuminate\Http\Response
      */
-    public function deleteUser($id) {
+    public function deleteUser($id) : \Illuminate\Http\Response {
         
         DB::transaction(function() use ($id){
 

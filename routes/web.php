@@ -20,6 +20,12 @@ use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteryPanelController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleDronePanelController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleEquipmentPanelController;
+// \Actions
+use App\Http\Controllers\Actions\LoadFlightPlansController;
+use App\Http\Controllers\Actions\LoadIncidentsController;
+use App\Http\Controllers\Actions\LoadProfilesController;
+use App\Http\Controllers\Actions\LoadReportsController;
+use App\Http\Controllers\Actions\LoadUsersController;
 
 // External Views
 Route::get('/', function(){ return redirect("/login"); }); 

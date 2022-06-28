@@ -41,7 +41,7 @@ class AdministrationModuleUserPanelController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $current_page, $where_value);
+        return $this->service->loadUsersWithPagination($limit, $current_page, $where_value);
 
     }
 
@@ -52,19 +52,8 @@ class AdministrationModuleUserPanelController extends Controller
      */
     public function create() : \Illuminate\Http\Response
     {
-        
-        try{
-
-            $data = ProfileModel::all();
-
-            return response($data, 200);
-    
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 500);
-
-        }
-
+        $profiles = ProfileModel::all();
+        return response($data, 200);  
     }
 
     /**
@@ -98,7 +87,7 @@ class AdministrationModuleUserPanelController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $current_page, $where_value);
+        return $this->service->loadUsersWithPagination($limit, $current_page, $where_value);
 
     }
 
@@ -114,9 +103,7 @@ class AdministrationModuleUserPanelController extends Controller
 
         Gate::authorize('administration_write');
 
-        UserModel::where('id', $id)->update($request->only(["name", "email", "profile_id", "status"]));
-
-        return response(["message" => "Usuário atualizado com sucesso!"], 200); 
+        return $this->service->updateUser($request, $id);
 
     }
 

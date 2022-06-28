@@ -53,9 +53,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        IncidentModel::create($request->only(["type", "date", "description"]));
-
-        return response(["message" => "Incidente criado com sucesso!"], 200);
+        return $this->service->createIncident($request);
 
     }
 
@@ -88,9 +86,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        IncidentModel::where('id', $id)->update($request->only(["type", "description", "date"]));
-
-        return response(["message" => "Incidente atualizado com sucesso!"], 200);
+        return $this->updateIncident($request, $id);
   
     }
 
@@ -103,10 +99,8 @@ class IncidentModuleController extends Controller
     public function destroy($id) : \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
-        
-        IncidentModel::where('id', $id)->delete();
 
-        return response(["message" => "Incidente deletado com sucesso!"], 200);
+        return $this->service->deleteIncident($id); 
  
     }
 }

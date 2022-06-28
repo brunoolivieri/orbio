@@ -11,17 +11,14 @@ use App\Services\FormatDataService;
 class FlightPlanService{
 
     private FormatDataService $format_data_service;
-    private FlightPlanModel $flight_plan_model;
 
     /**
      * Dependency injection.
      * 
      * @param App\Services\FormatDataService $service
-     * @param App\Models\FlightPlans\FlightPlanModel $flight_plan
      */
-    public function __construct(FormatDataService $service, FlightPlanModel $flight_plan){
+    public function __construct(FormatDataService $service){
         $this->format_data_service = $service;
-        $this->flight_plan_model = $flight_plan;
     }
 
     /**
@@ -63,7 +60,7 @@ class FlightPlanService{
      * @param string $filename
      * @return \Illuminate\Http\Response
      */
-    public function getFlightPlanFile($filename){
+    public function getFlightPlanFile(string $filename){
 
         if(Storage::disk("public")->exists("flight_plans/$filename")){
 
@@ -85,10 +82,10 @@ class FlightPlanService{
     /**
      * Create flight plan.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createFlightPlan($request){
+    public function createFlightPlan(Request $request){
 
         if(!$request->file('flight_plan')){
             return response(["error" => "Falha na criação do plano de voo."], 500);
@@ -114,12 +111,32 @@ class FlightPlanService{
     }
 
     /**
-     * Soft delete flight plan.
+     * Update flight plan.
      *
-     * @param  int  $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param int $flight_plan_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteFlightPlan($flight_plan_id){
+    public function updateFlightPlan(Request $request, int $flight_plan_id){
+
+        FlightPlanModel::where('id', $id)->update([
+            "report_id" => $request->report_id == 0 ? null : $request->report_id,
+            "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
+            "description" => $request->description,
+            "status" => $request->status
+        ]);
+
+        return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
+
+    }
+
+    /**
+     * Soft delete flight plan.
+     *
+     * @param int $flight_plan_id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteFlightPlan(int $flight_plan_id){
 
         DB::transaction(function() use ($flight_plan_id) {
 

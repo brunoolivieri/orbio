@@ -65,7 +65,7 @@ class ServiceOrderService{
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createServiceOrder($request){
+    public function createServiceOrder(Request $request){
 
         DB::transaction(function () use ($request) {
             
@@ -131,11 +131,11 @@ class ServiceOrderService{
     /**
     * Update service order.
     *
-    * @param $request
-    * @param $service_order_id
+    * @param \Illuminate\Http\Request $request
+    * @param int $service_order_id
     * @return \Illuminate\Http\Response
     */
-    public function updateServiceOrder($request, $service_order_id){
+    public function updateServiceOrder(Request $request, int $service_order_id){
 
         DB::transaction(function () use ($request, $service_order_id) {
             
@@ -181,7 +181,7 @@ class ServiceOrderService{
 
         });
 
-        return response(["message" => "Ordem de serviço atualizada com sucesso!"]);
+        return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
 
     }
 
@@ -191,7 +191,7 @@ class ServiceOrderService{
      * @param int $service_order_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteServiceOrder($service_order_id){
+    public function deleteServiceOrder(int $service_order_id){
 
         DB::transaction(function () use ($service_order_id) {
             

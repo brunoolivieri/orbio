@@ -41,7 +41,7 @@ class AdministrationModuleProfilePanelController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $current_page, $where_value);
+        return $this->service->loadProfilesModulesWithPagination($limit, $current_page, $where_value);
         
     }
 
@@ -74,7 +74,7 @@ class AdministrationModuleProfilePanelController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $current_page, $where_value);
+        return $this->service->loadProfilesModulesWithPagination($limit, $current_page, $where_value);
 
     }
 

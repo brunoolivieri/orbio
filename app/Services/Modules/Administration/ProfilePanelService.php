@@ -36,7 +36,7 @@ class ProfilePanelService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadProfilesModulesWithPagination(int $limit, int $current_page, int|string $where_value) {
 
         $data = DB::table('profile_has_module')
         ->join('profiles', 'profile_has_module.profile_id', '=', 'profiles.id')

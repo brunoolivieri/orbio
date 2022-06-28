@@ -31,7 +31,7 @@ class BatteryService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination($limit, $current_page, $where_value){
+    public function loadBatteriesWithPagination(int $limit, int $current_page, int|string $where_value){
 
         $data = DB::table('batteries')
         ->where("batteries.deleted_at", null)
@@ -69,10 +69,10 @@ class BatteryService{
     /**
      * Create battery.
      *
-     * @param $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createBattery($request) {
+    public function createBattery(Request $request) {
 
         DB::transaction(function () use ($request) {
 
@@ -97,11 +97,11 @@ class BatteryService{
     /**
      * Update battery.
      *
-     * @param $request
+     * @param  \Illuminate\Http\Request $request
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function updateBattery($request, $battery_id) {
+    public function updateBattery(Request $request, int $battery_id) {
 
         DB::transaction(function () use ($request, $battery_id) {
 
@@ -139,7 +139,7 @@ class BatteryService{
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteBattery($battery_id) {
+    public function deleteBattery(int $battery_id) {
         
         DB::transaction(function() use ($battery_id){
 

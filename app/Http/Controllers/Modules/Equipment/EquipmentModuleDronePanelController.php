@@ -38,7 +38,7 @@ class EquipmentModuleDronePanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadDronesWithPagination($limit, $actual_page, $where_value);
             
     }
 
@@ -71,7 +71,7 @@ class EquipmentModuleDronePanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
             
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadDronesWithPagination($limit, $actual_page, $where_value);
     }
 
     /**

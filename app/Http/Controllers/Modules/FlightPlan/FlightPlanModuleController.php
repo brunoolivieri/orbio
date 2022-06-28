@@ -65,19 +65,11 @@ class FlightPlanModuleController extends Controller
      */
     public function create() : \Illuminate\Http\Response
     {
-        try{
+        $table = request()->table;
 
-            $table = request()->table;
+        $data = DB::table($table)->get();
 
-            $data = DB::table($table)->get();
-
-            return response($data, 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()]);
-
-        }
+        return response($data, 200);
     }
 
     /**
@@ -124,14 +116,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        FlightPlanModel::where('id', $id)->update([
-            "report_id" => $request->report_id == 0 ? null : $request->report_id,
-            "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
-            "description" => $request->description,
-            "status" => $request->status
-        ]);
-
-        return response("", 200);
+        return $this->service->updateFlightPlan($request, $id);
  
     }
 

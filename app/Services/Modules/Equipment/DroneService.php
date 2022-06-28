@@ -31,7 +31,7 @@ class DroneService {
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination($limit, $current_page, $where_value){
+    public function loadDronesWithPagination(int $limit, int $current_page, int|string $where_value){
 
         $data = DB::table('drones')
         ->where("drones.deleted_at", null)
@@ -71,10 +71,10 @@ class DroneService {
     /**
      * Create drone.
      *
-     * @param $request
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createDrone($request) {
+    public function createDrone(Request $request) {
 
         DB::transaction(function () use ($request) {
 
@@ -99,10 +99,11 @@ class DroneService {
     /**
      * Update drone.
      *
-     * @param $request
+     * @param  \Illuminate\Http\Request $request
+     * @param int $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function updateDrone($request, $drone_id) {
+    public function updateDrone(Request $request, int $drone_id) {
 
         DB::transaction(function () use ($request, $drone_id) {
 
@@ -137,10 +138,10 @@ class DroneService {
     /**
      * Soft delete drone.
      *
-     * @param $id
+     * @param int $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteDrone($drone_id) {
+    public function deleteDrone(int $drone_id) {
         
         DB::transaction(function() use ($drone_id){
 

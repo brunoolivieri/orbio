@@ -29,7 +29,7 @@ class IncidentService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadPagination(int $limit, int $current_page, int|string $where_value) {
 
         $data = DB::table('incidents')
         ->where("incidents.deleted_at", null)
@@ -50,6 +50,49 @@ class IncidentService{
             return response(["error" => "Nenhum incidente encontrado."], 404);
 
         }
+    }
+
+    /**
+     * Create incident.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function createIncident(Request $request){
+
+        IncidentModel::create($request->only(["type", "date", "description"]));
+
+        return response(["message" => "Incidente criado com sucesso!"], 200); 
+
+    }
+
+    /**
+     * Update incident.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param int $incident_id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateIncident(Request $request, int $incident_id) {
+
+        IncidentModel::where('id', $incident_id)->update($request->only(["type", "description", "date"]));
+
+        return response(["message" => "Incidente atualizado com sucesso!"], 200);
+
+    }
+
+    /**
+     * Soft delete incident.
+     *
+     * @param int $incident_id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteIncident(int $incident_id) {
+
+        IncidentModel::where('id', $incident_id)->delete();
+
+        return response(["message" => "Incidente deletado com sucesso!"], 200);
+
     }
     
 }
