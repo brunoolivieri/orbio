@@ -3,6 +3,7 @@
 namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\Pivot\ProfileHasModuleModel;
 use App\Models\Profiles\ProfileModel;
@@ -77,7 +78,7 @@ class ProfilePanelService{
     * @param $request
     * @return \Illuminate\Http\Response
     */
-    public function createProfile($request) {
+    public function createProfile(Request $request) {
 
         DB::transaction(function () use ($request) {
             
@@ -117,7 +118,7 @@ class ProfilePanelService{
     * @param $profile_id
     * @return \Illuminate\Http\Response
     */
-    public function updateProfile($request, $profile_id) {
+    public function updateProfile(Request $request, int $profile_id) {
 
         DB::transaction(function() use ($request, $profile_id) {
 
@@ -138,7 +139,7 @@ class ProfilePanelService{
     * @param $id
     * @param $profile_modules_relationship
     */
-    private function updateProfileModulesRelationship($profile_id, $profile_modules_relationship){
+    private function updateProfileModulesRelationship(int $profile_id, $profile_modules_relationship){
 
         DB::transaction(function() use ($profile_id, $profile_modules_relationship) {
 
@@ -163,7 +164,7 @@ class ProfilePanelService{
     * @param $profile_id
     * @return \Illuminate\Http\Response
     */
-    public function deleteProfile($profile_id) {
+    public function deleteProfile(int $profile_id) {
 
         DB::transaction(function () use ($profile_id) {
             

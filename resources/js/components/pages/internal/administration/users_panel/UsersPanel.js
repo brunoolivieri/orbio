@@ -138,8 +138,6 @@ export function UsersPanel() {
 
   }
 
-  console.log(panelData)
-
   /**
    * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
    * 
@@ -185,8 +183,6 @@ export function UsersPanel() {
         } else {
 
           handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
-
-          console.log(error.message);
 
           setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 

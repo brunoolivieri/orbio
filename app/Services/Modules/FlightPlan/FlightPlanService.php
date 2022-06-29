@@ -4,6 +4,7 @@ namespace App\Services\Modules\FlightPlan;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\FlightPlans\FlightPlanModel;
 use App\Services\FormatDataService;
@@ -32,7 +33,7 @@ class FlightPlanService{
     public function loadPagination(int $limit, int $current_page, int|string $where_value){
 
         $data = DB::table('flight_plans')
-        ->select('id', 'report_id', 'incident_id', 'file', 'description', 'status', 'created_at', 'updated_at', 'deleted_at')
+        ->select('id', 'report_id', 'incident_id', 'coordinates', 'description', 'status', 'created_at', 'updated_at', 'deleted_at')
         ->where("flight_plans.deleted_at", null)
         ->when($where_value, function ($query, $where_value) {
 
@@ -91,19 +92,19 @@ class FlightPlanService{
             return response(["error" => "Falha na criação do plano de voo."], 500);
         }
 
-        $file_name = $request->flight_plan->getClientOriginalName();
-        $storage_folder = "public/flight_plans";
+        $coordinantes_filename = $request->flight_plan->getClientOriginalName();
+        $coordinantes_folder = "public/flight_plans";
 
         FlightPlanModel::create([
             "report_id" => null,
             "incident_id" => null,
-            "file" => $file_name,
+            "coordinates" => $coordinantes_filename,
             "description" => $request->description,
             "status" => 0
         ]);
 
-        $path = $request->file('flight_plan')->storeAs(
-            $storage_folder, $file_name
+        $request->file('flight_plan')->storeAs(
+            $coordinantes_folder, $coordinantes_filename
         );
 
         return response(["message" => "Plano de voo criado com sucesso!"], 200);
@@ -120,6 +121,7 @@ class FlightPlanService{
     public function updateFlightPlan(Request $request, int $flight_plan_id){
 
         FlightPlanModel::where('id', $id)->update([
+            "name" => $request->name,
             "report_id" => $request->report_id == 0 ? null : $request->report_id,
             "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
             "description" => $request->description,
@@ -157,8 +159,8 @@ class FlightPlanService{
                 $flight_plan->service_order_has_flight_plans()->delete();
             }
 
-            // Delete file from storage
-            Storage::disk('public')->delete("flight_plans/".$flight_plan->arquivo);
+            // Delete coordinates file from storage
+            Storage::disk('public')->delete("flight_plans/".$flight_plan->coordinates);
 
             $flight_plan->delete();
             

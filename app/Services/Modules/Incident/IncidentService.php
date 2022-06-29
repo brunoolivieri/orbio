@@ -3,6 +3,7 @@
 namespace App\Services\Modules\Incident;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\Incidents\IncidentModel;
 use App\Services\FormatDataService;

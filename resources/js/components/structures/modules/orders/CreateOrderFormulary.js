@@ -18,8 +18,8 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
-import { ModalTransferList } from "../../modal_with_transfer_list/ModalTransferList";
 import { RadioInput } from '../../radio_group/RadioInput';
+import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -337,13 +337,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
             <Box sx={{ mb: 2 }}>
 
-              <ModalTransferList
-                open_button={"Planos de voo"}
-                modal_title={"Seleção de Planos de Voo"}
-                data_source={"/api/load-flight_plans"}
-                set_selected_items={setFlightPlansSelected}
-                selected_items={flightPlansSelected}
-              />
+              <ModalFlightPlansTable setFlightPlansSelected = {setFlightPlansSelected} />
 
             </Box>
 
@@ -372,7 +366,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton}>Criar ordem de serviço</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Criar ordem de serviço</Button>
           </DialogActions>
 
         </Box>

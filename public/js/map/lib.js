@@ -1239,7 +1239,9 @@ function savePath() {
 
 	var blob = new Blob([content],
 		{ type: "text/plain;charset=utf-8" });
-	
+
+	// const screenshot = takeMapScreenshot();
+
 	const custom_name = prompt('Digite um nome para o plano de voo');
 	const timestamp = new Date().getTime();
 
@@ -1248,6 +1250,19 @@ function savePath() {
 
 	//Criação de um novo registro na tabela de planos de vôo
 	generateNewFlightPlanRecord(fileName, blob);
+
+}
+
+async function takeMapScreenshot() {
+
+	let captureStream = null;
+
+	try {
+		captureStream = await navigator.mediaDevices.getDisplayMedia();
+	} catch (err) {
+		console.error("Error: " + err);
+	}
+	return captureStream;
 
 }
 
@@ -1275,6 +1290,10 @@ function generateNewFlightPlanRecord(fileName, blob) {
 
 		console.log(response)
 		alert("O plano foi salvo no sistema e está disponível para download.");
+
+		setTimeout(() => {
+			window.close();
+		}, 2000)
 
 	}).catch((error) => {
 

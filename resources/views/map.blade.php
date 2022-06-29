@@ -65,6 +65,7 @@
 	<div class="logo-box">
 		<img src="{{ asset('images/map/embrapa.png') }}" alt="Embrapa Instrumentação"/>
 		<img src="{{ asset('images/map/bv.png') }}" alt="BirdView"/>
+		<div id = "output"></div>
 	</div>
 
 	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu">

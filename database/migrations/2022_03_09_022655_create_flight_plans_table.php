@@ -17,7 +17,7 @@ class CreateFlightPlansTable extends Migration
             $table->id();
             $table->foreignId('report_id')->nullable(true)->constrained('reports')->onDelete('cascade');
             $table->foreignId('incident_id')->nullable(true)->constrained('incidents')->onDelete('cascade');
-            $table->text("file");
+            $table->string("coordinates");
             $table->text("description");
             $table->boolean("status")->default(false);
             $table->timestamps();

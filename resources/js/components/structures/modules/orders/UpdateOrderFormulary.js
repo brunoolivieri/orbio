@@ -17,8 +17,8 @@ import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { GenericSelect } from '../../input_select/GenericSelect';
-import { ModalTransferList } from "../../modal_with_transfer_list/ModalTransferList";
 import { RadioInput } from '../../radio_group/RadioInput';
+import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -357,13 +357,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
               <Box sx={{ mb: 2 }}>
 
-                <ModalTransferList
-                  open_button={"Planos de voo"}
-                  modal_title={"Seleção de Planos de Voo"}
-                  data_source={"/api/load-flight_plans"}
-                  set_selected_items={setFlightPlansSelected}
-                  selected_items={props.record.flight_plans}
-                />
+                <ModalFlightPlansTable setFlightPlansSelected={setFlightPlansSelected} />
 
               </Box>
 

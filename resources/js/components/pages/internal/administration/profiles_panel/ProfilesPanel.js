@@ -161,8 +161,6 @@ export function ProfilesPanel() {
 
           handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
 
-          console.log(error.message);
-
           setPanelData({ status: { loading: false, success: false, error: true }, response: null });
 
         }

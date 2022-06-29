@@ -4,6 +4,7 @@ namespace App\Services\Modules\ServiceOrder;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\Orders\ServiceOrderModel;
 use App\Services\FormatDataService;

@@ -413,13 +413,12 @@ export function PlansPanel() {
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Abrir</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
@@ -427,9 +426,9 @@ export function PlansPanel() {
                   panelData.response.records.map((row, index) => (
                     <TableRow key={row.plan_id} >
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.plan_id} /></TableCell>
-                      <TableCell align="center">{row.file.split(".")[0]}</TableCell>
+                      <TableCell align="center">{row.coordinates.split(".")[0]}</TableCell>
                       <TableCell align="center">
-                        <Link href={`/internal/map?file=${row.file}`} target="_blank">
+                        <Link href={`/internal/map?file=${row.coordinates}`} target="_blank">
                           <Tooltip title="Ver plano">
                             <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
                               <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -439,7 +438,7 @@ export function PlansPanel() {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Baixar plano">
-                          <IconButton onClick={() => handleDownloadFlightPlan(row.file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                          <IconButton onClick={() => handleDownloadFlightPlan(row.coordinates)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
                             <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
                           </IconButton>
                         </Tooltip>
@@ -460,7 +459,6 @@ export function PlansPanel() {
                       <TableCell align="center">{row.status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
-                      <TableCell align="center">{row.created_at}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

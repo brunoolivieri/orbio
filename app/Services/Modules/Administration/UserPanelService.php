@@ -4,6 +4,7 @@ namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 // Custom
 use App\Services\FormatDataService;
 use App\Models\User\UserModel;
@@ -74,7 +75,7 @@ class UserPanelService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createUser($request) : \Illuminate\Http\Response {
+    public function createUser(Request $request) : \Illuminate\Http\Response {
 
         DB::transaction(function () use ($request) {
 
@@ -106,9 +107,9 @@ class UserPanelService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function updateUser($request, $user_id) : \Illuminate\Http\Response{
+    public function updateUser(Request $request, $user_id) : \Illuminate\Http\Response{
 
-        UserModel::where('id', $id)->update($request->only(["name", "email", "profile_id", "status"]));
+        UserModel::where('id', $user_id)->update($request->only(["name", "email", "profile_id", "status"]));
 
         return response(["message" => "Usuário atualizado com sucesso!"], 200); 
 
@@ -117,14 +118,14 @@ class UserPanelService{
     /**
      * Soft delete user.
      *
-     * @param $id
+     * @param int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteUser($id) : \Illuminate\Http\Response {
+    public function deleteUser(int $user_id) : \Illuminate\Http\Response {
         
-        DB::transaction(function() use ($id){
+        DB::transaction(function() use ($user_id){
 
-            $user = UserModel::findOrFail($id);
+            $user = UserModel::findOrFail($user_id);
 
             // If user is linked to a service order
             if(!empty($user->service_order_has_user)){
@@ -163,8 +164,8 @@ class UserPanelService{
             $user->service_order_has_user()->delete();
 
             // The user record is soft deleted
-            UserModel::where('id', $id)->update(["status" => false]);
-            UserModel::where('id', $id)->delete();
+            UserModel::where('id', $user_id)->update(["status" => false]);
+            UserModel::where('id', $user_id)->delete();
 
         });
 
