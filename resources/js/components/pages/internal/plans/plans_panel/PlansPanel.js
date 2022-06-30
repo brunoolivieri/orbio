@@ -264,7 +264,7 @@ export function PlansPanel() {
       where: paginationParams.where
     });
 
-  };
+  }
 
   /**
    * Função para processar o download do arquivo com as coordenadas do plano de vôo

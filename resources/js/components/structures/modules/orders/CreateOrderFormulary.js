@@ -37,8 +37,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   const [open, setOpen] = React.useState(false);
 
   // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, observation: false, flight_plans: false, status: false });
-  const [errorMessage, setErrorMessage] = React.useState({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", observation: "", flight_plans: "", status: "" });
+  const [errorDetected, setErrorDetected] = React.useState({ start_date: false, end_date: false, pilot_name: false, client_name: false, observation: false, flight_plans: false, status: false });
+  const [errorMessage, setErrorMessage] = React.useState({ start_date: "", end_date: "", pilot_name: "", client_name: "", observation: "", flight_plans: "", status: "" });
 
   // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -60,8 +60,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    setErrorDetected({ order_start_date: false, order_end_date: false, pilot_name: false, client_name: false, observation: false, flight_plans: false, status: false });
-    setErrorMessage({ order_start_date: "", order_end_date: "", pilot_name: "", client_name: "", observation: "", flight_plans: "", status: "" });
+    setErrorDetected({ start_date: false, end_date: false, pilot_name: false, client_name: false, observation: false, flight_plans: false, status: false });
+    setErrorMessage({ start_date: "", end_date: "", pilot_name: "", client_name: "", observation: "", flight_plans: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
     setOpen(false);
@@ -108,8 +108,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setErrorDetected({
-      order_start_date: startDateValidate.error,
-      order_end_date: endDateValidate.error,
+      start_date: startDateValidate.error,
+      end_date: endDateValidate.error,
       pilot_name: pilotNameValidate.error,
       client_name: clientNameValidate.error,
       observation: orderNoteValidate.error,
@@ -118,8 +118,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     });
 
     setErrorMessage({
-      order_start_date: startDateValidate.message,
-      order_end_date: endDateValidate.message,
+      start_date: startDateValidate.message,
+      end_date: endDateValidate.message,
       pilot_name: pilotNameValidate.message,
       client_name: clientNameValidate.message,
       observation: orderNoteValidate.message,
@@ -162,23 +162,14 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   */
   const requestServerOperation = (data) => {
 
-    let arr = [];
-    let obj_with_arr_of_ids = {};
-
-    flightPlansSelected.map((flight_plan, index) => {
-      arr[index] = flight_plan.id;
-    });
-
-    obj_with_arr_of_ids["flight_plans_ids"] = arr;
-
     AxiosApi.post(`/api/orders-module`, {
-      initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-      final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+      start_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+      end_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: data.get("pilot_name"),
       client_id: data.get("client_name"),
       observation: data.get("observation"),
       status: data.get("status"),
-      fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
+      fligth_plans_ids: flightPlansSelected
     })
       .then(function () {
 
@@ -222,8 +213,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
     let input_errors = {
-      initial_date: { error: false, message: null },
-      final_date: { error: false, message: null },
+      start_date: { error: false, message: null },
+      end_date: { error: false, message: null },
       pilot_name: { error: false, message: null },
       client_name: { error: false, message: null },
       observation: { error: false, message: null },
@@ -242,8 +233,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     }
 
     setErrorDetected({
-      order_start_date: input_errors.initial_date.error,
-      order_end_date: input_errors.final_date.error,
+      start_date: input_errors.start_date.error,
+      end_date: input_errors.end_date.error,
       pilot_name: input_errors.pilot_name.error,
       client_name: input_errors.client_name.error,
       observation: input_errors.observation.error,
@@ -252,8 +243,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     });
 
     setErrorMessage({
-      order_start_date: input_errors.initial_date.message,
-      order_end_date: input_errors.final_date.message,
+      start_date: input_errors.start_date.message,
+      end_date: input_errors.end_date.message,
       pilot_name: input_errors.pilot_name.message,
       client_name: input_errors.client_name.message,
       observation: input_errors.observation.message,
@@ -337,7 +328,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
             <Box sx={{ mb: 2 }}>
 
-              <ModalFlightPlansTable setFlightPlansSelected = {setFlightPlansSelected} />
+              <ModalFlightPlansTable setFlightPlansSelected={setFlightPlansSelected} defaultSelections={flightPlansSelected} />
 
             </Box>
 

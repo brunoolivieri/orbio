@@ -209,7 +209,7 @@ export const OrdersPanel = React.memo(() => {
       where: paginationParams.where
     });
 
-  };
+  }
 
   const handleChangeRowsPerPage = (event) => {
 
@@ -219,7 +219,7 @@ export const OrdersPanel = React.memo(() => {
       where: paginationParams.where
     });
 
-  };
+  }
 
   /**
    * Função para processar a pesquisa de ordens de serviço no input de pesquisa
@@ -383,8 +383,8 @@ export const OrdersPanel = React.memo(() => {
               <TableBody className="tbody">
                 {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
                   panelData.response.records.map((row, index) => (
-                    <TableRow key={row.order_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.order_id} /></TableCell>
+                    <TableRow key={row.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
                         <BadgeIcon number={row.flight_plans.length} color={"success"} />
@@ -399,16 +399,16 @@ export const OrdersPanel = React.memo(() => {
                       <TableCell align="center">
                         {row.client.ids == 0 ? <Chip label={"Sem dados"} variant="outlined" /> : (row.client.status == 1 ? <Chip label={row.client.name} color={"success"} variant="outlined" /> : <Chip label={row.client.name} color={"error"} variant="outlined" />)}
                       </TableCell>
-                      <TableCell align="center">{row.order_note}</TableCell>
-                      <TableCell align="center">{moment(row.order_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{moment(row.order_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{row.observation}</TableCell>
+                      <TableCell align="center">{moment(row.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{moment(row.end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
             </Table>
 
             {(!panelData.status.loading && !panelData.status.success && panelData.status.error) &&
-              <Areadt severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Areadt>
+              <Alert severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Alert>
             }
 
           </TableContainer>

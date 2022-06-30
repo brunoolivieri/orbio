@@ -17,6 +17,14 @@ class LoadFlightPlansController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return FlightPlanModel::all();
+
+        if(isset(request()->where)){
+            $data = FlightPlanModel::find(request()->where);
+        }else{
+            $data = FlightPlanModel::all();
+        }
+
+        return $data;
+
     }
 }

@@ -25,13 +25,13 @@ class ServiceOrderUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "initial_date" => 'required|date',
-            "final_date" => 'required|date',
+            "start_date" => 'required|date',
+            "end_date" => 'required|date',
             "pilot_id" => 'required|string',
             "client_id" => 'required|string',
             "observation" => 'required|string',
             "status" => 'required|boolean',
-            "fligth_plans_ids" => 'required', 
+            "fligth_plans_ids" => 'required|array|min:1', 
         ];
     }
 
@@ -43,14 +43,15 @@ class ServiceOrderUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'initial_date.required' => "A data inicial deve ser informada",
-            'final_date.required' => "A data final deve ser informada",
+            'start_date.required' => "A data inicial deve ser informada",
+            'end_date.required' => "A data final deve ser informada",
             'pilot_id.required' => "O piloto deve ser selecionado",
             'client_id.required' => "O cliente deve ser selecionado",
             'observation.required' => "A observação deve ser informada",
             'status.required' => "O status deve ser definido",
             'status.boolean' => "O status deve ser 1 ou 0",
-            'fligth_plans_ids.required' => "Pelo menos um plano de vôo deve ser selecionado"
+            'fligth_plans_ids.required' => "O plano de voo deve ser selecionado",
+            'fligth_plans_ids.min' => "Nenhum plano de voo selecionado"
         ];
     }
 }

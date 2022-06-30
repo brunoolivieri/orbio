@@ -36,8 +36,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
   const [open, setOpen] = React.useState(false);
 
   // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
-  const [errorMessage, setErrorMessage] = React.useState({ order_start_date: "", order_end_date: "", creator_name: "", pilot_name: "", client_name: "", observation: "", flight_plan: "", status: "" });
+  const [errorDetected, setErrorDetected] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
+  const [errorMessage, setErrorMessage] = React.useState({ start_date: "", end_date: "", creator_name: "", pilot_name: "", client_name: "", observation: "", flight_plan: "", status: "" });
 
   // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -54,13 +54,25 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
+  // Transform selected flight plans into array of their ids
+  React.useEffect(() => {
+
+    const order_flight_plans = props.record.flight_plans;
+    let flight_plans_only_ids = [];
+
+    flight_plans_only_ids = order_flight_plans.map((flight_plan) => flight_plan.id);
+
+    setFlightPlansSelected(flight_plans_only_ids);
+
+  }, []);
+
   const handleClickOpen = () => {
     setOpen(true);
   }
 
   const handleClose = () => {
-    setErrorDetected({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
-    setErrorMessage({ order_start_date: false, order_end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
+    setErrorDetected({ start_date: false, end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
+    setErrorMessage({ start_date: false, end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
     setDisplayAlert({ display: false, type: "", message: "" });
     setDisabledButton(false);
     setOpen(false);
@@ -107,8 +119,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setErrorDetected({
-      order_start_date: startDateValidate.error,
-      order_end_date: endDateValidate.error,
+      start_date: startDateValidate.error,
+      end_date: endDateValidate.error,
       pilot_name: pilotNameValidate.error,
       client_name: clientNameValidate.error,
       observation: orderNoteValidate.error,
@@ -117,8 +129,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     });
 
     setErrorMessage({
-      order_start_date: startDateValidate.message,
-      order_end_date: endDateValidate.message,
+      start_date: startDateValidate.message,
+      end_date: endDateValidate.message,
       pilot_name: pilotNameValidate.message,
       client_name: clientNameValidate.message,
       observation: orderNoteValidate.message,
@@ -172,8 +184,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     obj_with_arr_of_ids["flight_plans_ids"] = arr;
 
     AxiosApi.patch(`/api/orders-module/${data.get("id")}`, {
-      initial_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-      final_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+      start_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
+      end_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: data.get("select_pilot_name"),
       client_id: data.get("select_client_name"),
       observation: data.get("observation"),
@@ -225,8 +237,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
     let input_errors = {
-      initial_date: { error: false, message: null },
-      final_date: { error: false, message: null },
+      start_date: { error: false, message: null },
+      end_date: { error: false, message: null },
       creator_name: { error: false, message: null },
       pilot_name: { error: false, message: null },
       client_name: { error: false, message: null },
@@ -246,8 +258,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     }
 
     setErrorDetected({
-      order_start_date: input_errors.initial_date.error,
-      order_end_date: input_errors.final_date.error,
+      start_date: input_errors.start_date.error,
+      end_date: input_errors.end_date.error,
       creator_name: input_errors.creator_name.error,
       pilot_name: input_errors.pilot_name.error,
       client_name: input_errors.client_name.error,
@@ -257,8 +269,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
     });
 
     setErrorMessage({
-      order_start_date: input_errors.initial_date.message,
-      order_end_date: input_errors.final_date.message,
+      start_date: input_errors.start_date.message,
+      end_date: input_errors.end_date.message,
       creator_name: input_errors.creator_name.message,
       pilot_name: input_errors.pilot_name.message,
       client_name: input_errors.client_name.message,
@@ -309,9 +321,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   <DateTimeInput
                     event={setStartDate}
                     label={"Inicio da ordem de serviço"}
-                    helperText={errorMessage.order_start_date}
-                    error={errorDetected.order_start_date}
-                    defaultValue={props.record.order_start_date}
+                    helperText={errorMessage.start_date}
+                    error={errorDetected.start_date}
+                    defaultValue={props.record.start_date}
                     operation={"update"}
                     read_only={false}
                   />
@@ -320,9 +332,9 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   <DateTimeInput
                     event={setEndDate}
                     label={"Fim da ordem de serviço"}
-                    helperText={errorMessage.order_start_date}
-                    error={errorDetected.order_start_date}
-                    defaultValue={props.record.order_end_date}
+                    helperText={errorMessage.start_date}
+                    error={errorDetected.start_date}
+                    defaultValue={props.record.end_date}
                     operation={"update"}
                     read_only={false}
                   />
@@ -357,7 +369,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
               <Box sx={{ mb: 2 }}>
 
-                <ModalFlightPlansTable setFlightPlansSelected={setFlightPlansSelected} />
+                <ModalFlightPlansTable setFlightPlansSelected={setFlightPlansSelected} defaultSelections={flightPlansSelected} />
 
               </Box>
 

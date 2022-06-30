@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 // Custom
+use App\Models\User\UserModel;
 use App\Models\Orders\ServiceOrderModel;
 use App\Services\FormatDataService;
 use App\Models\Pivot\ServiceOrderHasUserModel;
@@ -68,6 +69,8 @@ class ServiceOrderService{
      */
     public function createServiceOrder(Request $request){
 
+        dd($request->all());
+
         DB::transaction(function () use ($request) {
             
             $pilot = UserModel::findOrFail($request->pilot_id);
@@ -92,22 +95,18 @@ class ServiceOrderService{
                 ["service_order_id" => $new_service_order->id,"user_id" => $request->client_id]
             ]);
 
-            $arr_plans_ids = json_decode($request->fligth_plans_ids, true);
+            foreach($request->fligth_plans_ids as $index => $value){
 
-            foreach($arr_plans_ids as $i => $value){
-                foreach($value as $j => $plan_id){
+                ServiceOrderHasFlightPlanModel::insert([
+                    "service_order_id" => $new_service_order->id,
+                    "flight_plan_id" => $value
+                ]);
 
-                    ServiceOrderHasFlightPlanModel::insert([
-                        "service_order_id" => $new_service_order->id,
-                        "flight_plan_id" => $plan_id
-                    ]);
-
-                }
             }
 
             event(new OrderCreatedEvent([
-                "initial_date" => $request->initial_date,
-                "final_date" =>  $request->final_date,
+                "initial_date" => $request->start_date,
+                "final_date" =>  $request->end_date,
                 "creator" => [
                     "name" => Auth::user()->name,
                     "email" => Auth::user()->email
