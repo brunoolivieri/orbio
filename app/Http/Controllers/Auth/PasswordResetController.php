@@ -30,13 +30,7 @@ class PasswordResetController extends Controller
      */
     public function index(UpdatePasswordRequest $request){
 
-        $response = $this->service->updatePassword($request);
-
-        if($response["status"]){
-            return response(["message" => $response["message"]], 200);
-        }else{
-            return response(["error" => $response["error"]], 500);
-        }
+        return $this->service->updatePassword($request);
 
     }
 }

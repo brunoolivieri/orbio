@@ -19,50 +19,40 @@ class PasswordResetService{
     /**
      * Method for proccess token request. 
      * 
-     * @param App\Http\Requests\Auth\ForgotPassword\PasswordResetTokenRequest $request
+     * @param Illuminate\Http\Request $request
      * @return array
      */
-    public function getToken($request) : array {
+    public function getToken($request) {
 
-        try{
+        DB::beginTransaction();
 
-            DB::beginTransaction();
+        $user = UserModel::where("email", $request->email)->firstOrFail();
 
-            $user = UserModel::where("email", $request->email)->firstOrFail();
+        // If doesn't has soft deleted
+        if(!$user->trashed()){
 
-            // If doesn't has soft deleted
-            if(!$user->trashed()){
+            $token = Str::random(10);
 
-                $token = Str::random(10);
+            PasswordResetModel::where("user_id", $user->id)->delete();
+            PasswordResetModel::create(["user_id" => $user->id, "token" => $token]);
 
-                PasswordResetModel::where("user_id", $user->id)->delete();
-                PasswordResetModel::create(["user_id" => $user->id, "token" => $token]);
+            $data_for_email = [
+                "token" => $token,
+                "name" => $user->name,
+                "email" => $user->email
+            ];
 
-                $data_for_email = [
-                    "token" => $token,
-                    "name" => $user->name,
-                    "email" => $user->email
-                ];
+            event(new RequestedTokenEvent($data_for_email));
 
-                event(new RequestedTokenEvent($data_for_email));
+            DB::Commit();
 
-                DB::Commit();
+            return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
 
-                return ["status" => true, "message" => "Sucesso! Confira o seu e-mail!"];
-
-            }else{
-
-                DB::rollBack();
-
-                return ["status" => false, "error" => "Alteração da senha falhou!"];
-
-            }
-
-        }catch(\Exception $e){
+        }else{
 
             DB::rollBack();
 
-            return ["status" => false, "error" => $e->getMessage()];
+            return response(["message" => "Alteração da senha falhou!"], 500);
 
         }
         
@@ -71,13 +61,13 @@ class PasswordResetService{
      /**
      * Method for proccess password reset.
      * 
-     * @param App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest $request
+     * @param Illuminate\Http\Request $request
      * @return array
      */
-    public function updatePassword($request) : array {
+    public function updatePassword($request) {
 
-        try{
-
+        DB::transaction(function () use ($request) {
+            
             $token = PasswordResetModel::where("token", $request->token)->firstOrFail();
 
             $token->user()->update(["password" => Hash::make($request->new_password)]);
@@ -86,13 +76,9 @@ class PasswordResetService{
 
             event(new UserPasswordChangedEvent($token->user->name, $token->user->email));
 
-            return ["status" => true, "message" => "Senha alterada com sucesso!"];
+        });
 
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        } 
+        return response(["message" => "Senha alterada com sucesso!"], 200);
 
     }
 }

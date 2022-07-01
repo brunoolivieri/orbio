@@ -31,7 +31,7 @@ class LoginService {
      * @param Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function login($request) {
+    public function login(Request $request) {
 
         if($user = Auth::attempt($request->only(["email", "password"]))){
 

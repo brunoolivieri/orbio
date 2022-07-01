@@ -4,7 +4,7 @@ import * as React from 'react';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { BackdropLoading } from '../../../structures/backdrop_loading/BackdropLoading';
-import { GenericModalDialog } from '../../../structures/generic_modal_dialog/GenericModalDialog';
+import { ModalInformative } from '../../../structures/generic_modal_dialog/ModalInformative';
 // Material UI
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -21,7 +21,6 @@ import SuccessImage from "../../../assets/images/Success/Success_md.png";
 import ErrorImage from "../../../assets/images/Error/Error_md.png";
 // Raect Router
 import { Link } from 'react-router-dom';
-// Lottie
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,211 +35,170 @@ export function ForgotPassword() {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({ email: false, code: false, password: false, confirm_password: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ email: null, code: null, password: null, confirm_password: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    // Form fields states
+    const [controlledInput, setControlledInput] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" });
 
-    // State do envio do código - true se foi enviado, false se não 
+    // Fields error states
+    const [fieldError, setFieldError] = React.useState({ email: false, code: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
+    const [fieldErrorMessage, setFiedlErrorMessage] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+
+    // Code request status
     const [codeSent, setCodeSent] = React.useState(false);
 
-    // State do contador para envio de um novo código 
+    // Timer for send another code
     const [codeTimer, setTimer] = React.useState(0);
 
-    // State da realização da operação - ativa o Modal informativo sobre o estado da operação 
-    // Neste caso, a operação é envio do código e alteração da senha
-    const [operationStatus, setOperationStatus] = React.useState({ type: null, title: null, message: null, image: null });
+    // Display modal with the current operation status
+    const [operation, setOperation] = React.useState({ current: "", title: "", message: "", image: "" });
 
-    // Classes do objeto makeStyles
+    // Classes from make styles
     const classes = useStyles();
-
-    // State do modal informativo acerca da operação realizada
-    const [openGenericModal, setOpenGenericModal] = React.useState(true);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    /*
-    * Rotina 1A
-    */
     function handleCodeSubmit(event) {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        if (formularyDataValidate("SEND_CODE")) {
 
-        if (formDataValidate(data, "SEND_CODE_FORMULARY_VALIDATION")) {
-
-            sendCodeRequestServerOperation(data);
+            sendCodeServerRequest();
 
         }
 
     }
 
-    /*
-    * Rotina 1B
-    */
     function handleChangePasswordSubmit(event) {
         event.preventDefault();
 
-        // Instância da classe JS FormData - para trabalhar os dados do formulário
-        const data = new FormData(event.currentTarget);
+        if (formularyDataValidate("CHANGE_PASSWORD")) {
 
-        if (formDataValidate(data, "CHANGE_PASSWORD_FORMULARY_VALIDATION")) {
-
-            changePasswordRequestServerOperation(data);
+            changePasswordServerRequest();
 
         }
 
     }
 
-    /*
-    * Rotina 2
-    */
-    function formDataValidate(formData, formulary) {
+    function formularyDataValidate(formulary) {
 
-        if (formulary === "SEND_CODE_FORMULARY_VALIDATION") {
+        if (formulary === "SEND_CODE") {
 
             const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-            const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
+            const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
 
-            setErrorDetected({ email: emailValidate.error, code: false, password: false, confirm_password: false });
-            setErrorMessage({ email: emailValidate.message, code: false, password: false, confirm_password: false });
+            setFieldError({ email: emailValidate.error, code: false, new_password: false, new_password_confirmation: false });
+            setFiedlErrorMessage({ email: emailValidate.message, code: false, new_password: false, new_password_confirmation: false });
 
-            if (emailValidate.error === true) {
+            return !emailValidate.error;
 
-                return false;
-
-            } else {
-
-                return true;
-
-            }
-
-        } else if (formulary === "CHANGE_PASSWORD_FORMULARY_VALIDATION") {
+        } else if (formulary === "CHANGE_PASSWORD") {
 
             const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-            const codeValidate = formData.get("code").length == 10 ? {error: false, message: ""} : {error: true, message: "Código inválido"};
-            const passwordValidate = FormValidation(formData.get("new_password"), 8, null, passwordPattern, "PASSWORD");
-            const passconfirmValidate = formData.get("new_password_confirmation") == formData.get("new_password") ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
+            const codeValidate = controlledInput.code.length == 10 ? { error: false, message: "" } : { error: true, message: "código inválido" };
+            const passwordValidate = FormValidation(controlledInput.new_password, 8, null, passwordPattern, "senha");
+            const passwordConfirmValidate = controlledInput.new_password == controlledInput.new_password_confirmation ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
 
-            setErrorDetected({ email: false, code: codeValidate.error, password: passwordValidate.error, confirm_password: passconfirmValidate.error });
-            setErrorMessage({ email: null, code: codeValidate.message, password: passwordValidate.message, confirm_password: passconfirmValidate.message });
+            setFieldError({ email: false, code: codeValidate.error, new_password: passwordValidate.error, new_password_confirmation: passwordConfirmValidate.error });
+            setFiedlErrorMessage({ email: "", code: codeValidate.message, new_password: passwordValidate.message, new_password_confirmation: passwordConfirmValidate.message });
 
-            if (codeValidate.error === true || passwordValidate.error === true || passconfirmValidate.error === true) {
-
-                return false;
-
-            } else {
-
-                return true;
-
-            }
+            return !(codeValidate.error || passwordValidate.error || passwordConfirmValidate.error);
 
         }
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function sendCodeRequestServerOperation(data) {
+    function sendCodeServerRequest() {
 
-        setOperationStatus({ type: "loading", title: null, message: null, image: null });
+        setOperation({ current: "loading", title: "", message: "", image: "" });
 
         AxiosApi.post("/api/auth/password-token", {
-            email: data.get("email")
+            email: controlledInput.email
         })
-            .then(function () {
+            .then(function (response) {
 
-                sendCodeSuccessServerResponseTreatment();
+                sendCodeSuccessServerResponseTreatment(response);
 
             }).catch((error) => {
 
-                sendCodeErrorServerResponseTreatment(error.response.data);
+                sendCodeErrorServerResponseTreatment(error.response);
 
             });
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function changePasswordRequestServerOperation(data) {
+    function changePasswordServerRequest() {
 
-        setOperationStatus({ type: "loading", title: null, message: null, image: null });
+        setOperation({ current: "loading", title: null, message: "", image: null });
 
         AxiosApi.post("/api/auth/change-password", {
-            token: data.get("code"),
-            new_password: data.get("new_password"),
-            new_password_confirmation: data.get("new_password_confirmation")
+            token: controlledInput.code,
+            new_password: controlledInput.new_password,
+            new_password_confirmation: controlledInput.new_password_confirmation
         })
-            .then(function () {
+            .then(function (response) {
 
-                changePasswordSuccessServerResponseTreatment();
+                changePasswordSuccessServerResponseTreatment(response);
 
             }).catch((error) => {
 
-                changePasswordErrorServerResponseTreatment(error.response.data);
+                changePasswordErrorServerResponseTreatment(error.response);
 
             });
 
     }
 
-    /*
-    * Rotina 4A
-    * 
-    */
-    function sendCodeSuccessServerResponseTreatment() {
+    function sendCodeSuccessServerResponseTreatment(response) {
 
-        setOperationStatus({ type: "processed", title: "Código enviado!", message: "Sucesso! Confira o seu e-mail.", image: SuccessImage });
+        setOperation({ current: "concluded", title: "Código enviado!", message: response.data.message, image: SuccessImage });
 
         setTimer(60);
         setCodeSent(true);
 
         setTimeout(() => {
 
-            setOperationStatus({ type: null, title: null, message: null, image: null });
+            setOperation({ current: "", title: "", message: "", image: "" });
 
         }, 2000);
 
     }
 
-    function sendCodeErrorServerResponseTreatment(response_data) {
+    function sendCodeErrorServerResponseTreatment(response) {
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro no envio do email. Tente novamente.";
+        const error_message = response.data.message ? response.data.message : "Houve um erro no envio do email. Tente novamente.";
 
-        setOperationStatus({ type: "processed", title: "Erro no envio do código!", message: error_message, image: ErrorImage });
+        setOperation({ current: "concluded", title: "Erro no envio do código!", message: error_message, image: ErrorImage });
 
-        let input_errors = {
-            email: { error: false, message: null }
+        let request_errors = {
+            email: { error: false, message: "" }
         }
 
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({ name: false, email: input_errors.email.error, password: false, confirm_password: false });
-        setErrorMessage({ name: false, email: input_errors.email.message, password: null, confirm_password: null });
+        setFieldError({ name: false, email: request_errors.email.error, new_password: false, new_password_confirmation: false });
+        setFiedlErrorMessage({ name: "", email: request_errors.email.message, new_password: "", new_password_confirmation: "" });
 
         setTimeout(() => {
 
-            setOperationStatus({ type: null, title: null, message: null, image: null });
+            setOperation({ current: "", title: "", message: "", image: "" });
 
         }, 2000);
 
     }
 
-    function changePasswordSuccessServerResponseTreatment() {
+    function changePasswordSuccessServerResponseTreatment(response) {
 
-        setOperationStatus({ type: "processed", title: "Sucesso!", message: "A sua senha foi alterada.", image: SuccessImage });
+        setOperation({ current: "concluded", title: response.data.message, message: "", image: SuccessImage });
 
         setTimeout(() => {
 
-            setOperationStatus({ type: null, title: null, message: null, image: null });
+            setOperation({ current: "", title: "", message: "", image: "" });
 
             window.location.href = "/login";
 
@@ -249,44 +207,44 @@ export function ForgotPassword() {
 
     }
 
-    function changePasswordErrorServerResponseTreatment(response_data) {
+    function changePasswordErrorServerResponseTreatment(response) {
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na alteração da senha. Tente novamente.";
+        const error_message = response.data.message ? response.data.message : "Houve um erro na alteração da senha. Tente novamente.";
 
-        setOperationStatus({ type: "processed", title: "Erro na alteração da senha!", message: error_message, image: ErrorImage });
+        setOperation({ current: "concluded", title: error_message, message: "", image: ErrorImage });
 
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
-            token: { error: false, message: null },
-            new_password: { error: false, message: null },
-            new_password_confirmation: { error: false, message: null }
+        // Errors by key that can be returned from backend validation 
+        let request_errors = {
+            token: { error: false, message: "" },
+            new_password: { error: false, message: "" },
+            new_password_confirmation: { error: false, message: "" }
         }
 
-        // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        // Get errors by their key 
+        for (let prop in response.data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({ name: input_errors.name.error, email: input_errors.email.error, password: input_errors.new_password.error, confirm_password: input_errors.new_password_confirmation.error });
-        setErrorMessage({ name: input_errors.name.error, email: input_errors.email.message, password: input_errors.new_password.message, confirm_password: input_errors.new_password_confirmation.message });
+        setFieldError({ name: request_errors.name.error, email: request_errors.email.error, new_password: request_errors.new_password.error, new_password_confirmation: request_errors.new_password_confirmation.error });
+        setFiedlErrorMessage({ name: request_errors.name.error, email: request_errors.email.message, new_password: request_errors.new_password.message, new_password_confirmation: request_errors.new_password_confirmation.message });
 
         setTimeout(() => {
 
-            setOperationStatus({ type: null, title: null, message: null, image: null });
+            setOperation({ current: "", title: "", message: "", image: "" });
 
         }, 2000);
 
     }
 
-    /*
-    * Rotina do contador
-    * 
-    */
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    }
+
     React.useEffect(() => {
 
         if (codeTimer > 0) {
@@ -299,7 +257,6 @@ export function ForgotPassword() {
 
         }
 
-
     }, [codeTimer]);
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -308,29 +265,14 @@ export function ForgotPassword() {
 
         <>
 
-            {operationStatus.type == "loading" &&
+            {operation.current === "loading" &&
                 <BackdropLoading />
             }
 
-            {operationStatus.type == "processed" &&
-                <GenericModalDialog
-                    modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
-                    title={{ top: { required: false }, middle: { required: true, text: operationStatus.message } }}
-                    image={{ required: true, src: operationStatus.image }}
-                    lottie={{ required: false }}
-                    content_text=""
-                    actions={{
-                        required: false,
-                        close_button_text: {
-                            required: false,
-                        },
-                        confirmation_default_button: {
-                            required: false
-                        },
-                        confirmation_button_with_link: {
-                            required: false
-                        }
-                    }}
+            {operation.current === "concluded" &&
+                <ModalInformative
+                    image={operation.image}
+                    title={operation.title}
                 />
             }
 
@@ -359,20 +301,20 @@ export function ForgotPassword() {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
                             label="Informe o seu endereço de email"
                             name="email"
                             autoFocus
-                            disabled={codeTimer > 0 ? true : false}
-                            error={errorDetected.email}
-                            helperText={errorMessage.email}
+                            onChange={handleInputChange}
+                            disabled={codeTimer > 0}
+                            error={fieldError.email}
+                            helperText={fieldErrorMessage.email}
                         />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
-                            disabled={codeTimer > 0 ? true : false}
+                            disabled={codeTimer > 0}
                         >
                             {codeTimer === 0 ? "Receber código" : codeTimer}
                         </Button>
@@ -385,36 +327,36 @@ export function ForgotPassword() {
                             name="code"
                             label="Código"
                             type="text"
-                            id="code"
+                            onChange={handleInputChange}
                             disabled={!codeSent}
-                            error={errorDetected.code}
-                            helperText={errorMessage.code}
+                            error={fieldError.code}
+                            helperText={fieldErrorMessage.code}
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            id="new_password"
                             label="Nova senha"
                             name="new_password"
                             type="password"
                             autoFocus
+                            onChange={handleInputChange}
                             disabled={!codeSent}
-                            helperText={errorMessage.password}
-                            error={errorDetected.password}
+                            helperText={fieldErrorMessage.new_password}
+                            error={fieldError.new_password}
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            id="new_password_confirmation"
                             label="Confirmação da senha"
                             name="new_password_confirmation"
                             type="password"
                             autoFocus
+                            onChange={handleInputChange}
                             disabled={!codeSent}
-                            helperText={errorMessage.confirm_password}
-                            error={errorDetected.confirm_password}
+                            helperText={fieldErrorMessage.new_password_confirmation}
+                            error={fieldError.new_password_confirmation}
                         />
                         <Button
                             type="submit"

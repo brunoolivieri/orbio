@@ -66,8 +66,6 @@ export function Login() {
 
     function formularyDataValidate() {
 
-        console.log(controlledInput)
-
         const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
         const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
