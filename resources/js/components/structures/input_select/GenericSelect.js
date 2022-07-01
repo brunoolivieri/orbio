@@ -13,12 +13,12 @@ export const GenericSelect = React.memo(({ ...props }) => {
 
     const { AuthData } = useAuthentication();
     const [axiosURL] = React.useState(props.data_source);
-    const [selectOptions, setSelectOptions] = React.useState({ status: { loading: true, success: false }, records: null, default_option: "Carregando", label_text: props.label_text });
-    const [selectedOption, setSelectedOption] = React.useState(props.default);
+    const [loading, setLoading] = React.useState(true);
+    const [data, setData] = React.useState({ records: [], label_text: props.label_text });
 
-    const handleSelectChange = (event) => {
+    const handleChange = (event) => {
 
-        setSelectedOption(event.target.value);
+        props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.target.value });
 
     };
 
@@ -29,63 +29,43 @@ export const GenericSelect = React.memo(({ ...props }) => {
         })
             .then(function (response) {
 
-                if (response.status === 200) {
-
-                    setSelectOptions({ status: { loading: false, success: true }, records: response.data, default_option: "Escolha uma opção", label_text: props.label_text });
-
-                } else {
-
-                    setSelectOptions({ status: { loading: false, success: false }, default_option: "Erro", label_text: props.label_text });
-
-                }
+                setLoading(false);
+                setData({ records: response.data, label_text: props.label_text });
 
             })
-            .catch(function (error) {
+            .catch(function () {
 
-                console.log(error)
-
-                setSelectOptions({ status: { loading: false, success: false }, default_option: "Erro", label_text: props.label_text });
+                setLoading(false);
+                setData({ records: [], label_text: props.label_text });
 
             });
 
     }, [open]);
 
     return (
-
         <>
+            <FormControl sx={{ margin: "5px 5px 0 0", minWidth: 120 }}>
+                <InputLabel id="demo-simple-select-helper-label">{data.label_text}</InputLabel>
+                <Select
+                    labelId="demo-simple-select-helper-label"
+                    id={props.name}
+                    defaultValue={props.default}
+                    label={data.label_text}
+                    onChange={handleChange}
+                    name={props.name}
+                    error={(!loading && data.records.length == 0)}
+                    disabled={loading}
+                >
 
-            {(selectOptions.status.loading == false && selectOptions.status.success) ?
-                <FormControl sx={{ margin: "5px 5px 0 0", minWidth: 120 }}>
-                    <InputLabel id="demo-simple-select-helper-label">{selectOptions.label_text}</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-helper-label"
-                        id={props.name}
-                        value={selectedOption}
-                        label={selectOptions.label_text}
-                        onChange={handleSelectChange}
-                        name={props.name}
-                        error={selectOptions.status.success ? false : true}
-                        disabled={selectOptions.status.loading || selectOptions.status.success == false || props.disabled}
-                    >
+                    <MenuItem value={0} disabled>{loading ? "Carregando" : "Escolha uma opção"}</MenuItem>
 
-                        <MenuItem value={0} disabled>{selectOptions.default_option}</MenuItem>
-
-                        {!selectOptions.status.loading &&
-
-                            selectOptions.records.map((row) =>
-
-                                <MenuItem value={row[props.primary_key]} key={row[props.primary_key]}>{row[props.key_content]}</MenuItem>
-
-                            )
-
-                        }
-
-                    </Select>
-                </FormControl>
-                : ""}
-
+                    {!loading &&
+                        data.records.map((row) =>
+                            <MenuItem value={row[props.primary_key]} key={row[props.primary_key]}>{row[props.key_content]}</MenuItem>
+                        )
+                    }
+                </Select>
+            </FormControl>
         </>
-
-    )
-
+    );
 });

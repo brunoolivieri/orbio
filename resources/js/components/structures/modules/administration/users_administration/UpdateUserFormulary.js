@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -25,113 +26,98 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
+  // Auth Context
   const { AuthData } = useAuthentication();
 
-  // States do formulário
-  const [open, setOpen] = React.useState(false);
+  // Controlled Inputs
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id, status: props.record.status });
 
-  // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ email: false, name: false, profile: false, status: false });
-  const [errorMessage, setErrorMessage] = React.useState({ email: null, name: null, profile: null, status: null });
+  // State fields erros 
+  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); // State para o efeito de erro - true ou false
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "", profile: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-  // State da mensagem do alerta
+  // Start display alert
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  // State loading
+  const [loading, setLoading] = React.useState(false);
+
+  // Formulary state
+  const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   }
 
-  // Função para fechar o modal
   const handleClose = () => {
-    setErrorDetected({ email: false, name: false, profile: false, status: false });
-    setErrorMessage({ email: null, name: null, profile: null, status: null });
+    setFieldError({ email: false, name: false, profile: false, status: false });
+    setFieldErrorMessage({ email: "", name: "", profile: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
   }
 
-  /*
-   * Rotina 1
-   * 
-   */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
+    if (submitedDataValidate()) {
 
-    if (submitedDataValidate(data)) {
-
-      setDisabledButton(true);
-
-      requestServerOperation(data);
+      setLoading(true);
+      requestServerOperation();
 
     }
 
   }
 
-  const submitedDataValidate = (formData) => {
+  const submitedDataValidate = () => {
 
     const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-    const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
-    const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
-    const profileValidate = Number(formData.get("profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
-    const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
+    const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+    const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
+    const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
+    const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
-    setErrorDetected({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error });
-    setErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message, status: statusValidate.message });
+    setFieldError({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error });
+    setFieldErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message, status: statusValidate.message });
 
-    if (emailValidate.error === true || nameValidate.error === true || profileValidate.error || statusValidate.error) {
-
-      return false;
-
-    } else {
-
-      return true;
-
-    }
+    return !(emailValidate.error === true || nameValidate.error === true || profileValidate.error || statusValidate.error);
 
   }
 
-  const requestServerOperation = (data) => {
+  const requestServerOperation = () => {
 
-    AxiosApi.patch(`/api/admin-module-user/${data.get("id")}`, {
-      name: data.get("name"),
-      email: data.get("email"),
-      status: data.get("status"),
-      profile_id: data.get("profile")
+    AxiosApi.patch(`/api/admin-module-user/${controlledInput.id}`, {
+      name: controlledInput.name,
+      email: controlledInput.email,
+      status: controlledInput.status,
+      profile_id: controlledInput.profile
     })
-      .then(() => {
+      .then((response) => {
 
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch((error) => {
 
+        setLoading(false);
         errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  const successServerResponseTreatment = () => {
+  const successServerResponseTreatment = (response) => {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
 
-      // Deselecionar registro na tabela
-      props.record_setter(null);
-      // Outros
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
 
     }, 2000);
@@ -140,45 +126,46 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   const errorServerResponseTreatment = (response) => {
 
-    setDisabledButton(false);
-
-    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+    const error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
-    // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-    let input_errors = {
+    // Errors by key that can be returned from backend validation 
+    let request_errors = {
       email: { error: false, message: null },
       name: { error: false, message: null },
       profile_id: { error: false, message: null },
       status: { error: false, message: null },
     }
 
-    // Coleta dos objetos de erro existentes na response
+    // Get errors by their key 
     for (let prop in response.data.errors) {
 
-      input_errors[prop] = {
+      request_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
 
     }
 
-    setErrorDetected({
-      email: input_errors.email.error,
-      name: input_errors.name.error,
-      profile: input_errors.profile_id.error,
-      status: input_errors.status.error
+    setFieldError({
+      email: request_errors.email.error,
+      name: request_errors.name.error,
+      profile: request_errors.profile_id.error,
+      status: request_errors.status.error
     });
 
-    setErrorMessage({
-      email: input_errors.email.message,
-      name: input_errors.name.message,
-      profile: input_errors.profile_id.message,
-      status: input_errors.status.message
+    setFieldErrorMessage({
+      email: request_errors.email.message,
+      name: request_errors.name.message,
+      profile: request_errors.profile_id.message,
+      status: request_errors.status.message
     });
 
   }
-  console.log(props.record)
+
+  const handleInputChange = (event) => {
+    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+  }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
 
@@ -192,6 +179,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
       </Tooltip>
 
       {(props.record != null && open) &&
+
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.id})</DialogTitle>
 
@@ -201,13 +189,12 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="id"
                 name="id"
                 label="ID"
                 type="email"
                 fullWidth
                 variant="outlined"
-                defaultValue={props.record.id}
+                value={controlledInput.id}
                 inputProps={{
                   readOnly: true
                 }}
@@ -216,27 +203,27 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                id="name"
                 name="name"
                 label="Nome completo"
                 fullWidth
                 variant="outlined"
-                defaultValue={props.record.name}
-                helperText={errorMessage.name}
-                error={errorDetected.name}
+                onChange={handleInputChange}
+                value={controlledInput.name}
+                helperText={fieldErrorMessage.name}
+                error={fieldError.name}
                 sx={{ mb: 2 }}
               />
               <TextField
                 margin="dense"
-                id="email"
                 name="email"
                 label="Endereço de email"
                 type="email"
                 fullWidth
                 variant="outlined"
+                onChange={handleInputChange}
                 defaultValue={props.record.email}
-                helperText={errorMessage.email}
-                error={errorDetected.email}
+                helperText={fieldErrorMessage.email}
+                error={fieldError.email}
                 sx={{ mb: 2 }}
               />
 
@@ -246,14 +233,25 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
                   data_source={"/api/load-profiles"}
                   primary_key={"id"}
                   key_content={"name"}
-                  error={errorDetected.profile}
-                  default={props.record.profile_id}
                   name={"profile"}
+                  default={props.record.profile_id}
+                  onChange={handleInputChange}
+                  error={fieldError.profile}
+                  value={controlledInput.profile}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
                 />
               </Box>
 
               <Box>
-                <RadioInput title={"Status"} name={"status"} default_value={props.record.status} options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]} />
+                <RadioInput
+                  title={"Status"}
+                  name={"status"}
+                  default={props.record.status}
+                  options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                />
               </Box>
 
             </DialogContent>
@@ -262,9 +260,11 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
               <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
             }
 
+            {loading && <LinearProgress />}
+
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
             </DialogActions>
 
           </Box>

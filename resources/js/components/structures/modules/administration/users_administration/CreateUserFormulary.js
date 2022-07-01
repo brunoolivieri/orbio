@@ -12,6 +12,7 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -25,20 +26,23 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
+  // Auth Context
   const { AuthData } = useAuthentication();
 
-  // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ name: false, email: false, profile: false }); // State para o efeito de erro - true ou false
-  const [errorMessage, setErrorMessage] = React.useState({ name: null, email: null, profile: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+  // Controlled Inputs
+  const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "" });
 
-  // State da mensagem do alerta
+  // State fields erros 
+  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); // State para o efeito de erro - true ou false
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+
+  // Start display alert
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  // State loading
+  const [loading, setLoading] = React.useState(false);
 
-  // States do formulário
+  // Formulary state
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -49,117 +53,91 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   const handleClose = () => {
 
-    setErrorDetected({ name: false, email: false, profile: false });
-    setErrorMessage({ name: null, email: null, profile: null });
+    setFieldError({ name: false, email: false, profile: false });
+    setFieldErrorMessage({ name: null, email: null, profile: null });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
 
   }
 
-  /*
-  * Rotina 1
-  */
   function handleRegistrationSubmit(event) {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
+    if (formularyDataValidate()) {
 
-    if (dataValidate(data)) {
-
-      setDisabledButton(true);
-
-      requestServerOperation(data);
+      setLoading(true);
+      requestServerOperation();
 
     }
 
   }
 
-  /*
-  * Rotina 2
-  */
-  function dataValidate(formData) {
+  function formularyDataValidate() {
 
     const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-    const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
-    const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
-    const profileValidate = Number(formData.get("profile")) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
+    const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
+    const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+    const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
 
-    setErrorDetected({ name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error });
-    setErrorMessage({ name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message });
+    setFieldError({ name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error });
+    setFieldErrorMessage({ name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message });
 
-    if (nameValidate.error || emailValidate.error || profileValidate.error) {
-
-      return false;
-
-    } else {
-
-      return true;
-
-    }
+    return !(nameValidate.error || emailValidate.error || profileValidate.error);
 
   }
 
-  /*
-  * Rotina 3
-  */
-  const requestServerOperation = (data) => {
+  const requestServerOperation = () => {
 
     const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
 
     AxiosApi.post(`/api/admin-module-user`, {
-      email: data.get("email"),
-      name: data.get("name"),
-      profile_id: data.get("profile"),
+      email: controlledInput.email,
+      name: controlledInput.name,
+      profile_id: controlledInput.profile,
       password: random_pass
     })
       .then(function () {
 
+        setLoading(false);
         successServerResponseTreatment();
 
       })
       .catch(function (error) {
 
+        setLoading(false);
         errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  /*
-  * Rotina 4A
-  */
   const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
     setTimeout(() => {
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
     }, 2000);
 
   }
 
-  /*
-  * Rotina 4B
-  */
   const errorServerResponseTreatment = (response) => {
-
-    setDisabledButton(false);
 
     let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
-    // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
+    // Errors by key that can be returned from backend validation
     let input_errors = {
       name: { error: false, message: null },
       email: { error: false, message: null },
       profile_id: { error: false, message: null }
     }
 
-    // Coleta dos objetos de erro existentes na response
+    // Get errors by their key 
     for (let prop in response.data.errors) {
 
       input_errors[prop] = {
@@ -169,18 +147,22 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
     }
 
-    setErrorDetected({
+    setFieldError({
       name: input_errors.name.error,
       email: input_errors.email.error,
       profile: input_errors.profile_id.error
     });
 
-    setErrorMessage({
+    setFieldErrorMessage({
       name: input_errors.name.message,
       email: input_errors.email.message,
       profile: input_errors.profile_id.message
     });
 
+  }
+
+  const handleInputChange = (event) => {
+    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
@@ -213,10 +195,10 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               fullWidth
               variant="outlined"
               required
-              id="registration_name_input"
               name="name"
-              helperText={errorMessage.name}
-              error={errorDetected.name}
+              onChange={handleInputChange}
+              helperText={fieldErrorMessage.name}
+              error={fieldError.name}
               sx={{ mb: 2 }}
             />
 
@@ -227,10 +209,10 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               fullWidth
               variant="outlined"
               required
-              id="email"
               name="email"
-              helperText={errorMessage.email}
-              error={errorDetected.email}
+              onChange={handleInputChange}
+              helperText={fieldErrorMessage.email}
+              error={fieldError.email}
               sx={{ mb: 2 }}
             />
 
@@ -239,20 +221,24 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               data_source={"/api/load-profiles"}
               primary_key={"id"}
               key_content={"name"}
-              error={errorDetected.profile}
-              default={0}
+              error={fieldError.profile}
               name={"profile"}
+              default={0}
+              setControlledInput={setControlledInput}
+              controlledInput={controlledInput}
             />
 
           </DialogContent>
 
-          {displayAlert.display &&
+          {(!loading && displayAlert.display) &&
             <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
           }
 
+          {loading && <LinearProgress />}
+
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton} variant="contained">Criar usuário e enviar email</Button>
+            <Button type="submit" disabled={loading} variant="contained">Criar usuário e enviar email</Button>
           </DialogActions>
 
         </Box>

@@ -48,7 +48,7 @@ class UserModel extends Authenticatable
     * Relationship with service_order_has_user table
     */
     function service_order_has_user(){
-        return $this->hasMany("App\Models\Orders\ServiceOrderHasUserModel", "user_id");
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", "user_id");
     }
 
     /**
