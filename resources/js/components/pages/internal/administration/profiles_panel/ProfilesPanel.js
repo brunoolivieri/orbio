@@ -45,23 +45,16 @@ export function ProfilesPanel() {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // State do carregamento dos dados
-  // Enquanto for false, irá aparecer "carregando" no painel
   const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
 
-  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
   const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-
-  // State da deleção permitida
-  const [deleteAvailable] = React.useState(true);
 
   // State do valor procurado
   const [value_searched, setValueSearched] = React.useState("");
@@ -106,10 +99,6 @@ export function ProfilesPanel() {
 
   }
 
-  /**
-   * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
-   * 
-   */
   React.useEffect(() => {
 
     if (!paginationParams.where) {
@@ -124,10 +113,6 @@ export function ProfilesPanel() {
 
   }, [paginationParams]);
 
-  /**
-  * Carregamento de todos os registros de usuário
-  * 
-  */
   const requestToGetAllProfiles = () => {
 
     // This receives: limit clause, where clause and the page number
@@ -136,19 +121,19 @@ export function ProfilesPanel() {
     AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}`)
       .then(function (response) {
 
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
+        setPanelData({
+          status: {
+            loading: false,
+            success: true,
+            error: false
+          },
+          response: {
+            records: response.data.records,
+            total_records: response.data.total_records,
+            records_per_page: response.data.records_per_page,
+            total_pages: response.data.total_pages
+          }
+        });
 
       })
       .catch(function (error) {
@@ -170,10 +155,6 @@ export function ProfilesPanel() {
 
   }
 
-  /**
-  * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
-  * 
-  */
   const requestToGetSearchedProfiles = () => {
 
     // This receives: limit clause, where clause and the page number
@@ -182,25 +163,25 @@ export function ProfilesPanel() {
     AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}`)
       .then(function (response) {
 
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
-          if (response.data.total_records > 1) {
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
-          } else {
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
+        setPanelData({
+          status: {
+            loading: false,
+            success: true,
+            error: false
+          },
+          response: {
+            records: response.data.records,
+            total_records: response.data.total_records,
+            records_per_page: response.data.records_per_page,
+            total_pages: response.data.total_pages
           }
+        });
+
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
+        }
 
       }).catch((error) => {
 
@@ -273,7 +254,7 @@ export function ProfilesPanel() {
           }
         </Grid>
 
-        <Grid item hidden={!deleteAvailable}>
+        <Grid item>
           {selectedRecordIndex == null &&
             <Tooltip title="Selecione um registro para excluir">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >

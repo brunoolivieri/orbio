@@ -61,7 +61,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   }
 
-  function handleRegistrationSubmit(event) {
+  const handleRegistrationSubmit = (event) => {
     event.preventDefault();
 
     if (formularyDataValidate()) {
@@ -73,7 +73,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   }
 
-  function formularyDataValidate() {
+  const formularyDataValidate = () => {
 
     const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -127,7 +127,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   const errorServerResponseTreatment = (response) => {
 
-    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Errors by key that can be returned from backend validation

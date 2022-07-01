@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../../services/AxiosApi';
@@ -24,16 +25,15 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  const [open, setOpen] = React.useState(false);
+  const [controlledInput] = React.useState({ id: props.record.profile_id });
 
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -43,75 +43,52 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
   const handleClose = () => {
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
-
+    setLoading(false);
     setOpen(false);
-
   }
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
-
-    setDisabledButton(true);
-
-    requestServerOperation(data);
+    setLoading(true);
+    requestServerOperation();
 
   }
 
-  /*
- * Rotina 3
- * 
- */
-  function requestServerOperation(data) {
+  const requestServerOperation = () => {
 
-    setDisabledButton(false);
+    AxiosApi.delete(`/api/admin-module-profile/${controlledInput.id}`)
+      .then(function (response) {
 
-    AxiosApi.delete(`/api/admin-module-profile/${data.get("id")}`)
-      .then(function () {
-
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch(function (error) {
 
+        setLoading(false);
         errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  /*
-  * Rotina 4A
-  */
-  const successServerResponseTreatment = () => {
+  const successServerResponseTreatment = (response) => {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
-      // Deselecionar registro na tabela
       props.record_setter(null);
-      // Outros
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
-
     }, 2000);
 
   }
 
-  /*
-  * Rotina 4B
-  */
   function errorServerResponseTreatment(response) {
 
-    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da deleção!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
   }
@@ -164,13 +141,15 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
               </DialogContent>
 
-              {displayAlert.display &&
+              {(!loading && displayAlert.display) &&
                 <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
               }
 
+              {loading && <LinearProgress />}
+
               <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+                <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
               </DialogActions>
 
             </Box>

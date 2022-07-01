@@ -26,23 +26,17 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Auth Context
   const { AuthData } = useAuthentication();
 
-  // Controlled Inputs
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id, status: props.record.status });
 
-  // State fields erros 
   const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); // State para o efeito de erro - true ou false
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "", profile: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-  // Start display alert
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State loading
   const [loading, setLoading] = React.useState(false);
 
-  // Formulary state
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -126,7 +120,7 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
 
   const errorServerResponseTreatment = (response) => {
 
-    const error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Errors by key that can be returned from backend validation 

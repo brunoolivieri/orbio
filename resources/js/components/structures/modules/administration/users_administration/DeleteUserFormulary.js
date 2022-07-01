@@ -24,16 +24,12 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Auth Context
   const { AuthData } = useAuthentication();
 
-  // Controlled Inputs
   const [controlledInput] = React.useState({ id: props.record.id });
 
-  // Form state
   const [open, setOpen] = React.useState(false);
 
-  // Alert state
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
   const [loading, setLoading] = React.useState(false);
@@ -58,7 +54,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
   }
 
-  function requestServerOperation() {
+  const requestServerOperation = () => {
 
     AxiosApi.delete(`/api/admin-module-user/${controlledInput.id}`)
       .then(function (response) {
@@ -76,23 +72,21 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
   }
 
-  function successServerResponseTreatment(response) {
+  const successServerResponseTreatment = (response) => {
 
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
       props.record_setter(null);
       props.reload_table();
       handleClose();
-
     }, 2000);
 
   }
 
-  function errorServerResponseTreatment(response) {
+  const errorServerResponseTreatment = (response) => {
 
-    let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
   }

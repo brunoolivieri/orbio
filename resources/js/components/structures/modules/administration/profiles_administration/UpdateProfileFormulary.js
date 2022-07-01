@@ -16,6 +16,7 @@ import { FormLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { FormGroup } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -28,22 +29,16 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States do formulário
-    const [open, setOpen] = React.useState(false);
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.profile_id, name: props.record.name });
 
-    // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({ name: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ name: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [fieldError, setFieldError] = React.useState({ name: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
 
-    // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = React.useState(false);
-
+    // Reducer Dispatch
     const privilegesReducer = (actual_state, action) => {
 
         let cloneState = Object.assign({}, actual_state);
@@ -62,6 +57,12 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
         "6": { read: props.record.modules["6"].profile_powers.read === 1 ? true : false, write: props.record.modules["6"].profile_powers.write === 1 ? true : false }
     });
 
+    // State loading
+    const [loading, setLoading] = React.useState(false);
+
+    // States do formulário
+    const [open, setOpen] = React.useState(false);
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
     const handleClickOpen = () => {
@@ -69,123 +70,97 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
     };
 
     const handleClose = () => {
-        setErrorDetected({ name: false });
-        setErrorMessage({ name: null });
+        setFieldError({ name: false });
+        setFieldErrorMessage({ name: "" });
         setDisplayAlert({ display: false, type: "", message: "" });
-        setDisabledButton(false);
+        setLoading(false);
         setOpen(false);
     }
 
-    /*
-    * Rotina 1
-    */
     function handleSubmitOperation(event) {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        if (formularyDataValidate()) {
 
-        setDisabledButton(true);
-
-        if (submitedDataValidate(data)) {
-
-            requestServerOperation(data);
+            setLoading(true);
+            requestServerOperation();
 
         }
 
     }
 
-    /*
-    * Rotina 2
-    */
-    function submitedDataValidate(formData) {
+    const formularyDataValidate = () => {
 
-        const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
+        const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
 
-        setErrorDetected({ name: nameValidate.error });
-        setErrorMessage({ name: nameValidate.message });
+        setFieldError({ name: nameValidate.error });
+        setFieldErrorMessage({ name: nameValidate.message });
 
-        if (nameValidate.error === true) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(nameValidate.error === true);
 
     }
 
-    /*
-    * Rotina 3
-    */
-    const requestServerOperation = (data) => {
+    const requestServerOperation = () => {
 
-        AxiosApi.patch(`/api/admin-module-profile/${data.get("id")}`, {
-            name: data.get("name"),
+        AxiosApi.patch(`/api/admin-module-profile/${controlledInput.id}`, {
+            name: controlledInput.name,
             privileges: privileges
         })
-            .then(function () {
+            .then(function (response) {
 
-                successServerResponseTreatment();
+                setLoading(false);
+                successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
 
+                setLoading(false);
                 errorServerResponseTreatment(error.response);
 
             });
 
     }
 
-    /*
-    * Rotina 4A
-    */
-    const successServerResponseTreatment = () => {
+    const successServerResponseTreatment = (response) => {
 
-        setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
-
-            // Deselecionar registro na tabela
             props.record_setter(null);
-            // Outros
             props.reload_table();
-            setDisabledButton(false);
+            setLoading(false);
             handleClose();
-
         }, 2000);
 
     }
 
-    /*
-    * Rotina 4B
-    */
     const errorServerResponseTreatment = (response) => {
 
-        setDisabledButton(false);
-
-        let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        // Erros retornáveis como erros na response
+        let request_errors = {
             name: { error: false, message: null }
         }
 
         // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({ name: input_errors.name.error });
-        setErrorMessage({ name: input_errors.name.message });
+        setFieldError({ name: request_errors.name.error });
+        setFieldErrorMessage({ name: request_errors.name.message });
 
+    }
+
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -209,7 +184,6 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.profile_id}
-                                id="id"
                                 name="id"
                                 label="ID do perfil"
                                 fullWidth
@@ -223,13 +197,13 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.profile_name}
-                                id="name"
                                 name="name"
                                 label="Nome do perfil"
                                 fullWidth
                                 variant="outlined"
-                                helperText={errorMessage.name}
-                                error={errorDetected.name}
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
                             />
 
                         </DialogContent>
@@ -286,13 +260,15 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
                         </Grid>
 
-                        {displayAlert.display &&
+                        {(!loading && displayAlert.display) &&
                             <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                         }
 
+                        {loading && <LinearProgress />}
+
                         <DialogActions>
                             <Button onClick={handleClose}>Cancelar</Button>
-                            <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
+                            <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
                         </DialogActions>
 
                     </Box>
