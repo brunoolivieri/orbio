@@ -31,7 +31,7 @@ class LoginService {
      * @param Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function login($request) : array {
+    public function login($request) {
 
         if($user = Auth::attempt($request->only(["email", "password"]))){
 
@@ -47,7 +47,7 @@ class LoginService {
 
                 event(new LoginEvent($data_for_email));
 
-                return ["status" => true, "message" => "Acesso autorizado!"];
+                return response(["message" => "Acesso autorizado!"], 200);
             
             // User account is inactive
             }else if(!Auth::user()->status && empty(Auth::user()->last_access)){
@@ -63,18 +63,18 @@ class LoginService {
 
                 event(new LoginEvent($data_for_email));
 
-                return ["status" => true, "message" => "Acesso autorizado!"];
+                return response(["message" => "Acesso autorizado!"], 200);
 
             // User account is disabled or deleted
             }else if((!Auth::user()->status && !empty(Auth::user()->last_access) || (!empty(Auth::user()->deleted_at)))){
 
-                return ["status" => false, "message" => "Conta desabilitada!"];
+                return response(["message" => "Conta desabilitada!"], 500);
 
             }
 
         }else{
 
-            return ["status" => false, "message" => "Credenciais inválidas!"];
+            return response(["message" => "Credenciais inválidas!"], 500);
 
         }
 

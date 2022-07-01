@@ -32,13 +32,7 @@ class LoginController extends Controller
      */
     function index(LoginRequest $request) :  \Illuminate\Http\Response {
 
-        $response = $this->service->login($request);
-
-        if($response["status"]){
-            return response(["message" => $response["message"]], 200);
-        }else{
-            return response(["error" => $response["message"]], 500);
-        }
+        return $this->service->login($request);
 
     }
 

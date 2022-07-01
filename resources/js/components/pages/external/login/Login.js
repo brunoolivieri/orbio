@@ -33,92 +33,76 @@ export function Login() {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // States utilizados nas validações dos campos 
-    const [errorDetected, setErrorDetected] = React.useState({ email: false, password: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ email: null, password: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    // Form fields states
+    const [controlledInput, setControlledInput] = React.useState({ email: "", password: "" });
 
-    // State do alerta
+    // Fields error states
+    const [fieldError, setFieldError] = React.useState({ email: false, password: false }); // State para o efeito de erro - true ou false
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ email: "", password: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+
+    // Alert state
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "error", message: "" });
 
-    // Para desabilitar o botão de login
-    const [disabled, setDisabled] = React.useState(false);
+    // Disabled login button
+    const [buttonDisabled, setButtonDisabled] = React.useState(false);
 
-    // Classes do objeto makeStyles
+    // Make Styles
     const classes = useStyles();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    /*
-    * Rotina 1
-    */
     function handleLoginSubmit(event) {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        setButtonDisabled(true);
 
-        setDisabled(true);
+        if (formularyDataValidate()) {
 
-        if (dataValidate(data)) {
-
-            requestServerOperation(data);
+            requestServerOperation();
 
         }
 
     }
 
-    /*
-    * Rotina 2
-    */
-    function dataValidate(formData) {
+    function formularyDataValidate() {
+
+        console.log(controlledInput)
 
         const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-        const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
-        const passwordValidate = FormValidation(formData.get("password"), null, null, null, null);
+        const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+        const passwordValidate = FormValidation(controlledInput.password, null, null, null, null);
 
-        setErrorDetected({ email: emailValidate.error, password: passwordValidate.error });
-        setErrorMessage({ email: emailValidate.message, password: passwordValidate.message });
+        setFieldError({ email: emailValidate.error, password: passwordValidate.error });
+        setFieldErrorMessage({ email: emailValidate.message, password: passwordValidate.message });
 
-        if (emailValidate.error === true || passwordValidate.error === true) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        // If its true, return false, and vice-versa
+        return emailValidate.error || passwordValidate.error ? false : true;
 
     }
 
-    /*
-    * Rotina 3
-    */
-    function requestServerOperation(data) {
+    function requestServerOperation() {
 
         AxiosApi.post("/api/auth/login", {
-            email: data.get("email"),
-            password: data.get("password")
+            email: controlledInput.email,
+            password: controlledInput.password
         })
             .then(function (response) {
 
-                successServerResponseTreatment(response.data);
+                successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
 
-                errorServerResponseTreatment(error.response.data);
+                errorServerResponseTreatment(error.response);
 
             });
 
     }
 
-    /*
-    * Rotina 4A
-    */
-    function successServerResponseTreatment(response_data) {
+    function successServerResponseTreatment(response) {
 
-        setDisplayAlert({ display: true, type: "success", message: response_data.message });
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
             window.location.href = "/internal";
@@ -126,54 +110,37 @@ export function Login() {
 
     }
 
-    /*
-    * Rotina 4B
-    */
-    function errorServerResponseTreatment(response_data) {
+    function errorServerResponseTreatment(response) {
 
-        setDisabled(false);
+        const message = response.data.message ? response.data.message : "Erro do servidor";
 
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        setDisplayAlert({ display: true, type: "error", message: message });
+
+        setButtonDisabled(false);
+
+        // Errors by key that can be returned from backend validation 
+        let request_errors = {
             email: { error: false, message: null },
             password: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        // Get errors by their key 
+        for (let prop in response.data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({ email: input_errors.email.error, password: input_errors.password.error });
-        setErrorMessage({ email: input_errors.email.message, password: input_errors.password.message });
+        setFieldError({ email: request_errors.email.error, password: request_errors.password.error });
+        setFieldErrorMessage({ email: request_errors.email.message, password: request_errors.password.message });
 
-        if (response_data.error == "activation") {
+    }
 
-            setDisplayAlert({ display: true, type: "error", message: "Houve um erro na ativação da conta. Tente novamente ou contate o suporte." });
-
-        } else if (response_data.error == "token") {
-
-            setDisplayAlert({ display: true, type: "error", message: "Erro na autenticação. Tente novamente ou contate o suporte." });
-
-        } else if (response_data.error == "account_disabled") {
-
-            setDisplayAlert({ display: true, type: "error", message: "Essa conta foi desativada. Entre em contato com o suporte para reativá-la." });
-
-        } else if (response_data.error == "invalid_credentials") {
-
-            setDisplayAlert({ display: true, type: "error", message: "Email ou senha incorretos." });
-
-        } else {
-
-            setDisplayAlert({ display: true, type: "error", message: "A operação falhou! Tente novamente ou contate o suporte." });
-
-        }
-
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -217,12 +184,12 @@ export function Login() {
                                 margin="normal"
                                 required
                                 fullWidth
-                                id="email"
                                 label="Digite o seu email"
                                 name="email"
                                 autoFocus
-                                helperText={errorMessage.email}
-                                error={errorDetected.email}
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.email}
+                                error={fieldError.email}
                             />
                             <TextField
                                 margin="normal"
@@ -231,9 +198,9 @@ export function Login() {
                                 name="password"
                                 label="Digite a sua senha"
                                 type="password"
-                                id="password"
-                                helperText={errorMessage.password}
-                                error={errorDetected.password}
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.password}
+                                error={fieldError.password}
                             />
                             <FormControlLabel
                                 control={<Checkbox value="remember" color="primary" />}
@@ -246,7 +213,7 @@ export function Login() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
                                 color="primary"
-                                disabled={disabled}
+                                disabled={buttonDisabled}
                             >
                                 Acessar
                             </Button>

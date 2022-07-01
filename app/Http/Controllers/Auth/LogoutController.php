@@ -14,7 +14,7 @@ class LogoutController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return Redirect
      */
-    function logout(Request $request) {
+    function index(Request $request) {
 
         Auth::logout();
 
