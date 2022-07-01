@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -25,161 +26,135 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  const [open, setOpen] = React.useState(false);
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, report_id: props.record.report_id, incident_id: props.record.incident_id, description: props.record.description });
 
-  // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ description: false, status: false }); // State para o efeito de erro - true ou false
-  const [errorMessage, setErrorMessage] = React.useState({ description: "", status: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+  const [fieldError, setFieldError] = React.useState({ description: false, status: false, report: false, incident: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ description: "", status: "", report: "", incident: "" });
 
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
-  };
+  }
 
-  // Função para fechar o modal
   const handleClose = () => {
-    setErrorDetected({ status: false, description: false });
-    setErrorMessage({ status: "", description: "" });
+    setFieldError({ status: false, description: false });
+    setFieldErrorMessage({ status: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
   };
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
+    if (formularyDataValidate()) {
 
-    if (submitedDataValidate(data)) {
-
-      setDisabledButton(true);
-
-      requestServerOperation(data);
+      setLoading(true);
+      requestServerOperation();
 
     }
 
   }
 
-  /*
- * Rotina 2
- */
-  function submitedDataValidate(formData) {
+  const formularyDataValidate = () => {
 
-    const descriptionValidate = FormValidation(formData.get("description"), 3, null, null, null);
-    const statusValidate = (Number(formData.get("status")) == 0 || Number(formData.get("status")) == 1) ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
+    const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
+    const statusValidate = (Number(controlledInput.status) == 0 || Number(controlledInput.status) == 1) ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
+    const reportValidate = Number(controlledInput.report_id) === 0 ? { error: true, message: "Selecione um relatório" } : { error: false, message: "" };
+    const incidentValidate = Number(controlledInput.incident_id) === 0 ? { error: true, message: "Selecione um incidente" } : { error: false, message: "" };
 
-    setErrorDetected({ description: descriptionValidate.error, status: statusValidate.error });
-    setErrorMessage({ description: descriptionValidate.message, status: statusValidate.message });
+    setFieldError({ description: descriptionValidate.error, status: statusValidate.error, report: reportValidate.error, incident: incidentValidate.error });
+    setFieldErrorMessage({ description: descriptionValidate.message, status: statusValidate.message, report: reportValidate.message, incident: incidentValidate.message });
 
-    if (descriptionValidate.error || statusValidate.error) {
-
-      return false;
-
-    } else {
-
-      return true;
-
-    }
+    return !(descriptionValidate.error || statusValidate.error);
 
   }
 
-  /*
- * Rotina 3
- * 
- */
-  function requestServerOperation(data) {
+  const requestServerOperation = () => {
 
-    AxiosApi.patch(`/api/plans-module/${data.get("id")}`, {
-      report_id: data.get("report"),
-      incident_id: data.get("incident"),
-      status: data.get("status"),
-      description: data.get("description"),
+    AxiosApi.patch(`/api/plans-module/${controlledInput.id}`, {
+      report_id: controlledInput.report_id,
+      incident_id: controlledInput.incident_id,
+      status: controlledInput.status,
+      description: controlledInput.description
     })
-      .then(function () {
+      .then(function (response) {
 
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch(function (error) {
 
-        errorServerResponseTreatment(error.response.data);
+        setLoading(false);
+        errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  /*
-  * Rotina 4A
-  */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = (response) => {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
-      // Deselecionar registro na tabela
       props.record_setter(null);
-      // Outros
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
-
     }, 2000);
 
   }
 
-  /*
-  * Rotina 4B
-  */
-  function errorServerResponseTreatment(response_data) {
+  const errorServerResponseTreatment = (response) => {
 
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da atualização!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
+
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
-    let input_errors = {
+    let request_errors = {
       report_id: { error: false, message: null },
       incident_id: { error: false, message: null },
       status: { error: false, message: null },
       description: { error: false, message: null }
     }
 
-    for (let prop in response_data.errors) {
+    for (let prop in response.data.errors) {
 
-      input_errors[prop] = {
+      request_errors[prop] = {
         error: true,
         message: ""
       }
 
     }
 
-    setErrorDetected({
-      report: input_errors.report_id.error,
-      incident: input_errors.incident_id.error,
-      status: input_errors.status.error,
-      description: input_errors.description.error
+    setFieldError({
+      report: request_errors.report_id.error,
+      incident: request_errors.incident_id.error,
+      status: request_errors.status.error,
+      description: request_errors.description.error
     });
 
-    setErrorMessage({
-      report: input_errors.report_id.message,
-      incident: input_errors.incident_id.message,
-      status: input_errors.status.message,
-      description: input_errors.description.message
+    setFieldErrorMessage({
+      report: request_errors.report_id.message,
+      incident: request_errors.incident_id.message,
+      status: request_errors.status.message,
+      description: request_errors.description.message
     });
 
+  }
+
+  const handleInputChange = (event) => {
+    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -220,47 +195,60 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                   data_source={"/api/load-reports"}
                   primary_key={"id"}
                   key_content={"id"}
-                  error={null}
+                  error={fieldError.report}
                   default={props.record.report_id != null ? props.record.report_id : 0}
-                  name={"report"}
+                  name={"report_id"}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
                 />
                 <GenericSelect
                   label_text={"Incidente"}
                   data_source={"/api/load-incidents"}
                   primary_key={"id"}
                   key_content={"id"}
-                  error={null}
+                  error={fieldError.incident}
                   default={props.record.incident_id != null ? props.record.incident_id : 0}
-                  name={"incident"}
+                  name={"incident_id"}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
                 />
               </Box>
 
               <TextField
                 margin="dense"
-                id="description"
                 name="description"
                 label="Descrição"
                 type="text"
                 fullWidth
                 variant="outlined"
+                onChange={handleInputChange}
                 defaultValue={props.record.description}
-                helperText={errorMessage.description}
-                error={errorDetected.description}
+                helperText={fieldErrorMessage.description}
+                error={fieldError.description}
               />
 
               <Box>
-                <RadioInput title={"Status"} name={"status"} default_value={props.record.status} options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]} />
+                <RadioInput
+                  title={"Status"}
+                  name={"status"}
+                  default={props.record.status}
+                  options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                />
               </Box>
 
             </DialogContent>
 
-            {displayAlert.display &&
+            {(!loading && displayAlert.display) &&
               <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
             }
 
+            {loading && <LinearProgress />}
+
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
             </DialogActions>
 
           </Box>

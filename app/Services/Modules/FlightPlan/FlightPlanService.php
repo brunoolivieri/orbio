@@ -49,7 +49,7 @@ class FlightPlanService{
 
         }else{
 
-            return response(["error" => "Nenhum plano de voo encontrado."], 404);
+            return response(["message" => "Nenhum plano de voo encontrado."], 404);
 
         }
 
@@ -74,7 +74,7 @@ class FlightPlanService{
     
         }else{
 
-            return response(["error" => "Nenhum arquivo encontrado."], 404);
+            return response(["message" => "Nenhum arquivo encontrado."], 404);
 
         }
 
@@ -89,7 +89,7 @@ class FlightPlanService{
     public function createFlightPlan(Request $request){
 
         if(!$request->file('flight_plan')){
-            return response(["error" => "Falha na criação do plano de voo."], 500);
+            return response(["message" => "Falha na criação do plano de voo."], 500);
         }
 
         $coordinantes_filename = $request->flight_plan->getClientOriginalName();
@@ -120,8 +120,7 @@ class FlightPlanService{
      */
     public function updateFlightPlan(Request $request, int $flight_plan_id){
 
-        FlightPlanModel::where('id', $id)->update([
-            "name" => $request->name,
+        FlightPlanModel::where('id', $flight_plan_id)->update([
             "report_id" => $request->report_id == 0 ? null : $request->report_id,
             "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
             "description" => $request->description,

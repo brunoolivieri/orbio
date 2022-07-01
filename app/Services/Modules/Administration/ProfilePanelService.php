@@ -66,7 +66,7 @@ class ProfilePanelService{
 
         }else{
 
-            return response(["error" => "Nenhum perfil encontrado."], 404);
+            return response(["message" => "Nenhum perfil encontrado."], 404);
 
         }
 

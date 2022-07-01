@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
@@ -22,16 +23,15 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  const [open, setOpen] = React.useState(false);
+  const [controlledInput] = React.useState({ id: props.record.id });
 
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
@@ -41,74 +41,52 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
 
   const handleClose = () => {
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
   }
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    // Instância da classe JS FormData - para trabalhar os dados do formulário
-    const data = new FormData(event.currentTarget);
-
-    // Botão é desabilitado
-    setDisabledButton(true);
-
-    // Inicialização da requisição para o servidor
-    requestServerOperation(data);
+    setLoading(true);
+    requestServerOperation();
 
   }
 
-  /*
- * Rotina 3
- * 
- */
-  function requestServerOperation(data) {
+  const requestServerOperation = () => {
 
-    setDisabledButton(false);
+    AxiosApi.delete(`/api/plans-module/${controlledInput.id}`)
+      .then(function (response) {
 
-    AxiosApi.delete(`/api/plans-module/${data.get("id")}`)
-      .then(function () {
-
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch(function (error) {
 
+        setLoading(false);
         errorServerResponseTreatment(error.response.data);
 
       });
 
   }
 
-  /*
-  * Rotina 4A
-  */
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = (response) => {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
       props.record_setter(null);
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
-
     }, 2000);
 
   }
 
-  /*
-  * Rotina 4B
-  */
-  function errorServerResponseTreatment(response_data) {
+  const errorServerResponseTreatment = (response) => {
 
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da atualização!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
   }
@@ -155,18 +133,20 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
                 inputProps={{
                   readOnly: true
                 }}
-                defaultValue={props.record.plan_file}
+                defaultValue={props.record.coordinates}
               />
 
             </DialogContent>
 
-            {displayAlert.display &&
+            {(!loading && displayAlert.display) &&
               <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
             }
 
+            {loading && <LinearProgress />}
+
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
             </DialogActions>
 
           </Box>

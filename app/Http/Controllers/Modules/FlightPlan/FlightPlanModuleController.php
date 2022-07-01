@@ -65,7 +65,7 @@ class FlightPlanModuleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) : \Illuminate\Http\Response
-    {
+    {dd($request->all());
         Gate::authorize('flight_plans_write');
 
         return $this->service->createFlightPlan($request);
