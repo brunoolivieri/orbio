@@ -69,10 +69,6 @@ export function UsersPanel() {
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  /**
-   * First load
-   * 
-   */
   React.useEffect(() => {
 
     if (!paginationParams.where) {
@@ -87,10 +83,6 @@ export function UsersPanel() {
 
   }, [paginationParams]);
 
-  /**
-   * Carregamento de todos os registros de usuário
-   * 
-   */
   function requestToGetAllUsers() {
 
     // This receives: limit clause, where clause and the page number
@@ -99,49 +91,29 @@ export function UsersPanel() {
     AxiosApi.get(`/api/admin-module-user?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
-
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records_founded,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
-        }
+        setPanelData({
+          status: {
+            loading: false,
+            success: true,
+            error: false
+          },
+          response: {
+            records: response.data.records,
+            total_records: response.data.total_records_founded,
+            records_per_page: response.data.records_per_page,
+            total_pages: response.data.total_pages
+          }
+        });
 
       })
       .catch(function (error) {
 
-        if (error.response.status == 404) {
-
-          handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
-
-          console.log(error.message);
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        handleOpenSnackbar(error.response.data.message, "error");
 
       });
 
   }
 
-  /**
-   * Carregamento dos registros de usuários compátiveis com a pesquisa realizada
-   * 
-   */
   function requestToGetSearchedUsers() {
 
     // Essa variável recebe: limit clause, where clause and the page number
@@ -150,43 +122,29 @@ export function UsersPanel() {
     AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
-
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records_founded,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
-          if (response.data.total_records_founded > 1) {
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
-          } else {
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
+        setPanelData({
+          status: {
+            loading: false,
+            success: true,
+            error: false
+          },
+          response: {
+            records: response.data.records,
+            total_records: response.data.total_records_founded,
+            records_per_page: response.data.records_per_page,
+            total_pages: response.data.total_pages
           }
+        });
 
+        if (response.data.total_records_founded > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
         }
 
       }).catch(function (error) {
 
-        if (error.response.status == 404) {
-
-          handleOpenSnackbar("Nenhum registro de usuário encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de usuários!", "error");
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        handleOpenSnackbar(error.response.data.message, "error");
 
       });
 

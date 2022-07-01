@@ -63,7 +63,7 @@ class UserPanelService{
 
         }else{
 
-            return response(["error" => "Nenhum usuário encontrado."], 404);
+            return response(["message" => "Nenhum usuário encontrado."], 404);
 
         }
 
