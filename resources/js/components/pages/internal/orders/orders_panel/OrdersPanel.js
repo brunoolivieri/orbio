@@ -7,6 +7,7 @@ import { CreateOrderFormulary } from "../../../../structures/modules/orders/Crea
 import { UpdateOrderFormulary } from "../../../../structures/modules/orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/orders/DeleteOrderFormulary";
 import { BadgeIcon } from "../../../../structures/badge_icon/BadgeIcon";
+import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
 // MaterialUI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -22,7 +23,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Chip from '@mui/material/Chip';
-import Alert from '@mui/material/Alert';
 import { InputAdornment } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -49,30 +49,27 @@ export const OrdersPanel = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // State do carregamento dos dados
-  // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+  const [records, setRecords] = React.useState([]);
 
-  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
+
   const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+
+  const [loading, setLoading] = React.useState(true);
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
-  // Context do snackbar
+  const [searchField, setSearchField] = React.useState("");
+
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  /**
-   * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
-   * 
-   */
   React.useEffect(() => {
 
     if (!paginationParams.where) {
@@ -87,120 +84,69 @@ export const OrdersPanel = React.memo(() => {
 
   }, [paginationParams]);
 
-  /**
-  * Carregamento de todos os registros de ordens de serviço
-  * 
-  */
   function requestToGetAllServiceOrders() {
 
-    // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/orders-module?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records_founded,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
+        if (response.data.total_records_founded > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} ordem de serviço`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} ordens de serviço`, "success");
         }
 
       })
       .catch(function (error) {
 
-        if (error.response.status == 404) {
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
 
-          handleOpenSnackbar("Nenhum registro de ordem de serviço encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de ordens de serviço!", "error");
-
-          console.log(error.message);
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
 
   }
 
-  /**
-   * Carregamento dos registros de ordens de serviço compátiveis com a pesquisa realizada
-   * 
-   */
   function requestToGetSearchedServiceOrders() {
 
-    // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/orders-module/show?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records_founded,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
-          if (response.data.total_records_founded > 1) {
-            handleOpenSnackbar(`Foram encontradas ${response.data.total_records_founded} ordens de serviços`, "success");
-          } else if (response.data.total_records_founded == 1) {
-            handleOpenSnackbar(`Foi encontrada ${response.data.total_records_founded} ordem de serviço`, "success");
-          }
-
+        if (response.data.total_records_founded > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} ordem de serviço`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} ordens de serviço`, "success");
         }
 
       })
       .catch(function (error) {
 
-        if (error.response.status == 404) {
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
 
-          handleOpenSnackbar("Nenhum registro de ordem de serviço encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de ordens de serviço!", "error");
-
-          console.log(error.message);
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
   }
 
-  /**
-  * Função para processar a alteração da página da tabela
-  * paginationParams é a dependência do useEffect
-  * 
-  */
   const handleTablePageChange = (event, value) => {
 
     setPaginationParams({
@@ -221,33 +167,24 @@ export const OrdersPanel = React.memo(() => {
 
   }
 
-  /**
-   * Função para processar a pesquisa de ordens de serviço no input de pesquisa
-   * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
-   * 
-   */
   function handleSearchSubmit(event) {
     event.preventDefault();
-
-    let value_searched = window.document.getElementById("search_input").value;
 
     setPaginationParams({
       page: 1,
       limit: paginationParams.limit,
-      where: value_searched
+      where: searchField
     });
 
   }
 
-  /**
-   * Função para processar o recarregamento dos dados da tabela
-   * 
-   */
   function reloadTable() {
 
     setSelectedRecordIndex(null);
 
-    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+    setLoading(true);
+    setRecords([]);
+    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
     setPaginationParams({
       page: 1,
@@ -277,6 +214,7 @@ export const OrdersPanel = React.memo(() => {
 
   return (
     <>
+      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -292,8 +230,8 @@ export const OrdersPanel = React.memo(() => {
             </Tooltip>
           }
 
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <UpdateOrderFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <UpdateOrderFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -306,8 +244,8 @@ export const OrdersPanel = React.memo(() => {
             </Tooltip>
           }
 
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <DeleteOrderFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <DeleteOrderFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -323,6 +261,7 @@ export const OrdersPanel = React.memo(() => {
           <TextField
             fullWidth
             placeholder={"Pesquisar ordem por ID"}
+            onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
@@ -339,13 +278,13 @@ export const OrdersPanel = React.memo(() => {
           />
         </Grid>
 
-        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+        {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>
               <TablePagination
                 labelRowsPerPage="Linhas por página: "
                 component="div"
-                count={panelData.response.total_records}
+                count={pagination.total_records}
                 page={paginationParams.page - 1}
                 onPageChange={handleTablePageChange}
                 rowsPerPage={paginationParams.limit}
@@ -363,7 +302,6 @@ export const OrdersPanel = React.memo(() => {
           name="radio-buttons-group"
           value={selectedRecordIndex}
         >
-
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>
@@ -381,8 +319,8 @@ export const OrdersPanel = React.memo(() => {
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
-                  panelData.response.records.map((row, index) => (
+                {(!loading && records.length > 0) &&
+                  records.map((row, index) => (
                     <TableRow key={row.id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
@@ -406,13 +344,7 @@ export const OrdersPanel = React.memo(() => {
                   ))}
               </TableBody>
             </Table>
-
-            {(!panelData.status.loading && !panelData.status.success && panelData.status.error) &&
-              <Alert severity="error" sx={{ display: "flex", justifyContent: "center" }}>{panelData.response}</Alert>
-            }
-
           </TableContainer>
-
         </RadioGroup>
       </FormControl>
 

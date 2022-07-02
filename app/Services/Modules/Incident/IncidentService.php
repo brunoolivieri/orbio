@@ -30,7 +30,7 @@ class IncidentService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadIncidentsWithPagination(int $limit, int $current_page, int|string $where_value) {
 
         $data = DB::table('incidents')
         ->where("incidents.deleted_at", null)
@@ -48,7 +48,7 @@ class IncidentService{
 
         }else{
 
-            return response(["error" => "Nenhum incidente encontrado."], 404);
+            return response(["message" => "Nenhum incidente encontrado."], 404);
 
         }
     }

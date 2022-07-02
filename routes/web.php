@@ -41,7 +41,7 @@ Route::middleware(["session.auth"])->group(function(){
     // Internal simple operations
     Route::get('/internal', [MainInternalController::class, "index"]); 
     Route::get('/internal/{internalpage?}', [MainInternalController::class, "refreshInternalSystem"])->where(["internalpage" => "^(?!auth|map).*$"]); 
-    Route::get('/api/auth/logout', [LogoutController::class, "logout"]); 
+    Route::get('/api/auth/logout', [LogoutController::class, "index"]); 
     Route::view('/internal/map', "map"); 
     Route::post('/api/get-auth-data', [MainInternalController::class, "getUserAuthenticatedData"]); 
     // Internal "MyAccount" operations

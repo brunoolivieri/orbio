@@ -14,7 +14,7 @@ use App\Events\Modules\Admin\UserCreatedEvent;
 class UserPanelService{
 
     private FormatDataService $format_data_service;
-    private UserModel $user_model;
+    private UserModel $model;
 
     /**
      * Dependency injection.
@@ -22,9 +22,9 @@ class UserPanelService{
      * @param App\Models\User\UserModel $user
      * @param App\Services\FormatDataService $service
      */
-    public function __construct(UserModel $user, FormatDataService $service){
+    public function __construct(UserModel $model, FormatDataService $service){
         $this->format_data_service = $service;
-        $this->user_model = $user;
+        $this->model = $model;
     }
 
      /**
@@ -79,12 +79,12 @@ class UserPanelService{
 
         DB::transaction(function () use ($request) {
 
-            $this->user_model->profile_id = intval($request->profile_id);
-            $this->user_model->name = $request->name;
-            $this->user_model->email = $request->email;
-            $this->user_model->password = Hash::make($request->password);
-    
-            $this->user_model->save();
+            UserModel::create([
+                "profile_id" => intval($request->profile_id),
+                "name" => $request->name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password)
+            ]);
 
             $data_for_email = [
                 "name" => $this->user_model->name,

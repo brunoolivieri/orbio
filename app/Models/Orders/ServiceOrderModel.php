@@ -28,7 +28,7 @@ class ServiceOrderModel extends Model
     */
     function service_order_has_user(){
 
-        return $this->hasOne("App\Models\Orders\ServiceOrderHasUserModel", "service_order_id");
+        return $this->hasOne("App\Models\Pivot\ServiceOrderHasUserModel", "service_order_id");
 
     }
 
@@ -37,7 +37,7 @@ class ServiceOrderModel extends Model
     */
     function service_order_has_flight_plan(){
 
-        return $this->hasMany("App\Models\Orders\ServiceOrderHasFlightPlansModel", "service_order_id");
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasFlightPlanModel", "service_order_id");
 
     }
 }

@@ -62,7 +62,7 @@ class DroneService {
 
         }else{
 
-            return response(["error" => "Nenhum drone encontrado."], 404);
+            return response(["message" => "Nenhum drone encontrado."], 404);
 
         }
 

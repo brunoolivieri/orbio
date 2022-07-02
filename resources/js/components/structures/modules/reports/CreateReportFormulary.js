@@ -257,7 +257,6 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
   return (
     <>
 
-      {/* Botão para abrir o formulário */}
       <Tooltip title="Novo relatório">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
           <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -267,20 +266,19 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
       <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE RELATÓRIO</DialogTitle>
 
-        {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
 
           <DialogContent>
 
             <DialogContentText sx={{ mb: 3 }}>
-              Realize uma conexão com o drone para realizar o download dos dados do vôo realizado.
+              A geração do relatório é realizada a partir do log do drone.
             </DialogContentText>
 
             <Box sx={{ mb: 3 }}>
               <label htmlFor="contained-button-file">
                 <Input accept=".txt" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleFileUploadedValidateItAndReleaseFormulary} />
                 <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faWifi} color={"#fff"} size="sm" />}>
-                  {errorDetected.flight_log ? errorDetected.flight_log : "Conectar"}
+                  {errorDetected.flight_log ? errorDetected.flight_log : "CONECTAR AO DRONE"}
                 </Button>
               </label>
             </Box>

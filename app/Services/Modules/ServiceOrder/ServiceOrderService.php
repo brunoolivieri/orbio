@@ -37,7 +37,7 @@ class ServiceOrderService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadServiceOrdersWithPagination(int $limit, int $current_page, int|string $where_value){
 
         $data = DB::table('service_orders')
         ->where("service_orders.deleted_at", null)
@@ -55,7 +55,7 @@ class ServiceOrderService{
 
         }else{
 
-            return response(["error" => "Nenhuma ordem de serviço encontrada."], 404);
+            return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
 
         }
 
@@ -68,8 +68,6 @@ class ServiceOrderService{
      * @return \Illuminate\Http\Response
      */
     public function createServiceOrder(Request $request){
-
-        dd($request->all());
 
         DB::transaction(function () use ($request) {
             
@@ -95,7 +93,7 @@ class ServiceOrderService{
                 ["service_order_id" => $new_service_order->id,"user_id" => $request->client_id]
             ]);
 
-            foreach($request->fligth_plans_ids as $index => $value){
+            foreach($request->flight_plans_ids as $index => $value){
 
                 ServiceOrderHasFlightPlanModel::insert([
                     "service_order_id" => $new_service_order->id,
@@ -143,7 +141,7 @@ class ServiceOrderService{
             $client_data = UserModel::find($request->client_id);
 
             // Update da ordem de serviço
-            $order = ServiceOrderModel::where('id', $id)->update(
+            $order = ServiceOrderModel::where('id', $service_order_id)->update(
                 [
                     "start_date" => $request->start_date,
                     "end_date" => $request->end_date,
@@ -156,27 +154,22 @@ class ServiceOrderService{
             );
 
             // Deleta as relações atuais com os usuários - é mais fácil desse modo
-            ServiceOrderHasUserModel::where("service_order_id", $id)->delete();
+            ServiceOrderHasUserModel::where("service_order_id", $service_order_id)->delete();
             // Cria novamente as relações com cada usuário envolvido na ordem de serviço (criador, piloto e cliente)
             ServiceOrderHasUserModel::insert([
-                ["service_order_id" => (int) $id,"user_id" => Auth::user()->id], 
-                ["service_order_id" => (int) $id,"user_id" => $request->pilot_id],
-                ["service_order_id" => (int) $id,"user_id" => $request->client_id]
+                ["service_order_id" => (int) $service_order_id,"user_id" => Auth::user()->id], 
+                ["service_order_id" => (int) $service_order_id,"user_id" => $request->pilot_id],
+                ["service_order_id" => (int) $service_order_id,"user_id" => $request->client_id]
             ]);
 
             // Deleta as relações atuais com os planos de vôo - é mais fácil desse modo
-            ServiceOrderHasFlightPlanModel::where("service_order_id", $id)->delete();
+            ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order_id)->delete();
             // Cria novamente as relações com cada plano de vôo envolvido na ordem de serviço
-            $arr_plans_ids = json_decode($request->fligth_plans_ids, true);
-            foreach($arr_plans_ids as $i => $value){
-                foreach($value as $j => $plan_id){
-
-                    ServiceOrderHasFlightPlanModel::insert([
-                        "service_order_id" => (int) $id,
-                        "flight_plan_id" => (int) $plan_id
-                    ]);
-
-                }
+            foreach($request->flight_plans_ids as $index => $flight_plan_id){
+                ServiceOrderHasFlightPlanModel::insert([
+                    "service_order_id" => (int) $service_order_id,
+                    "flight_plan_id" => (int) $flight_plan_id
+                ]);
             }
 
         });
@@ -195,7 +188,7 @@ class ServiceOrderService{
 
         DB::transaction(function () use ($service_order_id) {
             
-            $service_order = ServiceOrderModel::find($id);
+            $service_order = ServiceOrderModel::find($service_order_id);
 
             // Desvinculation with flight_plans through service_order_has_flight_plan table
             if(!empty($service_order->service_order_has_flight_plan)){ 

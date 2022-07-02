@@ -158,49 +158,42 @@ class FormatDataService {
      */
     public function serviceOrderPanelDataFormatting(LengthAwarePaginator $data){
 
-        foreach($data->items() as $row => $record){
+        foreach($data->items() as $row => $service_order){
 
-            foreach($record as $column => $value){
+            // ====== COLUNAS GENÉRICAS ====== //
+            foreach($service_order as $column => $value){
 
                 if($column == "created_at" || $column == "updated_at" || $column == "deleted_at"){
                     $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
-                }else{
+                }else if($column != "client_name" && $column != "pilot_name" && $column != "creator_name"){
                     $this->formated_data["records"][$row][$column] = $value;
                 }
 
             }
 
-            // ====== Formatação dos dados dos planos de voo vinculados ====== //
+            // ====== PLANOS DE VOO VINCULADOS ====== //
+            $service_order_flight_plans = ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order->id)->get();
+            $flight_plans_vinculated = [];
+            for($count = 0; $count < count($service_order_flight_plans); $count++){
 
-            // Recuperação dos ids dos planos de voo relacionados à ordem de serviço
-            $service_order_related_flight_plans_ids = ServiceOrderHasFlightPlanModel::where("service_order_id", $record->id)->get();
-            $flight_plans_array = [];
-            for($count = 0; $count < count($service_order_related_flight_plans_ids); $count++){
+                $actual_flight_plan["id"] = $service_order_flight_plans[$count]->flight_plans->id;
+                $actual_flight_plan["file"] = $service_order_flight_plans[$count]->flight_plans->file;
+                $actual_flight_plan["status"] = $service_order_flight_plans[$count]->flight_plans->status;
 
-                $actual_flight_plan["id"] = $service_order_related_flight_plans_ids[$count]->flight_plans->id;
-                $actual_flight_plan["file"] = $service_order_related_flight_plans_ids[$count]->flight_plans->file;
-                $actual_flight_plan["status"] = $service_order_related_flight_plans_ids[$count]->flight_plans->status;
-
-                array_push($flight_plans_array, $actual_flight_plan);
-
+                array_push($flight_plans_vinculated, $actual_flight_plan);
             }
-            $this->formated_data["records"][$row]["flight_plans"] = $flight_plans_array;
+            $this->formated_data["records"][$row]["flight_plans"] = $flight_plans_vinculated;
 
-            // ====== Formatação dos dados dos usuários vinculados ====== //
-           
-            // Recuperação dos ids dos usuários relacionados à ordem de serviço
-            $service_order_related_users_ids = ServiceOrderHasUserModel::where("service_order_id", $record->id)->get();
+            // ====== USUÁRIOS VINCULADOS ====== //
+            $service_order_users = ServiceOrderHasUserModel::where("service_order_id", $service_order->id)->get();
             $index = 0;
 
-            // Se o usuário criador, piloto ou cliente não for null, seus dados são armazenados
-            // Se for null, a posição "id" dele recebe 0
-            // Será dessa forma para que na abertura do form de update o item selecionado no select seja o com value "0"
-            if(!empty($record->creator_name)){
+            if(!empty($service_order->creator_name)){
 
-                $this->formated_data["records"][$row]["creator"]["id"] = $service_order_related_users_ids[$index]->users->id;
-                $this->formated_data["records"][$row]["creator"]["profile_id"] = $service_order_related_users_ids[$index]->users->profile_id;
-                $this->formated_data["records"][$row]["creator"]["name"] = $service_order_related_users_ids[$index]->users->name;
-                $this->formated_data["records"][$row]["creator"]["status"] = $service_order_related_users_ids[$index]->users->status;
+                $this->formated_data["records"][$row]["creator"]["id"] = $service_order_users[$index]->users->id;
+                $this->formated_data["records"][$row]["creator"]["profile_id"] = $service_order_users[$index]->users->profile_id;
+                $this->formated_data["records"][$row]["creator"]["name"] = $service_order_users[$index]->users->name;
+                $this->formated_data["records"][$row]["creator"]["status"] = $service_order_users[$index]->users->status;
 
                 $index++;
 
@@ -210,12 +203,12 @@ class FormatDataService {
 
             }
 
-            if(!empty($record->pilot_name)){
+            if(!empty($service_order->pilot_name)){
 
-               $this->formated_data["records"][$row]["pilot"]["id"] = $service_order_related_users_ids[$index]->users->id;
-               $this->formated_data["records"][$row]["pilot"]["profile_id"] = $service_order_related_users_ids[$index]->users->profile_id;
-               $this->formated_data["records"][$row]["pilot"]["name"] = $service_order_related_users_ids[$index]->users->name;
-               $this->formated_data["records"][$row]["pilot"]["status"] = $service_order_related_users_ids[$index]->users->status;
+               $this->formated_data["records"][$row]["pilot"]["id"] = $service_order_users[$index]->users->id;
+               $this->formated_data["records"][$row]["pilot"]["profile_id"] = $service_order_users[$index]->users->profile_id;
+               $this->formated_data["records"][$row]["pilot"]["name"] = $service_order_users[$index]->users->name;
+               $this->formated_data["records"][$row]["pilot"]["status"] = $service_order_users[$index]->users->status;
 
                 $index++;
 
@@ -225,12 +218,12 @@ class FormatDataService {
 
             }
 
-            if(!empty($record->client_name)){
+            if(!empty($service_order->client_name)){
 
-                $this->formated_data["records"][$row]["client"]["id"] = $service_order_related_users_ids[$index]->users->id;
-                $this->formated_data["records"][$row]["client"]["profile_id"] = $service_order_related_users_ids[$index]->users->profile_id;
-                $this->formated_data["records"][$row]["client"]["name"] = $service_order_related_users_ids[$index]->users->name;
-                $this->formated_data["records"][$row]["client"]["status"] = $service_order_related_users_ids[$index]->users->status;
+                $this->formated_data["records"][$row]["client"]["id"] = $service_order_users[$index]->users->id;
+                $this->formated_data["records"][$row]["client"]["profile_id"] = $service_order_users[$index]->users->profile_id;
+                $this->formated_data["records"][$row]["client"]["name"] = $service_order_users[$index]->users->name;
+                $this->formated_data["records"][$row]["client"]["status"] = $service_order_users[$index]->users->status;
 
                 $index++;
 

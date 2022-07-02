@@ -6,6 +6,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
+import { BackdropLoading } from "../../../../structures/backdrop_loading/BackdropLoading";
 // Material UI
 import styled from "@emotion/styled";
 import { Table } from "@mui/material";
@@ -47,57 +48,25 @@ export function ProfilesPanel() {
 
   const { AuthData } = useAuthentication();
 
-  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+  const [records, setRecords] = React.useState([]);
+
+  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
   const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+
+  const [loading, setLoading] = React.useState(true);
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
-  // State do valor procurado
-  const [value_searched, setValueSearched] = React.useState("");
+  const [searchField, setSearchField] = React.useState("");
 
   // context do snackbar
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
-
-  const handleTablePageChange = (event, value) => {
-
-    setPaginationParams({
-      page: value + 1,
-      limit: paginationParams.limit,
-      where: paginationParams.where
-    });
-
-  };
-
-  function handleSearchSubmit(event) {
-    event.preventDefault();
-
-    setPaginationParams({
-      page: 1,
-      limit: paginationParams.limit,
-      where: value_searched
-    });
-
-  }
-
-  function reloadTable() {
-
-    setSelectedRecordIndex(null);
-
-    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
-
-    setPaginationParams({
-      page: 1,
-      limit: paginationParams.limit,
-      where: 0
-    });
-
-  }
 
   React.useEffect(() => {
 
@@ -121,34 +90,25 @@ export function ProfilesPanel() {
     AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}`)
       .then(function (response) {
 
-        setPanelData({
-          status: {
-            loading: false,
-            success: true,
-            error: false
-          },
-          response: {
-            records: response.data.records,
-            total_records: response.data.total_records,
-            records_per_page: response.data.records_per_page,
-            total_pages: response.data.total_pages
-          }
-        });
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
+        }
 
       })
       .catch(function (error) {
 
-        if (error.response.status == 404) {
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
 
-          handleOpenSnackbar("Nenhum registro de perfil encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
@@ -163,19 +123,9 @@ export function ProfilesPanel() {
     AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}`)
       .then(function (response) {
 
-        setPanelData({
-          status: {
-            loading: false,
-            success: true,
-            error: false
-          },
-          response: {
-            records: response.data.records,
-            total_records: response.data.total_records,
-            records_per_page: response.data.records_per_page,
-            total_pages: response.data.total_pages
-          }
-        });
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
@@ -185,19 +135,51 @@ export function ProfilesPanel() {
 
       }).catch((error) => {
 
-        if (error.response.status == 404) {
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
 
-          handleOpenSnackbar("Nenhum registro de perfil encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de perfis!", "error");
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
+
+  }
+
+  const handleTablePageChange = (event, value) => {
+
+    setPaginationParams({
+      page: value + 1,
+      limit: paginationParams.limit,
+      where: paginationParams.where
+    });
+
+  };
+
+  function handleSearchSubmit(event) {
+    event.preventDefault();
+
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit,
+      where: searchField
+    });
+
+  }
+
+  function reloadTable() {
+
+    setSelectedRecordIndex(null);
+
+    setLoading(true);
+    setRecords([]);
+    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
+
+    setPaginationParams({
+      page: 1,
+      limit: paginationParams.limit,
+      where: 0
+    });
 
   }
 
@@ -231,8 +213,8 @@ export function ProfilesPanel() {
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
   return (
-
     <>
+      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -249,8 +231,8 @@ export function ProfilesPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <UpdateProfileFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <UpdateProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -264,8 +246,8 @@ export function ProfilesPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <DeleteProfileFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <DeleteProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -281,7 +263,7 @@ export function ProfilesPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar perfil por ID"}
-            onChange={(e) => setValueSearched(e.currentTarget.value)}
+            onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
@@ -297,13 +279,13 @@ export function ProfilesPanel() {
           />
         </Grid>
 
-        {(panelData.status && !panelData.error) &&
+        {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>
               <TablePagination
                 labelRowsPerPage="Linhas por página: "
                 component="div"
-                count={panelData.response.total_records}
+                count={pagination.total_records}
                 page={paginationParams.page - 1}
                 onPageChange={handleTablePageChange}
                 rowsPerPage={paginationParams.limit}
@@ -336,8 +318,8 @@ export function ProfilesPanel() {
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
-                  panelData.response.records.map((row, index) => (
+                {(!loading && records.length > 0) &&
+                  records.map((row, index) => (
                     <TableRow key={row.profile_id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.profile_id} /></TableCell>
                       <TableCell align="center">{row.profile_name}</TableCell>

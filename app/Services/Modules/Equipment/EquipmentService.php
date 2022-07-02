@@ -62,7 +62,7 @@ class EquipmentService{
 
         }else{
 
-            return response(["error" => "Nenhum equipamento encontrado."], 404);
+            return response(["message" => "Nenhum equipamento encontrado."], 404);
 
         }
 

@@ -157,7 +157,7 @@ export const ModalFlightPlansTable = React.memo((props) => {
     return (
         <>
             <Button variant="contained" onClick={handleClickOpen}>
-                {"SELECIONAR PLANOS DE VOO"}
+                {selectedRecords.length == 0 ? "SELECIONAR PLANOS DE VOO" : "PLANOS DE VOO SELECIONADOS: " + selectedRecords.length}
             </Button>
             <Dialog open={open} onClose={handleClose} maxWidth={'xl'}>
                 <DialogTitle>{"PLANOS DE VOO"}</DialogTitle>

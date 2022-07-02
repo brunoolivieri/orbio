@@ -30,22 +30,5 @@ class ProfileModel extends Model
         return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "profile_id");
 
     }
-
-    // ================================================ //
-
-    function loadAllProfiles() : array {
-
-        try{
-
-            $data = ProfileModel::all();
-
-            return ["status" => true, "error" => false, "data" => $data];      
-                
-        }catch(\Exception $e){
-
-            return ["status" => false, "error" => $e->getMessage()];
-
-        }
-
-    }
+   
 }

@@ -1293,7 +1293,7 @@ function generateNewFlightPlanRecord(fileName, blob) {
 
 		setTimeout(() => {
 			window.close();
-		}, 2000)
+		}, 1000)
 
 	}).catch((error) => {
 

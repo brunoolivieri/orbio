@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from "@mui/material";
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -22,16 +23,14 @@ export function DeleteIncidentFormulary({ ...props }) {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // State da mensagem do alerta
+  const [controlledInput] = React.useState({ id: props.record.id });
+
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
-  // States do formulário
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -42,70 +41,51 @@ export function DeleteIncidentFormulary({ ...props }) {
 
   const handleClose = () => {
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
   }
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
-
-    setDisabledButton(true);
-
-    requestServerOperation(data);
+    setLoading(false);
+    requestServerOperation();
 
   }
 
-  /*
- * Rotina 2
- * 
- */
-  function requestServerOperation(data) {
+  const requestServerOperation = () => {
 
-    AxiosApi.delete(`/api/incidents-module/${data.get("id")}`)
-      .then(function () {
+    AxiosApi.delete(`/api/incidents-module/${controlledInput.id}`)
+      .then(function (response) {
 
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch(function (error) {
 
-        errorServerResponseTreatment(error.response.data);
+        setLoading(false);
+        errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  /*
-  * Rotina 3A
-  */
-  function successServerResponseTreatment() {
+  function successServerResponseTreatment(response) {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
-
     }, 2000);
 
   }
 
-  /*
-  * Rotina 3B
-  */
-  function errorServerResponseTreatment(response_data) {
+  function errorServerResponseTreatment(response) {
 
-    setDisabledButton(false);
-
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
   }
@@ -122,10 +102,9 @@ export function DeleteIncidentFormulary({ ...props }) {
 
       {(props.record != null && open) &&
 
-        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
 
-          {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
             <DialogContent>
@@ -163,13 +142,15 @@ export function DeleteIncidentFormulary({ ...props }) {
 
             </DialogContent>
 
-            {displayAlert.display &&
+            {(!loading && displayAlert.display) &&
               <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
             }
 
+            {loading && <LinearProgress />}
+
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton}>Confirmar deleção</Button>
+              <Button type="submit" disabled={loading}>Confirmar deleção</Button>
             </DialogActions>
 
           </Box>

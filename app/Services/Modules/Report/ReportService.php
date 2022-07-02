@@ -11,6 +11,7 @@ use App\Services\FormatDataService;
 class ReportService{
     
     private FormatDataService $format_data_service;
+    private ReportModel $model;
 
     /**
      * Dependency injection.
@@ -18,8 +19,9 @@ class ReportService{
      * @param App\Services\FormatDataService $service
      * @param App\Models\Incidents\ReportModel $incident
      */
-    public function __construct(FormatDataService $service){
+    public function __construct(FormatDataService $service, ReportModel $model){
         $this->format_data_service = $service;
+        $this->model = $model;
     }
 
     /**
@@ -48,7 +50,7 @@ class ReportService{
 
         }else{
 
-            return response(["error" => "Nenhum relatório encontrado."], 404);
+            return response(["message" => "Nenhum relatório encontrado."], 404);
 
         }
     }
@@ -61,7 +63,7 @@ class ReportService{
      */
     public function createReport(Request $request){
 
-        ReportModel::create($request->only(["start_date", "end_date", "flight_log", "observation"]));
+        $this->model->create($request->only(["start_date", "end_date", "flight_log", "observation"]));
 
         return response(["message" => "Relatório criado com sucesso!"], 200); 
 
@@ -76,7 +78,7 @@ class ReportService{
      */
     public function updateReport(Request $request, int $report_id) {
 
-        ReportModel::where('id', $report_id)->update($request->only(["start_date", "end_date", "flight_log", "observation"]));
+        $this->model->where('id', $report_id)->update($request->only(["start_date", "end_date", "flight_log", "observation"]));
 
         return response(["message" => "Relatório atualizado com sucesso!"], 200);
 
@@ -90,7 +92,9 @@ class ReportService{
      */
     public function deleteReport(int $report_id) {
 
-        ReportModel::where('id', $report_id)->delete();
+        $this->model->flight_plans->update("report_id", null);
+
+        $this->model->where('id', $report_id)->delete();
 
         return response(["message" => "Relatório deletado com sucesso!"], 200);
 

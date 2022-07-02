@@ -60,7 +60,7 @@ class BatteryService{
 
         }else{
 
-            return response(["error" => "Nenhuma bateria encontrada."], 404);
+            return response(["message" => "Nenhuma bateria encontrada."], 404);
 
         }
 

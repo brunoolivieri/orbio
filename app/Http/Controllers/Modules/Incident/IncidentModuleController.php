@@ -39,7 +39,7 @@ class IncidentModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadIncidentsWithPagination($limit, $actual_page, $where_value);
  
     }
 
@@ -72,7 +72,7 @@ class IncidentModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadIncidentsWithPagination($limit, $actual_page, $where_value);
     }
 
     /**

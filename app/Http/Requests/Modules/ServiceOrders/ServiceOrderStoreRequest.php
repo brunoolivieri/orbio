@@ -27,11 +27,11 @@ class ServiceOrderStoreRequest extends FormRequest
         return [
             "start_date" => 'required|date',
             "end_date" => 'required|date',
-            "pilot_id" => 'required|string',
-            "client_id" => 'required|string',
+            "pilot_id" => 'required|integer',
+            "client_id" => 'required|integer',
             "observation" => 'required|string',
             "status" => 'required|boolean',
-            "fligth_plans_ids" => 'required|array|min:1', 
+            "flight_plans_ids" => 'required|array|min:1', 
         ];
     }
 
@@ -52,8 +52,8 @@ class ServiceOrderStoreRequest extends FormRequest
             'observation.required' => "A observação deve ser informada",
             'status.required' => "O status deve ser definido",
             'status.boolean' => "O status deve ser 1 ou 0",
-            'fligth_plans_ids.required' => "O plano de voo deve ser selecionado",
-            'fligth_plans_ids.min' => "Nenhum plano de voo selecionado"
+            'flight_plans_ids.required' => "O plano de voo deve ser selecionado",
+            'flight_plans_ids.min' => "No mínimo 1 plano de voo deve ser selecionado"
         ];
     }
 }

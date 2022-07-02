@@ -19,6 +19,7 @@ import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { RadioInput } from '../../radio_group/RadioInput';
 import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -29,32 +30,26 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // States do formulário
-  const [open, setOpen] = React.useState(false);
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.pilot.id, client_id: props.record.client.id, observation: props.record.observation, status: props.record.status });
 
-  // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
-  const [errorMessage, setErrorMessage] = React.useState({ start_date: "", end_date: "", creator_name: "", pilot_name: "", client_name: "", observation: "", flight_plan: "", status: "" });
+  const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
 
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
-  // States dos inputs de data
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
 
-  // State dos planos de vôo selecionados
+  const [open, setOpen] = React.useState(false);
+
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Transform selected flight plans into array of their ids
   React.useEffect(() => {
 
     const order_flight_plans = props.record.flight_plans;
@@ -71,32 +66,26 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    setErrorDetected({ start_date: false, end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
-    setErrorMessage({ start_date: false, end_date: false, creator_name: false, pilot_name: false, client_name: false, observation: false, flight_plan: false, status: false });
+    setFieldError({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
+    setFieldErrorMessage({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
   }
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
-
-    if (submitedDataValidate(data)) {
+    if (formularyDataValidate()) {
 
       if (verifyDateInterval()) {
 
-        setDisabledButton(true);
-
-        requestServerOperation(data);
+        setLoading(true);
+        requestServerOperation();
 
       } else {
 
+        setLoading(false);
         setDisplayAlert({ display: false, type: "", message: "Erro! A data inicial não pode anteceder a final." });
 
       }
@@ -105,180 +94,138 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
   }
 
-  /*
- * Rotina 2
- */
-  const submitedDataValidate = (formData) => {
+  const formularyDataValidate = () => {
 
     const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
-    const pilotNameValidate = formData.get("select_pilot_name") != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
-    const clientNameValidate = formData.get("select_client_name") != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
-    const orderNoteValidate = FormValidation(formData.get("observation"), 3, null, null, null);
+    const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
+    const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
+    const observationValidate = FormValidation(controlledInput.observation, 3, null, null, "observação");
     const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
-    const statusValidate = Number(formData.get("status")) != 0 && Number(formData.get("status")) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
+    const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
-    setErrorDetected({
+    setFieldError({
       start_date: startDateValidate.error,
       end_date: endDateValidate.error,
-      pilot_name: pilotNameValidate.error,
-      client_name: clientNameValidate.error,
-      observation: orderNoteValidate.error,
+      pilot_id: pilotNameValidate.error,
+      client_id: clientNameValidate.error,
+      observation: observationValidate.error,
       flight_plan: fligthPlansValidate.error,
       status: statusValidate.error
     });
 
-    setErrorMessage({
+    setFieldErrorMessage({
       start_date: startDateValidate.message,
       end_date: endDateValidate.message,
-      pilot_name: pilotNameValidate.message,
-      client_name: clientNameValidate.message,
-      observation: orderNoteValidate.message,
+      pilot_id: pilotNameValidate.message,
+      client_id: clientNameValidate.message,
+      observation: observationValidate.message,
       flight_plan: fligthPlansValidate.message,
       status: statusValidate.message
     });
 
-    if (startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error) {
-
-      return false;
-
-    } else {
-
-      return true;
-
-    }
+    return !(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
 
   }
 
-  /*
- * Rotina 3
- * 
- */
   function verifyDateInterval() {
 
-    if (moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss')) {
-
-      return true;
-
-    } else {
-
-      return false;
-
-    }
+    return moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss');
 
   }
 
-  /*
- * Rotina 4
- * 
- */
-  const requestServerOperation = (data) => {
+  const requestServerOperation = () => {
 
-    let arr = [];
-    let obj_with_arr_of_ids = {};
-
-    flightPlansSelected.map((flight_plan, index) => {
-      arr[index] = flight_plan.id;
-    });
-
-    obj_with_arr_of_ids["flight_plans_ids"] = arr;
-
-    AxiosApi.patch(`/api/orders-module/${data.get("id")}`, {
+    AxiosApi.patch(`/api/orders-module/${controlledInput.id}`, {
       start_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
       end_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
-      pilot_id: data.get("select_pilot_name"),
-      client_id: data.get("select_client_name"),
-      observation: data.get("observation"),
-      status: data.get("status"),
-      fligth_plans_ids: JSON.stringify(obj_with_arr_of_ids)
+      pilot_id: controlledInput.pilot_id,
+      client_id: controlledInput.client_id,
+      observation: controlledInput.observation,
+      status: controlledInput.status,
+      flight_plans_ids: flightPlansSelected
     })
-      .then(function () {
+      .then(function (response) {
 
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch(function (error) {
 
-        errorServerResponseTreatment(error.response.data);
+        setLoading(false);
+        errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  /*
-  * Rotina 5A
-  */
-  const successServerResponseTreatment = () => {
+  const successServerResponseTreatment = (response) => {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
-      // Deselecionar registro na tabela
       props.record_setter(null);
-      // Outros
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
-
     }, 2000);
 
   }
 
-  /*
-  * Rotina 5B
-  */
-  function errorServerResponseTreatment(response_data) {
+  function errorServerResponseTreatment(response) {
 
-    setDisabledButton(false);
-
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-    let input_errors = {
+    let request_errors = {
       start_date: { error: false, message: null },
       end_date: { error: false, message: null },
       creator_name: { error: false, message: null },
-      pilot_name: { error: false, message: null },
-      client_name: { error: false, message: null },
+      pilot_id: { error: false, message: null },
+      client_id: { error: false, message: null },
       observation: { error: false, message: null },
       status: { error: false, message: null },
       fligth_plans_ids: { error: false, message: null }
     }
 
     // Coleta dos objetos de erro existentes na response
-    for (let prop in response_data.errors) {
+    for (let prop in response.data.errors) {
 
-      input_errors[prop] = {
+      request_errors[prop] = {
         error: true,
-        message: response_data.errors[prop][0]
+        message: response.data.errors[prop][0]
       }
 
     }
 
-    setErrorDetected({
-      start_date: input_errors.start_date.error,
-      end_date: input_errors.end_date.error,
-      creator_name: input_errors.creator_name.error,
-      pilot_name: input_errors.pilot_name.error,
-      client_name: input_errors.client_name.error,
-      observation: input_errors.observation.error,
-      flight_plans: input_errors.fligth_plans_ids.error,
-      status: input_errors.status.error
+    setFieldError({
+      start_date: request_errors.start_date.error,
+      end_date: request_errors.end_date.error,
+      creator_name: request_errors.creator_name.error,
+      pilot_id: request_errors.pilot_id.error,
+      client_id: request_errors.client_id.error,
+      observation: request_errors.observation.error,
+      flight_plans: request_errors.fligth_plans_ids.error,
+      status: request_errors.status.error
     });
 
-    setErrorMessage({
-      start_date: input_errors.start_date.message,
-      end_date: input_errors.end_date.message,
-      creator_name: input_errors.creator_name.message,
-      pilot_name: input_errors.pilot_name.message,
-      client_name: input_errors.client_name.message,
-      observation: input_errors.observation.message,
-      flight_plans: input_errors.fligth_plans_ids.message,
-      status: input_errors.status.message
+    setFieldErrorMessage({
+      start_date: request_errors.start_date.message,
+      end_date: request_errors.end_date.message,
+      creator_name: request_errors.creator_name.message,
+      pilot_id: request_errors.pilot_id.message,
+      client_id: request_errors.client_id.message,
+      observation: request_errors.observation.message,
+      flight_plans: request_errors.fligth_plans_ids.message,
+      status: request_errors.status.message
     });
 
+  }
+
+  const handleInputChange = (event) => {
+    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -321,8 +268,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   <DateTimeInput
                     event={setStartDate}
                     label={"Inicio da ordem de serviço"}
-                    helperText={errorMessage.start_date}
-                    error={errorDetected.start_date}
+                    helperText={fieldErrorMessage.start_date}
+                    error={fieldError.start_date}
                     defaultValue={props.record.start_date}
                     operation={"update"}
                     read_only={false}
@@ -332,8 +279,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   <DateTimeInput
                     event={setEndDate}
                     label={"Fim da ordem de serviço"}
-                    helperText={errorMessage.start_date}
-                    error={errorDetected.start_date}
+                    helperText={fieldErrorMessage.start_date}
+                    error={fieldError.start_date}
                     defaultValue={props.record.end_date}
                     operation={"update"}
                     read_only={false}
@@ -347,10 +294,12 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   data_source={"/api/load-users?where=profile_id.3"}
                   primary_key={"id"}
                   key_content={"name"}
-                  helperText={errorMessage.pilot_name}
-                  error={errorDetected.pilot_name}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  helperText={fieldErrorMessage.pilot_id}
+                  error={fieldError.pilot_id}
                   default={props.record.pilot.id}
-                  name={"select_pilot_name"}
+                  name={"pilot_id"}
                 />
               </Box>
 
@@ -360,16 +309,21 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   data_source={"/api/load-users?where=profile_id.4"}
                   primary_key={"id"}
                   key_content={"name"}
-                  helperText={errorMessage.client_name}
-                  error={errorDetected.client_name}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  helperText={fieldErrorMessage.client_id}
+                  error={fieldError.client_id}
                   default={props.record.client.id}
-                  name={"select_client_name"}
+                  name={"client_id"}
                 />
               </Box>
 
               <Box sx={{ mb: 2 }}>
 
-                <ModalFlightPlansTable setFlightPlansSelected={setFlightPlansSelected} defaultSelections={flightPlansSelected} />
+                <ModalFlightPlansTable
+                  setFlightPlansSelected={setFlightPlansSelected}
+                  defaultSelections={flightPlansSelected}
+                />
 
               </Box>
 
@@ -380,27 +334,36 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                 fullWidth
                 variant="outlined"
                 required
-                id="observation"
                 name="observation"
-                helperText={errorMessage.observation}
-                error={errorDetected.observation}
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.observation}
+                error={fieldError.observation}
                 defaultValue={props.record.observation}
                 sx={{ mb: 2 }}
               />
 
               <Box>
-                <RadioInput title={"Status"} name={"status"} default_value={props.record.status} options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]} />
+                <RadioInput
+                  title={"Status"}
+                  name={"status"}
+                  default={props.record.status}
+                  options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                />
               </Box>
 
             </DialogContent>
 
-            {displayAlert.display &&
+            {(!loading && displayAlert.display) &&
               <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
             }
 
+            {loading && <LinearProgress />}
+
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton}>Confirmar atualização</Button>
+              <Button type="submit" variant='contained' disabled={loading}>Confirmar atualização</Button>
             </DialogActions>
 
           </Box>

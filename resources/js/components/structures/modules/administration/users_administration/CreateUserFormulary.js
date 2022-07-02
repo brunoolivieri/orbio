@@ -24,28 +24,22 @@ import { FormValidation } from '../../../../../utils/FormValidation';
 
 export const CreateUserFormulary = React.memo(({ ...props }) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
-  // Auth Context
   const { AuthData } = useAuthentication();
 
-  // Controlled Inputs
   const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "" });
 
-  // State fields erros 
   const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); // State para o efeito de erro - true ou false
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-  // Start display alert
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State loading
   const [loading, setLoading] = React.useState(false);
 
-  // Formulary state
   const [open, setOpen] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -131,7 +125,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Errors by key that can be returned from backend validation
-    let input_errors = {
+    let request_errors = {
       name: { error: false, message: null },
       email: { error: false, message: null },
       profile_id: { error: false, message: null }
@@ -140,7 +134,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     // Get errors by their key 
     for (let prop in response.data.errors) {
 
-      input_errors[prop] = {
+      request_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
@@ -148,15 +142,15 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     }
 
     setFieldError({
-      name: input_errors.name.error,
-      email: input_errors.email.error,
-      profile: input_errors.profile_id.error
+      name: request_errors.name.error,
+      email: request_errors.email.error,
+      profile: request_errors.profile_id.error
     });
 
     setFieldErrorMessage({
-      name: input_errors.name.message,
-      email: input_errors.email.message,
-      profile: input_errors.profile_id.message
+      name: request_errors.name.message,
+      email: request_errors.email.message,
+      profile: request_errors.profile_id.message
     });
 
   }
@@ -165,7 +159,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <div>

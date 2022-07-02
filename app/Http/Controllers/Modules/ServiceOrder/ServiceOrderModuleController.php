@@ -41,7 +41,7 @@ class ServiceOrderModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -74,7 +74,7 @@ class ServiceOrderModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
         
     }
 

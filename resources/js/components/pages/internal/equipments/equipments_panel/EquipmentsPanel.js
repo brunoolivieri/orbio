@@ -6,6 +6,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/CreateEquipmentFormulary';
 import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/DeleteEquipmentFormulary';
 import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
+import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -45,31 +46,27 @@ export const EquipmentPanel = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // State do carregamento dos dados
-  // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+  const [records, setRecords] = React.useState([]);
 
-  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
+
   const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+
+  const [loading, setLoading] = React.useState(true);
+
+  const [searchField, setSearchField] = React.useState("");
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
-  // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  /**
- * Hook use useEffect para carregar os dados da tabela de acordo com os valores da paginação
- * Esses valores são: limit, where e número da página atual
- * 
- */
   React.useEffect(() => {
 
     if (!paginationParams.where) {
@@ -84,119 +81,68 @@ export const EquipmentPanel = React.memo(() => {
 
   }, [paginationParams]);
 
-
-  /**
-   * Carregamento de todos os registros de equipamento
-   * 
-   */
   function requestToGetAllUsers() {
 
-    // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/equipments-module-equipment?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records_founded,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
+        if (response.data.total_records_founded > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} equipamentos`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} equipamento`, "success");
         }
 
       })
       .catch(function (error) {
 
-        if (error.response.status == 404) {
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
 
-          handleOpenSnackbar("Nenhum registro de equipamento encontrado!", "error");
-
-        } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de equipamentos!", "error");
-
-          console.log(error.message);
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
-        }
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
   }
 
-  /**
-   * Carregamento dos registros de equipamentos compátiveis com a pesquisa realizada
-   * 
-   */
   function requestToGetSearchedEquipments() {
 
-    // Essa variável recebe: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/equipments-module-equipment/show?args=${select_query_params}`)
       .then(function (response) {
 
-        if (response.status === 200) {
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-          setPanelData({
-            status: {
-              loading: false,
-              success: true,
-              error: false
-            },
-            response: {
-              records: response.data.records,
-              total_records: response.data.total_records_founded,
-              records_per_page: response.data.records_per_page,
-              total_pages: response.data.total_pages
-            }
-          });
-
-          if (response.data.total_records_founded > 1) {
-            handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} equipamentos`, "success");
-          } else {
-            handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} equipamento`, "success");
-          }
-
-        }
-
-      }).catch(function (error) {
-
-        if (error.response.status == 404) {
-
-          handleOpenSnackbar("Nenhum registro de equipamento encontrado!", "error");
-
+        if (response.data.total_records_founded > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} equipamentos`, "success");
         } else {
-
-          handleOpenSnackbar("Erro no carregamento dos dados do painel de equipamentos!", "error");
-
-          console.log(error.message);
-
-          setPanelData({ status: { loading: false, success: false, error: true }, response: null });
-
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} equipamento`, "success");
         }
+
+      })
+      .catch(function (error) {
+
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
+
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
   }
 
-  /**
-   * Função para processar a alteração da página da tabela
-   * paginationParams é a dependência do useEffect
-   * 
-   */
   const handleTablePageChange = (event, value) => {
 
     setPaginationParams({
@@ -217,33 +163,24 @@ export const EquipmentPanel = React.memo(() => {
 
   };
 
-  /**
-   * Função para processar a pesquisa de equipamentos no input de pesquisa
-   * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
-   * 
-   */
   function handleSearchSubmit(event) {
     event.preventDefault();
-
-    let value_searched = window.document.getElementById("search_input").value;
 
     setPaginationParams({
       page: 1,
       limit: paginationParams.limit,
-      where: value_searched
+      where: searchField
     });
 
   }
 
-  /**
-   * Função para processar o recarregamento dos dados da tabela
-   * 
-   */
   function reloadTable() {
 
     setSelectedRecordIndex(null);
 
-    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+    setLoading(true);
+    setRecords([]);
+    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
     setPaginationParams({
       page: 1,
@@ -272,8 +209,8 @@ export const EquipmentPanel = React.memo(() => {
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
   return (
-
     <>
+      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -290,8 +227,8 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <UpdateEquipmentFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <UpdateEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -305,8 +242,8 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <DeleteEquipmentFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <DeleteEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -322,6 +259,7 @@ export const EquipmentPanel = React.memo(() => {
           <TextField
             fullWidth
             placeholder={"Pesquisar um equipamento"}
+            onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
@@ -339,13 +277,13 @@ export const EquipmentPanel = React.memo(() => {
         </Grid>
 
         {/* Geração da paginação */}
-        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+        {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>
               <TablePagination
                 labelRowsPerPage="Linhas por página: "
                 component="div"
-                count={panelData.response.total_records}
+                count={pagination.total_records}
                 page={paginationParams.page - 1}
                 onPageChange={handleTablePageChange}
                 rowsPerPage={paginationParams.limit}
@@ -380,8 +318,8 @@ export const EquipmentPanel = React.memo(() => {
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
-                  panelData.response.records.map((row, index) => (
+                {(!loading && records.length > 0) &&
+                  records.map((row, index) => (
                     <TableRow key={row.id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} /></TableCell>

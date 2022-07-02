@@ -13,6 +13,7 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -25,169 +26,137 @@ import { FormValidation } from '../../../../utils/FormValidation';
 
 export const CreateIncidentFormulary = React.memo(({ ...props }) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // States utilizados nas validações dos campos 
-  const [errorDetected, setErrorDetected] = React.useState({ date: false, type: false, description: false });
-  const [errorMessage, setErrorMessage] = React.useState({ date: "", type: "", description: "" });
+  const [controlledInput, setControlledInput] = React.useState({ type: "", description: "" });
 
-  // State da mensagem do alerta
+  const [fieldError, setFieldError] = React.useState({ date: false, type: false, description: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ date: "", type: "", description: "" });
+
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
-  // States do formulário
   const [open, setOpen] = React.useState(false);
 
-  // States dos inputs de data
   const [incidentDate, setIncidentDate] = React.useState(moment());
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
   }
 
   const handleClose = () => {
-    setErrorDetected({ date: false, type: false, description: false });
-    setErrorMessage({ date: "", type: "", description: "" });
+    setFieldError({ date: false, type: false, description: false });
+    setFieldErrorMessage({ date: "", type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
+    setLoading(false);
     setOpen(false);
   }
 
-  /*
-  * Rotina 1
-  */
-  function handleRegistrationSubmit(event) {
+  const handleRegistrationSubmit = (event) => {
     event.preventDefault();
 
-    const data = new FormData(event.currentTarget);
+    if (formularyDataValidation()) {
 
-    if (dataValidate(data)) {
-
-      setDisabledButton(true);
-
-      requestServerOperation(data);
+      setLoading(true);
+      requestServerOperation();
 
     }
 
   }
 
-  /*
-  * Rotina 2
-  */
-  function dataValidate(formData) {
+  const formularyDataValidation = () => {
 
     const incidentDateValidate = incidentDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const incidentTypeValidate = FormValidation(formData.get("type"), 2, null, null, null);
-    const incidentNoteValidate = FormValidation(formData.get("description"), 3, null, null, null);
+    const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
+    const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
 
-    setErrorDetected({ date: incidentDateValidate.error, type: incidentTypeValidate.error, description: incidentNoteValidate.error });
-    setErrorMessage({ date: incidentDateValidate.message, type: incidentTypeValidate.message, description: incidentNoteValidate.message });
+    setFieldError({ date: incidentDateValidate.error, type: incidentTypeValidate.error, description: incidentNoteValidate.error });
+    setFieldErrorMessage({ date: incidentDateValidate.message, type: incidentTypeValidate.message, description: incidentNoteValidate.message });
 
-    if (incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error) {
-
-      return false;
-
-    } else {
-
-      return true;
-
-    }
+    return !(incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error);
 
   }
 
-
-  /*
-  * Rotina 3
-  */
-  function requestServerOperation(data) {
+  const requestServerOperation = () => {
 
     AxiosApi.post(`/api/incidents-module`, {
       date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-      type: data.get("type"),
-      description: data.get("description"),
+      type: controlledInput.type,
+      description: controlledInput.description
     })
-      .then(function () {
+      .then(function (response) {
 
-        successServerResponseTreatment();
+        setLoading(false);
+        successServerResponseTreatment(response);
 
       })
       .catch(function (error) {
 
-        errorServerResponseTreatment(error.response.data);
+        setLoading(false);
+        errorServerResponseTreatment(error.response);
 
       });
 
   }
 
-  /*
-  * Rotina 4A
-  * Tratamento da resposta de uma requisição bem sucedida
-  */
-  function successServerResponseTreatment() {
+  function successServerResponseTreatment(response) {
 
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
-
       props.reload_table();
-      setDisabledButton(false);
+      setLoading(false);
       handleClose();
-
     }, 2000);
 
   }
 
-  /*
-  * Rotina 4B
-  * Tratamento da resposta de uma requisição falha
-  * Os erros relacionados aos parâmetros enviados são recuperados com o for in
-  */
-  function errorServerResponseTreatment(response_data) {
+  function errorServerResponseTreatment(response) {
 
-    setDisabledButton(false);
-
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-    let input_errors = {
+    let request_errors = {
       date: { error: false, message: null },
       type: { error: false, message: null },
       description: { error: false, message: null }
     }
 
     // Coleta dos objetos de erro existentes na response
-    for (let prop in response_data.errors) {
+    for (let prop in response.data.errors) {
 
-      input_errors[prop] = {
+      request_errors[prop] = {
         error: true,
-        message: response_data.errors[prop][0]
+        message: response.data.errors[prop][0]
       }
 
     }
 
-    setErrorDetected({
-      date: input_errors.date.error,
-      type: input_errors.type.error,
-      description: input_errors.description.error
+    setFieldError({
+      date: request_errors.date.error,
+      type: request_errors.type.error,
+      description: request_errors.description.error
     });
 
-    setErrorMessage({
-      date: input_errors.date.message,
-      type: input_errors.type.message,
-      description: input_errors.description.message
+    setFieldErrorMessage({
+      date: request_errors.date.message,
+      type: request_errors.type.message,
+      description: request_errors.description.message
     });
 
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
+  const handleInputChange = (event) => {
+    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+  }
+
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
@@ -214,8 +183,8 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
               <DateTimeInput
                 event={setIncidentDate}
                 label={"Data do incidente"}
-                helperText={errorMessage.date}
-                error={errorDetected.date}
+                helperText={fieldErrorMessage.date}
+                error={fieldError.date}
                 defaultValue={moment()}
                 operation={"create"}
                 read_only={false}
@@ -229,10 +198,10 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
               fullWidth
               variant="outlined"
               required
-              id="type"
               name="type"
-              helperText={errorMessage.type}
-              error={errorDetected.type}
+              onChange={handleInputChange}
+              helperText={fieldErrorMessage.type}
+              error={fieldError.type}
               sx={{ mb: 2 }}
             />
 
@@ -243,21 +212,23 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
               fullWidth
               variant="outlined"
               required
-              id="description"
               name="description"
-              helperText={errorMessage.description}
-              error={errorDetected.description}
+              onChange={handleInputChange}
+              helperText={fieldErrorMessage.description}
+              error={fieldError.description}
             />
 
           </DialogContent>
 
-          {displayAlert.display &&
+          {(!loading && displayAlert.display) &&
             <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
           }
 
+          {loading && <LinearProgress />}
+
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton} variant="contained">Criar incidente</Button>
+            <Button type="submit" disabled={loading} variant="contained">Criar incidente</Button>
           </DialogActions>
 
         </Box>

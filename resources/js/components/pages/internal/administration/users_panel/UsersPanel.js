@@ -7,6 +7,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
+import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -46,23 +47,22 @@ export function UsersPanel() {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // State do carregamento dos dados
-  // Enquanto for false, irá aparecer "carregando" no painel
-  const [panelData, setPanelData] = React.useState({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+  const [records, setRecords] = React.useState([]);
 
-  // State dos parâmetros do carregamento dos dados - define os parâmetros do SELECT do backend
+  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
+
   const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+
+  const [loading, setLoading] = React.useState(true);
 
   // State do registro selecionado
   // Quando um registro é selecionado, seu índice é salvo nesse state
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
-  // State do valor procurado
-  const [value_searched, setValueSearched] = React.useState("");
+  const [searchField, setSearchField] = React.useState("");
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -91,24 +91,25 @@ export function UsersPanel() {
     AxiosApi.get(`/api/admin-module-user?args=${select_query_params}`)
       .then(function (response) {
 
-        setPanelData({
-          status: {
-            loading: false,
-            success: true,
-            error: false
-          },
-          response: {
-            records: response.data.records,
-            total_records: response.data.total_records_founded,
-            records_per_page: response.data.records_per_page,
-            total_pages: response.data.total_pages
-          }
-        });
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+
+        if (response.data.total_records_founded > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
+        }
 
       })
       .catch(function (error) {
 
-        handleOpenSnackbar(error.response.data.message, "error");
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
+
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
@@ -122,19 +123,9 @@ export function UsersPanel() {
     AxiosApi.get(`/api/admin-module-user/show?args=${select_query_params}`)
       .then(function (response) {
 
-        setPanelData({
-          status: {
-            loading: false,
-            success: true,
-            error: false
-          },
-          response: {
-            records: response.data.records,
-            total_records: response.data.total_records_founded,
-            records_per_page: response.data.records_per_page,
-            total_pages: response.data.total_pages
-          }
-        });
+        setLoading(false);
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
         if (response.data.total_records_founded > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
@@ -144,17 +135,17 @@ export function UsersPanel() {
 
       }).catch(function (error) {
 
-        handleOpenSnackbar(error.response.data.message, "error");
+        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+        handleOpenSnackbar(error_message, "error");
+
+        setLoading(false);
+        setRecords([]);
+        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
 
   }
 
-  /**
-   * Função para processar a alteração da página da tabela
-   * paginationParams é a dependência do useEffect
-   * 
-   */
   const handleTablePageChange = (event, value) => {
 
     setPaginationParams({
@@ -175,31 +166,24 @@ export function UsersPanel() {
 
   };
 
-  /**
-   * Função para processar a pesquisa de usuários no input de pesquisa
-   * O state do parâmetro de paginação é alterado, o useEffect é chamado, e a requisição AXIOS ocorre com outra configuração
-   * 
-   */
   function handleSearchSubmit(event) {
     event.preventDefault();
 
     setPaginationParams({
       page: 1,
       limit: paginationParams.limit,
-      where: value_searched
+      where: searchField
     });
 
   }
 
-  /**
-   * Função para processar o recarregamento dos dados da tabela
-   * 
-   */
   function reloadTable() {
 
     setSelectedRecordIndex(null);
 
-    setPanelData({ status: { loading: true, success: false, error: false }, response: { records: "", total_records: null, records_per_page: null, total_pages: null } });
+    setLoading(true);
+    setRecords([]);
+    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
     setPaginationParams({
       page: 1,
@@ -229,8 +213,8 @@ export function UsersPanel() {
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
   return (
-
     <>
+      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -247,8 +231,8 @@ export function UsersPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <UpdateUserFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <UpdateUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -262,8 +246,8 @@ export function UsersPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(panelData.response.records != null && selectedRecordIndex != null) &&
-            <DeleteUserFormulary record={panelData.response.records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+            <DeleteUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
@@ -279,7 +263,7 @@ export function UsersPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
-            onChange={(e) => setValueSearched(e.currentTarget.value)}
+            onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
@@ -297,13 +281,13 @@ export function UsersPanel() {
         </Grid>
 
         {/* Geração da paginação */}
-        {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
+        {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>
               <TablePagination
                 labelRowsPerPage="Linhas por página: "
                 component="div"
-                count={panelData.response.total_records}
+                count={pagination.total_records}
                 page={paginationParams.page - 1}
                 onPageChange={handleTablePageChange}
                 rowsPerPage={paginationParams.limit}
@@ -334,8 +318,8 @@ export function UsersPanel() {
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
-                {(!panelData.status.loading && panelData.status.success && !panelData.status.error) &&
-                  panelData.response.records.map((row, index) => (
+                {(!loading && records.length > 0) &&
+                  records.map((row, index) => (
                     <TableRow key={row.id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>

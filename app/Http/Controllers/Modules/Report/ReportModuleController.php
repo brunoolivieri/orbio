@@ -8,26 +8,22 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 // Custom
-use App\Models\Reports\ReportModel;
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
-use App\Services\FormatDataTable;
+use App\Services\Modules\Report\ReportService;
 
 class ReportModuleController extends Controller
 {
 
-    private FormatDataTable $format_data_service;
-    private ReportModel $report_model;
+    private ReportService $service;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Services\FormatDataTable $service
-     * @param App\Models\Reports\ReportModel $report
+     * @param App\Services\Modules\Report\ReportService $service
      */
-    public function __construct(FormatDataTable $service, ReportModel $report){
-        $this->format_data_service = $service;
-        $this->report_model = $report;
+    public function __construct(ReportService $service){
+        $this->service = $service;
     }
 
     /**
@@ -44,7 +40,7 @@ class ReportModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->report_model->loadAReportsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadAReportsWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -57,8 +53,8 @@ class ReportModuleController extends Controller
     public function store(ReportStoreRequest $request) : \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-        
-        return $this->createReport($request);
+
+        return $this->service->createReport($request);
 
     }
 
@@ -77,7 +73,7 @@ class ReportModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->report_model->loadAReportsWithPagination($limit, $actual_page, $where_value); 
+        return $this->service->loadReportsWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -92,7 +88,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_write');
         
-        return $this->updateReport($request, $id);
+        return $this->service->updateReport($request, $id);
 
     }
 
@@ -106,7 +102,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_write');
         
-        return $this->deleteReport($request, $id);
+        return $this->service->deleteReport($request, $id);
  
     }
 }
