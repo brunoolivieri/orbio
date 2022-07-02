@@ -4,6 +4,7 @@ namespace App\Services\Modules\Equipment;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\Drones\DroneModel;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;

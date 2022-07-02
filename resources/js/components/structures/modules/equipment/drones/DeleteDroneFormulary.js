@@ -22,94 +22,72 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // State da mensagem do alerta
+    const [controlledInput] = React.useState({ id: props.record.id });
+
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
-    const [disabledButton, setDisabledButton] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
+
+    const htmlImage = React.useRef();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
     const handleClose = () => {
         setDisplayAlert({ display: false, type: "", message: "" });
-        setDisabledButton(false);
+        setLoading(false);
         setOpen(false);
     };
 
-    /*
-    * Rotina 1
-    */
-    function handleDroneDeleteSubmit(event) {
+    const handleDroneDeleteSubmit = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
-
-        setDisabledButton(true);
-
-        requestServerOperation(data);
+        setLoading(true);
+        requestServerOperation();
 
     }
 
+    const requestServerOperation = () => {
 
-    /*
-    * Rotina 2
-    */
-    function requestServerOperation(data) {
+        AxiosApi.delete(`/api/equipments-module-drone/${controlledInput.id}`)
+            .then(function (response) {
 
-        AxiosApi.delete(`/api/equipments-module-drone/${data.get("id")}`)
-            .then(function () {
-
-                successServerResponseTreatment();
+                setLoading(false);
+                successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
 
-                errorServerResponseTreatment(error.response.data);
+                setLoading(false);
+                errorServerResponseTreatment(error.response);
 
             });
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = (response) => {
 
-        setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
-
-            // Deselecionar registro na tabela
             props.record_setter(null);
-            // Outros
             props.reload_table();
-            setDisabledButton(false);
+            setLoading(false);
             handleClose();
-
         }, 2000);
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response) => {
 
-        setDisabledButton(false);
-
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
     }
@@ -234,6 +212,10 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                             }}
                         />
 
+                        <Box sx={{ mt: 2 }}>
+                            <img ref={htmlImage} style={{ borderRadius: 10, width: "190px" }} src={props.record.image_url}></img>
+                        </Box>
+
                     </DialogContent>
 
                     {displayAlert.display &&
@@ -242,7 +224,7 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+                        <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
                     </DialogActions>
 
                 </Box>
