@@ -25,7 +25,7 @@ class UpdateDocumentsRequest extends FormRequest
     {
 
         return [
-            "anac_license" => ["required", "unique:user_complementary_data,habANAC"],
+            "anac_license" => ["required", "unique:user_complementary_data,anac_license"],
             "cpf" => ["required", "unique:user_complementary_data,CPF"],
             "cnpj" => ["required", "unique:user_complementary_data,CNPJ"],
             "telephone" => ["required", "unique:user_complementary_data,telefone"],

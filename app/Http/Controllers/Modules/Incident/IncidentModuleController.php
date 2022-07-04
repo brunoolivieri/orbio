@@ -86,7 +86,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->updateIncident($request, $id);
+        return $this->service->updateIncident($request, $id);
   
     }
 

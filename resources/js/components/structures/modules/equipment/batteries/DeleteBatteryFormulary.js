@@ -22,36 +22,27 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
     const handleClose = () => {
         setDisplayAlert({ display: false, type: "", message: "" });
         setDisabledButton(false);
         setOpen(false);
     };
 
-    /*
-    * Rotina 1
-    */
-    function handleDroneRegistrationSubmit(event) {
+    const handleDroneRegistrationSubmit = (event) => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -62,10 +53,7 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3
-    */
-    function requestServerOperation(data) {
+    const requestServerOperation = (data) => {
 
         AxiosApi.delete(`/api/equipments-module-battery/${data.get("id")}`)
             .then(function () {
@@ -81,10 +69,7 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = () => {
 
         setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -98,10 +83,7 @@ export const DeleteBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response_data) => {
 
         setDisabledButton(false);
 

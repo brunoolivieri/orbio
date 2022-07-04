@@ -35,23 +35,17 @@ export function ForgotPassword() {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Form fields states
     const [controlledInput, setControlledInput] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" });
 
-    // Fields error states
     const [fieldError, setFieldError] = React.useState({ email: false, code: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
     const [fieldErrorMessage, setFiedlErrorMessage] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-    // Code request status
     const [codeSent, setCodeSent] = React.useState(false);
 
-    // Timer for send another code
     const [codeTimer, setTimer] = React.useState(0);
 
-    // Display modal with the current operation status
     const [operation, setOperation] = React.useState({ current: "", title: "", message: "", image: "" });
 
-    // Classes from make styles
     const classes = useStyles();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -165,7 +159,6 @@ export function ForgotPassword() {
     function sendCodeErrorServerResponseTreatment(response) {
 
         const error_message = response.data.message ? response.data.message : "Houve um erro no envio do email. Tente novamente.";
-
         setOperation({ current: "concluded", title: "Erro no envio do código!", message: error_message, image: ErrorImage });
 
         let request_errors = {

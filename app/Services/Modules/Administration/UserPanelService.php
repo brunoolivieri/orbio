@@ -79,17 +79,17 @@ class UserPanelService{
 
         DB::transaction(function () use ($request) {
 
-            UserModel::create([
-                "profile_id" => intval($request->profile_id),
-                "name" => $request->name,
-                "email" => $request->email,
-                "password" => Hash::make($request->password)
-            ]);
+            $this->model->profile_id = intval($request->profile_id);
+            $this->model->name = $request->name;
+            $this->model->email = $request->email;
+            $this->model->password = Hash::make($request->password);
+
+            $this->model->save();
 
             $data_for_email = [
-                "name" => $this->user_model->name,
-                "email" => $this->user_model->email,
-                "profile" => $this->user_model->profile->name,
+                "name" => $this->model->name,
+                "email" => $this->model->email,
+                "profile" => $this->model->profile->name,
                 "password" => $request->password
             ];
 

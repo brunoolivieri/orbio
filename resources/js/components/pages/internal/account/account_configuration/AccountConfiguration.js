@@ -37,17 +37,13 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States referentes ao formulário
     const [saveNecessary, setSaveNecessary] = React.useState(false);
 
-    // States de validação dos campos
-    const [errorDetected, setErrorDetected] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false }); 
+    const [errorMessage, setErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" }); 
 
-    // State do modal informativo acerca da desativação da conta
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -127,7 +123,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        let request_errors = {
             actual_password: { error: false, message: null },
             new_password: { error: false, message: null },
             new_password_confirmation: { error: false, message: null }
@@ -136,7 +132,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         // Coleta dos objetos de erro existentes na response
         for (let prop in response_data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
                 message: response_data.errors[prop][0]
             }
@@ -144,15 +140,15 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         }
 
         setErrorDetected({
-            actual_password: input_errors.actual_password.error,
-            new_password: input_errors.new_password.error,
-            new_password_confirmation: input_errors.new_password_confirmation.error
+            actual_password: request_errors.actual_password.error,
+            new_password: request_errors.new_password.error,
+            new_password_confirmation: request_errors.new_password_confirmation.error
         });
 
         setErrorMessage({
-            actual_password: input_errors.actual_password.message,
-            new_password: input_errors.new_password.message,
-            new_password_confirmation: input_errors.new_password_confirmation.message
+            actual_password: request_errors.actual_password.message,
+            new_password: request_errors.new_password.message,
+            new_password_confirmation: request_errors.new_password_confirmation.message
         });
 
     }

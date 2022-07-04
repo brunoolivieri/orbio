@@ -22,36 +22,27 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
     const handleClose = () => {
         setDisplayAlert({ display: false, type: "", message: "" });
         setDisabledButton(false);
         setOpen(false);
     };
 
-    /*
-    * Rotina 1
-    */
-    function handleEquipmentDeleteSubmit(event) {
+    const handleEquipmentDeleteSubmit = (event) => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -62,15 +53,12 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3
-    */
-    function requestServerOperation(data) {
+    const requestServerOperation = (data) => {
 
         AxiosApi.delete(`/api/equipments-module-equipment/${data.get("id")}}`)
-            .then(function () {
+            .then(function (response) {
 
-                successServerResponseTreatment();
+                successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
@@ -81,12 +69,9 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = (response) => {
 
-        setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
 
@@ -98,14 +83,11 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response) => {
 
         setDisabledButton(false);
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
     }

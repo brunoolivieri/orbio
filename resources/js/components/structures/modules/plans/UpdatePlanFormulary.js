@@ -28,7 +28,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   const { AuthData } = useAuthentication();
 
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, report_id: props.record.report_id, incident_id: props.record.incident_id, description: props.record.description });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, report_id: props.record.report_id, incident_id: props.record.incident_id, status: props.record.status, description: props.record.description });
 
   const [fieldError, setFieldError] = React.useState({ description: false, status: false, report: false, incident: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ description: "", status: "", report: "", incident: "" });
@@ -68,7 +68,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   const formularyDataValidate = () => {
 
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
-    const statusValidate = (Number(controlledInput.status) == 0 || Number(controlledInput.status) == 1) ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
+    const statusValidate = controlledInput.status != null ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
     const reportValidate = Number(controlledInput.report_id) === 0 ? { error: true, message: "Selecione um relatório" } : { error: false, message: "" };
     const incidentValidate = Number(controlledInput.incident_id) === 0 ? { error: true, message: "Selecione um incidente" } : { error: false, message: "" };
 
@@ -169,7 +169,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
       {(props.record != null && open) &&
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>EDIÇÃO | PLANO DE VÔO (ID: {props.record.id})</DialogTitle>
+          <DialogTitle>EDIÇÃO | PLANO DE VOO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
             <DialogContent>
@@ -229,10 +229,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
               <Box>
                 <RadioInput
-                  title={"Status"}
-                  name={"status"}
-                  default={props.record.status}
-                  options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]}
+                  default={props.record.status == 1 ? "1" : "0"}
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
                 />

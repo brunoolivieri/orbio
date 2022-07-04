@@ -4,6 +4,7 @@ namespace App\Services\Modules\Equipment;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\Equipments\EquipmentModel;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
@@ -31,7 +32,7 @@ class EquipmentService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadEquipmentsWithPagination($limit, $current_page, $where_value){
+    public function loadEquipmentsWithPagination(int $limit, int $current_page, int|string $where_value){
 
         $data = DB::table('equipments')
         ->where("equipments.deleted_at", null)
@@ -74,7 +75,7 @@ class EquipmentService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createEquipment($request) {
+    public function createEquipment(Request $request) {
 
         DB::transaction(function () use ($request) {
 
@@ -103,7 +104,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function updateEquipment($request, $equipment_id) {
+    public function updateEquipment(Request $request, int $equipment_id) {
 
         DB::transaction(function () use ($request, $equipment_id) {
 
@@ -141,7 +142,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteDrone($equipment_id) {
+    public function deleteDrone(int $equipment_id) {
         
         DB::transaction(function() use ($equipment_id){
 

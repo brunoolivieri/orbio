@@ -30,6 +30,6 @@ class OrderDeletedEventListener
      */
     public function handle($event)
     {
-        Mail::to()->cc([])->queue(new OrderDeletedMail());
+        Mail::to()->cc([])->send(new OrderDeletedMail());
     }
 }

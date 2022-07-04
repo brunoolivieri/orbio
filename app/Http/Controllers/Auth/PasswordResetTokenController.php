@@ -28,7 +28,7 @@ class PasswordResetTokenController extends Controller
      * @param App\Http\Requests\Auth\ForgotPassword\PasswordResetTokenRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function index(PasswordResetTokenRequest $request){
+    public function index(PasswordResetTokenRequest $request) : \Illuminate\Http\Response {
 
         return $this->service->getToken($request);
 

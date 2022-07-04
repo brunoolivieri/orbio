@@ -231,7 +231,7 @@ export function UsersPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <UpdateUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -246,7 +246,7 @@ export function UsersPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <DeleteUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>

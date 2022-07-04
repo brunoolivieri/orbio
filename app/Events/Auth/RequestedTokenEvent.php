@@ -14,10 +14,10 @@ class RequestedTokenEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $name;
-    public $email;
-    public $token;
-    public $datetime;
+    public String $name;
+    public String $email;
+    public String $token;
+    public String $datetime;
 
     /**
      * Create a new event instance.

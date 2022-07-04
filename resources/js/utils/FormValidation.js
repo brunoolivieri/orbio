@@ -1,4 +1,4 @@
-export function FormValidation(value, minLength = null, maxLength = null, regex = null, field_name = null) {
+export const FormValidation = (value, minLength = null, maxLength = null, regex = null, field_name = null) => {
 
     if (nullCheck(value)) {
 

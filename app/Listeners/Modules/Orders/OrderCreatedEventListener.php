@@ -32,8 +32,8 @@ class OrderCreatedEventListener
      */
     public function handle(OrderCreatedEvent $event)
     {
-        Mail::to($event->creator["email"])->queue(new NewOrderCreatorMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
-        Mail::to($event->pilot["email"])->queue(new NewOrderPilotMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
-        Mail::to($event->client["email"])->queue(new NewOrderClientMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
+        Mail::to($event->creator["email"])->send(new NewOrderCreatorMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
+        Mail::to($event->pilot["email"])->send(new NewOrderPilotMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
+        Mail::to($event->client["email"])->send(new NewOrderClientMail($event->initial_date, $event->final_date, $event->creator, $event->pilot, $event->client, $event->observation));
     }
 }

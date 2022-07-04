@@ -227,7 +227,7 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <UpdateEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -242,7 +242,7 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <DeleteEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>

@@ -74,7 +74,7 @@ class MainInternalController extends Controller
                 "profile" => Auth::user()->profile->name,
                 "user_complementary_data" => array(
                     "complementary_data_id" => Auth::user()->complementary_data->id,
-                    "habANAC" => Auth::user()->complementary_data->habANAC,
+                    "anac_license" => Auth::user()->complementary_data->anac_license,
                     "CPF" => Auth::user()->complementary_data->CPF,
                     "CNPJ" => Auth::user()->complementary_data->CNPJ,
                     "country_code" => Auth::user()->complementary_data->country_code,

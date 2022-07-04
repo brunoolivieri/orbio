@@ -25,19 +25,15 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
     const [saveNecessary, setSaveNecessary] = React.useState({ documents: false, address: false });
 
-    // States de validação dos campos
     const [errorDetected, setErrorDetected] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
-    const [errorMessage, setErrorMessage] = React.useState({ anac_license: null, cpf: null, cnpj: null, telephone: null, cellphone: null, company_name: null, trading_name: null, address: null, number: null, cep: null, city: null, state: null, complement: null });
+    const [errorMessage, setErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
 
-    // State key Down
     const [keyPressed, setKeyPressed] = React.useState();
 
-    // State do input de estado e de cidade
     const [inputState, setInputState] = React.useState(props.state);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -113,9 +109,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
         }
     }
 
-    /*
-    * Rotina 1
-    */
     function handleAddressSubmitForm(event) {
         event.preventDefault();
 
@@ -129,9 +122,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 1
-    */
     function handleDocumentsSubmitForm(event) {
         event.preventDefault();
 
@@ -145,9 +135,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 2A
-    */
     function formDocumentsValidate(data) {
 
         const habAnacPattern = /^\d{6}$/;
@@ -199,21 +186,10 @@ export const ComplementaryDataPanel = React.memo((props) => {
             }
         );
 
-        if (habanacValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || rsocialValidate.error || nfantasiaValidate.error) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(habanacValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || rsocialValidate.error || nfantasiaValidate.error);
 
     }
 
-    /*
-    * Rotina 2B
-    */
     function formAddressValidate(data) {
 
         const adressNumberPattern = /^\d+$/;
@@ -273,9 +249,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
         }
     }
 
-    /*
-    * Rotina 3A
-    */
     function formDocumentsRequestServerOperation(data) {
 
         AxiosApi.patch(`/api/update-documents-data/${AuthData.data.id}`, {
@@ -302,9 +275,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 3B
-    */
     function formAddressRequestServerOperation(data) {
 
         AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
@@ -328,9 +298,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 4A
-    */
     function formDocumentsSuccessRequestServerOperation() {
 
         handleOpenSnackbar("Documentos atualizados com sucesso!", "success");
@@ -340,9 +307,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 4B
-    */
     function formAddressSuccessRequestServerOperation() {
 
         handleOpenSnackbar("Endereço atualizado com sucesso!", "success");
@@ -351,16 +315,13 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 4AA
-    */
     function formDocumentsErrorRequestServerOperation(response_data) {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        let request_errors = {
             anac_license: { error: false, message: null },
             cpf: { error: false, message: null },
             cnpj: { error: false, message: null },
@@ -373,7 +334,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
         // Coleta dos objetos de erro existentes na response
         for (let prop in response_data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
                 message: response_data.errors[prop][0]
             }
@@ -381,13 +342,13 @@ export const ComplementaryDataPanel = React.memo((props) => {
         }
 
         setErrorDetected({
-            anac_license: input_errors.anac_license.error,
-            cpf: input_errors.cpf.error,
-            cnpj: input_errors.cnpj.error,
-            telephone: input_errors.telephone.error,
-            cellphone: input_errors.cellphone.error,
-            company_name: input_errors.company_name.error,
-            trading_name: input_errors.trading_name.error,
+            anac_license: request_errors.anac_license.error,
+            cpf: request_errors.cpf.error,
+            cnpj: request_errors.cnpj.error,
+            telephone: request_errors.telephone.error,
+            cellphone: request_errors.cellphone.error,
+            company_name: request_errors.company_name.error,
+            trading_name: request_errors.trading_name.error,
             address: "",
             number: "",
             cep: "",
@@ -397,13 +358,13 @@ export const ComplementaryDataPanel = React.memo((props) => {
         });
 
         setErrorMessage({
-            anac_license: input_errors.anac_license.message,
-            cpf: input_errors.cpf.message,
-            cnpj: input_errors.cnpj.message,
-            telephone: input_errors.telephone.message,
-            cellphone: input_errors.cellphone.message,
-            company_name: input_errors.company_name.message,
-            trading_name: input_errors.trading_name.message,
+            anac_license: request_errors.anac_license.message,
+            cpf: request_errors.cpf.message,
+            cnpj: request_errors.cnpj.message,
+            telephone: request_errors.telephone.message,
+            cellphone: request_errors.cellphone.message,
+            company_name: request_errors.company_name.message,
+            trading_name: request_errors.trading_name.message,
             address: "",
             number: "",
             cep: "",
@@ -415,9 +376,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 4BB
-    */
     function formAddressErrorRequestServerOperation(response_data) {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";

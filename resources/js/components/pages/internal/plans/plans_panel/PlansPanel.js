@@ -271,7 +271,7 @@ export function PlansPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <UpdatePlanFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -286,7 +286,7 @@ export function PlansPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <DeletePlanFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -360,7 +360,7 @@ export function PlansPanel() {
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
                   records.map((row, index) => (
-                    <TableRow key={row.plan_id} >
+                    <TableRow key={row.id} >
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.coordinates.split(".")[0]}</TableCell>
                       <TableCell align="center">

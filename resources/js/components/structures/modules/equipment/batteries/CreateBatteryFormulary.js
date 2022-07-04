@@ -32,39 +32,29 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
     const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: false });
 
-    // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
 
-    // States dos inputs de data
     const [chargeDate, setChargeDate] = React.useState(moment());
 
-    // State of uploaded image
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
-    // Referencia ao componente de imagem
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    // Função para abrir o modal
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    // Função para fechar o modal
     const handleClose = () => {
         setErrorDetected({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
         setErrorMessage({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" });
@@ -73,10 +63,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
         setOpen(false);
     };
 
-    /*
-    * Rotina 1
-    */
-    function handleBatteryRegistrationSubmit(event) {
+    const handleBatteryRegistrationSubmit = (event) => {
         event.preventDefault();
 
         const data = new FormData(event.currentTarget);
@@ -91,7 +78,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    function handleUploadedImage(event) {
+    const handleUploadedImage = (event) => {
 
         const uploaded_file = event.currentTarget.files[0];
 
@@ -104,10 +91,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 2
-    */
-    function formValidate(formData) {
+    const formValidate = (formData) => {
 
         let nameValidation = FormValidation(formData.get("name"), 3, null, null, null);
         let manufacturerValidation = FormValidation(formData.get("manufacturer"), 3, null, null, null);
@@ -147,11 +131,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-
-    /*
-    * Rotina 3
-    */
-    function requestServerOperation(data) {
+    const requestServerOperation = (data) => {
         
         data.append("image", uploadedImage);
         data.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
@@ -170,10 +150,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = () => {
 
         setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -187,10 +164,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response_data) => {
 
         setDisabledButton(false);
 

@@ -101,6 +101,8 @@ export const OrdersPanel = React.memo(() => {
           handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} ordens de serviço`, "success");
         }
 
+        console.log(records)
+
       })
       .catch(function (error) {
 
@@ -155,7 +157,7 @@ export const OrdersPanel = React.memo(() => {
       where: paginationParams.where
     });
 
-  }
+  };
 
   const handleChangeRowsPerPage = (event) => {
 
@@ -165,9 +167,9 @@ export const OrdersPanel = React.memo(() => {
       where: paginationParams.where
     });
 
-  }
+  };
 
-  function handleSearchSubmit(event) {
+  const handleSearchSubmit = (event) => {
     event.preventDefault();
 
     setPaginationParams({
@@ -178,11 +180,11 @@ export const OrdersPanel = React.memo(() => {
 
   }
 
-  function reloadTable() {
+  const reloadTable = () => {
 
     setSelectedRecordIndex(null);
 
-    setLoading(true);
+    setLoading(false);
     setRecords([]);
     setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
@@ -194,7 +196,7 @@ export const OrdersPanel = React.memo(() => {
 
   }
 
-  function handleClickRadio(event) {
+  const handleClickRadio = (event) => {
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
@@ -204,7 +206,7 @@ export const OrdersPanel = React.memo(() => {
 
   }
 
-  function handleOpenSnackbar(text, variant) {
+  const handleOpenSnackbar = (text, variant) => {
 
     enqueueSnackbar(text, { variant });
 
@@ -230,7 +232,7 @@ export const OrdersPanel = React.memo(() => {
             </Tooltip>
           }
 
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <UpdateOrderFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -244,7 +246,7 @@ export const OrdersPanel = React.memo(() => {
             </Tooltip>
           }
 
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <DeleteOrderFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>

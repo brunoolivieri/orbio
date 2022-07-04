@@ -36,7 +36,7 @@ class LoginService {
         if($user = Auth::attempt($request->only(["email", "password"]))){
 
             // User account is active
-            if(Auth::user()->status && !empty(Auth::user()->last_access)){
+            if(Auth::user()->status && !is_null(Auth::user()->last_access)){
 
                 $data_for_email = [
                     "id" => Auth::user()->id, 
@@ -50,7 +50,7 @@ class LoginService {
                 return response(["message" => "Acesso autorizado!"], 200);
             
             // User account is inactive
-            }else if(!Auth::user()->status && empty(Auth::user()->last_access)){
+            }else if(!Auth::user()->status && is_null(Auth::user()->last_access)){
 
                 $this->activateAccount();
 
@@ -63,10 +63,10 @@ class LoginService {
 
                 event(new LoginEvent($data_for_email));
 
-                return response(["message" => "Acesso autorizado!"], 200);
+                return response(["message" => "Conta foi ativada e o acesso autorizado!"], 200);
 
             // User account is disabled or deleted
-            }else if((!Auth::user()->status && !empty(Auth::user()->last_access) || (!empty(Auth::user()->deleted_at)))){
+            }else if((!Auth::user()->status && !is_null(Auth::user()->last_access) || !is_null(Auth::user()->deleted_at))){
 
                 return response(["message" => "Conta desabilitada!"], 500);
 
@@ -87,12 +87,10 @@ class LoginService {
      */
     private function activateAccount() { 
 
-        try{
-
-            DB::beginTransaction();
-
+        DB::transaction(function () {
+            
             UserModel::where("id", Auth::user()->id)->update(["status" => 1]);
-    
+
             $new_address = UserAddressModel::create([
                 "address" => null,
                 "number" => null,
@@ -114,14 +112,8 @@ class LoginService {
             ]);
     
             UserModel::where('id', Auth::user()->id)->update(["complementary_data_id" => $new_comp_data->id]);
-    
-            DB::commit();
 
-        }catch(\Exception $e){
-
-            DB::rollBack();
-
-        }
+        });
 
     }
 

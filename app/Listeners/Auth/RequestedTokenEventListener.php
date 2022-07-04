@@ -28,6 +28,6 @@ class RequestedTokenEventListener
      */
     public function handle($event)
     {
-        Mail::to($event->email)->queue(new TokenForChangePasswordMail($event->name, $event->token, $event->datetime));
+        Mail::to($event->email)->send(new TokenForChangePasswordMail($event->name, $event->token, $event->datetime));
     }
 }

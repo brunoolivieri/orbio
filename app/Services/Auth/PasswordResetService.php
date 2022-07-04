@@ -24,17 +24,18 @@ class PasswordResetService{
      */
     public function getToken($request) {
 
-        DB::beginTransaction();
-
         $user = UserModel::where("email", $request->email)->firstOrFail();
 
-        // If doesn't has soft deleted
-        if(!$user->trashed()){
+        if($user->trashed()){
+            return response(["message" => "A conta foi desabilitada!"], 500);
+        }
 
+        DB::transaction(function () use ($request, $user) {
+            
             $token = Str::random(10);
 
-            PasswordResetModel::where("user_id", $user->id)->delete();
-            PasswordResetModel::create(["user_id" => $user->id, "token" => $token]);
+            $user->password_resets()->delete();
+            PasswordResetModel::insert(["user_id" => $user->id, "token" => $token]);
 
             $data_for_email = [
                 "token" => $token,
@@ -44,17 +45,9 @@ class PasswordResetService{
 
             event(new RequestedTokenEvent($data_for_email));
 
-            DB::Commit();
+        });
 
-            return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
-
-        }else{
-
-            DB::rollBack();
-
-            return response(["message" => "Alteração da senha falhou!"], 500);
-
-        }
+        return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
         
     }
 

@@ -92,7 +92,7 @@ export function ProfilesPanel() {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
@@ -125,7 +125,7 @@ export function ProfilesPanel() {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
@@ -231,7 +231,7 @@ export function ProfilesPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <UpdateProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -246,7 +246,7 @@ export function ProfilesPanel() {
           }
 
           {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && records.length > 0 && selectedRecordIndex != null) &&
+          {(!loading && selectedRecordIndex != null) &&
             <DeleteProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
@@ -279,6 +279,7 @@ export function ProfilesPanel() {
           />
         </Grid>
 
+        {/* Geração da paginação */}
         {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>

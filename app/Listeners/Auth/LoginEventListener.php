@@ -31,6 +31,6 @@ class LoginEventListener
     public function handle($event)
     {
         UserModel::where("id", $event->user_id)->update(["last_access" => date("Y-m-d H:i:s")]);
-        Mail::to($event->email)->queue(new LogInNotification($event->name, $event->profile, $event->datetime));
+        Mail::to($event->email)->send(new LogInNotification($event->name, $event->profile, $event->datetime));
     }
 }

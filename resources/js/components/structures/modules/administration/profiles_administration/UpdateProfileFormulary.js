@@ -31,7 +31,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
     const { AuthData } = useAuthentication();
 
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.profile_id, name: props.record.name });
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.profile_id, name: props.record.profile_name });
 
     const [fieldError, setFieldError] = React.useState({ name: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
@@ -57,10 +57,8 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
         "6": { read: props.record.modules["6"].profile_powers.read === 1 ? true : false, write: props.record.modules["6"].profile_powers.write === 1 ? true : false }
     });
 
-    // State loading
     const [loading, setLoading] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -77,7 +75,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
         setOpen(false);
     }
 
-    function handleSubmitOperation(event) {
+    const handleSubmit = (event) => {
         event.preventDefault();
 
         if (formularyDataValidate()) {
@@ -91,12 +89,12 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
 
     const formularyDataValidate = () => {
 
-        const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
+        const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
 
         setFieldError({ name: nameValidate.error });
         setFieldErrorMessage({ name: nameValidate.message });
 
-        return !(nameValidate.error === true);
+        return !nameValidate.error;
 
     }
 
@@ -177,7 +175,7 @@ export const UpdateProfileFormulary = React.memo(({ ...props }) => {
                 <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
                     <DialogTitle>EDIÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
 
-                    <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+                    <Box component="form" noValidate onSubmit={handleSubmit} >
 
                         <DialogContent>
 

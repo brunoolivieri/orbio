@@ -16,7 +16,7 @@ class CreateUserComplementaryData extends Migration
         Schema::create('user_complementary_data', function (Blueprint $table) {
             $table->id();
             $table->foreignId('address_id')->nullable(true)->constrained('address')->onDelete('cascade');
-            $table->string("habANAC")->nullable(true);
+            $table->string("anac_license")->nullable(true);
             $table->string("CPF")->nullable(true);
             $table->string("CNPJ")->nullable(true);
             $table->string("telephone")->nullable(true);

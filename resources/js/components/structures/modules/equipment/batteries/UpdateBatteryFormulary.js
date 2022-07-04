@@ -32,10 +32,8 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // Controlled inputs
     const [formData, setFormData] = React.useState({
         id: props.record.id,
         image: false,
@@ -46,23 +44,17 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
         last_charge: props.record.last_charge
     });
     
-    // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
     const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: false });
 
-    // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
 
-    // States dos inputs de data
     const [chargeDate, setChargeDate] = React.useState(moment());
 
-    // Referencia ao componente de imagem
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -83,10 +75,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
         setFormData({ ...formData, [event.target.name]: event.currentTarget.value })
     }
 
-    /*
-    * Rotina 1
-    */
-    function handleBatteryUpdateSubmit(event) {
+    const handleBatteryUpdateSubmit = (event) => {
         event.preventDefault();
 
         if (formValidate()) {
@@ -99,7 +88,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    function handleUploadedImage(event) {
+    const handleUploadedImage = (event) => {
 
         const uploaded_file = event.currentTarget.files[0];
 
@@ -113,10 +102,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 2
-    */
-    function formValidate() {
+    const formValidate = () => {
 
         let nameValidation = FormValidation(formData.name, 3, null, null, null);
         let manufacturerValidation = FormValidation(formData.manufacturer, 3, null, null, null);
@@ -155,11 +141,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-
-    /*
-    * Rotina 3
-    */
-    function requestServerOperation() {
+    const requestServerOperation = () => {
 
         setFormData({ ...formData, ["last_charge"]: moment(chargeDate).format('YYYY-MM-DD hh:mm:ss') });
 
@@ -177,10 +159,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = () => {
 
         setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -194,10 +173,7 @@ export const UpdateBatteryFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function errorServerResponseTreatment(response_data) {
+   const errorServerResponseTreatment = (response_data) => {
 
         setDisabledButton(false);
 

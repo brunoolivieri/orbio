@@ -315,10 +315,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
             <Box>
               <RadioInput
-                title={"Status"}
-                name={"status"}
                 default={"1"}
-                options={[{ label: "Ativo", value: "1" }, { label: "Inativo", value: "0" }]}
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
               />

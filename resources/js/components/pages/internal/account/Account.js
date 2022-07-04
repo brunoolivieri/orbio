@@ -7,6 +7,7 @@ import { AccountConfiguration } from './account_configuration/AccountConfigurati
 import AxiosApi from "../../../../services/AxiosApi";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
 import { Switcher } from "../../../structures/switcher/Switcher";
+import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
 // Material UI
 import Paper from '@mui/material/Paper';
 import { Grid } from "@mui/material";
@@ -17,19 +18,16 @@ export function Account({ ...props }) {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // State para alternância do painel de administrador
   const [actualPanel, setActualPanel] = React.useState("basic");
 
-  // State para recarregar o formulário
   const [reloadForm, setReloadForm] = React.useState(false);
 
-  // State para os valores dos campos editáveis 
-  const [accountData, setAccountData] = React.useState({ status: false, error: false, data: { basic: [], complementary: [], sessions: [] } });
+  const [accountData, setAccountData] = React.useState({ basic: [], complementary: [], sessions: [] });
 
-  // Snackbar
+  const [loading, setLoading] = React.useState(true);
+
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -40,30 +38,25 @@ export function Account({ ...props }) {
 
   React.useEffect(() => {
 
-    // Get the user atualized data
-    AxiosApi.get(`/api/user-account-data?user_id=${AuthData.data.id}`, {
-      access: AuthData.data.access
-    })
+    AxiosApi.get(`/api/user-account-data?user_id=${AuthData.data.id}`)
       .then(function (response) {
 
+        setLoading(false);
+
         setAccountData({
-          status: true,
-          error: false,
-          data: {
-            basic: {
-              ...response.data["0"].basic,
-              profile: AuthData.data.profile,
-              last_access: AuthData.data.last_access,
-              last_update: AuthData.data.last_update
-            },
-            complementary: {
-              complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
-              address_id: AuthData.data.user_address_data.user_address_id,
-              ...response.data["0"].complementary,
-              ...response.data["0"].address,
-            },
-            sessions: response.data["0"].active_sessions
-          }
+          basic: {
+            ...response.data["0"].basic,
+            profile: AuthData.data.profile,
+            last_access: AuthData.data.last_access,
+            last_update: AuthData.data.last_update
+          },
+          complementary: {
+            complementary_data_id: AuthData.data.user_complementary_data.complementary_data_id,
+            address_id: AuthData.data.user_address_data.user_address_id,
+            ...response.data["0"].complementary,
+            ...response.data["0"].address,
+          },
+          sessions: response.data["0"].active_sessions
         });
 
       })
@@ -88,18 +81,17 @@ export function Account({ ...props }) {
       <Paper sx={{ maxWidth: '95%', margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
-            {/* Cabeçalho do painel principal - botões para alternância dos paineis */}
             <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }]} />
           </Grid>
         </Grid>
 
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {accountData.status ? (actualPanel === "basic" ? <BasicDataPanel {...accountData.data.basic} reload_state={reloadForm} reload_setter={setReloadForm} />
-            : (actualPanel === "complementary" ? <ComplementaryDataPanel {...accountData.data.complementary} reload_state={reloadForm} reload_setter={setReloadForm} />
-              : <AccountConfiguration data={accountData.data.sessions} reload_state={reloadForm} reload_setter={setReloadForm} />))
-            : "CARREGANDO"
-          }
+          {!(loading) && <BackdropLoading />}
+
+          {(!loading && actualPanel === "basic") && <BasicDataPanel {...accountData.basic} reload_state={reloadForm} reload_setter={setReloadForm} />}
+          {(!loading && actualPanel === "complementary") && <ComplementaryDataPanel {...accountData.complementary} reload_state={reloadForm} reload_setter={setReloadForm} />}
+          {(!loading && actualPanel === "account_configuration") && <AccountConfiguration data={accountData.sessions} reload_state={reloadForm} reload_setter={setReloadForm} />}
 
         </Box>
 

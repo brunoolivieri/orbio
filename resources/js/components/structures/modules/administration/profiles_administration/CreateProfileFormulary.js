@@ -78,7 +78,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
     setFieldError({ name: nameValidate.error });
     setFieldErrorMessage({ name: nameValidate.message });
 
-    return !nameValidate.error;
+    return !(nameValidate.error);
 
   }
 

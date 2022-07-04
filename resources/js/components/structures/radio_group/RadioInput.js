@@ -8,7 +8,7 @@ import FormLabel from '@mui/material/FormLabel';
 export const RadioInput = React.memo(({ ...props }) => {
 
     const handleChange = (event) => {
-        props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.currentTarget.value });
+        props.setControlledInput({ ...props.controlledInput, ["status"]: event.currentTarget.value });
     }
 
     return (
@@ -16,13 +16,12 @@ export const RadioInput = React.memo(({ ...props }) => {
             <FormLabel>{props.title}</FormLabel>
             <RadioGroup
                 row
-                name={props.name}
+                name="status"
                 defaultValue={props.default}
                 onChange={handleChange}
             >
-                {props.options.map((item, index) =>
-                    <FormControlLabel value={item.value} control={<Radio />} label={item.label} key={index} />
-                )}
+                <FormControlLabel value={"0"} control={<Radio />} label={"Ativo"} key={index} />
+                <FormControlLabel value={"1"} control={<Radio />} label={"Inativo"} key={index} />
             </RadioGroup>
         </FormControl>
     );

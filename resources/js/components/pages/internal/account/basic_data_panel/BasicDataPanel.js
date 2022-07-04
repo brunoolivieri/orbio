@@ -23,15 +23,12 @@ export const BasicDataPanel = React.memo((props) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // States referentes ao formulário
     const [saveNecessary, setSaveNecessary] = React.useState(false);
 
-    // States de validação dos campos
-    const [errorDetected, setErrorDetected] = React.useState({ name: false, email: false }); // State para o efeito de erro - true ou false
-    const [errorMessage, setErrorMessage] = React.useState({ name: "", email: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+    const [errorDetected, setErrorDetected] = React.useState({ name: false, email: false }); 
+    const [errorMessage, setErrorMessage] = React.useState({ name: "", email: "" }); 
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -49,9 +46,6 @@ export const BasicDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 1
-    */
     function handleSubmitBasicDataForm(event) {
         event.preventDefault();
 
@@ -65,9 +59,6 @@ export const BasicDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 2 
-    */
     function formDataValidate(formData) {
 
         // Regex para validação
@@ -79,21 +70,10 @@ export const BasicDataPanel = React.memo((props) => {
         setErrorDetected({ name: nameValidate.error, email: emailValidate.error });
         setErrorMessage({ name: nameValidate.message, email: emailValidate.message });
 
-        if (nameValidate.error || emailValidate.error) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(nameValidate.error || emailValidate.error);
 
     }
 
-    /*
-    * Rotina 3
-    */
     function requestServerOperation(data) {
 
         let request_data = {};
@@ -117,9 +97,6 @@ export const BasicDataPanel = React.memo((props) => {
 
     }
 
-    /*
-    * Rotina 4A 
-    */
     function serverSuccessResponseTreatment() {
 
         handleOpenSnackbar("Dados atualizados com sucesso!", "success");
@@ -128,16 +105,13 @@ export const BasicDataPanel = React.memo((props) => {
 
     }
 
-    /*
-   * Rotina 4B
-   */
     function serverErrorResponseTreatment(response_data) {
 
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        let request_errors = {
             name: { error: false, message: null },
             email: { error: false, message: null }
         }
@@ -145,7 +119,7 @@ export const BasicDataPanel = React.memo((props) => {
         // Coleta dos objetos de erro existentes na response
         for (let prop in response_data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
                 message: response_data.errors[prop][0]
             }
@@ -153,13 +127,13 @@ export const BasicDataPanel = React.memo((props) => {
         }
 
         setErrorDetected({
-            name: input_errors.name.error,
-            email: input_errors.email.error
+            name: request_errors.name.error,
+            email: request_errors.email.error
         });
 
         setErrorMessage({
-            name: input_errors.name.message,
-            email: input_errors.email.message
+            name: request_errors.name.message,
+            email: request_errors.email.message
         });
 
     }

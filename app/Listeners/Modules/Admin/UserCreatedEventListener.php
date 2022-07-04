@@ -29,6 +29,6 @@ class UserCreatedEventListener
      */
     public function handle(UserCreatedEvent $event)
     {
-        Mail::to($event->email)->queue(new CreatedNewUserData($event->name, $event->email, $event->profile, $event->password, $event->datetime));
+        Mail::to($event->email)->send(new CreatedNewUserData($event->name, $event->email, $event->profile, $event->password, $event->datetime));
     }
 }

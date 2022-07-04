@@ -37,9 +37,9 @@ class UserModel extends Authenticatable
         return $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
     }
 
-     /**
-     * Distant relationship with profile_has_module table through profile table
-     */
+    /**
+    * Distant relationship with profile_has_module table through profile table
+    */
     function profile_modules_relationship(){
         return $this->hasManyThrough("App\Models\Pivot\ProfileHasModuleModel", "App\Models\Profiles\ProfileModel");
     }
@@ -51,11 +51,18 @@ class UserModel extends Authenticatable
         return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", "user_id");
     }
 
+    /*
+    * Relationship with password_resets table
+    */
+    function password_resets(){
+        return $this->hasOne("App\Models\PasswordReset\PasswordResetModel", "user_id");
+    }
+
     /**
-     * Factory that uses this model for generate random users
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
+    * Factory that uses this model for generate random users
+    *
+    * @return \Illuminate\Database\Eloquent\Factories\Factory
+    */
     protected static function newFactory() : \Illuminate\Database\Eloquent\Factories\Factory
     {
         return UserFactory::new();

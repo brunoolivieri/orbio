@@ -32,10 +32,8 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Utilizador do state global de autenticação
     const { AuthData } = useAuthentication();
 
-    // Controlled inputs
     const [formData, setFormData] = React.useState({
         id: props.record.id,
         image: null,
@@ -49,23 +47,17 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         purchase_date: props.record.purchase_date
     });
 
-    // States utilizados nas validações dos campos 
     const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
     const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
 
-    // State da mensagem do alerta
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // State da acessibilidade do botão de executar o registro
     const [disabledButton, setDisabledButton] = React.useState(false);
 
-    // States do formulário
     const [open, setOpen] = React.useState(false);
 
-    // States dos inputs de data
     const [purchaseDate, setPurchaseDate] = React.useState(moment());
 
-    // Referencia ao componente de imagem
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -86,13 +78,10 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         setFormData({ ...formData, [event.target.name]: event.currentTarget.value })
     }
 
-    /*
-    * Rotina 1
-    */
-    function handleEquipmentUpdateSubmit(event) {
+    const handleEquipmentUpdateSubmit = (event) => {
         event.preventDefault();
 
-        if (formValidate()) {
+        if (formularyDataValidate()) {
 
             setDisabledButton(true);
 
@@ -102,24 +91,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    function handleUploadedImage(event) {
-
-        const uploaded_file = event.currentTarget.files[0];
-
-        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
-
-            htmlImage.current.src = "";
-            htmlImage.current.src = URL.createObjectURL(uploaded_file);
-
-            setFormData({ ...formData, ["image"]: uploaded_file });
-        }
-
-    }
-
-    /*
-    * Rotina 2
-    */
-    function formValidate() {
+    const formularyDataValidate = () => {
 
         let nameValidation = FormValidation(formData.name, 3, null, null, null);
         let manufacturerValidation = FormValidation(formData.manufacturer, 3, null, null, null);
@@ -154,30 +126,18 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: purchaseValidation.message
         });
 
-        if (nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error);
 
     }
 
-
-    /*
-    * Rotina 3
-    */
-    function requestServerOperation() {
+    const requestServerOperation = () => {
 
         setFormData({ ...formData, ["purchase_date"]: moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss') });
 
         AxiosApi.patch(`/api/equipments-module-equipment/${formData.id}`, formData)
-            .then(function () {
+            .then(function (response) {
 
-                successServerResponseTreatment();
+                successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
@@ -188,12 +148,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3A
-    */
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = (response) => {
 
-        setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
 
@@ -205,18 +162,15 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    /*
-    * Rotina 3B
-    */
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response_data) => {
 
         setDisabledButton(false);
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        let request_errors = {
             image: { error: false, message: null },
             name: { error: false, message: null },
             manufacturer: { error: false, message: null },
@@ -231,7 +185,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         // Coleta dos objetos de erro existentes na response
         for (let prop in response_data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
                 message: response_data.errors[prop][0]
             }
@@ -239,28 +193,42 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         }
 
         setErrorDetected({
-            image: input_errors.image.error,
-            name: input_errors.name.error,
-            manufacturer: input_errors.manufacturer.error,
-            model: input_errors.model.error,
-            record_number: input_errors.record_number.error,
-            serial_number: input_errors.serial_number.error,
-            weight: input_errors.weight.error,
-            observation: input_errors.observation.error,
-            purchase_date: input_errors.purchase_date.error
+            image: request_errors.image.error,
+            name: request_errors.name.error,
+            manufacturer: request_errors.manufacturer.error,
+            model: request_errors.model.error,
+            record_number: request_errors.record_number.error,
+            serial_number: request_errors.serial_number.error,
+            weight: request_errors.weight.error,
+            observation: request_errors.observation.error,
+            purchase_date: request_errors.purchase_date.error
         });
 
         setErrorMessage({
-            image: input_errors.image.message,
-            name: input_errors.name.message,
-            manufacturer: input_errors.manufacturer.message,
-            model: input_errors.model.message,
-            record_number: input_errors.record_number.message,
-            serial_number: input_errors.serial_number.message,
-            weight: input_errors.weight.message,
-            observation: input_errors.observation.message,
-            purchase_date: input_errors.purchase_date.message
+            image: request_errors.image.message,
+            name: request_errors.name.message,
+            manufacturer: request_errors.manufacturer.message,
+            model: request_errors.model.message,
+            record_number: request_errors.record_number.message,
+            serial_number: request_errors.serial_number.message,
+            weight: request_errors.weight.message,
+            observation: request_errors.observation.message,
+            purchase_date: request_errors.purchase_date.message
         });
+
+    }
+
+    const handleUploadedImage = (event) => {
+
+        const uploaded_file = event.currentTarget.files[0];
+
+        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+
+            htmlImage.current.src = "";
+            htmlImage.current.src = URL.createObjectURL(uploaded_file);
+
+            setFormData({ ...formData, ["image"]: uploaded_file });
+        }
 
     }
 
