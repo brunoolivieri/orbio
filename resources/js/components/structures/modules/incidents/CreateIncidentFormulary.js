@@ -163,8 +163,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
     <>
 
       <Tooltip title="Novo incidente">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.read == 1 ? false : true}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}>
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 

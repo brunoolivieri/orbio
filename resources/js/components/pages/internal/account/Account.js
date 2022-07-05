@@ -41,8 +41,6 @@ export function Account({ ...props }) {
     AxiosApi.get(`/api/user-account-data?user_id=${AuthData.data.id}`)
       .then(function (response) {
 
-        setLoading(false);
-
         setAccountData({
           basic: {
             ...response.data["0"].basic,
@@ -59,16 +57,19 @@ export function Account({ ...props }) {
           sessions: response.data["0"].active_sessions
         });
 
+        setLoading(false);
+
       })
       .catch(function () {
 
+        setLoading(false);
         handleOpenSnackbar("Erro! Os dados do perfil não foram carregados.", "error");
 
       });
 
   }, [reloadForm]);
 
-  function handleOpenSnackbar(text, variant) {
+  const handleOpenSnackbar = (text, variant) => {
 
     enqueueSnackbar(text, { variant });
 
@@ -87,9 +88,9 @@ export function Account({ ...props }) {
 
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {!(loading) && <BackdropLoading />}
+          {loading && <BackdropLoading />}
 
-          {(!loading && actualPanel === "basic") && <BasicDataPanel {...accountData.basic} reload_state={reloadForm} reload_setter={setReloadForm} />}
+          {(!loading && actualPanel === "basic") && <BasicDataPanel data={accountData.basic} reload_state={reloadForm} reload_setter={setReloadForm} />}
           {(!loading && actualPanel === "complementary") && <ComplementaryDataPanel {...accountData.complementary} reload_state={reloadForm} reload_setter={setReloadForm} />}
           {(!loading && actualPanel === "account_configuration") && <AccountConfiguration data={accountData.sessions} reload_state={reloadForm} reload_setter={setReloadForm} />}
 

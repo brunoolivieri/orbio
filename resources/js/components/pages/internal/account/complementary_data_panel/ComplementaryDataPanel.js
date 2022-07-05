@@ -127,7 +127,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
         const data = new FormData(event.currentTarget);
 
-        if (formDocumentsValidate(data)) {
+        if (formularyDataValidation(data)) {
 
             formDocumentsRequestServerOperation(data);
 
@@ -135,7 +135,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    function formDocumentsValidate(data) {
+    function formularyDataValidation(data) {
 
         const habAnacPattern = /^\d{6}$/;
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;

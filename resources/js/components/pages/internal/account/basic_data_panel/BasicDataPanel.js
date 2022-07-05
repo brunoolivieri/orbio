@@ -15,99 +15,90 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
+import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
 export const BasicDataPanel = React.memo((props) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
+    const [controlledInput, setControlledInput] = React.useState({ name: props.name, email: props.email });
+
+    const [loading, setLoading] = React.useState(false);
+
     const [saveNecessary, setSaveNecessary] = React.useState(false);
 
-    const [errorDetected, setErrorDetected] = React.useState({ name: false, email: false }); 
-    const [errorMessage, setErrorMessage] = React.useState({ name: "", email: "" }); 
+    const [fieldError, setFieldError] = React.useState({ name: false, email: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "" });
 
     const { enqueueSnackbar } = useSnackbar();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
-    function enableSaveButton() {
-
+    const enableSaveButton = () => {
         setSaveNecessary(true);
-
     }
 
-    function reloadFormulary() {
-
+    const reloadFormulary = () => {
         props.reload_setter(!props.reload_state);
-
     }
 
-    function handleSubmitBasicDataForm(event) {
+    const handleSubmitBasicDataForm = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        if (formularyDataValidation()) {
 
-        if (formDataValidate(data)) {
-
-            requestServerOperation(data);
+            setLoading(true);
+            requestServerOperation();
 
         }
 
     }
 
-    function formDataValidate(formData) {
+    const formularyDataValidation = () => {
 
-        // Regex para validação
         const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
-        const nameValidate = FormValidation(formData.get("name"), 3, null, null, null);
-        const emailValidate = FormValidation(formData.get("email"), null, null, emailPattern, "EMAIL");
+        const nameValidate = FormValidation(controlledInput.name, 3);
+        const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
 
-        setErrorDetected({ name: nameValidate.error, email: emailValidate.error });
-        setErrorMessage({ name: nameValidate.message, email: emailValidate.message });
+        setFieldError({ name: nameValidate.error, email: emailValidate.error });
+        setFieldErrorMessage({ name: nameValidate.message, email: emailValidate.message });
 
         return !(nameValidate.error || emailValidate.error);
 
     }
 
-    function requestServerOperation(data) {
+    const requestServerOperation = () => {
 
-        let request_data = {};
-
-        request_data = {
-            email: data.get("email"),
-            name: data.get("name")
-        };
-
-        AxiosApi.patch(`/api/update-basic-data/${AuthData.data.id}`, request_data)
+        AxiosApi.patch(`/api/update-basic-data/${AuthData.data.id}`, controlledInput)
             .then(function (response) {
 
+                setLoading(false);
                 serverSuccessResponseTreatment(response);
 
             })
             .catch(function (error) {
 
+                setLoading(false);
                 serverErrorResponseTreatment(error.response.data);
 
             });
 
     }
 
-    function serverSuccessResponseTreatment() {
-
-        handleOpenSnackbar("Dados atualizados com sucesso!", "success");
-
+    const serverSuccessResponseTreatment = (response) => {
+        handleOpenSnackbar(response.data.message, "success");
         props.reload_setter(!props.reload_state);
-
     }
 
-    function serverErrorResponseTreatment(response_data) {
+    const serverErrorResponseTreatment = (response) => {
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -117,37 +108,41 @@ export const BasicDataPanel = React.memo((props) => {
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
             request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({
+        setFieldError({
             name: request_errors.name.error,
             email: request_errors.email.error
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             name: request_errors.name.message,
             email: request_errors.email.message
         });
 
     }
 
-    function handleOpenSnackbar(text, variant) {
-
-        enqueueSnackbar(text, { variant });
-
+    const handleInputChange = (event) => {
+        enableSaveButton();
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
+    }
+
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
+            {loading && <BackdropLoading />}
             <Grid container spacing={1} alignItems="center">
 
                 <Grid item>
@@ -171,10 +166,10 @@ export const BasicDataPanel = React.memo((props) => {
                                 label="Nome completo"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.name}
-                                helperText={errorMessage.name}
-                                error={errorDetected.name}
-                                onChange={enableSaveButton}
+                                defaultValue={props.data.name}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
@@ -186,10 +181,10 @@ export const BasicDataPanel = React.memo((props) => {
                                 label="Email"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.email}
-                                helperText={errorMessage.email}
-                                error={errorDetected.email}
-                                onChange={enableSaveButton}
+                                defaultValue={props.data.email}
+                                helperText={fieldErrorMessage.email}
+                                error={fieldError.email}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
@@ -199,7 +194,7 @@ export const BasicDataPanel = React.memo((props) => {
                                 label="Perfil de usuário"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.profile}
+                                defaultValue={props.data.profile}
                                 inputProps={{
                                     readOnly: true
                                 }}

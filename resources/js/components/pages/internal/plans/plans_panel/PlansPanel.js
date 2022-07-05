@@ -254,8 +254,8 @@ export function PlansPanel() {
         <Grid item>
           <Tooltip title="Novo Plano">
             <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
-              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
               </IconButton>
             </Link>
           </Tooltip>
