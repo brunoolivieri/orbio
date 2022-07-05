@@ -20,8 +20,8 @@ export const RadioInput = React.memo(({ ...props }) => {
                 defaultValue={props.default}
                 onChange={handleChange}
             >
-                <FormControlLabel value={"0"} control={<Radio />} label={"Ativo"} key={0} />
-                <FormControlLabel value={"1"} control={<Radio />} label={"Inativo"} key={1} />
+                <FormControlLabel value={"1"} control={<Radio />} label={"Ativo"} key={0} />
+                <FormControlLabel value={"0"} control={<Radio />} label={"Inativo"} key={1} />
             </RadioGroup>
         </FormControl>
     );
