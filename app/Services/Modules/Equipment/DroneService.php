@@ -146,7 +146,7 @@ class DroneService {
         
         DB::transaction(function() use ($drone_id){
 
-            $drone = DroneModel::findOrFail($id);
+            $drone = DroneModel::findOrFail($drone_id);
 
             Storage::disk('public')->delete("images/drone/".$drone->image);
 

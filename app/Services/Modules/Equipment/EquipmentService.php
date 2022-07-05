@@ -142,7 +142,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteDrone($equipment_id) {
+    public function deleteEquipment($equipment_id) {
         
         DB::transaction(function() use ($equipment_id){
 
