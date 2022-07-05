@@ -104,7 +104,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function updateEquipment(Request $request, int $equipment_id) {
+    public function updateEquipment(Request $request, $equipment_id) {
 
         DB::transaction(function () use ($request, $equipment_id) {
 
@@ -142,7 +142,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteDrone(int $equipment_id) {
+    public function deleteDrone($equipment_id) {
         
         DB::transaction(function() use ($equipment_id){
 

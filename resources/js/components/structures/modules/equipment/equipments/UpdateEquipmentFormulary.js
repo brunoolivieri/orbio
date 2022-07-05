@@ -12,6 +12,7 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import styled from '@emotion/styled';
+import LinearProgress from '@mui/material/LinearProgress';
 // Moment
 import moment from 'moment';
 // Fonts Awesome
@@ -34,25 +35,26 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     const { AuthData } = useAuthentication();
 
-    const [formData, setFormData] = React.useState({
+    const [controlledInput, setControlledInput] = React.useState({
         id: props.record.id,
-        image: null,
         name: props.record.name,
         manufacturer: props.record.manufacturer,
         model: props.record.model,
         record_number: props.record.record_number,
         serial_number: props.record.serial_number,
         weight: props.record.weight,
-        observation: props.record.observation,
-        purchase_date: props.record.purchase_date
+        observation: props.record.observation
     });
 
-    const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-    const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
+    const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
+
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
 
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    const [disabledButton, setDisabledButton] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
+    const [uploadedImage, setUploadedImage] = React.useState(null);
 
     const [open, setOpen] = React.useState(false);
 
@@ -64,18 +66,14 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
-        setErrorDetected({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
-        setErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
+        setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
+        setFieldErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
         setDisplayAlert({ display: false, type: "", message: "" });
-        setDisabledButton(false);
+        setLoading(false);
         setOpen(false);
-    };
-
-    const handleInputChange = (event) => {
-        setFormData({ ...formData, [event.target.name]: event.currentTarget.value })
     }
 
     const handleEquipmentUpdateSubmit = (event) => {
@@ -83,8 +81,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
         if (formularyDataValidate()) {
 
-            setDisabledButton(true);
-
+            setLoading(true);
             requestServerOperation();
 
         }
@@ -93,16 +90,16 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     const formularyDataValidate = () => {
 
-        let nameValidation = FormValidation(formData.name, 3, null, null, null);
-        let manufacturerValidation = FormValidation(formData.manufacturer, 3, null, null, null);
-        let modelValidation = FormValidation(formData.model, null, null, null, null);
-        let recordNumberValidation = FormValidation(formData.record_number, null, null, null, null);
-        let serialNumberValidation = FormValidation(formData.serial_number, null, null, null, null);
-        let weightValidation = FormValidation(formData.weight, null, null, null, null);
-        let observationValidation = FormValidation(formData.observation, 3, null, null, null);
-        let purchaseValidation = purchaseDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data" };
+        let nameValidation = FormValidation(controlledInput.name, 3);
+        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
+        let modelValidation = FormValidation(controlledInput.model);
+        let recordNumberValidation = FormValidation(controlledInput.record_number);
+        let serialNumberValidation = FormValidation(controlledInput.serial_number);
+        let weightValidation = FormValidation(controlledInput.weight);
+        let observationValidation = FormValidation(controlledInput.observation, 3);
+        let purchaseValidation = purchaseDate == null ? { error: true, message: "A data da compra precisa ser informada" } : { error: false, message: "" }
 
-        setErrorDetected({
+        setFieldError({
             image: false,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
@@ -114,8 +111,8 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: purchaseValidation.error
         });
 
-        setErrorMessage({
-            image: false,
+        setFieldErrorMessage({
+            image: "",
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -132,17 +129,29 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     const requestServerOperation = () => {
 
-        setFormData({ ...formData, ["purchase_date"]: moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss') });
+        const formData = new FormData();
+        formData.append("name", controlledInput.name);
+        formData.append("manufacturer", controlledInput.manufacturer);
+        formData.append("model", controlledInput.model);
+        formData.append("record_number", controlledInput.record_number);
+        formData.append("serial_number", controlledInput.serial_number);
+        formData.append("weight", controlledInput.weight);
+        formData.append("observation", controlledInput.observation);
+        formData.append("image", uploadedImage);
+        formData.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
+        formData.append('_method', 'PATCH');
 
-        AxiosApi.patch(`/api/equipments-module-equipment/${formData.id}`, formData)
+        AxiosApi.post(`/api/equipments-module-equipment/${controlledInput.id}`, formData)
             .then(function (response) {
 
+                setLoading(false);
                 successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
 
-                errorServerResponseTreatment(error.response.data);
+                setLoading(false);
+                errorServerResponseTreatment(error.response);
 
             });
 
@@ -153,18 +162,14 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
-
             props.reload_table();
-            setDisabledButton(false);
+            setLoading(false);
             handleClose();
-
         }, 2000);
 
     }
 
-    const errorServerResponseTreatment = (response_data) => {
-
-        setDisabledButton(false);
+    const errorServerResponseTreatment = (response) => {
 
         const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
@@ -183,16 +188,16 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
             request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({
+        setFieldError({
             image: request_errors.image.error,
             name: request_errors.name.error,
             manufacturer: request_errors.manufacturer.error,
@@ -204,7 +209,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: request_errors.purchase_date.error
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             image: request_errors.image.message,
             name: request_errors.name.message,
             manufacturer: request_errors.manufacturer.message,
@@ -218,6 +223,10 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    }
+
     const handleUploadedImage = (event) => {
 
         const uploaded_file = event.currentTarget.files[0];
@@ -227,7 +236,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
 
-            setFormData({ ...formData, ["image"]: uploaded_file });
+            setUploadedImage(event.target.files[0]);
         }
 
     }
@@ -256,7 +265,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="id"
                             name="id"
-                            defaultValue={formData.id}
+                            defaultValue={props.record.id}
                             InputProps={{
                                 readOnly: true,
                             }}
@@ -271,9 +280,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="name"
                             name="name"
-                            helperText={errorMessage.name}
-                            error={errorDetected.name}
-                            defaultValue={formData.name}
+                            helperText={fieldErrorMessage.name}
+                            error={fieldError.name}
+                            defaultValue={props.record.name}
                             onChange={handleInputChange}
                         />
 
@@ -286,9 +295,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="manufacturer"
                             name="manufacturer"
-                            helperText={errorMessage.manufacturer}
-                            error={errorDetected.manufacturer}
-                            defaultValue={formData.manufacturer}
+                            helperText={fieldErrorMessage.manufacturer}
+                            error={fieldError.manufacturer}
+                            defaultValue={props.record.manufacturer}
                             onChange={handleInputChange}
                         />
 
@@ -301,9 +310,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="model"
                             name="model"
-                            helperText={errorMessage.model}
-                            error={errorDetected.model}
-                            defaultValue={formData.model}
+                            helperText={fieldErrorMessage.model}
+                            error={fieldError.model}
+                            defaultValue={props.record.model}
                             onChange={handleInputChange}
                         />
 
@@ -316,9 +325,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="record_number"
                             name="record_number"
-                            helperText={errorMessage.record_number}
-                            error={errorDetected.record_number}
-                            defaultValue={formData.record_number}
+                            helperText={fieldErrorMessage.record_number}
+                            error={fieldError.record_number}
+                            defaultValue={props.record.record_number}
                             onChange={handleInputChange}
                         />
 
@@ -331,9 +340,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="serial_number"
                             name="serial_number"
-                            helperText={errorMessage.serial_number}
-                            error={errorDetected.serial_number}
-                            defaultValue={formData.serial_number}
+                            helperText={fieldErrorMessage.serial_number}
+                            error={fieldError.serial_number}
+                            defaultValue={props.record.serial_number}
                         />
 
                         <TextField
@@ -345,9 +354,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="weight"
                             name="weight"
-                            helperText={errorMessage.weight}
-                            error={errorDetected.weight}
-                            defaultValue={formData.weight}
+                            helperText={fieldErrorMessage.weight}
+                            error={fieldError.weight}
+                            defaultValue={props.record.weight}
                             onChange={handleInputChange}
                         />
 
@@ -360,9 +369,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             required
                             id="observation"
                             name="observation"
-                            helperText={errorMessage.observation}
-                            error={errorDetected.observation}
-                            defaultValue={formData.observation}
+                            helperText={fieldErrorMessage.observation}
+                            error={fieldError.observation}
+                            defaultValue={props.record.observation}
                             onChange={handleInputChange}
                         />
 
@@ -370,9 +379,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                             <DateTimeInput
                                 event={setPurchaseDate}
                                 label={"Data da compra"}
-                                helperText={errorMessage.purchase_date}
-                                error={errorDetected.purchase_date}
-                                defaultValue={formData.purchase_date}
+                                helperText={fieldErrorMessage.purchase_date}
+                                error={fieldError.purchase_date}
+                                defaultValue={props.record.purchase_date}
                                 operation={"create"}
                                 read_only={false}
                             />
@@ -381,8 +390,8 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                         <Box sx={{ mt: 2, display: 'flex' }}>
                             <label htmlFor="contained-button-file">
                                 <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
+                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
                                 </Button>
                             </label>
                         </Box>
@@ -393,13 +402,15 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
                     </DialogContent>
 
-                    {displayAlert.display &&
+                    {(!loading && displayAlert.display) &&
                         <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                     }
 
+                    {loading && <LinearProgress />}
+
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton} variant="contained">Confirmar atualização</Button>
+                        <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
                     </DialogActions>
 
                 </Box>

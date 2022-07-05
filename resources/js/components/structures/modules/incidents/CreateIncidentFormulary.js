@@ -24,7 +24,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 
-export const CreateIncidentFormulary = React.memo(({ ...props }) => {
+export const CreateIncidentFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -53,6 +53,7 @@ export const CreateIncidentFormulary = React.memo(({ ...props }) => {
     setFieldError({ date: false, type: false, description: false });
     setFieldErrorMessage({ date: "", type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
+    setControlledInput({ type: "", description: "" });
     setLoading(false);
     setOpen(false);
   }

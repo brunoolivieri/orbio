@@ -11,6 +11,7 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -24,9 +25,11 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
     const { AuthData } = useAuthentication();
 
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [controlledInput] = React.useState({ id: props.record.id });
 
-    const [disabledButton, setDisabledButton] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
+    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
     const [open, setOpen] = React.useState(false);
 
@@ -34,35 +37,34 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
         setDisplayAlert({ display: false, type: "", message: "" });
-        setDisabledButton(false);
+        setLoading(false);
         setOpen(false);
-    };
+    }
 
     const handleEquipmentDeleteSubmit = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
-
-        setDisabledButton(true);
-
-        requestServerOperation(data);
+        setLoading(true);
+        requestServerOperation();
 
     }
 
-    const requestServerOperation = (data) => {
+    const requestServerOperation = () => {
 
-        AxiosApi.delete(`/api/equipments-module-equipment/${data.get("id")}}`)
+        AxiosApi.delete(`/api/equipments-module-equipment/${controlledInput.id}}`)
             .then(function (response) {
 
+                setLoading(false);
                 successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
 
+                setLoading(false);
                 errorServerResponseTreatment(error.response.data);
 
             });
@@ -74,18 +76,14 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
-
             props.reload_table();
-            setDisabledButton(false);
+            setLoading(false);
             handleClose();
-
         }, 2000);
 
     }
 
     const errorServerResponseTreatment = (response) => {
-
-        setDisabledButton(false);
 
         const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
@@ -214,13 +212,15 @@ export const DeleteEquipmentFormulary = React.memo(({ ...props }) => {
 
                     </DialogContent>
 
-                    {displayAlert.display &&
+                    {(!loading && displayAlert.display) &&
                         <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                     }
 
+                    {loading && <LinearProgress />}
+
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+                        <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
                     </DialogActions>
 
                 </Box>

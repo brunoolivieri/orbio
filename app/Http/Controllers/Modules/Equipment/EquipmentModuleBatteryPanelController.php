@@ -85,7 +85,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->updateBattery($request, $id);
+        return $this->service->updateBattery($request, $id);
     }
 
     /**
@@ -98,7 +98,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->deleteBattery($id);
+        return $this->service->deleteBattery($id);
 
     }
 }

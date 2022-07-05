@@ -46,13 +46,12 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
   };
 
   const handleClose = () => {
-
     setFieldError({ name: false, email: false, profile: false });
     setFieldErrorMessage({ name: null, email: null, profile: null });
     setDisplayAlert({ display: false, type: "", message: "" });
+    setControlledInput({ name: "", email: "", profile: "" });
     setLoading(false);
     setOpen(false);
-
   }
 
   const handleRegistrationSubmit = (event) => {

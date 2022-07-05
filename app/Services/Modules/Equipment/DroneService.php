@@ -101,10 +101,10 @@ class DroneService {
      * Update drone.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param int $drone_id
+     * @param $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function updateDrone(Request $request, int $drone_id) {
+    public function updateDrone(Request $request, $drone_id) {
 
         DB::transaction(function () use ($request, $drone_id) {
 
@@ -142,7 +142,7 @@ class DroneService {
      * @param int $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteDrone(int $drone_id) {
+    public function deleteDrone($drone_id) {
         
         DB::transaction(function() use ($drone_id){
 

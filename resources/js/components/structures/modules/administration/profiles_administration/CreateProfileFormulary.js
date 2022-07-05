@@ -25,20 +25,15 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
 
-  // Controlled Inputs
   const [controlledInput, setControlledInput] = React.useState({ name: "" });
 
-  // States utilizados nas validações dos campos 
-  const [fieldError, setFieldError] = React.useState({ name: false }); // State para o efeito de erro - true ou false
-  const [fiedlErrorMessage, setFieldErrorMessage] = React.useState({ name: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
+  const [fieldError, setFieldError] = React.useState({ name: false });
+  const [fiedlErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
 
-  // States do formulário
   const [open, setOpen] = React.useState(false);
 
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
   const [loading, setLoading] = React.useState(false);
@@ -50,13 +45,12 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-
     setFieldError({ name: false });
     setFieldErrorMessage({ name: null });
     setDisplayAlert({ display: false, type: "", message: "" });
+    setControlledInput({ name: "" });
     setLoading(false);
     setOpen(false);
-
   }
 
   const handleRegistrationProfile = (event) => {

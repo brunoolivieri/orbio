@@ -50,9 +50,9 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
     const [loading, setLoading] = React.useState(false);
 
-    const [open, setOpen] = React.useState(false);
+    const [uploadedImage, setUploadedImage] = React.useState(null);
 
-    const [uploadedImage] = React.useState(null);
+    const [open, setOpen] = React.useState(false);
 
     const htmlImage = React.useRef();
 
@@ -60,7 +60,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
         setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
@@ -82,33 +82,18 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
     }
 
-    const handleUploadedImage = (event) => {
-
-        const uploaded_file = event.currentTarget.files[0];
-
-        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
-
-            htmlImage.current.src = "";
-            htmlImage.current.src = URL.createObjectURL(uploaded_file);
-
-            setControlledInput({ ...controlledInput, ["image"]: uploaded_file });
-        }
-
-    }
-
     const formularyDataValidation = () => {
 
-        let nameValidation = FormValidation(controlledInput.name, 3, null, null, null);
-        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3, null, null, null);
-        let modelValidation = FormValidation(controlledInput.model, null, null, null, null);
-        let recordNumberValidation = FormValidation(controlledInput.record_number, null, null, null, null);
-        let serialNumberValidation = FormValidation(controlledInput.serial_number, null, null, null, null);
-        let weightValidation = FormValidation(controlledInput.weight, null, null, null, null);
-        let observationValidation = FormValidation(controlledInput.observation, 3, null, null, null);
-        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
+        let nameValidation = FormValidation(controlledInput.name, 3);
+        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
+        let modelValidation = FormValidation(controlledInput.model);
+        let recordNumberValidation = FormValidation(controlledInput.record_number);
+        let serialNumberValidation = FormValidation(controlledInput.serial_number);
+        let weightValidation = FormValidation(controlledInput.weight);
+        let observationValidation = FormValidation(controlledInput.observation);
 
         setFieldError({
-            image: imageValidation.error,
+            image: false,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
             model: modelValidation.error,
@@ -120,7 +105,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
 
         setFieldErrorMessage({
-            image: imageValidation.message,
+            image: "",
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
             model: modelValidation.message,
@@ -130,7 +115,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             observation: observationValidation.message
         });
 
-        return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || imageValidation.error);
+        return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error);
 
     }
 
@@ -145,8 +130,9 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         formData.append("weight", controlledInput.weight);
         formData.append("observation", controlledInput.observation);
         formData.append("image", uploadedImage);
+        formData.append('_method', 'PATCH');
 
-        AxiosApi.post(`/api/equipments-module-drone`, formData)
+        AxiosApi.post(`/api/equipments-module-drone/${controlledInput.id}`, formData)
             .then(function (response) {
                 setLoading(false);
                 successServerResponseTreatment(response);
@@ -225,6 +211,20 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
+    const handleUploadedImage = (event) => {
+
+        const uploaded_file = event.currentTarget.files[0];
+
+        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+
+            htmlImage.current.src = "";
+            htmlImage.current.src = URL.createObjectURL(uploaded_file);
+
+            setUploadedImage(uploaded_file);
+        }
+
+    }
+
     return (
         <>
             <Tooltip title="Editar">
@@ -249,8 +249,6 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                             required
                             id="id"
                             name="id"
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
                             defaultValue={props.record.id}
                             InputProps={{
                                 readOnly: true,

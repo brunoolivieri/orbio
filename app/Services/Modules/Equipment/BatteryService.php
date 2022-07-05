@@ -102,13 +102,13 @@ class BatteryService{
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function updateBattery(Request $request, int $battery_id) {
+    public function updateBattery(Request $request, $battery_id) {
 
         DB::transaction(function () use ($request, $battery_id) {
 
             $battery = BatteryModel::findOrFail($battery_id);
 
-            if(!empty($request->image)){
+            if(!is_null($request->image)){
 
                 // Filename is the hash of the content
                 $content_hash = md5(file_get_contents($request->file('image'))); 
@@ -140,7 +140,7 @@ class BatteryService{
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteBattery(int $battery_id) {
+    public function deleteBattery($battery_id) {
         
         DB::transaction(function() use ($battery_id){
 

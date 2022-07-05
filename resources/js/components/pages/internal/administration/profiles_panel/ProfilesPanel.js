@@ -52,7 +52,7 @@ export function ProfilesPanel() {
 
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
-  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, order_by: "", where: "" });
 
   const [loading, setLoading] = React.useState(true);
 
@@ -84,7 +84,6 @@ export function ProfilesPanel() {
 
   const requestToGetAllProfiles = () => {
 
-    // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}`)
@@ -117,7 +116,6 @@ export function ProfilesPanel() {
 
   const requestToGetSearchedProfiles = () => {
 
-    // This receives: limit clause, where clause and the page number
     const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
 
     AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}`)

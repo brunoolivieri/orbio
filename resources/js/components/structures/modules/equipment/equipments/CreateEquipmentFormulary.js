@@ -12,6 +12,7 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import styled from '@emotion/styled';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -24,22 +25,25 @@ import { FormValidation } from '../../../../../utils/FormValidation';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
+
 const Input = styled('input')({
     display: 'none',
 });
 
 export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
-    const [errorDetected, setErrorDetected] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-    const [errorMessage, setErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
+    const [controlledInput, setControlledInput] = React.useState({ name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
+
+    const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
 
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    const [disabledButton, setDisabledButton] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
     const [open, setOpen] = React.useState(false);
 
@@ -49,48 +53,45 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
     const htmlImage = React.useRef();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
-        setErrorDetected({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-        setErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
+        setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
+        setFieldErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
         setDisplayAlert({ display: false, type: "", message: "" });
-        setDisabledButton(false);
+        setLoading(false);
         setOpen(false);
-    };
+    }
 
     const handleEquipmentRegistrationSubmit = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        if (formularyDataValidate()) {
 
-        if (formularyDataValidate(data)) {
-
-            setDisabledButton(true);
-
-            requestServerOperation(data);
+            setLoading(true);
+            requestServerOperation();
 
         }
 
     }
 
-    const formularyDataValidate = (formData) => {
+    const formularyDataValidate = () => {
 
-        let nameValidation = FormValidation(formData.get("name"), 3, null, null, null);
-        let manufacturerValidation = FormValidation(formData.get("manufacturer"), 3, null, null, null);
-        let modelValidation = FormValidation(formData.get("model"), null, null, null, null);
-        let recordNumberValidation = FormValidation(formData.get("record_number"), null, null, null, null);
-        let serialNumberValidation = FormValidation(formData.get("serial_number"), null, null, null, null);
-        let weightValidation = FormValidation(formData.get("weight"), null, null, null, null);
-        let observationValidation = FormValidation(formData.get("observation"), 3, null, null, null);
+        let nameValidation = FormValidation(controlledInput.name, 3);
+        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
+        let modelValidation = FormValidation(controlledInput.model);
+        let recordNumberValidation = FormValidation(controlledInput.record_number);
+        let serialNumberValidation = FormValidation(controlledInput.serial_number);
+        let weightValidation = FormValidation(controlledInput.weight);
+        let observationValidation = FormValidation(controlledInput.observation, 3);
         let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
         let purchaseValidation = purchaseDate == null ? { error: true, message: "A data da compra precisa ser informada" } : { error: false, message: "" }
 
-        setErrorDetected({
+        setFieldError({
             image: imageValidation.error,
             name: nameValidation.error,
             manufacturer: manufacturerValidation.error,
@@ -102,7 +103,7 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: purchaseValidation.error
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             image: imageValidation.message,
             name: nameValidation.message,
             manufacturer: manufacturerValidation.message,
@@ -118,19 +119,29 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    const requestServerOperation = (data) => {
+    const requestServerOperation = () => {
 
-        data.append("image", uploadedImage);
-        data.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
+        const formData = new FormData();
+        formData.append("name", controlledInput.name);
+        formData.append("manufacturer", controlledInput.manufacturer);
+        formData.append("model", controlledInput.model);
+        formData.append("record_number", controlledInput.record_number);
+        formData.append("serial_number", controlledInput.serial_number);
+        formData.append("weight", controlledInput.weight);
+        formData.append("observation", controlledInput.observation);
+        formData.append("image", uploadedImage);
+        formData.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
 
-        AxiosApi.post(`/api/equipments-module-equipment`, data)
+        AxiosApi.post(`/api/equipments-module-equipment`, formData)
             .then(function (response) {
 
+                setLoading(false);
                 successServerResponseTreatment(response);
 
             })
             .catch(function (error) {
 
+                setLoading(false);
                 errorServerResponseTreatment(error.response);
 
             });
@@ -142,18 +153,14 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
 
         setTimeout(() => {
-
             props.reload_table();
-            setDisabledButton(false);
+            setLoading(false);
             handleClose();
-
         }, 2000);
 
     }
 
     const errorServerResponseTreatment = (response) => {
-
-        setDisabledButton(false);
 
         const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
@@ -181,7 +188,7 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
         }
 
-        setErrorDetected({
+        setFieldError({
             image: request_errors.image.error,
             name: request_errors.name.error,
             manufacturer: request_errors.manufacturer.error,
@@ -193,7 +200,7 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: request_errors.purchase_date.error
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             image: request_errors.image.message,
             name: request_errors.name.message,
             manufacturer: request_errors.manufacturer.message,
@@ -220,6 +227,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    }
+
     return (
         <>
             <Tooltip title="Nova bateria">
@@ -242,10 +253,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="name"
                             name="name"
-                            helperText={errorMessage.name}
-                            error={errorDetected.name}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.name}
+                            error={fieldError.name}
                         />
 
                         <TextField
@@ -255,10 +266,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="manufacturer"
                             name="manufacturer"
-                            helperText={errorMessage.manufacturer}
-                            error={errorDetected.manufacturer}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.manufacturer}
+                            error={fieldError.manufacturer}
                         />
 
                         <TextField
@@ -268,10 +279,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="model"
                             name="model"
-                            helperText={errorMessage.model}
-                            error={errorDetected.model}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.model}
+                            error={fieldError.model}
                         />
 
                         <TextField
@@ -281,10 +292,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="record_number"
                             name="record_number"
-                            helperText={errorMessage.record_number}
-                            error={errorDetected.record_number}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.record_number}
+                            error={fieldError.record_number}
                         />
 
                         <TextField
@@ -294,10 +305,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="serial_number"
                             name="serial_number"
-                            helperText={errorMessage.serial_number}
-                            error={errorDetected.serial_number}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.serial_number}
+                            error={fieldError.serial_number}
                         />
 
                         <TextField
@@ -307,10 +318,10 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="weight"
                             name="weight"
-                            helperText={errorMessage.weight}
-                            error={errorDetected.weight}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.weight}
+                            error={fieldError.weight}
                         />
 
                         <TextField
@@ -320,18 +331,18 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             fullWidth
                             variant="outlined"
                             required
-                            id="observation"
                             name="observation"
-                            helperText={errorMessage.observation}
-                            error={errorDetected.observation}
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.observation}
+                            error={fieldError.observation}
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
                             <DateTimeInput
                                 event={setPurchaseDate}
                                 label={"Data da compra"}
-                                helperText={errorMessage.purchase_date}
-                                error={errorDetected.purchase_date}
+                                helperText={fieldErrorMessage.purchase_date}
+                                error={fieldError.purchase_date}
                                 defaultValue={moment()}
                                 operation={"create"}
                                 read_only={false}
@@ -341,8 +352,8 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                         <Box sx={{ mt: 2, display: 'flex' }}>
                             <label htmlFor="contained-button-file">
                                 <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={errorDetected.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {errorDetected.image ? errorMessage.image : "Escolher imagem"}
+                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
                                 </Button>
                             </label>
                         </Box>
@@ -353,13 +364,15 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
                     </DialogContent>
 
-                    {displayAlert.display &&
+                    {(!loading && displayAlert.display) &&
                         <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                     }
 
+                    {loading && <LinearProgress />}
+
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={disabledButton} variant="contained">Criar equipamento</Button>
+                        <Button type="submit" disabled={loading} variant="contained">Criar equipamento</Button>
                     </DialogActions>
 
                 </Box>

@@ -51,7 +51,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
         setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
@@ -59,7 +59,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
         setDisplayAlert({ display: false, type: "", message: "" });
         setLoading(false);
         setOpen(false);
-    };
+    }
 
     const handleDroneRegistrationSubmit = (event) => {
         event.preventDefault();
@@ -338,7 +338,7 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
 
                     </DialogContent>
 
-                    {displayAlert.display &&
+                    {(!loading && displayAlert.display) &&
                         <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                     }
 

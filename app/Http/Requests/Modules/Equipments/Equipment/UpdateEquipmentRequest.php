@@ -23,8 +23,11 @@ class UpdateEquipmentRequest extends FormRequest
      */
     public function rules()
     {
+
+        $equipment_id_parameter = $this->route("equipments_module_equipment");
+
         return [
-            'name' => 'bail|required|unique:drones,name',
+            'name' => 'bail|required|unique:drones,name,'.$equipment_id_parameter,
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
             'record_number' => 'bail|required',
@@ -43,14 +46,14 @@ class UpdateEquipmentRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'O nome do drone deve ser informado',
-            'name.unique' => 'Já existe um drone com esse nome',
-            'manufacturer.required' => 'O fabricante do drone deve ser informado',
-            'model.required' => 'O modelo do drone deve ser informado',
+            'name.required' => 'O nome do equipamento deve ser informado',
+            'name.unique' => 'Já existe um equipamento com esse nome',
+            'manufacturer.required' => 'O fabricante do equipamento deve ser informado',
+            'model.required' => 'O modelo do equipamento deve ser informado',
             'record_number.required' => 'O número do registro deve ser informado',
             'serial_number.required' => 'O número do serial deve ser informado',
-            'weight.required' => 'O peso do drone deve ser informado',
-            'purchase_date.required' => 'A data da última carga deve ser informada',
+            'weight.required' => 'O peso do equipamento deve ser informado',
+            'purchase_date.required' => 'A data da compra deve ser informada',
             'purchase_date.date' => 'Informe uma data válida',
             'observation.required' => 'Uma observação é necessária'
         ];

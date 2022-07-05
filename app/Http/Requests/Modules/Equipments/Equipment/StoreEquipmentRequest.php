@@ -44,17 +44,17 @@ class StoreEquipmentRequest extends FormRequest
     public function messages()
     {
         return [
-            'image.required' => 'A imagem do drone deve ser enviada',
+            'image.required' => 'A imagem do equipamento deve ser enviada',
             'image.image' => 'Deve ser um arquivo de imagem',
             'image.mimes' => 'Deve ser uma imagem .png, .svg ou .jpg',
-            'name.required' => 'O nome do drone deve ser informado',
+            'name.required' => 'O nome do equipamento deve ser informado',
             'name.unique' => 'Já existe um equipamento com esse nome',
-            'manufacturer.required' => 'O fabricante do drone deve ser informado',
-            'model.required' => 'O modelo do drone deve ser informado',
+            'manufacturer.required' => 'O fabricante do equipamento deve ser informado',
+            'model.required' => 'O modelo do equipamento deve ser informado',
             'record_number.required' => 'O número do registro deve ser informado',
             'serial_number.required' => 'O número do serial deve ser informado',
-            'weight.required' => 'O peso do drone deve ser informado',
-            'purchase_date.required' => 'A data da última carga deve ser informada',
+            'weight.required' => 'O peso do equipamento deve ser informado',
+            'purchase_date.required' => 'A data da compra deve ser informada',
             'purchase_date.date' => 'Informe uma data válida'
         ];
     }

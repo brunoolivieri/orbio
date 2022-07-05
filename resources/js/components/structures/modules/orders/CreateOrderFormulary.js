@@ -59,6 +59,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     setFieldError({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
     setFieldErrorMessage({ start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
+    setControlledInput({ pilot_id: "", client_id: "", observation: "", status: "1" });
     setLoading(false);
     setOpen(false);
   };

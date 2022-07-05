@@ -17,6 +17,7 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
 import AxiosApi from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import LinearProgress from '@mui/material/LinearProgress';
 
 export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
@@ -38,13 +39,13 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleClose = () => {
         setDisplayAlert({ display: false, type: "", message: "" });
         setLoading(false);
         setOpen(false);
-    };
+    }
 
     const handleDroneDeleteSubmit = (event) => {
         event.preventDefault();
@@ -218,9 +219,11 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
                     </DialogContent>
 
-                    {displayAlert.display &&
+                    {(!loading && displayAlert.display) &&
                         <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                     }
+
+                    {loading && <LinearProgress />}
 
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>

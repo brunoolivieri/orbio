@@ -23,8 +23,11 @@ class UpdateBatteryRequest extends FormRequest
      */
     public function rules()
     {
+
+        $battery_id_parameter = $this->route("equipments_module_battery");
+
         return [
-            'name' => 'bail|required|unique:batteries,name',
+            'name' => 'bail|required|unique:batteries,name,'.$battery_id_parameter,
             'manufacturer' => 'bail|required',
             'model' => 'bail|required',
             'serial_number' => 'bail|required',
@@ -40,6 +43,7 @@ class UpdateBatteryRequest extends FormRequest
     public function messages()
     {
         return [
+            'name.required' => 'O nome da bateria deve ser informado',
             'name.unique' => 'Já existe uma bateria com esse nome',
             'manufacturer.required' => 'O fabricante da bateria deve ser informado',
             'model.required' => 'O modelo da bateria deve ser informado',
