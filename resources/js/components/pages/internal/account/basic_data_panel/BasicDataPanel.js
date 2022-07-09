@@ -26,7 +26,7 @@ export const BasicDataPanel = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
 
-    const [controlledInput, setControlledInput] = React.useState({ name: props.name, email: props.email });
+    const [controlledInput, setControlledInput] = React.useState({ name: props.data.name, email: props.data.email });
 
     const [loading, setLoading] = React.useState(false);
 
@@ -38,7 +38,6 @@ export const BasicDataPanel = React.memo((props) => {
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     const reloadFormulary = () => {
-        setLoading(true);
         props.reload_setter(!props.reload_state);
     }
 
@@ -70,18 +69,13 @@ export const BasicDataPanel = React.memo((props) => {
 
         AxiosApi.patch(`/api/update-basic-data/${AuthData.data.id}`, controlledInput)
             .then(function (response) {
-
                 setLoading(false);
                 serverSuccessResponseTreatment(response);
-
             })
             .catch(function (error) {
-
                 setLoading(false);
-                serverErrorResponseTreatment(error.response.data);
-
+                serverErrorResponseTreatment(error.response);
             });
-
     }
 
     const serverSuccessResponseTreatment = (response) => {

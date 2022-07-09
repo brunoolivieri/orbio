@@ -82,20 +82,12 @@ class MyAccountController extends Controller
      */
     function basicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
 
-        try{
+        UserModel::where("id", Auth::user()->id)->update([
+            "name" => $request->name,
+            "email" => $request->email
+        ]);
 
-            UserModel::where("id", Auth::user()->id)->update([
-                "nome" => $request->name,
-                "email" => $request->email
-            ]);
-
-            return response("", 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 200);
-
-        }
+        return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
 
     }
 
@@ -107,27 +99,19 @@ class MyAccountController extends Controller
      */
     function documentsUpdate(UpdateDocumentsRequest $request) : \Illuminate\Http\Response {
 
-        try{
+        $user = UserModel::find(Auth::user()->id);
 
-            $user = UserModel::find(Auth::user()->id);
+        UserComplementaryDataModel::where("id", $user->complementary_data->id)->update([
+            "anac_license" => $request->anac_license,
+            "cpf" => $request->cpf,
+            "cnpj" => $request->cnpj,
+            "telephone" => $request->telephone,
+            "cellphone" => $request->cellphone,
+            "company_name" => $request->company_name,
+            "trading_name" => $request->trading_name
+        ]);
 
-            UserComplementaryDataModel::where("id", $user->complementary_data->id)->update([
-                "anac_license" => $request->anac_license,
-                "cpf" => $request->cpf,
-                "cnpj" => $request->cnpj,
-                "telefone" => $request->telephone,
-                "celular" => $request->cellphone,
-                "razaoSocial" => $request->company_name,
-                "nomeFantasia" => $request->trading_name
-            ]);
-
-            return response("", 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 500);
-
-        }
+        return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
 
     }
 
@@ -139,26 +123,18 @@ class MyAccountController extends Controller
      */
     function addressUpdate(UpdateAddressRequest $request) : \Illuminate\Http\Response {
 
-        try{
+        $user = UserModel::find(Auth::user()->id);
 
-            $user = UserModel::find(Auth::user()->id);
+        UserAddressModel::where("id", $user->complementary_data->address->id)->update([
+            "address" => $request->street_name,
+            "number" => $request->number,
+            "cep" => $request->cep,
+            "city" => $request->city,
+            "state" => $request->state,
+            "complement" => $request->complement
+        ]);
 
-            UserAddressModel::where("id", $user->complementary_data->address->id)->update([
-                "logradouro" => $request->street_name,
-                "numero" => $request->number,
-                "cep" => $request->cep,
-                "cidade" => $request->city,
-                "estado" => $request->state,
-                "complemento" => $request->complement
-            ]);
-
-            return response("", 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 500);
-
-        }
+        return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
 
     }
 
@@ -170,21 +146,13 @@ class MyAccountController extends Controller
      */
     function passwordUpdate(UpdatePasswordRequest $request){
 
-        try{
+        $user = UserModel::find(Auth::user()->id);
 
-            $user = UserModel::find(Auth::user()->id);
+        $user->update(["password" => Hash::make($request->new_password)]);
 
-            $user->update(["senha" => Hash::make($request->new_password)]);
+        event(new UserPasswordChangedEvent($user));
 
-            event(new UserPasswordChangedEvent($user));
-
-            return response("", 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 500);
-
-        }
+        return response(["message" => "Senha atualizada com sucesso!"], 200);
     }
 
     /**
@@ -195,19 +163,12 @@ class MyAccountController extends Controller
      */
     function accountDesactivation($id) : \Illuminate\Http\Response {
 
-        try{
+        $user = UserModel::find($id);
 
-            $user = UserModel::find($id);
+        $user->update(["status" => false]);
 
-            $user->update(["status" => false]);
+        event(new UserAccountDesactivatedEvent($user));
 
-            event(new UserAccountDesactivatedEvent($user));
-
-            return response("", 200);
-
-        }catch(\Exception $e){
-
-            return response(["error" => $e->getMessage()], 500);
-        }
+        return response(["message" => "Conta desativada com sucesso!"], 200);
     }
 }

@@ -24,9 +24,11 @@ class UpdateBasicDataRequest extends FormRequest
     public function rules()
     {
 
+        $user_id = $this->route("id");
+
         return [
             "name" => ["required"],
-            "email" => ["required", "unique:users,email"]
+            "email" => ["required", "unique:users,email,".$user_id]
         ];
 
     }
