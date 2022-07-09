@@ -392,7 +392,7 @@ export function PlansPanel() {
                           </IconButton>
                         }
                       </TableCell>
-                      <TableCell align="center">{row.status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                      <TableCell align="center">{row.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
                     </TableRow>

@@ -325,7 +325,7 @@ export const OrdersPanel = React.memo(() => {
                   records.map((row, index) => (
                     <TableRow key={row.id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.status === 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                      <TableCell align="center">{row.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
                         <BadgeIcon number={row.flight_plans.length} color={"success"} />
                       </TableCell>

@@ -30,8 +30,6 @@ export const BasicDataPanel = React.memo((props) => {
 
     const [loading, setLoading] = React.useState(false);
 
-    const [saveNecessary, setSaveNecessary] = React.useState(false);
-
     const [fieldError, setFieldError] = React.useState({ name: false, email: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "" });
 
@@ -39,11 +37,8 @@ export const BasicDataPanel = React.memo((props) => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const enableSaveButton = () => {
-        setSaveNecessary(true);
-    }
-
     const reloadFormulary = () => {
+        setLoading(true);
         props.reload_setter(!props.reload_state);
     }
 
@@ -51,10 +46,8 @@ export const BasicDataPanel = React.memo((props) => {
         event.preventDefault();
 
         if (formularyDataValidation()) {
-
             setLoading(true);
             requestServerOperation();
-
         }
 
     }
@@ -98,7 +91,7 @@ export const BasicDataPanel = React.memo((props) => {
 
     const serverErrorResponseTreatment = (response) => {
 
-        let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -130,7 +123,6 @@ export const BasicDataPanel = React.memo((props) => {
     }
 
     const handleInputChange = (event) => {
-        enableSaveButton();
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
@@ -228,7 +220,7 @@ export const BasicDataPanel = React.memo((props) => {
                         </Grid>
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary} sx={{ mt: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
                         Atualizar
                     </Button>
 

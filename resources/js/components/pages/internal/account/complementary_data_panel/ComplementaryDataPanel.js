@@ -27,10 +27,28 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
 
-    const [saveNecessary, setSaveNecessary] = React.useState({ documents: false, address: false });
+    const [controlledInput, setControlledInput] = React.useState({
+        complementary_data_id: props.complementary_data_id, 
+        address_id: props.address_id, 
+        anac_license: props.anac_license,
+        cpf: props.cpf,
+        cnpj: props.cnpj,
+        telephone: props.telephone,
+        cellphone: props.cellphone,
+        company_name: props.company_name,
+        trading_name: props.trading_name,
+        address: props.address,
+        number: props.number,
+        cep: props.cep,
+        city: props.city,
+        state: props.state,
+        complement: props.complement
+    });
 
-    const [errorDetected, setErrorDetected] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
-    const [errorMessage, setErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
+    const [loading, setLoading] = React.useState(false);
+
+    const [fieldError, setFieldError] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
 
     const [keyPressed, setKeyPressed] = React.useState();
 
@@ -40,14 +58,16 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    function reloadFormulary() {
-
+    const reloadFormulary = () => {
         props.reload_setter(!props.reload_state);
+    }
 
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
 
-    function inputSetMask(event, input) {
+    const inputSetMask = (event, input) => {
 
         if (keyPressed != "Backspace") {
 
@@ -109,48 +129,42 @@ export const ComplementaryDataPanel = React.memo((props) => {
         }
     }
 
-    function handleAddressSubmitForm(event) {
+    const handleDocumentsSubmitForm = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
-
-        if (formAddressValidate(data)) {
-
-            formAddressRequestServerOperation(data);
-
+        if (documentFormularyDataValidation()) {
+            setLoading(true);
+            documentsRequestServerOperation();
         }
 
     }
 
-    function handleDocumentsSubmitForm(event) {
+    const handleAddressSubmitForm = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
-
-        if (formularyDataValidation(data)) {
-
-            formDocumentsRequestServerOperation(data);
-
+        if (addressFormularyDataValidation()) {
+            setLoading(true);
+            addressRequestServerOperation();
         }
 
     }
 
-    function formularyDataValidation(data) {
+    const documentFormularyDataValidation = () => {
 
         const habAnacPattern = /^\d{6}$/;
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
         const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
 
-        const habanacValidate = FormValidation(data.get("anac_license"), 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
-        const cpfValidate = FormValidation(data.get("cpf"), null, null, cpfPattern, "CPF");
-        const cnpjValidate = FormValidation(data.get("cnpj"), null, null, cnpjPattern, "CNPJ");
-        const telephoneValidate = FormValidation(data.get("telephone"), null, null, phonePattern, "NÚMERO DE TELEFONE");
-        const cellphoneValidate = FormValidation(data.get("cellphone"), null, null, phonePattern, "NÚMERO DE CELULAR");
-        const rsocialValidate = FormValidation(data.get("company_name"), 3, null, null);
-        const nfantasiaValidate = FormValidation(data.get("trading_name"), 3, null, null);
+        const habanacValidate = FormValidation(controlledInput.anac_license, 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
+        const cpfValidate = FormValidation(controlledInput.cpf, null, null, cpfPattern, "CPF");
+        const cnpjValidate = FormValidation(controlledInput.cnpj, null, null, cnpjPattern, "CNPJ");
+        const telephoneValidate = FormValidation(controlledInput.telephone, null, null, phonePattern, "NÚMERO DE TELEFONE");
+        const cellphoneValidate = FormValidation(controlledInput.cellphone, null, null, phonePattern, "NÚMERO DE CELULAR");
+        const rsocialValidate = FormValidation(controlledInput.company_name, 3);
+        const nfantasiaValidate = FormValidation(controlledInput.trading_name, 3);
 
-        setErrorDetected(
+        setFieldError(
             {
                 anac_license: habanacValidate.error,
                 cpf: cpfValidate.error,
@@ -168,7 +182,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             }
         );
 
-        setErrorMessage(
+        setFieldErrorMessage(
             {
                 anac_license: habanacValidate.message,
                 cpf: cpfValidate.message,
@@ -190,19 +204,19 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    function formAddressValidate(data) {
+    const addressFormularyDataValidation = () => {
 
         const adressNumberPattern = /^\d+$/;
         const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
-        const logradouroValidate = FormValidation(data.get("address"), 3, null, null);
-        const numeroValidate = FormValidation(data.get("number"), null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
-        const cepValidate = FormValidation(data.get("cep"), null, null, cepPattern, "CEP");
-        const cidadeValidate = data.get("select_city_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
-        const estadoValidate = data.get("select_state_input") != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
-        const complementoValidate = FormValidation(data.get("complement"), null, null, null);
+        const logradouroValidate = FormValidation(controlledInput.address, 3);
+        const numeroValidate = FormValidation(controlledInput.number, null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
+        const cepValidate = FormValidation(controlledInput.cep, null, null, cepPattern, "CEP");
+        const cidadeValidate = controlledInput.city != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
+        const estadoValidate = controlledInput.state != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
+        const complementoValidate = FormValidation(controlledInput.complement);
 
-        setErrorDetected(
+        setFieldError(
             {
                 anac_license: false,
                 cpf: false,
@@ -220,7 +234,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             }
         );
 
-        setErrorMessage(
+        setFieldErrorMessage(
             {
                 anac_license: "",
                 cpf: "",
@@ -238,86 +252,77 @@ export const ComplementaryDataPanel = React.memo((props) => {
             }
         );
 
-        if (logradouroValidate.error || numeroValidate.error || cepValidate.error || cidadeValidate.error || estadoValidate.error || complementoValidate.error) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(logradouroValidate.error || numeroValidate.error || cepValidate.error || cidadeValidate.error || estadoValidate.error || complementoValidate.error);
     }
 
-    function formDocumentsRequestServerOperation(data) {
+    const documentsRequestServerOperation = () => {
 
         AxiosApi.patch(`/api/update-documents-data/${AuthData.data.id}`, {
-            complementary_data_id: props.complementary_data_id,
-            address_id: props.address_id,
-            anac_license: data.get("anac_license"),
-            cpf: data.get("cpf"),
-            cnpj: data.get("cnpj"),
-            telephone: data.get("telephone"),
-            cellphone: data.get("cellphone"),
-            company_name: data.get("company_name"),
-            trading_name: data.get("trading_name")
+            complementary_data_id: controlledInput.complementary_data_id,
+            address_id: controlledInput.address_id,
+            anac_license: controlledInput.anac_license,
+            cpf: controlledInput.cpf,
+            cnpj: controlledInput.cnpj,
+            telephone: controlledInput.telephone,
+            cellphone: controlledInput.cellphone,
+            company_name: controlledInput.company_name,
+            trading_name: controlledInput.trading_name
         })
             .then(function (response) {
 
-                formDocumentsSuccessRequestServerOperation(response);
+                setLoading(false);
+                documentsSuccessRequestServerOperation(response);
 
             })
             .catch(function (error) {
 
-                formDocumentsErrorRequestServerOperation(error.response.data);
+                setLoading(false);
+                documentsErrorRequestServerOperation(error.response.data);
 
             });
 
     }
 
-    function formAddressRequestServerOperation(data) {
+    const addressRequestServerOperation = () => {
 
         AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
-            address: data.get("address"),
-            number: data.get("number"),
-            cep: data.get("cep"),
-            city: data.get("select_city_input"),
-            state: data.get("select_state_input"),
-            complement: data.get("complement")
+            address: controlledInput.address,
+            number: controlledInput.number,
+            cep: controlledInput.cep,
+            city: controlledInput.city,
+            state: controlledInput.state,
+            complement: controlledInput.complement
         })
             .then(function (response) {
 
-                formAddressSuccessRequestServerOperation(response);
+                setLoading(false);
+                addressSuccessRequestServerOperation(response);
 
             })
             .catch(function (error) {
 
-                formAddressErrorRequestServerOperation(error.response.data);
+                setLoading(false);
+                addressErrorRequestServerOperation(error.response);
 
             });
 
     }
 
-    function formDocumentsSuccessRequestServerOperation() {
-
-        handleOpenSnackbar("Documentos atualizados com sucesso!", "success");
-
-        props.reload_setter(!props.reload_state);
-
-
-    }
-
-    function formAddressSuccessRequestServerOperation() {
-
-        handleOpenSnackbar("Endereço atualizado com sucesso!", "success");
-
+    const documentsSuccessRequestServerOperation = (response) => {
+        handleOpenSnackbar(response.data.message, "success");
         props.reload_setter(!props.reload_state);
 
     }
 
-    function formDocumentsErrorRequestServerOperation(response_data) {
+    const addressSuccessRequestServerOperation = (response) => {
+        handleOpenSnackbar(response.data.message, "success");
+        props.reload_setter(!props.reload_state);
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    }
+
+    const documentsErrorRequestServerOperation = (response) => {
+
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -332,16 +337,16 @@ export const ComplementaryDataPanel = React.memo((props) => {
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
             request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({
+        setFieldError({
             anac_license: request_errors.anac_license.error,
             cpf: request_errors.cpf.error,
             cnpj: request_errors.cnpj.error,
@@ -357,7 +362,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             complement: ""
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             anac_license: request_errors.anac_license.message,
             cpf: request_errors.cpf.message,
             cnpj: request_errors.cnpj.message,
@@ -376,9 +381,9 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     }
 
-    function formAddressErrorRequestServerOperation(response_data) {
+    const addressErrorRequestServerOperation = (response) => {
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -392,16 +397,16 @@ export const ComplementaryDataPanel = React.memo((props) => {
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
             input_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({
+        setFieldError({
             anac_license: false,
             cpf: false,
             cnpj: false,
@@ -417,7 +422,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             complement: input_errors.complement.error
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             anac_license: "",
             cpf: "",
             cnpj: "",
@@ -434,10 +439,8 @@ export const ComplementaryDataPanel = React.memo((props) => {
         });
     }
 
-    function handleOpenSnackbar(text, variant) {
-
+    const handleOpenSnackbar = (text, variant) => {
         enqueueSnackbar(text, { variant });
-
     }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -472,9 +475,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.anac_license}
-                                helperText={errorMessage.anac_license}
-                                error={errorDetected.anac_license}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "HAB_ANAC"); }}
+                                helperText={fieldErrorMessage.anac_license}
+                                error={fieldError.anac_license}
+                                onChange={(event) => {
+                                    inputSetMask(event, "HAB_ANAC");
+                                    handleInputChange(event);
+                                }}
                             />
                         </Grid>
 
@@ -487,9 +493,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.cpf}
-                                helperText={errorMessage.cpf}
-                                error={errorDetected.cpf}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CPF"); }}
+                                helperText={fieldErrorMessage.cpf}
+                                error={fieldError.cpf}
+                                onChange={(event) => {
+                                    inputSetMask(event, "CPF");
+                                    handleInputChange(event);
+                                }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                             />
                         </Grid>
@@ -503,9 +512,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.cnpj}
-                                helperText={errorMessage.cnpj}
-                                error={errorDetected.cnpj}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CNPJ"); }}
+                                helperText={fieldErrorMessage.cnpj}
+                                error={fieldError.cnpj}
+                                onChange={(event) => {
+                                    inputSetMask(event, "CNPJ");
+                                    handleInputChange(event);
+                                }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
                                     maxLength: 18
@@ -522,9 +534,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.telephone}
-                                helperText={errorMessage.telephone}
-                                error={errorDetected.telephone}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "PHONE"); }}
+                                helperText={fieldErrorMessage.telephone}
+                                error={fieldError.telephone}
+                                onChange={(event) => {
+                                    inputSetMask(event, "PHONE");
+                                    handleInputChange(event);
+                                }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
                                     maxLength: 14
@@ -541,9 +556,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.cellphone}
-                                helperText={errorMessage.cellphone}
-                                error={errorDetected.cellphone}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "PHONE"); }}
+                                helperText={fieldErrorMessage.cellphone}
+                                error={fieldError.cellphone}
+                                onChange={(event) => {
+                                    inputSetMask(event, "PHONE");
+                                    handleInputChange(event);
+                                }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
                                     maxLength: 14
@@ -560,9 +578,9 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.company_name}
-                                helperText={errorMessage.company_name}
-                                error={errorDetected.company_name}
-                                onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
+                                helperText={fieldErrorMessage.company_name}
+                                error={fieldError.company_name}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
@@ -575,15 +593,15 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.trading_name}
-                                helperText={errorMessage.trading_name}
-                                error={errorDetected.trading_name}
-                                onChange={() => { setSaveNecessary({ documents: true, address: false }) }}
+                                helperText={fieldErrorMessage.trading_name}
+                                error={fieldError.trading_name}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary.documents} sx={{ mt: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
                         Atualizar
                     </Button>
                 </Paper>
@@ -597,8 +615,8 @@ export const ComplementaryDataPanel = React.memo((props) => {
                     <Grid container spacing={3}>
 
                         <Grid item xs={12} sm={12}>
-                            <SelectStates default={props.state} state_input_setter={setInputState} error={errorDetected.state} error_message={errorMessage.state} edit_mode={true} save_necessary_setter={setSaveNecessary} />
-                            <SelectCities default={props.city} choosen_state={inputState} error={errorDetected.city} error_message={errorMessage.city} edit_mode={true} save_necessary_setter={setSaveNecessary} />
+                            <SelectStates default={props.state} state_input_setter={setInputState} error={fieldError.state} error_message={fieldErrorMessage.state} edit_mode={true} />
+                            <SelectCities default={props.city} choosen_state={inputState} error={fieldError.city} error_message={fieldErrorMessage.city} edit_mode={true}/>
                         </Grid>
 
                         <Grid item xs={12} sm={6}>
@@ -610,9 +628,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.cep}
-                                helperText={errorMessage.cep}
-                                error={errorDetected.cep}
-                                onChange={(event) => { setSaveNecessary({ documents: true, address: false }); inputSetMask(event, "CEP"); }}
+                                helperText={fieldErrorMessage.cep}
+                                error={fieldError.cep}
+                                onChange={(event) => {
+                                    inputSetMask(event, "CEP");
+                                    handleInputChange(event);
+                                }}
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                                 InputProps={{
                                     maxLength: 9
@@ -629,9 +650,9 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.address}
-                                helperText={errorMessage.address}
-                                error={errorDetected.address}
-                                onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
+                                helperText={fieldErrorMessage.address}
+                                error={fieldError.address}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
@@ -644,9 +665,9 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.number}
-                                helperText={errorMessage.number}
-                                error={errorDetected.number}
-                                onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
+                                helperText={fieldErrorMessage.number}
+                                error={fieldError.number}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
@@ -659,15 +680,15 @@ export const ComplementaryDataPanel = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 defaultValue={props.complement}
-                                helperText={errorMessage.complement}
-                                error={errorDetected.complement}
-                                onChange={() => { setSaveNecessary({ documents: false, address: true }) }}
+                                helperText={fieldErrorMessage.complement}
+                                error={fieldError.complement}
+                                onChange={handleInputChange}
                             />
                         </Grid>
 
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary.address} sx={{ mt: 2 }}>
+                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
                         Atualizar
                     </Button>
 

@@ -39,10 +39,12 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     const { AuthData } = useAuthentication();
 
-    const [saveNecessary, setSaveNecessary] = React.useState(false);
+    const [controlledInput, setControlledInput] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
 
-    const [errorDetected, setErrorDetected] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false }); 
-    const [errorMessage, setErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" }); 
+    const [loading, setLoading] = React.useState(false);
+
+    const [fieldError, setFieldError] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
 
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
@@ -50,30 +52,32 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    function handleSubmitChangePassword(event) {
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    }
 
+    const handleSubmitChangePassword = (event) => {
         event.preventDefault();
 
-        const data = new FormData(event.currentTarget);
+        if (formChangePasswordValidate()) {
 
-        if (formChangePasswordValidate(data)) {
-
-            requestServerOperation(data);
+            setLoading(true);
+            requestServerOperation();
 
         }
 
 
     }
 
-    function formChangePasswordValidate(data) {
+    const formChangePasswordValidate = () => {
 
         const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 
-        const actualPasswordValidate = FormValidation(data.get("actual_password"), null, null, null, null);
-        const newPasswordValidate = FormValidation(data.get("new_password"), null, null, passwordPattern, "PASSWORD");
-        const newPasswordConfirmationValidate = data.get("new_password") != data.get("new_password_confirmation") ? { error: true, message: "As senhas são incompátiveis" } : { error: false, message: "" };
+        const actualPasswordValidate = FormValidation(controlledInput.actual_password);
+        const newPasswordValidate = FormValidation(controlledInput.new_password, null, null, passwordPattern, "PASSWORD");
+        const newPasswordConfirmationValidate = controlledInput.new_password != controlledInput.new_password_confirmation ? { error: true, message: "As senhas são incompátiveis" } : { error: false, message: "" };
 
-        setErrorDetected(
+        setFieldError(
             {
                 actual_password: actualPasswordValidate.error,
                 new_password: newPasswordValidate.error,
@@ -81,7 +85,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
             }
         );
 
-        setErrorMessage(
+        setFieldErrorMessage(
             {
                 actual_password: actualPasswordValidate.message,
                 new_password: newPasswordValidate.message,
@@ -89,37 +93,31 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
             }
         );
 
-        if (actualPasswordValidate.error || newPasswordValidate.error || newPasswordConfirmationValidate.error) {
-
-            return false;
-
-        } else {
-
-            return true;
-
-        }
+        return !(actualPasswordValidate.error || newPasswordValidate.error || newPasswordConfirmationValidate.error);
 
     }
 
-    function requestServerOperation(data) {
+    const requestServerOperation = () => {
 
-        AxiosApi.post(`/api/update-password/${AuthData.data.id}`, data)
-            .then(function () {
+        AxiosApi.post(`/api/update-password/${AuthData.data.id}`, controlledInput)
+            .then(function (response) {
 
-                handleOpenSnackbar("Senha alterada com sucesso!", "success");
+                setLoading(false);
+                handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
-                requestErrorServerOperation(error.response.data);
+                setLoading(false);
+                requestErrorServerOperation(error.response);
 
             });
 
     }
 
-    function requestErrorServerOperation(response_data) {
+    function requestErrorServerOperation(response) {
 
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -130,22 +128,22 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
+        for (let prop in response.data.errors) {
 
             request_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
 
         }
 
-        setErrorDetected({
+        setFieldError({
             actual_password: request_errors.actual_password.error,
             new_password: request_errors.new_password.error,
             new_password_confirmation: request_errors.new_password_confirmation.error
         });
 
-        setErrorMessage({
+        setFieldErrorMessage({
             actual_password: request_errors.actual_password.message,
             new_password: request_errors.new_password.message,
             new_password_confirmation: request_errors.new_password_confirmation.message
@@ -153,13 +151,11 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     }
 
-    function reloadFormulary() {
-
+    const reloadFormulary = () => {
         props.reload_setter(!props.reload_state);
-
     }
 
-    function disableAccount() {
+    const disableAccount = () => {
 
         AxiosApi.post(`/api/desactivate-account/${AuthData.data.id}`)
             .then(function () {
@@ -243,9 +239,9 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                helperText={errorMessage.actual_password}
-                                error={errorDetected.actual_password}
-                                onChange={() => { setSaveNecessary(true) }}
+                                helperText={fieldErrorMessage.actual_password}
+                                error={fieldError.actual_password}
+                                onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
                             <TextField
@@ -254,9 +250,9 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                helperText={errorMessage.new_password}
-                                error={errorDetected.new_password}
-                                onChange={() => { setSaveNecessary(true) }}
+                                helperText={fieldErrorMessage.new_password}
+                                error={fieldError.new_password}
+                                onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
                             <TextField
@@ -265,12 +261,12 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                helperText={errorMessage.new_password_confirmation}
-                                error={errorDetected.new_password_confirmation}
-                                onChange={() => { setSaveNecessary(true) }}
+                                helperText={fieldErrorMessage.new_password_confirmation}
+                                error={fieldError.new_password_confirmation}
+                                onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
-                            <Button type="submit" variant="contained" color="primary" disabled={!saveNecessary}>
+                            <Button type="submit" variant="contained" color="primary" disabled={loading}>
                                 Alterar senha
                             </Button>
                         </PaperStyled>
