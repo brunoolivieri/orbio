@@ -28,21 +28,21 @@ export const ComplementaryDataPanel = React.memo((props) => {
     const { AuthData } = useAuthentication();
 
     const [controlledInput, setControlledInput] = React.useState({
-        complementary_data_id: props.data.complementary_data_id, 
-        address_id: props.data.address_id, 
-        anac_license: props.data.anac_license,
-        cpf: props.data.cpf,
-        cnpj: props.data.cnpj,
-        telephone: props.data.telephone,
-        cellphone: props.data.cellphone,
-        company_name: props.data.company_name,
-        trading_name: props.data.trading_name,
-        address: props.data.address,
-        number: props.data.number,
-        cep: props.data.cep,
-        city: props.data.city,
-        state: props.data.state,
-        complement: props.data.complement
+        complementary_data_id: props.complementary_data_id, 
+        address_id: props.address_id, 
+        anac_license: props.anac_license,
+        cpf: props.cpf,
+        cnpj: props.cnpj,
+        telephone: props.telephone,
+        cellphone: props.cellphone,
+        company_name: props.company_name,
+        trading_name: props.trading_name,
+        address: props.address,
+        number: props.number,
+        cep: props.cep,
+        city: props.city,
+        state: props.state,
+        complement: props.complement
     });
 
     const [loading, setLoading] = React.useState(false);

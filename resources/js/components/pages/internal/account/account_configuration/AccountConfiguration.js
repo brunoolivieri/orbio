@@ -115,7 +115,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     }
 
-    function requestErrorServerOperation(response) {
+    const requestErrorServerOperation = (response) => {
 
         const error_message = response.data.message ? response.data.message : "Erro do servidor";
         handleOpenSnackbar(error_message, "error");
@@ -177,7 +177,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     }
 
-    function handleOpenSnackbar(text, variant) {
+    const handleOpenSnackbar = (text, variant) => {
 
         enqueueSnackbar(text, { variant });
 

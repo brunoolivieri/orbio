@@ -82,10 +82,13 @@ class MyAccountController extends Controller
      */
     function basicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
 
-        UserModel::where("id", Auth::user()->id)->update([
+        $this->model->where("id", Auth::user()->id)->update([
             "name" => $request->name,
             "email" => $request->email
         ]);
+
+        // Send email
+        // Send email with confirmation link if email was changed
 
         return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
 
