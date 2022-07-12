@@ -98,7 +98,6 @@ class AdministrationModuleProfilesController extends Controller
      */
     public function destroy($id) : \Illuminate\Http\Response
     {
-
         Gate::authorize('administration_write');
 
         return $this->service->deleteProfile($id);
