@@ -109,7 +109,12 @@ class UserPanelService{
      */
     public function updateUser(Request $request, $user_id) : \Illuminate\Http\Response{
 
-        UserModel::where('id', $user_id)->update($request->only(["name", "email", "profile_id", "status"]));
+        UserModel::where('id', $user_id)->update([
+            "name" => $request->name,
+            "email" => $request->email,
+            "profile_id" =>  $request->profile_id,
+            "status" =>  $request->boolean("status")
+        ]);
 
         return response(["message" => "Usuário atualizado com sucesso!"], 200); 
 

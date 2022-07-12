@@ -17,7 +17,7 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericSelect } from '../../../input_select/GenericSelect';
 import AxiosApi from '../../../../../services/AxiosApi';
-import { RadioInput } from '../../../radio_group/RadioInput';
+import { StatusRadio } from '../../../radio_group/StatusRadio';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -238,8 +238,8 @@ export const UpdateUserFormulary = React.memo(({ ...props }) => {
               </Box>
 
               <Box>
-                <RadioInput
-                  default={props.record.status == 1 ? "1" : "0"}
+                <StatusRadio
+                  default={props.record.status == 1 ? 1 : 0}
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
                 />

@@ -19,7 +19,7 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
-import { RadioInput } from '../../radio_group/RadioInput';
+import { StatusRadio } from '../../radio_group/StatusRadio';
 import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -315,8 +315,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
             />
 
             <Box>
-              <RadioInput
-                default={"1"}
+              <StatusRadio
+                default={1}
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
               />

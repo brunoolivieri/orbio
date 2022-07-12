@@ -83,7 +83,7 @@ class ServiceOrderService{
                     "pilot_name" => $pilot->name,
                     "client_name" => $client->name,
                     "observation" => $request->observation,
-                    "status" => $request->status
+                    "status" => $request->boolean("status")
                 ]
             );
 
@@ -149,7 +149,7 @@ class ServiceOrderService{
                     "pilot_name" => $pilot_data->name,
                     "client_name" => $client_data->name,
                     "observation" => $request->observation,
-                    "status" => $request->status
+                    "status" => $request->boolean("status")
                 ]
             );
 

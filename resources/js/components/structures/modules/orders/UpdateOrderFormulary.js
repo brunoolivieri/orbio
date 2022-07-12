@@ -17,7 +17,7 @@ import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { GenericSelect } from '../../input_select/GenericSelect';
-import { RadioInput } from '../../radio_group/RadioInput';
+import { StatusRadio } from '../../radio_group/StatusRadio';
 import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
 import LinearProgress from '@mui/material/LinearProgress';
 // Fontsawesome
@@ -343,8 +343,8 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
               />
 
               <Box>
-                <RadioInput
-                  default={props.record.status == 1 ? "1" : "0"}
+                <StatusRadio
+                  default={props.record.status == 1 ? 1 : 0}
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
                 />
