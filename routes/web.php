@@ -45,7 +45,9 @@ Route::middleware(["session.auth"])->group(function(){
     Route::view('/internal/map', "map"); 
     Route::post('/api/get-auth-data', [MainInternalController::class, "getUserAuthenticatedData"]); 
     // Internal "MyAccount" operations
-    Route::get('/api/user-account-data', [MyAccountController::class, "loadAccountData"]);
+    Route::get('/api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
+    Route::get('/api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);
+    Route::get('/api/load-sessions-data', [MyAccountController::class, "loadActiveSessions"]);
     Route::patch('/api/update-basic-data/{id}', [MyAccountController::class, "basicDataUpdate"]);
     Route::patch('/api/update-documents-data/{id}', [MyAccountController::class, "documentsUpdate"]);
     Route::patch('/api/update-address-data/{id}', [MyAccountController::class, "addressUpdate"]);

@@ -68,44 +68,4 @@ class UserModel extends Authenticatable
         return UserFactory::new();
     }
 
-    // ================================================ //
-
-    /**
-     * Get all user data.
-     *
-     * @param int $user_id
-     * @return array
-     */
-    function loadAllUserData(int $user_id) : array {
-
-        $user = UserModel::find($user_id);
-
-        $data = [
-            "basic" => [
-                'name' => $user->name, 
-                'email' => $user->email 
-            ],
-            "complementary" => [
-                'anac_license' => $user->complementary_data->habANAC,
-                'cpf' => $user->complementary_data->CPF,
-                'cnpj' => $user->complementary_data->CNPJ,
-                'telefone' => $user->complementary_data->telephone,
-                'celular' => $user->complementary_data->cellphone,
-                'company_name' => $user->complementary_data->company_name,
-                'trading_name' => $user->complementary_data->trading_name
-            ],
-            "address" => [
-                'address' => $user->complementary_data->address->address,
-                'number' => $user->complementary_data->address->number,
-                'cep' => $user->complementary_data->address->cep,
-                'city' => $user->complementary_data->address->city,
-                'state' => $user->complementary_data->address->state,
-                'complement' => $user->complementary_data->address->complement
-            ]    
-        ];
-
-        return ["status" => true, "error" => false, "account_data" => $data];
-
-    }
-
 }

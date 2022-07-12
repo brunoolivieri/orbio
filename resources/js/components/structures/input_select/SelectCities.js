@@ -3,7 +3,7 @@
 // React
 import * as React from 'react';
 // Custom JSON
-import brazil_cities from "../../../services/brazil_geo_data.json";
+import cities from "../../../services/brazil_geo_data.json";
 // Material UI
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -12,37 +12,22 @@ import Select from '@mui/material/Select';
 
 export const SelectCities = React.memo((props) => {
 
+    const [selectedOption, setSelectedOption] = React.useState(props.default != null ? props.default : "0");
+    const [options, setOptions] = React.useState([]);
+
     React.useEffect(() => {
-
-        //  Aqui as cidades são recuperadas do JSON "brazil_states"
-        // As cidades recuperadas são as do objeto cuja sigla é igual ao do estado já selecionado
-
-        brazil_cities.estados.map((row) => {
-
-            // Se o estado já escolhido for igual ao da estrutura de dados
-            if (row.sigla == props.choosen_state) {
-
-                // As cidades do estado escolhido são recuperadas
-                setSelectionData({ status: true, data: row.cidades });
-
+        cities.estados.map((state) => {
+            // The cities of the selected state are selected
+            if (state.sigla == props.selectedState) {
+                setOptions(state.cidades);
             }
-
-        })
-
-    }, [props.choosen_state])
-
-    const [selectedItemValue, setSelectedItem] = React.useState(props.default != null ? props.default : "0");
-
-    // State do carregamento dos dados do input de select
-    const [selectData, setSelectionData] = React.useState({ status: false, data: [] });
+        });
+    }, [props.selectedState]);
 
     const handleSelectChange = (event) => {
-
-        setSelectedItem(event.target.value);
-        props.save_necessary_setter(true);
-        props.state_input_setter(event.target.value);
-
-    };
+        setSelectedOption(event.target.value);
+        props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.target.value });
+    }
 
     return (
         <>
@@ -50,27 +35,21 @@ export const SelectCities = React.memo((props) => {
                 <InputLabel id="demo-simple-select-helper-label">Cidade</InputLabel>
                 <Select
                     labelId="demo-simple-select-helper-label"
-                    id={"select_city_input"}
-                    value={selectedItemValue} // O valor inicial é 0 ou o valor do atributo "cidade" no Token JWT
+                    value={selectedOption}
                     label={"Cidade"}
                     onChange={handleSelectChange}
-                    name={"select_city_input"}
-                    error={props.error}
-                    disabled={props.edit_mode == false ? true : (props.choosen_state != null ? false : true)}
+                    name={"city"}
+                    error={props.fieldError}
+                    disabled={props.selectedState != null ? false : true}
                 >
 
-                    {/* GERAÇÃO DOS ITENS DO SELECT */}
                     <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
 
-                    {selectData.status &&
+                    {options.map((city, index) =>
 
-                        selectData.data.map((element, index) =>
+                        <MenuItem value={city} key={index}>{city}</MenuItem>
 
-                            // O valor de cada item é igual ao nome da cidade para que possa haver a correspondência com o Token JWT
-                            // O valor da cidade no Token JWT é o seu nome
-                            <MenuItem value={element} key={index}>{element}</MenuItem>
-
-                        )
+                    )
 
                     }
 

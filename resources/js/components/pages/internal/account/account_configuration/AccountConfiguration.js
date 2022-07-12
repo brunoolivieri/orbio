@@ -41,7 +41,9 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     const [controlledInput, setControlledInput] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
 
-    const [loading, setLoading] = React.useState(false);
+    const [sessions, setSessions] = React.useState([]);
+
+    const [loading, setLoading] = React.useState(true);
 
     const [fieldError, setFieldError] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
@@ -52,6 +54,25 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
+    React.useEffect(() => {
+
+        AxiosApi.get("/api/load-sessions-data")
+            .then(function (response) {
+
+                setSessions(response.data);
+                setLoading(false);
+
+            })
+            .catch(function () {
+
+                setSessions([]);
+                setLoading(false);
+                handleOpenSnackbar("Erro no carregamento das sessões ativas.", "error");
+
+            });
+
+    }, [loading]);
+
     const handleInputChange = (event) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
@@ -60,12 +81,9 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         event.preventDefault();
 
         if (formChangePasswordValidate()) {
-
             setLoading(true);
             requestServerOperation();
-
         }
-
 
     }
 
@@ -271,12 +289,13 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                             </Button>
                         </PaperStyled>
 
+
                         <PaperStyled>
                             <Typography variant="h5" marginBottom={2}>Sessões ativas</Typography>
                             <Stack spacing={2}>
-                                {props.data.length > 0 &&
-                                    props.data.map((session) => (
-                                        <Paper key={session.id} sx={{ boxShadow: 'none' }}>
+                                {!loading && sessions.length > 0 &&
+                                    sessions.map((session, index) => (
+                                        <Paper key={index} sx={{ boxShadow: 'none' }}>
                                             <Card sx={{ display: 'flex', alignItems: 'center', boxShadow: 'none' }}>
                                                 <Box sx={{ padding: 2 }}>
                                                     <FontAwesomeIcon icon={faComputer} size="2x" color={'#4caf50'} />

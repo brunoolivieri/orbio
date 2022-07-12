@@ -31,47 +31,76 @@ class MyAccountController extends Controller
     }
 
     /**
-     * Method for load user account data.
+     * Method for load basic user account data.
      * 
      * @return \Illuminate\Http\Response
      */
-    function loadAccountData() : \Illuminate\Http\Response {
+    function loadBasicData() : \Illuminate\Http\Response {
 
-        if(request()->user_id == Auth::user()->id){
+        $user = $this->user_model->find(Auth::user()->id);
 
-            $response =  $this->user_model->loadAllUserData((int) Auth::user()->id);
+       return response([
+        "name" => $user->name,
+        "email" => $user->email
+       ], 200);
 
-            if($response["status"] && !$response["error"]){
+    }
 
-                $active_sessions = [];
-                for($count = 0; $count < count(Auth::user()->sessions); $count++){
+    /**
+     * Method for load complementary user account data.
+     * 
+     * @return \Illuminate\Http\Response
+     */
+    function loadComplementaryData() : \Illuminate\Http\Response  {
 
-                    $user_agent_array = explode(" ", Auth::user()->sessions[$count]->user_agent);
-                    $browser = $user_agent_array[count($user_agent_array) - 1];
+        $user = $this->user_model->find(Auth::user()->id);
 
-                    $active_sessions[$count] = [
-                        "id" => Auth::user()->sessions[$count]->id,
-                        "user_agent" => $browser,
-                        "ip" => Auth::user()->sessions[$count]->ip_address,
-                        "last_activity" => date('d-m-Y H:i:s', strtotime(Auth::user()->sessions[$count]->last_activity))
-                    ];
-                }
+        return response([
+            "complementary" => [
+                'anac_license' => $user->complementary_data->habANAC,
+                'cpf' => $user->complementary_data->CPF,
+                'cnpj' => $user->complementary_data->CNPJ,
+                'telephone' => $user->complementary_data->telephone,
+                'cellphone' => $user->complementary_data->cellphone,
+                'company_name' => $user->complementary_data->company_name,
+                'trading_name' => $user->complementary_data->trading_name
+            ],
+            "address" => [
+                'address' => $user->complementary_data->address->address,
+                'number' => $user->complementary_data->address->number,
+                'cep' => $user->complementary_data->address->cep,
+                'city' => $user->complementary_data->address->city,
+                'state' => $user->complementary_data->address->state,
+                'complement' => $user->complementary_data->address->complement
+            ]    
+        ], 200);
 
-                $response["account_data"]["active_sessions"] = $active_sessions;
+    }
 
-                return response([$response["account_data"]], 200);
+    /**
+     * Method for load user active sessions.
+     * 
+     * @param  App\Http\Requests\UserAccount\UpdateBasicDataRequest  $request
+     * @return \Illuminate\Http\Response
+     */
+    function loadActiveSessions() : \Illuminate\Http\Response {
 
-            }else if(!$response["status"] && $response["error"]){
+        $active_sessions = [];
+        
+        for($count = 0; $count < count(Auth::user()->sessions); $count++){
 
-                return response("", 500);
+            $user_agent_array = explode(" ", Auth::user()->sessions[$count]->user_agent);
+            $browser = $user_agent_array[count($user_agent_array) - 1];
 
-            }
+            $active_sessions[$count] = [
+                "id" => Auth::user()->sessions[$count]->id,
+                "user_agent" => $browser,
+                "ip" => Auth::user()->sessions[$count]->ip_address,
+                "last_activity" => date('d-m-Y H:i:s', strtotime(Auth::user()->sessions[$count]->last_activity))
+            ];
+        }
 
-        }else{
-
-            return response("", 500);
-        } 
-
+        return response($active_sessions, 200);
     }
 
     /**
@@ -82,7 +111,7 @@ class MyAccountController extends Controller
      */
     function basicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
 
-        $this->model->where("id", Auth::user()->id)->update([
+        $this->user_model->where("id", Auth::user()->id)->update([
             "name" => $request->name,
             "email" => $request->email
         ]);

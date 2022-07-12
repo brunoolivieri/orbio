@@ -14,120 +14,66 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
+import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { SelectStates } from '../../../../structures/input_select/InputSelectStates';
+import { SelectStates } from '../../../../structures/input_select/SelectStates';
 import { SelectCities } from '../../../../structures/input_select/SelectCities';
 import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
 // Libs
 import { useSnackbar } from 'notistack';
 
-export const ComplementaryDataPanel = React.memo((props) => {
+export const ComplementaryDataPanel = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
-    const [controlledInput, setControlledInput] = React.useState({
-        complementary_data_id: props.complementary_data_id, 
-        address_id: props.address_id, 
-        anac_license: props.anac_license,
-        cpf: props.cpf,
-        cnpj: props.cnpj,
-        telephone: props.telephone,
-        cellphone: props.cellphone,
-        company_name: props.company_name,
-        trading_name: props.trading_name,
-        address: props.address,
-        number: props.number,
-        cep: props.cep,
-        city: props.city,
-        state: props.state,
-        complement: props.complement
-    });
+    const [controlledInput, setControlledInput] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
 
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
 
     const [fieldError, setFieldError] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" });
 
-    const [keyPressed, setKeyPressed] = React.useState();
-
-    const [inputState, setInputState] = React.useState(props.state);
+    const [keyPressed, setKeyPressed] = React.useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const reloadFormulary = () => {
-        props.reload_setter(!props.reload_state);
-    }
+    React.useEffect(() => {
 
-    const handleInputChange = (event) => {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
-    }
+        AxiosApi.get("/api/load-complementary-account-data")
+            .then(function (response) {
 
+                setControlledInput({
+                    anac_license: response.data.complementary.anac_license,
+                    cpf: response.data.complementary.cpf,
+                    cnpj: response.data.complementary.cnpj,
+                    telephone: response.data.complementary.telephone,
+                    cellphone: response.data.complementary.cellphone,
+                    company_name: response.data.complementary.company_name,
+                    trading_name: response.data.complementary.trading_name,
+                    address: response.data.address.address,
+                    number: response.data.address.number,
+                    cep: response.data.address.cep,
+                    city: response.data.address.city,
+                    state: response.data.address.state,
+                    complement: response.data.address.complement
+                });
 
-    const inputSetMask = (event, input) => {
+                setLoading(false);
 
-        if (keyPressed != "Backspace") {
+            })
+            .catch(function () {
 
-            if (input == "HAB_ANAC") {
+                setControlledInput(null);
+                setLoading(false);
+                handleOpenSnackbar("Erro no carregamento dos dados.", "error");
 
-                console.log(event.currentTarget.value.length)
+            });
 
-            } else if (input == "CNPJ") {
-
-                if (event.currentTarget.value.length == 2 || event.currentTarget.value.length == 6) {
-
-                    event.currentTarget.value = `${event.currentTarget.value}.`;
-
-                } else if (event.currentTarget.value.length == 10) {
-
-                    event.currentTarget.value = event.currentTarget.value + "/";
-
-                } else if (event.currentTarget.value.length == 15) {
-
-                    event.currentTarget.value = event.currentTarget.value + "-";
-
-                }
-
-            } else if (input == "CPF") {
-
-                if (event.currentTarget.value.length == 3 || event.currentTarget.value.length == 7) {
-
-                    event.currentTarget.value = `${event.currentTarget.value}.`;
-
-                } else if (event.currentTarget.value.length == 11) {
-
-                    event.currentTarget.value = event.currentTarget.value + "-";
-
-                }
-
-            } else if (input == "PHONE") {
-
-                if (event.currentTarget.value.length == 1) {
-
-                    event.currentTarget.value = `(${event.currentTarget.value}`;
-
-                } else if (event.currentTarget.value.length == 3) {
-
-                    event.currentTarget.value = event.currentTarget.value + ")";
-
-                } else if (event.currentTarget.value.length == 9) {
-
-                    event.currentTarget.value = event.currentTarget.value + "-";
-                }
-
-            } else if (input == "CEP") {
-
-                if (event.currentTarget.value.length == 5) {
-
-                    event.currentTarget.value = event.currentTarget.value + "-";
-
-                }
-            }
-        }
-    }
+    }, [loading]);
 
     const handleDocumentsSubmitForm = (event) => {
         event.preventDefault();
@@ -151,28 +97,30 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     const documentFormularyDataValidation = () => {
 
-        const habAnacPattern = /^\d{6}$/;
+        const anacLicensePattern = /^\d{6}$/;
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
         const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
 
-        const habanacValidate = FormValidation(controlledInput.anac_license, 3, null, habAnacPattern, "HABILITAÇÃO ANAC");
+        console.log(controlledInput)
+
+        const anacLicenseValidate = FormValidation(controlledInput.anac_license, 3, null, anacLicensePattern, "HABILITAÇÃO ANAC");
         const cpfValidate = FormValidation(controlledInput.cpf, null, null, cpfPattern, "CPF");
         const cnpjValidate = FormValidation(controlledInput.cnpj, null, null, cnpjPattern, "CNPJ");
         const telephoneValidate = FormValidation(controlledInput.telephone, null, null, phonePattern, "NÚMERO DE TELEFONE");
         const cellphoneValidate = FormValidation(controlledInput.cellphone, null, null, phonePattern, "NÚMERO DE CELULAR");
-        const rsocialValidate = FormValidation(controlledInput.company_name, 3);
-        const nfantasiaValidate = FormValidation(controlledInput.trading_name, 3);
+        const companyNameValidate = FormValidation(controlledInput.company_name, 3);
+        const tradingNameValidate = FormValidation(controlledInput.trading_name, 3);
 
         setFieldError(
             {
-                anac_license: habanacValidate.error,
+                anac_license: anacLicenseValidate.error,
                 cpf: cpfValidate.error,
                 cnpj: cnpjValidate.error,
                 telephone: telephoneValidate.error,
                 cellphone: cellphoneValidate.error,
-                company_name: rsocialValidate.error,
-                trading_name: nfantasiaValidate.error,
+                company_name: companyNameValidate.error,
+                trading_name: tradingNameValidate.error,
                 address: false,
                 number: false,
                 cep: false,
@@ -184,13 +132,13 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
         setFieldErrorMessage(
             {
-                anac_license: habanacValidate.message,
+                anac_license: anacLicenseValidate.message,
                 cpf: cpfValidate.message,
                 cnpj: cnpjValidate.message,
                 telephone: telephoneValidate.message,
                 cellphone: cellphoneValidate.message,
-                company_name: rsocialValidate.message,
-                trading_name: nfantasiaValidate.message,
+                company_name: companyNameValidate.message,
+                trading_name: tradingNameValidate.message,
                 address: "",
                 number: "",
                 cep: "",
@@ -200,7 +148,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             }
         );
 
-        return !(habanacValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || rsocialValidate.error || nfantasiaValidate.error);
+        return !(anacLicenseValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || companyNameValidate.error || tradingNameValidate.error);
 
     }
 
@@ -209,12 +157,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
         const adressNumberPattern = /^\d+$/;
         const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
 
-        const logradouroValidate = FormValidation(controlledInput.address, 3);
-        const numeroValidate = FormValidation(controlledInput.number, null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
+        const addressValidate = FormValidation(controlledInput.address, 3);
+        const numberValidate = FormValidation(controlledInput.number, null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
         const cepValidate = FormValidation(controlledInput.cep, null, null, cepPattern, "CEP");
-        const cidadeValidate = controlledInput.city != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
-        const estadoValidate = controlledInput.state != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
-        const complementoValidate = FormValidation(controlledInput.complement);
+        const cityValidate = controlledInput.city != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
+        const stateValidate = controlledInput.state != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
+        const complementValidate = FormValidation(controlledInput.complement);
 
         setFieldError(
             {
@@ -225,12 +173,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 cellphone: false,
                 company_name: false,
                 trading_name: false,
-                address: logradouroValidate.error,
-                number: numeroValidate.error,
+                address: addressValidate.error,
+                number: numberValidate.error,
                 cep: cepValidate.error,
-                city: cidadeValidate.error,
-                state: estadoValidate.error,
-                complement: complementoValidate.error
+                city: cityValidate.error,
+                state: stateValidate.error,
+                complement: complementValidate.error
             }
         );
 
@@ -243,16 +191,16 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 cellphone: "",
                 company_name: "",
                 trading_name: "",
-                address: logradouroValidate.message,
-                number: numeroValidate.message,
+                address: addressValidate.message,
+                number: numberValidate.message,
                 cep: cepValidate.message,
-                city: cidadeValidate.message,
-                state: estadoValidate.message,
-                complement: complementoValidate.message
+                city: cityValidate.message,
+                state: stateValidate.message,
+                complement: complementValidate.message
             }
         );
 
-        return !(logradouroValidate.error || numeroValidate.error || cepValidate.error || cidadeValidate.error || estadoValidate.error || complementoValidate.error);
+        return !(addressValidate.error || numberValidate.error || cepValidate.error || cityValidate.error || stateValidate.error || complementValidate.error);
     }
 
     const documentsRequestServerOperation = () => {
@@ -271,13 +219,13 @@ export const ComplementaryDataPanel = React.memo((props) => {
             .then(function (response) {
 
                 setLoading(false);
-                documentsSuccessRequestServerOperation(response);
+                handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
                 setLoading(false);
-                documentsErrorRequestServerOperation(error.response.data);
+                documentsErrorRequestServerOperation(error.response);
 
             });
 
@@ -296,7 +244,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
             .then(function (response) {
 
                 setLoading(false);
-                addressSuccessRequestServerOperation(response);
+                handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
@@ -305,18 +253,6 @@ export const ComplementaryDataPanel = React.memo((props) => {
                 addressErrorRequestServerOperation(error.response);
 
             });
-
-    }
-
-    const documentsSuccessRequestServerOperation = (response) => {
-        handleOpenSnackbar(response.data.message, "success");
-        props.reload_setter(!props.reload_state);
-
-    }
-
-    const addressSuccessRequestServerOperation = (response) => {
-        handleOpenSnackbar(response.data.message, "success");
-        props.reload_setter(!props.reload_state);
 
     }
 
@@ -383,11 +319,11 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
     const addressErrorRequestServerOperation = (response) => {
 
-        let error_message = (response.data.message != "" && response.data.message != undefined) ? response.data.message : "Houve um erro na realização da operação!";
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
         handleOpenSnackbar(error_message, "error");
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-        let input_errors = {
+        let request_errors = {
             address: { error: false, message: null },
             number: { error: false, message: null },
             cep: { error: false, message: null },
@@ -399,7 +335,7 @@ export const ComplementaryDataPanel = React.memo((props) => {
         // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
 
-            input_errors[prop] = {
+            request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
@@ -414,12 +350,12 @@ export const ComplementaryDataPanel = React.memo((props) => {
             cellphone: false,
             company_name: false,
             trading_name: false,
-            address: input_errors.address.error,
-            number: input_errors.number.error,
-            cep: input_errors.cep.error,
-            city: input_errors.city.error,
-            state: input_errors.state.error,
-            complement: input_errors.complement.error
+            address: request_errors.address.error,
+            number: request_errors.number.error,
+            cep: request_errors.cep.error,
+            city: request_errors.city.error,
+            state: request_errors.state.error,
+            complement: request_errors.complement.error
         });
 
         setFieldErrorMessage({
@@ -430,13 +366,29 @@ export const ComplementaryDataPanel = React.memo((props) => {
             cellphone: "",
             company_name: "",
             trading_name: "",
-            address: input_errors.address.message,
-            number: input_errors.number.message,
-            cep: input_errors.cep.message,
-            city: input_errors.city.message,
-            state: input_errors.state.message,
-            complement: input_errors.complement.message
+            address: request_errors.address.message,
+            number: request_errors.number.message,
+            cep: request_errors.cep.message,
+            city: request_errors.city.message,
+            state: request_errors.state.message,
+            complement: request_errors.complement.message
         });
+    }
+
+    const reloadFormulary = () => {
+        setControlledInput(null);
+        setLoading(true);
+    }
+
+    const handleInputChange = (event) => {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    }
+
+
+    const inputSetMask = (event) => {
+
+        InputMask(event, keyPressed);
+
     }
 
     const handleOpenSnackbar = (text, variant) => {
@@ -459,241 +411,233 @@ export const ComplementaryDataPanel = React.memo((props) => {
 
             </Grid>
 
-            <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 0px' }}>
+            {!loading &&
+                <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >
+                    <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 0px' }}>
 
-                    <Typography variant="h5" marginBottom={2}>Documentos</Typography>
+                        <Typography variant="h5" marginBottom={2}>Documentos</Typography>
 
-                    <Grid container spacing={3}>
+                        <Grid container spacing={3}>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="anac_license"
-                                name="anac_license"
-                                label="Habilitação ANAC"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.anac_license}
-                                helperText={fieldErrorMessage.anac_license}
-                                error={fieldError.anac_license}
-                                onChange={(event) => {
-                                    inputSetMask(event, "HAB_ANAC");
-                                    handleInputChange(event);
-                                }}
-                            />
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="anac_license"
+                                    name="anac_license"
+                                    label="Habilitação ANAC"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.anac_license}
+                                    helperText={fieldErrorMessage.anac_license}
+                                    error={fieldError.anac_license}
+                                    onChange={(event) => {
+                                        inputSetMask(event, "HAB_ANAC");
+                                        handleInputChange(event);
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="cpf"
+                                    name="cpf"
+                                    label="CPF"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.cpf}
+                                    helperText={fieldErrorMessage.cpf}
+                                    error={fieldError.cpf}
+                                    onChange={(event) => {
+                                        inputSetMask(event, "CPF");
+                                        handleInputChange(event);
+                                    }}
+                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="cnpj"
+                                    name="cnpj"
+                                    label="CNPJ"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.cnpj}
+                                    helperText={fieldErrorMessage.cnpj}
+                                    error={fieldError.cnpj}
+                                    onChange={(event) => {
+                                        inputSetMask(event, "CNPJ");
+                                        handleInputChange(event);
+                                    }}
+                                    InputProps={{
+                                        maxLength: 18
+                                    }}
+                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="telephone"
+                                    name="telephone"
+                                    label="Telefone (com DDD)"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.telephone}
+                                    helperText={fieldErrorMessage.telephone}
+                                    error={fieldError.telephone}
+                                    onChange={(event) => {
+                                        inputSetMask(event, "PHONE");
+                                        handleInputChange(event);
+                                    }}
+                                    InputProps={{
+                                        maxLength: 14
+                                    }}
+                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="cellphone"
+                                    name="cellphone"
+                                    label="Celular (com DDD)"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.cellphone}
+                                    helperText={fieldErrorMessage.cellphone}
+                                    error={fieldError.cellphone}
+                                    onChange={(event) => {
+                                        inputSetMask(event, "PHONE");
+                                        handleInputChange(event);
+                                    }}
+                                    InputProps={{
+                                        maxLength: 14
+                                    }}
+                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="company_name"
+                                    name="company_name"
+                                    label="Razão Social"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.company_name}
+                                    helperText={fieldErrorMessage.company_name}
+                                    error={fieldError.company_name}
+                                    onChange={handleInputChange}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="trading_name"
+                                    name="trading_name"
+                                    label="Nome Fantasia"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.trading_name}
+                                    helperText={fieldErrorMessage.trading_name}
+                                    error={fieldError.trading_name}
+                                    onChange={handleInputChange}
+                                />
+                            </Grid>
+
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="cpf"
-                                name="cpf"
-                                label="CPF"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.cpf}
-                                helperText={fieldErrorMessage.cpf}
-                                error={fieldError.cpf}
-                                onChange={(event) => {
-                                    inputSetMask(event, "CPF");
-                                    handleInputChange(event);
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            />
+                        <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
+                            Atualizar
+                        </Button>
+                    </Paper>
+                </Box>
+            }
+
+            {!loading &&
+                <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
+                    <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+
+                        <Typography variant="h5" marginBottom={2}>Endereço</Typography>
+
+                        <Grid container spacing={3}>
+
+                            <Grid item xs={12} sm={12}>
+                                <SelectStates default={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.state} />
+                                <SelectCities default={controlledInput.city} selectedState={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.city} />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="cep"
+                                    name="cep"
+                                    label="CEP"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.cep}
+                                    helperText={fieldErrorMessage.cep}
+                                    error={fieldError.cep}
+                                    onChange={(event) => {
+                                        inputSetMask(event, "CEP");
+                                        handleInputChange(event);
+                                    }}
+                                    InputProps={{
+                                        maxLength: 9
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="address"
+                                    name="address"
+                                    label="Logradouro"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.address}
+                                    helperText={fieldErrorMessage.address}
+                                    error={fieldError.address}
+                                    onChange={handleInputChange}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="number"
+                                    name="number"
+                                    label="Numero"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.number}
+                                    helperText={fieldErrorMessage.number}
+                                    error={fieldError.number}
+                                    onChange={handleInputChange}
+                                />
+                            </Grid>
+
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    id="complement"
+                                    name="complement"
+                                    label="Complemento"
+                                    fullWidth
+                                    variant="outlined"
+                                    defaultValue={controlledInput.complement}
+                                    helperText={fieldErrorMessage.complement}
+                                    error={fieldError.complement}
+                                    onChange={handleInputChange}
+                                />
+                            </Grid>
+
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="cnpj"
-                                name="cnpj"
-                                label="CNPJ"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.cnpj}
-                                helperText={fieldErrorMessage.cnpj}
-                                error={fieldError.cnpj}
-                                onChange={(event) => {
-                                    inputSetMask(event, "CNPJ");
-                                    handleInputChange(event);
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                InputProps={{
-                                    maxLength: 18
-                                }}
-                            />
-                        </Grid>
+                        <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
+                            Atualizar
+                        </Button>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="telephone"
-                                name="telephone"
-                                label="Telefone (com DDD)"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.telephone}
-                                helperText={fieldErrorMessage.telephone}
-                                error={fieldError.telephone}
-                                onChange={(event) => {
-                                    inputSetMask(event, "PHONE");
-                                    handleInputChange(event);
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                InputProps={{
-                                    maxLength: 14
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="cellphone"
-                                name="cellphone"
-                                label="Celular (com DDD)"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.cellphone}
-                                helperText={fieldErrorMessage.cellphone}
-                                error={fieldError.cellphone}
-                                onChange={(event) => {
-                                    inputSetMask(event, "PHONE");
-                                    handleInputChange(event);
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                InputProps={{
-                                    maxLength: 14
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="company_name"
-                                name="company_name"
-                                label="Razão Social"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.company_name}
-                                helperText={fieldErrorMessage.company_name}
-                                error={fieldError.company_name}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="trading_name"
-                                name="trading_name"
-                                label="Nome Fantasia"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.trading_name}
-                                helperText={fieldErrorMessage.trading_name}
-                                error={fieldError.trading_name}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                    </Grid>
-
-                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
-                        Atualizar
-                    </Button>
-                </Paper>
-            </Box>
-
-            <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
-
-                    <Typography variant="h5" marginBottom={2}>Endereço</Typography>
-
-                    <Grid container spacing={3}>
-
-                        <Grid item xs={12} sm={12}>
-                            <SelectStates default={props.state} state_input_setter={setInputState} error={fieldError.state} error_message={fieldErrorMessage.state} edit_mode={true} />
-                            <SelectCities default={props.city} choosen_state={inputState} error={fieldError.city} error_message={fieldErrorMessage.city} edit_mode={true}/>
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="cep"
-                                name="cep"
-                                label="CEP"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.cep}
-                                helperText={fieldErrorMessage.cep}
-                                error={fieldError.cep}
-                                onChange={(event) => {
-                                    inputSetMask(event, "CEP");
-                                    handleInputChange(event);
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                InputProps={{
-                                    maxLength: 9
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="address"
-                                name="address"
-                                label="Logradouro"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.address}
-                                helperText={fieldErrorMessage.address}
-                                error={fieldError.address}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="number"
-                                name="number"
-                                label="Numero"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.number}
-                                helperText={fieldErrorMessage.number}
-                                error={fieldError.number}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                required
-                                id="complement"
-                                name="complement"
-                                label="Complemento"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.complement}
-                                helperText={fieldErrorMessage.complement}
-                                error={fieldError.complement}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                    </Grid>
-
-                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
-                        Atualizar
-                    </Button>
-
-                </Paper>
-            </Box>
+                    </Paper>
+                </Box>
+            }
         </>
 
     );

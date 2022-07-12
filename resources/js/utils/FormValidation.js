@@ -43,7 +43,7 @@ export const FormValidation = (value, minLength = null, maxLength = null, regex 
 
 function nullCheck(value) {
 
-    return value.length == 0;
+    return value == null;
 
 }
 
