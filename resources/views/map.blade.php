@@ -157,34 +157,17 @@
 					<input type="file" id="file-import-poly" hidden/>
 				</label>
 			</li>
+			<li>
+				<label>Importar MP
+					<input type="file" id="file-import-mp" hidden/>
+				</label>
+			</li>
 		</ul>
 	</nav>
 
-	<!-- Modal da geração do plano -->
-	<div class="modal fade" role="dialog" id = "flight_plan_creation_modal">
-		<div class="modal-dialog">
-			<!-- Modal content-->
-			<form name = "flight_plan">
-				<div class="mb-2">	
-					<label for="wp-grid" id="label-grid" class="form-label">Informe o nome do plano de voo</label>
-					<input type="text" name="name" />
-				</div>
-			</form>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-dark" data-bs-dismiss="modal">Fechar</button>
-			</div>
-		</div>
-	</div>
-
 	<button id="btn-mission" class="btn btn-success">Missão</button>
-
 	<button id="btn" class="btn btn-primary">Configuração</button>
 	
 	<script src="{{ asset('js/map/lib.js') }}"></script>
-	<script> 
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-    </script>
  </body>
  </html>
