@@ -18,15 +18,12 @@ import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { SelectStates } from '../../../../structures/input_select/SelectStates';
 import { SelectCities } from '../../../../structures/input_select/SelectCities';
-import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
 // Libs
 import { useSnackbar } from 'notistack';
 
 export const ComplementaryDataPanel = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
-
-    const { AuthData } = useAuthentication();
 
     const [controlledInput, setControlledInput] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
 
@@ -79,7 +76,6 @@ export const ComplementaryDataPanel = React.memo(() => {
         event.preventDefault();
 
         if (documentFormularyDataValidation()) {
-            setLoading(true);
             documentsRequestServerOperation();
         }
 
@@ -89,7 +85,6 @@ export const ComplementaryDataPanel = React.memo(() => {
         event.preventDefault();
 
         if (addressFormularyDataValidation()) {
-            setLoading(true);
             addressRequestServerOperation();
         }
 
@@ -101,8 +96,6 @@ export const ComplementaryDataPanel = React.memo(() => {
         const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
         const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
         const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
-
-        console.log(controlledInput)
 
         const anacLicenseValidate = FormValidation(controlledInput.anac_license, 3, null, anacLicensePattern, "HABILITAÇÃO ANAC");
         const cpfValidate = FormValidation(controlledInput.cpf, null, null, cpfPattern, "CPF");
@@ -205,7 +198,7 @@ export const ComplementaryDataPanel = React.memo(() => {
 
     const documentsRequestServerOperation = () => {
 
-        AxiosApi.patch(`/api/update-documents-data/${AuthData.data.id}`, {
+        AxiosApi.patch("/api/update-documents-data", {
             complementary_data_id: controlledInput.complementary_data_id,
             address_id: controlledInput.address_id,
             anac_license: controlledInput.anac_license,
@@ -218,13 +211,11 @@ export const ComplementaryDataPanel = React.memo(() => {
         })
             .then(function (response) {
 
-                setLoading(false);
                 handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
-                setLoading(false);
                 documentsErrorRequestServerOperation(error.response);
 
             });
@@ -233,7 +224,7 @@ export const ComplementaryDataPanel = React.memo(() => {
 
     const addressRequestServerOperation = () => {
 
-        AxiosApi.patch(`/api/update-address-data/${AuthData.data.id}`, {
+        AxiosApi.patch("/api/update-address-data", {
             address: controlledInput.address,
             number: controlledInput.number,
             cep: controlledInput.cep,
@@ -243,13 +234,11 @@ export const ComplementaryDataPanel = React.memo(() => {
         })
             .then(function (response) {
 
-                setLoading(false);
                 handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
-                setLoading(false);
                 addressErrorRequestServerOperation(error.response);
 
             });
@@ -385,10 +374,8 @@ export const ComplementaryDataPanel = React.memo(() => {
     }
 
 
-    const inputSetMask = (event) => {
-
+    const handleInputSetMask = (event) => {
         InputMask(event, keyPressed);
-
     }
 
     const handleOpenSnackbar = (text, variant) => {
@@ -430,7 +417,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                                     helperText={fieldErrorMessage.anac_license}
                                     error={fieldError.anac_license}
                                     onChange={(event) => {
-                                        inputSetMask(event, "HAB_ANAC");
+                                        handleInputSetMask(event);
                                         handleInputChange(event);
                                     }}
                                 />
@@ -447,7 +434,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                                     helperText={fieldErrorMessage.cpf}
                                     error={fieldError.cpf}
                                     onChange={(event) => {
-                                        inputSetMask(event, "CPF");
+                                        handleInputSetMask(event);
                                         handleInputChange(event);
                                     }}
                                     onKeyDown={(event) => { setKeyPressed(event.key) }}
@@ -465,7 +452,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                                     helperText={fieldErrorMessage.cnpj}
                                     error={fieldError.cnpj}
                                     onChange={(event) => {
-                                        inputSetMask(event, "CNPJ");
+                                        handleInputSetMask(event);
                                         handleInputChange(event);
                                     }}
                                     InputProps={{
@@ -486,7 +473,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                                     helperText={fieldErrorMessage.telephone}
                                     error={fieldError.telephone}
                                     onChange={(event) => {
-                                        inputSetMask(event, "PHONE");
+                                        handleInputSetMask(event);
                                         handleInputChange(event);
                                     }}
                                     InputProps={{
@@ -507,7 +494,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                                     helperText={fieldErrorMessage.cellphone}
                                     error={fieldError.cellphone}
                                     onChange={(event) => {
-                                        inputSetMask(event, "PHONE");
+                                        handleInputSetMask(event);
                                         handleInputChange(event);
                                     }}
                                     InputProps={{
@@ -578,7 +565,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                                     helperText={fieldErrorMessage.cep}
                                     error={fieldError.cep}
                                     onChange={(event) => {
-                                        inputSetMask(event, "CEP");
+                                        handleInputSetMask(event);
                                         handleInputChange(event);
                                     }}
                                     InputProps={{

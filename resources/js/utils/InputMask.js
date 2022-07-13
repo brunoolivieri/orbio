@@ -39,7 +39,7 @@ export function InputMask(event, key) {
 
             }
 
-        } else if (field_name == "telephone") {
+        } else if (field_name == "telephone" || field_name == "cellphone") {
 
             if (event.currentTarget.value.length == 1) {
 

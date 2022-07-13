@@ -57,7 +57,7 @@ class MyAccountController extends Controller
 
         return response([
             "complementary" => [
-                'anac_license' => $user->complementary_data->habANAC,
+                'anac_license' => $user->complementary_data->anac_license,
                 'cpf' => $user->complementary_data->CPF,
                 'cnpj' => $user->complementary_data->CNPJ,
                 'telephone' => $user->complementary_data->telephone,
@@ -158,7 +158,7 @@ class MyAccountController extends Controller
         $user = UserModel::find(Auth::user()->id);
 
         UserAddressModel::where("id", $user->complementary_data->address->id)->update([
-            "address" => $request->street_name,
+            "address" => $request->address,
             "number" => $request->number,
             "cep" => $request->cep,
             "city" => $request->city,

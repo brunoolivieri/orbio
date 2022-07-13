@@ -48,11 +48,11 @@ Route::middleware(["session.auth"])->group(function(){
     Route::get('/api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
     Route::get('/api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);
     Route::get('/api/load-sessions-data', [MyAccountController::class, "loadActiveSessions"]);
-    Route::patch('/api/update-basic-data/{id}', [MyAccountController::class, "basicDataUpdate"]);
-    Route::patch('/api/update-documents-data/{id}', [MyAccountController::class, "documentsUpdate"]);
-    Route::patch('/api/update-address-data/{id}', [MyAccountController::class, "addressUpdate"]);
+    Route::patch('/api/update-basic-data', [MyAccountController::class, "basicDataUpdate"]);
+    Route::patch('/api/update-documents-data', [MyAccountController::class, "documentsUpdate"]);
+    Route::patch('/api/update-address-data', [MyAccountController::class, "addressUpdate"]);
     Route::post("/api/desactivate-account/{id}", [MyAccountController::class, "accountDesactivation"]);
-    Route::post("/api/update-password/{id}", [MyAccountController::class, "passwordUpdate"]);
+    Route::post("/api/update-password", [MyAccountController::class, "passwordUpdate"]);
     // Internal Modules operations
     Route::ApiResource("/api/admin-module-user", AdministrationModuleUsersController::class);
     Route::ApiResource("/api/admin-module-profile", AdministrationModuleProfilesController::class);

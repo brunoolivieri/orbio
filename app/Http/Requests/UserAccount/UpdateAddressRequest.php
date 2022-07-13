@@ -25,7 +25,7 @@ class UpdateAddressRequest extends FormRequest
     {
 
         return [
-            "street_name" => ["required"],
+            "address" => ["required"],
             "number" => ["required"],
             "cep" => ["required"],
             "city" => ["required"],
@@ -43,7 +43,7 @@ class UpdateAddressRequest extends FormRequest
     public function messages()
     {
         return [
-            "street_name.required" => ["required"],
+            "address.required" => ["required"],
             "number.required" => ["required"],
             "cep.required" => ["required"],
             "city.required" => ["required"],
