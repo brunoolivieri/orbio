@@ -28,7 +28,7 @@ class ServiceOrderModel extends Model
     */
     function service_order_has_user(){
 
-        return $this->hasOne("App\Models\Pivot\ServiceOrderHasUserModel", "service_order_id");
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", "service_order_id");
 
     }
 

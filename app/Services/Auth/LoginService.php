@@ -10,6 +10,7 @@ use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
 use App\Models\User\UserModel;
 use App\Events\Auth\LoginEvent;
+use App\Notifications\Auth\LoginNotification;
 
 
 class LoginService {
@@ -35,17 +36,12 @@ class LoginService {
 
         if($user = Auth::attempt($request->only(["email", "password"]))){
 
+            $user = UserModel::find(Auth::user()->id);
+
             // User account is active
             if(Auth::user()->status && !is_null(Auth::user()->last_access)){
 
-                $data_for_email = [
-                    "id" => Auth::user()->id, 
-                    "name" => Auth::user()->name, 
-                    "email" => Auth::user()->email, 
-                    "profile" => Auth::user()->profile->name
-                ];
-
-                event(new LoginEvent($data_for_email));
+                $user->notify(new LoginNotification($user));
 
                 return response(["message" => "Acesso autorizado!"], 200);
             
@@ -54,16 +50,9 @@ class LoginService {
 
                 $this->activateAccount();
 
-                $data_for_email = [
-                    "id" => Auth::user()->id, 
-                    "name" => Auth::user()->name, 
-                    "email" => Auth::user()->email, 
-                    "profile" => Auth::user()->profile->name
-                ];
+                $user->notify(new LoginNotification($user));
 
-                event(new LoginEvent($data_for_email));
-
-                return response(["message" => "Conta foi ativada e o acesso autorizado!"], 200);
+                return response(["message" => "Ativação e acesso realizados!"], 200);
 
             // User account is disabled or deleted
             }else if((!Auth::user()->status && !is_null(Auth::user()->last_access) || !is_null(Auth::user()->deleted_at))){

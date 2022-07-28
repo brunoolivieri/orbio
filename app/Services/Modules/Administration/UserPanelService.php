@@ -9,7 +9,9 @@ use Illuminate\Http\Request;
 use App\Services\FormatDataService;
 use App\Models\User\UserModel;
 use App\Models\Orders\ServiceOrderModel;
-use App\Events\Modules\Admin\UserCreatedEvent;
+use App\Notifications\Modules\Administration\User\UserCreatedNotification;
+use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
+use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
 class UserPanelService{
 
@@ -86,14 +88,9 @@ class UserPanelService{
 
             $this->model->save();
 
-            $data_for_email = [
-                "name" => $this->model->name,
-                "email" => $this->model->email,
-                "profile" => $this->model->profile->name,
-                "password" => $request->password
-            ];
+            $user = UserModel::findOrFail($this->model->id);
 
-            event(new UserCreatedEvent($data_for_email));
+            $user->notify(new UserCreatedNotification($user, $request->password));
 
         });
 
@@ -109,12 +106,16 @@ class UserPanelService{
      */
     public function updateUser(Request $request, $user_id) : \Illuminate\Http\Response{
 
-        UserModel::where('id', $user_id)->update([
+        $user = $this->model->findOrFail($user_id);
+
+        $user->update([
             "name" => $request->name,
             "email" => $request->email,
             "profile_id" =>  $request->profile_id,
             "status" =>  $request->boolean("status")
         ]);
+
+        $user->notify(new UserUpdatedNotification($user));
 
         return response(["message" => "Usuário atualizado com sucesso!"], 200); 
 
@@ -171,6 +172,8 @@ class UserPanelService{
             // The user record is soft deleted
             UserModel::where('id', $user_id)->update(["status" => false]);
             UserModel::where('id', $user_id)->delete();
+
+            $user->notify(new UserDisabledNotification($user));
 
         });
 

@@ -9,10 +9,9 @@ use Illuminate\Support\Str;
 // Custom
 use App\Models\User\UserModel;
 use App\Models\PasswordReset\PasswordResetModel;
-use App\Events\Auth\TokenForChangePasswordEvent;
-use App\Events\User\UserPasswordChangedEvent;
-use App\Events\Auth\RequestedTokenEvent;
 use App\Services\Auth\PasswordResetService;
+use App\Notifications\Auth\SendTokenNotification;
+use App\Notifications\Auth\ChangePasswordNotification;
 
 class PasswordResetService{
     
@@ -43,7 +42,7 @@ class PasswordResetService{
                 "email" => $user->email
             ];
 
-            event(new RequestedTokenEvent($data_for_email));
+            $user->notify(new SendTokenNotification($user));
 
         });
 
@@ -67,7 +66,7 @@ class PasswordResetService{
 
             PasswordResetModel::where("user_id", $token->user_id)->delete();
 
-            event(new UserPasswordChangedEvent($token->user->name, $token->user->email));
+            $token->user->notify(new ChangePasswordNotification($token->user));
 
         });
 
