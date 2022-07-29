@@ -6,19 +6,23 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+// Custom
+use App\Models\User\UserModel;
 
 class BasicDataUpdatedNotification extends Notification
 {
     use Queueable;
+
+    private $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(UserModel $user)
     {
-        //
+        $this->user = $user;
     }
 
     /**
@@ -40,10 +44,16 @@ class BasicDataUpdatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
+
+        $first_name = explode($notifiable->name, " ")[0];
+
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+            ->subject('ORBIO - Atualização dos dados básicos')
+            ->greeting("Olá ". $first_name."!")
+            ->line("Seus dados básicos foram atualizados.")
+            ->line("Nome completo: ".$notifiable->name)
+            ->line("Email: ".$notifiable->email)
+            ->line('Se não foi você quem realizou o procedimento, contate o suporte imediatamente.');
     }
 
     /**

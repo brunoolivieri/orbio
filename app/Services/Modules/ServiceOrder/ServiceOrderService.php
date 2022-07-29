@@ -40,6 +40,7 @@ class ServiceOrderService{
 
         $data = DB::table('service_orders')
         ->where("service_orders.deleted_at", null)
+        ->join('service_order_has_users', 'service_orders.id', '=', 'service_order_has_users.service_order_id')
         ->when($where_value, function ($query, $where_value) {
 
             $query->where('service_orders.id', $where_value);
@@ -79,18 +80,16 @@ class ServiceOrderService{
                     "start_date" => $request->start_date,
                     "end_date" => $request->end_date,
                     "numOS" => "os.".time(),
-                    "creator_id" => $creator->id,
-                    "pilot_id" => $pilot->id,
-                    "client_id" => $client->id,
                     "observation" => $request->observation,
                     "status" => $request->boolean("status")
                 ]
             );
 
-            ServiceOrderHasUserModel::insert([
-                ["service_order_id" => $new_service_order->id,"user_id" => $creator->id], 
-                ["service_order_id" => $new_service_order->id,"user_id" => $pilot->id],
-                ["service_order_id" => $new_service_order->id,"user_id" => $client->id]
+            ServiceOrderHasUserModel::create([
+                "service_order_id" => $new_service_order->id,
+                "creator_id" => $creator->id, 
+                "pilot_id" => $pilot->id,
+                "client_id" => $client->id
             ]);
 
             foreach($request->flight_plans_ids as $index => $value){
@@ -138,31 +137,27 @@ class ServiceOrderService{
             $pilot = UserModel::find($request->service_order_has_user->pilot_id);
             $client = UserModel::find($request->service_order_has_user->client_id);
 
-            // Update da ordem de serviço
             $service_order->update(
                 [
                     "start_date" => $request->start_date,
                     "end_date" => $request->end_date,
-                    "creator_id" => $creator->id,
-                    "pilot_id" => $pilot->id,
-                    "client_id" => $client->id,
                     "observation" => $request->observation,
                     "status" => $request->boolean("status")
                 ]
             );
 
-            // Deleta as relações atuais com os usuários 
             $service_order->service_order_has_user->delete();
             
-            // Cria novamente as relações com cada usuário envolvido na ordem de serviço (criador, piloto e cliente)
-            ServiceOrderHasUserModel::insert([
-                ["service_order_id" => (int) $service_order_id,"user_id" => $creator->id], 
-                ["service_order_id" => (int) $service_order_id,"user_id" => $pilot->id],
-                ["service_order_id" => (int) $service_order_id,"user_id" => $client->id]
+            ServiceOrderHasUserModel::create([
+                "service_order_id" => $new_service_order->id,
+                "creator_id" => $creator->id, 
+                "pilot_id" => $pilot->id,
+                "client_id" => $client->id
             ]);
 
             // Deleta as relações atuais com os planos de vôo - é mais fácil desse modo
             ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order_id)->delete();
+            
             // Cria novamente as relações com cada plano de vôo envolvido na ordem de serviço
             foreach($request->flight_plans_ids as $index => $flight_plan_id){
                 ServiceOrderHasFlightPlanModel::insert([

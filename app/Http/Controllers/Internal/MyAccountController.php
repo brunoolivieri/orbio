@@ -15,7 +15,8 @@ use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
 use App\Http\Requests\UserAccount\UpdateAddressRequest;
 use App\Http\Requests\UserAccount\UpdatePasswordRequest;
 use App\Notifications\Account\BasicDataUpdatedNotification;
-use App\Notifications\Account\ComplementaryDataUpdatedNotification;
+use App\Notifications\Account\DocumentsUpdatedNotification;
+use App\Notifications\Account\AddressUpdatedNotification;
 use App\Notifications\Auth\ChangePasswordNotification;
 use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
@@ -60,8 +61,8 @@ class MyAccountController extends Controller
         return response([
             "complementary" => [
                 'anac_license' => $user->complementary_data->anac_license,
-                'cpf' => $user->complementary_data->CPF,
-                'cnpj' => $user->complementary_data->CNPJ,
+                'cpf' => $user->complementary_data->cpf,
+                'cnpj' => $user->complementary_data->cnpj,
                 'telephone' => $user->complementary_data->telephone,
                 'cellphone' => $user->complementary_data->cellphone,
                 'company_name' => $user->complementary_data->company_name,
@@ -146,7 +147,7 @@ class MyAccountController extends Controller
             "trading_name" => $request->trading_name
         ]);
 
-        $user->notify(new ComplementaryDataUpdatedNotification($user));
+        $user->notify(new DocumentsUpdatedNotification($user));
 
         return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
 
@@ -171,7 +172,7 @@ class MyAccountController extends Controller
             "complement" => $request->complement
         ]);
 
-        $user->notify(new ComplementaryDataUpdatedNotification($user));
+        $user->notify(new AddressUpdatedNotification($user));
 
         return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
 

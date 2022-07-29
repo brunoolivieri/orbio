@@ -13,8 +13,8 @@ class ServiceOrderHasUserModel extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    function users(){
-        return $this->belongsTo("App\Models\User\UserModel", "user_id");
+    function users(string $field){
+        return $this->belongsTo("App\Models\User\UserModel", $field);
     }
 
     function service_order(){

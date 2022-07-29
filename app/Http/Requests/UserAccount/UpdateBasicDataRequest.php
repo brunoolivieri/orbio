@@ -3,6 +3,7 @@
 namespace App\Http\Requests\UserAccount;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateBasicDataRequest extends FormRequest
 {
@@ -24,7 +25,7 @@ class UpdateBasicDataRequest extends FormRequest
     public function rules()
     {
 
-        $user_id = $this->route("id");
+        $user_id = Auth::user()->id;
 
         return [
             "name" => ["required"],

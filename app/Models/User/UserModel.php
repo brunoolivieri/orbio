@@ -46,10 +46,10 @@ class UserModel extends Authenticatable
     }
 
     /*
-    * Relationship with service_order_has_user table
+    * Relationship with service_order_has_user table as creator
     */
-    function service_order_has_user(){
-        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", "user_id");
+    function service_order_has_user(string $field){
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", $field);
     }
 
     /*
