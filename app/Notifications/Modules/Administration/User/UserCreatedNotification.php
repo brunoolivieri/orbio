@@ -47,9 +47,12 @@ class UserCreatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
+
+        $first_name = explode(" ", $notifiable->name)[0];
+        
         return (new MailMessage)
             ->subject('ORBIO - Nova conta')
-            ->greeting("Bem vindo ".$notifiable->name."!")
+            ->greeting("Bem vindo ".$first_name."!")
             ->line("A seguir estão os dados para acesso a sua nova conta no nosso sistema.")
             ->line("Email: ".$notifiable->email)
             ->line("Senha: ".$this->password)

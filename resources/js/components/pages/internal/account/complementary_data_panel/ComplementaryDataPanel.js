@@ -25,9 +25,25 @@ export const ComplementaryDataPanel = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", city: "", state: "", complement: "" });
+    const [controlledInput, setControlledInput] = React.useState({
+        anac_license: "Carregando",
+        cpf: "Carregando",
+        cnpj: "Carregando",
+        telephone: "Carregando",
+        cellphone: "Carregando",
+        company_name: "Carregando",
+        trading_name: "Carregando",
+        address: "Carregando",
+        number: "Carregando",
+        cep: "Carregando",
+        city: "Carregando",
+        state: "Carregando",
+        complement: "Carregando"
+    });
 
-    const [loading, setLoading] = React.useState(true);
+    const [addressUpdateLoading, setAddressUpdateLoading] = React.useState(false);
+    const [documentUpdateLoading, setDocumentUpdateLoading] = React.useState(false);
+    const [loadingFields, setLoadingFields] = React.useState(true);
 
     const [fieldError, setFieldError] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" });
@@ -40,42 +56,76 @@ export const ComplementaryDataPanel = React.memo(() => {
 
     React.useEffect(() => {
 
+        setControlledInput({
+            anac_license: "Carregando",
+            cpf: "Carregando",
+            cnpj: "Carregando",
+            telephone: "Carregando",
+            cellphone: "Carregando",
+            company_name: "Carregando",
+            trading_name: "Carregando",
+            address: "Carregando",
+            number: "Carregando",
+            cep: "Carregando",
+            city: "Carregando",
+            state: "Carregando",
+            complement: "Carregando"
+        });
+
         AxiosApi.get("/api/load-complementary-account-data")
             .then(function (response) {
 
+                setLoadingFields(false);
+                setAddressUpdateLoading(false);
+                setDocumentUpdateLoading(false);
                 setControlledInput({
-                    anac_license: response.data.complementary.anac_license,
-                    cpf: response.data.complementary.cpf,
-                    cnpj: response.data.complementary.cnpj,
-                    telephone: response.data.complementary.telephone,
-                    cellphone: response.data.complementary.cellphone,
-                    company_name: response.data.complementary.company_name,
-                    trading_name: response.data.complementary.trading_name,
-                    address: response.data.address.address,
-                    number: response.data.address.number,
-                    cep: response.data.address.cep,
-                    city: response.data.address.city,
-                    state: response.data.address.state,
-                    complement: response.data.address.complement
+                    anac_license: response.data.complementary.anac_license ? response.data.complementary.anac_license : "",
+                    cpf: response.data.complementary.cpf ? response.data.complementary.cpf : "",
+                    cnpj: response.data.complementary.cnpj ? response.data.complementary.cnpj : "",
+                    telephone: response.data.complementary.telephone ? response.data.complementary.telephone : "",
+                    cellphone: response.data.complementary.cellphone ? response.data.complementary.cellphone : "",
+                    company_name: response.data.complementary.company_name ? response.data.complementary.company_name : "",
+                    trading_name: response.data.complementary.trading_name ? response.data.complementary.trading_name : "",
+                    address: response.data.address.address ? response.data.address.address : "",
+                    number: response.data.address.number ? response.data.address.number : "",
+                    cep: response.data.address.cep ? response.data.address.cep : "",
+                    city: response.data.address.city ? response.data.address.city : "",
+                    state: response.data.address.state ? response.data.address.state : "",
+                    complement: response.data.address.complement ? response.data.address.complement : ""
                 });
-
-                setLoading(false);
 
             })
             .catch(function () {
 
-                setControlledInput(null);
-                setLoading(false);
+                setLoadingFields(false);
+                setAddressUpdateLoading(false);
+                setDocumentUpdateLoading(false);
+                setControlledInput({
+                    anac_license: "Erro",
+                    cpf: "Erro",
+                    cnpj: "Erro",
+                    telephone: "Erro",
+                    cellphone: "Erro",
+                    company_name: "Erro",
+                    trading_name: "Erro",
+                    address: "Erro",
+                    number: "Erro",
+                    cep: "Erro",
+                    city: "Erro",
+                    state: "Erro",
+                    complement: "Erro"
+                });
                 handleOpenSnackbar("Erro no carregamento dos dados.", "error");
 
             });
 
-    }, [loading]);
+    }, [loadingFields]);
 
     const handleDocumentsSubmitForm = (event) => {
         event.preventDefault();
 
         if (documentFormularyDataValidation()) {
+            setDocumentUpdateLoading(true);
             documentsRequestServerOperation();
         }
 
@@ -85,6 +135,7 @@ export const ComplementaryDataPanel = React.memo(() => {
         event.preventDefault();
 
         if (addressFormularyDataValidation()) {
+            setAddressUpdateLoading(true);
             addressRequestServerOperation();
         }
 
@@ -211,11 +262,14 @@ export const ComplementaryDataPanel = React.memo(() => {
         })
             .then(function (response) {
 
+                setDocumentUpdateLoading(false);
+                setLoadingFields(true);
                 handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
+                setDocumentUpdateLoading(false);
                 documentsErrorRequestServerOperation(error.response);
 
             });
@@ -234,11 +288,14 @@ export const ComplementaryDataPanel = React.memo(() => {
         })
             .then(function (response) {
 
+                setAddressUpdateLoading(false);
+                setLoadingFields(true);
                 handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
+                setAddressUpdateLoading(false);
                 addressErrorRequestServerOperation(error.response);
 
             });
@@ -365,8 +422,7 @@ export const ComplementaryDataPanel = React.memo(() => {
     }
 
     const reloadFormulary = () => {
-        setControlledInput(null);
-        setLoading(true);
+        setLoadingFields(true);
     }
 
     const handleInputChange = (event) => {
@@ -398,233 +454,243 @@ export const ComplementaryDataPanel = React.memo(() => {
 
             </Grid>
 
-            {!loading &&
-                <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >
-                    <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 0px' }}>
+            <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >
+                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 0px' }}>
 
-                        <Typography variant="h5" marginBottom={2}>Documentos</Typography>
+                    <Typography variant="h5" marginBottom={2}>Documentos</Typography>
 
-                        <Grid container spacing={3}>
+                    <Grid container spacing={3}>
 
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="anac_license"
-                                    name="anac_license"
-                                    label="Habilitação ANAC"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.anac_license}
-                                    helperText={fieldErrorMessage.anac_license}
-                                    error={fieldError.anac_license}
-                                    onChange={(event) => {
-                                        handleInputSetMask(event);
-                                        handleInputChange(event);
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="cpf"
-                                    name="cpf"
-                                    label="CPF"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.cpf}
-                                    helperText={fieldErrorMessage.cpf}
-                                    error={fieldError.cpf}
-                                    onChange={(event) => {
-                                        handleInputSetMask(event);
-                                        handleInputChange(event);
-                                    }}
-                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="cnpj"
-                                    name="cnpj"
-                                    label="CNPJ"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.cnpj}
-                                    helperText={fieldErrorMessage.cnpj}
-                                    error={fieldError.cnpj}
-                                    onChange={(event) => {
-                                        handleInputSetMask(event);
-                                        handleInputChange(event);
-                                    }}
-                                    InputProps={{
-                                        maxLength: 18
-                                    }}
-                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="telephone"
-                                    name="telephone"
-                                    label="Telefone (com DDD)"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.telephone}
-                                    helperText={fieldErrorMessage.telephone}
-                                    error={fieldError.telephone}
-                                    onChange={(event) => {
-                                        handleInputSetMask(event);
-                                        handleInputChange(event);
-                                    }}
-                                    InputProps={{
-                                        maxLength: 14
-                                    }}
-                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="cellphone"
-                                    name="cellphone"
-                                    label="Celular (com DDD)"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.cellphone}
-                                    helperText={fieldErrorMessage.cellphone}
-                                    error={fieldError.cellphone}
-                                    onChange={(event) => {
-                                        handleInputSetMask(event);
-                                        handleInputChange(event);
-                                    }}
-                                    InputProps={{
-                                        maxLength: 14
-                                    }}
-                                    onKeyDown={(event) => { setKeyPressed(event.key) }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="company_name"
-                                    name="company_name"
-                                    label="Razão Social"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.company_name}
-                                    helperText={fieldErrorMessage.company_name}
-                                    error={fieldError.company_name}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="trading_name"
-                                    name="trading_name"
-                                    label="Nome Fantasia"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.trading_name}
-                                    helperText={fieldErrorMessage.trading_name}
-                                    error={fieldError.trading_name}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="anac_license"
+                                name="anac_license"
+                                label="Habilitação ANAC"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.anac_license}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.anac_license}
+                                error={fieldError.anac_license}
+                                onChange={(event) => {
+                                    handleInputSetMask(event);
+                                    handleInputChange(event);
+                                }}
+                            />
                         </Grid>
 
-                        <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
-                            Atualizar
-                        </Button>
-                    </Paper>
-                </Box>
-            }
-
-            {!loading &&
-                <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
-                    <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
-
-                        <Typography variant="h5" marginBottom={2}>Endereço</Typography>
-
-                        <Grid container spacing={3}>
-
-                            <Grid item xs={12} sm={12}>
-                                <SelectStates default={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.state} />
-                                <SelectCities default={controlledInput.city} selectedState={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.city} />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="cep"
-                                    name="cep"
-                                    label="CEP"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.cep}
-                                    helperText={fieldErrorMessage.cep}
-                                    error={fieldError.cep}
-                                    onChange={(event) => {
-                                        handleInputSetMask(event);
-                                        handleInputChange(event);
-                                    }}
-                                    InputProps={{
-                                        maxLength: 9
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="address"
-                                    name="address"
-                                    label="Logradouro"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.address}
-                                    helperText={fieldErrorMessage.address}
-                                    error={fieldError.address}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="number"
-                                    name="number"
-                                    label="Numero"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.number}
-                                    helperText={fieldErrorMessage.number}
-                                    error={fieldError.number}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="complement"
-                                    name="complement"
-                                    label="Complemento"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.complement}
-                                    helperText={fieldErrorMessage.complement}
-                                    error={fieldError.complement}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="cpf"
+                                name="cpf"
+                                label="CPF"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.cpf}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.cpf}
+                                error={fieldError.cpf}
+                                onChange={(event) => {
+                                    handleInputSetMask(event);
+                                    handleInputChange(event);
+                                }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                            />
                         </Grid>
 
-                        <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
-                            Atualizar
-                        </Button>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="cnpj"
+                                name="cnpj"
+                                label="CNPJ"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.cnpj}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.cnpj}
+                                error={fieldError.cnpj}
+                                onChange={(event) => {
+                                    handleInputSetMask(event);
+                                    handleInputChange(event);
+                                }}
+                                InputProps={{
+                                    maxLength: 18
+                                }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                            />
+                        </Grid>
 
-                    </Paper>
-                </Box>
-            }
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="telephone"
+                                name="telephone"
+                                label="Telefone (com DDD)"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.telephone}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.telephone}
+                                error={fieldError.telephone}
+                                onChange={(event) => {
+                                    handleInputSetMask(event);
+                                    handleInputChange(event);
+                                }}
+                                InputProps={{
+                                    maxLength: 14
+                                }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="cellphone"
+                                name="cellphone"
+                                label="Celular (com DDD)"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.cellphone}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.cellphone}
+                                error={fieldError.cellphone}
+                                onChange={(event) => {
+                                    handleInputSetMask(event);
+                                    handleInputChange(event);
+                                }}
+                                InputProps={{
+                                    maxLength: 14
+                                }}
+                                onKeyDown={(event) => { setKeyPressed(event.key) }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="company_name"
+                                name="company_name"
+                                label="Razão Social"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.company_name}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.company_name}
+                                error={fieldError.company_name}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="trading_name"
+                                name="trading_name"
+                                label="Nome Fantasia"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.trading_name}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.trading_name}
+                                error={fieldError.trading_name}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                    </Grid>
+
+                    <Button type="submit" variant="contained" color="primary" disabled={documentUpdateLoading || loadingFields} sx={{ mt: 2 }}>
+                        {documentUpdateLoading ? "Processando..." : "Atualizar"}
+                    </Button>
+                </Paper>
+            </Box>
+
+
+
+            <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
+                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+
+                    <Typography variant="h5" marginBottom={2}>Endereço</Typography>
+
+                    <Grid container spacing={3}>
+
+                        <Grid item xs={12} sm={12}>
+                            <SelectStates default={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.state} />
+                            <SelectCities default={controlledInput.city} selectedState={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.city} />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="cep"
+                                name="cep"
+                                label="CEP"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.cep}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.cep}
+                                error={fieldError.cep}
+                                onChange={(event) => {
+                                    handleInputSetMask(event);
+                                    handleInputChange(event);
+                                }}
+                                InputProps={{
+                                    maxLength: 9
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="address"
+                                name="address"
+                                label="Logradouro"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.address}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.address}
+                                error={fieldError.address}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="number"
+                                name="number"
+                                label="Numero"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.number}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.number}
+                                error={fieldError.number}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="complement"
+                                name="complement"
+                                label="Complemento"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.complement}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.complement}
+                                error={fieldError.complement}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                    </Grid>
+
+                    <Button type="submit" variant="contained" color="primary" disabled={addressUpdateLoading || loadingFields} sx={{ mt: 2 }}>
+                        {addressUpdateLoading ? "Processando..." : "Atualizar"}
+                    </Button>
+
+                </Paper>
+            </Box>
+
         </>
 
     );

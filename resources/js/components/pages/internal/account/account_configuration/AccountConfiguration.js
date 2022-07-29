@@ -33,28 +33,25 @@ const PaperStyled = styled(Paper)({
     flexGrow: 1
 });
 
-export const AccountConfiguration = React.memo(({ ...props }) => {
+export const AccountConfiguration = () => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput, setControlledInput] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
-
     const [sessions, setSessions] = React.useState([]);
-
     const [loading, setLoading] = React.useState(true);
-
+    const [updateLoading, setUpdateLoading] = React.useState(false);
     const [fieldError, setFieldError] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
-
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
-
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
+
+        setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
 
         AxiosApi.get("/api/load-sessions-data")
             .then(function (response) {
@@ -81,7 +78,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         event.preventDefault();
 
         if (formChangePasswordValidate()) {
-            setLoading(true);
+            setUpdateLoading(true);
             requestServerOperation();
         }
 
@@ -120,13 +117,15 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
         AxiosApi.post(`/api/update-password/${AuthData.data.id}`, controlledInput)
             .then(function (response) {
 
-                setLoading(false);
+                setUpdateLoading(false);
+                setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
                 handleOpenSnackbar(response.data.message, "success");
 
             })
             .catch(function (error) {
 
-                setLoading(false);
+                setUpdateLoading(false);
+                setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
                 requestErrorServerOperation(error.response);
 
             });
@@ -170,7 +169,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
     }
 
     const reloadFormulary = () => {
-        props.reload_setter(!props.reload_state);
+        setLoading(true);
     }
 
     const disableAccount = () => {
@@ -196,9 +195,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
     }
 
     const handleOpenSnackbar = (text, variant) => {
-
         enqueueSnackbar(text, { variant });
-
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -257,6 +254,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
+                                value={controlledInput.actual_password}
                                 helperText={fieldErrorMessage.actual_password}
                                 error={fieldError.actual_password}
                                 onChange={handleInputChange}
@@ -268,6 +266,7 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
+                                value={controlledInput.new_password}
                                 helperText={fieldErrorMessage.new_password}
                                 error={fieldError.new_password}
                                 onChange={handleInputChange}
@@ -279,13 +278,14 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
+                                value={controlledInput.new_password_confirmation}
                                 helperText={fieldErrorMessage.new_password_confirmation}
                                 error={fieldError.new_password_confirmation}
                                 onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
-                            <Button type="submit" variant="contained" color="primary" disabled={loading}>
-                                Alterar senha
+                            <Button type="submit" variant="contained" color="primary" disabled={updateLoading}>
+                                {updateLoading ? "Processando..." : "Atualizar"}
                             </Button>
                         </PaperStyled>
 
@@ -337,5 +337,4 @@ export const AccountConfiguration = React.memo(({ ...props }) => {
 
         </>
     );
-
-});
+}

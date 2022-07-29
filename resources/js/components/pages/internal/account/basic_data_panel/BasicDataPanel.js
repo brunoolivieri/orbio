@@ -35,11 +35,9 @@ export const BasicDataPanel = React.memo(() => {
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        setControlledInput({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
-        loadFields();
-    }, [loadFields]);
 
-    const loadFields = () => {
+        setControlledInput({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
+
         AxiosApi.get("/api/load-basic-account-data")
             .then(function (response) {
 
@@ -56,7 +54,8 @@ export const BasicDataPanel = React.memo(() => {
                 handleOpenSnackbar("Erro no carregamento dos dados.", "error");
 
             });
-    }
+
+    }, [loadingFields]);
 
     const handleSubmitBasicDataForm = (event) => {
         event.preventDefault();

@@ -44,9 +44,12 @@ class ServiceOrderDeletedNotification extends Notification
      */
     public function toMail($notifiable)
     {
+
+        $first_name = explode(" ", $notifiable->name)[0];
+
         return (new MailMessage)
             ->subject('ORBIO - Ordem de serviço removida')
-            ->greeting("Olá ".$notifiable->name."!")
+            ->greeting("Olá ".$first_name."!")
             ->line("Você está sendo notificado porque uma das ordens de serviço a que estava vinculado foi removida.")
             ->line("Data inicial: ".$this->service_order_data["initial_date"])
             ->line("Data final: ".$this->service_order_data["final_date"])

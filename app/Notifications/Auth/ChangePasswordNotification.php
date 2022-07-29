@@ -44,9 +44,12 @@ class ChangePasswordNotification extends Notification
      */
     public function toMail($notifiable)
     {
+
+        $first_name = explode(" ", $notifiable->name)[0];
+
         return (new MailMessage)
             ->subject('ORBIO - Alteração da senha')
-            ->greeting("Olá ".$notifiable->name."!")
+            ->greeting("Olá ".$first_name."!")
             ->line("Sua senha foi alterada com sucesso.")
             ->line("Data: ".date("d-m-Y h:i:s"))
             ->line('Se não foi você quem requisitou o procedimento, contate o suporte imediatamente.');

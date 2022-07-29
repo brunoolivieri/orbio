@@ -45,7 +45,7 @@ class BasicDataUpdatedNotification extends Notification
     public function toMail($notifiable)
     {
 
-        $first_name = explode($notifiable->name, " ")[0];
+        $first_name = explode(" ", $notifiable->name)[0];
 
         return (new MailMessage)
             ->subject('ORBIO - Atualização dos dados básicos')

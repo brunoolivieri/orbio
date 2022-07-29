@@ -44,9 +44,12 @@ class UserUpdatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
+
+        $first_name = explode(" ", $notifiable->name)[0];
+
         return (new MailMessage)
             ->subject('ORBIO - Atualização dos dados de cadastro')
-            ->greeting("Olá ".$notifiable->name."!")
+            ->greeting("Olá ".$first_name."!")
             ->line("Você está sendo notificado porque seus dados cadastrais básicos foram atualizados.")
             ->line("Data: ".date("d-m-Y h:i:s"))
             ->action("Página de acesso", url(env("APP_URL")))
