@@ -30,8 +30,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "" });
 
-  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); // State para o efeito de erro - true ou false
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null }); // State para a mensagem do erro - objeto com mensagens para cada campo
+  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); 
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null }); 
 
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
