@@ -8,21 +8,24 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
 use App\Models\User\UserModel;
+use App\Models\Orders\ServiceOrderModel;
 
 class ServiceOrderDeletedNotification extends Notification
 {
     use Queueable;
 
     private $user;
+    private $service_order;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(UserModel $user)
+    public function __construct(UserModel $user, ServiceOrderModel $service_order)
     {
         $this->user = $user;
+        $this->service_order = $service_order;
     }
 
     /**
@@ -51,11 +54,13 @@ class ServiceOrderDeletedNotification extends Notification
             ->subject('ORBIO - Ordem de serviço removida')
             ->greeting("Olá ".$first_name."!")
             ->line("Você está sendo notificado porque uma das ordens de serviço a que estava vinculado foi removida.")
-            ->line("Data inicial: ".$this->service_order_data["initial_date"])
-            ->line("Data final: ".$this->service_order_data["final_date"])
-            ->line("Criador: ".$this->service_order_data["creator"])
-            ->line("Piloto: ".$this->service_order_data["pilot"])
-            ->line("Cliente: ".$this->service_order_data["client"])
+            ->line("Data inicial: ".$this->service_order->start_date)
+            ->line("Data final: ".$this->service_order->end_date)
+            ->line("Número: ".$this->service_order->observation)
+            ->line("Observação: ".$this->service_order->observation)
+            ->line("Criador: ".$this->service_order->service_order_has_user->has_creator->name)
+            ->line("Piloto: ".$this->service_order->service_order_has_user->has_pilot->name)
+            ->line("Cliente: ".$this->service_order->service_order_has_user->has_client->name)
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se desconhece a origem desse e-mail, ignore.');
     }

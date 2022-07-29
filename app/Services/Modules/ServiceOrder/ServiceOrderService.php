@@ -40,7 +40,6 @@ class ServiceOrderService{
 
         $data = DB::table('service_orders')
         ->where("service_orders.deleted_at", null)
-        ->join('service_order_has_users', 'service_orders.id', '=', 'service_order_has_users.service_order_id')
         ->when($where_value, function ($query, $where_value) {
 
             $query->where('service_orders.id', $where_value);
@@ -101,18 +100,9 @@ class ServiceOrderService{
 
             }
 
-            $service_order_data = [
-                "initial_date" => $request->start_date,
-                "final_date" =>  $request->end_date,
-                "creator" => $creator->name,
-                "pilot" => $pilot->name,
-                "client" => $client->name,
-                "observation" => $request->observation
-            ];
-
-            $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order_data));
-            $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order_data));
-            $client->notify(new ServiceOrderCreatedNotification($client, $service_order_data));
+            $creator->notify(new ServiceOrderCreatedNotification($creator, $new_service_order));
+            $pilot->notify(new ServiceOrderCreatedNotification($pilot, $new_service_order));
+            $client->notify(new ServiceOrderCreatedNotification($client, $new_service_order));
 
         });
 
@@ -134,8 +124,8 @@ class ServiceOrderService{
             $service_order = ServiceOrderModel::findOrFail($service_order_id);
             
             $creator = UserModel::findOrFail($service_order->service_order_has_user->creator_id);
-            $pilot = UserModel::find($request->service_order_has_user->pilot_id);
-            $client = UserModel::find($request->service_order_has_user->client_id);
+            $pilot = UserModel::find($service_order->service_order_has_user->pilot_id);
+            $client = UserModel::find($service_order->service_order_has_user->client_id);
 
             $service_order->update(
                 [
@@ -146,38 +136,30 @@ class ServiceOrderService{
                 ]
             );
 
-            $service_order->service_order_has_user->delete();
+            // Desvinculation with all users through service_order_has_user table
+            $service_order->service_order_has_user()->delete();
             
             ServiceOrderHasUserModel::create([
-                "service_order_id" => $new_service_order->id,
+                "service_order_id" => $service_order->id,
                 "creator_id" => $creator->id, 
                 "pilot_id" => $pilot->id,
                 "client_id" => $client->id
             ]);
 
             // Deleta as relações atuais com os planos de vôo - é mais fácil desse modo
-            ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order_id)->delete();
+            ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order->id)->delete();
             
             // Cria novamente as relações com cada plano de vôo envolvido na ordem de serviço
             foreach($request->flight_plans_ids as $index => $flight_plan_id){
                 ServiceOrderHasFlightPlanModel::insert([
-                    "service_order_id" => (int) $service_order_id,
+                    "service_order_id" => (int) $service_order->id,
                     "flight_plan_id" => (int) $flight_plan_id
                 ]);
             }
 
-            $service_order_data = [
-                "initial_date" => $request->start_date,
-                "final_date" =>  $request->end_date,
-                "creator" => $creator->name,
-                "pilot" => $pilot->name,
-                "client" => $client->name,
-                "observation" => $request->observation
-            ];
-
-            $creator->notify(new ServiceOrderUpdatedNotification($creator, $service_order_data));
-            $pilot->notify(new ServiceOrderUpdatedNotification($pilot, $service_order_data));
-            $client->notify(new ServiceOrderUpdatedNotification($client, $service_order_data));
+            $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order));
+            $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order));
+            $client->notify(new ServiceOrderCreatedNotification($client, $service_order));
 
         });
 
@@ -198,31 +180,22 @@ class ServiceOrderService{
             $service_order = ServiceOrderModel::find($service_order_id);
 
             $creator = UserModel::findOrFail($service_order->service_order_has_user->creator_id);
-            $pilot_data = UserModel::find($service_order->service_order_has_user->pilot_id);
-            $client_data = UserModel::find($service_order->service_order_has_user->client_id);
-
-            $service_order_data = [
-                "initial_date" => $service_order->start_date,
-                "final_date" =>  $service_order->end_date,
-                "creator" => $creator->name,
-                "pilot" => $pilot->name,
-                "client" => $client->name,
-                "observation" => $service_order->observation
-            ];
+            $pilot = UserModel::find($service_order->service_order_has_user->pilot_id);
+            $client = UserModel::find($service_order->service_order_has_user->client_id);
 
             // Desvinculation with flight_plans through service_order_has_flight_plan table
             if(!empty($service_order->service_order_has_flight_plan)){ 
                 $service_order->service_order_has_flight_plan()->delete();
             }
 
-            // Desvinculation with user through service_order_has_user table
+            // Desvinculation with all users through service_order_has_user table
             $service_order->service_order_has_user()->delete();
 
             $service_order->delete();
 
-            $creator->notify(new ServiceOrderUpdatedNotification($creator, $service_order_data));
-            $pilot->notify(new ServiceOrderUpdatedNotification($pilot, $service_order_data));
-            $client->notify(new ServiceOrderUpdatedNotification($client, $service_order_data));
+            $creator->notify(new ServiceOrderDeletedNotification($creator, $service_order));
+            $pilot->notify(new ServiceOrderDeletedNotification($pilot, $service_order));
+            $client->notify(new ServiceOrderDeletedNotification($client, $service_order));
 
         });
 

@@ -158,8 +158,6 @@ class FormatDataService {
      */
     public function serviceOrderPanelDataFormatting(LengthAwarePaginator $data){
 
-        dd($data);
-
         foreach($data->items() as $row => $service_order){
 
             // ====== GENERIC COLUMNS ====== //
@@ -191,15 +189,13 @@ class FormatDataService {
             $index = 0;
 
             // If service order has a creator
-            if(!empty($service_order_has_user->creator_id)){
+            if(isset($service_order_has_user[0]->has_creator)){
 
                 // Get creator data
-                $this->formated_data["records"][$row]["creator"]["id"] = $service_order_has_user[$index]->users("creator_id")->id;
-                $this->formated_data["records"][$row]["creator"]["profile_id"] = $service_order_has_user[$index]->users("creator_id")->profile_id;
-                $this->formated_data["records"][$row]["creator"]["name"] = $service_order_has_user[$index]->users("creator_id")->name;
-                $this->formated_data["records"][$row]["creator"]["status"] = $service_order_has_user[$index]->users("creator_id")->status;
-
-                $index++;
+                $this->formated_data["records"][$row]["creator"]["id"] = $service_order_has_user[0]->has_creator->id;
+                $this->formated_data["records"][$row]["creator"]["profile_id"] = $service_order_has_user[0]->has_creator->profile_id;
+                $this->formated_data["records"][$row]["creator"]["name"] = $service_order_has_user[0]->has_creator->name;
+                $this->formated_data["records"][$row]["creator"]["status"] = $service_order_has_user[0]->has_creator->status;
 
             }else{
 
@@ -208,15 +204,13 @@ class FormatDataService {
             }
 
             // If service order has a pilot
-            if(!empty($service_order_has_user->pilot_id)){
+            if(isset($service_order_has_user[0]->has_pilot)){
 
                 // Get pilot data
-               $this->formated_data["records"][$row]["pilot"]["id"] = $service_order_has_user[$index]->users("pilot_id")->id;
-               $this->formated_data["records"][$row]["pilot"]["profile_id"] = $service_order_has_user[$index]->users("pilot_id")->profile_id;
-               $this->formated_data["records"][$row]["pilot"]["name"] = $service_order_has_user[$index]->users("pilot_id")->name;
-               $this->formated_data["records"][$row]["pilot"]["status"] = $service_order_has_user[$index]->users("pilot_id")->status;
-
-                $index++;
+               $this->formated_data["records"][$row]["pilot"]["id"] = $service_order_has_user[0]->has_pilot->id;
+               $this->formated_data["records"][$row]["pilot"]["profile_id"] = $service_order_has_user[0]->has_pilot->profile_id;
+               $this->formated_data["records"][$row]["pilot"]["name"] = $service_order_has_user[0]->has_pilot->name;
+               $this->formated_data["records"][$row]["pilot"]["status"] = $service_order_has_user[0]->has_pilot->status;
 
             }else{
 
@@ -225,15 +219,13 @@ class FormatDataService {
             }
 
             // If service order has a client
-            if(!empty($service_order_has_user->client_id)){
+            if(isset($service_order_has_user[0]->has_client)){
 
                 // Get client data
-                $this->formated_data["records"][$row]["client"]["id"] = $service_order_has_user[$index]->users("client_id")->id;
-                $this->formated_data["records"][$row]["client"]["profile_id"] = $service_order_has_user[$index]->users("client_id")->profile_id;
-                $this->formated_data["records"][$row]["client"]["name"] = $service_order_has_user[$index]->users("client_id")->name;
-                $this->formated_data["records"][$row]["client"]["status"] = $service_order_has_user[$index]->users("client_id")->status;
-
-                $index++;
+                $this->formated_data["records"][$row]["client"]["id"] = $service_order_has_user[0]->has_client->id;
+                $this->formated_data["records"][$row]["client"]["profile_id"] = $service_order_has_user[0]->has_client->profile_id;
+                $this->formated_data["records"][$row]["client"]["name"] = $service_order_has_user[0]->has_client->name;
+                $this->formated_data["records"][$row]["client"]["status"] = $service_order_has_user[0]->has_client->status;
 
             }else{
 

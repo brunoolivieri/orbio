@@ -8,23 +8,24 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
 use App\Models\User\UserModel;
+use App\Models\Orders\ServiceOrderModel;
 
 class ServiceOrderCreatedNotification extends Notification
 {
     use Queueable;
 
     private $user;
-    private $service_order_data;
+    private $service_order;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(UserModel $user, array $service_order_data)
+    public function __construct(UserModel $user, ServiceOrderModel $service_order)
     {
         $this->user = $user;
-        $this->service_order_data = $service_order_data;
+        $this->service_order = $service_order;
     }
 
     /**
@@ -53,11 +54,13 @@ class ServiceOrderCreatedNotification extends Notification
             ->subject('ORBIO - Nova ordem de serviço')
             ->greeting("Olá ".$first_name."!")
             ->line("Você está sendo notificado porque foi vinculado a uma nova ordem de serviço.")
-            ->line("Data inicial: ".$this->service_order_data["initial_date"])
-            ->line("Data final: ".$this->service_order_data["final_date"])
-            ->line("Criador: ".$this->service_order_data["creator"])
-            ->line("Piloto: ".$this->service_order_data["pilot"])
-            ->line("Cliente: ".$this->service_order_data["client"])
+            ->line("Data inicial: ".$this->service_order->start_date)
+            ->line("Data final: ".$this->service_order->end_date)
+            ->line("Número: ".$this->service_order->numOS)
+            ->line("Observação: ".$this->service_order->observation)
+            ->line("Criador: ".$this->service_order->service_order_has_user->has_creator->name)
+            ->line("Piloto: ".$this->service_order->service_order_has_user->has_pilot->name)
+            ->line("Cliente: ".$this->service_order->service_order_has_user->has_client->name)
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }
