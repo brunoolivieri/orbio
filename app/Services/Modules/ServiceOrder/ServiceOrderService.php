@@ -84,7 +84,7 @@ class ServiceOrderService{
                 ]
             );
 
-            ServiceOrderHasUserModel::create([
+            ServiceOrderHasUserModel::insert([
                 "service_order_id" => $new_service_order->id,
                 "creator_id" => $creator->id, 
                 "pilot_id" => $pilot->id,
