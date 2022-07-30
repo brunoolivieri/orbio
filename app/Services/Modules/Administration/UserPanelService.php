@@ -9,7 +9,10 @@ use Illuminate\Http\Request;
 use App\Services\FormatDataService;
 use App\Models\User\UserModel;
 use App\Models\Orders\ServiceOrderModel;
-use App\Events\Modules\Admin\UserCreatedEvent;
+use App\Models\Pivot\ServiceOrderHasUserModel;
+use App\Notifications\Modules\Administration\User\UserCreatedNotification;
+use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
+use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
 class UserPanelService{
 
@@ -86,14 +89,9 @@ class UserPanelService{
 
             $this->model->save();
 
-            $data_for_email = [
-                "name" => $this->model->name,
-                "email" => $this->model->email,
-                "profile" => $this->model->profile->name,
-                "password" => $request->password
-            ];
+            $user = UserModel::findOrFail($this->model->id);
 
-            event(new UserCreatedEvent($data_for_email));
+            $user->notify(new UserCreatedNotification($user, $request->password));
 
         });
 
@@ -109,12 +107,16 @@ class UserPanelService{
      */
     public function updateUser(Request $request, $user_id) : \Illuminate\Http\Response{
 
-        UserModel::where('id', $user_id)->update([
+        $user = $this->model->findOrFail($user_id);
+
+        $user->update([
             "name" => $request->name,
             "email" => $request->email,
             "profile_id" =>  $request->profile_id,
             "status" =>  $request->boolean("status")
         ]);
+
+        $user->notify(new UserUpdatedNotification($user));
 
         return response(["message" => "Usuário atualizado com sucesso!"], 200); 
 
@@ -132,45 +134,28 @@ class UserPanelService{
 
             $user = UserModel::findOrFail($user_id);
 
-            // If user is linked to a service order
-            if(!empty($user->service_order_has_user)){
+            // If user is related to any service order as creator
+            if($user->service_order_has_user("creator_id")){
+                
+                ServiceOrderHasUserModel::where("creator_id", $user->id)->update(["creator_id" => null]);
+            
+            // If user is related to any service order as pilot
+            }else if($user->service_order_has_user("pilot_id")){
 
-                // Desvinculations with service_orders table
-                foreach($user->service_order_has_user as $index => $record){
+                ServiceOrderHasUserModel::where("pilot_id", $user->id)->update(["pilot_id" => null]);
+            
+            // If user is related to any service order as client
+            }else if($user->service_order_has_user("client_id")){
 
-                    // If user is a pilot and his name is the same of the pilot of the actual service order
-                    if($user->profile_id == 3 && ($record->service_order->pilot_name === $user->name)){
-
-                        ServiceOrderModel::where("id", $record->service_order_id)
-                        ->where("pilot_name", $user->name)
-                        ->update(["pilot_name" => null]);
-                    
-                    // If user is a client and his name is the same of the client of the actual service order
-                    }else if($user->profile_id == 4 && ($record->service_order->client_name === $user->name)){
-
-                        ServiceOrderModel::where("id", $record->service_order_id)
-                        ->where("client_name", $user->name)
-                        ->update(["client_name" => null]);
-                    
-                    // If the name of the user is the same of the creator of the actual service order
-                    }else if(($record->service_order->creator_name === $user->name)){
-
-                        ServiceOrderModel::where("id", $record->service_order_id)
-                        ->where("creator_name", $user->name)
-                        ->update(["creator_name" => null]);
-
-                    }
-
-                }
+                ServiceOrderHasUserModel::where("client_id", $user->id)->update(["client_id" => null]);
 
             }
 
-            // Desvinculations with service_orders_has_user table 
-            $user->service_order_has_user()->delete();
-
             // The user record is soft deleted
-            UserModel::where('id', $user_id)->update(["status" => false]);
-            UserModel::where('id', $user_id)->delete();
+            $user->update(["status" => false]);
+            $user->delete();
+
+            $user->notify(new UserDisabledNotification($user));
 
         });
 

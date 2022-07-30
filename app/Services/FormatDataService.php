@@ -160,18 +160,18 @@ class FormatDataService {
 
         foreach($data->items() as $row => $service_order){
 
-            // ====== COLUNAS GENÉRICAS ====== //
+            // ====== GENERIC COLUMNS ====== //
             foreach($service_order as $column => $value){
 
                 if($column == "created_at" || $column == "updated_at" || $column == "deleted_at"){
                     $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
-                }else if($column != "client_name" && $column != "pilot_name" && $column != "creator_name"){
+                }else{
                     $this->formated_data["records"][$row][$column] = $value;
                 }
 
             }
 
-            // ====== PLANOS DE VOO VINCULADOS ====== //
+            // ====== RELATED FLIGHT PLANS ====== //
             $service_order_flight_plans = ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order->id)->get();
             $flight_plans_vinculated = [];
             for($count = 0; $count < count($service_order_flight_plans); $count++){
@@ -184,48 +184,48 @@ class FormatDataService {
             }
             $this->formated_data["records"][$row]["flight_plans"] = $flight_plans_vinculated;
 
-            // ====== USUÁRIOS VINCULADOS ====== //
-            $service_order_users = ServiceOrderHasUserModel::where("service_order_id", $service_order->id)->get();
+            // ====== RELATED USERS ====== //
+            $service_order_has_user = ServiceOrderHasUserModel::where("service_order_id", $service_order->id)->get();
             $index = 0;
 
-            if(!empty($service_order->creator_name)){
+            // If service order has a creator
+            if(isset($service_order_has_user[0]->has_creator)){
 
-                $this->formated_data["records"][$row]["creator"]["id"] = $service_order_users[$index]->users->id;
-                $this->formated_data["records"][$row]["creator"]["profile_id"] = $service_order_users[$index]->users->profile_id;
-                $this->formated_data["records"][$row]["creator"]["name"] = $service_order_users[$index]->users->name;
-                $this->formated_data["records"][$row]["creator"]["status"] = $service_order_users[$index]->users->status;
-
-                $index++;
-
-            }else{
-
-                $this->formated_data["records"]["creator"]["id"] = 0;
-
-            }
-
-            if(!empty($service_order->pilot_name)){
-
-               $this->formated_data["records"][$row]["pilot"]["id"] = $service_order_users[$index]->users->id;
-               $this->formated_data["records"][$row]["pilot"]["profile_id"] = $service_order_users[$index]->users->profile_id;
-               $this->formated_data["records"][$row]["pilot"]["name"] = $service_order_users[$index]->users->name;
-               $this->formated_data["records"][$row]["pilot"]["status"] = $service_order_users[$index]->users->status;
-
-                $index++;
+                // Get creator data
+                $this->formated_data["records"][$row]["creator"]["id"] = $service_order_has_user[0]->has_creator->id;
+                $this->formated_data["records"][$row]["creator"]["profile_id"] = $service_order_has_user[0]->has_creator->profile_id;
+                $this->formated_data["records"][$row]["creator"]["name"] = $service_order_has_user[0]->has_creator->name;
+                $this->formated_data["records"][$row]["creator"]["status"] = $service_order_has_user[0]->has_creator->status;
 
             }else{
 
-                $this->formated_data["records"]["pilot"]["id"] = 0;
+                $this->formated_data["records"][$row]["creator"]["id"] = 0;
 
             }
 
-            if(!empty($service_order->client_name)){
+            // If service order has a pilot
+            if(isset($service_order_has_user[0]->has_pilot)){
 
-                $this->formated_data["records"][$row]["client"]["id"] = $service_order_users[$index]->users->id;
-                $this->formated_data["records"][$row]["client"]["profile_id"] = $service_order_users[$index]->users->profile_id;
-                $this->formated_data["records"][$row]["client"]["name"] = $service_order_users[$index]->users->name;
-                $this->formated_data["records"][$row]["client"]["status"] = $service_order_users[$index]->users->status;
+                // Get pilot data
+               $this->formated_data["records"][$row]["pilot"]["id"] = $service_order_has_user[0]->has_pilot->id;
+               $this->formated_data["records"][$row]["pilot"]["profile_id"] = $service_order_has_user[0]->has_pilot->profile_id;
+               $this->formated_data["records"][$row]["pilot"]["name"] = $service_order_has_user[0]->has_pilot->name;
+               $this->formated_data["records"][$row]["pilot"]["status"] = $service_order_has_user[0]->has_pilot->status;
 
-                $index++;
+            }else{
+
+                $this->formated_data["records"][$row]["pilot"]["id"] = 0;
+
+            }
+
+            // If service order has a client
+            if(isset($service_order_has_user[0]->has_client)){
+
+                // Get client data
+                $this->formated_data["records"][$row]["client"]["id"] = $service_order_has_user[0]->has_client->id;
+                $this->formated_data["records"][$row]["client"]["profile_id"] = $service_order_has_user[0]->has_client->profile_id;
+                $this->formated_data["records"][$row]["client"]["name"] = $service_order_has_user[0]->has_client->name;
+                $this->formated_data["records"][$row]["client"]["status"] = $service_order_has_user[0]->has_client->status;
 
             }else{
 

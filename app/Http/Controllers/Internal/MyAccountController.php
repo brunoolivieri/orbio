@@ -10,12 +10,15 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User\UserModel;
 use App\Models\User\UserComplementaryDataModel;
 use App\Models\User\UserAddressModel;
-use App\Events\User\UserPasswordChangedEvent;
-use App\Events\User\UserAccountDesactivatedEvent;
 use App\Http\Requests\UserAccount\UpdateBasicDataRequest;
 use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
 use App\Http\Requests\UserAccount\UpdateAddressRequest;
 use App\Http\Requests\UserAccount\UpdatePasswordRequest;
+use App\Notifications\Account\BasicDataUpdatedNotification;
+use App\Notifications\Account\DocumentsUpdatedNotification;
+use App\Notifications\Account\AddressUpdatedNotification;
+use App\Notifications\Auth\ChangePasswordNotification;
+use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
 class MyAccountController extends Controller
 {
@@ -58,8 +61,8 @@ class MyAccountController extends Controller
         return response([
             "complementary" => [
                 'anac_license' => $user->complementary_data->anac_license,
-                'cpf' => $user->complementary_data->CPF,
-                'cnpj' => $user->complementary_data->CNPJ,
+                'cpf' => $user->complementary_data->cpf,
+                'cnpj' => $user->complementary_data->cnpj,
                 'telephone' => $user->complementary_data->telephone,
                 'cellphone' => $user->complementary_data->cellphone,
                 'company_name' => $user->complementary_data->company_name,
@@ -111,13 +114,14 @@ class MyAccountController extends Controller
      */
     function basicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
 
-        $this->user_model->where("id", Auth::user()->id)->update([
+        $user = UserModel::findOrFail(Auth::user()->id);
+
+        $user->update([
             "name" => $request->name,
             "email" => $request->email
         ]);
 
-        // Send email
-        // Send email with confirmation link if email was changed
+        $user->notify(new BasicDataUpdatedNotification($user));
 
         return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
 
@@ -143,6 +147,8 @@ class MyAccountController extends Controller
             "trading_name" => $request->trading_name
         ]);
 
+        $user->notify(new DocumentsUpdatedNotification($user));
+
         return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
 
     }
@@ -166,6 +172,8 @@ class MyAccountController extends Controller
             "complement" => $request->complement
         ]);
 
+        $user->notify(new AddressUpdatedNotification($user));
+
         return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
 
     }
@@ -182,7 +190,7 @@ class MyAccountController extends Controller
 
         $user->update(["password" => Hash::make($request->new_password)]);
 
-        event(new UserPasswordChangedEvent($user));
+        $user->notify(new ChangePasswordNotification($user));
 
         return response(["message" => "Senha atualizada com sucesso!"], 200);
     }
@@ -199,7 +207,7 @@ class MyAccountController extends Controller
 
         $user->update(["status" => false]);
 
-        event(new UserAccountDesactivatedEvent($user));
+        $user->notify(new UserDisabledNotification($user));
 
         return response(["message" => "Conta desativada com sucesso!"], 200);
     }

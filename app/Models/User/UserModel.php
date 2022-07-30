@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 // Custom Models
 use Database\Factories\UserFactory;
 
 class UserModel extends Authenticatable
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $table = "users";
     protected $guarded = [];
@@ -45,10 +46,10 @@ class UserModel extends Authenticatable
     }
 
     /*
-    * Relationship with service_order_has_user table
+    * Relationship with service_order_has_user table as creator
     */
-    function service_order_has_user(){
-        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", "user_id");
+    function service_order_has_user(string $field){
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", $field);
     }
 
     /*
@@ -66,6 +67,17 @@ class UserModel extends Authenticatable
     protected static function newFactory() : \Illuminate\Database\Eloquent\Factories\Factory
     {
         return UserFactory::new();
+    }
+
+    /**
+     * Route notifications for the mail channel.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function routeNotificationForMail($notification)
+    {
+        return $this->email;
     }
 
 }

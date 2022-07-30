@@ -15,7 +15,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -25,11 +24,9 @@ export const BasicDataPanel = React.memo(() => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
-    const [controlledInput, setControlledInput] = React.useState(null);
-
-    const [loading, setLoading] = React.useState(false);
-
+    const [controlledInput, setControlledInput] = React.useState({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
+    const [updateLoading, setUpdateLoading] = React.useState(false);
+    const [loadingFields, setLoadingFields] = React.useState(true);
     const [fieldError, setFieldError] = React.useState({ name: false, email: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "" });
 
@@ -38,26 +35,33 @@ export const BasicDataPanel = React.memo(() => {
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
+
+        setControlledInput({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
+
         AxiosApi.get("/api/load-basic-account-data")
             .then(function (response) {
 
-                setControlledInput({ name: response.data.name, email: response.data.email });
-                setLoading(false);
+                setLoadingFields(false);
+                setUpdateLoading(false);
+                setControlledInput({ name: response.data.name, email: response.data.email, profile: AuthData.data.profile, last_access: moment(AuthData.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(AuthData.data.last_update).format('DD-MM-YYYY hh:mm') });
 
             })
             .catch(function () {
 
-                setLoading(false);
+                setLoadingFields(false);
+                setUpdateLoading(false);
+                setControlledInput({ name: "Erro", email: "Erro", profile: AuthData.data.profile, last_access: moment(AuthData.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(AuthData.data.last_update).format('DD-MM-YYYY hh:mm') });
                 handleOpenSnackbar("Erro no carregamento dos dados.", "error");
 
             });
-    }, [loading]);
+
+    }, [loadingFields]);
 
     const handleSubmitBasicDataForm = (event) => {
         event.preventDefault();
 
         if (formularyDataValidation()) {
-            setLoading(true);
+            setUpdateLoading(true);
             requestServerOperation();
         }
 
@@ -79,13 +83,19 @@ export const BasicDataPanel = React.memo(() => {
 
     const requestServerOperation = () => {
 
-        AxiosApi.patch(`/api/update-basic-data/${AuthData.data.id}`, controlledInput)
+        const body_data = {
+            name: controlledInput.name,
+            email: controlledInput.email
+        }
+
+        AxiosApi.patch(`/api/update-basic-data`, body_data)
             .then(function (response) {
-                setLoading(false);
+                setUpdateLoading(false);
+                setLoadingFields(true);
                 handleOpenSnackbar(response.data.message, "success");
             })
             .catch(function (error) {
-                setLoading(false);
+                setUpdateLoading(false);
                 serverErrorResponseTreatment(error.response);
             });
     }
@@ -124,8 +134,7 @@ export const BasicDataPanel = React.memo(() => {
     }
 
     const reloadFormulary = () => {
-        setControlledInput(null);
-        setLoading(true);
+        setLoadingFields(true);
     }
 
     const handleInputChange = (event) => {
@@ -140,7 +149,7 @@ export const BasicDataPanel = React.memo(() => {
 
     return (
         <>
-            {loading && <BackdropLoading />}
+
             <Grid container spacing={1} alignItems="center">
 
                 <Grid item>
@@ -153,82 +162,87 @@ export const BasicDataPanel = React.memo(() => {
 
             </Grid>
 
-            {!loading && controlledInput != null &&
-                < Box component="form" noValidate onSubmit={handleSubmitBasicDataForm} sx={{ mt: 2 }} >
-                    <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
-                        <Grid container spacing={3}>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="name"
-                                    name="name"
-                                    label="Nome completo"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.name}
-                                    helperText={fieldErrorMessage.name}
-                                    error={fieldError.name}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
+            < Box component="form" noValidate onSubmit={handleSubmitBasicDataForm} sx={{ mt: 2 }} >
+                <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+                    <Grid container spacing={3}>
 
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    id="email"
-                                    name="email"
-                                    label="Email"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={controlledInput.email}
-                                    helperText={fieldErrorMessage.email}
-                                    error={fieldError.email}
-                                    onChange={handleInputChange}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Perfil de usuário"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={AuthData.data.profile}
-                                    inputProps={{
-                                        readOnly: true
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Data do último acesso"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={moment(AuthData.data.last_access).format('DD-MM-YYYY hh:mm')}
-                                    inputProps={{
-                                        readOnly: true
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    label="Data da última atualização"
-                                    fullWidth
-                                    defaultValue={moment(AuthData.data.last_update).format('DD-MM-YYYY hh:mm')}
-                                    variant="outlined"
-                                    inputProps={{
-                                        readOnly: true
-                                    }}
-                                />
-                            </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="name"
+                                name="name"
+                                label="Nome completo"
+                                fullWidth
+                                value={controlledInput.name}
+                                disabled={loadingFields}
+                                variant="outlined"
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                                onChange={handleInputChange}
+                            />
                         </Grid>
 
-                        <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }}>
-                            Atualizar
-                        </Button>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                id="email"
+                                name="email"
+                                label="Email"
+                                value={controlledInput.email}
+                                disabled={loadingFields}
+                                fullWidth
+                                variant="outlined"
+                                helperText={fieldErrorMessage.email}
+                                error={fieldError.email}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
 
-                    </Paper>
-                </Box>
-            }
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Perfil de usuário"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.profile}
+                                disabled={true}
+                                inputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Data do último acesso"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.last_access}
+                                disabled={true}
+                                inputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                label="Data da última atualização"
+                                fullWidth
+                                value={controlledInput.last_update}
+                                disabled={true}
+                                variant="outlined"
+                                inputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+
+                    <Button type="submit" variant="contained" color="primary" disabled={updateLoading || loadingFields} sx={{ mt: 2 }}>
+                        {updateLoading ? "Processando..." : "Atualizar"}
+                    </Button>
+
+                </Paper>
+            </Box>
+
 
         </>
     );

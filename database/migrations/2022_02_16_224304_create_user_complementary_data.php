@@ -17,8 +17,8 @@ class CreateUserComplementaryData extends Migration
             $table->id();
             $table->foreignId('address_id')->nullable(true)->constrained('address')->onDelete('cascade');
             $table->string("anac_license")->nullable(true);
-            $table->string("CPF")->nullable(true);
-            $table->string("CNPJ")->nullable(true);
+            $table->string("cpf")->nullable(true);
+            $table->string("cnpj")->nullable(true);
             $table->string("telephone")->nullable(true);
             $table->string("cellphone")->nullable(true);
             $table->string("company_name")->nullable(true);

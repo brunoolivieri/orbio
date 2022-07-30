@@ -12,7 +12,7 @@ import Select from '@mui/material/Select';
 
 export const SelectCities = React.memo((props) => {
 
-    const [selectedOption, setSelectedOption] = React.useState(props.default != null ? props.default : "0");
+    const [selectedOption, setSelectedOption] = React.useState(props.default ? props.default : "0");
     const [options, setOptions] = React.useState([]);
 
     React.useEffect(() => {
@@ -40,10 +40,10 @@ export const SelectCities = React.memo((props) => {
                     onChange={handleSelectChange}
                     name={"city"}
                     error={props.fieldError}
-                    disabled={props.selectedState != null ? false : true}
+                    disabled={props.selectedState ? false : true}
                 >
 
-                    <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
+                    <MenuItem value="0" disabled>Escolha uma opção</MenuItem>
 
                     {options.map((city, index) =>
 

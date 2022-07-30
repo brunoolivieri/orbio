@@ -10,7 +10,7 @@ import cities from "../../../services/brazil_geo_data.json";
 
 export const SelectStates = React.memo((props) => {
 
-    const [selectedOption, setSelectedOption] = React.useState(props.default != null ? props.default : "0");
+    const [selectedOption, setSelectedOption] = React.useState(props.default ? props.default : "0");
 
     const handleSelectChange = (event) => {
 
@@ -24,23 +24,26 @@ export const SelectStates = React.memo((props) => {
         <>
             <FormControl sx={{ mr: 2 }}>
                 <InputLabel id="demo-simple-select-helper-label">Estado</InputLabel>
-                <Select
-                    labelId="demo-simple-select-helper-label"
-                    value={selectedOption}
-                    label={"Estado"}
-                    onChange={handleSelectChange}
-                    name={"state"}
-                    error={props.fieldError}
-                >
-                    <MenuItem value={0} disabled>Escolha uma opção</MenuItem>
+                {selectedOption != null &&
+                    <Select
+                        labelId="demo-simple-select-helper-label"
+                        value={selectedOption}
+                        label={"Estado"}
+                        onChange={handleSelectChange}
+                        name={"state"}
+                        error={props.fieldError}
+                    >
 
-                    {
-                        cities.estados.map((row, index) =>
-                            <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
-                        )
-                    }
+                        <MenuItem value="0" disabled>Escolha uma opção</MenuItem>
 
-                </Select>
+                        {
+                            cities.estados.map((row, index) =>
+                                <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
+                            )
+                        }
+
+                    </Select>
+                }
             </FormControl>
         </>
 

@@ -19,9 +19,6 @@ class CreateServiceOrdersTable extends Migration
             $table->dateTime("start_date");
             $table->dateTime("end_date");
             $table->boolean("status")->default(false);
-            $table->string("creator_name")->nullable(true);
-            $table->string("pilot_name")->nullable(true);
-            $table->string("client_name")->nullable(true);
             $table->text("observation");
             $table->timestamps();
             $table->softDeletes();

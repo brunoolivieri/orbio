@@ -39,7 +39,7 @@ export const GenericModalDialog = React.memo(({ ...props }) => {
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
-                PaperProps = {{style: { borderRadius: 15 }}}
+                PaperProps={{ style: { borderRadius: 15 } }}
             >
 
                 {props.title.top.required &&
@@ -58,7 +58,7 @@ export const GenericModalDialog = React.memo(({ ...props }) => {
                         {
                             props.lottie.required &&
                             <Box sx={{ margin: "auto", mb: 3, width: "max-content" }} justifyContent="center" >
-                               {props.lottie.animation}
+                                {props.lottie.animation}
                             </Box>
                         }
 
@@ -80,10 +80,10 @@ export const GenericModalDialog = React.memo(({ ...props }) => {
                                 <Button onClick={handleClose}>{props.actions.close_button_text.text}</Button>
                             }
                             {props.actions.confirmation_default_button.required &&
-                                <Button onClick={props.actions.confirmation_default_button.event}>{props.actions.confirmation_default_button.text}</Button>
+                                <Button onClick={props.actions.confirmation_default_button.event} variant="contained">{props.actions.confirmation_default_button.text}</Button>
                             }
                             {props.actions.confirmation_button_with_link.required &&
-                                <Button><a href={props.actions.confirmation_button_with_link.href}>{props.actions.confirmation_button_with_link.text}</a></Button>
+                                <Button><a href={props.actions.confirmation_button_with_link.href} variant="contained">{props.actions.confirmation_button_with_link.text}</a></Button>
                             }
                         </DialogActions>
                     }
