@@ -12,7 +12,6 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import { styled } from '@mui/material/styles';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
@@ -24,6 +23,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faWifi } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
+import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
 
 const Input = styled('input')({
   display: 'none',
@@ -286,7 +286,7 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
             {logUploaded.status &&
               <>
                 <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                  <DateTimeInput
+                  <DateTimeSingle
                     event={setStartDate}
                     label={"Inicio do vôo"}
                     helperText={errorMessage.flight_start_date}
@@ -295,7 +295,7 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
                     operation={"create"}
                     read_only={true}
                   />
-                  <DateTimeInput
+                  <DateTimeSingle
                     event={setEndDate}
                     name={"report_end_flight"}
                     label={"Fim do vôo"}

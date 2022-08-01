@@ -20,7 +20,7 @@ import moment from 'moment';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
 
 export const UpdateReportFormulary = React.memo(({ ...props }) => {
 
@@ -250,7 +250,7 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
               />
 
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                <DateTimeInput
+                <DateTimeSingle
                   event={setStartDate}
                   label={"Inicio do vôo"}
                   helperText={errorMessage.flight_start_date}
@@ -259,7 +259,7 @@ export const UpdateReportFormulary = React.memo(({ ...props }) => {
                   operation={"update"}
                   read_only={false}
                 />
-                <DateTimeInput
+                <DateTimeSingle
                   event={setEndDate}
                   label={"Fim do vôo"}
                   helperText={errorMessage.flight_end_date}

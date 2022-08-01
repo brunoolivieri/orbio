@@ -20,7 +20,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { DateTimeInput } from '../../../date_picker/DateTimeInput';
+import { DateTimeSingle } from '../../../date_picker/DateTimeSingle';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -376,7 +376,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                            <DateTimeInput
+                            <DateTimeSingle
                                 event={setPurchaseDate}
                                 label={"Data da compra"}
                                 helperText={fieldErrorMessage.purchase_date}

@@ -19,7 +19,7 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Moment
 import moment from 'moment';
 // Custom
-import { DateTimeInput } from '../../../date_picker/DateTimeInput';
+import { DateTimeSingle } from '../../../date_picker/DateTimeSingle';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -302,7 +302,7 @@ export const UpdateBatteryFormulary = React.memo((props) => {
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                            <DateTimeInput
+                            <DateTimeSingle
                                 event={setChargeDate}
                                 label={"Data da última carga"}
                                 helperText={fieldErrorMessage.last_charge}

@@ -41,6 +41,8 @@ class LoginService {
             // User account is active
             if(Auth::user()->status && !is_null(Auth::user()->last_access)){
 
+                $user->update(["last_access" => date('d-m-y h:i:s')]);
+
                 $user->notify(new LoginNotification($user));
 
                 return response(["message" => "Acesso autorizado!"], 200);
@@ -49,6 +51,8 @@ class LoginService {
             }else if(!Auth::user()->status && is_null(Auth::user()->last_access)){
 
                 $this->activateAccount();
+
+                $user->update(["last_access" => date('d-m-y h:i:s')]);
 
                 $user->notify(new LoginNotification($user));
 

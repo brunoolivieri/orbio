@@ -15,7 +15,7 @@ import { Tooltip } from '@mui/material';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
@@ -265,7 +265,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
 
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
                 <Box sx={{ mr: 1 }}>
-                  <DateTimeInput
+                  <DateTimeSingle
                     event={setStartDate}
                     label={"Inicio da ordem de serviço"}
                     helperText={fieldErrorMessage.start_date}
@@ -276,7 +276,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   />
                 </Box>
                 <Box>
-                  <DateTimeInput
+                  <DateTimeSingle
                     event={setEndDate}
                     label={"Fim da ordem de serviço"}
                     helperText={fieldErrorMessage.start_date}
