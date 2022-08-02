@@ -19,8 +19,8 @@ class SuperAdminSeeder extends Seeder
 
         UserModel::create([
             "name" => "Master",
-            "email" => env("SUPER_ADMIN_EMAIL"),
-            "password" => Hash::make(env("SUPER_ADMIN_PASS")),
+            "email" => env("ADMIN_EMAIL"),
+            "password" => Hash::make(env("ADMIN_PASS")),
             "status" => true,
             "profile_id" => 1,
             "last_access" => date("Y-m-d H:i:s"),

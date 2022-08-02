@@ -11,6 +11,7 @@ use App\Models\Profiles\ProfileModel;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;
+use App\Http\Resources\Modules\Administration\UsersResourcePagination;
 
 class AdministrationModuleUsersController extends Controller
 {

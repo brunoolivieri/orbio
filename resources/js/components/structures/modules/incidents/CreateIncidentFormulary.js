@@ -12,7 +12,6 @@ import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
 import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,6 +19,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
 // Custom
+import { DateTimeSingle } from "../../date_picker/DateTimeSingle";
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -181,7 +181,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
             </DialogContentText>
 
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-              <DateTimeInput
+              <DateTimeSingle
                 event={setIncidentDate}
                 label={"Data do incidente"}
                 helperText={fieldErrorMessage.date}
