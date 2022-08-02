@@ -95,8 +95,8 @@ class LoginService {
     
             $new_comp_data = UserComplementaryDataModel::create([
                 "anac_license" => null,
-                    "CPF" => null,
-                    "CNPJ" => null,
+                    "cpf" => null,
+                    "cnpj" => null,
                     "telephone" => null,
                     "cellphone" => null,
                     "company_name" => null,
