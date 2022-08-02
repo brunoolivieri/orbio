@@ -21,7 +21,7 @@ import moment from 'moment';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import { DateTimeSingle } from "../../date_picker/DateTimeSingle";
 
 export function UpdateIncidentFormulary({ ...props }) {
 
@@ -190,7 +190,7 @@ export function UpdateIncidentFormulary({ ...props }) {
               />
 
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                <DateTimeInput
+                <DateTimeSingle
                   event={setIncidentDate}
                   label={"Data do incidente"}
                   helperText={fieldErrorMessage.date}

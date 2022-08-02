@@ -18,7 +18,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
-import { DateTimeInput } from '../../date_picker/DateTimeInput';
+import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
 // Fontsawesome
@@ -220,8 +220,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   return (
     <>
       <Tooltip title="Nova ordem de serviço">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.read == 1 ? false : true}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true}>
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -238,7 +238,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
               <Box sx={{ mr: 1 }}>
-                <DateTimeInput
+                <DateTimeSingle
                   event={setStartDate}
                   label={"Inicio da ordem de serviço"}
                   helperText={fieldErrorMessage.flight_start_date}
@@ -249,7 +249,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
                 />
               </Box>
               <Box>
-                <DateTimeInput
+                <DateTimeSingle
                   event={setEndDate}
                   label={"Término da ordem de serviço"}
                   helperText={fieldErrorMessage.flight_end_date}

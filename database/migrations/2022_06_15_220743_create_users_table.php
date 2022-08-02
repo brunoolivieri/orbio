@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string("email");
             $table->string("password");
             $table->boolean("status")->default(false);
-            $table->dateTime("last_access")->nullable(true);
+            $table->timestamp("last_access")->nullable(true);
             $table->timestamps();   
             $table->softDeletes();
         });
