@@ -39,17 +39,11 @@ class UsersResourcePagination extends JsonResource
             ];   
 
             if($record->status){
-
                 $formated_data["records"][$row]["status_badge"] = ["Ativo", "success"];
-            
             }else if(!$record->status && empty($record->last_access)){
-
                 $formated_data["records"][$row]["status_badge"] = ["Inativo", "error"];
-            
             }else if(!$record->status && empty($record->last_access)){
-
                 $formated_data["records"][$row]["status_badge"] = ["Desativado", "error"];
-
             }
 
         }
