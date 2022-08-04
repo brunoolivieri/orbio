@@ -63,49 +63,6 @@ class FormatDataService {
     }
 
     /**
-     * Method for organize data for the users administration table.
-     *
-     * @param Illuminate\Pagination\LengthAwarePaginator $data
-     * @return array $this->formated_data
-     */
-    public function userPanelDataFormatting(LengthAwarePaginator $data){
-
-        foreach($data->items() as $row => $record){
-
-            foreach($record as $column => $value){
-
-                if($column === "created_at" || $column === "updated_at" || $column === "deleted_at" || $column === "last_access"){
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
-                }else{
-                    $this->formated_data["records"][$row][$column] = $value;
-                }
-
-            }
-
-            if($record->status == 1){
-
-                $this->formated_data["records"][$row]["status_badge"] = ["Ativo", "success"];
-            
-            }else if($record->status == 0 && $record->last_access == null){
-
-                $this->formated_data["records"][$row]["status_badge"] = ["Inativo", "error"];
-            
-            }else if($record->status == 0 && $record->last_access != null){
-
-                $this->formated_data["records"][$row]["status_badge"] = ["Desativado", "error"];
-
-            }
-        }
-
-        $this->formated_data["total_records_founded"] = $data->total();
-        $this->formated_data["records_per_page"] = $data->perPage();
-        $this->formated_data["total_pages"] = $data->lastPage();
-
-        return $this->formated_data;
-
-    }
-
-    /**
      * Method for organize data for the profiles administration table.
      * Each profile relationship with each module is defined in one row.
      * Thus, if there's N modules, for example, each profile will appears N times in the pivot table.

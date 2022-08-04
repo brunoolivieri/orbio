@@ -70,17 +70,11 @@ export function UsersPanel() {
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
-
     if (!paginationParams.where) {
-
       requestToGetAllUsers();
-
     } else {
-
       requestToGetSearchedUsers();
-
     }
-
   }, [paginationParams]);
 
   function requestToGetAllUsers() {
@@ -93,12 +87,12 @@ export function UsersPanel() {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} usuários`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} usuário`, "success");
         }
 
       })
@@ -125,12 +119,12 @@ export function UsersPanel() {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} usuários`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} usuários`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} usuário`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} usuário`, "success");
         }
 
       }).catch(function (error) {

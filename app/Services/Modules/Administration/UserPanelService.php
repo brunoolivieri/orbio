@@ -13,6 +13,7 @@ use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
 use App\Notifications\Modules\Administration\User\UserDisabledNotification;
+use App\Http\Resources\Modules\Administration\UsersResourcePagination;
 
 class UserPanelService{
 
@@ -40,11 +41,10 @@ class UserPanelService{
      */
     public function loadUsersWithPagination(int $limit, int $current_page, int|string $where_value) : \Illuminate\Http\Response {
 
-        $data = DB::table('users')
-        ->join('profiles', 'users.profile_id', '=', 'profiles.id')
-        ->select('users.id', 'users.name', 'users.email', 'users.profile_id', 'profiles.name as profile_name' , 'users.status', 'users.created_at', 'users.updated_at', 'users.last_access')
-        ->where("users.deleted_at", null)
-        ->when($where_value, function ($query, $where_value) {
+        $data = UserModel::where("deleted_at", null)
+        ->with("profile:id,name")
+        ->with("complementary_data:id")
+        ->when($where_value, function ($query, $where_value){
 
             $query->when(is_numeric($where_value), function($query) use ($where_value){
 
@@ -56,18 +56,14 @@ class UserPanelService{
 
             });
 
-        })->orderBy('users.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        })
+        ->orderBy("id")
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->userPanelDataFormatting($data);
-
-            return response($data_formated, 200);
-
+            return response(new UsersResourcePagination($data), 200);
         }else{
-
             return response(["message" => "Nenhum usuário encontrado."], 404);
-
         }
 
     }
