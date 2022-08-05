@@ -33,6 +33,7 @@ class UsersPanelResource extends JsonResource
                 "profile_name" => $record->profile->name,
                 "complementary_data_id" => $record->complementary_data_id,
                 "email" => $record->email,
+                "status" => $record->status,
                 "last_access" => empty($record->last_access) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->last_access)),
                 "created_at" => empty($record->created_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->created_at)),
                 "updated_at" => empty($record->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->updated_at))

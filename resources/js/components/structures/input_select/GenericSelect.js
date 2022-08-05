@@ -9,18 +9,12 @@ import Select from '@mui/material/Select';
 import AxiosApi from "../../../services/AxiosApi";
 import { useAuthentication } from "../../context/InternalRoutesAuth/AuthenticationContext";
 
-export const GenericSelect = React.memo(({ ...props }) => {
+export const GenericSelect = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
     const [axiosURL] = React.useState(props.data_source);
     const [loading, setLoading] = React.useState(true);
     const [data, setData] = React.useState({ records: [], label_text: props.label_text });
-
-    const handleChange = (event) => {
-
-        props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.target.value });
-
-    };
 
     React.useEffect(() => {
 
@@ -42,14 +36,19 @@ export const GenericSelect = React.memo(({ ...props }) => {
 
     }, [open]);
 
+    const handleChange = (event) => {
+        props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.target.value });
+    }
+
     return (
         <>
             <FormControl sx={{ margin: "5px 5px 0 0", minWidth: 120 }}>
                 <InputLabel id="demo-simple-select-helper-label">{data.label_text}</InputLabel>
+
                 <Select
                     labelId="demo-simple-select-helper-label"
                     id={props.name}
-                    defaultValue={props.default}
+                    defaultValue={loading ? "0" : props.default}
                     label={data.label_text}
                     onChange={handleChange}
                     name={props.name}
@@ -57,13 +56,14 @@ export const GenericSelect = React.memo(({ ...props }) => {
                     disabled={loading}
                 >
 
-                    <MenuItem value={0} disabled>{loading ? "Carregando" : "Escolha uma opção"}</MenuItem>
+                    <MenuItem value={"0"} disabled>{loading ? "Carregando" : "Escolha uma opção"}</MenuItem>
 
                     {!loading &&
-                        data.records.map((row) =>
-                            <MenuItem value={row[props.primary_key]} key={row[props.primary_key]}>{row[props.key_content]}</MenuItem>
+                        data.records.map((item) =>
+                            <MenuItem value={item[props.primary_key]} key={item[props.primary_key]}>{item[props.key_content]}</MenuItem>
                         )
                     }
+
                 </Select>
             </FormControl>
         </>

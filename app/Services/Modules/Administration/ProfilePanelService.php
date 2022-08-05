@@ -57,7 +57,7 @@ class ProfilePanelService{
         if($data->total() > 0){
             return response(new ProfilesPanelResource($data), 200);
         }else{
-            return response(["message" => "Nenhum usuário encontrado."], 404);
+            return response(["message" => "Nenhum perfil encontrado."], 404);
         }
 
     }

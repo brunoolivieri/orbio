@@ -22,7 +22,7 @@ import { StatusRadio } from '../../../radio_group/StatusRadio';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-export const UpdateUserFormulary = React.memo(({ ...props }) => {
+export const UpdateUserFormulary = React.memo((props) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
