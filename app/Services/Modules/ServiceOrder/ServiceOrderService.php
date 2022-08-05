@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\User\UserModel;
+use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
 use App\Models\Orders\ServiceOrderModel;
 use App\Services\FormatDataService;
 use App\Models\Pivot\ServiceOrderHasUserModel;
@@ -15,47 +16,33 @@ use App\Notifications\Modules\ServiceOrder\ServiceOrderCreatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderDeletedNotification;
 
-class ServiceOrderService{
-
-    private FormatDataService $format_data_service;
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Services\FormatDataService $service
-     */
-    public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
-    }
+class ServiceOrderService {
 
     /**
     * Load all service orders with pagination.
     *
     * @param int $limit
     * @param int $actual_page
-    * @param int|string $where_value
+    * @param int|string $typed_search
     * @return \Illuminate\Http\Response
     */
-    public function loadServiceOrdersWithPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search){
 
-        $data = DB::table('service_orders')
-        ->where("service_orders.deleted_at", null)
-        ->when($where_value, function ($query, $where_value) {
+        $data = ServiceOrderModel::where("deleted_at", null)
+        ->with("has_users")
+        ->with("has_flight_plans")
+        ->when($typed_search, function ($query, $typed_search) {
 
-            $query->where('service_orders.id', $where_value);
+            $query->where('service_orders.id', $typed_search);
 
-        })->orderBy('service_orders.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        })
+        ->orderBy('id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->serviceOrderPanelDataFormatting($data);
-
-            return response($data_formated, 200);
-
+            return response(new ServiceOrdersPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
-
         }
 
     }
@@ -66,7 +53,7 @@ class ServiceOrderService{
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createServiceOrder(Request $request){
+    public function createResource(Request $request){
 
         DB::transaction(function () use ($request) {
             
@@ -117,7 +104,7 @@ class ServiceOrderService{
     * @param int $service_order_id
     * @return \Illuminate\Http\Response
     */
-    public function updateServiceOrder(Request $request, int $service_order_id){
+    public function updateResource(Request $request, int $service_order_id){
 
         DB::transaction(function () use ($request, $service_order_id) {
 
@@ -173,7 +160,7 @@ class ServiceOrderService{
      * @param int $service_order_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteServiceOrder(int $service_order_id){
+    public function deleteResource(int $service_order_id){
 
         DB::transaction(function () use ($service_order_id) {
             

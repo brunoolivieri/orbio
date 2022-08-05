@@ -35,7 +35,7 @@ class FlightPlansPanelResource extends JsonResource
                 "coordinates_file" => $flight_plan->coordinates_file,
                 "description" => $flight_plan->description,
                 "status" => $flight_plan->status,
-                "created_at" => empty($flight_plan->created_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($flight_plan->created_at)),
+                "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->created_at)),
                 "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($flight_plan->updated_at))
             ];
 

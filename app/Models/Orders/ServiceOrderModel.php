@@ -14,28 +14,14 @@ class ServiceOrderModel extends Model
     protected $table = "service_orders";
     protected $guarded = [];
 
-    /*
-    * Relationship with flight_plans table
-    */
-    function flight_plans(){
-
-        return $this->belongsTo("App\Models\Plans\FlightPlanModel", "flight_plan_id");
-
-    }
-
-    /*
-    * Relationship with service_order_has_user table
-    */
-    function service_order_has_user(){
-
+    function has_users(){
         return $this->hasOne("App\Models\Pivot\ServiceOrderHasUserModel", "service_order_id");
-
     }
 
     /*
     * Relationship with service_order_has_flight_plan table
     */
-    function service_order_has_flight_plan(){
+    function has_flight_plans(){
 
         return $this->hasMany("App\Models\Pivot\ServiceOrderHasFlightPlanModel", "service_order_id");
 

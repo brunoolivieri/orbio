@@ -13,7 +13,7 @@ class ServiceOrderHasFlightPlanModel extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    function flight_plans(){
+    function flight_plan(){
         return $this->belongsTo("App\Models\FlightPlans\FlightPlanModel", "flight_plan_id");
     }
 }

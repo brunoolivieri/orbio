@@ -43,7 +43,7 @@ class FlightPlanModel extends Model
     /*
     * Relationship with service_order_has_flight_plan table
     */
-    function service_order_has_flight_plan(){
+    function has_flight_plan(){
 
         return $this->hasMany("App\Models\Pivot\ServiceOrdersHasFlightPlansModel", "flight_plan_id");
 

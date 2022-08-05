@@ -6,21 +6,18 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Reports\ReportModel;
-use App\Services\FormatDataService;
+use App\Http\Resources\Modules\Reports\ReportsPanelResource;
 
 class ReportService{
-    
-    private FormatDataService $format_data_service;
+
     private ReportModel $model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Services\FormatDataService $service
      * @param App\Models\Incidents\ReportModel $incident
      */
-    public function __construct(FormatDataService $service, ReportModel $model){
-        $this->format_data_service = $service;
+    public function __construct(ReportModel $model){
         $this->model = $model;
     }
 
@@ -29,29 +26,21 @@ class ReportService{
     *
     * @param int $limit
     * @param int $actual_page
-    * @param int|string $where_value
+    * @param int|string $typed_search
     * @return \Illuminate\Http\Response
     */
-    public function loadAReportsWithPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search) {
 
-        $data = DB::table('reports')
-        ->where("reports.deleted_at", null)
-        ->when($where_value, function ($query, $where_value) {
-
-            $query->where('id', $where_value);
-
-        })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = ReportModel::when($typed_search, function ($query, $typed_search) {
+            $query->where('id', $typed_search);
+        })
+        ->orderBy('id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->genericDataFormatting($data);
-
-            return response($data_formated, 200);
-
+            return response(new ReportsPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhum relatório encontrado."], 404);
-
         }
     }
 
@@ -61,7 +50,7 @@ class ReportService{
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function createReport(Request $request){
+    public function createResource(Request $request){
 
         $this->model->create($request->only(["start_date", "end_date", "flight_log", "observation"]));
 
@@ -76,7 +65,7 @@ class ReportService{
      * @param int $report_id
      * @return \Illuminate\Http\Response
      */
-    public function updateReport(Request $request, int $report_id) {
+    public function updateResource(Request $request, int $report_id) {
 
         $this->model->where('id', $report_id)->update($request->only(["start_date", "end_date", "flight_log", "observation"]));
 
@@ -90,7 +79,7 @@ class ReportService{
      * @param int $report_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteReport(int $report_id) {
+    public function deleteResource(int $report_id) {
 
         $this->model->flight_plans->update("report_id", null);
 

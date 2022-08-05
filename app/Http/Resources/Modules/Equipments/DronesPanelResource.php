@@ -38,7 +38,7 @@ class DronesPanelResource extends JsonResource
                 "serial_number" => $drone->serial_number,
                 "weight" => $drone->weight,
                 "observation" => $drone->observation,
-                "created_at" => empty($drone->created_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($drone->created_at)),
+                "created_at" => date( 'd-m-Y h:i', strtotime($drone->created_at)),
                 "updated_at" => empty($drone->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($drone->updated_at))
             ];
 

@@ -41,7 +41,7 @@ class ServiceOrderModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -55,7 +55,7 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->createServiceOrder($request);
+        return $this->service->createResource($request);
 
     }
 
@@ -74,7 +74,7 @@ class ServiceOrderModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadServiceOrdersWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
         
     }
 
@@ -89,7 +89,7 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->updateServiceOrder($request, $id);
+        return $this->service->updateResource($request, $id);
 
     }
 
@@ -103,7 +103,7 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->deleteServiceOrder($id);
+        return $this->service->deleteResource($id);
         
     }
 }

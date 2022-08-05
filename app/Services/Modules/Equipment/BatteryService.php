@@ -18,24 +18,24 @@ class BatteryService {
     *
     * @param int $limit
     * @param int $current_page
-    * @param int|string $where_value
+    * @param int|string $typed_search
     * @return \Illuminate\Http\Response
     */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search){
 
         $data = BatteryModel::where("batteries.deleted_at", null)
-        ->when($where_value, function ($query, $where_value) {
+        ->when($typed_search, function ($query, $typed_search) {
 
-            $query->when(is_numeric($where_value), function($query) use ($where_value){
+            $query->when(is_numeric($typed_search), function($query) use ($typed_search){
 
-                $query->where('id', $where_value);
+                $query->where('id', $typed_search);
 
-            }, function($query) use ($where_value){
+            }, function($query) use ($typed_search){
 
-                $query->where('name', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('manufacturer', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('model', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('serial_number', 'LIKE', '%'.$where_value.'%');
+                $query->where('name', 'LIKE', '%'.$typed_search.'%')
+                ->orWhere('manufacturer', 'LIKE', '%'.$typed_search.'%')
+                ->orWhere('model', 'LIKE', '%'.$typed_search.'%')
+                ->orWhere('serial_number', 'LIKE', '%'.$typed_search.'%');
 
             });
 

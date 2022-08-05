@@ -34,22 +34,24 @@ class UserPanelService {
      *
      * @param int $limit
      * @param int $actual_page
-     * @param int|string $where_value
+     * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value) : \Illuminate\Http\Response {
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search) : \Illuminate\Http\Response {
 
-        $data = UserModel::where("deleted_at", null)
-        ->with(["profile:id,name", "complementary_data:id"])
-        ->when($where_value, function ($query, $where_value){
+        // Add: when trashed = ->withTrashed()
+        // Add: when active = by active
 
-            $query->when(is_numeric($where_value), function($query) use ($where_value){
+        $data = UserModel::with(["profile:id,name", "complementary_data:id"])
+        ->when($typed_search, function ($query, $typed_search){
 
-                $query->where('users.id', $where_value);
+            $query->when(is_numeric($typed_search), function($query) use ($typed_search){
 
-            }, function($query) use ($where_value){
+                $query->where('users.id', $typed_search);
 
-                $query->where('users.name', 'LIKE', '%'.$where_value.'%')->orWhere('users.email', 'LIKE', '%'.$where_value.'%');
+            }, function($query) use ($typed_search){
+
+                $query->where('users.name', 'LIKE', '%'.$typed_search.'%')->orWhere('users.email', 'LIKE', '%'.$typed_search.'%');
 
             });
 

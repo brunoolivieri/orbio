@@ -39,7 +39,7 @@ class EquipmentsPanelResource extends JsonResource
                 "weight" => $equipment->weight,
                 "observation" => $equipment->observation,
                 "purchase_date" => empty($equipment->purchase_date) ? "N/A" : date( 'd-m-Y h:i', strtotime($equipment->purchase_date)),
-                "created_at" => empty($equipment->created_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($equipment->created_at)),
+                "created_at" => date( 'd-m-Y h:i', strtotime($equipment->created_at)),
                 "updated_at" => empty($equipment->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($equipment->updated_at))
             ];
 

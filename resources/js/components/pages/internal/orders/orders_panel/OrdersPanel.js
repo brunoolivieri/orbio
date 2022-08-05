@@ -60,7 +60,7 @@ export const OrdersPanel = React.memo(() => {
   const [loading, setLoading] = React.useState(true);
 
   // State do registro selecionado
-  // Quando um registro é selecionado, seu índice é salvo nesse state
+  // Quando um registro é selecionado, seu índice é salvo nesse statetotal_records_founded
   // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
@@ -93,15 +93,13 @@ export const OrdersPanel = React.memo(() => {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} ordem de serviço`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} ordem de serviço`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} ordens de serviço`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} ordens de serviço`, "success");
         }
-
-        console.log(records)
 
       })
       .catch(function (error) {
@@ -127,12 +125,12 @@ export const OrdersPanel = React.memo(() => {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} ordem de serviço`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} ordem de serviço`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} ordens de serviço`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} ordens de serviço`, "success");
         }
 
       })
@@ -331,13 +329,13 @@ export const OrdersPanel = React.memo(() => {
                       </TableCell>
                       <TableCell align="center">{row.numOS}</TableCell>
                       <TableCell align="center">
-                        {row.creator.id == 0 ? <Chip label={"Sem dados"} variant="outlined" /> : (row.creator.status == 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined" /> : <Chip label={row.creator.name} color={"error"} variant="outlined" />)}
+                        {row.creator.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.creator.status == 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined" /> : <Chip label={row.creator.name} color={"error"} variant="outlined" />)}
                       </TableCell>
                       <TableCell align="center">
-                        {row.pilot.id == 0 ? <Chip label={"Sem dados"} variant="outlined" /> : (row.pilot.status == 1 ? <Chip label={row.pilot.name} color={"success"} variant="outlined" /> : <Chip label={row.pilot.name} color={"error"} variant="outlined" />)}
+                        {row.pilot.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.pilot.status == 1 ? <Chip label={row.pilot.name} color={"success"} variant="outlined" /> : <Chip label={row.pilot.name} color={"error"} variant="outlined" />)}
                       </TableCell>
                       <TableCell align="center">
-                        {row.client.ids == 0 ? <Chip label={"Sem dados"} variant="outlined" /> : (row.client.status == 1 ? <Chip label={row.client.name} color={"success"} variant="outlined" /> : <Chip label={row.client.name} color={"error"} variant="outlined" />)}
+                        {row.client.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.client.status == 1 ? <Chip label={row.client.name} color={"success"} variant="outlined" /> : <Chip label={row.client.name} color={"error"} variant="outlined" />)}
                       </TableCell>
                       <TableCell align="center">{row.observation}</TableCell>
                       <TableCell align="center">{moment(row.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>

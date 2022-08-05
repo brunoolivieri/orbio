@@ -15,15 +15,15 @@ class IncidentService {
     *
     * @param int $limit
     * @param int $actual_page
-    * @param int|string $where_value
+    * @param int|string $typed_search
     * @return \Illuminate\Http\Response
     */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search) {
 
         $data = IncidentModel::where("deleted_at", null)
-        ->when($where_value, function ($query, $where_value) {
+        ->when($typed_search, function ($query, $typed_search) {
 
-            $query->where('id', $where_value);
+            $query->where('id', $typed_search);
 
         })->orderBy('id')
         ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);

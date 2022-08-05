@@ -35,16 +35,18 @@ class UsersPanelResource extends JsonResource
                 "email" => $record->email,
                 "status" => $record->status,
                 "last_access" => empty($record->last_access) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->last_access)),
-                "created_at" => empty($record->created_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->created_at)),
+                "created_at" => date( 'd-m-Y h:i', strtotime($record->created_at)),
                 "updated_at" => empty($record->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->updated_at))
             ];   
 
-            if($record->status){
+            if($record->status && !empty($record->last_access) && empty($record->deleted_at)){
                 $formated_data["records"][$row]["status_badge"] = ["Ativo", "success"];
-            }else if(!$record->status && empty($record->last_access)){
+            }else if(!$record->status && empty($record->last_access) && empty($record->deleted_at)){
                 $formated_data["records"][$row]["status_badge"] = ["Inativo", "error"];
-            }else if(!$record->status && empty($record->last_access)){
-                $formated_data["records"][$row]["status_badge"] = ["Desativado", "error"];
+            }else if(!$record->status && empty($record->last_access) && empty($record->deleted_at)){
+                $formated_data["records"][$row]["status_badge"] = ["Desabilitado", "error"];
+            }else if(!empty($record->deleted_at)){
+                $formated_data["records"][$row]["status_badge"] = ["Removido", "error"];
             }
 
         }

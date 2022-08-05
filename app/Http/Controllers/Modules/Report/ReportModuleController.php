@@ -40,7 +40,7 @@ class ReportModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadAReportsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -54,7 +54,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_write');
 
-        return $this->service->createReport($request);
+        return $this->service->createResource($request);
 
     }
 
@@ -73,7 +73,7 @@ class ReportModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadReportsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -88,7 +88,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_write');
         
-        return $this->service->updateReport($request, $id);
+        return $this->service->updateResource($request, $id);
 
     }
 
@@ -102,7 +102,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_write');
         
-        return $this->service->deleteReport($request, $id);
+        return $this->service->deleteResource($request, $id);
  
     }
 }
