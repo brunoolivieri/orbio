@@ -69,13 +69,9 @@ export const DronesPanel = React.memo(() => {
     React.useEffect(() => {
 
         if (!paginationParams.where) {
-
             requestToGetAllDrones();
-
         } else {
-
             requestToGetSearchedDrones();
-
         }
 
     }, [paginationParams]);

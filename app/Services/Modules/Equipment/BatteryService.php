@@ -7,22 +7,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Batteries\BatteryModel;
+use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
-use App\Services\FormatDataService;
 
-class BatteryService{
-    
-    private FormatDataService $format_data_service;
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Services\FormatDataService $service
-     */
-    public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
-    }
+class BatteryService {
 
     /**
     * Load all batteries with pagination.
@@ -34,35 +23,30 @@ class BatteryService{
     */
     public function loadBatteriesWithPagination(int $limit, int $current_page, int|string $where_value){
 
-        $data = DB::table('batteries')
-        ->where("batteries.deleted_at", null)
+        $data = BatteryModel::where("batteries.deleted_at", null)
         ->when($where_value, function ($query, $where_value) {
 
             $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                $query->where('batteries.id', $where_value);
+                $query->where('id', $where_value);
 
             }, function($query) use ($where_value){
 
-                $query->where('batteries.name', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('batteries.manufacturer', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('batteries.model', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('batteries.serial_number', 'LIKE', '%'.$where_value.'%');
+                $query->where('name', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('manufacturer', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('model', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('serial_number', 'LIKE', '%'.$where_value.'%');
 
             });
 
-        })->orderBy('batteries.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        })
+        ->orderBy('batteries.id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->genericEquipmentDataFormatting($data, "battery");
-
-            return response($data_formated, 200);
-
+            return response(new BatteriesPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhuma bateria encontrada."], 404);
-
         }
 
     }

@@ -10,20 +10,8 @@ use App\Models\Drones\DroneModel;
 use App\Http\Resources\Modules\Equipments\DronesPanelResource;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
-use App\Services\FormatDataService;
 
 class DroneService {
-
-    private FormatDataService $format_data_service;
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Services\FormatDataService $service
-     */
-    public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
-    }
 
     /**
     * Load all drones with pagination.
