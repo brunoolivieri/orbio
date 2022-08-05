@@ -49,12 +49,12 @@ export const UpdateProfileFormulary = React.memo((props) => {
 
     // Reducer
     const [privileges, dispatch] = React.useReducer(privilegesReducer, {
-        "1": { read: props.record.modules["1"].profile_powers.read == 1 ? true : false, write: props.record.modules["1"].profile_powers.write == 1 ? true : false },
-        "2": { read: props.record.modules["2"].profile_powers.read == 1 ? true : false, write: props.record.modules["2"].profile_powers.write == 1 ? true : false },
-        "3": { read: props.record.modules["3"].profile_powers.read == 1 ? true : false, write: props.record.modules["3"].profile_powers.write == 1 ? true : false },
-        "4": { read: props.record.modules["4"].profile_powers.read == 1 ? true : false, write: props.record.modules["4"].profile_powers.write == 1 ? true : false },
-        "5": { read: props.record.modules["5"].profile_powers.read == 1 ? true : false, write: props.record.modules["5"].profile_powers.write == 1 ? true : false },
-        "6": { read: props.record.modules["6"].profile_powers.read == 1 ? true : false, write: props.record.modules["6"].profile_powers.write == 1 ? true : false }
+        "1": { read: props.record.profile_modules_relationship["0"].read == 1 ? true : false, write: props.record.profile_modules_relationship["0"].write == 1 ? true : false },
+        "2": { read: props.record.profile_modules_relationship["1"].read == 1 ? true : false, write: props.record.profile_modules_relationship["1"].write == 1 ? true : false },
+        "3": { read: props.record.profile_modules_relationship["2"].read == 1 ? true : false, write: props.record.profile_modules_relationship["2"].write == 1 ? true : false },
+        "4": { read: props.record.profile_modules_relationship["3"].read == 1 ? true : false, write: props.record.profile_modules_relationship["3"].write == 1 ? true : false },
+        "5": { read: props.record.profile_modules_relationship["4"].read == 1 ? true : false, write: props.record.profile_modules_relationship["4"].write == 1 ? true : false },
+        "6": { read: props.record.profile_modules_relationship["5"].read == 1 ? true : false, write: props.record.profile_modules_relationship["5"].write == 1 ? true : false }
     });
 
     const [loading, setLoading] = React.useState(false);

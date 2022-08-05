@@ -6,18 +6,17 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 // Custom
-use App\Services\FormatDataService;
+use App\Contracts\Services\ModuleServiceInterface;
 use App\Models\User\UserModel;
 use App\Models\Orders\ServiceOrderModel;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
 use App\Notifications\Modules\Administration\User\UserDisabledNotification;
-use App\Http\Resources\Modules\Administration\UsersResourcePagination;
+use App\Http\Resources\Modules\Administration\UsersPanelResource;
 
-class UserPanelService{
+class UserPanelService {
 
-    private FormatDataService $format_data_service;
     private UserModel $model;
 
     /**
@@ -26,24 +25,22 @@ class UserPanelService{
      * @param App\Models\User\UserModel $user
      * @param App\Services\FormatDataService $service
      */
-    public function __construct(UserModel $model, FormatDataService $service){
-        $this->format_data_service = $service;
+    public function __construct(UserModel $model){
         $this->model = $model;
     }
 
      /**
-     * Load all users with their profiles with pagination.
+     * Load all users with their profiles with eloquent pagination.
      *
      * @param int $limit
      * @param int $actual_page
      * @param int|string $where_value
      * @return \Illuminate\Http\Response
      */
-    public function loadUsersWithPagination(int $limit, int $current_page, int|string $where_value) : \Illuminate\Http\Response {
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value) : \Illuminate\Http\Response {
 
         $data = UserModel::where("deleted_at", null)
-        ->with("profile:id,name")
-        ->with("complementary_data:id")
+        ->with(["profile:id,name", "complementary_data:id"])
         ->when($where_value, function ($query, $where_value){
 
             $query->when(is_numeric($where_value), function($query) use ($where_value){
@@ -61,7 +58,7 @@ class UserPanelService{
         ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-            return response(new UsersResourcePagination($data), 200);
+            return response(new UsersPanelResource($data), 200);
         }else{
             return response(["message" => "Nenhum usuário encontrado."], 404);
         }
@@ -74,7 +71,7 @@ class UserPanelService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createUser(Request $request) : \Illuminate\Http\Response {
+    public function createResource(Request $request) : \Illuminate\Http\Response {
 
         DB::transaction(function () use ($request) {
 
@@ -101,7 +98,7 @@ class UserPanelService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function updateUser(Request $request, $user_id) : \Illuminate\Http\Response{
+    public function updateResource(Request $request, $user_id) : \Illuminate\Http\Response{
 
         $user = $this->model->findOrFail($user_id);
 
@@ -124,7 +121,7 @@ class UserPanelService{
      * @param int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteUser(int $user_id) : \Illuminate\Http\Response {
+    public function deleteResource(int $user_id) : \Illuminate\Http\Response {
         
         DB::transaction(function() use ($user_id){
 

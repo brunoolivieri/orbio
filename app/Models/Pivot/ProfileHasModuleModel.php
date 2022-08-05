@@ -15,9 +15,11 @@ class ProfileHasModuleModel extends Model
     protected $guarded = [];
 
     function profile(){
+        return $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
+    }
 
-        $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
-        
+    function module(){
+        return $this->belongsTo("App\Models\Modules\ModuleModel", "module_id");
     }
 
 }

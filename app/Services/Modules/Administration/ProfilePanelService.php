@@ -8,12 +8,11 @@ use Illuminate\Http\Request;
 use App\Models\Pivot\ProfileHasModuleModel;
 use App\Models\Profiles\ProfileModel;
 use App\Models\Modules\ModuleModel;
-use App\Services\FormatDataService;
+use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
 
 class ProfilePanelService{
 
-    private FormatDataService $format_data_service;
-    private ProfileModel $profile_model;
+    private ProfileModel $model;
     private ProfileHasModuleModel $profile_module_model;
 
     /**
@@ -23,9 +22,8 @@ class ProfilePanelService{
     * @param App\Models\Pivot\ProfileModel $profile
     * @param App\Models\Pivot\ProfileHasModuleModel $profile_module
     */
-    public function __construct(FormatDataService $service, ProfileModel $profile, ProfileHasModuleModel $profile_module){
-        $this->format_data_service = $service;
-        $this->profile_model = $profile;
+    public function __construct(ProfileModel $profile, ProfileHasModuleModel $profile_module){
+        $this->model = $profile;
         $this->profile_module_model = $profile_module;
     }
 
@@ -37,37 +35,29 @@ class ProfilePanelService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadProfilesModulesWithPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value) {
 
-        $data = DB::table('profile_has_module')
-        ->join('profiles', 'profile_has_module.profile_id', '=', 'profiles.id')
-        ->join('modules', 'profile_has_module.module_id', '=', 'modules.id')
-        ->select('profile_has_module.module_id', 'modules.name', 'profile_has_module.profile_id', 'profiles.name as profile_name', 'profile_has_module.read', 'profile_has_module.write')
-        ->where('profiles.deleted_at', null)
+        $data = ProfileModel::where("deleted_at", null)
+        ->with("module_privileges")
         ->when($where_value, function ($query, $where_value) {
 
-            $query->when(is_numeric($where_value), function($query) use ($where_value){
+            $query->when(is_numeric($where_value), function($query) use ($where_value) {
 
-                $query->where('profile_has_module.profile_id', '=', $where_value);
+                $query->where('id', '=', $where_value);
 
-            }, function($query) use ($where_value){
+            }, function($query) use ($where_value) {
 
-                $query->where('profiles.name', 'LIKE', '%'.$where_value.'%');
+                $query->where('name', 'LIKE', '%'.$where_value.'%');
 
             });
 
-        })->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        })
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->profilePanelDataFormatting($data);
-
-            return response($data_formated, 200);
-
+            return response(new ProfilesPanelResource($data), 200);
         }else{
-
-            return response(["message" => "Nenhum perfil encontrado."], 404);
-
+            return response(["message" => "Nenhum usuário encontrado."], 404);
         }
 
     }
@@ -78,7 +68,7 @@ class ProfilePanelService{
     * @param $request
     * @return \Illuminate\Http\Response
     */
-    public function createProfile(Request $request) {
+    public function createResource(Request $request) {
 
         DB::transaction(function () use ($request) {
             
@@ -118,7 +108,7 @@ class ProfilePanelService{
     * @param $profile_id
     * @return \Illuminate\Http\Response
     */
-    public function updateProfile(Request $request, int $profile_id) {
+    public function updateResource(Request $request, int $profile_id) {
 
         DB::transaction(function() use ($request, $profile_id) {
 
@@ -164,7 +154,7 @@ class ProfilePanelService{
     * @param $profile_id
     * @return \Illuminate\Http\Response
     */
-    public function deleteProfile(int $profile_id) {
+    public function deleteResource(int $profile_id) {
 
         DB::transaction(function () use ($profile_id) {
             
@@ -174,6 +164,8 @@ class ProfilePanelService{
             if(!empty($profile->user)){ 
                 $profile->user()->update(["profile_id" => 5]);
             }
+
+            //$profile->module_privileges->delete();
     
             $profile->delete();
 

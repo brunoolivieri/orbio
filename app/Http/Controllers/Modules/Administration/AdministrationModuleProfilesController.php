@@ -38,7 +38,7 @@ class AdministrationModuleProfilesController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadProfilesModulesWithPagination($limit, $current_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
         
     }
 
@@ -52,7 +52,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        return $this->service->createProfile($request);
+        return $this->service->createResource($request);
 
     }
 
@@ -71,7 +71,7 @@ class AdministrationModuleProfilesController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadProfilesModulesWithPagination($limit, $current_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
 
     }
 
@@ -86,7 +86,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        return $this->service->updateProfile($request, $id);
+        return $this->service->updateResource($request, $id);
 
     }
 
@@ -100,7 +100,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        return $this->service->deleteProfile($id);
+        return $this->service->deleteResource($id);
 
     }
 }

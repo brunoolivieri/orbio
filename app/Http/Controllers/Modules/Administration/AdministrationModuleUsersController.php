@@ -41,7 +41,7 @@ class AdministrationModuleUsersController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadUsersWithPagination($limit, $current_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
 
     }
 
@@ -56,7 +56,7 @@ class AdministrationModuleUsersController extends Controller
 
         Gate::authorize('administration_write');
 
-        return $this->service->createUser($request);
+        return $this->service->createResource($request);
 
     }
 
@@ -76,7 +76,7 @@ class AdministrationModuleUsersController extends Controller
         $where_value = $args[1];
         $current_page = (int) $args[2];
 
-        return $this->service->loadUsersWithPagination($limit, $current_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
 
     }
 
@@ -92,7 +92,7 @@ class AdministrationModuleUsersController extends Controller
 
         Gate::authorize('administration_write');
 
-        return $this->service->updateUser($request, $id);
+        return $this->service->updateResource($request, $id);
 
     }
 
@@ -107,7 +107,7 @@ class AdministrationModuleUsersController extends Controller
 
         Gate::authorize('administration_write');
 
-        return $this->service->deleteUser($id);
+        return $this->service->deleteResource($id);
 
     }
 }
