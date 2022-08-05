@@ -63,51 +63,6 @@ class FormatDataService {
     }
 
     /**
-     * Method for organize data for the profiles administration table.
-     * Each profile relationship with each module is defined in one row.
-     * Thus, if there's N modules, for example, each profile will appears N times in the pivot table.
-     * This function put each profile rows group into ["records"][$actual_profile]["modules"].
-     *
-     * @param Illuminate\Pagination\LengthAwarePaginator $data
-     * @return array $this->formated_data
-     */
-    public function profilePanelDataFormatting(LengthAwarePaginator $data) : array {
-
-        $number_of_modules = ModuleModel::all()->count();
-        $arr_with_formated_records = array();
-        $actual_profile_privileges = array();
-        $actual_profile = 0;
-
-        foreach($data->items() as $row => $record){
-
-            // The $actual_profile will be the same for $number_of_modules loop or until the module id is not equal to $number_of_modules
-            // For each actual profile row the module change - of course, because each row defines a relationship of actual profile with one of the modules
-
-            $this->formated_data["records"][$actual_profile] = ["profile_id" => $record->profile_id, "profile_name" =>  $record->profile_name, "modules" => array()]; 
-
-            $module_name = explode(" ", $record->name)[0];
-            $actual_profile_privileges[$record->module_id] = ["module_name" => $module_name, "profile_powers" => ["read" => $record->read, "write" => $record->write]];
-
-            // If this is the last module
-            if($record->module_id == $number_of_modules){
-
-                // The actual profile relationships are stored
-                $this->formated_data["records"][$actual_profile]["modules"] = $actual_profile_privileges;
-                $actual_profile+=1;
-
-            }
-        }
-
-        // If each group of $number_of_modules rows is transformed into one, the total records need to be divided by $number_of_modules 
-        $this->formated_data["total_records"] = $data->total()/$number_of_modules;
-        $this->formated_data["records_per_page"] = $data->perPage()/$number_of_modules;
-        $this->formated_data["total_pages"] = $data->lastPage();
-
-        return $this->formated_data;
-
-    }
-
-    /**
      * Method for organize data for the service orders table.
      *
      * @param Illuminate\Pagination\LengthAwarePaginator $data
@@ -190,38 +145,6 @@ class FormatDataService {
 
             }
             
-        }
-
-        $this->formated_data["total_records_founded"] = $data->total();
-        $this->formated_data["records_per_page"] = $data->perPage();
-        $this->formated_data["total_pages"] = $data->lastPage();
-
-        return $this->formated_data;
-
-    }
-
-    /**
-     * Method for organize data for drones, batteries and equipment tables.
-     *
-     * @param Illuminate\Pagination\LengthAwarePaginator $data
-     * @param string $type 
-     * @return array $this->formated_data
-     */
-    public function genericEquipmentDataFormatting(LengthAwarePaginator $data, string $equipment){
-
-        foreach($data->items() as $row => $record){
-
-            foreach($record as $column => $value){
-
-                if($column == "created_at" || $column == "updated_at" || $column == "deleted_at" || $column ==  "last_access" || $column == "start_date" || $column == "end_date"){
-                    $this->formated_data["records"][$row][$column] = empty($value) ? "Sem data" : date( 'd-m-Y h:i', strtotime($value));
-                }else if($column == "image"){
-                    $this->formated_data["records"][$row]["image_url"] = Storage::url("images/$equipment/".$value);
-                }else{
-                    $this->formated_data["records"][$row][$column] = $value;
-                }
-
-            }
         }
 
         $this->formated_data["total_records_founded"] = $data->total();

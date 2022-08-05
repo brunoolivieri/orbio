@@ -69,17 +69,11 @@ export const IncidentsPanel = React.memo(() => {
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
-
     if (!paginationParams.where) {
-
       requestToGetAllIncidents();
-
     } else {
-
       requestToGetSearchedIncidents();
-
     }
-
   }, [paginationParams]);
 
   const requestToGetAllIncidents = () => {
@@ -91,12 +85,12 @@ export const IncidentsPanel = React.memo(() => {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} incidentes`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} incidentes`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} incidente`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} incidente`, "success");
         }
 
       })
@@ -122,12 +116,12 @@ export const IncidentsPanel = React.memo(() => {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} incidentes`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} incidentes`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} incidente`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} incidente`, "success");
         }
 
       })

@@ -24,7 +24,11 @@ class FlightPlanUpdateRequest extends FormRequest
      */
     public function rules()
     {
+
+        $flight_plan_id_parameter = $this->route("plans_module");
+
         return [
+            "name" => "required|unique:flight_plans,name,".$flight_plan_id_parameter,
             "report_id" => 'nullable|integer|bail',
             "incident_id" => 'nullable|integer',
             "status" => 'required|boolean',
@@ -40,6 +44,8 @@ class FlightPlanUpdateRequest extends FormRequest
     public function messages()
     {
         return [
+            'name.required' => "O nome do plano de voo deve ser informado",
+            'name.unique' => "Já existe um plano de voo com esse nome",
             'status.required' => "O status deve ser definido",
             'status.boolean' => "O status deve ser 1 ou 0",
             'description.required' => "A descrição deve ser informada"

@@ -38,7 +38,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadEquipmentsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
             
     }
 
@@ -52,7 +52,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->createEquipment($request);
+        return $this->service->createResource($request);
    
     }
 
@@ -71,7 +71,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
             
-        return $this->service->loadEquipmentsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -86,7 +86,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->updateEquipment($request, $id);
+        return $this->service->updateResource($request, $id);
 
     }
 
@@ -100,7 +100,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->deleteEquipment($id);
+        return $this->service->deleteResource($id);
 
     }
 }

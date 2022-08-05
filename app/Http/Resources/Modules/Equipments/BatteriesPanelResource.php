@@ -30,7 +30,7 @@ class BatteriesPanelResource extends JsonResource
 
             $formated_data["records"][$row] = [
                 "id" => $battery->id,
-                "image_url" => Storage::url("images/drone/".$battery->image),
+                "image_url" => Storage::url("images/battery/".$battery->image),
                 "name" => $battery->name,
                 "manufacturer" => $battery->manufacturer,
                 "model" => $battery->model,

@@ -28,10 +28,10 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   const { AuthData } = useAuthentication();
 
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, report_id: props.record.report_id, incident_id: props.record.incident_id, status: props.record.status, description: props.record.description });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, report_id: props.record.report_id, incident_id: props.record.incident_id, status: props.record.status, description: props.record.description });
 
-  const [fieldError, setFieldError] = React.useState({ description: false, status: false, report: false, incident: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ description: "", status: "", report: "", incident: "" });
+  const [fieldError, setFieldError] = React.useState({ name: false, description: false, status: false, report: false, incident: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", description: "", status: "", report: "", incident: "" });
 
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
@@ -67,15 +67,16 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   const formularyDataValidate = () => {
 
+    const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
     const statusValidate = controlledInput.status != null ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
     const reportValidate = Number(controlledInput.report_id) === 0 ? { error: true, message: "Selecione um relatório" } : { error: false, message: "" };
     const incidentValidate = Number(controlledInput.incident_id) === 0 ? { error: true, message: "Selecione um incidente" } : { error: false, message: "" };
 
-    setFieldError({ description: descriptionValidate.error, status: statusValidate.error, report: reportValidate.error, incident: incidentValidate.error });
-    setFieldErrorMessage({ description: descriptionValidate.message, status: statusValidate.message, report: reportValidate.message, incident: incidentValidate.message });
+    setFieldError({ name: nameValidate.error, description: descriptionValidate.error, status: statusValidate.error, report: reportValidate.error, incident: incidentValidate.error });
+    setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message, status: statusValidate.message, report: reportValidate.message, incident: incidentValidate.message });
 
-    return !(descriptionValidate.error || statusValidate.error);
+    return !(nameValidate.error || descriptionValidate.error || statusValidate.error);
 
   }
 
@@ -122,6 +123,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     let request_errors = {
+      name: { error: false, message: null },
       report_id: { error: false, message: null },
       incident_id: { error: false, message: null },
       status: { error: false, message: null },
@@ -138,6 +140,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     }
 
     setFieldError({
+      name: request_errors.name.error,
       report: request_errors.report_id.error,
       incident: request_errors.incident_id.error,
       status: request_errors.status.error,
@@ -145,6 +148,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     });
 
     setFieldErrorMessage({
+      name: request_errors.name.message,
       report: request_errors.report_id.message,
       incident: request_errors.incident_id.message,
       status: request_errors.status.message,
@@ -182,10 +186,25 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                 type="text"
                 fullWidth
                 variant="outlined"
+                onChange={handleInputChange}
                 defaultValue={props.record.id}
                 inputProps={{
                   readOnly: true
                 }}
+                sx={{ mb: 2 }}
+              />
+
+              <TextField
+                margin="dense"
+                id="name"
+                name="name"
+                label="Nome do plano"
+                type="text"
+                fullWidth
+                variant="outlined"
+                defaultValue={props.record.name}
+                helperText={fieldErrorMessage.name}
+                error={fieldError.name}
                 sx={{ mb: 2 }}
               />
 

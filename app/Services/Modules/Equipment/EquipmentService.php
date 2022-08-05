@@ -7,22 +7,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Equipments\EquipmentModel;
+use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
-use App\Services\FormatDataService;
 
-class EquipmentService{
-
-    private FormatDataService $format_data_service;
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Services\FormatDataService $service
-     */
-    public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
-    }
+class EquipmentService {
 
     /**
     * Load all equipments with pagination.
@@ -32,39 +21,34 @@ class EquipmentService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadEquipmentsWithPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value){
 
-        $data = DB::table('equipments')
-        ->where("equipments.deleted_at", null)
+        $data = EquipmentModel::where("equipments.deleted_at", null)
         ->when($where_value, function ($query, $where_value) {
 
             $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                $query->where('equipments.id', $where_value)
-                ->orWhere('equipments.weight', $where_value);
+                $query->where('id', $where_value)
+                ->orWhere('weight', $where_value);
 
             }, function($query) use ($where_value){
 
-                $query->where('equipments.name', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('equipments.manufacturer', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('equipments.model', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('equipments.record_number', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('equipments.serial_number', 'LIKE', '%'.$where_value.'%');
+                $query->where('name', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('manufacturer', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('model', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('record_number', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('serial_number', 'LIKE', '%'.$where_value.'%');
 
             });
 
-        })->orderBy('equipments.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
-
+        })
+        ->orderBy('id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->genericEquipmentDataFormatting($data, "equipment");
-
-            return response($data_formated, 200);
-
+            return response(new EquipmentsPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhum equipamento encontrado."], 404);
-
         }
 
     }
@@ -75,7 +59,7 @@ class EquipmentService{
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createEquipment(Request $request) {
+    public function createResource(Request $request) {
 
         DB::transaction(function () use ($request) {
 
@@ -104,7 +88,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function updateEquipment(Request $request, $equipment_id) {
+    public function updateResource(Request $request, $equipment_id) {
 
         DB::transaction(function () use ($request, $equipment_id) {
 
@@ -142,7 +126,7 @@ class EquipmentService{
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteEquipment($equipment_id) {
+    public function deleteResource($equipment_id) {
         
         DB::transaction(function() use ($equipment_id){
 

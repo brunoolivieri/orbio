@@ -7,20 +7,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\FlightPlans\FlightPlanModel;
-use App\Services\FormatDataService;
+use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
 
-class FlightPlanService{
+class FlightPlanService {
 
     private FormatDataService $format_data_service;
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Services\FormatDataService $service
-     */
-    public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
-    }
 
     /**
     * Load all flight plans with pagination.
@@ -30,27 +21,31 @@ class FlightPlanService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value){
 
-        $data = DB::table('flight_plans')
-        ->select('id', 'report_id', 'incident_id', 'coordinates', 'description', 'status', 'created_at', 'updated_at', 'deleted_at')
-        ->where("flight_plans.deleted_at", null)
+        $data = FlightPlanModel::where("deleted_at", null)
+        ->with("incidents")
+        ->with("reports")
         ->when($where_value, function ($query, $where_value) {
 
-            $query->where('id', $where_value);
+            $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-        })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+                $query->where('id', $where_value);
+
+            }, function($query) use ($where_value){
+
+                $query->where('name', 'LIKE', '%'.$where_value.'%');
+
+            });
+
+        })
+        ->orderBy('id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->genericDataFormatting($data);
-
-            return response($data_formated, 200);
-
+            return response(new FlightPlansPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhum plano de voo encontrado."], 404);
-
         }
 
     }
@@ -61,7 +56,7 @@ class FlightPlanService{
      * @param string $filename
      * @return \Illuminate\Http\Response
      */
-    public function getFlightPlanFile(string $filename){
+    public function downloadResource(string $filename){
 
         if(Storage::disk("public")->exists("flight_plans/$filename")){
 
@@ -86,26 +81,30 @@ class FlightPlanService{
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createFlightPlan(Request $request){
+    public function createResource(Request $request){
 
-        if(!$request->file('flight_plan')){
+        if(!$request->file("coordinates_file")){
             return response(["message" => "Falha na criação do plano de voo."], 500);
         }
 
-        $coordinantes_filename = $request->flight_plan->getClientOriginalName();
-        $coordinantes_folder = "public/flight_plans";
+        // Filename is the hash of the content
+        $file_content_hash = md5(file_get_contents($request->file("coordinates_file"))); 
+        $filename = $file_content_hash.".txt";
+        $storage_folder = "public/flight_plans";
 
         FlightPlanModel::create([
             "report_id" => null,
             "incident_id" => null,
-            "coordinates" => $coordinantes_filename,
-            "description" => $request->description,
+            "name" => $request->name,
+            "coordinates_file" => $filename,
+            "description" => $request->description == "none" ? "N/A" : $request->description,
             "status" => 0
         ]);
 
-        $request->file('flight_plan')->storeAs(
-            $coordinantes_folder, $coordinantes_filename
-        );
+        // Flight plan is stored just if does not already exists
+        if (!Storage::disk('public')->exists($storage_folder.$filename)) {
+            $path = $request->file('coordinates_file')->storeAs($storage_folder, $filename);
+        }
 
         return response(["message" => "Plano de voo criado com sucesso!"], 200);
 
@@ -118,9 +117,10 @@ class FlightPlanService{
      * @param int $flight_plan_id
      * @return \Illuminate\Http\Response
      */
-    public function updateFlightPlan(Request $request, int $flight_plan_id){
+    public function updateResource(Request $request, int $flight_plan_id){
 
         FlightPlanModel::where('id', $flight_plan_id)->update([
+            "name" => $request->name,
             "report_id" => $request->report_id == 0 ? null : $request->report_id,
             "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
             "description" => $request->description,
@@ -137,7 +137,7 @@ class FlightPlanService{
      * @param int $flight_plan_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteFlightPlan(int $flight_plan_id){
+    public function deleteResource(int $flight_plan_id){
 
         DB::transaction(function() use ($flight_plan_id) {
 
@@ -158,8 +158,8 @@ class FlightPlanService{
                 $flight_plan->service_order_has_flight_plans()->delete();
             }
 
-            // Delete coordinates file from storage
-            Storage::disk('public')->delete("flight_plans/".$flight_plan->coordinates);
+            // Delete coordinates_file file from storage
+            Storage::disk('public')->delete("flight_plans/".$flight_plan->coordinates_file);
 
             $flight_plan->delete();
             

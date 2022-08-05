@@ -35,7 +35,6 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import { useSnackbar } from 'notistack';
-import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -90,12 +89,12 @@ export const EquipmentPanel = React.memo(() => {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} equipamentos`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} equipamentos`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} equipamento`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} equipamento`, "success");
         }
 
       })
@@ -121,12 +120,12 @@ export const EquipmentPanel = React.memo(() => {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} equipamentos`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} equipamentos`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} equipamento`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} equipamento`, "success");
         }
 
       })
@@ -329,8 +328,8 @@ export const EquipmentPanel = React.memo(() => {
                       <TableCell align="center">{row.record_number}</TableCell>
                       <TableCell align="center">{row.serial_number}</TableCell>
                       <TableCell align="center">{row.weight}</TableCell>
-                      <TableCell align="center">{moment(row.purchase_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">{row.observation}</TableCell>
+                      <TableCell align="center">{row.purchase_date}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

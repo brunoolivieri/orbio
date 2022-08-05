@@ -39,7 +39,7 @@ class IncidentModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadIncidentsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
  
     }
 
@@ -53,7 +53,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->createIncident($request);
+        return $this->service->createResource($request);
 
     }
 
@@ -72,7 +72,7 @@ class IncidentModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadIncidentsWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
     }
 
     /**
@@ -86,7 +86,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->updateIncident($request, $id);
+        return $this->service->updateResource($request, $id);
   
     }
 
@@ -100,7 +100,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->deleteIncident($id); 
+        return $this->service->deleteResource($id); 
  
     }
 }

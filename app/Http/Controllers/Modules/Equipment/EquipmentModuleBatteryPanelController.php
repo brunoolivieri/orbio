@@ -38,7 +38,7 @@ class EquipmentModuleBatteryPanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadBatteriesWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
             
     }
 
@@ -52,7 +52,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->createBattery($request); 
+        return $this->service->createResource($request); 
 
     }
 
@@ -71,7 +71,7 @@ class EquipmentModuleBatteryPanelController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
             
-        return $this->service->loadBatteriesWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
     }
 
     /**
@@ -85,7 +85,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->updateBattery($request, $id);
+        return $this->service->updateResource($request, $id);
     }
 
     /**
@@ -98,7 +98,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->deleteBattery($id);
+        return $this->service->deleteResource($id);
 
     }
 }

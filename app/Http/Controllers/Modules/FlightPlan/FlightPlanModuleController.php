@@ -41,7 +41,7 @@ class FlightPlanModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
 
     }
 
@@ -50,7 +50,7 @@ class FlightPlanModuleController extends Controller
      * @param string $filename
      * @return \Illuminate\Http\Response
      */
-    public function getFlightPlanFile(string $filename) : \Illuminate\Http\Response {
+    public function downloadResource(string $filename) : \Illuminate\Http\Response {
 
         Gate::authorize('flight_plans_read');
 
@@ -68,7 +68,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createFlightPlan($request);
+        return $this->service->createResource($request);
 
     }
 
@@ -87,7 +87,7 @@ class FlightPlanModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadPagination($limit, $actual_page, $where_value); 
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value); 
 
     }
 
@@ -102,7 +102,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateFlightPlan($request, $id);
+        return $this->service->updateResource($request, $id);
  
     }
 
@@ -116,7 +116,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->deleteFlightPlan($id);
+        return $this->service->deleteResource($id);
 
     }
 }

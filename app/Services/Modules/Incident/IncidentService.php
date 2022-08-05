@@ -6,21 +6,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Incidents\IncidentModel;
-use App\Services\FormatDataService;
+use App\Http\Resources\Modules\Incidents\IncidentsPanelResource;
 
-class IncidentService{
-
-    private FormatDataService $format_data_service;
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Services\FormatDataService $service
-     * @param App\Models\Incidents\IncidentModel $incident
-     */
-    public function __construct(FormatDataService $service){
-        $this->format_data_service = $service;
-    }
+class IncidentService {
 
     /**
     * Load all incidents with pagination.
@@ -30,26 +18,20 @@ class IncidentService{
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadIncidentsWithPagination(int $limit, int $current_page, int|string $where_value) {
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value) {
 
-        $data = DB::table('incidents')
-        ->where("incidents.deleted_at", null)
+        $data = IncidentModel::where("deleted_at", null)
         ->when($where_value, function ($query, $where_value) {
 
             $query->where('id', $where_value);
 
-        })->orderBy('id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        })->orderBy('id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->genericDataFormatting($data);
-
-            return response($data_formated, 200);
-
+            return response(new IncidentsPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhum incidente encontrado."], 404);
-
         }
     }
 
@@ -59,7 +41,7 @@ class IncidentService{
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function createIncident(Request $request){
+    public function createResource(Request $request){
 
         IncidentModel::create($request->only(["type", "date", "description"]));
 
@@ -74,7 +56,7 @@ class IncidentService{
      * @param int $incident_id
      * @return \Illuminate\Http\Response
      */
-    public function updateIncident(Request $request, int $incident_id) {
+    public function updateResource(Request $request, int $incident_id) {
 
         IncidentModel::where('id', $incident_id)->update($request->only(["type", "description", "date"]));
 
@@ -88,7 +70,7 @@ class IncidentService{
      * @param int $incident_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteIncident(int $incident_id) {
+    public function deleteResource(int $incident_id) {
 
         IncidentModel::where('id', $incident_id)->delete();
 

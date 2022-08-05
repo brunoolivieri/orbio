@@ -1363,28 +1363,19 @@ function savePath() {
 	const custom_name = prompt('Digite um nome para o plano de voo');
 	const timestamp = new Date().getTime();
 
-	// Nome do arquivo com data em milissegundos decorridos
-	fileName = custom_name + "." + timestamp + ".txt";
-
-	//Criação de um novo registro na tabela de planos de vôo
-	generateNewFlightPlanRecord(fileName, blob);
+	// Criação de um novo registro na tabela de planos de vôo
+	generateNewFlightPlan(custom_name, timestamp, blob);
 }
 
-function generateNewFlightPlanRecord(fileName, blob) {
+function generateNewFlightPlan(custom_name, timestamp, blob) {
 
-	const params = new URLSearchParams(window.location.search);
-
-	let user_id = params.get('userid');
-	let module_id = 2;
-	let action = "escrever";
-
-	const file = new File([blob], fileName);
+	const filename = timestamp + ".txt";
+	const file = new File([blob], filename);
 
 	let formData = new FormData();
-
-	formData.append("auth", `${user_id}.${module_id}.${action}`);
-	formData.append("description", `none`);
-	formData.append("flight_plan", file);
+	formData.append("name", custom_name);
+	formData.append("description", "none");
+	formData.append("coordinates_file", file);
 
 	axios.post("/api/plans-module", formData, {
 		headers: {
@@ -1392,7 +1383,6 @@ function generateNewFlightPlanRecord(fileName, blob) {
 		}
 	}).then((response) => {
 
-		console.log(response)
 		alert("O plano foi salvo no sistema e está disponível para download.");
 
 		setTimeout(() => {
@@ -1401,8 +1391,8 @@ function generateNewFlightPlanRecord(fileName, blob) {
 
 	}).catch((error) => {
 
-		console.log(error.response);
 		alert("Erro! Tente novamente.");
+		console.log(error.response);
 
 	})
 

@@ -93,14 +93,16 @@ export function PlansPanel() {
     AxiosApi.get(`/api/plans-module?args=${select_query_params}`)
       .then(function (response) {
 
+        console.log(response.data.records)
+
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de voo`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de voo`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
         }
 
       })
@@ -127,12 +129,12 @@ export function PlansPanel() {
 
         setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} planos de voo`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} plano de voo`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
         }
 
       })
@@ -362,9 +364,9 @@ export function PlansPanel() {
                   records.map((row, index) => (
                     <TableRow key={row.id} >
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.coordinates.split(".")[0]}</TableCell>
+                      <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">
-                        <Link href={`/internal/map?file=${row.coordinates}`} target="_blank">
+                        <Link href={`/internal/map?file=${row.coordinates_file}`} target="_blank">
                           <Tooltip title="Ver plano">
                             <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
                               <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -374,7 +376,7 @@ export function PlansPanel() {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Baixar plano">
-                          <IconButton onClick={() => handleDownloadFlightPlan(row.coordinates)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                          <IconButton onClick={() => handleDownloadFlightPlan(row.coordinates_file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
                             <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
                           </IconButton>
                         </Tooltip>
