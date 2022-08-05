@@ -1,5 +1,6 @@
 {
     "private": true,
+    "author": "Marcelo de Souza Moreira",
     "scripts": {
         "dev": "npm run development",
         "development": "mix",

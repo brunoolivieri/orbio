@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Drones\DroneModel;
+use App\Http\Resources\Modules\Equipments\DronesPanelResource;
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 use App\Services\FormatDataService;
@@ -32,39 +33,34 @@ class DroneService {
     * @param int|string $where_value
     * @return \Illuminate\Http\Response
     */
-    public function loadDronesWithPagination(int $limit, int $current_page, int|string $where_value){
+    public function loadResourceWithPagination(int $limit, int $current_page, int|string $where_value){
 
-        $data = DB::table('drones')
-        ->where("drones.deleted_at", null)
+        $data = DroneModel::where("drones.deleted_at", null)
         ->when($where_value, function ($query, $where_value) {
 
             $query->when(is_numeric($where_value), function($query) use ($where_value){
 
-                $query->where('drones.id', $where_value)
-                ->orWhere('drones.weight', $where_value);
+                $query->where('id', $where_value)
+                ->orWhere('weight', $where_value);
 
             }, function($query) use ($where_value){
 
-                $query->where('drones.name', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('drones.manufacturer', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('drones.model', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('drones.record_number', 'LIKE', '%'.$where_value.'%')
-                ->orWhere('drones.serial_number', 'LIKE', '%'.$where_value.'%');
+                $query->where('name', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('manufacturer', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('model', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('record_number', 'LIKE', '%'.$where_value.'%')
+                ->orWhere('serial_number', 'LIKE', '%'.$where_value.'%');
 
             });
 
-        })->orderBy('drones.id')->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        })
+        ->orderBy('id')
+        ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
 
         if($data->total() > 0){
-
-            $data_formated = $this->format_data_service->genericEquipmentDataFormatting($data, "drone");
-
-            return response($data_formated, 200);
-
+            return response(new DronesPanelResource($data), 200);
         }else{
-
             return response(["message" => "Nenhum drone encontrado."], 404);
-
         }
 
     }
@@ -75,7 +71,7 @@ class DroneService {
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createDrone(Request $request) {
+    public function createResource(Request $request) {
 
         DB::transaction(function () use ($request) {
 
@@ -104,7 +100,7 @@ class DroneService {
      * @param $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function updateDrone(Request $request, $drone_id) {
+    public function updateResource(Request $request, $drone_id) {
 
         DB::transaction(function () use ($request, $drone_id) {
 
@@ -142,7 +138,7 @@ class DroneService {
      * @param int $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteDrone($drone_id) {
+    public function deleteResource($drone_id) {
         
         DB::transaction(function() use ($drone_id){
 
