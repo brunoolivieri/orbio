@@ -58,9 +58,9 @@ class ServiceOrderCreatedNotification extends Notification
             ->line("Data final: ".$this->service_order->end_date)
             ->line("Número: ".$this->service_order->numOS)
             ->line("Observação: ".$this->service_order->observation)
-            ->line("Criador: ".$this->service_order->service_order_has_user->has_creator->name)
-            ->line("Piloto: ".$this->service_order->service_order_has_user->has_pilot->name)
-            ->line("Cliente: ".$this->service_order->service_order_has_user->has_client->name)
+            ->line("Criador: ".$this->service_order->has_users->has_creator->name)
+            ->line("Piloto: ".$this->service_order->has_users->has_pilot->name)
+            ->line("Cliente: ".$this->service_order->has_users->has_client->name)
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }

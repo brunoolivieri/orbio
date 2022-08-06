@@ -44,6 +44,7 @@ export const GenericSelect = React.memo((props) => {
                 <Select
                     labelId="demo-simple-select-helper-label"
                     id={props.name}
+                    value={props.value}
                     defaultValue={loading ? "0" : props.default}
                     label={data.label_text}
                     onChange={handleChange}

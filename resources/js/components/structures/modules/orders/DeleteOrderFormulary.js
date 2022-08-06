@@ -18,7 +18,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-export function DeleteOrderFormulary({ ...props }) {
+export function DeleteOrderFormulary(props) {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 

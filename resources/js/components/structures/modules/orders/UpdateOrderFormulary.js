@@ -26,7 +26,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-export const UpdateOrderFormulary = React.memo(({ ...props }) => {
+export const UpdateOrderFormulary = React.memo((props) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -300,6 +300,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   error={fieldError.pilot_id}
                   default={props.record.pilot.id}
                   name={"pilot_id"}
+                  value={controlledInput.pilot_id}
                 />
               </Box>
 
@@ -315,6 +316,7 @@ export const UpdateOrderFormulary = React.memo(({ ...props }) => {
                   error={fieldError.client_id}
                   default={props.record.client.id}
                   name={"client_id"}
+                  value={controlledInput.client_id}
                 />
               </Box>
 

@@ -56,7 +56,7 @@ export const ModalFlightPlansTable = React.memo((props) => {
                 setLoading({ loading: false, error: false });
                 setPanelData({
                     records: response.data.records,
-                    total_records: response.data.total_records_founded,
+                    total_records: response.data.total_records,
                     records_per_page: response.data.records_per_page,
                     total_pages: response.data.total_pages
                 });
@@ -226,7 +226,7 @@ export const ModalFlightPlansTable = React.memo((props) => {
                                         {panelData.records.map((record, index) =>
                                             <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                                 <TableCell><FormControlLabel label={record.id} control={<Checkbox value={record.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(record.id)} />} /></TableCell>
-                                                <TableCell align="center">{record.coordinates}</TableCell>
+                                                <TableCell align="center">{record.coordinates_file}</TableCell>
                                             </TableRow>
                                         )}
                                     </>

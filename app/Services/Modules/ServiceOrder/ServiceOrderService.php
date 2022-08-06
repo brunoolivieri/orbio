@@ -109,10 +109,9 @@ class ServiceOrderService {
         DB::transaction(function () use ($request, $service_order_id) {
 
             $service_order = ServiceOrderModel::findOrFail($service_order_id);
-            
-            $creator = UserModel::findOrFail($service_order->service_order_has_user->creator_id);
-            $pilot = UserModel::find($service_order->service_order_has_user->pilot_id);
-            $client = UserModel::find($service_order->service_order_has_user->client_id);
+            $creator = UserModel::findOrFail($service_order->has_users->has_creator->id);
+            $pilot = UserModel::findOrFail($request->pilot_id);
+            $client = UserModel::findOrFail($request->client_id);
 
             $service_order->update(
                 [
@@ -124,16 +123,16 @@ class ServiceOrderService {
             );
 
             // Desvinculation with all users through service_order_has_user table
-            $service_order->service_order_has_user()->delete();
-            
+            $service_order->has_users()->delete();
+
             ServiceOrderHasUserModel::create([
                 "service_order_id" => $service_order->id,
-                "creator_id" => $creator->id, 
+                "creator_id" => $service_order->has_users->has_creator->id, 
                 "pilot_id" => $pilot->id,
                 "client_id" => $client->id
             ]);
 
-            // Deleta as relações atuais com os planos de vôo - é mais fácil desse modo
+            // Deleta as relações atuais com os planos de vôo 
             ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order->id)->delete();
             
             // Cria novamente as relações com cada plano de vôo envolvido na ordem de serviço
