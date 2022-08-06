@@ -7,20 +7,16 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 // Custom
 import AxiosApi from "../../../services/AxiosApi";
-import { useAuthentication } from "../../context/InternalRoutesAuth/AuthenticationContext";
 
 export const GenericSelect = React.memo((props) => {
 
-    const { AuthData } = useAuthentication();
     const [axiosURL] = React.useState(props.data_source);
     const [loading, setLoading] = React.useState(true);
     const [data, setData] = React.useState({ records: [], label_text: props.label_text });
 
     React.useEffect(() => {
 
-        AxiosApi.get(axiosURL, {
-            access: AuthData.data.access
-        })
+        AxiosApi.get(axiosURL)
             .then(function (response) {
 
                 setLoading(false);

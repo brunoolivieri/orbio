@@ -14,7 +14,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { useAuthentication } from "../../../../../components/context/InternalRoutesAuth/AuthenticationContext";
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -23,7 +22,6 @@ export const BasicDataPanel = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
     const [controlledInput, setControlledInput] = React.useState({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
     const [updateLoading, setUpdateLoading] = React.useState(false);
     const [loadingFields, setLoadingFields] = React.useState(true);
@@ -43,14 +41,14 @@ export const BasicDataPanel = React.memo(() => {
 
                 setLoadingFields(false);
                 setUpdateLoading(false);
-                setControlledInput({ name: response.data.name, email: response.data.email, profile: AuthData.data.profile, last_access: moment(AuthData.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(AuthData.data.last_update).format('DD-MM-YYYY hh:mm') });
+                setControlledInput({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD-MM-YYYY hh:mm') });
 
             })
             .catch(function () {
 
                 setLoadingFields(false);
                 setUpdateLoading(false);
-                setControlledInput({ name: "Erro", email: "Erro", profile: AuthData.data.profile, last_access: moment(AuthData.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(AuthData.data.last_update).format('DD-MM-YYYY hh:mm') });
+                setControlledInput({ name: "Erro", email: "Erro", profile: "Erro", last_access: "Erro", last_update: "Erro" });
                 handleOpenSnackbar("Erro no carregamento dos dados.", "error");
 
             });

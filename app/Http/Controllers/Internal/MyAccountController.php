@@ -44,7 +44,10 @@ class MyAccountController extends Controller
 
        return response([
         "name" => $user->name,
-        "email" => $user->email
+        "email" => $user->email,
+        "profile" => $user->profile->name,
+        "last_access" => $user->last_access,
+        "last_update" => $user->updated_at
        ], 200);
 
     }

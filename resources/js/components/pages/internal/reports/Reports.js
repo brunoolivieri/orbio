@@ -9,13 +9,9 @@ import IconButton from '@mui/material/IconButton';
 import { Box } from "@mui/system";
 import PostAddIcon from '@mui/icons-material/PostAdd';
 // Custom
-import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext";
 import { ReportsPanel } from "./reports_panel/ReportsPanel";
 
 export const Reports = React.memo(({ ...props }) => {
-
-  // Utilizador do state global de autenticação
-  //const { AuthData, setAuthData } = useAuthentication();
 
   React.useEffect(() => {
     props.setPage("RELATÓRIOS");

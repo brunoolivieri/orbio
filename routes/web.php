@@ -6,8 +6,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordResetTokenController; 
 use App\Http\Controllers\Auth\PasswordResetController; 
 use App\Http\Controllers\Auth\LogoutController;
-// \Internal Controller
-use App\Http\Controllers\Internal\MainInternalController; 
+// \Internal Controller 
 use App\Http\Controllers\Internal\MyAccountController; 
 use App\Http\Controllers\Internal\SupportController; 
 // \Modules
@@ -21,6 +20,7 @@ use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteryPanelController
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleDronePanelController;
 use App\Http\Controllers\Modules\Equipment\EquipmentModuleEquipmentPanelController;
 // \Actions
+use App\Http\Controllers\Actions\LoadAuthData;
 use App\Http\Controllers\Actions\LoadFlightPlansController;
 use App\Http\Controllers\Actions\LoadIncidentsController;
 use App\Http\Controllers\Actions\LoadProfilesController;
@@ -28,22 +28,25 @@ use App\Http\Controllers\Actions\LoadReportsController;
 use App\Http\Controllers\Actions\LoadUsersController;
 
 // External Views
-Route::get('/', function(){ return redirect("/login"); }); 
+Route::get('/', function() { 
+    return redirect("/login"); 
+}); 
 Route::view('/login', "react_root"); 
 Route::view('/forgot-password', "react_root"); 
 
-// Auth operations
+// External operations
 Route::post('/api/auth/login', [LoginController::class, "index"]); 
 Route::post('/api/auth/password-token', [PasswordResetTokenController::class, "index"]); 
 Route::post('/api/auth/change-password', [PasswordResetController::class, "index"]); 
 
 Route::middleware(["session.auth"])->group(function(){
     // Internal simple operations
-    Route::get('/internal', [MainInternalController::class, "index"]); 
-    Route::get('/internal/{internalpage?}', [MainInternalController::class, "refreshInternalSystem"])->where(["internalpage" => "^(?!auth|map).*$"]); 
+    Route::view('/internal', "react_root"); 
+    Route::get('/internal/{internalpage?}', function(){
+        return redirect("/internal");
+    })->where(["internalpage" => "^(?!auth|map).*$"]); 
     Route::get('/api/auth/logout', [LogoutController::class, "index"]); 
     Route::view('/internal/map', "map"); 
-    Route::post('/api/get-auth-data', [MainInternalController::class, "getUserAuthenticatedData"]); 
     // Internal "MyAccount" operations
     Route::get('/api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
     Route::get('/api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);
@@ -65,6 +68,7 @@ Route::middleware(["session.auth"])->group(function(){
     Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
+    Route::post('/api/get-auth-data', LoadAuthData::class); 
     Route::get("/api/load-users", LoadUsersController::class);
     Route::get("/api/load-profiles", LoadProfilesController::class);
     Route::get("/api/load-flight_plans", LoadFlightPlansController::class);
