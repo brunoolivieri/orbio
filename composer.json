@@ -1,8 +1,5 @@
 {
     "name": "laravel/laravel",
-    "authors": [
-        "Marcelo de Souza Moreira"
-    ],
     "type": "project",
     "description": "The Laravel Framework.",
     "keywords": [
