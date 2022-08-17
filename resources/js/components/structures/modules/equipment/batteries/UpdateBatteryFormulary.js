@@ -118,8 +118,11 @@ export const UpdateBatteryFormulary = React.memo((props) => {
         formData.append("model", controlledInput.model);
         formData.append("serial_number", controlledInput.serial_number);
         formData.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
-        formData.append("image", uploadedImage);
         formData.append('_method', 'PATCH');
+
+        if (uploadedImage !== null) {
+            formData.append("image", uploadedImage);
+        }
 
         AxiosApi.post(`/api/equipments-module-battery/${controlledInput.id}`, formData)
             .then(function (response) {

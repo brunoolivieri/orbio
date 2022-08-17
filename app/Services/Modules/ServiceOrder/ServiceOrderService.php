@@ -143,6 +143,8 @@ class ServiceOrderService {
                 ]);
             }
 
+            $service_order = ServiceOrderModel::findOrFail($service_order_id);
+
             $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order));
             $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order));
             $client->notify(new ServiceOrderCreatedNotification($client, $service_order));

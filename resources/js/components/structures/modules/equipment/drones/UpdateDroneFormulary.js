@@ -129,8 +129,11 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         formData.append("serial_number", controlledInput.serial_number);
         formData.append("weight", controlledInput.weight);
         formData.append("observation", controlledInput.observation);
-        formData.append("image", uploadedImage);
         formData.append('_method', 'PATCH');
+
+        if (uploadedImage !== null) {
+            formData.append("image", uploadedImage);
+        }
 
         AxiosApi.post(`/api/equipments-module-drone/${controlledInput.id}`, formData)
             .then(function (response) {

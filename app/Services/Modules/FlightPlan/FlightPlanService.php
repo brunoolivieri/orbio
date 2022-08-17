@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 // Custom
+use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
 use App\Models\FlightPlans\FlightPlanModel;
+use App\Models\Reports\ReportModel;
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
 
 class FlightPlanService {
@@ -143,22 +145,17 @@ class FlightPlanService {
 
             $flight_plan = FlightPlanModel::findOrFail($flight_plan_id);
 
-            // Desvinculation with incidents table
-            if(!empty($flight_plan->incidents)){ 
-                $flight_plan->incidents()->delete();
-            }
-
-            // Desvinculation with reports table
+            // Delete related report
             if(!empty($flight_plan->reports)){
-                $flight_plan->reports()->delete();
+                ReportModel::where("id", $flight_plan->reports->id)->delete();
             }
             
-            // Desvinculations with service_orders through service_orders_has_flight_plans table
+            // Delete relation in service order pivot table
             if(!empty($flight_plan->service_order_has_flight_plans)){
-                $flight_plan->service_order_has_flight_plans()->delete();
+                ServiceOrderHasFlightPlanModel::where("flight_plan_id", $flight_plan->id)->delete();
             }
 
-            // Delete coordinates_file file from storage
+            // Delete coordinates file from storage
             Storage::disk('public')->delete("flight_plans/".$flight_plan->coordinates_file);
 
             $flight_plan->delete();

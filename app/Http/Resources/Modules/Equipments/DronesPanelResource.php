@@ -39,7 +39,7 @@ class DronesPanelResource extends JsonResource
                 "weight" => $drone->weight,
                 "observation" => $drone->observation,
                 "created_at" => date( 'd-m-Y h:i', strtotime($drone->created_at)),
-                "updated_at" => empty($drone->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($drone->updated_at))
+                "updated_at" => empty($drone->updated_at) ? "N/A" : date( 'Y-m-d h:i', strtotime($drone->updated_at))
             ];
 
         }

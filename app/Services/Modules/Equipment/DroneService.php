@@ -94,7 +94,7 @@ class DroneService {
 
             $drone = DroneModel::findOrFail($drone_id);
 
-            if(!empty($request->image)){
+            if(isset($request->image)){
 
                 // Filename is the hash of the content
                 $content_hash = md5(file_get_contents($request->file('image'))); 

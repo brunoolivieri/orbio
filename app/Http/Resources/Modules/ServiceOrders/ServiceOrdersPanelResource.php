@@ -39,12 +39,17 @@ class ServiceOrdersPanelResource extends JsonResource
             ];
 
             // ============================== RELATED FLIGHT PLANS ====== //
-            foreach($service_order->has_flight_plans as $index => $pivot_record){
+            dd($service_order->has_flight_plans);
+            if(isset($service_order->has_flight_plans)){
+                foreach($service_order->has_flight_plans as $index => $pivot_record){
 
-                $formated_data["records"][$row]["flight_plans"][$index]["id"] = $pivot_record->flight_plan->id;
-                $formated_data["records"][$row]["flight_plans"][$index]["file"] = $pivot_record->flight_plan->coordinates_file;
-                $formated_data["records"][$row]["flight_plans"][$index]["status"] = $pivot_record->flight_plan->status;
-
+                    $formated_data["records"][$row]["flight_plans"][$index]["id"] = $pivot_record->flight_plan->id;
+                    $formated_data["records"][$row]["flight_plans"][$index]["file"] = $pivot_record->flight_plan->coordinates_file;
+                    $formated_data["records"][$row]["flight_plans"][$index]["status"] = $pivot_record->flight_plan->status;
+    
+                }
+            }else{
+                $formated_data["records"][$row]["flight_plans"] = [];
             }
             
             // ============================== RELATED USERS ====== //

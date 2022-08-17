@@ -137,9 +137,12 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         formData.append("serial_number", controlledInput.serial_number);
         formData.append("weight", controlledInput.weight);
         formData.append("observation", controlledInput.observation);
-        formData.append("image", uploadedImage);
         formData.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
         formData.append('_method', 'PATCH');
+
+        if (uploadedImage !== null) {
+            formData.append("image", uploadedImage);
+        }
 
         AxiosApi.post(`/api/equipments-module-equipment/${controlledInput.id}`, formData)
             .then(function (response) {
