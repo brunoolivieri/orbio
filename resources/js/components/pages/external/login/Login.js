@@ -17,6 +17,8 @@ import { Alert } from '@mui/material';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
+import LoadingButton from '@mui/lab/LoadingButton';
+import SaveIcon from '@mui/icons-material/Save';
 // React router dom
 import { Link } from 'react-router-dom';
 
@@ -33,20 +35,15 @@ export function Login() {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-    // Form fields states
     const [controlledInput, setControlledInput] = React.useState({ email: "", password: "" });
 
-    // Fields error states
     const [fieldError, setFieldError] = React.useState({ email: false, password: false }); // State para o efeito de erro - true ou false
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ email: "", password: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
 
-    // Alert state
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "error", message: "" });
 
-    // Disabled login button
-    const [buttonDisabled, setButtonDisabled] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
 
-    // Make Styles
     const classes = useStyles();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -54,10 +51,9 @@ export function Login() {
     function handleLoginSubmit(event) {
         event.preventDefault();
 
-        setButtonDisabled(true);
-
         if (formularyDataValidate()) {
 
+            setLoading(true);
             requestServerOperation();
 
         }
@@ -92,6 +88,7 @@ export function Login() {
             })
             .catch(function (error) {
 
+                setLoading(false);
                 errorServerResponseTreatment(error.response);
 
             });
@@ -113,8 +110,6 @@ export function Login() {
         const message = response.data.message ? response.data.message : "Erro do servidor";
 
         setDisplayAlert({ display: true, type: "error", message: message });
-
-        setButtonDisabled(false);
 
         // Errors by key that can be returned from backend validation 
         let request_errors = {
@@ -205,16 +200,31 @@ export function Login() {
                                 label="Lembrar"
                             />
 
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
-                                color="primary"
-                                disabled={buttonDisabled}
-                            >
-                                Acessar
-                            </Button>
+                            {!loading &&
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                    color="primary"
+                                >
+                                    Acessar
+                                </Button>
+                            }
+
+                            {loading &&
+                                <LoadingButton
+                                    loading
+                                    loadingPosition="start"
+                                    startIcon={<SaveIcon />}
+                                    variant="outlined"
+                                    fullWidth
+                                    sx={{ mt: 3, mb: 2 }}
+                                >
+                                    Acessando
+                                </LoadingButton>
+                            }
+
                             <Grid container sx={{ mb: 2 }}>
                                 <Grid item xs >
                                     <Link to="/forgot-password" className={classes.hiperlink}>
@@ -222,6 +232,7 @@ export function Login() {
                                     </Link>
                                 </Grid>
                             </Grid>
+
                             {displayAlert.display &&
                                 <Alert severity={displayAlert.type} fullWidth>{displayAlert.message}</Alert>
                             }
