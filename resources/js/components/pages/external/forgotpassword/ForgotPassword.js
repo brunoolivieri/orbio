@@ -16,6 +16,8 @@ import Container from '@mui/material/Container';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
+import LoadingButton from '@mui/lab/LoadingButton';
+import SaveIcon from '@mui/icons-material/Save';
 // Assets
 import SuccessImage from "../../../assets/images/Success/Success_md.png";
 import ErrorImage from "../../../assets/images/Error/Error_md.png";
@@ -46,6 +48,8 @@ export function ForgotPassword() {
 
     const [operation, setOperation] = React.useState({ current: "", title: "", message: "", image: "" });
 
+    const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
+
     const classes = useStyles();
 
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -55,6 +59,7 @@ export function ForgotPassword() {
 
         if (formularyDataValidate("SEND_CODE")) {
 
+            setLoading({ send_code: true, change_password: false });
             sendCodeServerRequest();
 
         }
@@ -66,6 +71,7 @@ export function ForgotPassword() {
 
         if (formularyDataValidate("CHANGE_PASSWORD")) {
 
+            setLoading({ send_code: false, change_password: true });
             changePasswordServerRequest();
 
         }
@@ -103,17 +109,17 @@ export function ForgotPassword() {
 
     function sendCodeServerRequest() {
 
-        setOperation({ current: "loading", title: "", message: "", image: "" });
-
         AxiosApi.post("/api/auth/password-token", {
             email: controlledInput.email
         })
             .then(function (response) {
 
+                setLoading({ send_code: false, change_password: false });
                 sendCodeSuccessServerResponseTreatment(response);
 
             }).catch((error) => {
 
+                setLoading({ send_code: false, change_password: false });
                 sendCodeErrorServerResponseTreatment(error.response);
 
             });
@@ -131,10 +137,12 @@ export function ForgotPassword() {
         })
             .then(function (response) {
 
+                setLoading({ send_code: false, change_password: false });
                 changePasswordSuccessServerResponseTreatment(response);
 
             }).catch((error) => {
 
+                setLoading({ send_code: false, change_password: false });
                 changePasswordErrorServerResponseTreatment(error.response);
 
             });
@@ -202,9 +210,7 @@ export function ForgotPassword() {
 
     function changePasswordErrorServerResponseTreatment(response) {
 
-        const error_message = response.data.message ? response.data.message : "Houve um erro na alteração da senha. Tente novamente.";
-
-        setOperation({ current: "concluded", title: error_message, message: "", image: ErrorImage });
+        setOperation({ current: "concluded", title: "Erro do servidor", message: "", image: ErrorImage });
 
         // Errors by key that can be returned from backend validation 
         let request_errors = {
@@ -302,15 +308,33 @@ export function ForgotPassword() {
                             error={fieldError.email}
                             helperText={fieldErrorMessage.email}
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={codeTimer > 0}
-                        >
-                            {codeTimer === 0 ? "Receber código" : codeTimer}
-                        </Button>
+
+                        {!loading.send_code &&
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                                disabled={codeTimer > 0}
+                            >
+                                {codeTimer === 0 ? "Receber código" : codeTimer}
+                            </Button>
+                        }
+
+                        {loading.send_code &&
+                            <LoadingButton
+                                loading
+                                loadingPosition="start"
+                                startIcon={<SaveIcon />}
+                                variant="outlined"
+                                type="submit"
+                                fullWidth
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Enviando código
+                            </LoadingButton>
+                        }
+
                     </Box>
                     <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
@@ -351,15 +375,33 @@ export function ForgotPassword() {
                             helperText={fieldErrorMessage.new_password_confirmation}
                             error={fieldError.new_password_confirmation}
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            disabled={!codeSent}
-                        >
-                            Alterar a senha
-                        </Button>
+
+                        {!loading.change_password &&
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                sx={{ mt: 3, mb: 2 }}
+                                disabled={!codeSent}
+                            >
+                                Alterar a senha
+                            </Button>
+                        }
+
+                        {loading.change_password &&
+                            <LoadingButton
+                                loading
+                                loadingPosition="start"
+                                startIcon={<SaveIcon />}
+                                variant="outlined"
+                                type="submit"
+                                fullWidth
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Alterando senha
+                            </LoadingButton>
+                        }
+
                         <Grid container justifyContent="flex-end">
                             <Grid item>
                                 <Link to="/login" className={classes.hiperlink}>
