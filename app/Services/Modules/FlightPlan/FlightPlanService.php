@@ -146,12 +146,12 @@ class FlightPlanService {
             $flight_plan = FlightPlanModel::findOrFail($flight_plan_id);
 
             // Delete related report
-            if(!empty($flight_plan->reports)){
+            if($flight_plan->reports->count() > 0){
                 ReportModel::where("id", $flight_plan->reports->id)->delete();
             }
             
             // Delete relation in service order pivot table
-            if(!empty($flight_plan->service_order_has_flight_plans)){
+            if($flight_plan->has_service_order->count() > 0){
                 ServiceOrderHasFlightPlanModel::where("flight_plan_id", $flight_plan->id)->delete();
             }
 

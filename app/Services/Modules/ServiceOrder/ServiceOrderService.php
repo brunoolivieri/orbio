@@ -167,18 +167,18 @@ class ServiceOrderService {
             
             $service_order = ServiceOrderModel::find($service_order_id);
 
-            $creator = UserModel::findOrFail($service_order->service_order_has_user->creator_id);
-            $pilot = UserModel::find($service_order->service_order_has_user->pilot_id);
-            $client = UserModel::find($service_order->service_order_has_user->client_id);
+            $creator = UserModel::find($service_order->has_users->creator_id);
+            $pilot = UserModel::find($service_order->has_users->pilot_id);
+            $client = UserModel::find($service_order->has_users->client_id);
 
-            // Desvinculation with flight_plans through service_order_has_flight_plan table
-            if(!empty($service_order->service_order_has_flight_plan)){ 
-                $service_order->service_order_has_flight_plan()->delete();
+            // Desvinculation with all flight plans through service_order_has_flight_plans table
+            if($service_order->has_flight_plans->count() > 0){ 
+                ServiceOrderHasFlightPlanModel::where("service_order_id", $service_order->id)->delete();
             }
 
             // Desvinculation with all users through service_order_has_user table
-            $service_order->service_order_has_user()->delete();
-
+            ServiceOrderHasUserModel::where("service_order_id", $service_order->id)->delete();
+            
             $service_order->delete();
 
             $creator->notify(new ServiceOrderDeletedNotification($creator, $service_order));

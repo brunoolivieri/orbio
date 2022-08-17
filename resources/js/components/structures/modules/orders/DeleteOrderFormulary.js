@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
@@ -34,6 +35,8 @@ export function DeleteOrderFormulary(props) {
   // State da acessibilidade do botão de executar o registro
   const [disabledButton, setDisabledButton] = React.useState(false);
 
+  const [loading, setLoading] = React.useState(false);
+
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   const handleClickOpen = () => {
@@ -56,7 +59,7 @@ export function DeleteOrderFormulary(props) {
     const data = new FormData(event.currentTarget);
 
     setDisabledButton(true);
-
+    setLoading(true);
     requestServerOperation(data);
 
   }
@@ -70,11 +73,13 @@ export function DeleteOrderFormulary(props) {
     AxiosApi.delete(`/api/orders-module/${data.get("id")}`)
       .then(function () {
 
+        setLoading(false);
         successServerResponseTreatment();
 
       })
       .catch(function (error) {
 
+        setLoading(false);
         errorServerResponseTreatment(error.response.data);
 
       });
@@ -124,7 +129,7 @@ export function DeleteOrderFormulary(props) {
       </Tooltip>
 
       {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps = {{style: { borderRadius: 15 }}}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
           <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -183,6 +188,8 @@ export function DeleteOrderFormulary(props) {
             {displayAlert.display &&
               <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
             }
+
+            {loading && <LinearProgress />}
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>

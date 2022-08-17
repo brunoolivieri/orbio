@@ -39,8 +39,7 @@ class ServiceOrdersPanelResource extends JsonResource
             ];
 
             // ============================== RELATED FLIGHT PLANS ====== //
-            dd($service_order->has_flight_plans);
-            if(isset($service_order->has_flight_plans)){
+            if($service_order->has_flight_plans->count() > 0){
                 foreach($service_order->has_flight_plans as $index => $pivot_record){
 
                     $formated_data["records"][$row]["flight_plans"][$index]["id"] = $pivot_record->flight_plan->id;
@@ -49,13 +48,13 @@ class ServiceOrdersPanelResource extends JsonResource
     
                 }
             }else{
-                $formated_data["records"][$row]["flight_plans"] = [];
+                $formated_data["records"][$row]["flight_plans"] = array();
             }
             
             // ============================== RELATED USERS ====== //
 
             // Related creator
-            if(isset($service_order->has_users->has_creator)){
+            if($service_order->has_users->has_creator->count() > 0){
 
                 $formated_data["records"][$row]["creator"]["id"] = $service_order->has_users->has_creator->id;
                 $formated_data["records"][$row]["creator"]["profile_id"] = $service_order->has_users->has_creator->profile_id;
@@ -67,7 +66,7 @@ class ServiceOrdersPanelResource extends JsonResource
             }
 
             // Related pilot
-            if(isset($service_order->has_users->has_pilot)){
+            if($service_order->has_users->has_pilot->count() > 0){
 
                 $formated_data["records"][$row]["pilot"]["id"] = $service_order->has_users->has_pilot->id;
                 $formated_data["records"][$row]["pilot"]["profile_id"] = $service_order->has_users->has_pilot->profile_id;
@@ -79,7 +78,7 @@ class ServiceOrdersPanelResource extends JsonResource
             }
 
             // Related client
-            if(isset($service_order->has_users->has_client)){
+            if($service_order->has_users->has_client->count() > 0){
 
                 $formated_data["records"][$row]["client"]["id"] = $service_order->has_users->has_client->id;
                 $formated_data["records"][$row]["client"]["profile_id"] = $service_order->has_users->has_client->profile_id;

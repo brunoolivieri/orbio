@@ -32,20 +32,11 @@ class FlightPlanModel extends Model
     }
 
     /*
-    * Relationship with service_orders table
-    */
-    function service_orders(){
-
-        return $this->hasMany("App\Models\Orders\ServiceOrderModel", "flight_plan_id");
-
-    }
-
-    /*
     * Relationship with service_order_has_flight_plan table
     */
-    function has_flight_plan(){
+    function has_service_order(){
 
-        return $this->hasMany("App\Models\Pivot\ServiceOrdersHasFlightPlansModel", "flight_plan_id");
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasFlightPlanModel", "flight_plan_id");
 
     }
 }
