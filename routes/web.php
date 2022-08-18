@@ -1,31 +1,42 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// \Auth Controllers
-use App\Http\Controllers\Auth\LoginController; 
-use App\Http\Controllers\Auth\PasswordResetTokenController; 
-use App\Http\Controllers\Auth\PasswordResetController; 
-use App\Http\Controllers\Auth\LogoutController;
-// \Internal Controller 
-use App\Http\Controllers\Internal\MyAccountController; 
-use App\Http\Controllers\Internal\SupportController; 
-// \Modules
-use App\Http\Controllers\Modules\Administration\AdministrationModuleUsersController;
-use App\Http\Controllers\Modules\Administration\AdministrationModuleProfilesController;
+// Auth Controllers
+use App\Http\Controllers\Auth\{
+    LoginController,
+    PasswordResetTokenController,
+    PasswordResetController,
+    LogoutController
+}; 
+// Internal Controller 
+use App\Http\Controllers\Internal\{
+    DashboardController,
+    MyAccountController,
+    SupportController
+}; 
+// Modules
+use App\Http\Controllers\Modules\Administration\{
+    AdministrationModuleUsersController,
+    AdministrationModuleProfilesController
+};
 use App\Http\Controllers\Modules\Report\ReportModuleController;
 use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
 use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
-use App\Http\Controllers\Modules\Equipment\EquipmentModuleBatteryPanelController;
-use App\Http\Controllers\Modules\Equipment\EquipmentModuleDronePanelController;
-use App\Http\Controllers\Modules\Equipment\EquipmentModuleEquipmentPanelController;
-// \Actions
-use App\Http\Controllers\Actions\LoadAuthData;
-use App\Http\Controllers\Actions\LoadFlightPlansController;
-use App\Http\Controllers\Actions\LoadIncidentsController;
-use App\Http\Controllers\Actions\LoadProfilesController;
-use App\Http\Controllers\Actions\LoadReportsController;
-use App\Http\Controllers\Actions\LoadUsersController;
+use App\Http\Controllers\Modules\Equipment\{
+    EquipmentModuleBatteryPanelController,
+    EquipmentModuleDronePanelController,
+    EquipmentModuleEquipmentPanelController
+};
+// Actions
+use App\Http\Controllers\Actions\{
+    LoadAuthData,
+    LoadFlightPlansController,
+    LoadIncidentsController,
+    LoadProfilesController,
+    LoadReportsController,
+    LoadUsersController
+};
 
 // External Views
 Route::get('/', function() { 
@@ -47,6 +58,8 @@ Route::middleware(["session.auth"])->group(function(){
     })->where(["internalpage" => "^(?!auth|map).*$"]); 
     Route::get('/api/auth/logout', [LogoutController::class, "index"]); 
     Route::view('/internal/map', "map"); 
+    // Internal Dashboard 
+    Route::get('/api/load-dashboard-metrics', DashboardController::class);
     // Internal "MyAccount" operations
     Route::get('/api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
     Route::get('/api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);

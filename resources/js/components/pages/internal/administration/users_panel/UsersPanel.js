@@ -29,14 +29,13 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import TablePagination from '@mui/material/TablePagination';
+import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Outros
-import { useSnackbar } from 'notistack';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -198,9 +197,7 @@ export function UsersPanel() {
   }
 
   function handleOpenSnackbar(text, variant) {
-
     enqueueSnackbar(text, { variant });
-
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
