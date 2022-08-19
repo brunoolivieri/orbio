@@ -40,37 +40,28 @@ export const Dashboard = React.memo(({ ...props }) => {
     AxiosApi.get("/api/load-dashboard-metrics")
       .then(function (response) {
 
+        console.log(response.data)
+
         setLoading(false);
 
         setUsers({
           total: response.data.users.total,
-          chart: [
-            {
-              "id": "Ativos",
-              "label": "Ativos",
-              "value": response.data.users.active
-            },
-            {
-              "id": "Inativos",
-              "label": "Inativos",
-              "value": response.data.users.inactive
-            }
-          ]
+          chart: response.data.users.chart
         });
 
         setFlightPlans({
           total: response.data.flight_plans.total,
-          chart: [{}]
+          chart: response.data.flight_plans.chart
         });
 
         setServiceOrders({
           total: response.data.service_orders.total,
-          chart: [{}]
+          chart: response.data.service_orders.chart
         });
 
         setReports({
           total: response.data.reports.total,
-          chart: [{}]
+          chart: response.data.reports.chart
         });
 
         handleOpenSnackbar("Métricas carregadas", "success");
@@ -101,7 +92,7 @@ export const Dashboard = React.memo(({ ...props }) => {
           <Grid container spacing={2}>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 200, maxWidth: 450, margin: 'auto' }}>
+              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 2 }}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faUsers} color="green" size='2x' />}
                   title={<Typography variant="h6">Usuários</Typography>}
@@ -117,7 +108,7 @@ export const Dashboard = React.memo(({ ...props }) => {
             </Grid>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 200, maxWidth: 450, margin: 'auto' }}>
+              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 2 }}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faMap} color="green" size='2x' />}
                   title={<Typography variant="h6">Planos de voo</Typography>}
@@ -133,7 +124,7 @@ export const Dashboard = React.memo(({ ...props }) => {
             </Grid>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 200, maxWidth: 450, margin: 'auto' }}>
+              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 2 }}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faClipboard} color="green" size='2x' />}
                   title={<Typography variant="h6">Ordens de serviço</Typography>}
@@ -149,7 +140,7 @@ export const Dashboard = React.memo(({ ...props }) => {
             </Grid>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 200, maxWidth: 450, margin: 'auto' }}>
+              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 2 }}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faChartColumn} color="green" size='2x' />}
                   title={<Typography variant="h6">Relatórios</Typography>}
@@ -168,10 +159,10 @@ export const Dashboard = React.memo(({ ...props }) => {
         </Toolbar>
       </Paper>
 
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', padding: 3, overflow: 'hidden', borderRadius: 5, mt: 3, bgcolor: "#333" }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', padding: 3, overflow: 'hidden', borderRadius: 5, mt: 3 }}>
 
         <Grid container>
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ height: 350 }}>
             <LinesChart />
           </Grid>
         </Grid>

@@ -29,20 +29,100 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
 
+       $users = [
+        "total" => $this->user_model->withTrashed()->count(),
+        "active" => $this->user_model->where("status", 1)->count(),
+        "inative" => $this->user_model->where("status", 0)->count(),
+        "deleted" => $this->user_model->onlyTrashed()->count()
+       ];
+
+       $flight_plans = [
+        "total" => $this->flight_plan_model->withTrashed()->count(),
+        "active" => $this->flight_plan_model->where("status", 1)->count(),
+        "inative" => $this->flight_plan_model->where("status", 0)->count(),
+        "deleted" => $this->flight_plan_model->onlyTrashed()->count()
+       ];
+
+       $service_orders = [
+        "total" => $this->service_order_model->withTrashed()->count(),
+        "finished" => $this->service_order_model->whereRaw("service_orders.start_date >= service_orders.end_date")->count(),
+        "to_finish" => $this->service_order_model->whereRaw("service_orders.start_date < service_orders.end_date")->count(),
+        "deleted" => $this->service_order_model->onlyTrashed()->count()
+       ];
+
+       $reports = [
+        "total" => $this->report_model->withTrashed()->count(),
+        "active" => $this->report_model->count(),
+        "deleted" => $this->report_model->onlyTrashed()->count()
+       ];
+
         return response([
             "users" => [
-                "total" => $this->user_model->all()->count(),
-                "active" => $this->user_model->where("deleted_at", null)->count(),
-                "inactive" => $this->user_model->where("deleted_at", "!=", null)->count()
+                "total" => $users["total"], 
+                "chart" => [
+                    [
+                        "id" => "Ativos", 
+                        "label" => "Ativos (".$users["active"].")", 
+                        "value" => $users["active"]
+                    ],
+                    [
+                        "id" => "Inativos", 
+                        "label" => "Inativos (".$users["inative"].")", 
+                        "value" => $users["inative"]
+                    ],
+                    [
+                        "id" => "Inativos", 
+                        "label" => "Deletados (".$users["deleted"].")", 
+                        "value" => $users["deleted"]
+                    ]
+                ]
             ],
             "flight_plans" => [
-                "total" => $this->flight_plan_model->all()->count()
+                "total" => $flight_plans["total"],
+                "chart" => [
+                    [
+                        "id" => "Ativos", 
+                        "label" => "Ativos (".$flight_plans["active"].")", 
+                        "value" => $flight_plans["active"]
+                    ],
+                    [
+                        "id" => "Deletados", 
+                        "label" => "Deletados (".$flight_plans["deleted"].")", 
+                        "value" => $flight_plans["deleted"]
+                    ],
+                    [
+                        "id" => "Inativos", 
+                        "label" => "Inativos (".$flight_plans["inative"].")", 
+                        "value" => $flight_plans["inative"]
+                    ]
+                ]
             ],
             "service_orders" => [
-                "total" => $this->service_order_model->all()->count()
+                "total" => $service_orders["total"],
+                "chart" => [
+                    [
+                        "id" => "Finalizadas", 
+                        "label" => "Finalizadas (".$service_orders["finished"].")", 
+                        "value" => $service_orders["finished"]
+                    ],
+                    [
+                        "id" => "Deletadas", 
+                        "label" => "Deletadas (".$service_orders["deleted"].")", 
+                        "value" => $service_orders["deleted"]
+                    ],
+                    [
+                        "id" => "Em andamento", 
+                        "label" => "Em andamento (".$service_orders["to_finish"].")", 
+                        "value" => $service_orders["to_finish"]
+                    ]
+                ]
             ],
             "reports" => [
-                "total" => $this->report_model->all()->count()
+                "total" => $reports["total"],
+                "chart" => [
+                    ["id" => "Acessíveis", "label" => "Acessíveis (".$reports["active"].")", "value" => $reports["active"]],
+                    ["id" => "Deletados", "label" => "Deletados (".$reports["deleted"].")", "value" => $reports["deleted"]]
+                ] 
             ]
         ], 200);
     }

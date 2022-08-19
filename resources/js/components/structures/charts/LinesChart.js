@@ -1,67 +1,132 @@
 import * as React from 'react';
-import { BarChart, Bar, Tooltip, Legend, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import { ResponsiveLine } from '@nivo/line'
 
 const data = [
     {
-        "name": "Janeiro",
-        "Acessos": 27
-    },
-    {
-        "name": "Fevereiro",
-        "Acessos": 25
-    },
-    {
-        "name": "Abril",
-        "Acessos": 12
-    },
-    {
-        "name": "Março",
-        "Acessos": 45
-    },
-    {
-        "name": "Junho",
-        "Acessos": 42
-    },
-    {
-        "name": "Julho",
-        "Acessos": 77
-    },
-    {
-        "name": "Agosto",
-        "Acessos": 16
-    },
-    {
-        "name": "Setembro",
-        "Acessos": 31
-    },
-    {
-        "name": "Outubro",
-        "Acessos": 33
-    },
-    {
-        "name": "Novembro",
-        "Acessos": 7
-    },
-    {
-        "name": "Dezembro",
-        "Acessos": 47
+        "id": "Acessos",
+        "color": "hsl(166, 70%, 50%)",
+        "data": [
+            {
+                "x": "Janeiro",
+                "y": 154
+            },
+            {
+                "x": "Fevereiro",
+                "y": 201
+            },
+            {
+                "x": "Março",
+                "y": 240
+            },
+            {
+                "x": "Abril",
+                "y": 256
+            },
+            {
+                "x": "Maio",
+                "y": 25
+            },
+            {
+                "x": "Junho",
+                "y": 253
+            },
+            {
+                "x": "Julho",
+                "y": 94
+            },
+            {
+                "x": "Agosto",
+                "y": 136
+            },
+            {
+                "x": "Setembro",
+                "y": 195
+            },
+            {
+                "x": "Outubro",
+                "y": 61
+            },
+            {
+                "x": "Novembro",
+                "y": 12
+            },
+            {
+                "x": "Dezembro",
+                "y": 115
+            }
+        ]
     }
-]
+];
 
 export const LinesChart = () => {
 
     return (
         <>
-            <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="Acessos" fill="#82CA9D" />
-                </BarChart>
-            </ResponsiveContainer>
+            <ResponsiveLine
+                data={data}
+                margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+                xScale={{ type: 'point' }}
+                colors={{ scheme: 'category10' }}
+                yScale={{
+                    type: 'linear',
+                    min: 'auto',
+                    max: 'auto',
+                    stacked: true,
+                    reverse: false
+                }}
+                yFormat=" >-.2f"
+                axisTop={null}
+                axisRight={null}
+                axisBottom={{
+                    orient: 'bottom',
+                    tickSize: 0,
+                    tickPadding: 30,
+                    tickRotation: 0,
+                    legendOffset: 36,
+                    legendPosition: 'middle'
+                }}
+                axisLeft={{
+                    orient: 'left',
+                    tickSize: 0,
+                    tickPadding: 10,
+                    tickRotation: 0,
+                    legend: `Novos usuários (${new Date().getFullYear()})`,
+                    legendOffset: -50,
+                    legendPosition: 'middle'
+                }}
+                pointSize={10}
+                pointColor={"#1F77B4"}
+                pointBorderWidth={2}
+                pointBorderColor={{ from: 'serieColor' }}
+                pointLabelYOffset={-12}
+                useMesh={true}
+                legends={[
+                    {
+                        anchor: 'bottom-right',
+                        direction: 'column',
+                        justify: false,
+                        translateX: 100,
+                        translateY: 0,
+                        itemsSpacing: 0,
+                        itemDirection: 'left-to-right',
+                        itemWidth: 80,
+                        itemHeight: 20,
+                        itemOpacity: 0.75,
+                        symbolSize: 12,
+                        symbolShape: 'circle',
+                        symbolBorderColor: 'rgba(0, 0, 0, .5)',
+                        effects: [
+                            {
+                                on: 'hover',
+                                style: {
+                                    itemBackground: 'rgba(0, 0, 0, .03)',
+                                    itemOpacity: 1
+                                }
+                            }
+                        ]
+                    }
+                ]}
+            />
         </>
     );
 }
