@@ -1,69 +1,12 @@
 import * as React from 'react';
 import { ResponsiveLine } from '@nivo/line'
 
-const data = [
-    {
-        "id": "Acessos",
-        "color": "hsl(166, 70%, 50%)",
-        "data": [
-            {
-                "x": "Janeiro",
-                "y": 154
-            },
-            {
-                "x": "Fevereiro",
-                "y": 201
-            },
-            {
-                "x": "Março",
-                "y": 240
-            },
-            {
-                "x": "Abril",
-                "y": 256
-            },
-            {
-                "x": "Maio",
-                "y": 25
-            },
-            {
-                "x": "Junho",
-                "y": 253
-            },
-            {
-                "x": "Julho",
-                "y": 94
-            },
-            {
-                "x": "Agosto",
-                "y": 136
-            },
-            {
-                "x": "Setembro",
-                "y": 195
-            },
-            {
-                "x": "Outubro",
-                "y": 61
-            },
-            {
-                "x": "Novembro",
-                "y": 12
-            },
-            {
-                "x": "Dezembro",
-                "y": 115
-            }
-        ]
-    }
-];
-
-export const LinesChart = () => {
+export const LinesChart = React.memo((props) => {
 
     return (
         <>
             <ResponsiveLine
-                data={data}
+                data={props.data}
                 margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
                 xScale={{ type: 'point' }}
                 colors={{ scheme: 'category10' }}
@@ -92,7 +35,8 @@ export const LinesChart = () => {
                     tickRotation: 0,
                     legend: `Novos usuários (${new Date().getFullYear()})`,
                     legendOffset: -50,
-                    legendPosition: 'middle'
+                    legendPosition: 'middle',
+                    format: e => Math.floor(e) === e && e
                 }}
                 pointSize={10}
                 pointColor={"#1F77B4"}
@@ -129,4 +73,4 @@ export const LinesChart = () => {
             />
         </>
     );
-}
+});

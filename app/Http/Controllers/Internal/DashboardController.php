@@ -56,6 +56,61 @@ class DashboardController extends Controller
         "deleted" => $this->report_model->onlyTrashed()->count()
        ];
 
+       $registrations = [
+            [
+                "x" => "Janeiro",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 1)->withTrashed()->count()
+            ],
+            [
+                "x" => "Fevereiro",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 2)->withTrashed()->count()
+            ],
+            [
+                "x" => "Março",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 3)->withTrashed()->count()
+            ],
+            [
+                "x" => "Abril",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 4)->withTrashed()->count()
+            ],
+            [
+                "x" => "Maio",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 5)->withTrashed()->count()
+            ],
+            [
+                "x" => "Junho",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 6)->withTrashed()->count()
+            ],
+            [
+                "x" => "Julho",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 7)->withTrashed()->count()
+            ],
+            [
+                "x" => "Agosto",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 8)->withTrashed()->count()
+            ],
+            [
+                "x" => "Setembro",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 9)->withTrashed()->count()
+            ],
+            [
+                "x" => "Outubro",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 10)->withTrashed()->count()
+            ],
+            [
+                "x" => "Novembro",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 11)->withTrashed()->count()
+            ],
+            [
+                "x" => "Dezembro",
+                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 12)->withTrashed()->count()
+            ]
+        ];
+
+        // The response structure follows the data organization rules of the charts
+        // For pie chart: https://nivo.rocks/pie/
+        // For line chart: https://nivo.rocks/line/
+
         return response([
             "users" => [
                 "total" => $users["total"], 
@@ -63,17 +118,17 @@ class DashboardController extends Controller
                     [
                         "id" => "Ativos", 
                         "label" => "Ativos (".$users["active"].")", 
-                        "value" => $users["active"]
+                        "value" => $users["active"] > 0 ? $users["active"] : ""
                     ],
                     [
                         "id" => "Inativos", 
                         "label" => "Inativos (".$users["inative"].")", 
-                        "value" => $users["inative"]
+                        "value" => $users["inative"] > 0 ? $users["inative"] : ""
                     ],
                     [
-                        "id" => "Inativos", 
+                        "id" => "Deletados", 
                         "label" => "Deletados (".$users["deleted"].")", 
-                        "value" => $users["deleted"]
+                        "value" => $users["deleted"] > 0 ? $users["deleted"] : ""
                     ]
                 ]
             ],
@@ -83,17 +138,17 @@ class DashboardController extends Controller
                     [
                         "id" => "Ativos", 
                         "label" => "Ativos (".$flight_plans["active"].")", 
-                        "value" => $flight_plans["active"]
-                    ],
-                    [
-                        "id" => "Deletados", 
-                        "label" => "Deletados (".$flight_plans["deleted"].")", 
-                        "value" => $flight_plans["deleted"]
+                        "value" => $flight_plans["active"] > 0 ? $flight_plans["active"] : ""
                     ],
                     [
                         "id" => "Inativos", 
                         "label" => "Inativos (".$flight_plans["inative"].")", 
-                        "value" => $flight_plans["inative"]
+                        "value" => $flight_plans["inative"] > 0 ? $flight_plans["inative"] : ""
+                    ],
+                    [
+                        "id" => "Deletados", 
+                        "label" => "Deletados (".$flight_plans["deleted"].")", 
+                        "value" => $flight_plans["deleted"] > 0 ? $flight_plans["deleted"] : ""
                     ]
                 ]
             ],
@@ -103,26 +158,40 @@ class DashboardController extends Controller
                     [
                         "id" => "Finalizadas", 
                         "label" => "Finalizadas (".$service_orders["finished"].")", 
-                        "value" => $service_orders["finished"]
+                        "value" => $service_orders["finished"] > 0 ? $service_orders["finished"] : ""
                     ],
                     [
                         "id" => "Deletadas", 
                         "label" => "Deletadas (".$service_orders["deleted"].")", 
-                        "value" => $service_orders["deleted"]
+                        "value" => $service_orders["deleted"] > 0 ? $service_orders["deleted"] : ""
                     ],
                     [
-                        "id" => "Em andamento", 
-                        "label" => "Em andamento (".$service_orders["to_finish"].")", 
-                        "value" => $service_orders["to_finish"]
+                        "id" => "Em progresso", 
+                        "label" => "Em progresso (".$service_orders["to_finish"].")", 
+                        "value" => $service_orders["to_finish"] > 0 ? $service_orders["to_finish"] : ""
                     ]
                 ]
             ],
             "reports" => [
                 "total" => $reports["total"],
                 "chart" => [
-                    ["id" => "Acessíveis", "label" => "Acessíveis (".$reports["active"].")", "value" => $reports["active"]],
-                    ["id" => "Deletados", "label" => "Deletados (".$reports["deleted"].")", "value" => $reports["deleted"]]
-                ] 
+                    [
+                        "id" => "Acessíveis", 
+                        "label" => "Acessíveis (".$reports["active"].")", 
+                        "value" => $reports["active"] > 0 ? $service_orders["active"] : ""
+                    ],
+                    [
+                        "id" => "Deletados", 
+                        "label" => "Deletados (".$reports["deleted"].")", 
+                        "value" => $reports["deleted"] > 0 ? $service_orders["deleted"] : ""
+                    ]
+                ]     
+            ],
+            "registrations" => [
+                [
+                "id" => "Acessos",
+                "data" => $registrations
+                ]
             ]
         ], 200);
     }
