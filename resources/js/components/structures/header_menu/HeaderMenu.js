@@ -27,7 +27,7 @@ export function HeaderMenu() {
         onClick={handleClick}
         style={{ backgroundColor: "transparent" }}
       >
-        <FontAwesomeIcon icon = {faCircleUser} color={"#fff"} size={'2x'} />
+        <FontAwesomeIcon icon={faCircleUser} color={"#007937"} size={'2x'} />
       </Button>
       <Menu
         id="basic-menu"

@@ -36,13 +36,14 @@ const CardContentStyle = {
 }
 
 const topSectionStyle = {
-  maxWidth: "90%",
+  maxWidth: { xs: "95%", md: "90%", lg: "85%", xl: "85%" },
   margin: 'auto',
   overflow: 'visible',
   padding: 3,
   borderRadius: 5,
   mt: 10,
-  bgcolor: '#333'
+  bgcolor: '#333',
+  boxShadow: 1
 }
 
 const middleSectionStyle = {

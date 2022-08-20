@@ -12,13 +12,13 @@ import { Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 
-export const Header = React.memo(({...props}) => {
+export const Header = React.memo(({ ...props }) => {
 
   const { onDrawerToggle } = props;
 
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: '#00458C' }}>
+      <AppBar position="static" sx={{ bgcolor: '#fff' }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -28,12 +28,12 @@ export const Header = React.memo(({...props}) => {
             sx={{ mr: 2 }}
             onClick={onDrawerToggle}
           >
-           <FontAwesomeIcon icon={faBars} /> 
+            <FontAwesomeIcon icon={faBars} color="#007937" />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Typography variant="h1" sx={{ fontSize: '20px', color: '#fff' }}>{props.page}</Typography>
+            <Typography variant="h1" sx={{ fontSize: '20px', color: '#007937' }}>{props.page}</Typography>
           </Typography>
-            <HeaderMenu />
+          <HeaderMenu />
         </Toolbar>
       </AppBar>
     </>

@@ -46,7 +46,7 @@ export const Navigator = React.memo((props) => {
 
   const categories = React.useMemo(() => ([
     {
-      id: 'Menu de operações',
+      id: 'Menu',
       children: [
         {
           id: 'Dashboard',
