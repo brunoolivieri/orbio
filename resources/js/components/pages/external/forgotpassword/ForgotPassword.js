@@ -317,7 +317,7 @@ export function ForgotPassword() {
                                 sx={{ mt: 3, mb: 2 }}
                                 disabled={codeTimer > 0}
                             >
-                                {codeTimer === 0 ? "Receber código" : codeTimer}
+                                {codeTimer === 0 ? "Enviar código" : codeTimer}
                             </Button>
                         }
 
