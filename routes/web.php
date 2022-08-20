@@ -39,11 +39,14 @@ use App\Http\Controllers\Actions\{
 };
 
 // External Views
-Route::get('/', function() { 
-    return redirect("/login"); 
-}); 
-Route::view('/login', "react_root"); 
-Route::view('/forgot-password', "react_root"); 
+Route::middleware(['guest'])->group(function () {
+    Route::get('/', function() { 
+        return redirect("/login"); 
+    }); 
+    Route::view('/login', "react_root"); 
+    Route::view('/forgot-password', "react_root");
+});
+ 
 
 // External operations
 Route::post('/api/auth/login', [LoginController::class, "index"]); 
@@ -55,7 +58,7 @@ Route::middleware(["session.auth"])->group(function(){
     Route::view('/internal', "react_root"); 
     Route::get('/internal/{internalpage?}', function(){
         return redirect("/internal");
-    })->where(["internalpage" => "^(?!auth|map).*$"]); 
+    })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard"); 
     Route::get('/api/auth/logout', [LogoutController::class, "index"]); 
     Route::view('/internal/map', "map"); 
     // Internal Dashboard 
