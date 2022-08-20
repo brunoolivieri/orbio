@@ -32,7 +32,27 @@ const CardStyle = {
 }
 
 const CardContentStyle = {
+  bgcolor: '#fff'
+}
+
+const topSectionStyle = {
+  maxWidth: "90%",
+  margin: 'auto',
+  overflow: 'visible',
+  padding: 3,
+  borderRadius: 5,
+  mt: 10,
   bgcolor: '#333'
+}
+
+const middleSectionStyle = {
+  display: { xs: "none", md: "block", lg: "block", xl: "block" },
+  maxWidth: "90%",
+  margin: 'auto',
+  padding: 3,
+  overflow: 'hidden',
+  borderRadius: 5,
+  mt: 3
 }
 
 export const Dashboard = React.memo(({ ...props }) => {
@@ -102,7 +122,7 @@ export const Dashboard = React.memo(({ ...props }) => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'visible', padding: 3, borderRadius: 5, mt: 10, bgcolor: '#333' }}>
+      <Paper sx={topSectionStyle}>
 
         <Toolbar>
           <Grid container spacing={2} sx={{ mt: -10 }}>
@@ -175,7 +195,7 @@ export const Dashboard = React.memo(({ ...props }) => {
         </Toolbar>
       </Paper>
 
-      <Paper sx={{ display: { xs: "none", md: "block", lg: "block", xl: "block" }, maxWidth: "90%", margin: 'auto', padding: 3, overflow: 'hidden', borderRadius: 5, mt: 3 }}>
+      <Paper sx={middleSectionStyle}>
         <Typography variant="h5">Tráfego</Typography>
         <Grid container>
           <Grid item xs={12} sx={{ height: 350 }}>
@@ -184,7 +204,7 @@ export const Dashboard = React.memo(({ ...props }) => {
         </Grid>
       </Paper>
 
-      <Paper sx={{ display: { xs: "none", md: "block", lg: "block", xl: "block" }, maxWidth: "90%", margin: 'auto', padding: 3, overflow: 'hidden', borderRadius: 5, mt: 3 }}>
+      <Paper sx={middleSectionStyle}>
         <Typography variant="h5">Novos usuários</Typography>
         <Grid container>
           <Grid item xs={12} sx={{ height: 350 }}>

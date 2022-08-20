@@ -30,7 +30,7 @@ export const PizzaChart = React.memo((props) => {
                             itemsSpacing: 5,
                             itemWidth: 105,
                             itemHeight: 18,
-                            itemTextColor: '#fff',
+                            itemTextColor: '#333',
                             itemDirection: 'left-to-right',
                             itemOpacity: 1,
                             symbolSize: 15,
