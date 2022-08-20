@@ -33,7 +33,6 @@ export const LinesChart = React.memo((props) => {
                     tickSize: 0,
                     tickPadding: 10,
                     tickRotation: 0,
-                    legend: `Novos usuários (${new Date().getFullYear()})`,
                     legendOffset: -50,
                     legendPosition: 'middle',
                     format: e => Math.floor(e) === e && e

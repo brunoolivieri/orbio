@@ -41,7 +41,7 @@ class LoginService {
             // User account is active
             if(Auth::user()->status && !is_null(Auth::user()->last_access)){
 
-                $user->update(["last_access" => date('d-m-y h:i:s')]);
+                $user->update(["last_access" => date('Y-m-d H:i:s')]);
 
                 $user->notify(new LoginNotification($user));
 
@@ -52,7 +52,7 @@ class LoginService {
 
                 $this->activateAccount();
 
-                $user->update(["last_access" => date('d-m-y h:i:s')]);
+                $user->update(["last_access" => date('Y-m-d H:i:s')]);
 
                 $user->notify(new LoginNotification($user));
 

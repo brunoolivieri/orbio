@@ -23,6 +23,18 @@ import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 
+const CardStyle = {
+  minWidth: 220,
+  maxWidth: 450,
+  margin: 'auto',
+  borderRadius: 5,
+  boxShadow: 1
+}
+
+const CardContentStyle = {
+  bgcolor: '#333'
+}
+
 export const Dashboard = React.memo(({ ...props }) => {
 
   const [loading, setLoading] = React.useState(true);
@@ -31,6 +43,7 @@ export const Dashboard = React.memo(({ ...props }) => {
   const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
   const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
   const [registrations, setRegistrations] = React.useState([{}]);
+  const [logins, setLogins] = React.useState([{}]);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -65,6 +78,8 @@ export const Dashboard = React.memo(({ ...props }) => {
 
         setRegistrations(response.data.registrations);
 
+        setLogins(response.data.logins);
+
         handleOpenSnackbar("Métricas carregadas", "success");
 
       })
@@ -87,20 +102,20 @@ export const Dashboard = React.memo(({ ...props }) => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', padding: 1, borderRadius: 5, boxShadow: 0, bgcolor: 'transparent' }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'visible', padding: 3, borderRadius: 5, mt: 10, bgcolor: '#333' }}>
 
         <Toolbar>
-          <Grid container spacing={2}>
+          <Grid container spacing={2} sx={{ mt: -10 }}>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 3 }}>
+              <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faUsers} color="green" size='2x' />}
                   title={<Typography variant="h6">Usuários</Typography>}
                   subheader={"Total: " + users.total}
                 />
                 <Divider />
-                <CardContent sx={{ bgcolor: '#333' }}>
+                <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
                     {loading ? <CircularProgress /> : <PizzaChart data={users.chart} />}
                   </Box>
@@ -109,14 +124,14 @@ export const Dashboard = React.memo(({ ...props }) => {
             </Grid>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 3 }}>
+              <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faMap} color="green" size='2x' />}
                   title={<Typography variant="h6">Planos de voo</Typography>}
                   subheader={"Total: " + flightPlans.total}
                 />
                 <Divider />
-                <CardContent sx={{ bgcolor: '#333' }}>
+                <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
                     {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} />}
                   </Box>
@@ -125,14 +140,14 @@ export const Dashboard = React.memo(({ ...props }) => {
             </Grid>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 3 }}>
+              <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faClipboard} color="green" size='2x' />}
                   title={<Typography variant="h6">Ordens de serviço</Typography>}
                   subheader={"Total: " + serviceOrders.total}
                 />
                 <Divider />
-                <CardContent sx={{ bgcolor: '#333' }}>
+                <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
                     {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} />}
                   </Box>
@@ -141,14 +156,14 @@ export const Dashboard = React.memo(({ ...props }) => {
             </Grid>
 
             <Grid item xs={12} md={6} lg={6} xl={3}>
-              <Card sx={{ minWidth: 220, maxWidth: 450, margin: 'auto', borderRadius: 5, boxShadow: 2 }}>
+              <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faChartColumn} color="green" size='2x' />}
                   title={<Typography variant="h6">Relatórios</Typography>}
                   subheader={"Total: " + reports.total}
                 />
                 <Divider />
-                <CardContent sx={{ bgcolor: '#333' }}>
+                <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
                     {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} />}
                   </Box>
@@ -161,13 +176,21 @@ export const Dashboard = React.memo(({ ...props }) => {
       </Paper>
 
       <Paper sx={{ display: { xs: "none", md: "block", lg: "block", xl: "block" }, maxWidth: "90%", margin: 'auto', padding: 3, overflow: 'hidden', borderRadius: 5, mt: 3 }}>
+        <Typography variant="h5">Tráfego</Typography>
+        <Grid container>
+          <Grid item xs={12} sx={{ height: 350 }}>
+            {!loading && <LinesChart data={logins} />}
+          </Grid>
+        </Grid>
+      </Paper>
 
+      <Paper sx={{ display: { xs: "none", md: "block", lg: "block", xl: "block" }, maxWidth: "90%", margin: 'auto', padding: 3, overflow: 'hidden', borderRadius: 5, mt: 3 }}>
+        <Typography variant="h5">Novos usuários</Typography>
         <Grid container>
           <Grid item xs={12} sx={{ height: 350 }}>
             {!loading && <LinesChart data={registrations} />}
           </Grid>
         </Grid>
-
       </Paper>
     </>
 
