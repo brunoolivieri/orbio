@@ -77,7 +77,7 @@ Route::middleware(["session.auth"])->group(function(){
     Route::ApiResource("/api/admin-module-profile", AdministrationModuleProfilesController::class);
     Route::ApiResource("/api/reports-module", ReportModuleController::class);
     Route::ApiResource("/api/plans-module", FlightPlanModuleController::class);
-    Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "getFlightPlanFile"]);
+    Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
     Route::ApiResource("/api/orders-module", ServiceOrderModuleController::class);
     Route::ApiResource("/api/incidents-module", IncidentModuleController::class);
     Route::ApiResource("/api/equipments-module-drone", EquipmentModuleDronePanelController::class);

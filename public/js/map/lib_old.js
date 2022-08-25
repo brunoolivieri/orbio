@@ -22,14 +22,12 @@ var map = new mapboxgl.Map({
     center: home // Longitude e latitude
 });
 
-// Adicionando um marcador no ponto KML importados
 marcador = new mapboxgl.Marker({ color: 'black' })
     .setLngLat(home)
     .addTo(map);
 
 // ========= FERRAMENTA DE BUSCA POR LOCALIDADES =========== //
 
-// Adicionando o controle de busca ao mapa.
 map.addControl(
     new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
@@ -37,27 +35,10 @@ map.addControl(
     })
 );
 
-// Adicionando controles de zoom e rotação no mapa
 map.addControl(new mapboxgl.NavigationControl());
-
-// ========== ADICIONANDO AS OPÇÕES DE MAPA ============= //
-/*
-var layerList = document.getElementById("menu");
-var inputs = layerList.getElementsByTagName("input");
-
-function switchLayer(layer){
-    var layerId = layer.target.id;
-    map.setStyle('mapbox://styles/mapbox/' + layerId);
-}
-
-for(var i = 0; i < inputs.length; i++){
-    inputs[i].onclick = switchLayer;
-}*/
 
 // ========== DESENHANDO POLÍGONO ============= //
 
-// Criando um objeto para desenho do polígono
-// Apenas duas opções de controle estão habilitadas: polígono e lixeira
 var draw = new MapboxDraw({
     displayControlsDefault: false,
     controls: {
@@ -94,6 +75,7 @@ function updateArea(e) {
         // Área em hectares
         var rounded_area = (Math.round(area * 100) / 100) / 10000;
         answer.innerHTML = rounded_area.toFixed(2) + ' ha';
+
     } else {
         answer.innerHTML = '';
         if (e.type !== 'draw.delete')
@@ -121,46 +103,6 @@ var longestEdge = function (area_coordinates) {
         }
     }
 
-    // Se já existe um layer e um source com este ID, eles são removidos
-    /*var mapLayer = map.getLayer('route');
-
-    if(typeof mapLayer !== 'undefined') {
-        map.removeLayer('route').removeSource('route');
-    }
-	
-    // Criando um Objeto GeoJSON para 
-    // desenhar uma linha sobre a maior aresta
-    var objLongestEdge = {
-        'type': 'geojson',
-        'data': {
-            'type': 'Feature',
-            'properties': {},
-            'geometry' : {
-                'type' : 'LineString',
-                'coordinates': [
-                    longestEdge[0],
-                    longestEdge[1]
-                ]	
-            }
-        }
-    }
-
-    map.addSource('route', objLongestEdge);
-
-    map.addLayer({
-        'id': 'route',
-        'type': 'line',
-        'source': 'route',
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#0f0',
-            'line-width': 1
-        }
-    });*/
-
     return longestEdge;
 }
 
@@ -180,30 +122,6 @@ var farthestVertex = function (area_coordinates, longestEdge) {
             farthestVertex = area_coordinates[i];
         }
     }
-
-    // Criando um objeto Ponto no formado GeoJSON
-    // com as coordenadas do vértice mais distante
-    /*map.addSource('vertex', {
-        'type': 'geojson',
-        'data': {
-            'type': 'Feature',
-            'properties': {},
-            'geometry' : {
-                'type' : 'Point',
-                'coordinates': farthestVertex
-            }
-        }
-    });
-
-    // Adicionando o objeto Ponto no mapa
-    map.addLayer({
-        'id': 'vertex',
-        'type': 'circle',
-        'source': 'vertex',
-        'paint':{
-            'circle-color' : '#f00'	
-        }
-    });*/
 
     return farthestVertex;
 }
@@ -272,38 +190,11 @@ function drawReducedPolygon(areaPolygon, selectedPosition) {
         }
     }
 
-    // Criando um objeto GeoJSON para desenhar no mapa
-    /*var objPt = {
-        'type': 'geojson',
-        'data': {
-            'type': 'MultiLineString',
-            'coordinates': 
-                reducedPolygon
-        }
-    }
-
-    // Se já existe um layer e um source com este ID, eles são removidos
-    cleanLayerById('pt');
-
-    // Novos sources e layers são adicionados apenas se ainda não existem no mapa
-    map.addSource('pt', objPt);
-
-    map.addLayer({
-        'id': 'pt',
-        'type': 'circle',
-        'source': 'pt',
-        'paint': {
-            'circle-color': '#f00'
-        }
-    });*/
-
     return selectedPosition;
 }
 
 // == CRIANDO E DESENHANDO O BBOX == //
 function drawBBox(selectedPosition) {
-
-    //console.log("Ponto de partida da rota: " + turf.coordAll(selectedPosition));	
 
     // Desenhando um box no entorno do polígono
     //bbox = turf.bbox(draw.getAll());
@@ -314,12 +205,6 @@ function drawBBox(selectedPosition) {
 
     // Aumentando o tamanho do retângulo em 200%
     rectangle = turf.transformScale(rectangle, 2);
-
-    // Criando um objeto GeoJSON para desenhar o retângulo no mapa
-    /*var objRectangle = {
-        'type': 'geojson',
-        'data': rectangle
-    }*/
 
     // Invocando função das linhas paralelas
     drawParallelLines(rectangle, selectedPosition);
@@ -969,7 +854,6 @@ function createIntermediateWaypoints(initialPath, finalDestination, initialFinal
 
 function drawAllWaypoints() {
 
-    console.log(window.initialPath.length);
     var objWp01 = {
         'type': 'geojson',
         'data': {
@@ -994,7 +878,6 @@ function drawAllWaypoints() {
         }
     });
 
-    console.log(window.finalDestination.length);
     var objWp02 = {
         'type': 'geojson',
         'data': {
@@ -1019,7 +902,6 @@ function drawAllWaypoints() {
         }
     });
 
-    console.log(window.initialFinalPath[1].length);
     var objWp03 = {
         'type': 'geojson',
         'data': {
@@ -1051,12 +933,6 @@ function drawAllWaypoints() {
 // Distância
 var configDistance = document.getElementById("distance");
 var labelDistance = document.getElementById("label-distance");
-var wpGrid = document.getElementById('wp-grid');
-
-wpGrid.onchange = function () {
-    cleanLayers();
-    selectInitialPosition();
-}
 
 configDistance.onchange = function () {
     selectInitialPosition();
@@ -1106,7 +982,30 @@ btnClean.addEventListener("click", cleanPolygon);
 
 // ==== MENU: ABRIR ==== //
 // A função de leitura do arquivo é chamada sempre que o input file é modificado
-document.getElementById('file-input').addEventListener('change', openTxtFile, false);
+document.getElementById('file-input').addEventListener('change', (e) => { openTxtFile(e.target.files[0], "UPLOAD") }, false);
+
+// ==== ABRIR PLANO POR QUERY STRING ==== //
+window.onload = (e) => {
+
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    if (params.file) {
+        axios.get(`/api/plans-module-download/${params.file}`)
+            .then((response) => {
+
+                openTxtFile(response.data, "STORAGE");
+
+            })
+            .catch((error) => {
+
+                console.log(error.response);
+
+            })
+    }
+
+}
 
 // ==== MENU: SALVAR ==== //
 // Acessando botão que dispara a função para criar um arquivo .txt
@@ -1121,10 +1020,6 @@ btnImport.addEventListener('change', importKMLPoint, false);
 // ==== MENU: IMPORTAR POLÍGONO KML ==== //
 var btnImportPoly = document.getElementById("file-import-poly");
 btnImportPoly.addEventListener('change', importKMLPolygon, false);
-
-// ==== MENU: IMPORTAR POLÍGONO Mission Planner ==== //
-var btnImportMP = document.getElementById("file-import-mp");
-btnImportMP.addEventListener('change', importMPPolygon, false);
 
 // ==== MENU: CONFIGURAÇÂO  ==== //
 // Acessando o elemento "modal"
@@ -1290,60 +1185,41 @@ function savePath() {
     content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
 
     // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
-    //console.log(initialPath.length);
-    if (document.getElementById('wp-grid').checked) {
-        index = 0;
-        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
+    index = 0;
 
-            // Comando MAV_CMD_DO_SET_SERVO
+    for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
+        content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+        index++;
+
+        // Comando MAV_CMD_DO_SET_SERVO
+        if (document.getElementById('wp-grid').checked)
             content += j + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-        }
-    } else {
-        index = 0;
-        for (j = 3; j < (initialPath.length) + 2; j++) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-        }
     }
 
     // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
-    //console.log(finalDestination.length);
-    if (document.getElementById('wp-grid').checked) {
-        index = 0;
-        for (i = j; i < (finalDestination.length * 2) + j - 1; i += 2) {
-            content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
+    index = 0;
 
-            // Comando MAV_CMD_DO_SET_SERVO
+    //content += "OPA\n";
+    for (i = j; i < (finalDestination.length * 2) + j - 1; i += 2) {
+        content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+        index++;
+
+        // Comando MAV_CMD_DO_SET_SERVO
+        if (document.getElementById('wp-grid').checked)
             content += i + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-        }
-    } else {
-        index = 0;
-        console.log(finalDestination);
-        for (i = j; i < (finalDestination.length) + j - 1; i++) {
-            content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-        }
     }
 
     // WAYPOINT: 16 - ROTA FINAL DA FASE 03
-    if (document.getElementById('wp-grid').checked) {
-        index = 0;
-        for (j = i; j < (initialFinalPath[1].length * 2) + i; j += 2) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
+    index = 0;
 
-            // Comando MAV_CMD_DO_SET_SERVO
+    //content += "OPA\n";
+    for (j = i; j < (initialFinalPath[1].length * 2) + i; j += 2) {
+        content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+        index++;
+
+        // Comando MAV_CMD_DO_SET_SERVO
+        if (document.getElementById('wp-grid').checked)
             content += j + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-        }
-    } else {
-        index = 0;
-        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-        }
     }
 
     // RETURN-T0-LAUNCH: 20
@@ -1359,9 +1235,45 @@ function savePath() {
     var blob = new Blob([content],
         { type: "text/plain;charset=utf-8" });
 
-    // Nome do arquivo com data em milissegundos decorridos
-    fileName = new Date().getTime() + ".txt";
-    saveAs(blob, fileName);
+    const custom_name = prompt('Digite um nome para o plano de voo');
+    const timestamp = new Date().getTime();
+
+    // Criação de um novo registro na tabela de planos de vôo
+    generateNewFlightPlan(custom_name, timestamp, blob);
+
+}
+
+// == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
+function generateNewFlightPlan(custom_name, timestamp, blob) {
+
+    const filename = timestamp + ".txt";
+    const file = new File([blob], filename);
+
+    let formData = new FormData();
+    formData.append("name", custom_name);
+    formData.append("description", "none");
+    formData.append("coordinates_file", file);
+
+    axios.post("/api/plans-module", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    }).then((response) => {
+
+        console.log(response)
+        alert("O plano foi salvo no sistema e está disponível para download.");
+
+        setTimeout(() => {
+            window.close();
+        }, 1000)
+
+    }).catch((error) => {
+
+        console.log(error.response);
+        alert("Erro! Tente novamente.");
+
+    })
+
 }
 
 // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR A POSIÇÃO INICIAL NO MAPA === //
@@ -1371,7 +1283,6 @@ function importKMLPoint(e) {
     cleanLayers();
     cleanPolygon();
 
-    console.log(marcador);
     // Apagando o marcador anterior
     marcador.remove();
 
@@ -1394,6 +1305,7 @@ function importKMLPoint(e) {
         // Quebrando a única coordenada do ponto
         coordinates = coordinates.split(",");
         home = [Number(coordinates[0]), Number(coordinates[1])];
+
 
         // Direcionando o mapa para a posição inicial
         map.flyTo({
@@ -1444,7 +1356,6 @@ function importKMLPolygon(e) {
 
         // Percorrendo todas as coordenadas e quebrando as informações de lat e long
         for (i = 0; i < coordinates.length - 1; i++) {
-            console.log(coordinates[i]);
 
             latLong = coordinates[i].split(",");
             kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -1475,91 +1386,94 @@ function importKMLPolygon(e) {
     reader.readAsText(file);
 }
 
-// === OPÇÃO DE "ABRIR" UM ARQUIVO .poly DO MISSION PLANNER E CARREGAR UM POLÍGONO NO MAPA === //
-function importMPPolygon(e) {
-
-    // Limpando layers, campos e polígono
-    cleanLayers();
-    cleanPolygon();
-
-    var file = e.target.files[0];
-    var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-    if (!file || extension !== 'poly') { return; }
-
-    var reader = new FileReader();
-
-    reader.onload = function (e) {
-        // Conteúdo completo do arquivo
-        var contents = e.target.result;
-
-        // Localizando as tags <coordinates> dentro do arquivo
-        /*var coordinates  = contents.substring(
-        contents.search("<coordinates>") + 13, 
-        contents.search("</coordinates>")
-    );*/
-
-        //console.log(contents);
-
-        // Quebrando todas as coordenadas do polígono
-        coordinates = contents.split(/\r?\n/);
-
-        //console.log(coordinates);	
-        // Array que irá armazenar as coordenadas da área
-        kmlArea = [];
-
-        // Percorrendo todas as coordenadas e quebrando as informações de lat e long
-        for (i = 0; i < coordinates.length - 1; i++) {
-            //console.log(coordinates[i]);
-
-            latLong = coordinates[i].split(" ");
-            kmlArea[i] = [Number(latLong[1]), Number(latLong[0])];
-            //console.log(kmlArea[i]);
-        }
-
-        coordinatesLongLat = kmlArea;
-        home = kmlArea[0];
-
-        console.log(coordinatesLongLat);
-
-        // Acessando o centroide da área para posicionar no mapa
-        var polygon = turf.polygon([kmlArea]);
-        var centroid = turf.coordAll(turf.centroid(polygon));
-
-        // Direcionando o mapa
-        map.flyTo({
-            center: [
-                centroid[0][0], centroid[0][1]
-            ],
-            essential: true
-        });
-
-        // Desenhando o polígono no mapa e calculando o tamanho da área importada
-        drawTxtArea(kmlArea);
-        calculateTxtArea();
-
-        // Chamando novamente as funções que calculam a maior aresta e o vértice mais distante
-        longestEdgeLongLat = longestEdge(kmlArea);
-        farthestVertexLongLat = farthestVertex(kmlArea, longestEdgeLongLat);
-    };
-    reader.readAsText(file);
-}
-
 // === OPÇÃO DE "ABRIR" UM ARQUIVO .TXT E CARREGAR A ROTA === //
-function openTxtFile(e) {
+function openTxtFile(file, source) {
 
     // Limpando layers, campos e polígono
     cleanLayers();
     cleanPolygon();
 
-    var file = e.target.files[0];
-    var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-    if (!file || extension !== 'txt') { return; }
+    if (source === "UPLOAD") {
 
-    var reader = new FileReader();
+        var reader = new FileReader();
 
-    reader.onload = function (e) {
+        const extension = file.name.split('.').pop().toLowerCase();
+        if (!file || extension !== 'txt') { return; }
+
+        reader.onload = function (e) {
+            // Conteúdo completo do arquivo
+            var contents = e.target.result;
+
+            // Quebrando as linhas do arquivo em um array
+            var lines = contents.split("\n");
+
+            // Acessando a posição inicial (home) contida no arquivo
+            var txtHome = lines[1].split("\t");
+            home = [Number(txtHome[9]), Number(txtHome[8])];
+
+            // Acessando a velocidade contida no arquivo e preenchendo o campo no form
+            var txtSpeed = lines[3].split("\t");
+            document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
+            document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
+
+            // Acessando a altitude contida no arquivo e preenchendo o campo no form
+            var txtAltitude = lines[2].split("\t");
+            document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
+            document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
+
+            // Array que armazenará todos os waypoints da rota do arquivo
+            var txtPath = [];
+            index = 0;
+
+            // Quebrando todas as linhas nos espaços \t
+            for (i = 4; i < lines.length - 2; i++) {
+                line = lines[i].split("\t");
+
+                // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+                txtPath[index] = [Number(line[9]), Number(line[8])];
+                index++
+            }
+
+            // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
+            txtArea = [];
+            index = 0;
+
+            // Quebrando a última linha para acessar as coordenadas do polígono
+            txtPolygon = lines[lines.length - 1].split("\t");
+
+            // Acessando todas as coordenadas
+            for (i = 1; i < txtPolygon.length - 1; i++) {
+                txtLatLong = txtPolygon[i].split(",");
+                txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
+                index++;
+            }
+
+            // Acessando o centroide da área para posicionar no mapa
+            var polygon = turf.polygon([txtArea]);
+            var centroid = turf.coordAll(turf.centroid(polygon));
+
+            // Direcionando o mapa
+            map.flyTo({
+                center: [
+                    centroid[0][0], centroid[0][1]
+                ],
+                essential: true
+            });
+
+            // Desenhando a rota e calculando sua distância
+            drawTxtPath(txtPath);
+            calculateTxtDistance(txtPath);
+
+            // Desenhando o polígono e calculando sua área
+            drawTxtArea(txtArea);
+            calculateTxtArea();
+
+        };
+
+    } else if (source === "STORAGE") {
+
         // Conteúdo completo do arquivo
-        var contents = e.target.result;
+        var contents = file;
 
         // Quebrando as linhas do arquivo em um array
         var lines = contents.split("\n");
@@ -1586,16 +1500,9 @@ function openTxtFile(e) {
         for (i = 4; i < lines.length - 2; i++) {
             line = lines[i].split("\t");
 
-            // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
-            // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
-            // adicionados ao desenho da rota
-            if (Number(line[3]) == 16) {
-                // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
-                txtPath[index] = [Number(line[9]), Number(line[8])];
-                index++
-            }
-            console.log(Number(line[3]));
-
+            // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+            txtPath[index] = [Number(line[9]), Number(line[8])];
+            index++
         }
 
         // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
@@ -1632,7 +1539,8 @@ function openTxtFile(e) {
         drawTxtArea(txtArea);
         calculateTxtArea();
 
-    };
+    }
+
     reader.readAsText(file);
 }
 
@@ -1641,7 +1549,6 @@ function calculateTxtDistance(txtPath) {
 
     // Distância percorrida pela rota importada do arquivo
     totalDistance = 0;
-    console.log(speed.value);
     for (j = 0; j < txtPath.length - 1; j++) {
         totalDistance += turf.distance(turf.point([txtPath[j][0], txtPath[j][1]]), turf.point([txtPath[j + 1][0], txtPath[j + 1][1]]));
     }
@@ -1754,6 +1661,7 @@ function cleanLayerById(id) {
 }
 
 function cleanFields() {
+
     // Limpando o input file e os boxes de distância e tamanho da área
     document.getElementById('file-input').value = "";
     document.getElementById('file-import').value = "";
@@ -1770,6 +1678,7 @@ function cleanFields() {
     document.getElementById('label-altitude').innerHTML = "Altitude: 10m";
     document.getElementById('label-speed').innerHTML = "Velocidade: 8m/s";
     document.getElementById('label-distance').innerHTML = "Distância: 50m";
+
 }
 
 function cleanPolygon() {

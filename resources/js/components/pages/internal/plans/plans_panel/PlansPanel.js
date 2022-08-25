@@ -210,9 +210,7 @@ export function PlansPanel() {
 
   const handleDownloadFlightPlan = ((filename) => {
 
-    const module_middleware = `${AuthData.data.id}.${2}.${"read"}`;
-
-    AxiosApi.get(`/api/plans-module-download/${filename}?auth=${module_middleware}`, null, {
+    AxiosApi.get(`/api/plans-module-download/${filename}?`, null, {
       responseType: 'blob'
     })
       .then(function (response) {

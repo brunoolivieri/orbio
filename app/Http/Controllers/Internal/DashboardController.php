@@ -109,52 +109,20 @@ class DashboardController extends Controller
 
         $logins = [
             [
-                "x" => "Janeiro",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 1)->withTrashed()->count()
+                "x" => "Manhã",
+                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereTime('last_access', '>=', '06:00:00')->whereTime('last_access', '<', '12:00:00')->count()
             ],
             [
-                "x" => "Fevereiro",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 2)->withTrashed()->count()
+                "x" => "Tarde",
+                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereTime('last_access', '>=', '12:00:00')->whereTime('last_access', '<', '18:00:00')->count()
             ],
             [
-                "x" => "Março",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 3)->withTrashed()->count()
+                "x" => "Noite",
+                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereTime('last_access', '>=', '18:00:00')->whereTime('last_access', '<', '00:00:00')->count()
             ],
             [
-                "x" => "Abril",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 4)->withTrashed()->count()
-            ],
-            [
-                "x" => "Maio",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 5)->withTrashed()->count()
-            ],
-            [
-                "x" => "Junho",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 6)->withTrashed()->count()
-            ],
-            [
-                "x" => "Julho",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 7)->withTrashed()->count()
-            ],
-            [
-                "x" => "Agosto",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 8)->withTrashed()->count()
-            ],
-            [
-                "x" => "Setembro",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 9)->withTrashed()->count()
-            ],
-            [
-                "x" => "Outubro",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 10)->withTrashed()->count()
-            ],
-            [
-                "x" => "Novembro",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 11)->withTrashed()->count()
-            ],
-            [
-                "x" => "Dezembro",
-                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereMonth('last_access', '=', 12)->withTrashed()->count()
+                "x" => "Madrugada",
+                "y" => $this->user_model->whereYear('last_access', '=', date("Y"))->whereTime('last_access', '>=', '00:00:00')->whereTime('last_access', '<', '06:00:00')->count()
             ]
         ];
 

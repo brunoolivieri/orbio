@@ -13,8 +13,6 @@ use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
 
 class FlightPlanService {
 
-    private FormatDataService $format_data_service;
-
     /**
     * Load all flight plans with pagination.
     *

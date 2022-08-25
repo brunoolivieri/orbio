@@ -23,7 +23,8 @@ class FlightPlanModuleController extends Controller
      * 
      * @param App\Services\Modules\FlightPlan\FlightPlanService $service
      */
-    public function __construct(FlightPlanService $service){
+    public function __construct(FlightPlanService $service)
+    {
         $this->service = $service;
     }
 
@@ -32,7 +33,7 @@ class FlightPlanModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_read');
 
@@ -42,7 +43,6 @@ class FlightPlanModuleController extends Controller
         $actual_page = (int) $args[2];
 
         return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
-
     }
 
     /**
@@ -50,12 +50,12 @@ class FlightPlanModuleController extends Controller
      * @param string $filename
      * @return \Illuminate\Http\Response
      */
-    public function downloadResource(string $filename) : \Illuminate\Http\Response {
+    public function downloadFlightPlan(string $filename): \Illuminate\Http\Response
+    {
 
         Gate::authorize('flight_plans_read');
 
-        return $this->service->getFlightPlanFile($filename);
-       
+        return $this->service->downloadResource($filename);
     }
 
     /**
@@ -64,12 +64,11 @@ class FlightPlanModuleController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request) : \Illuminate\Http\Response
+    public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
         return $this->service->createResource($request);
-
     }
 
     /**
@@ -78,7 +77,7 @@ class FlightPlanModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_read');
 
@@ -87,8 +86,7 @@ class FlightPlanModuleController extends Controller
         $where_value = $args[1];
         $actual_page = (int) $args[2];
 
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value); 
-
+        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
     }
 
     /**
@@ -98,12 +96,11 @@ class FlightPlanModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(FlightPlanUpdateRequest $request, $id) : \Illuminate\Http\Response
+    public function update(FlightPlanUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
         return $this->service->updateResource($request, $id);
- 
     }
 
     /**
@@ -112,11 +109,10 @@ class FlightPlanModuleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
         return $this->service->deleteResource($id);
-
     }
 }

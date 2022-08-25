@@ -32,7 +32,7 @@ const CardStyle = {
 }
 
 const CardContentStyle = {
-  bgcolor: '#fff'
+  bgcolor: '#F7F7F7'
 }
 
 const topSectionStyle = {
@@ -42,7 +42,7 @@ const topSectionStyle = {
   padding: 3,
   borderRadius: 5,
   mt: 10,
-  bgcolor: '#333',
+  bgcolor: '#0275D8',
   boxShadow: 1
 }
 
@@ -197,7 +197,7 @@ export const Dashboard = React.memo(({ ...props }) => {
       </Paper>
 
       <Paper sx={middleSectionStyle}>
-        <Typography variant="h5">Tráfego</Typography>
+        <Typography variant="h5">Tráfego diário</Typography>
         <Grid container>
           <Grid item xs={12} sx={{ height: 350 }}>
             {!loading && <LinesChart data={logins} />}
