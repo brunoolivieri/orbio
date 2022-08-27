@@ -12,7 +12,6 @@ import { Plans } from "../components/pages/internal/plans/Plans";
 import { Reports } from "../components/pages/internal/reports/Reports";
 import { Account } from "../components/pages/internal/account/Account";
 import { Administration } from "../components/pages/internal/administration/Administration";
-import { Configurations } from "../components/pages/internal/configurations/Configurations";
 import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
 import { Incidents } from "../components/pages/internal/incidents/Incidents";
@@ -44,7 +43,6 @@ export function InternalRoutes({ ...props }) {
             <Route exact path="planos" element={<Plans setPage={props.setPage} />} />
             <Route exact path="relatorios" element={<Reports setPage={props.setPage} />} />
             <Route exact path="conta" element={<Account setPage={props.setPage} />} />
-            <Route exact path="configuracoes" element={<Configurations setPage={props.setPage} />} />
             <Route exact path="administracao" element={<Administration setPage={props.setPage} />} />
             <Route exact path="suporte" element={<Support setPage={props.setPage} />} />
             <Route exact path="ordens" element={<ServiceOrders setPage={props.setPage} />} />
