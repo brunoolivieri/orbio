@@ -10,12 +10,19 @@ import cities from "../../../services/brazil_geo_data.json";
 
 export const SelectStates = React.memo((props) => {
 
-    const [selectedOption, setSelectedOption] = React.useState(props.default ? props.default : "0");
+    const [selected, setSelected] = React.useState(props.controlledInput.state);
 
     const handleSelectChange = (event) => {
 
-        setSelectedOption(event.target.value);
+        setSelected(event.target.value);
         props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.target.value });
+
+        console.log(selected)
+        console.log(props.controlledInput.state)
+
+        if (selected != "0") {
+            props.setControlledInput({ ...props.controlledInput, ["city"]: "0" });
+        }
 
     }
 
@@ -24,26 +31,26 @@ export const SelectStates = React.memo((props) => {
         <>
             <FormControl sx={{ mr: 2 }}>
                 <InputLabel id="demo-simple-select-helper-label">Estado</InputLabel>
-                {selectedOption != null &&
-                    <Select
-                        labelId="demo-simple-select-helper-label"
-                        value={selectedOption}
-                        label={"Estado"}
-                        onChange={handleSelectChange}
-                        name={"state"}
-                        error={props.fieldError}
-                    >
 
-                        <MenuItem value="0" disabled>Escolha uma opção</MenuItem>
+                <Select
+                    labelId="demo-simple-select-helper-label"
+                    value={selected}
+                    label={"Estado"}
+                    onChange={handleSelectChange}
+                    name={"state"}
+                    error={props.fieldError}
+                >
 
-                        {
-                            cities.estados.map((row, index) =>
-                                <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
-                            )
-                        }
+                    <MenuItem value="0" disabled>Escolha uma opção</MenuItem>
 
-                    </Select>
-                }
+                    {
+                        cities.estados.map((row, index) =>
+                            <MenuItem value={row.sigla} key={index}>{row.sigla}</MenuItem>
+                        )
+                    }
+
+                </Select>
+
             </FormControl>
         </>
 

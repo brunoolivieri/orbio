@@ -26,23 +26,24 @@ class LoginRequest extends FormRequest
 
         return [
             'email' => 'required|email|exists:users,email',
-            'password' => 'required'
+            'password' => 'required|min:3|max:15'
         ];
-
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
             "email.required" => "O email precisa ser informado",
             "email.email" => "Informe um email válido",
             "email.exists" => "O email não está cadastrado",
-            "password.required" => "A senha precisa ser informada"
+            "password.required" => "A senha precisa ser informada",
+            "password.min" => "Senha inválida",
+            "password.max" => "Senha inválida"
         ];
     }
 }

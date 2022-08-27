@@ -83,13 +83,10 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   const requestServerOperation = () => {
 
-    const random_pass = `User${(Math.floor(Math.random() * 100000000) + 99999999)}`;
-
     AxiosApi.post(`/api/admin-module-user`, {
       email: controlledInput.email,
       name: controlledInput.name,
-      profile_id: controlledInput.profile,
-      password: random_pass
+      profile_id: controlledInput.profile
     })
       .then(function () {
 

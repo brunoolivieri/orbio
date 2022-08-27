@@ -6,8 +6,8 @@ import { CreateReportFormulary } from "../../../../structures/modules/reports/Cr
 import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
 import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
 import { GenerateReportFormulary } from "../../../../structures/modules/reports/GenerateReportFormulary";
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -212,7 +212,6 @@ export function ReportsPanel() {
 
   return (
     <>
-      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -334,6 +333,7 @@ export function ReportsPanel() {
 
         </RadioGroup>
       </FormControl>
+      {loading && <LinearProgress color="success" />}
     </>
   );
 }

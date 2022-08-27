@@ -1,19 +1,28 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// Auth Controllers
-use App\Http\Controllers\Auth\{
+// Authentication
+use App\Http\Controllers\Actions\Authentication\{
     LoginController,
-    PasswordResetTokenController,
+    LogoutController,
     PasswordResetController,
-    LogoutController
-}; 
+    PasswordTokenController
+};
+// Actions
+use App\Http\Controllers\Actions\{
+    LoadAuthData,
+    LoadFlightPlansController,
+    LoadIncidentsController,
+    LoadProfilesController,
+    LoadReportsController,
+    LoadUsersController
+};
 // Internal Controller 
 use App\Http\Controllers\Internal\{
     DashboardController,
     MyAccountController,
     SupportController
-}; 
+};
 // Modules
 use App\Http\Controllers\Modules\Administration\{
     AdministrationModuleUsersController,
@@ -28,39 +37,30 @@ use App\Http\Controllers\Modules\Equipment\{
     EquipmentModuleDronePanelController,
     EquipmentModuleEquipmentPanelController
 };
-// Actions
-use App\Http\Controllers\Actions\{
-    LoadAuthData,
-    LoadFlightPlansController,
-    LoadIncidentsController,
-    LoadProfilesController,
-    LoadReportsController,
-    LoadUsersController
-};
 
 // External Views
 Route::middleware(['guest'])->group(function () {
-    Route::get('/', function() { 
-        return redirect("/login"); 
-    }); 
-    Route::view('/login', "react_root"); 
+    Route::get('/', function () {
+        return redirect("/login");
+    });
+    Route::view('/login', "react_root");
     Route::view('/forgot-password', "react_root");
 });
- 
+
 
 // External operations
-Route::post('/api/auth/login', [LoginController::class, "index"]); 
-Route::post('/api/auth/password-token', [PasswordResetTokenController::class, "index"]); 
-Route::post('/api/auth/change-password', [PasswordResetController::class, "index"]); 
+Route::post('/api/auth/login', LoginController::class);
+Route::post('/api/auth/password-token', PasswordTokenController::class);
+Route::post('/api/auth/change-password', PasswordResetController::class);
 
-Route::middleware(["session.auth"])->group(function(){
+Route::middleware(["session.auth"])->group(function () {
     // Internal simple operations
-    Route::view('/internal', "react_root"); 
-    Route::get('/internal/{internalpage?}', function(){
+    Route::view('/internal', "react_root");
+    Route::get('/internal/{internalpage?}', function () {
         return redirect("/internal");
-    })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard"); 
-    Route::get('/api/auth/logout', [LogoutController::class, "index"]); 
-    Route::view('/internal/map', "map"); 
+    })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard");
+    Route::get('/api/auth/logout', LogoutController::class);
+    Route::view('/internal/map', "map");
     // Internal Dashboard 
     Route::get('/api/load-dashboard-metrics', DashboardController::class);
     // Internal "MyAccount" operations
@@ -84,13 +84,10 @@ Route::middleware(["session.auth"])->group(function(){
     Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
-    Route::post('/api/get-auth-data', LoadAuthData::class); 
+    Route::post('/api/get-auth-data', LoadAuthData::class);
     Route::get("/api/load-users", LoadUsersController::class);
     Route::get("/api/load-profiles", LoadProfilesController::class);
     Route::get("/api/load-flight_plans", LoadFlightPlansController::class);
     Route::get("/api/load-incidents", LoadIncidentsController::class);
     Route::get("/api/load-reports", LoadReportsController::class);
 });
-
-
-

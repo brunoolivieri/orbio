@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Modules\Equipment;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;

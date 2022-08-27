@@ -6,7 +6,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateDroneFormulary } from '../../../../structures/modules/equipment/drones/CreateDroneFormulary';
 import { DeleteDroneFormulary } from '../../../../structures/modules/equipment/drones/DeleteDroneFormulary';
 import { UpdateDroneFormulary } from '../../../../structures/modules/equipment/drones/UpdateDroneFormulary';
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -206,7 +206,6 @@ export const DronesPanel = React.memo(() => {
 
     return (
         <>
-            {loading && <BackdropLoading />}
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
@@ -332,6 +331,7 @@ export const DronesPanel = React.memo(() => {
                     </TableContainer>
                 </RadioGroup>
             </FormControl>
+            {loading && <LinearProgress color="success" />}
         </>
     )
 });

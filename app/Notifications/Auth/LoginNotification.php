@@ -45,14 +45,11 @@ class LoginNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
-        $first_name = explode(" ", $notifiable->name)[0];
-
         return (new MailMessage)
             ->subject('ORBIO - Notificação de login')
-            ->greeting("Olá ".$first_name."!")
+            ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Você está sendo notificado que um acesso foi realizado na sua conta.")
-            ->line("Data de acesso: ".date("d-m-Y h:i:s"))
+            ->line("Data de acesso: " . date("d-m-Y h:i:s"))
             ->line('Se não foi você quem realizou o acesso, contate o suporte.');
     }
 

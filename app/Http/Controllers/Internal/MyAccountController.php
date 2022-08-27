@@ -29,7 +29,8 @@ class MyAccountController extends Controller
      * 
      * @param App\Models\User\UserModel $user
      */
-    public function __construct(UserModel $user){
+    public function __construct(UserModel $user)
+    {
         $this->user_model = $user;
     }
 
@@ -38,18 +39,18 @@ class MyAccountController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    function loadBasicData() : \Illuminate\Http\Response {
+    function loadBasicData(): \Illuminate\Http\Response
+    {
 
         $user = $this->user_model->find(Auth::user()->id);
 
-       return response([
-        "name" => $user->name,
-        "email" => $user->email,
-        "profile" => $user->profile->name,
-        "last_access" => $user->last_access,
-        "last_update" => $user->updated_at
-       ], 200);
-
+        return response([
+            "name" => $user->name,
+            "email" => $user->email,
+            "profile" => $user->profile->name,
+            "last_access" => $user->last_access,
+            "last_update" => $user->updated_at
+        ], 200);
     }
 
     /**
@@ -57,7 +58,8 @@ class MyAccountController extends Controller
      * 
      * @return \Illuminate\Http\Response
      */
-    function loadComplementaryData() : \Illuminate\Http\Response  {
+    function loadComplementaryData(): \Illuminate\Http\Response
+    {
 
         $user = $this->user_model->find(Auth::user()->id);
 
@@ -75,12 +77,11 @@ class MyAccountController extends Controller
                 'address' => $user->complementary_data->address->address,
                 'number' => $user->complementary_data->address->number,
                 'cep' => $user->complementary_data->address->cep,
-                'city' => $user->complementary_data->address->city,
-                'state' => $user->complementary_data->address->state,
+                'city' => isset($user->complementary_data->address->city) ? $user->complementary_data->address->city : "0",
+                'state' => isset($user->complementary_data->address->state) ? $user->complementary_data->address->state : "0",
                 'complement' => $user->complementary_data->address->complement
-            ]    
+            ]
         ], 200);
-
     }
 
     /**
@@ -89,11 +90,12 @@ class MyAccountController extends Controller
      * @param  App\Http\Requests\UserAccount\UpdateBasicDataRequest  $request
      * @return \Illuminate\Http\Response
      */
-    function loadActiveSessions() : \Illuminate\Http\Response {
+    function loadActiveSessions(): \Illuminate\Http\Response
+    {
 
         $active_sessions = [];
-        
-        for($count = 0; $count < count(Auth::user()->sessions); $count++){
+
+        for ($count = 0; $count < count(Auth::user()->sessions); $count++) {
 
             $user_agent_array = explode(" ", Auth::user()->sessions[$count]->user_agent);
             $browser = $user_agent_array[count($user_agent_array) - 1];
@@ -115,19 +117,16 @@ class MyAccountController extends Controller
      * @param  App\Http\Requests\UserAccount\UpdateBasicDataRequest  $request
      * @return \Illuminate\Http\Response
      */
-    function basicDataUpdate(UpdateBasicDataRequest $request) : \Illuminate\Http\Response {
+    function basicDataUpdate(UpdateBasicDataRequest $request): \Illuminate\Http\Response
+    {
 
         $user = UserModel::findOrFail(Auth::user()->id);
 
-        $user->update([
-            "name" => $request->name,
-            "email" => $request->email
-        ]);
+        $user->update($request->validated());
 
         $user->notify(new BasicDataUpdatedNotification($user));
 
         return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
-
     }
 
     /**
@@ -136,24 +135,16 @@ class MyAccountController extends Controller
      * @param  App\Http\Requests\UserAccount\UpdateDocumentsRequest $request
      * @return \Illuminate\Http\Response
      */
-    function documentsUpdate(UpdateDocumentsRequest $request) : \Illuminate\Http\Response {
+    function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
+    {
 
         $user = UserModel::find(Auth::user()->id);
 
-        UserComplementaryDataModel::where("id", $user->complementary_data->id)->update([
-            "anac_license" => $request->anac_license,
-            "cpf" => $request->cpf,
-            "cnpj" => $request->cnpj,
-            "telephone" => $request->telephone,
-            "cellphone" => $request->cellphone,
-            "company_name" => $request->company_name,
-            "trading_name" => $request->trading_name
-        ]);
+        UserComplementaryDataModel::where("id", $user->complementary_data->id)->update($request->validated());
 
         $user->notify(new DocumentsUpdatedNotification($user));
 
         return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
-
     }
 
     /**
@@ -162,23 +153,16 @@ class MyAccountController extends Controller
      * @param App\Http\Requests\UserAccount\UpdateAddressRequest $request
      * @return \Illuminate\Http\Response
      */
-    function addressUpdate(UpdateAddressRequest $request) : \Illuminate\Http\Response {
+    function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
+    {
 
         $user = UserModel::find(Auth::user()->id);
 
-        UserAddressModel::where("id", $user->complementary_data->address->id)->update([
-            "address" => $request->address,
-            "number" => $request->number,
-            "cep" => $request->cep,
-            "city" => $request->city,
-            "state" => $request->state,
-            "complement" => $request->complement
-        ]);
+        UserAddressModel::where("id", $user->complementary_data->address->id)->update($request->validated());
 
         $user->notify(new AddressUpdatedNotification($user));
 
         return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
-
     }
 
     /**
@@ -187,11 +171,12 @@ class MyAccountController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    function passwordUpdate(UpdatePasswordRequest $request){
+    function passwordUpdate(UpdatePasswordRequest $request)
+    {
 
         $user = UserModel::find(Auth::user()->id);
 
-        $user->update(["password" => Hash::make($request->new_password)]);
+        $user->update($request->safe()->only(['new_password']));
 
         $user->notify(new ChangePasswordNotification($user));
 
@@ -204,7 +189,8 @@ class MyAccountController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    function accountDesactivation($id) : \Illuminate\Http\Response {
+    function accountDesactivation($id): \Illuminate\Http\Response
+    {
 
         $user = UserModel::find($id);
 

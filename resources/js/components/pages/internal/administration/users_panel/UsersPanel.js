@@ -7,7 +7,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -204,7 +204,6 @@ export function UsersPanel() {
 
   return (
     <>
-      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -288,7 +287,6 @@ export function UsersPanel() {
         }
 
       </Grid>
-
       <FormControl fullWidth>
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
@@ -324,6 +322,7 @@ export function UsersPanel() {
           </TableContainer>
         </RadioGroup>
       </FormControl>
+      {loading && <LinearProgress color="success" />}
     </>
   )
 }

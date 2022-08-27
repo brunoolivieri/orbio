@@ -12,21 +12,23 @@ import Select from '@mui/material/Select';
 
 export const SelectCities = React.memo((props) => {
 
-    const [selectedOption, setSelectedOption] = React.useState(props.default ? props.default : "0");
     const [options, setOptions] = React.useState([]);
+    const [selected, setSelected] = React.useState(props.controlledInput.city);
 
     React.useEffect(() => {
         cities.estados.map((state) => {
             // The cities of the selected state are selected
-            if (state.sigla == props.selectedState) {
+            if (state.sigla == props.controlledInput.state) {
                 setOptions(state.cidades);
             }
         });
-    }, [props.selectedState]);
+    }, []);
 
     const handleSelectChange = (event) => {
-        setSelectedOption(event.target.value);
+
+        setSelected(event.target.value);
         props.setControlledInput({ ...props.controlledInput, [event.target.name]: event.target.value });
+        
     }
 
     return (
@@ -35,20 +37,17 @@ export const SelectCities = React.memo((props) => {
                 <InputLabel id="demo-simple-select-helper-label">Cidade</InputLabel>
                 <Select
                     labelId="demo-simple-select-helper-label"
-                    value={selectedOption}
+                    value={selected}
                     label={"Cidade"}
                     onChange={handleSelectChange}
                     name={"city"}
                     error={props.fieldError}
-                    disabled={props.selectedState ? false : true}
                 >
 
                     <MenuItem value="0" disabled>Escolha uma opção</MenuItem>
 
                     {options.map((city, index) =>
-
                         <MenuItem value={city} key={index}>{city}</MenuItem>
-
                     )
 
                     }

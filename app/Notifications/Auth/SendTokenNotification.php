@@ -44,14 +44,11 @@ class SendTokenNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
-        $first_name = explode(" ", $notifiable->name)[0];
-
         return (new MailMessage)
             ->subject('ORBIO - Código para alteração da senha')
-            ->greeting("Olá ".$first_name."!")
+            ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Recebemos um pedido para alteração da sua senha.")
-            ->line("Código: ".$notifiable->password_resets->token)
+            ->line("Código: " . $notifiable->password_resets->token)
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }
 

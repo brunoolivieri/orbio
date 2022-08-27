@@ -103,7 +103,7 @@ class FlightPlanService {
 
         // Flight plan is stored just if does not already exists
         if (!Storage::disk('public')->exists($storage_folder.$filename)) {
-            $path = $request->file('coordinates_file')->storeAs($storage_folder, $filename);
+            $request->file('coordinates_file')->storeAs($storage_folder, $filename);
         }
 
         return response(["message" => "Plano de voo criado com sucesso!"], 200);

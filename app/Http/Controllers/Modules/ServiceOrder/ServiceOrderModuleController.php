@@ -55,7 +55,7 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->createResource($request);
+        return $this->service->createResource($request->validated());
 
     }
 
@@ -89,7 +89,7 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->updateResource($request, $id);
+        return $this->service->updateResource($request->validated(), $id);
 
     }
 

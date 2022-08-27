@@ -45,13 +45,11 @@ class UserDisabledNotification extends Notification
     public function toMail($notifiable)
     {
 
-        $first_name = explode(" ", $notifiable->name)[0];
-        
         return (new MailMessage)
             ->subject('ORBIO - Desabilitação da conta')
-            ->greeting("Olá ".$first_name."!")
+            ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Você está sendo notificado que sua conta foi desabilitada no nosso sistema.")
-            ->line("Data: ".date("d-m-Y h:i:s"))
+            ->line("Data: " . date("d-m-Y h:i:s"))
             ->line('Se não foi você quem requisitou ou realizou o procedimento, contate o suporte.');
     }
 

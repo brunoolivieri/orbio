@@ -19,25 +19,24 @@ class UserPanelStoreRequest extends FormRequest
     }
 
     /**
-    * Get the validation rules that apply to the request.
-    *
-    * @return array
-    */
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
     public function rules()
     {
         return [
-                'name' => 'bail|required',
-                'email' => 'bail|required|email|unique:users,email',
-                'profile_id' => 'bail|required|numeric',
-                'password' => 'bail|required'
-            ];  
+            'name' => 'bail|required',
+            'email' => 'bail|required|email|unique:users,email',
+            'profile_id' => 'bail|required|exists:profiles,id'
+        ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
@@ -45,8 +44,8 @@ class UserPanelStoreRequest extends FormRequest
             'email.required' => 'O email do usuário deve ser informado',
             'email.unique' => 'Esse email já está cadastrado',
             'email.email' => 'Digite um email válido',
-            'profile_id.required' => 'Um perfil de usuário deve ser selecionado'
+            'profile_id.required' => 'Um perfil de usuário deve ser selecionado',
+            'profile_id.exists' => 'Selecione um perfil válido'
         ];
     }
-
 }

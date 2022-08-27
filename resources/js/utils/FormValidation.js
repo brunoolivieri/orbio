@@ -2,7 +2,7 @@ export const FormValidation = (value, minLength = null, maxLength = null, regex 
 
     if (nullCheck(value)) {
 
-        return { error: true, message: "O campo deve ser preenchido" }
+        return { error: true, message: "O campo deve ser informado" }
 
     }
 

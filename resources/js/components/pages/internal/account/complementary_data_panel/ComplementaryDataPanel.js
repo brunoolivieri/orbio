@@ -36,8 +36,8 @@ export const ComplementaryDataPanel = React.memo(() => {
         address: "Carregando",
         number: "Carregando",
         cep: "Carregando",
-        city: "Carregando",
-        state: "Carregando",
+        city: "0",
+        state: "0",
         complement: "Carregando"
     });
 
@@ -67,13 +67,15 @@ export const ComplementaryDataPanel = React.memo(() => {
             address: "Carregando",
             number: "Carregando",
             cep: "Carregando",
-            city: "Carregando",
-            state: "Carregando",
+            city: "0",
+            state: "0",
             complement: "Carregando"
         });
 
         AxiosApi.get("/api/load-complementary-account-data")
             .then(function (response) {
+
+                //console.log(response.data)
 
                 setLoadingFields(false);
                 setAddressUpdateLoading(false);
@@ -89,8 +91,8 @@ export const ComplementaryDataPanel = React.memo(() => {
                     address: response.data.address.address ? response.data.address.address : "",
                     number: response.data.address.number ? response.data.address.number : "",
                     cep: response.data.address.cep ? response.data.address.cep : "",
-                    city: response.data.address.city ? response.data.address.city : "",
-                    state: response.data.address.state ? response.data.address.state : "",
+                    city: response.data.address.city,
+                    state: response.data.address.state,
                     complement: response.data.address.complement ? response.data.address.complement : ""
                 });
 
@@ -602,8 +604,6 @@ export const ComplementaryDataPanel = React.memo(() => {
                 </Paper>
             </Box>
 
-
-
             <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
 
@@ -612,8 +612,10 @@ export const ComplementaryDataPanel = React.memo(() => {
                     <Grid container spacing={3}>
 
                         <Grid item xs={12} sm={12}>
-                            <SelectStates default={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.state} />
-                            <SelectCities default={controlledInput.city} selectedState={controlledInput.state} controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.city} />
+
+                            <SelectStates controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.state} />
+                            <SelectCities controlledInput={controlledInput} setControlledInput={setControlledInput} selectedState={controlledInput.state} error={fieldError.city} />
+
                         </Grid>
 
                         <Grid item xs={12} sm={6}>

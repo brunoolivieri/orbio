@@ -6,7 +6,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
-import { BackdropLoading } from "../../../../structures/backdrop_loading/BackdropLoading";
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import styled from "@emotion/styled";
 import { Table } from "@mui/material";
@@ -206,7 +206,6 @@ export function ProfilesPanel() {
 
   return (
     <>
-      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -359,6 +358,7 @@ export function ProfilesPanel() {
           </TableContainer>
         </RadioGroup>
       </FormControl>
+      {loading && <LinearProgress color="success" />}
     </>
   )
 }

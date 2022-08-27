@@ -25,7 +25,6 @@ class UserCreatedNotification extends Notification
     {
         $this->user = $user;
         $this->password = $password;
-
     }
 
     /**
@@ -48,15 +47,13 @@ class UserCreatedNotification extends Notification
     public function toMail($notifiable)
     {
 
-        $first_name = explode(" ", $notifiable->name)[0];
-        
         return (new MailMessage)
             ->subject('ORBIO - Nova conta')
-            ->greeting("Bem vindo ".$first_name."!")
+            ->greeting("Bem vindo " . $notifiable->first_name . "!")
             ->line("A seguir estão os dados para acesso a sua nova conta no nosso sistema.")
-            ->line("Email: ".$notifiable->email)
-            ->line("Senha: ".$this->password)
-            ->line("Data de acesso: ".date("d-m-Y h:i:s"))
+            ->line("Email: " . $notifiable->email)
+            ->line("Senha: " . $this->password)
+            ->line("Data de acesso: " . date("d-m-Y h:i:s"))
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }

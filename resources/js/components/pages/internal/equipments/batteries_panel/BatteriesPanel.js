@@ -6,7 +6,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { DeleteBatteryFormulary } from '../../../../structures/modules/equipment/batteries/DeleteBatteryFormulary';
 import { UpdateBatteryFormulary } from '../../../../structures/modules/equipment/batteries/UpdateBatteryFormulary';
 import { CreateBatteryFormulary } from "../../../../structures/modules/equipment/batteries/CreateBatteryFormulary";
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -210,7 +210,6 @@ export const BatteriesPanel = React.memo(() => {
 
     return (
         <>
-            {loading && <BackdropLoading />}
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
@@ -332,6 +331,7 @@ export const BatteriesPanel = React.memo(() => {
                     </TableContainer>
                 </RadioGroup>
             </FormControl>
+            {loading && <LinearProgress color="success" />}
         </>
     )
 });

@@ -45,19 +45,17 @@ class DocumentsUpdatedNotification extends Notification
     public function toMail($notifiable)
     {
 
-        $first_name = explode(" ", $notifiable->name)[0];
-
         return (new MailMessage)
             ->subject('ORBIO - Atualização dos documentos')
-            ->greeting("Olá ". $first_name."!")
+            ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Seus dados documentais foram atualizados.")
-            ->line("Habilitação ANAC: ".$notifiable->complementary_data->anac_license)
-            ->line("CPF: ".$notifiable->complementary_data->cpf)
-            ->line("CNPJ: ".$notifiable->complementary_data->cnpj)
-            ->line("Telefone: ".$notifiable->complementary_data->telephone)
-            ->line("Celular: ".$notifiable->complementary_data->cellphone)
-            ->line("Razão social: ".$notifiable->complementary_data->company_name)
-            ->line("Nome fantasia: ".$notifiable->complementary_data->trading_name)
+            ->line("Habilitação ANAC: " . $notifiable->complementary_data->anac_license)
+            ->line("CPF: " . $notifiable->complementary_data->cpf)
+            ->line("CNPJ: " . $notifiable->complementary_data->cnpj)
+            ->line("Telefone: " . $notifiable->complementary_data->telephone)
+            ->line("Celular: " . $notifiable->complementary_data->cellphone)
+            ->line("Razão social: " . $notifiable->complementary_data->company_name)
+            ->line("Nome fantasia: " . $notifiable->complementary_data->trading_name)
             ->line('Se não foi você quem realizou o procedimento, contate o suporte imediatamente.');
     }
 

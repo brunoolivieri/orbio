@@ -47,20 +47,17 @@ class ServiceOrderCreatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
-        $first_name = explode(" ", $notifiable->name)[0];
-
         return (new MailMessage)
             ->subject('ORBIO - Nova ordem de serviço')
-            ->greeting("Olá ".$first_name."!")
+            ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Você está sendo notificado porque foi vinculado a uma nova ordem de serviço.")
-            ->line("Data inicial: ".$this->service_order->start_date)
-            ->line("Data final: ".$this->service_order->end_date)
-            ->line("Número: ".$this->service_order->numOS)
-            ->line("Observação: ".$this->service_order->observation)
-            ->line("Criador: ".$this->service_order->has_users->has_creator->name)
-            ->line("Piloto: ".$this->service_order->has_users->has_pilot->name)
-            ->line("Cliente: ".$this->service_order->has_users->has_client->name)
+            ->line("Data inicial: " . $this->service_order->start_date)
+            ->line("Data final: " . $this->service_order->end_date)
+            ->line("Número: " . $this->service_order->numOS)
+            ->line("Observação: " . $this->service_order->observation)
+            ->line("Criador: " . $this->service_order->has_users->has_creator->name)
+            ->line("Piloto: " . $this->service_order->has_users->has_pilot->name)
+            ->line("Cliente: " . $this->service_order->has_users->has_client->name)
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }

@@ -64,7 +64,6 @@ export const Dashboard = React.memo(({ ...props }) => {
   const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
   const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
   const [registrations, setRegistrations] = React.useState([{}]);
-  const [logins, setLogins] = React.useState([{}]);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -98,8 +97,6 @@ export const Dashboard = React.memo(({ ...props }) => {
         });
 
         setRegistrations(response.data.registrations);
-
-        setLogins(response.data.logins);
 
         handleOpenSnackbar("Métricas carregadas", "success");
 
@@ -194,15 +191,6 @@ export const Dashboard = React.memo(({ ...props }) => {
 
           </Grid>
         </Toolbar>
-      </Paper>
-
-      <Paper sx={middleSectionStyle}>
-        <Typography variant="h5">Tráfego diário</Typography>
-        <Grid container>
-          <Grid item xs={12} sx={{ height: 350 }}>
-            {!loading && <LinesChart data={logins} />}
-          </Grid>
-        </Grid>
       </Paper>
 
       <Paper sx={middleSectionStyle}>

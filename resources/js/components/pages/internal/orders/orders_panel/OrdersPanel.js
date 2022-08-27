@@ -7,7 +7,7 @@ import { CreateOrderFormulary } from "../../../../structures/modules/orders/Crea
 import { UpdateOrderFormulary } from "../../../../structures/modules/orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/orders/DeleteOrderFormulary";
 import { BadgeIcon } from "../../../../structures/badge_icon/BadgeIcon";
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
+import LinearProgress from '@mui/material/LinearProgress';
 // MaterialUI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -214,7 +214,6 @@ export const OrdersPanel = React.memo(() => {
 
   return (
     <>
-      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -347,7 +346,7 @@ export const OrdersPanel = React.memo(() => {
           </TableContainer>
         </RadioGroup>
       </FormControl>
-
+      {loading && <LinearProgress color="success" />}
     </>
   );
 });

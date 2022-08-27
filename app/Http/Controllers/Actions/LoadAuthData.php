@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Actions;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\FormatDataService;
 use Illuminate\Support\Facades\Auth;
 // Custom
 use App\Models\Modules\ModuleModel;

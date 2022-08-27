@@ -65,7 +65,7 @@ export function Login() {
         const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
 
         const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
-        const passwordValidate = FormValidation(controlledInput.password, null, null, null, null);
+        const passwordValidate = FormValidation(controlledInput.password);
 
         setFieldError({ email: emailValidate.error, password: passwordValidate.error });
         setFieldErrorMessage({ email: emailValidate.message, password: passwordValidate.message });

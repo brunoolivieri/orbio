@@ -44,19 +44,16 @@ class AddressUpdatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
-        $first_name = explode(" ", $notifiable->name)[0];
-        
         return (new MailMessage)
             ->subject('ORBIO - Atualização do endereço')
-            ->greeting("Olá ". $first_name."!")
+            ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Seus dados de endereço foram atualizados.")
-            ->line("Estado: ".$notifiable->complementary_data->address->state)
-            ->line("Cidade: ".$notifiable->complementary_data->address->city)
-            ->line("CEP: ".$notifiable->complementary_data->address->cep)
-            ->line("Logradouro: ".$notifiable->complementary_data->address->address)
-            ->line("Número: ".$notifiable->complementary_data->address->number)
-            ->line("Complemento: ".$notifiable->complementary_data->address->complement)
+            ->line("Estado: " . $notifiable->complementary_data->address->state)
+            ->line("Cidade: " . $notifiable->complementary_data->address->city)
+            ->line("CEP: " . $notifiable->complementary_data->address->cep)
+            ->line("Logradouro: " . $notifiable->complementary_data->address->address)
+            ->line("Número: " . $notifiable->complementary_data->address->number)
+            ->line("Complemento: " . $notifiable->complementary_data->address->complement)
             ->line('Se não foi você quem realizou o procedimento, contate o suporte imediatamente.');
     }
 

@@ -100,7 +100,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateResource($request, $id);
+        return $this->service->updateResource($request->validated(), $id);
     }
 
     /**

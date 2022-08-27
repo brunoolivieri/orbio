@@ -6,7 +6,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/CreateEquipmentFormulary';
 import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/DeleteEquipmentFormulary';
 import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -209,7 +209,6 @@ export const EquipmentPanel = React.memo(() => {
 
   return (
     <>
-      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
@@ -337,6 +336,7 @@ export const EquipmentPanel = React.memo(() => {
           </TableContainer>
         </RadioGroup>
       </FormControl>
+      {loading && <LinearProgress color="success" />}
     </>
   )
 });

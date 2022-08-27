@@ -5,7 +5,7 @@ import { useAuthentication } from "../../../../context/InternalRoutesAuth/Authen
 import AxiosApi from "../../../../../services/AxiosApi";
 import { UpdatePlanFormulary } from "../../../../structures/modules/plans/UpdatePlanFormulary";
 import { DeletePlanFormulary } from "../../../../structures/modules/plans/DeletePlanFormulary";
-import { BackdropLoading } from '../../../../structures/backdrop_loading/BackdropLoading';
+import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
 import { Table } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
@@ -249,7 +249,6 @@ export function PlansPanel() {
 
   return (
     <>
-      {loading && <BackdropLoading />}
       <Grid container spacing={1} alignItems="center" mb={1}>
         <Grid item>
           <Tooltip title="Novo Plano">
@@ -402,6 +401,7 @@ export function PlansPanel() {
           </TableContainer>
         </RadioGroup>
       </FormControl>
+      {loading && <LinearProgress color="success" />}
     </>
   );
 }

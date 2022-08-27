@@ -3,10 +3,10 @@
 namespace App\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 // Custom Models
 use Database\Factories\UserFactory;
 
@@ -78,6 +78,39 @@ class UserModel extends Authenticatable
     public function routeNotificationForMail($notification)
     {
         return $this->email;
+    }
+
+    /**
+     * First name acessor.
+     *
+     * @param  \Illuminate\Notifications\Notification  $notification
+     * @return string
+     */
+    public function getFirstNameAttribute()
+    {
+        return explode(" ", $this->name)[0];
+    }
+
+    /**
+     * Password mutator.
+     *
+     * @param $value
+     * @return string
+     */
+    public function setPasswordAttribute($value)
+    {
+        return Hash::make($value);
+    }
+
+    /**
+     * Status mutator.
+     *
+     * @param $value
+     * @return bool
+     */
+    public function setStatusAttribute($value)
+    {
+        return intval($value);
     }
 
 }

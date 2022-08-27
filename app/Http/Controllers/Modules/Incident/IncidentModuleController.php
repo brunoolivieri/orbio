@@ -53,7 +53,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->createResource($request);
+        return $this->service->createResource($request->validated());
 
     }
 
@@ -86,7 +86,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->updateResource($request, $id);
+        return $this->service->updateResource($request->validated(), $id);
   
     }
 
