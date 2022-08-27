@@ -1,34 +1,33 @@
 // React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-// Fonts Awesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export function HeaderMenu() {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-  };
+  }
+
   const handleClose = () => {
     setAnchorEl(null);
-  };
+  }
 
   return (
     <div>
-      <Button
-        id="basic-button"
-        aria-expanded={open ? 'true' : undefined}
+      <IconButton
+        size="large"
+        aria-label="menu"
         onClick={handleClick}
-        style={{ backgroundColor: "transparent" }}
       >
-        <FontAwesomeIcon icon={faCircleUser} color={"#007937"} size={'2x'} />
-      </Button>
+        <AccountCircleIcon color="success" />
+      </IconButton>
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}

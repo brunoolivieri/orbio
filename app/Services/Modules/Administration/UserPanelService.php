@@ -104,7 +104,11 @@ class UserPanelService
 
         $user = $this->model->findOrFail($user_id);
 
-        $user->update($request->validated());
+        $user->update([
+            "name" => $request->name,
+            "email" => $request->email,
+            "status" => intval($request->status)
+        ]);
 
         $user->refresh();
 

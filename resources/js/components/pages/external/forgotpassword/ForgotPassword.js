@@ -3,21 +3,20 @@ import * as React from 'react';
 // Custom
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { BackdropLoading } from '../../../structures/backdrop_loading/BackdropLoading';
 import { ModalInformative } from '../../../structures/generic_modal_dialog/ModalInformative';
 // Material UI
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+// Fonts awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsersGear } from '@fortawesome/free-solid-svg-icons';
 // Assets
 import SuccessImage from "../../../assets/images/Success/Success_md.png";
 import ErrorImage from "../../../assets/images/Error/Error_md.png";
@@ -264,10 +263,6 @@ export function ForgotPassword() {
 
         <>
 
-            {operation.current === "loading" &&
-                <BackdropLoading />
-            }
-
             {operation.current === "concluded" &&
                 <ModalInformative
                     image={operation.image}
@@ -285,16 +280,15 @@ export function ForgotPassword() {
                         alignItems: 'center',
                     }}
                 >
-
-                    <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50] }}>
-                        <ManageAccountsIcon />
-                    </Avatar>
+                    <Box sx={{ mb: 1 }}>
+                        <FontAwesomeIcon icon={faUsersGear} color={'#00713A'} size={"2x"} />
+                    </Box>
 
                     <Typography component="h1" variant="h5">
                         Recuperar a conta
                     </Typography>
 
-                    <Box component="form" onSubmit={handleCodeSubmit} noValidate sx={{ mt: 1 }}>
+                    <Box component="form" onSubmit={handleCodeSubmit} noValidate sx={{ mt: 2 }}>
 
                         <TextField
                             margin="normal"
@@ -314,7 +308,7 @@ export function ForgotPassword() {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{ mt: 1, mb: 2, borderRadius: 5 }}
                                 disabled={codeTimer > 0}
                             >
                                 {codeTimer === 0 ? "Enviar código" : codeTimer}
@@ -329,7 +323,7 @@ export function ForgotPassword() {
                                 variant="outlined"
                                 type="submit"
                                 fullWidth
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{ mt: 1, mb: 2, borderRadius: 5 }}
                             >
                                 Enviando código
                             </LoadingButton>
@@ -381,7 +375,7 @@ export function ForgotPassword() {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{ mt: 1, mb: 2, borderRadius: 5 }}
                                 disabled={!codeSent}
                             >
                                 Alterar a senha
@@ -396,7 +390,7 @@ export function ForgotPassword() {
                                 variant="outlined"
                                 type="submit"
                                 fullWidth
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{ mt: 1, mb: 2, borderRadius: 5 }}
                             >
                                 Alterando senha
                             </LoadingButton>

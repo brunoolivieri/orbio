@@ -12,9 +12,7 @@ import Box from '@mui/material/Box';
 export const GenericModalDialog = React.memo(({ ...props }) => {
 
     const handleClose = () => {
-
         props.modal_controller.setModalState(false);
-
     };
 
     React.useEffect(() => {

@@ -24,7 +24,7 @@ export const Administration = React.memo(({ ...props }) => {
   return (
     <>
 
-      <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5, mb: 2 }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5, mb: 2 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             <Switcher panelStateSetter={setActualPanel} options={[{ page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> }, { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }]} />
@@ -32,7 +32,7 @@ export const Administration = React.memo(({ ...props }) => {
         </Grid>
       </Paper>
 
-      <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
           {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}

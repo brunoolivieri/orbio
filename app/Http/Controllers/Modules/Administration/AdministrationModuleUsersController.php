@@ -18,7 +18,8 @@ class AdministrationModuleUsersController extends Controller
      * 
      * @param App\Services\Modules\Administration\UserPanelService $service
      */
-    public function __construct(UserPanelService $service){
+    public function __construct(UserPanelService $service)
+    {
         $this->service = $service;
     }
 
@@ -27,7 +28,7 @@ class AdministrationModuleUsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_read');
@@ -38,7 +39,6 @@ class AdministrationModuleUsersController extends Controller
         $current_page = (int) $args[2];
 
         return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
-
     }
 
     /**
@@ -47,13 +47,12 @@ class AdministrationModuleUsersController extends Controller
      * @param App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UserPanelStoreRequest $request) : \Illuminate\Http\Response
+    public function store(UserPanelStoreRequest $request): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_write');
 
         return $this->service->createResource($request);
-
     }
 
     /**
@@ -62,7 +61,7 @@ class AdministrationModuleUsersController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_read');
@@ -73,7 +72,6 @@ class AdministrationModuleUsersController extends Controller
         $current_page = (int) $args[2];
 
         return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
-
     }
 
     /**
@@ -83,13 +81,12 @@ class AdministrationModuleUsersController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserPanelUpdateRequest $request, $id) : \Illuminate\Http\Response
+    public function update(UserPanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_write');
 
         return $this->service->updateResource($request, $id);
-
     }
 
     /**
@@ -98,12 +95,11 @@ class AdministrationModuleUsersController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_write');
 
         return $this->service->deleteResource($id);
-
     }
 }

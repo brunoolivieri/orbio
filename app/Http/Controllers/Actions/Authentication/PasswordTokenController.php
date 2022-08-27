@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User\UserModel;
 use App\Models\PasswordReset\PasswordResetModel;
 use App\Notifications\Auth\SendTokenNotification;
-use App\Notifications\Auth\ChangePasswordNotification;
+use App\Http\Requests\Auth\ForgotPassword\PasswordResetTokenRequest;
 
 class PasswordTokenController extends Controller
 {
@@ -20,7 +20,7 @@ class PasswordTokenController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function __invoke(Request $request)
+    public function __invoke(PasswordResetTokenRequest $request)
     {
         $user = UserModel::where("email", $request->email)->firstOrFail();
 

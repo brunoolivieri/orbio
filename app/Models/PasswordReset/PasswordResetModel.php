@@ -10,6 +10,7 @@ class PasswordResetModel extends Model
     use HasFactory;
 
     protected $table = "password_resets";
+    protected $primary = "user_id";
     protected $guarded = [];
     const UPDATED_AT = null;
 

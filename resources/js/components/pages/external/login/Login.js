@@ -4,7 +4,6 @@ import * as React from 'react';
 import AxiosApi from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
 // Material UI
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -14,11 +13,12 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { Alert } from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { blue } from '@mui/material/colors';
 import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+// Fonts awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 // React router dom
 import { Link } from 'react-router-dom';
 
@@ -166,9 +166,10 @@ export function Login() {
                         }}
 
                     >
-                        <Avatar sx={{ m: 1, color: "black", bgcolor: blue[50], border: "black" }}>
-                            <LockOutlinedIcon />
-                        </Avatar>
+                        <Box sx={{ mb: 1 }}>
+                            <FontAwesomeIcon icon={faRightToBracket} color={'#00713A'} size={"2x"} />
+                        </Box>
+
                         <Typography component="h1" variant="h5">
                             Acessar
                         </Typography>
@@ -205,7 +206,7 @@ export function Login() {
                                     type="submit"
                                     fullWidth
                                     variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
+                                    sx={{ mt: 1, mb: 2, borderRadius: 5 }}
                                     color="primary"
                                 >
                                     Acessar
@@ -219,7 +220,7 @@ export function Login() {
                                     startIcon={<SaveIcon />}
                                     variant="outlined"
                                     fullWidth
-                                    sx={{ mt: 3, mb: 2 }}
+                                    sx={{ mt: 1, mb: 2, borderRadius: 5 }}
                                 >
                                     Acessando
                                 </LoadingButton>
