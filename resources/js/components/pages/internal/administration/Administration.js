@@ -23,6 +23,7 @@ export const Administration = React.memo(({ ...props }) => {
 
   return (
     <>
+
       <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5, mb: 2 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>

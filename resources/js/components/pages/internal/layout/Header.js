@@ -18,7 +18,7 @@ export const Header = React.memo(({ ...props }) => {
 
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: '#fff' }}>
+      <AppBar position="static" sx={{ bgcolor: '#fff', boxShadow: 1 }}>
         <Toolbar>
           <IconButton
             size="large"
@@ -28,7 +28,7 @@ export const Header = React.memo(({ ...props }) => {
             sx={{ mr: 2 }}
             onClick={onDrawerToggle}
           >
-            <FontAwesomeIcon icon={faBars} color="#007937" />
+            <FontAwesomeIcon icon={faBars} color="#007937" size="sm" />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Typography variant="h1" sx={{ fontSize: '20px', color: '#007937' }}>{props.page}</Typography>

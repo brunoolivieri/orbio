@@ -27,23 +27,22 @@ const CardStyle = {
   minWidth: 220,
   maxWidth: 450,
   margin: 'auto',
-  borderRadius: 5,
-  boxShadow: 1
+  borderRadius: 5
 }
 
 const CardContentStyle = {
-  bgcolor: '#F7F7F7'
+  bgcolor: '#333'
 }
 
 const topSectionStyle = {
-  maxWidth: { xs: "95%", md: "90%", lg: "85%", xl: "85%" },
+  maxWidth: { xs: "100%", md: "90%", lg: "85%", xl: "85%" },
   margin: 'auto',
   overflow: 'visible',
-  padding: 3,
+  padding: 1,
   borderRadius: 5,
   mt: 10,
-  bgcolor: '#0275D8',
-  boxShadow: 1
+  boxShadow: 0,
+  bgcolor: '#EAEFF1'
 }
 
 const middleSectionStyle = {
@@ -120,6 +119,7 @@ export const Dashboard = React.memo(({ ...props }) => {
 
   return (
     <>
+
       <Paper sx={topSectionStyle}>
 
         <Toolbar>

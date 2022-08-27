@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Material UI
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Box from '@mui/material/Box';
@@ -30,8 +29,6 @@ import { Typography } from "@mui/material";
 import EmbrapaLogo from "../../../assets/images/Logos/Embrapa.png";
 
 const item = {
-  py: 1.2,
-  px: 3,
   borderRadius: 2,
   '&:hover, &:focus': {
     bgcolor: '#E3EEFA',
@@ -83,23 +80,21 @@ export const Navigator = React.memo((props) => {
           <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'left' }}>
           </Box> */}
         </ListItem>
-        <Divider variant="middle" />
 
-        <ListItem>
+        <ListItem sx={{ boxShadow: 2, mb: 1 }}>
           <Box sx={{ py: 2, borderRadius: 2, flexGrow: 1, textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <FontAwesomeIcon icon={faIdCardClip} color={'#00713A'} /> <Typography sx={{ marginLeft: 1, fontWeight: 600 }}>{AuthData.data.profile}</Typography>
           </Box>
         </ListItem>
-        <Divider variant="middle" />
 
         {categories.map(({ id, children }) => (
           <Box key={id}>
             <ListItem>
-              <ListItemText sx={{ color: "#222" }}><b>{id}</b></ListItemText>
+              <ListItemText sx={{ color: "#222" }}>{id}</ListItemText>
             </ListItem>
             {children.map(({ id: childId, icon, active, access }) => (
               access &&
-              <ListItem key={childId}>
+              <ListItem key={childId} disablePadding>
                 <Link to={childId == "Dashboard" ? "/internal" : (childId.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""))} style={{ width: '100%', display: 'block' }}>
                   <ListItemButton selected={active} sx={{ ...item }}>
                     <ListItemIcon sx={{ color: '#00713A' }}>{icon}</ListItemIcon>
@@ -108,7 +103,6 @@ export const Navigator = React.memo((props) => {
                 </Link>
               </ListItem>
             ))}
-            <Divider variant="middle" />
           </Box>
         ))}
 
