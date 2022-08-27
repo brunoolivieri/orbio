@@ -22,6 +22,7 @@ import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
+import { usePage } from '../../../context/PageContext.js';
 
 const CardStyle = {
   minWidth: 220,
@@ -55,7 +56,7 @@ const middleSectionStyle = {
   mt: 3
 }
 
-export const Dashboard = React.memo(({ ...props }) => {
+export const Dashboard = React.memo(() => {
 
   const [loading, setLoading] = React.useState(true);
   const [users, setUsers] = React.useState({ total: 0, chart: [{}] });
@@ -67,8 +68,12 @@ export const Dashboard = React.memo(({ ...props }) => {
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
 
+  // Context page
+  const { setPage } = usePage();
+
   React.useEffect(() => {
-    props.setPage("DASHBOARD");
+
+    setPage("DASHBOARD");
 
     AxiosApi.get("/api/load-dashboard-metrics")
       .then(function (response) {

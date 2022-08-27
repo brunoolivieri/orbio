@@ -3,6 +3,7 @@ import * as React from 'react';
 // Custom
 import { UsersPanel } from "./users_panel/UsersPanel";
 import { ProfilesPanel } from "./profiles_panel/ProfilesPanel";
+import { usePage } from '../../../context/PageContext';
 // Material UI
 import Paper from '@mui/material/Paper';
 import { Grid } from "@mui/material";
@@ -13,12 +14,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 
-export const Administration = React.memo(({ ...props }) => {
+export const Administration = React.memo(() => {
 
   const [actualPanel, setActualPanel] = React.useState("users");
 
+  // Context page
+  const { setPage } = usePage();
+
   React.useEffect(() => {
-    props.setPage("ADMINISTRAÇÃO");
+    setPage("ADMINISTRAÇÃO");
   }, []);
 
   return (

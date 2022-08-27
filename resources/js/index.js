@@ -6,6 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 // Custom
 import { AuthProvider } from './components/context/InternalRoutesAuth/AuthenticationContext';
+import { PageProvider } from './components/context/PageContext';
 // Libs
 import { ReactRoutes } from "./routes/ReactRouter";
 import { SnackbarProvider } from 'notistack';
@@ -17,14 +18,16 @@ export default function Index() {
   return (
     <>
       <React.StrictMode>
-        <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <SnackbarProvider maxSnack={3}>
-              <ReactRoutes />
-            </SnackbarProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <PageProvider>
+          <AuthProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <SnackbarProvider maxSnack={3}>
+                <ReactRoutes />
+              </SnackbarProvider>
+            </ThemeProvider>
+          </AuthProvider>
+        </PageProvider>
       </React.StrictMode>
     </>
   );

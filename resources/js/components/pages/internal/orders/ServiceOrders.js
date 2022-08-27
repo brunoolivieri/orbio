@@ -4,11 +4,14 @@ import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 // Custom
 import { OrdersPanel } from './orders_panel/OrdersPanel';
+import { usePage } from '../../../context/PageContext';
 
-export function ServiceOrders({...props}) {
+export function ServiceOrders() {
+
+    const { setPage } = usePage();
 
     React.useEffect(() => {
-        props.setPage("ORDENS DE SERVIÇO");
+        setPage("ORDENS DE SERVIÇO");
     }, []);
 
     return (

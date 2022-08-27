@@ -25,8 +25,6 @@ export const Layout = React.memo(() => {
 
   const [menuOpen, setMenuOpen] = React.useState(false);
 
-  const [page, setPage] = React.useState("Dashboard");
-
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
@@ -104,12 +102,12 @@ export const Layout = React.memo(() => {
 
           </Box>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <Header onDrawerToggle={handleDrawerToggle} page={page} />
+            <Header onDrawerToggle={handleDrawerToggle} />
             <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
 
               {/* Conteúdo variável de cada página */}
               {AuthData.status &&
-                <InternalRoutes setPage={setPage} />
+                <InternalRoutes />
               }
 
             </Box>

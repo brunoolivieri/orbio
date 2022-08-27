@@ -4,12 +4,16 @@ import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+// Custom
+import { usePage } from '../../../context/PageContext';
 
-export const Support = React.memo(({...props}) => {
+export const Support = React.memo(() => {
+
+  const { setPage } = usePage();
 
   React.useEffect(() => {
-    props.setPage("SUPORTE");
-  },[]);
+    setPage("SUPORTE");
+  }, []);
 
   return (
 

@@ -2,6 +2,7 @@
 import * as React from 'react';
 // Custom
 import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";
+import { usePage } from '../../../context/PageContext';
 // Material UI
 import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
@@ -14,6 +15,8 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 export const Header = React.memo(({ ...props }) => {
 
   const { onDrawerToggle } = props;
+
+  const { page } = usePage();
 
   return (
     <>
@@ -32,9 +35,14 @@ export const Header = React.memo(({ ...props }) => {
           <HeaderMenu />
         </Toolbar>
       </AppBar>
-      <AppBar position="static" sx={{ boxShadow: 1 }}>
+      <AppBar position="static" sx={{ boxShadow: 1, bgcolor: '#16529B' }}>
         <Toolbar>
-          <AdminPanelSettingsIcon sx={{ mr: 1 }} /><Typography variant="h5" color={"#fff"}>DASHBOARD</Typography>
+          {page &&
+            <>
+              <AdminPanelSettingsIcon sx={{ mr: 1 }} /><Typography variant="h7" fontWeight={600} color={"#fff"}>{page}</Typography>
+            </>
+          }
+
         </Toolbar>
       </AppBar>
     </>

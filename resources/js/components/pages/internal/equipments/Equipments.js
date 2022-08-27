@@ -9,13 +9,17 @@ import { Switcher } from "../../../structures/switcher/Switcher";
 import { DronesPanel } from './drones_panel/DronesPanel';
 import { BatteriesPanel } from './batteries_panel/BatteriesPanel';
 import { EquipmentPanel } from './equipments_panel/EquipmentsPanel';
+// Context
+import { usePage } from '../../../context/PageContext';
 
-export const Equipments = React.memo(({ ...props }) => {
+export const Equipments = React.memo(() => {
 
   const [actualPanel, setActualPanel] = React.useState("drones");
 
+  const { setPage } = usePage();
+
   React.useEffect(() => {
-    props.setPage("DRONES, BATERIAS E EQUIPAMENTOS");
+    setPage("DRONES, BATERIAS E EQUIPAMENTOS");
   }, []);
 
   return (

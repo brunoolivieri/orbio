@@ -1,20 +1,17 @@
 import * as React from 'react';
 // Material UI
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
 import { Box } from "@mui/system";
-import PostAddIcon from '@mui/icons-material/PostAdd';
 // Custom
 import { ReportsPanel } from "./reports_panel/ReportsPanel";
+import { usePage } from '../../../context/PageContext';
 
-export const Reports = React.memo(({ ...props }) => {
+export const Reports = React.memo(() => {
+
+  const { setPage } = usePage();
 
   React.useEffect(() => {
-    props.setPage("RELATÓRIOS");
+    setPage("RELATÓRIOS");
   }, []);
 
   return (

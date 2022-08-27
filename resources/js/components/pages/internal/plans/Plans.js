@@ -5,11 +5,14 @@ import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 // Custom
 import { PlansPanel } from "./plans_panel/PlansPanel";
+import { usePage } from '../../../context/PageContext';
 
-export const Plans = React.memo(({ ...props }) => {
+export const Plans = React.memo(() => {
+
+  const { setPage } = usePage();
 
   React.useEffect(() => {
-    props.setPage("PLANOS DE VOO");
+    setPage("PLANOS DE VOO");
   }, []);
 
   return (

@@ -34,20 +34,20 @@ export function ReactRoutes() {
 
 }
 
-export function InternalRoutes({ ...props }) {
+export function InternalRoutes() {
 
     return (
 
         <Routes>
-            <Route index element={<Dashboard setPage={props.setPage} />} />
-            <Route exact path="planos" element={<Plans setPage={props.setPage} />} />
-            <Route exact path="relatorios" element={<Reports setPage={props.setPage} />} />
-            <Route exact path="conta" element={<Account setPage={props.setPage} />} />
-            <Route exact path="administracao" element={<Administration setPage={props.setPage} />} />
-            <Route exact path="suporte" element={<Support setPage={props.setPage} />} />
-            <Route exact path="ordens" element={<ServiceOrders setPage={props.setPage} />} />
-            <Route exact path="incidentes" element={<Incidents setPage={props.setPage} />} />
-            <Route exact path="equipamentos" element={<Equipments setPage={props.setPage} />} />
+            <Route index element={<Dashboard />} />
+            <Route exact path="planos" element={<Plans />} />
+            <Route exact path="relatorios" element={<Reports />} />
+            <Route exact path="conta" element={<Account />} />
+            <Route exact path="administracao" element={<Administration />} />
+            <Route exact path="suporte" element={<Support />} />
+            <Route exact path="ordens" element={<ServiceOrders />} />
+            <Route exact path="incidentes" element={<Incidents />} />
+            <Route exact path="equipamentos" element={<Equipments />} />
         </Routes>
 
     )

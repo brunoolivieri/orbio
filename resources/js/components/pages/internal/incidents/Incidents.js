@@ -4,12 +4,15 @@ import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 // Custom
 import { IncidentsPanel } from './incidents_panel/IncidentsPanel';
+import { usePage } from '../../../context/PageContext';
 
-export const Incidents = React.memo(({...props}) => {
+export const Incidents = React.memo(() => {
+
+  const { setPage } = usePage();
 
   React.useEffect(() => {
-    props.setPage("INCIDENTES");
-  },[]);
+    setPage("INCIDENTES");
+  }, []);
 
   return (
     <>
