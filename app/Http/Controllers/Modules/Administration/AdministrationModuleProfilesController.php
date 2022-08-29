@@ -19,27 +19,28 @@ class AdministrationModuleProfilesController extends Controller
      * 
      * @param  App\Services\Administration\ProfilePanelService $service
      */
-    public function __construct(ProfilePanelService $service){
+    public function __construct(ProfilePanelService $service)
+    {
         $this->service = $service;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0]*5;
-        $where_value = $args[1];
-        $current_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
-        
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -48,12 +49,11 @@ class AdministrationModuleProfilesController extends Controller
      * @param App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ProfilePanelStoreRequest $request) : \Illuminate\Http\Response
+    public function store(ProfilePanelStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
         return $this->service->createResource($request);
-
     }
 
     /**
@@ -62,17 +62,11 @@ class AdministrationModuleProfilesController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) :  \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_read');
-        
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0]*5;
-        $where_value = $args[1];
-        $current_page = (int) $args[2];
 
-        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
-
+        //
     }
 
     /**
@@ -82,12 +76,11 @@ class AdministrationModuleProfilesController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ProfilePanelUpdateRequest $request, $id) : \Illuminate\Http\Response
+    public function update(ProfilePanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
         return $this->service->updateResource($request, $id);
-
     }
 
     /**
@@ -96,11 +89,10 @@ class AdministrationModuleProfilesController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
         return $this->service->deleteResource($id);
-
     }
 }

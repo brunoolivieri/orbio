@@ -18,6 +18,34 @@ class UserModel extends Authenticatable
     protected $guarded = [];
 
     /*
+    * Scope for search
+    */
+    function scopeSearch($query, $value_searched)
+    {
+        return $query->when((bool) $value_searched, function ($query) use ($value_searched) {
+
+            if (is_numeric($value_searched)) {
+                $query->where('users.id', $value_searched);
+            } else {
+                $query->where('users.name', 'LIKE', '%' . $value_searched . '%')->orWhere('users.email', 'LIKE', '%' . $value_searched . '%');
+            }
+        });
+    }
+
+    /*
+    * Scope for filter
+    */
+    function scopeFilter($query, $filters)
+    {
+        return $query->when((bool) $filters, function ($query) use ($filters) {
+
+            foreach ($filters as $index => $filter) {
+                $query->where($filter["column"], $filter["value"]);
+            }
+        });
+    }
+
+    /*
     * Relationship with user_complementary_data table
     */
     function complementary_data()

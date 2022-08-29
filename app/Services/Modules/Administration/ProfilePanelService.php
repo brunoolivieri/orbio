@@ -13,6 +13,18 @@ class ProfilePanelService
 {
 
     /**
+     * Dependency injection.
+     * 
+     * @param App\Models\Profiles\ProfileModel $profile_model
+     * @param App\Models\Pivot\ProfileHasModuleModel $profile_has_module_model
+     */
+    public function __construct(ProfileModel $profile_model, ProfileHasModuleModel $profile_has_module_model)
+    {
+        $this->profile_model = $profile_model;
+        $this->$profile_has_module_model = $profile_has_module_model;
+    }
+
+    /**
      * Load all profiles with their modules relationships with pagination.
      *
      * @param int $limit
@@ -20,21 +32,14 @@ class ProfilePanelService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters)
     {
 
-        $data = ProfileModel::with("module_privileges")
-            ->when($typed_search, function ($query, $typed_search) {
-
-                $query->when(is_numeric($typed_search), function ($query) use ($typed_search) {
-
-                    $query->where('id', '=', $typed_search);
-                }, function ($query) use ($typed_search) {
-
-                    $query->where('name', 'LIKE', '%' . $typed_search . '%');
-                });
-            })
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = $this->profile_model->with("module_privileges")
+            ->search($search) // scope
+            ->filter($filters) // scope
+            ->orderBy($order_by)
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
         if ($data->total() > 0) {
             return response(new ProfilesPanelResource($data), 200);

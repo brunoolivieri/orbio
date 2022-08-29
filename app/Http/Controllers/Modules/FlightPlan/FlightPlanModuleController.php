@@ -37,12 +37,13 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -81,12 +82,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        //
     }
 
     /**

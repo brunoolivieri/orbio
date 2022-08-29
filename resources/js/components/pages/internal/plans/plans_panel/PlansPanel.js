@@ -28,8 +28,12 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import TablePagination from '@mui/material/TablePagination';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -53,17 +57,20 @@ export function PlansPanel() {
 
   const { AuthData } = useAuthentication();
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const open = Boolean(anchorEl);
+
   const [records, setRecords] = React.useState([]);
 
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
-  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
 
   const [loading, setLoading] = React.useState(true);
 
-  // State do registro selecionado
-  // Quando um registro é selecionado, seu índice é salvo nesse state
-  // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
+  // When a record is selected, its index is saved in this state
+  // The index is used for retrieve the correspondent record in records state
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
   const [searchField, serSearchField] = React.useState("");
@@ -73,58 +80,18 @@ export function PlansPanel() {
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
+    serverLoadRecords();
+  }, [paginationConfig]);
 
-    if (!paginationParams.where) {
+  const serverLoadRecords = () => {
 
-      requestToGetAllFlightPlans();
+    const limit = paginationConfig.limit;
+    const search = paginationConfig.search;
+    const page = paginationConfig.page;
+    const order_by = paginationConfig.order_by;
+    const filter = paginationConfig.filter;
 
-    } else {
-
-      requestToGetSearchedFlightPlans();
-
-    }
-
-  }, [paginationParams]);
-
-  const requestToGetAllFlightPlans = (() => {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/plans-module?args=${select_query_params}`)
-      .then(function (response) {
-
-        console.log(response.data.records)
-
-        setLoading(false);
-        setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
-
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
-        }
-
-      })
-      .catch(function (error) {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        setLoading(false);
-        setRecords([]);
-        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-      });
-
-
-  });
-
-  const requestToGetSearchedFlightPlans = (() => {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/plans-module/show?args=${select_query_params}`)
+    AxiosApi.get(`/api/plans-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
 
         setLoading(false);
@@ -148,42 +115,67 @@ export function PlansPanel() {
         setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
       });
+  }
 
-  });
+  const handleTablePageChange = (event, value) => {
 
-  const handleTablePageChange = (_event, value) => {
-
-    setPaginationParams({
+    setPaginationConfig({
       page: value + 1,
-      limit: paginationParams.limit,
-      where: paginationParams.where
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   };
 
-  const handleSearchSubmit = (event) => {
+  const handleChangeRowsPerPage = (event) => {
+
+    setPaginationConfig({
+      page: 1,
+      limit: event.target.value,
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
+    });
+
+  };
+
+  function handleSearchSubmit(event) {
     event.preventDefault();
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: searchField
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: searchField,
+      total_records: 0,
+      filter: 0
     });
 
   }
 
-  const reloadTable = () => {
+  function reloadTable() {
 
     setSelectedRecordIndex(null);
 
-    setLoading(false);
+    setLoading(true);
     setRecords([]);
-    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
+    setPagination({
+      total_records: 0,
+      records_per_page: 0,
+      total_pages: 0
+    });
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: 0
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: 0,
+      total_records: 0,
+      filter: 0
     });
 
   }
@@ -195,16 +187,6 @@ export function PlansPanel() {
     } else if (event.target.value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
-
-  }
-
-  const handleChangeRowsPerPage = (event) => {
-
-    setPaginationParams({
-      page: 1,
-      limit: event.target.value,
-      where: paginationParams.where
-    });
 
   }
 
@@ -238,11 +220,20 @@ export function PlansPanel() {
 
   });
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
+
   const handleOpenSnackbar = (text, variant) => {
 
     enqueueSnackbar(text, { variant });
 
   }
+
+
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
@@ -291,6 +282,35 @@ export function PlansPanel() {
         </Grid>
 
         <Grid item>
+          <Tooltip title="Filtros">
+            <IconButton
+              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem ><Checkbox /> Ativos </MenuItem>
+          <MenuItem ><Checkbox /> Inativos </MenuItem>
+          <MenuItem ><Checkbox /> Deletados </MenuItem>
+        </Menu>
+
+        <Grid item>
           <Tooltip title="Carregar">
             <IconButton onClick={reloadTable}>
               <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
@@ -325,9 +345,9 @@ export function PlansPanel() {
                 labelRowsPerPage="Linhas por página: "
                 component="div"
                 count={pagination.total_records}
-                page={paginationParams.page - 1}
+                page={paginationConfig.page - 1}
                 onPageChange={handleTablePageChange}
-                rowsPerPage={paginationParams.limit}
+                rowsPerPage={paginationConfig.limit}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Stack>

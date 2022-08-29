@@ -33,12 +33,13 @@ class AdministrationModuleUsersController extends Controller
 
         Gate::authorize('administration_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $current_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -58,20 +59,14 @@ class AdministrationModuleUsersController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id): \Illuminate\Http\Response
+    public function show(): \Illuminate\Http\Response
     {
 
         Gate::authorize('administration_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $current_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $current_page, $where_value);
+        //
     }
 
     /**

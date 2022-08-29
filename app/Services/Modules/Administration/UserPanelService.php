@@ -3,13 +3,10 @@
 namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 // Custom
-use App\Contracts\Services\ModuleServiceInterface;
 use App\Models\User\UserModel;
-use App\Models\Orders\ServiceOrderModel;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
@@ -19,17 +16,16 @@ use App\Http\Resources\Modules\Administration\UsersPanelResource;
 class UserPanelService
 {
 
-    private UserModel $model;
-
     /**
      * Dependency injection.
      * 
      * @param App\Models\User\UserModel $user
-     * @param App\Services\FormatDataService $service
+     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $service_order_has_user_model
      */
-    public function __construct(UserModel $model)
+    public function __construct(UserModel $user_model, ServiceOrderHasUserModel $service_order_has_user_model)
     {
-        $this->model = $model;
+        $this->user_model = $user_model;
+        $this->$service_order_has_user_model = $service_order_has_user_model;
     }
 
     /**
@@ -40,25 +36,14 @@ class UserPanelService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search): \Illuminate\Http\Response
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        // Add: when trashed = ->withTrashed()
-        // Add: when active = by active
-
-        $data = UserModel::with(["profile:id,name", "complementary_data:id"])
-            ->when($typed_search, function ($query, $typed_search) {
-
-                $query->when(is_numeric($typed_search), function ($query) use ($typed_search) {
-
-                    $query->where('users.id', $typed_search);
-                }, function ($query) use ($typed_search) {
-
-                    $query->where('users.name', 'LIKE', '%' . $typed_search . '%')->orWhere('users.email', 'LIKE', '%' . $typed_search . '%');
-                });
-            })
-            ->orderBy("id")
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = $this->user_model->with(["profile:id,name", "complementary_data:id"])
+            ->search($search) // scope
+            ->filter($filters) // scope
+            ->orderBy($order_by)
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
         if ($data->total() > 0) {
             return response(new UsersPanelResource($data), 200);
@@ -80,7 +65,7 @@ class UserPanelService
 
             $random_password = Str::random(10);
 
-            $user = $this->model->create([
+            $user = $this->user_model->create([
                 "name" => $request->name,
                 "email" => $request->email,
                 "profile_id" => $request->profile_id,
@@ -102,7 +87,7 @@ class UserPanelService
     public function updateResource(Request $request, $user_id): \Illuminate\Http\Response
     {
 
-        $user = $this->model->findOrFail($user_id);
+        $user = $this->user_model->findOrFail($user_id);
 
         $user->update([
             "name" => $request->name,
@@ -128,22 +113,22 @@ class UserPanelService
 
         DB::transaction(function () use ($user_id) {
 
-            $user = UserModel::findOrFail($user_id);
+            $user = $this->user_model->findOrFail($user_id);
 
             // If user is related to any service order as creator
             if ($user->service_order_has_user("creator_id")) {
 
-                ServiceOrderHasUserModel::where("creator_id", $user->id)->update(["creator_id" => null]);
+                $this->service_order_has_user_model->where("creator_id", $user->id)->update(["creator_id" => null]);
 
                 // If user is related to any service order as pilot
             } else if ($user->service_order_has_user("pilot_id")) {
 
-                ServiceOrderHasUserModel::where("pilot_id", $user->id)->update(["pilot_id" => null]);
+                $this->service_order_has_user_model->where("pilot_id", $user->id)->update(["pilot_id" => null]);
 
                 // If user is related to any service order as client
             } else if ($user->service_order_has_user("client_id")) {
 
-                ServiceOrderHasUserModel::where("client_id", $user->id)->update(["client_id" => null]);
+                $this->service_order_has_user_model->where("client_id", $user->id)->update(["client_id" => null]);
             }
 
             // The user record is soft deleted

@@ -9,8 +9,8 @@ import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import { Typography } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 
 export const Header = React.memo(({ ...props }) => {
 
@@ -28,7 +28,7 @@ export const Header = React.memo(({ ...props }) => {
             sx={{ mr: 2 }}
             onClick={onDrawerToggle}
           >
-            <MenuIcon color="success" />
+            <MenuOpenIcon color="success" />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           </Typography>

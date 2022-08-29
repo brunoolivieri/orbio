@@ -52,13 +52,12 @@ export function ProfilesPanel() {
 
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
-  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, order_by: "", where: "" });
+  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
 
   const [loading, setLoading] = React.useState(true);
 
-  // State do registro selecionado
-  // Quando um registro é selecionado, seu índice é salvo nesse state
-  // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
+  // When a record is selected, its index is saved in this state
+  // The index is used for retrieve the correspondent record in records state
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
 
   const [searchField, setSearchField] = React.useState("");
@@ -69,20 +68,18 @@ export function ProfilesPanel() {
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
+    serverLoadRecords();
+  }, [paginationConfig]);
 
-    if (!paginationParams.where) {
-      requestToGetAllProfiles();
-    } else {
-      requestToGetSearchedProfiles();
-    }
+  const serverLoadRecords = () => {
 
-  }, [paginationParams]);
+    const limit = paginationConfig.limit;
+    const search = paginationConfig.search;
+    const page = paginationConfig.page;
+    const order_by = paginationConfig.order_by;
+    const filter = paginationConfig.filter;
 
-  const requestToGetAllProfiles = () => {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/admin-module-profile?args=${select_query_params}`)
+    AxiosApi.get(`/api/admin-module-profile?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
 
         setLoading(false);
@@ -110,42 +107,15 @@ export function ProfilesPanel() {
 
   }
 
-  const requestToGetSearchedProfiles = () => {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/admin-module-profile/show?args=${select_query_params}`)
-      .then(function (response) {
-
-        setLoading(false);
-        setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
-
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
-        }
-
-      }).catch((error) => {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        setLoading(false);
-        setRecords([]);
-        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-      });
-
-  }
-
   const handleTablePageChange = (event, value) => {
 
-    setPaginationParams({
+    setPaginationConfig({
       page: value + 1,
-      limit: paginationParams.limit,
-      where: paginationParams.where
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   };
@@ -153,10 +123,13 @@ export function ProfilesPanel() {
   function handleSearchSubmit(event) {
     event.preventDefault();
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: searchField
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: searchField,
+      total_records: 0,
+      filter: 0
     });
 
   }
@@ -169,26 +142,32 @@ export function ProfilesPanel() {
     setRecords([]);
     setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: 0
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: 0,
+      total_records: 0,
+      filter: 0
     });
 
   }
 
   const handleChangeRowsPerPage = (event) => {
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
       limit: event.target.value,
-      where: paginationParams.where
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   }
 
   function handleClickRadio(event) {
-
+    
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
@@ -278,9 +257,9 @@ export function ProfilesPanel() {
                 labelRowsPerPage="Linhas por página: "
                 component="div"
                 count={pagination.total_records}
-                page={paginationParams.page - 1}
+                page={paginationConfig.page - 1}
                 onPageChange={handleTablePageChange}
-                rowsPerPage={paginationParams.limit}
+                rowsPerPage={paginationConfig.limit}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Stack>
