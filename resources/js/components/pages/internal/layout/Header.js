@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -27,8 +27,8 @@ export const Header = React.memo(({ ...props }) => {
   const { pageIndex } = usePage();
 
   const pages = [
-    { icon: <AdminPanelSettingsIcon />, title: "DASHBOARD" },
-    { icon: <DashboardIcon sx={{ mr: 1 }} />, title: "ADMINISTRAÇÃO" },
+    { icon: <DashboardIcon />, title: "DASHBOARD" },
+    { icon: <AdminPanelSettingsIcon sx={{ mr: 1 }} />, title: "ADMINISTRAÇÃO" },
     { icon: <MapIcon sx={{ mr: 1 }} />, title: "PLANOS DE VOO" },
     { icon: <AssignmentIcon sx={{ mr: 1 }} />, title: "ORDENS DE SERVIÇO" },
     { icon: <AssessmentIcon sx={{ mr: 1 }} />, title: "RELATÓRIOS" },
@@ -45,7 +45,6 @@ export const Header = React.memo(({ ...props }) => {
           <IconButton
             size="large"
             aria-label="menu"
-            sx={{ mr: 2 }}
             onClick={onDrawerToggle}
           >
             <MenuOpenIcon color="success" />
@@ -57,12 +56,10 @@ export const Header = React.memo(({ ...props }) => {
       </AppBar>
       <AppBar position="static" sx={{ boxShadow: 1, bgcolor: '#16529B' }}>
         <Toolbar>
-
-          <>
+          <Typography sx={{ mr: 1, ml: 1 }}>{pages[pageIndex].icon}</Typography>
+          <Box>
             <Typography variant="h7" fontWeight={600} color={"#fff"}>{pages[pageIndex].title}</Typography>
-          </>
-
-
+          </Box>
         </Toolbar>
       </AppBar>
     </>

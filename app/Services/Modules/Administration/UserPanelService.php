@@ -9,8 +9,6 @@ use Illuminate\Support\Str;
 use App\Models\User\UserModel;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
-use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
-use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 use App\Http\Resources\Modules\Administration\UsersPanelResource;
 
 class UserPanelService
@@ -97,8 +95,6 @@ class UserPanelService
 
         $user->refresh();
 
-        $user->notify(new UserUpdatedNotification($user));
-
         return response(["message" => "Usuário atualizado com sucesso!"], 200);
     }
 
@@ -135,7 +131,6 @@ class UserPanelService
             $user->update(["status" => false]);
             $user->delete();
 
-            $user->notify(new UserDisabledNotification($user));
         });
 
         return response(["message" => "Usuário deletado com sucesso!"], 200);

@@ -2,7 +2,6 @@
 
 namespace App\Services\Modules\Report;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Reports\ReportModel;

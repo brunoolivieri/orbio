@@ -27,8 +27,12 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import TablePagination from '@mui/material/TablePagination';
 import Table from '@mui/material/Table';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -50,59 +54,31 @@ export const IncidentsPanel = React.memo(() => {
   const { AuthData } = useAuthentication();
   const [records, setRecords] = React.useState([]);
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
   const [loading, setLoading] = React.useState(true);
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
   const [searchField, setSearchField] = React.useState("");
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
-    if (!paginationParams.where) {
-      requestToGetAllIncidents();
-    } else {
-      requestToGetSearchedIncidents();
-    }
-  }, [paginationParams]);
+    serverLoadRecords();
+  }, [paginationConfig]);
 
-  const requestToGetAllIncidents = () => {
+  const serverLoadRecords = () => {
 
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
+    const limit = paginationConfig.limit;
+    const search = paginationConfig.search;
+    const page = paginationConfig.page;
+    const order_by = paginationConfig.order_by;
+    const filter = paginationConfig.filter;
 
-    AxiosApi.get(`/api/incidents-module?args=${select_query_params}`)
-      .then(function (response) {
-
-        setLoading(false);
-        setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
-
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} incidentes`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} incidente`, "success");
-        }
-
-      })
-      .catch(function (error) {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        setLoading(false);
-        setRecords([]);
-        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-      });
-
-  }
-
-  const requestToGetSearchedIncidents = () => {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/incidents-module/show?args=${select_query_params}`)
+    AxiosApi.get(`/api/incidents-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
 
         setLoading(false);
@@ -131,20 +107,26 @@ export const IncidentsPanel = React.memo(() => {
 
   const handleTablePageChange = (event, value) => {
 
-    setPaginationParams({
+    setPaginationConfig({
       page: value + 1,
-      limit: paginationParams.limit,
-      where: paginationParams.where
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   };
 
   const handleChangeRowsPerPage = (event) => {
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
       limit: event.target.value,
-      where: paginationParams.where
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   };
@@ -152,10 +134,13 @@ export const IncidentsPanel = React.memo(() => {
   const handleSearchSubmit = (event) => {
     event.preventDefault();
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: searchField
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: searchField,
+      total_records: 0,
+      filter: 0
     });
 
   }
@@ -164,14 +149,21 @@ export const IncidentsPanel = React.memo(() => {
 
     setSelectedRecordIndex(null);
 
-    setLoading(false);
+    setLoading(true);
     setRecords([]);
-    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
+    setPagination({
+      total_records: 0,
+      records_per_page: 0,
+      total_pages: 0
+    });
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: 0
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: 0,
+      total_records: 0,
+      filter: 0
     });
 
   }
@@ -186,10 +178,15 @@ export const IncidentsPanel = React.memo(() => {
 
   }
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
+
   const handleOpenSnackbar = (text, variant) => {
-
     enqueueSnackbar(text, { variant });
-
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
@@ -231,6 +228,35 @@ export const IncidentsPanel = React.memo(() => {
         </Grid>
 
         <Grid item>
+          <Tooltip title="Filtros">
+            <IconButton
+              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem ><Checkbox /> Ativos </MenuItem>
+          <MenuItem ><Checkbox /> Inativos </MenuItem>
+          <MenuItem ><Checkbox /> Deletados </MenuItem>
+        </Menu>
+
+        <Grid item>
           <Tooltip title="Carregar">
             <IconButton onClick={reloadTable}>
               <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
@@ -266,9 +292,9 @@ export const IncidentsPanel = React.memo(() => {
                 labelRowsPerPage="Linhas por página: "
                 component="div"
                 count={pagination.total_records}
-                page={paginationParams.page - 1}
+                page={paginationConfig.page - 1}
                 onPageChange={handleTablePageChange}
-                rowsPerPage={paginationParams.limit}
+                rowsPerPage={paginationConfig.limit}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Stack>
@@ -283,7 +309,6 @@ export const IncidentsPanel = React.memo(() => {
           name="radio-buttons-group"
           value={selectedRecordIndex}
         >
-
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 500 }} aria-label="customized table">
               <TableHead>

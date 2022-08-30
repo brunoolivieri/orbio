@@ -21,7 +21,8 @@ class IncidentModuleController extends Controller
      * 
      * @param App\Services\Modules\Incident\IncidentService $service
      */
-    public function __construct(IncidentService $service){
+    public function __construct(IncidentService $service)
+    {
         $this->service = $service;
     }
 
@@ -30,17 +31,17 @@ class IncidentModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
- 
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -49,12 +50,11 @@ class IncidentModuleController extends Controller
      * @param  App\Http\Requests\Modules\Incidents\IncidentStoreRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(IncidentStoreRequest $request) : \Illuminate\Http\Response
+    public function store(IncidentStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
 
         return $this->service->createResource($request->validated());
-
     }
 
     /**
@@ -63,16 +63,11 @@ class IncidentModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        //
     }
 
     /**
@@ -82,12 +77,11 @@ class IncidentModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(IncidentUpdateRequest $request, $id) : \Illuminate\Http\Response
+    public function update(IncidentUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
 
         return $this->service->updateResource($request->validated(), $id);
-  
     }
 
     /**
@@ -96,11 +90,10 @@ class IncidentModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->deleteResource($id); 
- 
+        return $this->service->deleteResource($id);
     }
 }

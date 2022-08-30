@@ -23,7 +23,8 @@ class ServiceOrderModuleController extends Controller
      * 
      * @param App\Services\Modules\ServiceOrder\ServiceOrderService $service
      */
-    public function __construct(ServiceOrderService $service){
+    public function __construct(ServiceOrderService $service)
+    {
         $this->service = $service;
     }
 
@@ -32,17 +33,17 @@ class ServiceOrderModuleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
-
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -51,12 +52,11 @@ class ServiceOrderModuleController extends Controller
      * @param App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(ServiceOrderStoreRequest $request) : \Illuminate\Http\Response
+    public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
 
         return $this->service->createResource($request->validated());
-
     }
 
     /**
@@ -65,17 +65,11 @@ class ServiceOrderModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_read');
-        
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
 
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
-        
+        //
     }
 
     /**
@@ -85,12 +79,11 @@ class ServiceOrderModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(ServiceOrderUpdateRequest $request, $id) : \Illuminate\Http\Response
+    public function update(ServiceOrderUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
 
         return $this->service->updateResource($request->validated(), $id);
-
     }
 
     /**
@@ -99,11 +92,10 @@ class ServiceOrderModuleController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
 
         return $this->service->deleteResource($id);
-        
     }
 }

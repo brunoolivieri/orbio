@@ -2,28 +2,13 @@
 
 namespace App\Providers;
 
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
-// Custom Events
-use App\Events\Auth\LoginEvent;
-use App\Events\Auth\RequestedTokenEvent;
-use App\Events\User\UserPasswordChangedEvent;
-use App\Events\Modules\Admin\UserCreatedEvent;
-use App\Events\User\UserAccountDesactivatedEvent;
-use  App\Events\Modules\Orders\OrderCreatedEvent;
-// Custom Listeners
-use App\Listeners\Auth\LoginEventListener;
-use App\Listeners\Auth\RequestedTokenEventListener;
-use App\Listeners\User\UserChangedPasswordEventListener;
-use App\Listeners\Modules\Admin\UserCreatedEventListener;
-use App\Listeners\User\UserAccountDesactivatedEventListener;
-use App\Listeners\Modules\Orders\OrderCreatedEventListener;
-// Custom Observers
-use App\Observers\UserModelObserver;
-// Custom Model
+// Observers
+use App\Observers\ServiceOrderObserver;
+use App\Observers\UserObserver;
+// Models
 use App\Models\User\UserModel;
+use App\Models\Orders\ServiceOrderModel;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -33,24 +18,9 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        LoginEvent::class => [
-            LoginEventListener::class
-        ],
-        RequestedTokenEvent::class => [
-            RequestedTokenEventListener::class
-        ],
-        UserPasswordChangedEvent::class => [
-            UserChangedPasswordEventListener::class
-        ],
-        UserCreatedEvent::class => [
-            UserCreatedEventListener::class
-        ],
-        UserAccountDesactivatedEvent::class => [
-            UserAccountDesactivatedEventListener::class
-        ],
-        OrderCreatedEvent::class => [
-            OrderCreatedEventListener::class
-        ]
+        //Event::class => [
+        //EventListener::class
+        //]
 
     ];
 
@@ -60,7 +30,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $observers = [
-        //UserModel::class => [UserModelObserver::class],
+        UserModel::class => [UserObserver::class],
+        ServiceOrderModel::class => [ServiceOrderObserver::class]
     ];
 
     /**
@@ -70,6 +41,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //UserModel::observe(UserModelObserver::class);
+        UserModel::observe(UserObserver::class);
+        ServiceOrderModel::observe(ServiceOrderObserver::class);
     }
 }
