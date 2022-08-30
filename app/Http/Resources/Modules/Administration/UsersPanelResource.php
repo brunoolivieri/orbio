@@ -10,7 +10,8 @@ class UsersPanelResource extends JsonResource
 
     private LengthAwarePaginator $data;
 
-    function __construct(LengthAwarePaginator $data){
+    function __construct(LengthAwarePaginator $data)
+    {
         $this->data = $data;
     }
 
@@ -24,7 +25,7 @@ class UsersPanelResource extends JsonResource
     {
         $formated_data["records"] = array();
 
-        foreach($this->data as $row => $record){
+        foreach ($this->data as $row => $record) {
 
             $formated_data["records"][$row] = [
                 "id" => $record->id,
@@ -34,21 +35,18 @@ class UsersPanelResource extends JsonResource
                 "complementary_data_id" => $record->complementary_data_id,
                 "email" => $record->email,
                 "status" => $record->status,
-                "last_access" => empty($record->last_access) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->last_access)),
-                "created_at" => date( 'd-m-Y h:i', strtotime($record->created_at)),
-                "updated_at" => empty($record->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($record->updated_at))
-            ];   
+                "last_access" => empty($record->last_access) ? "N/A" : date('d-m-Y h:i', strtotime($record->last_access)),
+                "created_at" => date('d-m-Y h:i', strtotime($record->created_at)),
+                "updated_at" => empty($record->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($record->updated_at))
+            ];
 
-            if($record->status && !empty($record->last_access) && empty($record->deleted_at)){
+            if ((bool) $record->status && empty($record->deleted_at)) {
                 $formated_data["records"][$row]["status_badge"] = ["Ativo", "success"];
-            }else if(!$record->status && empty($record->last_access) && empty($record->deleted_at)){
+            } else if ((bool) !$record->status && empty($record->deleted_at)) {
                 $formated_data["records"][$row]["status_badge"] = ["Inativo", "error"];
-            }else if(!$record->status && empty($record->last_access) && empty($record->deleted_at)){
-                $formated_data["records"][$row]["status_badge"] = ["Desabilitado", "error"];
-            }else if(!empty($record->deleted_at)){
+            } else if (!empty($record->deleted_at)) {
                 $formated_data["records"][$row]["status_badge"] = ["Removido", "error"];
             }
-
         }
 
         $formated_data["total_records"] = $this->data->total();
@@ -56,6 +54,5 @@ class UsersPanelResource extends JsonResource
         $formated_data["total_pages"] = $this->data->lastPage();
 
         return $formated_data;
-
     }
 }

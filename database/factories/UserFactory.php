@@ -25,8 +25,9 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail(),
             'password' => Hash::make("123456789User"),
             'status' => (bool) Arr::random([0, 1]),
-            'last_acess' => Arr::random([now(), null]),
+            'last_access' => now(),
             'updated_at' => null,
+            'deleted_at' => Arr::random([now(), null])
         ];
     }
 }

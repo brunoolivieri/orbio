@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Actions\Authentication;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -31,7 +30,10 @@ class LoginController extends Controller
             // User account is active
             if (Auth::user()->status && !is_null(Auth::user()->last_access)) {
 
-                $user->update(["last_access" => Carbon::now()]);
+                // To disable observer
+                $user->withoutEvents(function () use ($user) {
+                    $user->update(["last_access" => Carbon::now()]);
+                });
 
                 $user->notify(new LoginNotification($user));
 
@@ -42,7 +44,10 @@ class LoginController extends Controller
 
                 $this->activateAccount();
 
-                $user->update(["last_access" => Carbon::now()]);
+                // To disable observer
+                $user->withoutEvents(function () use ($user) {
+                    $user->update(["last_access" => Carbon::now()]);
+                });
 
                 $user->notify(new LoginNotification($user));
 
@@ -79,7 +84,10 @@ class LoginController extends Controller
                 "address_id" => $new_address->id
             ]);
 
-            UserModel::where('id', Auth::user()->id)->update(["complementary_data_id" => $new_complementary_data->id]);
+            // To disable observer
+            $user->withoutEvents(function () use ($user, $new_complementary_data) {
+                $user->where('id', Auth::user()->id)->update(["complementary_data_id" => $new_complementary_data->id]);
+            });
         });
     }
 }

@@ -17,7 +17,7 @@ class UsersSeeder extends Seeder
     {
 
         // Call the factory of the UserModel
-        UserModel::factory()->count(50)->create();
+        UserModel::factory()->count(250)->create();
 
     }
 }

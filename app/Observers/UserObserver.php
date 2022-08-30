@@ -41,26 +41,4 @@ class UserObserver
     {
         $userModel->notify(new UserDisabledNotification($userModel));
     }
-
-    /**
-     * Handle the UserModel "restored" event.
-     *
-     * @param  \App\Models\User\UserModel  $userModel
-     * @return void
-     */
-    public function restored(UserModel $userModel)
-    {
-        //
-    }
-
-    /**
-     * Handle the UserModel "force deleted" event.
-     *
-     * @param  \App\Models\User\UserModel  $userModel
-     * @return void
-     */
-    public function forceDeleted(UserModel $userModel)
-    {
-        //
-    }
 }
