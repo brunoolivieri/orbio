@@ -30,8 +30,11 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControl from '@mui/material/FormControl';
 import { useSnackbar } from 'notistack';
 import TablePagination from '@mui/material/TablePagination';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -47,20 +50,15 @@ export function ProfilesPanel() {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [records, setRecords] = React.useState([]);
-
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
   const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
-
   const [loading, setLoading] = React.useState(true);
-
-  // When a record is selected, its index is saved in this state
-  // The index is used for retrieve the correspondent record in records state
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-
   const [searchField, setSearchField] = React.useState("");
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   // context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -167,13 +165,20 @@ export function ProfilesPanel() {
   }
 
   function handleClickRadio(event) {
-    
+
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
 
+  }
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleClose = () => {
+    setAnchorEl(null);
   }
 
   function handleOpenSnackbar(text, variant) {
@@ -220,6 +225,35 @@ export function ProfilesPanel() {
             <DeleteProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
+
+        <Grid item>
+          <Tooltip title="Filtros">
+            <IconButton
+              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem ><Checkbox /> Ativos </MenuItem>
+          <MenuItem ><Checkbox /> Inativos </MenuItem>
+          <MenuItem ><Checkbox /> Deletados </MenuItem>
+        </Menu>
 
         <Grid item>
           <Tooltip title="Carregar">

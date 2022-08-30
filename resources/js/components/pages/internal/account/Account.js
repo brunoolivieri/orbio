@@ -5,21 +5,23 @@ import { BasicDataPanel } from "./basic_data_panel/BasicDataPanel";
 import { ComplementaryDataPanel } from "./complementary_data_panel/ComplementaryDataPanel";
 import { AccountConfiguration } from './account_configuration/AccountConfiguration';
 import { Switcher } from "../../../structures/switcher/Switcher";
+import { usePage } from '../../../context/PageContext';
 // Material UI
 import Paper from '@mui/material/Paper';
 import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 
-export function Account({ ...props }) {
+export const Account = () => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const [actualPanel, setActualPanel] = React.useState("basic");
+  const { setPageIndex } = usePage();
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
-    props.setPage("MINHA CONTA");
+    setPageIndex(8);
   }, []);
 
   // ============================================================================== STRUCTURES ============================================================================== //

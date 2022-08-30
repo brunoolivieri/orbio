@@ -8,10 +8,10 @@ import { usePage } from '../../../context/PageContext';
 
 export const Incidents = React.memo(() => {
 
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPage("INCIDENTES");
+    setPageIndex(5);
   }, []);
 
   return (

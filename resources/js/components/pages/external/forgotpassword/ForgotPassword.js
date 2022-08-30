@@ -3,7 +3,6 @@ import * as React from 'react';
 // Custom
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { ModalInformative } from '../../../structures/generic_modal_dialog/ModalInformative';
 // Material UI
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -14,12 +13,10 @@ import Container from '@mui/material/Container';
 import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+import { useSnackbar } from 'notistack';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersGear } from '@fortawesome/free-solid-svg-icons';
-// Assets
-import SuccessImage from "../../../assets/images/Success/Success_md.png";
-import ErrorImage from "../../../assets/images/Error/Error_md.png";
 // Raect Router
 import { Link } from 'react-router-dom';
 
@@ -32,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export function ForgotPassword() {
+export const ForgotPassword = () => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -45,15 +42,16 @@ export function ForgotPassword() {
 
     const [codeTimer, setTimer] = React.useState(0);
 
-    const [operation, setOperation] = React.useState({ current: "", title: "", message: "", image: "" });
-
     const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
 
     const classes = useStyles();
 
+    // Context do snackbar
+    const { enqueueSnackbar } = useSnackbar();
+
     // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-    function handleCodeSubmit(event) {
+    const handleCodeSubmit = (event) => {
         event.preventDefault();
 
         if (formularyDataValidate("SEND_CODE")) {
@@ -65,7 +63,7 @@ export function ForgotPassword() {
 
     }
 
-    function handleChangePasswordSubmit(event) {
+    const handleChangePasswordSubmit = (event) => {
         event.preventDefault();
 
         if (formularyDataValidate("CHANGE_PASSWORD")) {
@@ -77,7 +75,7 @@ export function ForgotPassword() {
 
     }
 
-    function formularyDataValidate(formulary) {
+    const formularyDataValidate = (formulary) => {
 
         if (formulary === "SEND_CODE") {
 
@@ -106,7 +104,7 @@ export function ForgotPassword() {
 
     }
 
-    function sendCodeServerRequest() {
+    const sendCodeServerRequest = () => {
 
         AxiosApi.post("/api/auth/password-token", {
             email: controlledInput.email
@@ -125,9 +123,7 @@ export function ForgotPassword() {
 
     }
 
-    function changePasswordServerRequest() {
-
-        setOperation({ current: "loading", title: null, message: "", image: null });
+    const changePasswordServerRequest = () => {
 
         AxiosApi.post("/api/auth/change-password", {
             token: controlledInput.code,
@@ -148,25 +144,18 @@ export function ForgotPassword() {
 
     }
 
-    function sendCodeSuccessServerResponseTreatment(response) {
+    const sendCodeSuccessServerResponseTreatment = (response) => {
 
-        setOperation({ current: "concluded", title: "Código enviado!", message: response.data.message, image: SuccessImage });
+        handleOpenSnackbar(response.data.message, "success");
 
         setTimer(60);
         setCodeSent(true);
 
-        setTimeout(() => {
-
-            setOperation({ current: "", title: "", message: "", image: "" });
-
-        }, 2000);
-
     }
 
-    function sendCodeErrorServerResponseTreatment(response) {
+    const sendCodeErrorServerResponseTreatment = (response) => {
 
-        const error_message = response.data.message ? response.data.message : "Houve um erro no envio do email. Tente novamente.";
-        setOperation({ current: "concluded", title: "Erro no envio do código!", message: error_message, image: ErrorImage });
+        handleOpenSnackbar("Erro. Tente novamente.", "error");
 
         let request_errors = {
             email: { error: false, message: "" }
@@ -184,32 +173,22 @@ export function ForgotPassword() {
         setFieldError({ name: false, email: request_errors.email.error, new_password: false, new_password_confirmation: false });
         setFiedlErrorMessage({ name: "", email: request_errors.email.message, new_password: "", new_password_confirmation: "" });
 
-        setTimeout(() => {
-
-            setOperation({ current: "", title: "", message: "", image: "" });
-
-        }, 2000);
-
     }
 
-    function changePasswordSuccessServerResponseTreatment(response) {
+    const changePasswordSuccessServerResponseTreatment = (response) => {
 
-        setOperation({ current: "concluded", title: response.data.message, message: "", image: SuccessImage });
+        handleOpenSnackbar(response.data.message, "success");
 
         setTimeout(() => {
-
-            setOperation({ current: "", title: "", message: "", image: "" });
-
             window.location.href = "/login";
-
         }, 2000);
 
 
     }
 
-    function changePasswordErrorServerResponseTreatment(response) {
+    const changePasswordErrorServerResponseTreatment = (response) => {
 
-        setOperation({ current: "concluded", title: "Erro do servidor", message: "", image: ErrorImage });
+        handleOpenSnackbar("Erro do servidor", "error");
 
         // Errors by key that can be returned from backend validation 
         let request_errors = {
@@ -231,12 +210,6 @@ export function ForgotPassword() {
         setFieldError({ name: request_errors.name.error, email: request_errors.email.error, new_password: request_errors.new_password.error, new_password_confirmation: request_errors.new_password_confirmation.error });
         setFiedlErrorMessage({ name: request_errors.name.error, email: request_errors.email.message, new_password: request_errors.new_password.message, new_password_confirmation: request_errors.new_password_confirmation.message });
 
-        setTimeout(() => {
-
-            setOperation({ current: "", title: "", message: "", image: "" });
-
-        }, 2000);
-
     }
 
     const handleInputChange = (event) => {
@@ -244,34 +217,22 @@ export function ForgotPassword() {
     }
 
     React.useEffect(() => {
-
         if (codeTimer > 0) {
-
             setTimeout(() => {
-
                 setTimer(codeTimer - 1);
-
             }, 1000);
-
         }
-
     }, [codeTimer]);
+
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
+    }
 
     // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
     return (
-
         <>
-
-            {operation.current === "concluded" &&
-                <ModalInformative
-                    image={operation.image}
-                    title={operation.title}
-                />
-            }
-
             <Container component="main" maxWidth="xs">
-
                 <Box
                     sx={{
                         marginTop: 8,
@@ -404,7 +365,6 @@ export function ForgotPassword() {
                             </Grid>
                         </Grid>
                     </Box>
-
                 </Box>
             </Container>
         </>

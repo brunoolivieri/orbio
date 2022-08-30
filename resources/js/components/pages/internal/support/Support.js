@@ -9,10 +9,10 @@ import { usePage } from '../../../context/PageContext';
 
 export const Support = React.memo(() => {
 
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPage("SUPORTE");
+    setPageIndex(7);
   }, []);
 
   return (

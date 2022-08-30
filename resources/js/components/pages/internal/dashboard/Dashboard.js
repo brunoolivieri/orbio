@@ -69,11 +69,11 @@ export const Dashboard = React.memo(() => {
   const { enqueueSnackbar } = useSnackbar();
 
   // Context page
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
 
-    setPage("DASHBOARD");
+    setPageIndex(0);
 
     AxiosApi.get("/api/load-dashboard-metrics")
       .then(function (response) {

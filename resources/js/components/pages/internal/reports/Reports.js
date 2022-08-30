@@ -8,10 +8,10 @@ import { usePage } from '../../../context/PageContext';
 
 export const Reports = React.memo(() => {
 
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPage("RELATÓRIOS");
+    setPageIndex(4);
   }, []);
 
   return (

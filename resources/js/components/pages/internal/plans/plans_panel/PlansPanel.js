@@ -157,7 +157,7 @@ export function PlansPanel() {
 
   }
 
-  function reloadTable() {
+  const reloadTable = () => {
 
     setSelectedRecordIndex(null);
 

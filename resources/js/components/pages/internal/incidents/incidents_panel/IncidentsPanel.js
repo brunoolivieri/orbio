@@ -48,20 +48,11 @@ export const IncidentsPanel = React.memo(() => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [records, setRecords] = React.useState([]);
-
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
   const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
-
   const [loading, setLoading] = React.useState(true);
-
-  // State do registro selecionado
-  // Quando um registro é selecionado, seu índice é salvo nesse state
-  // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-
   const [searchField, setSearchField] = React.useState("");
 
   const { enqueueSnackbar } = useSnackbar();

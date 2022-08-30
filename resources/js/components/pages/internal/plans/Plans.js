@@ -9,10 +9,10 @@ import { usePage } from '../../../context/PageContext';
 
 export const Plans = React.memo(() => {
 
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPage("PLANOS DE VOO");
+    setPageIndex(2);
   }, []);
 
   return (

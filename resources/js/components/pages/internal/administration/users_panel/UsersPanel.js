@@ -50,24 +50,15 @@ export function UsersPanel() {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+  const [records, setRecords] = React.useState([]);
+  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
+  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
+  const [loading, setLoading] = React.useState(true);
+  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
+  const [searchField, setSearchField] = React.useState("");
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-
   const open = Boolean(anchorEl);
-
-  const [records, setRecords] = React.useState([]);
-
-  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
-
-  const [loading, setLoading] = React.useState(true);
-
-  // When a record is selected, its index is saved in this state
-  // The index is used for retrieve the correspondent record in records state
-  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-
-  const [searchField, setSearchField] = React.useState("");
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();

@@ -8,10 +8,10 @@ import { usePage } from '../../../context/PageContext';
 
 export function ServiceOrders() {
 
-    const { setPage } = usePage();
+    const { setPageIndex } = usePage();
 
     React.useEffect(() => {
-        setPage("ORDENS DE SERVIÇO");
+        setPageIndex(3);
     }, []);
 
     return (

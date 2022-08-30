@@ -1,15 +1,15 @@
 import * as React from "react";
 
-const PageContext = React.createContext("DASHBOARD");
+const PageContext = React.createContext(0);
 
 // Provider
 export function PageProvider({ children }) {
 
-    const [page, setPage] = React.useState("DASHBOARD");
+    const [pageIndex, setPageIndex] = React.useState(0);
 
     return (
 
-        <PageContext.Provider value={{ page, setPage }}>
+        <PageContext.Provider value={{ pageIndex, setPageIndex }}>
 
             {children}
 

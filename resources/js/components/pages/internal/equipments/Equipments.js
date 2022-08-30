@@ -16,10 +16,10 @@ export const Equipments = React.memo(() => {
 
   const [actualPanel, setActualPanel] = React.useState("drones");
 
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPage("DRONES, BATERIAS E EQUIPAMENTOS");
+    setPageIndex(6);
   }, []);
 
   return (

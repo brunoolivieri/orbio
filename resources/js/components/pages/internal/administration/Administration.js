@@ -17,12 +17,11 @@ import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 export const Administration = React.memo(() => {
 
   const [actualPanel, setActualPanel] = React.useState("users");
-
   // Context page
-  const { setPage } = usePage();
+  const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPage("ADMINISTRAÇÃO");
+    setPageIndex(1);
   }, []);
 
   return (
