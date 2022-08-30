@@ -31,9 +31,7 @@ class LoginController extends Controller
             if (Auth::user()->status && !is_null(Auth::user()->last_access)) {
 
                 // To disable observer
-                $user->withoutEvents(function () use ($user) {
-                    $user->update(["last_access" => Carbon::now()]);
-                });
+                $user->update(["last_access" => Carbon::now()]);
 
                 $user->notify(new LoginNotification($user));
 
@@ -45,9 +43,7 @@ class LoginController extends Controller
                 $this->activateAccount();
 
                 // To disable observer
-                $user->withoutEvents(function () use ($user) {
-                    $user->update(["last_access" => Carbon::now()]);
-                });
+                $user->update(["last_access" => Carbon::now()]);
 
                 $user->notify(new LoginNotification($user));
 
@@ -85,9 +81,7 @@ class LoginController extends Controller
             ]);
 
             // To disable observer
-            $user->withoutEvents(function () use ($user, $new_complementary_data) {
-                $user->where('id', Auth::user()->id)->update(["complementary_data_id" => $new_complementary_data->id]);
-            });
+            $user->update(["last_access" => Carbon::now()]);
         });
     }
 }
