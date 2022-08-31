@@ -168,6 +168,6 @@
 	<button id="btn-mission" class="btn btn-success">Missão</button>
 	<button id="btn" class="btn btn-primary">Configuração</button>
 	
-	<script src="{{ asset('js/map/lib.js') }}"></script>
+	<script src="{{ asset('js/map/index.js') }}"></script>
  </body>
  </html>
