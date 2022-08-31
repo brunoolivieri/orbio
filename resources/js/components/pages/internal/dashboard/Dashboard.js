@@ -17,6 +17,7 @@ import { PizzaChart } from '../../../structures/charts/PizzaChart.js';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
+import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
@@ -25,30 +26,30 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
 
 const CardStyle = {
-  minWidth: 220,
-  maxWidth: 450,
+  minWidth: 300,
+  maxWidth: 390,
   margin: 'auto',
   borderRadius: 5
 }
 
 const CardContentStyle = {
-  bgcolor: '#333'
+  bgcolor: '#fff'
 }
 
 const topSectionStyle = {
-  maxWidth: { xs: "100%", md: "90%", lg: "85%", xl: "85%" },
+  maxWidth: { xs: "95%", md: "95%", lg: "95%", xl: "95%" },
   margin: 'auto',
   overflow: 'visible',
   padding: 1,
   borderRadius: 5,
-  mt: 10,
+  mt: 8,
   boxShadow: 0,
   bgcolor: '#EAEFF1'
 }
 
 const middleSectionStyle = {
   display: { xs: "none", md: "block", lg: "block", xl: "block" },
-  maxWidth: "90%",
+  maxWidth: "95%",
   margin: 'auto',
   padding: 3,
   overflow: 'hidden',
@@ -60,6 +61,7 @@ export const Dashboard = React.memo(() => {
 
   const [loading, setLoading] = React.useState(true);
   const [users, setUsers] = React.useState({ total: 0, chart: [{}] });
+  const [profiles, setProfiles] = React.useState({ total: 0, chart: [{}] });
   const [flightPlans, setFlightPlans] = React.useState({ total: 0, chart: [{}] });
   const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
   const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
@@ -83,6 +85,11 @@ export const Dashboard = React.memo(() => {
         setUsers({
           total: response.data.users.total,
           chart: response.data.users.chart
+        });
+
+        setProfiles({
+          total: response.data.profiles.total,
+          chart: response.data.profiles.chart
         });
 
         setFlightPlans({
@@ -128,67 +135,78 @@ export const Dashboard = React.memo(() => {
       <Paper sx={topSectionStyle}>
 
         <Toolbar>
-          <Grid container spacing={2} sx={{ mt: -10 }}>
+          <Grid container spacing={3} columns={10} sx={{ mt: -10 }}>
 
-            <Grid item xs={12} md={6} lg={6} xl={3}>
+            <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faUsers} color="green" size='2x' />}
                   title={<Typography variant="h6">Usuários</Typography>}
-                  subheader={"Total: " + users.total}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={users.chart} />}
+                    {loading ? <CircularProgress /> : <PizzaChart data={users.chart} total={users.total} />}
                   </Box>
                 </CardContent>
               </Card>
             </Grid>
 
-            <Grid item xs={12} md={6} lg={6} xl={3}>
+            <Grid item xs={10} md={5} lg={5} xl={2}>
+              <Card sx={CardStyle}>
+                <CardHeader
+                  avatar={<FontAwesomeIcon icon={faIdCardClip} color="green" size='2x' />}
+                  title={<Typography variant="h6">Perfis</Typography>}
+                />
+                <Divider />
+                <CardContent sx={CardContentStyle}>
+                  <Box width={'100%'} textAlign="center">
+                    {loading ? <CircularProgress /> : <PizzaChart data={profiles.chart} total={profiles.total} />}
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faMap} color="green" size='2x' />}
                   title={<Typography variant="h6">Planos de voo</Typography>}
-                  subheader={"Total: " + flightPlans.total}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} />}
+                    {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} total={flightPlans.total} />}
                   </Box>
                 </CardContent>
               </Card>
             </Grid>
 
-            <Grid item xs={12} md={6} lg={6} xl={3}>
+            <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faClipboard} color="green" size='2x' />}
                   title={<Typography variant="h6">Ordens de serviço</Typography>}
-                  subheader={"Total: " + serviceOrders.total}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} />}
+                    {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} total={serviceOrders.total} />}
                   </Box>
                 </CardContent>
               </Card>
             </Grid>
 
-            <Grid item xs={12} md={6} lg={6} xl={3}>
+            <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faChartColumn} color="green" size='2x' />}
                   title={<Typography variant="h6">Relatórios</Typography>}
-                  subheader={"Total: " + reports.total}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
                   <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} />}
+                    {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} total={reports.total} />}
                   </Box>
                 </CardContent>
               </Card>

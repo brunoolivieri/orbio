@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\User\UserModel;
+use App\Models\Profiles\ProfileModel;
 use App\Models\FlightPlans\FlightPlanModel;
 use App\Models\Orders\ServiceOrderModel;
 use App\Models\Reports\ReportModel;
@@ -13,12 +14,13 @@ use App\Models\Reports\ReportModel;
 class DashboardController extends Controller
 {
 
-    function __construct(UserModel $user_model, FlightPlanModel $flight_plan_model, ServiceOrderModel $service_order_model, ReportModel $report_model)
+    function __construct(UserModel $userModel, ProfileModel $profileModel, FlightPlanModel $flightPlanModel, ServiceOrderModel $serviceOrderModel, ReportModel $reportModel)
     {
-        $this->user_model = $user_model;
-        $this->flight_plan_model = $flight_plan_model;
-        $this->service_order_model = $service_order_model;
-        $this->report_model = $report_model;
+        $this->userModel = $userModel;
+        $this->profileModel = $profileModel;
+        $this->flightPlanModel = $flightPlanModel;
+        $this->serviceOrderModel = $serviceOrderModel;
+        $this->reportModel = $reportModel;
     }
 
     /**
@@ -30,80 +32,86 @@ class DashboardController extends Controller
     public function __invoke(Request $request)
     {
         $users = [
-            "total" => $this->user_model->withTrashed()->count(),
-            "active" => $this->user_model->where("status", 1)->count(),
-            "inative" => $this->user_model->where("status", 0)->count(),
-            "deleted" => $this->user_model->onlyTrashed()->count()
+            "total" => $this->userModel->withTrashed()->count(),
+            "active" => $this->userModel->where("status", 1)->count(),
+            "inative" => $this->userModel->where("status", 0)->count(),
+            "deleted" => $this->userModel->onlyTrashed()->count()
+        ];
+
+        $profiles = [
+            "total" => $this->profileModel->withTrashed()->count(),
+            "active" => $this->profileModel->count(),
+            "deleted" => $this->profileModel->onlyTrashed()->count()
         ];
 
         $flight_plans = [
-            "total" => $this->flight_plan_model->withTrashed()->count(),
-            "active" => $this->flight_plan_model->where("status", 1)->count(),
-            "inative" => $this->flight_plan_model->where("status", 0)->count(),
-            "deleted" => $this->flight_plan_model->onlyTrashed()->count()
+            "total" => $this->flightPlanModel->withTrashed()->count(),
+            "active" => $this->flightPlanModel->where("status", 1)->count(),
+            "inative" => $this->flightPlanModel->where("status", 0)->count(),
+            "deleted" => $this->flightPlanModel->onlyTrashed()->count()
         ];
 
         $service_orders = [
-            "total" => $this->service_order_model->withTrashed()->count(),
-            "finished" => $this->service_order_model->whereRaw("service_orders.start_date >= service_orders.end_date")->count(),
-            "to_finish" => $this->service_order_model->whereRaw("service_orders.start_date < service_orders.end_date")->count(),
-            "deleted" => $this->service_order_model->onlyTrashed()->count()
+            "total" => $this->serviceOrderModel->withTrashed()->count(),
+            "finished" => $this->serviceOrderModel->whereRaw("service_orders.start_date >= service_orders.end_date")->count(),
+            "to_finish" => $this->serviceOrderModel->whereRaw("service_orders.start_date < service_orders.end_date")->count(),
+            "deleted" => $this->serviceOrderModel->onlyTrashed()->count()
         ];
 
         $reports = [
-            "total" => $this->report_model->withTrashed()->count(),
-            "active" => $this->report_model->count(),
-            "deleted" => $this->report_model->onlyTrashed()->count()
+            "total" => $this->reportModel->withTrashed()->count(),
+            "active" => $this->reportModel->count(),
+            "deleted" => $this->reportModel->onlyTrashed()->count()
         ];
 
         $registrations = [
             [
                 "x" => "Janeiro",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 1)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 1)->withTrashed()->count()
             ],
             [
                 "x" => "Fevereiro",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 2)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 2)->withTrashed()->count()
             ],
             [
                 "x" => "Março",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 3)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 3)->withTrashed()->count()
             ],
             [
                 "x" => "Abril",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 4)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 4)->withTrashed()->count()
             ],
             [
                 "x" => "Maio",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 5)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 5)->withTrashed()->count()
             ],
             [
                 "x" => "Junho",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 6)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 6)->withTrashed()->count()
             ],
             [
                 "x" => "Julho",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 7)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 7)->withTrashed()->count()
             ],
             [
                 "x" => "Agosto",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 8)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 8)->withTrashed()->count()
             ],
             [
                 "x" => "Setembro",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 9)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 9)->withTrashed()->count()
             ],
             [
                 "x" => "Outubro",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 10)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 10)->withTrashed()->count()
             ],
             [
                 "x" => "Novembro",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 11)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 11)->withTrashed()->count()
             ],
             [
                 "x" => "Dezembro",
-                "y" => $this->user_model->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 12)->withTrashed()->count()
+                "y" => $this->userModel->whereYear('created_at', '=', date("Y"))->whereMonth('created_at', '=', 12)->withTrashed()->count()
             ]
         ];
 
@@ -118,17 +126,37 @@ class DashboardController extends Controller
                     [
                         "id" => "Ativos",
                         "label" => "Ativos (" . $users["active"] . ")",
-                        "value" => $users["active"] > 0 ? $users["active"] : ""
+                        "value" => $users["active"] > 0 ? $users["active"] : "",
+                        "color" => "#7FC97F"
                     ],
                     [
                         "id" => "Inativos",
                         "label" => "Inativos (" . $users["inative"] . ")",
-                        "value" => $users["inative"] > 0 ? $users["inative"] : ""
+                        "value" => $users["inative"] > 0 ? $users["inative"] : "",
+                        "color" => "#F47560"
                     ],
                     [
                         "id" => "Deletados",
                         "label" => "Deletados (" . $users["deleted"] . ")",
-                        "value" => $users["deleted"] > 0 ? $users["deleted"] : ""
+                        "value" => $users["deleted"] > 0 ? $users["deleted"] : "",
+                        "color" => "#F47560"
+                    ]
+                ]
+            ],
+            "profiles" => [
+                "total" => $profiles["total"],
+                "chart" => [
+                    [
+                        "id" => "Ativos",
+                        "label" => "Ativos (" . $profiles["active"] . ")",
+                        "value" => $profiles["active"] > 0 ? $profiles["active"] : "",
+                        "color" => "#7FC97F"
+                    ],
+                    [
+                        "id" => "Deletados",
+                        "label" => "Deletados (" . $profiles["deleted"] . ")",
+                        "value" => $profiles["deleted"] > 0 ? $profiles["deleted"] : "",
+                        "color" => "#F47560"
                     ]
                 ]
             ],
@@ -138,17 +166,20 @@ class DashboardController extends Controller
                     [
                         "id" => "Ativos",
                         "label" => "Ativos (" . $flight_plans["active"] . ")",
-                        "value" => $flight_plans["active"] > 0 ? $flight_plans["active"] : ""
+                        "value" => $flight_plans["active"] > 0 ? $flight_plans["active"] : "",
+                        "color" => "#7FC97F"
                     ],
                     [
                         "id" => "Inativos",
                         "label" => "Inativos (" . $flight_plans["inative"] . ")",
-                        "value" => $flight_plans["inative"] > 0 ? $flight_plans["inative"] : ""
+                        "value" => $flight_plans["inative"] > 0 ? $flight_plans["inative"] : "",
+                        "color" => "#F47560"
                     ],
                     [
                         "id" => "Deletados",
                         "label" => "Deletados (" . $flight_plans["deleted"] . ")",
-                        "value" => $flight_plans["deleted"] > 0 ? $flight_plans["deleted"] : ""
+                        "value" => $flight_plans["deleted"] > 0 ? $flight_plans["deleted"] : "",
+                        "color" => "#F47560"
                     ]
                 ]
             ],
@@ -158,17 +189,20 @@ class DashboardController extends Controller
                     [
                         "id" => "Finalizadas",
                         "label" => "Finalizadas (" . $service_orders["finished"] . ")",
-                        "value" => $service_orders["finished"] > 0 ? $service_orders["finished"] : ""
+                        "value" => $service_orders["finished"] > 0 ? $service_orders["finished"] : "",
+                        "color" => "#7FC97F"
                     ],
                     [
                         "id" => "Deletadas",
                         "label" => "Deletadas (" . $service_orders["deleted"] . ")",
-                        "value" => $service_orders["deleted"] > 0 ? $service_orders["deleted"] : ""
+                        "value" => $service_orders["deleted"] > 0 ? $service_orders["deleted"] : "",
+                        "color" => "#F47560"
                     ],
                     [
                         "id" => "Em progresso",
                         "label" => "Em progresso (" . $service_orders["to_finish"] . ")",
-                        "value" => $service_orders["to_finish"] > 0 ? $service_orders["to_finish"] : ""
+                        "value" => $service_orders["to_finish"] > 0 ? $service_orders["to_finish"] : "",
+                        "color" => "#7FC97F"
                     ]
                 ]
             ],
@@ -178,12 +212,14 @@ class DashboardController extends Controller
                     [
                         "id" => "Acessíveis",
                         "label" => "Acessíveis (" . $reports["active"] . ")",
-                        "value" => $reports["active"] > 0 ? $service_orders["active"] : ""
+                        "value" => $reports["active"] > 0 ? $service_orders["active"] : "",
+                        "color" => "#7FC97F"
                     ],
                     [
                         "id" => "Deletados",
                         "label" => "Deletados (" . $reports["deleted"] . ")",
-                        "value" => $reports["deleted"] > 0 ? $service_orders["deleted"] : ""
+                        "value" => $reports["deleted"] > 0 ? $service_orders["deleted"] : "",
+                        "color" => "#F47560"
                     ]
                 ]
             ],
