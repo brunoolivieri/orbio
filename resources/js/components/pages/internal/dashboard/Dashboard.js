@@ -26,10 +26,9 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
 
 const CardStyle = {
-  minWidth: 300,
-  maxWidth: 390,
+  minWidth: "100%",
   margin: 'auto',
-  borderRadius: 5
+  borderRadius: 1
 }
 
 const CardContentStyle = {
@@ -135,7 +134,7 @@ export const Dashboard = React.memo(() => {
       <Paper sx={topSectionStyle}>
 
         <Toolbar>
-          <Grid container spacing={3} columns={10} sx={{ mt: -10 }}>
+          <Grid container spacing={1} columns={10} sx={{ mt: -10 }}>
 
             <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
