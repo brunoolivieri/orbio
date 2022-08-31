@@ -8,11 +8,16 @@ use Illuminate\Http\Request;
 // Custom
 use App\Models\Batteries\BatteryModel;
 use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
-use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
-use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
+// Contract
+use App\Contracts\ServiceInterface;
 
-class BatteryService
+class BatteryService implements ServiceInterface
 {
+
+    function __construct(BatteryModel $batteryModel)
+    {
+        $this->batteryModel = $batteryModel;
+    }
 
     /**
      * Load all batteries with pagination.
@@ -22,25 +27,14 @@ class BatteryService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
     {
 
-        $data = BatteryModel::where("batteries.deleted_at", null)
-            ->when($typed_search, function ($query, $typed_search) {
-
-                $query->when(is_numeric($typed_search), function ($query) use ($typed_search) {
-
-                    $query->where('id', $typed_search);
-                }, function ($query) use ($typed_search) {
-
-                    $query->where('name', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('manufacturer', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('model', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('serial_number', 'LIKE', '%' . $typed_search . '%');
-                });
-            })
-            ->orderBy('batteries.id')
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = $this->batteryModel->where("batteries.deleted_at", null)
+            ->search($search) // scope
+            ->filter($filters) // scope
+            ->orderBy($order_by)
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
         if ($data->total() > 0) {
             return response(new BatteriesPanelResource($data), 200);
@@ -55,7 +49,7 @@ class BatteryService
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request)
+    public function createResource(Request $request) : \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request) {
@@ -67,7 +61,7 @@ class BatteryService
 
             $request->request->add(["image" => $filename]);
 
-            BatteryModel::create($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
+            $this->batteryModel->create($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
 
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -85,12 +79,12 @@ class BatteryService
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function updateResource(Request $request, $battery_id)
+    public function updateResource(Request $request, int $battery_id) : \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request, $battery_id) {
 
-            $battery = BatteryModel::findOrFail($battery_id);
+            $battery = $this->batteryModel->findOrFail($battery_id);
 
             if (!is_null($request->image)) {
 
@@ -122,12 +116,12 @@ class BatteryService
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource($battery_id)
+    public function deleteResource(int $battery_id) : \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($battery_id) {
 
-            $battery = BatteryModel::findOrFail($battery_id);
+            $battery = $this->batteryModel->findOrFail($battery_id);
 
             Storage::disk('public')->delete("images/batteries/" . $battery->image);
 

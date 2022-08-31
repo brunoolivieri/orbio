@@ -8,11 +8,16 @@ use Illuminate\Http\Request;
 // Custom
 use App\Models\Drones\DroneModel;
 use App\Http\Resources\Modules\Equipments\DronesPanelResource;
-use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
-use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
+// Contract
+use App\Contracts\ServiceInterface;
 
-class DroneService
+class DroneService implements ServiceInterface
 {
+
+    function __construct(DroneModel $droneModel)
+    {
+        $this->droneModel = $droneModel;
+    }
 
     /**
      * Load all drones with pagination.
@@ -22,27 +27,14 @@ class DroneService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
     {
 
-        $data = DroneModel::where("drones.deleted_at", null)
-            ->when($typed_search, function ($query, $typed_search) {
-
-                $query->when(is_numeric($typed_search), function ($query) use ($typed_search) {
-
-                    $query->where('id', $typed_search)
-                        ->orWhere('weight', $typed_search);
-                }, function ($query) use ($typed_search) {
-
-                    $query->where('name', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('manufacturer', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('model', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('record_number', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('serial_number', 'LIKE', '%' . $typed_search . '%');
-                });
-            })
-            ->orderBy('id')
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = $this->droneModel->where("drones.deleted_at", null)
+            ->search($search) // scope
+            ->filter($filters) // scope
+            ->orderBy($order_by)
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
         if ($data->total() > 0) {
             return response(new DronesPanelResource($data), 200);
@@ -57,7 +49,7 @@ class DroneService
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request)
+    public function createResource(Request $request) : \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request) {
@@ -69,7 +61,7 @@ class DroneService
 
             $request->request->add(["image" => $filename]);
 
-            DroneModel::create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
+            $this->droneModel->create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
 
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -86,13 +78,13 @@ class DroneService
      * @param  \Illuminate\Http\Request $request
      * @param $drone_id
      * @return \Illuminate\Http\Response
-     */
-    public function updateResource(Request $request, $drone_id)
+     */ 
+    public function updateResource(Request $request, int $drone_id) : \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request, $drone_id) {
 
-            $drone = DroneModel::findOrFail($drone_id);
+            $drone = $this->droneModel->findOrFail($drone_id);
 
             if (isset($request->image)) {
 
@@ -124,12 +116,12 @@ class DroneService
      * @param int $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource($drone_id)
+    public function deleteResource(int $drone_id) : \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($drone_id) {
 
-            $drone = DroneModel::findOrFail($drone_id);
+            $drone = $this->droneModel->findOrFail($drone_id);
 
             Storage::disk('public')->delete("images/drone/" . $drone->image);
 

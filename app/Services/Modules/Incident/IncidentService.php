@@ -6,20 +6,20 @@ use Illuminate\Http\Request;
 // Custom
 use App\Models\Incidents\IncidentModel;
 use App\Http\Resources\Modules\Incidents\IncidentsPanelResource;
+// Contract
+use App\Contracts\ServiceInterface;
 
-class IncidentService
+class IncidentService implements ServiceInterface
 {
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\FlightPlans\FlightPlanModel $flight_plan_model
-     * @param App\Models\Reports\ReportModel $report_model
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $service_order_has_flight_plan_model
+     * @param App\Models\Incidents\IncidentModel $incidentModel
      */
-    public function __construct(IncidentModel $incident_model)
+    public function __construct(IncidentModel $incidentModel)
     {
-        $this->incident_model = $incident_model;
+        $this->incidentModel = $incidentModel;
     }
 
     /**
@@ -30,10 +30,10 @@ class IncidentService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
     {
 
-        $data = $this->incident_model->where("deleted_at", null)
+        $data = $this->incidentModel->where("deleted_at", null)
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -52,10 +52,10 @@ class IncidentService
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request)
+    public function createResource(Request $request) : \Illuminate\Http\Response
     {
 
-        $this->incident_model->create($request->only(["type", "date", "description"]));
+        $this->incidentModel->create($request->only(["type", "date", "description"]));
 
         return response(["message" => "Incidente criado com sucesso!"], 200);
     }
@@ -67,10 +67,10 @@ class IncidentService
      * @param int $incident_id
      * @return \Illuminate\Http\Response
      */
-    public function updateResource(Request $request, int $incident_id)
+    public function updateResource(Request $request, int $incident_id) : \Illuminate\Http\Response
     {
 
-        $this->incident_model->where('id', $incident_id)->update($request->only(["type", "description", "date"]));
+        $this->incidentModel->where('id', $incident_id)->update($request->only(["type", "description", "date"]));
 
         return response(["message" => "Incidente atualizado com sucesso!"], 200);
     }
@@ -81,10 +81,10 @@ class IncidentService
      * @param int $incident_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource(int $incident_id)
+    public function deleteResource(int $incident_id) : \Illuminate\Http\Response
     {
 
-        $this->incident_model->where('id', $incident_id)->delete();
+        $this->incidentModel->where('id', $incident_id)->delete();
 
         return response(["message" => "Incidente deletado com sucesso!"], 200);
     }

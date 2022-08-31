@@ -10,22 +10,28 @@ use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
 use App\Models\FlightPlans\FlightPlanModel;
 use App\Models\Reports\ReportModel;
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
+// Contract
+use App\Contracts\ServiceInterface;
+// Trait
+use App\Traits\DownloadFlightPlanTrait;
 
-class FlightPlanService
+class FlightPlanService implements ServiceInterface
 {
+
+    use DownloadFlightPlanTrait;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\FlightPlans\FlightPlanModel $flight_plan_model
-     * @param App\Models\Reports\ReportModel $report_model
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $service_order_has_flight_plan_model
+     * @param App\Models\FlightPlans\FlightPlanModel $flightPlanModel
+     * @param App\Models\Reports\ReportModel $reportModel
+     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel
      */
-    public function __construct(FlightPlanModel $flight_plan_model, ReportModel $report_model, ServiceOrderHasFlightPlanModel $service_order_has_flight_plan_model)
+    public function __construct(FlightPlanModel $flightPlanModel, ReportModel $reportModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
     {
-        $this->flight_plan_model = $flight_plan_model;
-        $this->report_model = $report_model;
-        $this->service_order_has_flight_plan_model = $service_order_has_flight_plan_model;
+        $this->flightPlanModel = $flightPlanModel;
+        $this->reportModel = $reportModel;
+        $this->serviceOrderHasFlightPlanModel = $serviceOrderHasFlightPlanModel;
     }
 
     /**
@@ -36,7 +42,7 @@ class FlightPlanService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
         $data = FlightPlanModel::where("deleted_at", null)
@@ -83,7 +89,7 @@ class FlightPlanService
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request)
+    public function createResource(Request $request): \Illuminate\Http\Response
     {
 
         if (!$request->file("coordinates_file")) {
@@ -95,7 +101,7 @@ class FlightPlanService
         $filename = $file_content_hash . ".txt";
         $storage_folder = "public/flight_plans";
 
-        $this->flight_plan_model->create([
+        $this->flightPlanModel->create([
             "report_id" => null,
             "incident_id" => null,
             "name" => $request->name,
@@ -119,10 +125,10 @@ class FlightPlanService
      * @param int $flight_plan_id
      * @return \Illuminate\Http\Response
      */
-    public function updateResource(Request $request, int $flight_plan_id)
+    public function updateResource(Request $request, int $flight_plan_id): \Illuminate\Http\Response
     {
 
-        $this->flight_plan_model->where('id', $flight_plan_id)->update([
+        $this->flightPlanModel->where('id', $flight_plan_id)->update([
             "name" => $request->name,
             "report_id" => $request->report_id == 0 ? null : $request->report_id,
             "incident_id" => $request->incident_id == 0 ? null : $request->incident_id,
@@ -139,21 +145,21 @@ class FlightPlanService
      * @param int $flight_plan_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource(int $flight_plan_id)
+    public function deleteResource(int $flight_plan_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($flight_plan_id) {
 
-            $flight_plan =  $this->flight_plan_model->findOrFail($flight_plan_id);
+            $flight_plan =  $this->flightPlanModel->findOrFail($flight_plan_id);
 
             // Delete related report
             if ($flight_plan->reports->count() > 0) {
-                $this->report_model->where("id", $flight_plan->reports->id)->delete();
+                $this->reportModel->where("id", $flight_plan->reports->id)->delete();
             }
 
             // Delete relation in service order pivot table
             if ($flight_plan->has_service_order->count() > 0) {
-                $this->service_order_has_flight_plan_model->where("flight_plan_id", $flight_plan->id)->delete();
+                $this->serviceOrderHasFlightPlanModel->where("flight_plan_id", $flight_plan->id)->delete();
             }
 
             // Delete coordinates file from storage

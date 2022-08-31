@@ -20,7 +20,8 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * 
      * @param App\Models\Equipments\EquipmentModel $equipment
      */
-    public function __construct(EquipmentService $service){
+    public function __construct(EquipmentService $service)
+    {
         $this->service = $service;
     }
 
@@ -29,17 +30,17 @@ class EquipmentModuleEquipmentPanelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
-            
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -48,12 +49,11 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * @param App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreEquipmentRequest $request) : \Illuminate\Http\Response
+    public function store(StoreEquipmentRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
         return $this->service->createResource($request);
-   
     }
 
     /**
@@ -62,16 +62,11 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-            
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        //
 
     }
 
@@ -82,12 +77,11 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEquipmentRequest $request, $id) : \Illuminate\Http\Response
+    public function update(UpdateEquipmentRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
         return $this->service->updateResource($request, $id);
-
     }
 
     /**
@@ -96,11 +90,10 @@ class EquipmentModuleEquipmentPanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
         return $this->service->deleteResource($id);
-
     }
 }

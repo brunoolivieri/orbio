@@ -12,8 +12,10 @@ use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
 use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 use App\Http\Resources\Modules\Administration\UsersPanelResource;
+// Contract
+use App\Contracts\ServiceInterface;
 
-class UserPanelService
+class UserPanelService implements ServiceInterface
 {
 
     /**
@@ -24,8 +26,8 @@ class UserPanelService
      */
     public function __construct(UserModel $user_model, ServiceOrderHasUserModel $service_order_has_user_model)
     {
-        $this->user_model = $user_model;
-        $this->$service_order_has_user_model = $service_order_has_user_model;
+        $this->userModel = $user_model;
+        $this->serviceOrderHasUserModel = $service_order_has_user_model;
     }
 
     /**
@@ -36,10 +38,10 @@ class UserPanelService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
     {
 
-        $data = $this->user_model->with(["profile:id,name", "complementary_data:id"])
+        $data = $this->userModel->with(["profile:id,name", "complementary_data:id"])
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -65,7 +67,7 @@ class UserPanelService
 
             $random_password = Str::random(10);
 
-            $user = $this->user_model->create([
+            $user = $this->userModel->create([
                 "name" => $request->name,
                 "email" => $request->email,
                 "profile_id" => $request->profile_id,
@@ -87,7 +89,7 @@ class UserPanelService
     public function updateResource(Request $request, $user_id): \Illuminate\Http\Response
     {
 
-        $user = $this->user_model->findOrFail($user_id);
+        $user = $this->userModel->findOrFail($user_id);
 
         $user->update([
             "name" => $request->name,
@@ -113,22 +115,22 @@ class UserPanelService
 
         DB::transaction(function () use ($user_id) {
 
-            $user = $this->user_model->findOrFail($user_id);
+            $user = $this->userModel->findOrFail($user_id);
 
             // If user is related to any service order as creator
             if ($user->service_order_has_user("creator_id")) {
 
-                $this->service_order_has_user_model->where("creator_id", $user->id)->update(["creator_id" => null]);
+                $this->serviceOrderHasUserModel->where("creator_id", $user->id)->update(["creator_id" => null]);
 
                 // If user is related to any service order as pilot
             } else if ($user->service_order_has_user("pilot_id")) {
 
-                $this->service_order_has_user_model->where("pilot_id", $user->id)->update(["pilot_id" => null]);
+                $this->serviceOrderHasUserModel->where("pilot_id", $user->id)->update(["pilot_id" => null]);
 
                 // If user is related to any service order as client
             } else if ($user->service_order_has_user("client_id")) {
 
-                $this->service_order_has_user_model->where("client_id", $user->id)->update(["client_id" => null]);
+                $this->serviceOrderHasUserModel->where("client_id", $user->id)->update(["client_id" => null]);
             }
 
             // The user record is soft deleted

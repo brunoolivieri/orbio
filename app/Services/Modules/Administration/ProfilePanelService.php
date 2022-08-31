@@ -8,8 +8,10 @@ use Illuminate\Http\Request;
 use App\Models\Pivot\ProfileHasModuleModel;
 use App\Models\Profiles\ProfileModel;
 use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
+// Contract
+use App\Contracts\ServiceInterface;
 
-class ProfilePanelService
+class ProfilePanelService implements ServiceInterface
 {
 
     /**
@@ -20,8 +22,8 @@ class ProfilePanelService
      */
     public function __construct(ProfileModel $profile_model, ProfileHasModuleModel $profile_has_module_model)
     {
-        $this->profile_model = $profile_model;
-        $this->$profile_has_module_model = $profile_has_module_model;
+        $this->profileModel = $profile_model;
+        $this->profileHasModuleModel = $profile_has_module_model;
     }
 
     /**
@@ -32,10 +34,10 @@ class ProfilePanelService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
     {
 
-        $data = $this->profile_model->with("module_privileges")
+        $data = $this->profileModel->with("module_privileges")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -54,12 +56,12 @@ class ProfilePanelService
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request)
+    public function createResource(Request $request): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request) {
 
-            $new_profile = ProfileModel::create($request->validated());
+            $new_profile = $this->profileModel->create($request->validated());
 
             $this->createProfileModulesRelationship((int) $new_profile->id);
         });
@@ -76,7 +78,7 @@ class ProfilePanelService
     private function createProfileModulesRelationship(int $new_profile_id)
     {
 
-        ProfileHasModuleModel::insert([
+        $this->profileHasModuleModel->insert([
             ["module_id" => 1, "profile_id" => $new_profile_id, "read" => false, "write" => false],
             ["module_id" => 2, "profile_id" => $new_profile_id, "read" => false, "write" => false],
             ["module_id" => 3, "profile_id" => $new_profile_id, "read" => false, "write" => false],
@@ -93,12 +95,12 @@ class ProfilePanelService
      * @param $profile_id
      * @return \Illuminate\Http\Response
      */
-    public function updateResource(Request $request, int $profile_id)
+    public function updateResource(Request $request, int $profile_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request, $profile_id) {
 
-            ProfileModel::where('id', $profile_id)->update($request->validated());
+            $this->profileModel->where('id', $profile_id)->update($request->validated());
 
             $this->updateProfileModulesRelationship($profile_id, $request->privileges);
         });
@@ -120,7 +122,7 @@ class ProfilePanelService
 
             foreach ($profile_modules_relationship as $module_id => $module_privileges) {
 
-                ProfileHasModuleModel::where('profile_id', $profile_id)
+                $this->profileHasModuleModel->where('profile_id', $profile_id)
                     ->where('module_id', $module_id)
                     ->update(
                         [
@@ -138,12 +140,12 @@ class ProfilePanelService
      * @param $profile_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource(int $profile_id)
+    public function deleteResource(int $profile_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($profile_id) {
 
-            $profile = ProfileModel::findOrFail($profile_id);
+            $profile = $this->profileModel->findOrFail($profile_id);
 
             // Desvinculation with all users
             if (!empty($profile->user)) {

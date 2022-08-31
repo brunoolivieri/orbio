@@ -8,11 +8,16 @@ use Illuminate\Http\Request;
 // Custom
 use App\Models\Equipments\EquipmentModel;
 use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
-use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
-use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
+// Contract
+use App\Contracts\ServiceInterface;
 
-class EquipmentService
+class EquipmentService implements ServiceInterface
 {
+
+    function __construct(EquipmentModel $equipmentModel)
+    {
+        $this->equipmentModel = $equipmentModel;
+    }
 
     /**
      * Load all equipments with pagination.
@@ -22,27 +27,14 @@ class EquipmentService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search)
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = EquipmentModel::where("equipments.deleted_at", null)
-            ->when($typed_search, function ($query, $typed_search) {
-
-                $query->when(is_numeric($typed_search), function ($query) use ($typed_search) {
-
-                    $query->where('id', $typed_search)
-                        ->orWhere('weight', $typed_search);
-                }, function ($query) use ($typed_search) {
-
-                    $query->where('name', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('manufacturer', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('model', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('record_number', 'LIKE', '%' . $typed_search . '%')
-                        ->orWhere('serial_number', 'LIKE', '%' . $typed_search . '%');
-                });
-            })
-            ->orderBy('id')
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = $this->equipmentModel->where("equipments.deleted_at", null)
+            ->search($search) // scope
+            ->filter($filters) // scope
+            ->orderBy($order_by)
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
         if ($data->total() > 0) {
             return response(new EquipmentsPanelResource($data), 200);
@@ -57,7 +49,7 @@ class EquipmentService
      * @param $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request)
+    public function createResource(Request $request): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request) {
@@ -69,7 +61,7 @@ class EquipmentService
 
             $request->request->add(["image" => $filename]);
 
-            EquipmentModel::create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
+            $this->equipmentModel->create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
 
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -87,12 +79,12 @@ class EquipmentService
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function updateResource(Request $request, $equipment_id)
+    public function updateResource(Request $request, int $equipment_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request, $equipment_id) {
 
-            $equipment = EquipmentModel::findOrFail($equipment_id);
+            $equipment = $this->equipmentModel->findOrFail($equipment_id);
 
             if (!empty($request->image)) {
 
@@ -124,12 +116,12 @@ class EquipmentService
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource($equipment_id)
+    public function deleteResource(int $equipment_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($equipment_id) {
 
-            $equipment = EquipmentModel::find($equipment_id);
+            $equipment = $this->equipmentModel->find($equipment_id);
 
             Storage::disk('public')->delete("images/equipment/" . $equipment->image);
 

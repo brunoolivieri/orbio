@@ -19,26 +19,27 @@ class EquipmentModuleBatteryPanelController extends Controller
      * 
      * @param App\Models\Batteries\BatteryModel $battery
      */
-    public function __construct(BatteryService $service){
+    public function __construct(BatteryService $service)
+    {
         $this->service = $service;
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
-            
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -47,12 +48,11 @@ class EquipmentModuleBatteryPanelController extends Controller
      * @param App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreBatteryRequest $request) : \Illuminate\Http\Response
+    public function store(StoreBatteryRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->createResource($request); 
-
+        return $this->service->createResource($request);
     }
 
     /**
@@ -61,16 +61,11 @@ class EquipmentModuleBatteryPanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-            
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        //
     }
 
     /**
@@ -80,7 +75,7 @@ class EquipmentModuleBatteryPanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateBatteryRequest $request, $id) : \Illuminate\Http\Response
+    public function update(UpdateBatteryRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
@@ -93,11 +88,10 @@ class EquipmentModuleBatteryPanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
         return $this->service->deleteResource($id);
-
     }
 }

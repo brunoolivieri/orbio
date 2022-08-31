@@ -20,7 +20,8 @@ class EquipmentModuleDronePanelController extends Controller
      * 
      * @param App\Models\Drones\DroneModel $drone
      */
-    public function __construct(DroneService $service){
+    public function __construct(DroneService $service)
+    {
         $this->service = $service;
     }
 
@@ -29,17 +30,17 @@ class EquipmentModuleDronePanelController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index() : \Illuminate\Http\Response
+    public function index(): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
-            
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter
+        );
     }
 
     /**
@@ -48,12 +49,11 @@ class EquipmentModuleDronePanelController extends Controller
      * @param App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreDroneRequest $request) : \Illuminate\Http\Response
+    public function store(StoreDroneRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
         return $this->service->createResource($request);
- 
     }
 
     /**
@@ -62,16 +62,11 @@ class EquipmentModuleDronePanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id) : \Illuminate\Http\Response
+    public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-            
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        //
     }
 
     /**
@@ -81,13 +76,12 @@ class EquipmentModuleDronePanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateDroneRequest $request, $id) : \Illuminate\Http\Response
+    public function update(UpdateDroneRequest $request, $id): \Illuminate\Http\Response
     {
 
         Gate::authorize("equipments_write");
 
         return $this->service->updateResource($request, $id);
-
     }
 
     /**
@@ -96,11 +90,10 @@ class EquipmentModuleDronePanelController extends Controller
      * @param string $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id) : \Illuminate\Http\Response
+    public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
         return $this->service->deleteResource($id);
-
     }
 }
