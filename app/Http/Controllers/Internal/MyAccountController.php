@@ -20,16 +20,19 @@ use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
 class MyAccountController extends Controller
 {
-    private UserModel $user_model;
 
     /**
      * Dependency injection.
      * 
-     * @param App\Models\User\UserModel $user
+     * @param App\Models\User\UserModel $userModel
+     * @param App\Models\User\UserComplementaryDataModel $userComplementaryDataModel
+     * @param App\Models\User\UserAddressModel $userAddressModel
      */
-    public function __construct(UserModel $user)
+    public function __construct(UserModel $userModel, UserComplementaryDataModel $userComplementaryDataModel, UserAddressModel $userAddressModel)
     {
-        $this->user_model = $user;
+        $this->userModel = $userModel;
+        $this->userComplementaryDataModel = $userComplementaryDataModel;
+        $this->userAddressModel = $userAddressModel;
     }
 
     /**
@@ -40,7 +43,7 @@ class MyAccountController extends Controller
     function loadBasicData(): \Illuminate\Http\Response
     {
 
-        $user = $this->user_model->find(Auth::user()->id);
+        $user = $this->userModel->find(Auth::user()->id);
 
         return response([
             "name" => $user->name,
@@ -59,7 +62,7 @@ class MyAccountController extends Controller
     function loadComplementaryData(): \Illuminate\Http\Response
     {
 
-        $user = $this->user_model->find(Auth::user()->id);
+        $user = $this->userModel->find(Auth::user()->id);
 
         return response([
             "complementary" => [
@@ -118,7 +121,7 @@ class MyAccountController extends Controller
     function basicDataUpdate(UpdateBasicDataRequest $request): \Illuminate\Http\Response
     {
 
-        $user = UserModel::findOrFail(Auth::user()->id);
+        $user = $this->userModel->findOrFail(Auth::user()->id);
 
         $user->update($request->validated());
 
@@ -136,9 +139,9 @@ class MyAccountController extends Controller
     function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
     {
 
-        $user = UserModel::find(Auth::user()->id);
+        $user = $this->userModel->find(Auth::user()->id);
 
-        UserComplementaryDataModel::where("id", $user->complementary_data->id)->update($request->validated());
+        $this->userComplementaryDataModel->where("id", $user->complementary_data->id)->update($request->validated());
 
         $user->notify(new DocumentsUpdatedNotification($user));
 
@@ -154,9 +157,9 @@ class MyAccountController extends Controller
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
 
-        $user = UserModel::find(Auth::user()->id);
+        $user = $this->userModel->find(Auth::user()->id);
 
-        UserAddressModel::where("id", $user->complementary_data->address->id)->update($request->validated());
+        $this->userAddressModel->where("id", $user->complementary_data->address->id)->update($request->validated());
 
         $user->notify(new AddressUpdatedNotification($user));
 
@@ -172,7 +175,7 @@ class MyAccountController extends Controller
     function passwordUpdate(UpdatePasswordRequest $request)
     {
 
-        $user = UserModel::find(Auth::user()->id);
+        $user = $this->userModel->find(Auth::user()->id);
 
         $user->update($request->safe()->only(['new_password']));
 
@@ -190,9 +193,9 @@ class MyAccountController extends Controller
     function accountDesactivation($id): \Illuminate\Http\Response
     {
 
-        $user = UserModel::find($id);
+        $user = $this->userModel->find($id);
 
-        $user->update(["status" => false]);
+        $user->delete();
 
         $user->notify(new UserDisabledNotification($user));
 

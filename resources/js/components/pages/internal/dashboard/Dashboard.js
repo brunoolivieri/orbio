@@ -28,7 +28,8 @@ import { usePage } from '../../../context/PageContext.js';
 const CardStyle = {
   minWidth: "100%",
   margin: 'auto',
-  borderRadius: 1
+  height: "100%",
+  borderRadius: 0
 }
 
 const CardContentStyle = {
@@ -36,24 +37,23 @@ const CardContentStyle = {
 }
 
 const topSectionStyle = {
-  maxWidth: { xs: "95%", md: "95%", lg: "95%", xl: "95%" },
+  maxWidth: "95%",
   margin: 'auto',
   overflow: 'visible',
   padding: 1,
-  borderRadius: 5,
-  mt: 8,
+  mt: 3,
   boxShadow: 0,
-  bgcolor: '#EAEFF1'
+  bgcolor: 'transparent'
 }
 
-const middleSectionStyle = {
+const lastSectionStyle = {
   display: { xs: "none", md: "block", lg: "block", xl: "block" },
   maxWidth: "95%",
   margin: 'auto',
   padding: 3,
   overflow: 'hidden',
-  borderRadius: 5,
-  mt: 3
+  borderRadius: 0,
+  mb: 1
 }
 
 export const Dashboard = React.memo(() => {
@@ -134,7 +134,7 @@ export const Dashboard = React.memo(() => {
       <Paper sx={topSectionStyle}>
 
         <Toolbar>
-          <Grid container spacing={1} columns={10} sx={{ mt: -10 }}>
+          <Grid container spacing={1} columns={10}>
 
             <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
@@ -215,7 +215,7 @@ export const Dashboard = React.memo(() => {
         </Toolbar>
       </Paper>
 
-      <Paper sx={middleSectionStyle}>
+      <Paper sx={lastSectionStyle}>
         <Typography variant="h5">Novos usuários</Typography>
         <Grid container>
           <Grid item xs={12} sx={{ height: 350 }}>

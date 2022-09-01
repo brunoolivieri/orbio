@@ -99,7 +99,7 @@ class UserPanelService implements ServiceInterface
         $user->update([
             "name" => $request->name,
             "email" => $request->email,
-            "status" => intval($request->status)
+            "profile_id" => $request->profile_id
         ]);
 
         $user->refresh();

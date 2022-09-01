@@ -16,18 +16,18 @@ class CreateAnnualTrafficTable extends Migration
         Schema::create('annual_traffic', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->integer("january")->nullable(true);
-            $table->integer("february")->nullable(true);
-            $table->integer("march")->nullable(true);
-            $table->integer("april")->nullable(true);
-            $table->integer("may")->nullable(true);
-            $table->integer("june")->nullable(true);
-            $table->integer("july")->nullable(true);
-            $table->integer("august")->nullable(true);
-            $table->integer("september")->nullable(true);
-            $table->integer("october")->nullable(true);
-            $table->integer("november")->nullable(true);
-            $table->integer("december")->nullable(true);
+            $table->integer("january")->default(0);
+            $table->integer("february")->default(0);
+            $table->integer("march")->default(0);
+            $table->integer("april")->default(0);
+            $table->integer("may")->default(0);
+            $table->integer("june")->default(0);
+            $table->integer("july")->default(0);
+            $table->integer("august")->default(0);
+            $table->integer("september")->default(0);
+            $table->integer("october")->default(0);
+            $table->integer("november")->default(0);
+            $table->integer("december")->default(0);
             $table->timestamps();
         });
     }

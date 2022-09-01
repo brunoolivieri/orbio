@@ -17,7 +17,6 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericSelect } from '../../../input_select/GenericSelect';
 import AxiosApi from '../../../../../services/AxiosApi';
-import { StatusRadio } from '../../../radio_group/StatusRadio';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -28,7 +27,7 @@ export const UpdateUserFormulary = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
 
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id, status: props.record.status });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id });
 
   const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "", profile: "" });
@@ -46,8 +45,8 @@ export const UpdateUserFormulary = React.memo((props) => {
   }
 
   const handleClose = () => {
-    setFieldError({ email: false, name: false, profile: false, status: false });
-    setFieldErrorMessage({ email: "", name: "", profile: "", status: "" });
+    setFieldError({ email: false, name: false, profile: false });
+    setFieldErrorMessage({ email: "", name: "", profile: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setLoading(false);
     setOpen(false);
@@ -72,12 +71,11 @@ export const UpdateUserFormulary = React.memo((props) => {
     const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
     const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
-    const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
-    setFieldError({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error, status: statusValidate.error });
-    setFieldErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message, status: statusValidate.message });
+    setFieldError({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error });
+    setFieldErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message });
 
-    return !(emailValidate.error === true || nameValidate.error === true || profileValidate.error || statusValidate.error);
+    return !(emailValidate.error === true || nameValidate.error === true || profileValidate.error);
 
   }
 
@@ -127,8 +125,7 @@ export const UpdateUserFormulary = React.memo((props) => {
     let request_errors = {
       email: { error: false, message: null },
       name: { error: false, message: null },
-      profile_id: { error: false, message: null },
-      status: { error: false, message: null },
+      profile_id: { error: false, message: null }
     }
 
     // Get errors by their key 
@@ -144,15 +141,13 @@ export const UpdateUserFormulary = React.memo((props) => {
     setFieldError({
       email: request_errors.email.error,
       name: request_errors.name.error,
-      profile: request_errors.profile_id.error,
-      status: request_errors.status.error
+      profile: request_errors.profile_id.error
     });
 
     setFieldErrorMessage({
       email: request_errors.email.message,
       name: request_errors.name.message,
-      profile: request_errors.profile_id.message,
-      status: request_errors.status.message
+      profile: request_errors.profile_id.message
     });
 
   }
@@ -232,14 +227,6 @@ export const UpdateUserFormulary = React.memo((props) => {
                   onChange={handleInputChange}
                   error={fieldError.profile}
                   value={controlledInput.profile}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                />
-              </Box>
-
-              <Box>
-                <StatusRadio
-                  default={props.record.status == 1 ? 1 : 0}
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
                 />

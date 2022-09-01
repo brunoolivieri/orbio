@@ -16,10 +16,10 @@ class CreateAccessedDevicesTable extends Migration
         Schema::create('accessed_devices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users');
-            $table->integer("personal_computer")->nullable(true);
-            $table->integer("smartphone")->nullable(true);
-            $table->integer("tablet")->nullable(true);
-            $table->integer("other")->nullable(true);
+            $table->integer("personal_computer")->default(0);
+            $table->integer("smartphone")->default(0);
+            $table->integer("tablet")->default(0);
+            $table->integer("other")->default(0);
             $table->timestamps();
         });
     }

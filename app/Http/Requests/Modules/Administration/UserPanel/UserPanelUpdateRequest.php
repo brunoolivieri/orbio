@@ -31,8 +31,7 @@ class UserPanelUpdateRequest extends FormRequest
         return [
             'name' => 'bail|required|string',
             'email' => 'bail|required|email|unique:users,email,'.$user_id_parameter,
-            'profile_id' => 'bail|required|integer|numeric',
-            'status' => 'bail|required|boolean'
+            'profile_id' => 'bail|required|integer|numeric'
         ]; 
     }
 
@@ -48,9 +47,7 @@ class UserPanelUpdateRequest extends FormRequest
             'email.required' => 'O email deve ser informado',
             'email.unique' => 'Esse email já está cadastrado',
             'email.email' => 'Digite um email válido',
-            'profile_id.required' => 'Um perfil deve ser selecionado',
-            'status.required' => 'O status deve ser definido',
-            'status.boolean' => 'O status deve ser 1 ou 0'
+            'profile_id.required' => 'Um perfil deve ser selecionado'
         ];
     }
 

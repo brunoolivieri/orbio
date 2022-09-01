@@ -12,15 +12,4 @@ class AnnualAccessesModel extends Model
 
     protected $guarded = [];
     public $table = "annual_traffic";
-
-    /*
-    * Scope for increment monthly access counter
-    */
-    function scopeIncrementMonthlyAccess($query)
-    {
-        $date = Carbon::now();
-        $month_name = $date->format('F');
-
-        return $query->increment($month_name, 1);
-    }
 }

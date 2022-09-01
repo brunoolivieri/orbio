@@ -11,12 +11,4 @@ class AccessedDevicesModel extends Model
 
     protected $guarded = [];
     public $table = "accessed_devices";
-
-    /*
-    * Scope for increment device access
-    */
-    function scopeIncrementDeviceAccess($query)
-    {
-        return $query->increment("personal_computer", 1);
-    }
 }

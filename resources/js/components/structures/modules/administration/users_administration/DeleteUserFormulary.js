@@ -95,7 +95,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
   return (
     <>
-      <Tooltip title="Deletar">
+      <Tooltip title="Desativar">
         <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
         </IconButton>
@@ -104,7 +104,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
       {(props.record != null && open) &&
 
         <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>DELEÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
+          <DialogTitle>DESATIVAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -112,7 +112,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
             <DialogContent>
 
               <DialogContentText mb={2}>
-                Todos os vínculos do usuário serão desfeitos, e todos os seus dados serão apagados do sistema.
+                O usuário será desvinculado das ordens de serviço e seu nível acesso será alterado para o de um visitante.
               </DialogContentText>
 
               <TextField
@@ -154,7 +154,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
+              <Button type="submit" disabled={loading} variant="contained">Desativar</Button>
             </DialogActions>
 
           </Box>

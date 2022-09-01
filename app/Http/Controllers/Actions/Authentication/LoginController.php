@@ -42,10 +42,9 @@ class LoginController extends Controller
             // if user was not deleted
             if (!$user->trashed()) {
 
+                // If is the first login
                 if (!$user->status && is_null($user->last_access)) {
                     FirstSuccessfulLoginEvent::dispatch($user);
-                } else if (!$user->status && !is_null($user->last_access)) {
-                    return response()->json(["message" => "Conta desabilitada. Contate o suporte.!"], 500);
                 }
 
                 LoginSuccessfulEvent::dispatch($user);
