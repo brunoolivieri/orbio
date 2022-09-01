@@ -93,6 +93,22 @@ class UserModel extends Authenticatable
         return $this->hasOne("App\Models\PasswordReset\PasswordResetModel", "user_id");
     }
 
+    /*
+    * Relationship with annual_accesses table
+    */
+    function annual_accesses()
+    {
+        return $this->hasOne("App\Models\Accesses\AnnualAccessesModel", "user_id");
+    }
+
+    /*
+    * Relationship with devices_accessed table
+    */
+    function devices_acessed()
+    {
+        return $this->hasOne("App\Models\Accesses\AccessedDevicesModel", "user_id");
+    }
+
     /**
      * Factory that uses this model for generate random users
      *

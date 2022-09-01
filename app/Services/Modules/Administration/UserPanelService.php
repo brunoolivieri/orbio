@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 // Custom
 use App\Models\User\UserModel;
+use App\Models\Accesses\AnnualAccessesModel;
+use App\Models\Accesses\AccessedDevicesModel;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
@@ -21,13 +23,15 @@ class UserPanelService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\User\UserModel $user
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $service_order_has_user_model
+     * @param App\Models\User\UserModel $userModel
+     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasUserModel
      */
-    public function __construct(UserModel $user_model, ServiceOrderHasUserModel $service_order_has_user_model)
+    public function __construct(UserModel $userModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, AnnualAccessesModel $annualAcessesModel, AccessedDevicesModel $accessedDevicesModel)
     {
-        $this->userModel = $user_model;
-        $this->serviceOrderHasUserModel = $service_order_has_user_model;
+        $this->userModel = $userModel;
+        $this->serviceOrderHasUserModel = $serviceOrderHasUserModel;
+        $this->annualAcessesModel = $annualAcessesModel;
+        $this->accessedDevicesModel = $accessedDevicesModel;
     }
 
     /**
@@ -38,7 +42,7 @@ class UserPanelService implements ServiceInterface
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
         $data = $this->userModel->with(["profile:id,name", "complementary_data:id"])
@@ -73,6 +77,7 @@ class UserPanelService implements ServiceInterface
                 "profile_id" => $request->profile_id,
                 "password" => $random_password
             ]);
+
 
             $user->notify(new UserCreatedNotification($user, $random_password));
         });

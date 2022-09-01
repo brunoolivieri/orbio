@@ -4,17 +4,26 @@ namespace App\Http\Controllers\Actions\Authentication;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 // Custom
-use App\Http\Requests\Auth\Login\LoginRequest;
-use App\Models\User\UserComplementaryDataModel;
-use App\Models\User\UserAddressModel;
 use App\Models\User\UserModel;
-use App\Notifications\Auth\LoginNotification;
+use App\Http\Requests\Auth\Login\LoginRequest;
+use App\Events\Auth\FirstSuccessfulLoginEvent;
+use App\Events\Auth\LoginSuccessfulEvent;
 
 class LoginController extends Controller
 {
+
+    /**
+     * Dependency injection.
+     * 
+     * @param App\Models\User\UserModel $userModel
+     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasUserModel
+     */
+    public function __construct(UserModel $userModel)
+    {
+        $this->userModel = $userModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -23,65 +32,34 @@ class LoginController extends Controller
      */
     public function __invoke(LoginRequest $request)
     {
-        if (Auth::attempt($request->validated())) {
 
-            $user = UserModel::find(Auth::user()->id);
+        if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
 
-            // User account is active
-            if (Auth::user()->status && !is_null(Auth::user()->last_access)) {
+            $request->session()->regenerate();
 
-                // To disable observer
-                $user->update(["last_access" => Carbon::now()]);
+            $user = $this->userModel->find(Auth::user()->id);
 
-                $user->notify(new LoginNotification($user));
+            // if user was not deleted
+            if (!$user->trashed()) {
+
+                if (!$user->status && is_null($user->last_access)) {
+                    FirstSuccessfulLoginEvent::dispatch($user);
+                } else if (!$user->status && !is_null($user->last_access)) {
+                    return response()->json(["message" => "Conta desabilitada. Contate o suporte.!"], 500);
+                }
+
+                LoginSuccessfulEvent::dispatch($user);
 
                 return response()->json(["message" => "Acesso autorizado!"], 200);
 
-                // User account is inactive
-            } else if (!Auth::user()->status && is_null(Auth::user()->last_access)) {
+                // If user was deleted or just his account is disabled (turned inactive after first access)
+            } else if ($user->trashed()) {
 
-                $this->activateAccount();
-
-                // To disable observer
-                $user->update(["last_access" => Carbon::now()]);
-
-                $user->notify(new LoginNotification($user));
-
-                return response()->json(["message" => "Ativação e acesso realizados!"], 200);
-
-                // User account is disabled or deleted
-            } else if (!Auth::user()->status && !is_null(Auth::user()->last_access) || !is_null(Auth::user()->deleted_at)) {
-
-                return response()->json(["message" => "Conta desabilitada!"], 500);
+                return response()->json(["message" => "Conta desabilitada. Contate o suporte!"], 500);
             }
         } else {
 
             return response()->json(["message" => "Credenciais inválidas!"], 500);
         }
-    }
-
-    /**
-     * Method for activate user account
-     * 
-     * @return bool
-     */
-    private function activateAccount()
-    {
-
-        DB::transaction(function () {
-
-            $user = UserModel::find(Auth::user()->id);
-
-            $user->update(["status" => 1]);
-
-            $new_address = UserAddressModel::create();
-
-            $new_complementary_data = UserComplementaryDataModel::create([
-                "address_id" => $new_address->id
-            ]);
-
-            // To disable observer
-            $user->update(["last_access" => Carbon::now()]);
-        });
     }
 }

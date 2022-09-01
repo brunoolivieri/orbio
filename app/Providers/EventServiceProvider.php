@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+// Events
+use App\Events\Auth\FirstSuccessfulLoginEvent;
+use App\Events\Auth\LoginSuccessfulEvent;
+//Listeners
+use App\Listeners\Auth\Login\FirstLoginSuccessfulListener;
+use App\Listeners\Auth\Login\LoginSuccessfulListener;
 // Observers
 use App\Observers\ServiceOrderObserver;
 // Models
@@ -17,10 +23,12 @@ class EventServiceProvider extends ServiceProvider
      * @var array<class-string, array<int, class-string>>
      */
     protected $listen = [
-        //Event::class => [
-        //EventListener::class
-        //]
-
+        LoginSuccessfulEvent::class => [
+            LoginSuccessfulListener::class
+        ],
+        FirstSuccessfulLoginEvent::class => [
+            FirstLoginSuccessfulListener::class
+        ]
     ];
 
     /**
