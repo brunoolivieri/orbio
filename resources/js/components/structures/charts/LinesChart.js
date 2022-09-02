@@ -21,7 +21,7 @@ export const LinesChart = React.memo((props) => {
             <ResponsiveLine
                 data={props.data}
                 enableArea={true}
-                margin={{ top: 20, right: 20, bottom: 20, left: 40 }}
+                margin={{ top: 30, right: 40, bottom: 45, left: 40 }}
                 xScale={{ type: 'point' }}
                 colors={{ scheme: 'category10' }}
                 yScale={{
@@ -37,9 +37,9 @@ export const LinesChart = React.memo((props) => {
                 axisBottom={{
                     orient: 'bottom',
                     tickSize: 0,
-                    tickPadding: 30,
+                    tickPadding: 10,
                     tickRotation: 0,
-                    legendOffset: 36,
+                    legendOffset: 25,
                     legendPosition: 'middle'
                 }}
                 axisLeft={{

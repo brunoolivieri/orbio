@@ -16,6 +16,7 @@ import { LinesChart } from '../../../structures/charts/LinesChart.js';
 import { PizzaChart } from '../../../structures/charts/PizzaChart.js';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLaptop } from '@fortawesome/free-solid-svg-icons';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 import { faMap } from '@fortawesome/free-solid-svg-icons';
@@ -27,8 +28,8 @@ import { usePage } from '../../../context/PageContext.js';
 
 const CardStyle = {
   minWidth: "100%",
+  maxWidth: "100%",
   margin: 'auto',
-  height: "100%",
   borderRadius: 0
 }
 
@@ -36,24 +37,14 @@ const CardContentStyle = {
   bgcolor: '#fff'
 }
 
-const topSectionStyle = {
+const paperStyle = {
   maxWidth: "95%",
   margin: 'auto',
   overflow: 'visible',
   padding: 1,
-  mt: 3,
+  mt: 2,
   boxShadow: 0,
   bgcolor: 'transparent'
-}
-
-const lastSectionStyle = {
-  display: { xs: "none", md: "block", lg: "block", xl: "block" },
-  maxWidth: "95%",
-  margin: 'auto',
-  padding: 3,
-  overflow: 'hidden',
-  borderRadius: 0,
-  mb: 1
 }
 
 export const Dashboard = React.memo(() => {
@@ -65,6 +56,8 @@ export const Dashboard = React.memo(() => {
   const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
   const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
   const [registrations, setRegistrations] = React.useState([{}]);
+  const [devices, setDevices] = React.useState([{}]);
+  const [traffic, setTraffic] = React.useState([{}]);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -106,6 +99,13 @@ export const Dashboard = React.memo(() => {
           chart: response.data.reports.chart
         });
 
+        setDevices({
+          total: response.data.devices.total,
+          chart: response.data.devices.chart
+        });
+
+        setTraffic(response.data.traffic);
+
         setRegistrations(response.data.registrations);
 
         handleOpenSnackbar("Métricas carregadas", "success");
@@ -131,7 +131,7 @@ export const Dashboard = React.memo(() => {
   return (
     <>
 
-      <Paper sx={topSectionStyle}>
+      <Paper sx={paperStyle}>
 
         <Toolbar>
           <Grid container spacing={1} columns={10}>
@@ -211,18 +211,54 @@ export const Dashboard = React.memo(() => {
               </Card>
             </Grid>
 
+            <Grid item xs={10} md={5} lg={8} xl={8}>
+              <Typography variant="h6">Tráfego Anual</Typography>
+              <Grid container>
+                <Grid item xs={12} sx={{ height: 300 }}>
+                  {!loading && <LinesChart data={traffic} />}
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={10} md={5} lg={2} xl={2}>
+              <Card sx={CardStyle}>
+                <CardHeader
+                  avatar={<FontAwesomeIcon icon={faLaptop} color="green" size='2x' />}
+                  title={<Typography variant="h6">Dispositivos</Typography>}
+                />
+                <Divider />
+                <CardContent sx={CardContentStyle}>
+                  <Box width={'100%'} textAlign="center">
+                    {loading ? <CircularProgress /> : <PizzaChart data={devices.chart} total={devices.total} />}
+                  </Box>
+                </CardContent>
+              </Card>
+            </Grid>
+
+            <Grid item xs={10}>
+              <Typography variant="h6">Novos usuários</Typography>
+              <Grid container>
+                <Grid item xs={12} sx={{ height: 300 }}>
+                  {!loading && <LinesChart data={registrations} />}
+                </Grid>
+              </Grid>
+            </Grid>
+
           </Grid>
         </Toolbar>
       </Paper>
 
-      <Paper sx={lastSectionStyle}>
-        <Typography variant="h5">Novos usuários</Typography>
-        <Grid container>
-          <Grid item xs={12} sx={{ height: 350 }}>
-            {!loading && <LinesChart data={registrations} />}
+      {
+        /*  <Paper sx={lastSectionStyle}>
+          <Typography variant="h5">Novos usuários</Typography>
+          <Grid container>
+            <Grid item xs={12} sx={{ height: 350 }}>
+              {!loading && <LinesChart data={registrations} />}
+            </Grid>
           </Grid>
-        </Grid>
-      </Paper>
+        </Paper> 
+      */
+      }
     </>
 
   )
