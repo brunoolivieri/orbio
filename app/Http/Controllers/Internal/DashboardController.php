@@ -250,7 +250,7 @@ class DashboardController extends Controller
                         "id" => "Inativos",
                         "label" => "Inativos",
                         "value" => $flight_plans["inative"] > 0 ? $flight_plans["inative"] : "",
-                        "color" => "#F47560"
+                        "color" => "#FDAE61"
                     ],
                     [
                         "id" => "Deletados",
@@ -279,7 +279,7 @@ class DashboardController extends Controller
                         "id" => "Em progresso",
                         "label" => "Em progresso",
                         "value" => $service_orders["to_finish"] > 0 ? $service_orders["to_finish"] : "",
-                        "color" => "#7FC97F"
+                        "color" => "#F1E15B"
                     ]
                 ]
             ],

@@ -20,7 +20,7 @@ import { FormValidation } from '../../../../utils/FormValidation';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faWifi } from '@fortawesome/free-solid-svg-icons';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
 import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
@@ -271,14 +271,14 @@ export const CreateReportFormulary = React.memo(({ ...props }) => {
           <DialogContent>
 
             <DialogContentText sx={{ mb: 3 }}>
-              A geração do relatório é realizada a partir do log do drone.
+              Faça o upload do log do drone para armazená-lo no sistema e também gerar um registro correspondente. A partir do seu registro que poderão ser gerados os relatórios.
             </DialogContentText>
 
             <Box sx={{ mb: 3 }}>
               <label htmlFor="contained-button-file">
                 <Input accept=".txt" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleFileUploadedValidateItAndReleaseFormulary} />
-                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faWifi} color={"#fff"} size="sm" />}>
-                  {errorDetected.flight_log ? errorDetected.flight_log : "CONECTAR AO DRONE"}
+                <Button variant="contained" component="span" color={errorDetected.flight_log ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                  {errorDetected.flight_log ? errorDetected.flight_log : "UPLOAD DO LOG"}
                 </Button>
               </label>
             </Box>

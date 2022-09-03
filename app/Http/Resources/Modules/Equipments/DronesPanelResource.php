@@ -30,7 +30,7 @@ class DronesPanelResource extends JsonResource
 
             $formated_data["records"][$row] = [
                 "id" => $drone->id,
-                "image_url" => Storage::url("images/drone/".$drone->image),
+                "image_url" => Storage::url("images/drone/".$drone->image->path),
                 "name" => $drone->name,
                 "manufacturer" => $drone->manufacturer,
                 "model" => $drone->model,

@@ -10,22 +10,23 @@ class UserComplementaryDataModel extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "user_complementary_data";
+    protected $table = "complementary_data";
     protected $guarded = [];
     public $timestamps = false;
 
     /*
     * Relationship with users table
     */
-    function user(){
-        return $this->hasOne("App\Models\User\UserModel", "complementary_data_id");
+    function user()
+    {
+        return $this->belongsTo("App\Models\User\UserModel", "user_id");
     }
 
     /*
     * Relationship with address table
     */
-    function address(){
+    function address()
+    {
         return $this->belongsTo("App\Models\User\UserAddressModel", "address_id");
     }
-
 }

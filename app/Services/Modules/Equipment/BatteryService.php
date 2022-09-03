@@ -30,7 +30,7 @@ class BatteryService implements ServiceInterface
     public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
     {
 
-        $data = $this->batteryModel->where("batteries.deleted_at", null)
+        $data = $this->batteryModel->with('image')
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -59,9 +59,11 @@ class BatteryService implements ServiceInterface
             $filename = "$content_hash.jpg";
             $storage_folder = "public/images/battery/";
 
-            $request->request->add(["image" => $filename]);
+            $battery = $this->batteryModel->create($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
 
-            $this->batteryModel->create($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
+            $battery->image()->create([
+                "path" => $filename
+            ]);
 
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -93,9 +95,11 @@ class BatteryService implements ServiceInterface
                 $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/battery/";
 
-                $request->request->add(["image" => $filename]);
+                $battery = $battery->update($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
 
-                $battery->update($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
+                $battery->image()->update([
+                    "path" => $filename
+                ]);
 
                 // Image is stored just if does not already exists
                 if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -126,6 +130,7 @@ class BatteryService implements ServiceInterface
             Storage::disk('public')->delete("images/batteries/" . $battery->image);
 
             $battery->delete();
+            
         });
 
         return response(["message" => "Bateria deletada com sucesso!"], 200);

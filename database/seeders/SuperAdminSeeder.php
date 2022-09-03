@@ -23,8 +23,7 @@ class SuperAdminSeeder extends Seeder
             "password" => Hash::make(env("ADMIN_PASS")),
             "status" => true,
             "profile_id" => 1,
-            "last_access" => date("Y-m-d H:i:s"),
-            "complementary_data_id" => null
+            "last_access" => date("Y-m-d H:i:s")
         ]);
     }
 }

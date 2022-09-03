@@ -30,7 +30,7 @@ class EquipmentService implements ServiceInterface
     public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = $this->equipmentModel->where("equipments.deleted_at", null)
+        $data = $this->equipmentModel->with('image')
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -59,9 +59,11 @@ class EquipmentService implements ServiceInterface
             $filename = "$content_hash.jpg";
             $storage_folder = "public/images/equipment/";
 
-            $request->request->add(["image" => $filename]);
+            $equipment = $this->equipmentModel->create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
 
-            $this->equipmentModel->create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
+            $equipment->image()->create([
+                "path" => $filename
+            ]);
 
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -93,9 +95,11 @@ class EquipmentService implements ServiceInterface
                 $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/equipment/";
 
-                $request->request->add(["image" => $filename]);
+                $equipment = $equipment->update($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
 
-                $equipment->update($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
+                $equipment->image()->update([
+                    "path" => $filename
+                ]);
 
                 // Image is stored just if does not already exists
                 if (!Storage::disk('public')->exists($storage_folder . $filename)) {

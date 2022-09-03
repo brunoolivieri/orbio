@@ -7,8 +7,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
 // Custom
 use App\Models\User\UserModel;
-use App\Models\User\UserAddressModel;
-use App\Models\User\UserComplementaryDataModel;
+use App\Models\User\AddressModel;
+use App\Models\User\ComplementaryDataModel;
 use App\Models\Accesses\AnnualAccessesModel;
 use App\Models\Accesses\AccessedDevicesModel;
 
@@ -17,7 +17,7 @@ class FirstLoginSuccessfulListener
     /**
      * Dependency injection.
      */
-    public function __construct(UserModel $userModel, UserAddressModel $addressModel, UserComplementaryDataModel $userComplementaryDataModel,  AnnualAccessesModel $annualAcessesModel, AccessedDevicesModel $accessedDevicesModel)
+    public function __construct(UserModel $userModel, AddressModel $addressModel, ComplementaryDataModel $userComplementaryDataModel,  AnnualAccessesModel $annualAcessesModel, AccessedDevicesModel $accessedDevicesModel)
     {
         $this->userModel = $userModel;
         $this->userAddressModel = $addressModel;
@@ -45,6 +45,7 @@ class FirstLoginSuccessfulListener
 
             // New complementary data record
             $this->userComplementaryDataModel->create([
+                "user_id" => $user->id,
                 "address_id" => $new_address->id
             ]);
 

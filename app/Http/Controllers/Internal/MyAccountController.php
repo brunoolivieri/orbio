@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 // Custom
 use App\Models\User\UserModel;
-use App\Models\User\UserComplementaryDataModel;
-use App\Models\User\UserAddressModel;
+use App\Models\User\ComplementaryDataModel;
+use App\Models\User\AddressModel;
 use App\Http\Requests\UserAccount\UpdateBasicDataRequest;
 use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
 use App\Http\Requests\UserAccount\UpdateAddressRequest;
@@ -25,10 +25,10 @@ class MyAccountController extends Controller
      * Dependency injection.
      * 
      * @param App\Models\User\UserModel $userModel
-     * @param App\Models\User\UserComplementaryDataModel $userComplementaryDataModel
-     * @param App\Models\User\UserAddressModel $userAddressModel
+     * @param App\Models\User\ComplementaryDataModel $userComplementaryDataModel
+     * @param App\Models\User\AddressModel $userAddressModel
      */
-    public function __construct(UserModel $userModel, UserComplementaryDataModel $userComplementaryDataModel, UserAddressModel $userAddressModel)
+    public function __construct(UserModel $userModel, ComplementaryDataModel $userComplementaryDataModel, AddressModel $userAddressModel)
     {
         $this->userModel = $userModel;
         $this->userComplementaryDataModel = $userComplementaryDataModel;

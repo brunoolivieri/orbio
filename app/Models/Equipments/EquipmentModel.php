@@ -4,7 +4,9 @@ namespace App\Models\Equipments;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+// Custom
+use App\Models\Image\ImageModel;
+
 
 class EquipmentModel extends Model
 {
@@ -43,5 +45,12 @@ class EquipmentModel extends Model
                 $query->where($filter["column"], $filter["value"]);
             }
         });
+    }
+
+    /*
+    * Polymorphic relationship with table "images"
+    */
+    function image(){
+        return $this->morphOne(ImageModel::class, 'imageable');
     }
 }

@@ -50,7 +50,7 @@ class UserModel extends Authenticatable
     */
     function complementary_data()
     {
-        return $this->belongsTo("App\Models\User\UserComplementaryDataModel", "complementary_data_id");
+        return $this->hasOne("App\Models\User\UserComplementaryDataModel", "user_id");
     }
 
     /*

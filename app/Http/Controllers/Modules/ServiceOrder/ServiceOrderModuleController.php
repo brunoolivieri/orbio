@@ -3,10 +3,6 @@
 namespace App\Http\Controllers\Modules\ServiceOrder;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;

@@ -4,8 +4,8 @@ namespace App\Models\Batteries;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
+// Custom
+use App\Models\Image\ImageModel;
 
 class BatteryModel extends Model
 {
@@ -45,5 +45,13 @@ class BatteryModel extends Model
                 $query->where($filter["column"], $filter["value"]);
             }
         });
+    }
+
+    /*
+    * Polymorphic relationship with table "images"
+    */
+    function image()
+    {
+        return $this->morphOne(ImageModel::class, 'imageable');
     }
 }

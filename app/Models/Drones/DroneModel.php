@@ -4,7 +4,8 @@ namespace App\Models\Drones;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+// Custom
+use App\Models\Image\ImageModel;
 
 class DroneModel extends Model
 {
@@ -46,5 +47,13 @@ class DroneModel extends Model
                 $query->where($filter["column"], $filter["value"]);
             }
         });
+    }
+
+    /*
+    * Polymorphic relationship with table "images"
+    */
+    function image()
+    {
+        return $this->morphOne(ImageModel::class, 'imageable');
     }
 }

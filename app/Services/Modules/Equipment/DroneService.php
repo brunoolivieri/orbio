@@ -27,10 +27,10 @@ class DroneService implements ServiceInterface
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = $this->droneModel->where("drones.deleted_at", null)
+        $data = $this->droneModel->with('image')
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -49,7 +49,7 @@ class DroneService implements ServiceInterface
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request) : \Illuminate\Http\Response
+    public function createResource(Request $request): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request) {
@@ -59,9 +59,11 @@ class DroneService implements ServiceInterface
             $filename = "$content_hash.jpg";
             $storage_folder = "public/images/drone/";
 
-            $request->request->add(["image" => $filename]);
+            $drone = $this->droneModel->create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
 
-            $this->droneModel->create($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
+            $drone->image()->create([
+                "path" => $filename
+            ]);
 
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($storage_folder . $filename)) {
@@ -78,8 +80,8 @@ class DroneService implements ServiceInterface
      * @param  \Illuminate\Http\Request $request
      * @param $drone_id
      * @return \Illuminate\Http\Response
-     */ 
-    public function updateResource(Request $request, int $drone_id) : \Illuminate\Http\Response
+     */
+    public function updateResource(Request $request, int $drone_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($request, $drone_id) {
@@ -93,14 +95,17 @@ class DroneService implements ServiceInterface
                 $filename = "$content_hash.jpg";
                 $storage_folder = "public/images/drone/";
 
+                $drone = $drone->update($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
+
+                $drone->image()->update([
+                    "path" => $filename
+                ]);
+
                 // Image is stored just if does not already exists
                 if (!Storage::disk('public')->exists($storage_folder . $filename)) {
                     $request->file('image')->storeAs($storage_folder, $filename);
                 }
 
-                $request->request->add(["image" => $filename]);
-
-                $drone->update($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
             } else {
 
                 $drone->update($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
@@ -116,7 +121,7 @@ class DroneService implements ServiceInterface
      * @param int $drone_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource(int $drone_id) : \Illuminate\Http\Response
+    public function deleteResource(int $drone_id): \Illuminate\Http\Response
     {
 
         DB::transaction(function () use ($drone_id) {
@@ -126,6 +131,7 @@ class DroneService implements ServiceInterface
             Storage::disk('public')->delete("images/drone/" . $drone->image);
 
             $drone->delete();
+
         });
 
         return response(["message" => "Drone deletado com sucesso!"], 200);

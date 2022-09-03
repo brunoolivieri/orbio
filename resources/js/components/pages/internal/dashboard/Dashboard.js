@@ -11,6 +11,7 @@ import { useSnackbar } from 'notistack';
 import { Box } from '@mui/system';
 import CardHeader from '@mui/material/CardHeader';
 import { Divider } from '@mui/material';
+import { CardActions } from '@mui/material';
 // React Chart
 import { LinesChart } from '../../../structures/charts/LinesChart.js';
 import { PizzaChart } from '../../../structures/charts/PizzaChart.js';
@@ -148,6 +149,10 @@ export const Dashboard = React.memo(() => {
                     {loading ? <CircularProgress /> : <PizzaChart data={users.chart} total={users.total} />}
                   </Box>
                 </CardContent>
+                <Divider />
+                <CardActions>
+                  labels
+                </CardActions>
               </Card>
             </Grid>
 
@@ -163,6 +168,10 @@ export const Dashboard = React.memo(() => {
                     {loading ? <CircularProgress /> : <PizzaChart data={profiles.chart} total={profiles.total} />}
                   </Box>
                 </CardContent>
+                <Divider />
+                <CardActions>
+                  labels
+                </CardActions>
               </Card>
             </Grid>
 
@@ -178,6 +187,10 @@ export const Dashboard = React.memo(() => {
                     {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} total={flightPlans.total} />}
                   </Box>
                 </CardContent>
+                <Divider />
+                <CardActions>
+                  labels
+                </CardActions>
               </Card>
             </Grid>
 
@@ -193,6 +206,10 @@ export const Dashboard = React.memo(() => {
                     {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} total={serviceOrders.total} />}
                   </Box>
                 </CardContent>
+                <Divider />
+                <CardActions>
+                  labels
+                </CardActions>
               </Card>
             </Grid>
 
@@ -208,6 +225,10 @@ export const Dashboard = React.memo(() => {
                     {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} total={reports.total} />}
                   </Box>
                 </CardContent>
+                <Divider />
+                <CardActions>
+                  labels
+                </CardActions>
               </Card>
             </Grid>
 
@@ -232,6 +253,10 @@ export const Dashboard = React.memo(() => {
                     {loading ? <CircularProgress /> : <PizzaChart data={devices.chart} total={devices.total} />}
                   </Box>
                 </CardContent>
+                <Divider />
+                <CardActions>
+                  labels
+                </CardActions>
               </Card>
             </Grid>
 

@@ -15,7 +15,6 @@ class CreateDronesTable extends Migration
     {
         Schema::create('drones', function (Blueprint $table) {
             $table->id();
-            $table->string('image');
             $table->string('name');
             $table->string('manufacturer');
             $table->string('model');
