@@ -7,8 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\Orders\ServiceOrderModel;
+use App\Models\Users\User;
+use App\Models\ServiceOrders\ServiceOrder;
 
 class ServiceOrderCreatedNotification extends Notification
 {
@@ -22,7 +22,7 @@ class ServiceOrderCreatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(UserModel $user, ServiceOrderModel $service_order)
+    public function __construct(User $user, ServiceOrder $service_order)
     {
         $this->user = $user;
         $this->service_order = $service_order;
@@ -53,7 +53,7 @@ class ServiceOrderCreatedNotification extends Notification
             ->line("Você está sendo notificado porque foi vinculado a uma nova ordem de serviço.")
             ->line("Data inicial: " . $this->service_order->start_date)
             ->line("Data final: " . $this->service_order->end_date)
-            ->line("Número: " . $this->service_order->numOS)
+            ->line("Número: " . $this->service_order->number)
             ->line("Observação: " . $this->service_order->observation)
             ->line("Criador: " . $this->service_order->has_users->has_creator->name)
             ->line("Piloto: " . $this->service_order->has_users->has_pilot->name)

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class DocumentsUpdatedNotification extends Notification
 {
@@ -20,7 +20,7 @@ class DocumentsUpdatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(UserModel $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }
@@ -49,13 +49,13 @@ class DocumentsUpdatedNotification extends Notification
             ->subject('ORBIO - Atualização dos documentos')
             ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Seus dados documentais foram atualizados.")
-            ->line("Habilitação ANAC: " . $notifiable->complementary_data->anac_license)
-            ->line("CPF: " . $notifiable->complementary_data->cpf)
-            ->line("CNPJ: " . $notifiable->complementary_data->cnpj)
-            ->line("Telefone: " . $notifiable->complementary_data->telephone)
-            ->line("Celular: " . $notifiable->complementary_data->cellphone)
-            ->line("Razão social: " . $notifiable->complementary_data->company_name)
-            ->line("Nome fantasia: " . $notifiable->complementary_data->trading_name)
+            ->line("Habilitação ANAC: " . $notifiable->personal_document->anac_license)
+            ->line("CPF: " . $notifiable->personal_document->cpf)
+            ->line("CNPJ: " . $notifiable->personal_document->cnpj)
+            ->line("Telefone: " . $notifiable->personal_document->telephone)
+            ->line("Celular: " . $notifiable->personal_document->cellphone)
+            ->line("Razão social: " . $notifiable->personal_document->company_name)
+            ->line("Nome fantasia: " . $notifiable->personal_document->trading_name)
             ->line('Se não foi você quem realizou o procedimento, contate o suporte imediatamente.');
     }
 

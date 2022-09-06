@@ -161,7 +161,7 @@ export function DeleteOrderFormulary(props) {
                 required
                 id="numos"
                 name="numos"
-                defaultValue={props.record.numOS}
+                defaultValue={props.record.number}
                 inputProps={{
                   readOnly: true
                 }}

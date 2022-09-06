@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Models\Image;
+namespace App\Models\Images;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ImageModel extends Model
+class Image extends Model
 {
     use HasFactory;
 
-    public $table = "images";
     protected $guarded = [];
 
     // To polymorphic relationship

@@ -3,14 +3,14 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 
 class UserFactory extends Factory
 {
 
-    protected $model = UserModel::class;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.

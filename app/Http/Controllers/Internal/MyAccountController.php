@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\User\ComplementaryDataModel;
-use App\Models\User\AddressModel;
+use App\Models\Users\User;
+use App\Models\PersonalDocuments\PersonalDocument;
+use App\Models\Addresses\Address;
 use App\Http\Requests\UserAccount\UpdateBasicDataRequest;
 use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
 use App\Http\Requests\UserAccount\UpdateAddressRequest;
@@ -24,14 +24,14 @@ class MyAccountController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\User\UserModel $userModel
-     * @param App\Models\User\ComplementaryDataModel $userComplementaryDataModel
-     * @param App\Models\User\AddressModel $userAddressModel
+     * @param App\Models\Users\User $userModel
+     * @param App\Models\PersonalDocuments\PersonalDocument $personalDocumentModel
+     * @param App\Models\Addresses\Address $userAddressModel
      */
-    public function __construct(UserModel $userModel, ComplementaryDataModel $userComplementaryDataModel, AddressModel $userAddressModel)
+    public function __construct(User $userModel, PersonalDocument $personalDocumentModel, Address $userAddressModel)
     {
         $this->userModel = $userModel;
-        $this->userComplementaryDataModel = $userComplementaryDataModel;
+        $this->personalDocumentModel = $personalDocumentModel;
         $this->userAddressModel = $userAddressModel;
     }
 
@@ -66,21 +66,21 @@ class MyAccountController extends Controller
 
         return response([
             "complementary" => [
-                'anac_license' => $user->complementary_data->anac_license,
-                'cpf' => $user->complementary_data->cpf,
-                'cnpj' => $user->complementary_data->cnpj,
-                'telephone' => $user->complementary_data->telephone,
-                'cellphone' => $user->complementary_data->cellphone,
-                'company_name' => $user->complementary_data->company_name,
-                'trading_name' => $user->complementary_data->trading_name
+                'anac_license' => $user->personal_document->anac_license,
+                'cpf' => $user->personal_document->cpf,
+                'cnpj' => $user->personal_document->cnpj,
+                'telephone' => $user->personal_document->telephone,
+                'cellphone' => $user->personal_document->cellphone,
+                'company_name' => $user->personal_document->company_name,
+                'trading_name' => $user->personal_document->trading_name
             ],
             "address" => [
-                'address' => $user->complementary_data->address->address,
-                'number' => $user->complementary_data->address->number,
-                'cep' => $user->complementary_data->address->cep,
-                'city' => isset($user->complementary_data->address->city) ? $user->complementary_data->address->city : "0",
-                'state' => isset($user->complementary_data->address->state) ? $user->complementary_data->address->state : "0",
-                'complement' => $user->complementary_data->address->complement
+                'address' => $user->personal_document->address->address,
+                'number' => $user->personal_document->address->number,
+                'cep' => $user->personal_document->address->cep,
+                'city' => isset($user->personal_document->address->city) ? $user->personal_document->address->city : "0",
+                'state' => isset($user->personal_document->address->state) ? $user->personal_document->address->state : "0",
+                'complement' => $user->personal_document->address->complement
             ]
         ], 200);
     }
@@ -141,7 +141,7 @@ class MyAccountController extends Controller
 
         $user = $this->userModel->find(Auth::user()->id);
 
-        $this->userComplementaryDataModel->where("id", $user->complementary_data->id)->update($request->validated());
+        $this->personalDocumentModel->where("id", $user->personal_document->id)->update($request->validated());
 
         $user->notify(new DocumentsUpdatedNotification($user));
 
@@ -159,7 +159,7 @@ class MyAccountController extends Controller
 
         $user = $this->userModel->find(Auth::user()->id);
 
-        $this->userAddressModel->where("id", $user->complementary_data->address->id)->update($request->validated());
+        $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());
 
         $user->notify(new AddressUpdatedNotification($user));
 

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // Custom
-use App\Models\Modules\ModuleModel;
+use App\Models\Modules\Module;
 
 class LoadAuthData extends Controller
 {
@@ -20,34 +20,32 @@ class LoadAuthData extends Controller
     {
 
         // If logged user is the Super Admin
-        if(Auth::user()->profile_id == 1 && Auth::user()->profile->name == "Super-Admin"){
+        if (Auth::user()->profile_id == 1 && Auth::user()->profile->name == "Super-Admin") {
 
             $data = [
-                "id" => Auth::user()->id, 
-                "name"=> Auth::user()->name,  
-                "email"=> Auth::user()->email, 
+                "id" => Auth::user()->id,
+                "name" => Auth::user()->name,
+                "email" => Auth::user()->email,
                 "profile_id" => Auth::user()->profile_id,
                 "profile" => Auth::user()->profile->name
             ];
 
-        // If the logged user is not the Super Admin
-        }else if(Auth::user()->profile_id != 1){
+            // If the logged user is not the Super Admin
+        } else if (Auth::user()->profile_id != 1) {
 
             $data = array(
-                "id" => Auth::user()->id, 
-                "name"=> Auth::user()->name, 
-                "profile_id" => Auth::user()->profile_id, 
+                "id" => Auth::user()->id,
+                "name" => Auth::user()->name,
+                "profile_id" => Auth::user()->profile_id,
                 "profile" => Auth::user()->profile->name
             );
-
         }
 
-        foreach(Auth::user()->profile->module_privileges as $row => $record){
+        foreach (Auth::user()->profile->module_privileges as $row => $record) {
 
-            $module_name_splited = explode(" ", ModuleModel::find($record->module_id));
+            $module_name_splited = explode(" ", Module::find($record->module_id));
 
             $data["user_powers"][$record->module_id] = ["module" => $module_name_splited[0], "profile_powers" => ["read" => $record->read, "write" => $record->write]];
-
         }
 
         return response($data, 200);

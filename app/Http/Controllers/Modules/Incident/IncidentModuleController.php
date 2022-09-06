@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // Custom
-use App\Models\Incidents\IncidentModel;
+use App\Models\Incidents\Incident;
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
 use App\Services\Modules\Incident\IncidentService;

@@ -337,7 +337,7 @@ export const OrdersPanel = React.memo(() => {
                       <TableCell align="center">
                         <BadgeIcon number={row.flight_plans.length > 0 ? row.flight_plans.length : "0"} color={"success"} />
                       </TableCell>
-                      <TableCell align="center">{row.numOS}</TableCell>
+                      <TableCell align="center">{row.number}</TableCell>
                       <TableCell align="center">
                         {row.creator.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.creator.status == 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined" /> : <Chip label={row.creator.name} color={"error"} variant="outlined" />)}
                       </TableCell>

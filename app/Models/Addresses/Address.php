@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\Addresses;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class UserAddressModel extends Model
+class Address extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "address";
+    protected $table = "addresses";
     protected $guarded = [];
     public $timestamps = false;
-
 
     /*
     * Relationship with user_complementary_data table
     */
-    function complementary_data(){
-        $this->hasOne("App\Models\User\UserComplementaryDataModel", "address_id");
+    function personal_document()
+    {
+        $this->hasOne("App\Models\PersonalDocuments\PersonalDocument", "address_id");
     }
-
 }

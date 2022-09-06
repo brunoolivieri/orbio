@@ -4,12 +4,11 @@ namespace App\Models\Accesses;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Carbon;
 
-class AnnualAccessesModel extends Model
+class AnnualTraffic extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['*'];
     public $table = "annual_traffic";
 }

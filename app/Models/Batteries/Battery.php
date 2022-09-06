@@ -4,12 +4,13 @@ namespace App\Models\Batteries;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 // Custom
-use App\Models\Image\ImageModel;
+use App\Models\Images\Image;
 
-class BatteryModel extends Model
+class Battery extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
     public $table = "batteries";
@@ -52,6 +53,6 @@ class BatteryModel extends Model
     */
     function image()
     {
-        return $this->morphOne(ImageModel::class, 'imageable');
+        return $this->morphOne(Image::class, 'imageable');
     }
 }

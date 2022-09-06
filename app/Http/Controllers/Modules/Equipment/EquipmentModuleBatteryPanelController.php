@@ -17,7 +17,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Batteries\BatteryModel $battery
+     * @param App\Models\Batteries\Battery $battery
      */
     public function __construct(BatteryService $service)
     {

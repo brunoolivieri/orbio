@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\Profiles\ProfileModel;
+use App\Models\Profiles\Profile;
 
 class ProfilesSeeder extends Seeder
 {
@@ -25,7 +25,6 @@ class ProfilesSeeder extends Seeder
         ];
 
 
-        ProfileModel::insert($data);
-
+        Profile::insert($data);
     }
 }

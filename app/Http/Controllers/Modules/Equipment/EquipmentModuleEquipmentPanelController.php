@@ -18,7 +18,7 @@ class EquipmentModuleEquipmentPanelController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Equipments\EquipmentModel $equipment
+     * @param App\Models\Equipments\Equipment $equipment
      */
     public function __construct(EquipmentService $service)
     {

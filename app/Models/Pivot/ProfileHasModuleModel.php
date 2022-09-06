@@ -14,12 +14,13 @@ class ProfileHasModuleModel extends Model
     public $timestamps = false;
     protected $guarded = [];
 
-    function profile(){
-        return $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
+    function profile()
+    {
+        return $this->belongsTo("App\Models\Profiles\Profile", "profile_id");
     }
 
-    function module(){
-        return $this->belongsTo("App\Models\Modules\ModuleModel", "module_id");
+    function module()
+    {
+        return $this->belongsTo("App\Models\Modules\Module", "module_id");
     }
-
 }

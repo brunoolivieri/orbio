@@ -6,22 +6,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\User\AddressModel;
-use App\Models\User\ComplementaryDataModel;
-use App\Models\Accesses\AnnualAccessesModel;
-use App\Models\Accesses\AccessedDevicesModel;
+use App\Models\Users\User;
+use App\Models\Addresses\Address;
+use App\Models\PersonalDocuments\PersonalDocument;
+use App\Models\Accesses\AnnualTraffic;
+use App\Models\Accesses\AccessedDevice;
 
 class FirstLoginSuccessfulListener
 {
     /**
      * Dependency injection.
      */
-    public function __construct(UserModel $userModel, AddressModel $addressModel, ComplementaryDataModel $userComplementaryDataModel,  AnnualAccessesModel $annualAcessesModel, AccessedDevicesModel $accessedDevicesModel)
+    public function __construct(User $userModel, Address $addressModel, PersonalDocument $personalDocumentModel, AnnualTraffic $annualAcessesModel, AccessedDevice $accessedDevicesModel)
     {
         $this->userModel = $userModel;
         $this->userAddressModel = $addressModel;
-        $this->userComplementaryDataModel = $userComplementaryDataModel;
+        $this->personalDocumentModel = $personalDocumentModel;
         $this->annualAcessesModel = $annualAcessesModel;
         $this->accessedDevicesModel = $accessedDevicesModel;
     }
@@ -44,7 +44,7 @@ class FirstLoginSuccessfulListener
             $new_address = $this->userAddressModel->create();
 
             // New complementary data record
-            $this->userComplementaryDataModel->create([
+            $this->personalDocumentModel->create([
                 "user_id" => $user->id,
                 "address_id" => $new_address->id
             ]);

@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Models\Profiles;
+namespace App\Models\ServiceOrders;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProfileModel extends Model
+class ServiceOrder extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "profiles";
     protected $guarded = [];
 
     /*
@@ -22,8 +21,6 @@ class ProfileModel extends Model
 
             if (is_numeric($value_searched)) {
                 $query->where('id', $value_searched);
-            } else {
-                $query->where('name', 'LIKE', '%' . $value_searched . '%');
             }
         });
     }
@@ -35,27 +32,23 @@ class ProfileModel extends Model
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
 
-            foreach ($filters as $index => $filter) {
+            foreach ($filters as $filter) {
                 $query->where($filter["column"], $filter["value"]);
             }
         });
     }
 
-    /*
-    * Relationship with user table
-    */
-    function user()
+    function users()
     {
-
-        return $this->hasMany("App\Models\User\UserModel", "profile_id");
+        return $this->hasOne("App\Models\Pivot\ServiceOrderHasUserModel", "service_order_id");
     }
 
     /*
-    * Relationship with profilehasmodule table
+    * Relationship with service_order_has_flight_plan table
     */
-    function module_privileges()
+    function flight_plans()
     {
 
-        return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "profile_id");
+        return $this->hasMany("App\Models\Pivot\ServiceOrderHasFlightPlanModel", "service_order_id");
     }
 }

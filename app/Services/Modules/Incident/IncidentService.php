@@ -4,7 +4,7 @@ namespace App\Services\Modules\Incident;
 
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Incidents\IncidentModel;
+use App\Models\Incidents\Incident;
 use App\Http\Resources\Modules\Incidents\IncidentsPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -15,9 +15,9 @@ class IncidentService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Incidents\IncidentModel $incidentModel
+     * @param App\Models\Incidents\Incident $incidentModel
      */
-    public function __construct(IncidentModel $incidentModel)
+    public function __construct(Incident $incidentModel)
     {
         $this->incidentModel = $incidentModel;
     }
@@ -30,7 +30,7 @@ class IncidentService implements ServiceInterface
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
         $data = $this->incidentModel->where("deleted_at", null)
@@ -52,7 +52,7 @@ class IncidentService implements ServiceInterface
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function createResource(Request $request) : \Illuminate\Http\Response
+    public function createResource(Request $request): \Illuminate\Http\Response
     {
 
         $this->incidentModel->create($request->only(["type", "date", "description"]));
@@ -67,7 +67,7 @@ class IncidentService implements ServiceInterface
      * @param int $incident_id
      * @return \Illuminate\Http\Response
      */
-    public function updateResource(Request $request, int $incident_id) : \Illuminate\Http\Response
+    public function updateResource(Request $request, int $incident_id): \Illuminate\Http\Response
     {
 
         $this->incidentModel->where('id', $incident_id)->update($request->only(["type", "description", "date"]));
@@ -81,7 +81,7 @@ class IncidentService implements ServiceInterface
      * @param int $incident_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource(int $incident_id) : \Illuminate\Http\Response
+    public function deleteResource(int $incident_id): \Illuminate\Http\Response
     {
 
         $this->incidentModel->where('id', $incident_id)->delete();

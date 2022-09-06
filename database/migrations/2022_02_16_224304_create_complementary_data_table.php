@@ -13,7 +13,7 @@ class CreateComplementaryDataTable extends Migration
      */
     public function up()
     {
-        Schema::create('complementary_data', function (Blueprint $table) {
+        Schema::create('personal_document', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->nullable(true);
             $table->foreignId('address_id')->constrained('address')->nullable(true);
@@ -35,6 +35,6 @@ class CreateComplementaryDataTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('complementary_data');
+        Schema::dropIfExists('personal_document');
     }
 }

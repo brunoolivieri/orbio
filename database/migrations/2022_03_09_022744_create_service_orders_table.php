@@ -15,7 +15,7 @@ class CreateServiceOrdersTable extends Migration
     {
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
-            $table->string("numOS");
+            $table->string("number");
             $table->dateTime("start_date");
             $table->dateTime("end_date");
             $table->boolean("status")->default(false);

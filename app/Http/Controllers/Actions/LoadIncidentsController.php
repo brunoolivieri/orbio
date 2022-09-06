@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Incidents\IncidentModel;
+use App\Models\Incidents\Incident;
 
 class LoadIncidentsController extends Controller
 {
+
+    function __construct(Incident $incidentModel)
+    {
+        $this->incidentModel = $incidentModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -17,6 +23,6 @@ class LoadIncidentsController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return IncidentModel::all();
+        return $this->incidentModel->all();
     }
 }

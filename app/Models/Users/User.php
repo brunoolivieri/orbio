@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\Users;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,11 +10,10 @@ use Illuminate\Support\Facades\Hash;
 // Custom Models
 use Database\Factories\UserFactory;
 
-class UserModel extends Authenticatable
+class User extends Authenticatable
 {
     use HasFactory, SoftDeletes, Notifiable;
 
-    protected $table = "users";
     protected $guarded = [];
 
     /*
@@ -48,9 +47,9 @@ class UserModel extends Authenticatable
     /*
     * Relationship with user_complementary_data table
     */
-    function complementary_data()
+    function personal_document()
     {
-        return $this->hasOne("App\Models\User\UserComplementaryDataModel", "user_id");
+        return $this->hasOne("App\Models\PersonalDocuments\PersonalDocument", "user_id");
     }
 
     /*
@@ -66,7 +65,7 @@ class UserModel extends Authenticatable
     */
     function profile()
     {
-        return $this->belongsTo("App\Models\Profiles\ProfileModel", "profile_id");
+        return $this->belongsTo("App\Models\Profiles\Profile", "profile_id");
     }
 
     /**
@@ -74,7 +73,7 @@ class UserModel extends Authenticatable
      */
     function profile_modules_relationship()
     {
-        return $this->hasManyThrough("App\Models\Pivot\ProfileHasModuleModel", "App\Models\Profiles\ProfileModel");
+        return $this->hasManyThrough("App\Models\Pivot\ProfileHasModuleModel", "App\Models\Profiles\Profile");
     }
 
     /*
@@ -88,9 +87,9 @@ class UserModel extends Authenticatable
     /*
     * Relationship with password_resets table
     */
-    function password_resets()
+    function password_reset()
     {
-        return $this->hasOne("App\Models\PasswordReset\PasswordResetModel", "user_id");
+        return $this->hasOne("App\Models\PasswordResets\PasswordReset", "user_id");
     }
 
     /*
@@ -98,7 +97,7 @@ class UserModel extends Authenticatable
     */
     function annual_accesses()
     {
-        return $this->hasOne("App\Models\Accesses\AnnualAccessesModel", "user_id");
+        return $this->hasOne("App\Models\Accesses\AnnualTraffic", "user_id");
     }
 
     /*
@@ -106,7 +105,7 @@ class UserModel extends Authenticatable
     */
     function devices_acessed()
     {
-        return $this->hasOne("App\Models\Accesses\AccessedDevicesModel", "user_id");
+        return $this->hasOne("App\Models\Accesses\AccessedDevice", "user_id");
     }
 
     /**

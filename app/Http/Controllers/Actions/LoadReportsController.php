@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Reports\ReportModel;
+use App\Models\Reports\Report;
 
 class LoadReportsController extends Controller
 {
+
+    function __construct(Report $reportModel)
+    {
+        $this->reportModel = $reportModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -17,6 +23,6 @@ class LoadReportsController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return ReportModel::all();
+        return $this->reportModel->all();
     }
 }

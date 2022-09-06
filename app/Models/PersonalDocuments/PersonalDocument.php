@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models\PersonalDocuments;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ComplementaryDataModel extends Model
+class PersonalDocument extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "complementary_data";
+    protected $table = "personal_document";
     protected $guarded = [];
     public $timestamps = false;
 
@@ -19,7 +19,7 @@ class ComplementaryDataModel extends Model
     */
     function user()
     {
-        return $this->belongsTo("App\Models\User\UserModel", "user_id");
+        return $this->belongsTo("App\Models\Users\User", "user_id");
     }
 
     /*
@@ -27,6 +27,6 @@ class ComplementaryDataModel extends Model
     */
     function address()
     {
-        return $this->belongsTo("App\Models\User\UserAddressModel", "address_id");
+        return $this->belongsTo("App\Models\Addresses\Address", "address_id");
     }
 }

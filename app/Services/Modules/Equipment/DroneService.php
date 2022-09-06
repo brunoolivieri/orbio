@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Drones\DroneModel;
+use App\Models\Drones\Drone;
 use App\Http\Resources\Modules\Equipments\DronesPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -14,7 +14,7 @@ use App\Contracts\ServiceInterface;
 class DroneService implements ServiceInterface
 {
 
-    function __construct(DroneModel $droneModel)
+    function __construct(Drone $droneModel)
     {
         $this->droneModel = $droneModel;
     }

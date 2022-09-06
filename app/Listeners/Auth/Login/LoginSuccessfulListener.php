@@ -6,9 +6,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Carbon;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\Accesses\AnnualAccessesModel;
-use App\Models\Accesses\AccessedDevicesModel;
+use App\Models\Users\User;
+use App\Models\Accesses\AnnualTraffic;
+use App\Models\Accesses\AccessedDevice;
 use App\Notifications\Auth\LoginNotification;
 
 class LoginSuccessfulListener
@@ -18,7 +18,7 @@ class LoginSuccessfulListener
      *
      * @return void
      */
-    public function __construct(UserModel $userModel, AnnualAccessesModel $annualAccessesModel, AccessedDevicesModel $accessedDevicesModel)
+    public function __construct(User $userModel, AnnualTraffic $annualAccessesModel, AccessedDevice $accessedDevicesModel)
     {
         $this->userModel = $userModel;
         $this->annualAccessesModel = $annualAccessesModel;

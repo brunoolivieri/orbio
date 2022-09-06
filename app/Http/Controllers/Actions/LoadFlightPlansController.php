@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\FlightPlans\FlightPlanModel;
+use App\Models\FlightPlans\FlightPlan;
 
 class LoadFlightPlansController extends Controller
 {
@@ -18,13 +18,12 @@ class LoadFlightPlansController extends Controller
     public function __invoke(Request $request)
     {
 
-        if(isset(request()->where)){
-            $data = FlightPlanModel::find(request()->where);
-        }else{
-            $data = FlightPlanModel::all();
+        if (isset(request()->where)) {
+            $data = FlightPlan::find(request()->where);
+        } else {
+            $data = FlightPlan::all();
         }
 
         return $data;
-
     }
 }

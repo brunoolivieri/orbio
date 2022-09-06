@@ -12,8 +12,8 @@ use App\Listeners\Auth\Login\LoginSuccessfulListener;
 // Observers
 use App\Observers\ServiceOrderObserver;
 // Models
-use App\Models\User\UserModel;
-use App\Models\Orders\ServiceOrderModel;
+use App\Models\Users\User;
+use App\Models\ServiceOrders\ServiceOrder;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -37,7 +37,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $observers = [
-        ServiceOrderModel::class => [ServiceOrderObserver::class]
+        ServiceOrder::class => [ServiceOrderObserver::class]
     ];
 
     /**
@@ -47,6 +47,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        ServiceOrderModel::observe(ServiceOrderObserver::class);
+        ServiceOrder::observe(ServiceOrderObserver::class);
     }
 }

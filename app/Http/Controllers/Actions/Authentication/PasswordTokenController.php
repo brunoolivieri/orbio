@@ -7,13 +7,20 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\PasswordReset\PasswordResetModel;
+use App\Models\Users\User;
+use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\SendTokenNotification;
 use App\Http\Requests\Auth\ForgotPassword\PasswordResetTokenRequest;
 
 class PasswordTokenController extends Controller
 {
+
+    function __construct(User $userModel, PasswordReset $passwordResetModel)
+    {
+        $this->userModel = $userModel;
+        $this->passwordResetModel = $passwordResetModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -22,7 +29,7 @@ class PasswordTokenController extends Controller
      */
     public function __invoke(PasswordResetTokenRequest $request)
     {
-        $user = UserModel::where("email", $request->email)->firstOrFail();
+        $user = $this->userModel->where("email", $request->email)->with("password_reset")->firstOrFail();
 
         if ($user->trashed()) {
             return response(["message" => "A conta foi desabilitada!"], 500);
@@ -32,8 +39,9 @@ class PasswordTokenController extends Controller
 
             $token = Str::random(10);
 
-            $user->password_resets()->delete();
-            PasswordResetModel::insert(["user_id" => $user->id, "token" => $token]);
+            $user->password_reset()->delete();
+
+            $this->passwordResetModel->insert(["user_id" => $user->id, "token" => $token]);
 
             $user->notify(new SendTokenNotification($user));
         });

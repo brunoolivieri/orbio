@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class ChangePasswordNotification extends Notification
 {
@@ -19,7 +19,7 @@ class ChangePasswordNotification extends Notification
      *
      * @return void
      */
-    public function __construct(UserModel $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }

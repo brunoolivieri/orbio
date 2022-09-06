@@ -41,21 +41,21 @@ class FlightPlansPanelResource extends JsonResource
 
             if(!empty($flight_plan->report_id)){
                 $formated_data["records"][$row]["report"] = [
-                    "id" => $flight_plan->reports->id,
-                    "start_date" => $flight_plan->reports->start_date,
-                    "end_date" => $flight_plan->reports->end_date,
-                    "flight_log" => $flight_plan->reports->flight_log,
-                    "observation" => $flight_plan->reports->observation,
-                    "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->reports->created_at))
+                    "id" => $flight_plan->report->id,
+                    "start_date" => $flight_plan->report->start_date,
+                    "end_date" => $flight_plan->report->end_date,
+                    "flight_log" => $flight_plan->report->flight_log,
+                    "observation" => $flight_plan->report->observation,
+                    "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->report->created_at))
                 ];
             }
 
             if(!empty($flight_plan->incident_id)){
                 $formated_data["records"][$row]["incident"] = [
-                    "id" => $flight_plan->incidents->id,
-                    "type" => $flight_plan->incidents->type,
-                    "date" => date( 'd-m-Y h:i', strtotime($flight_plan->incidents->date)),
-                    "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->incidents->created_at))
+                    "id" => $flight_plan->incident->id,
+                    "type" => $flight_plan->incident->type,
+                    "date" => date( 'd-m-Y h:i', strtotime($flight_plan->incident->date)),
+                    "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->incident->created_at))
                 ];
             }
 

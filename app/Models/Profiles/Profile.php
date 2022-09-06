@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Models\FlightPlans;
+namespace App\Models\Profiles;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class FlightPlanModel extends Model
+class Profile extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "flight_plans";
+    protected $table = "profiles";
     protected $guarded = [];
 
     /*
@@ -42,29 +42,20 @@ class FlightPlanModel extends Model
     }
 
     /*
-    * Relationship with incidents table
+    * Relationship with user table
     */
-    function incidents()
+    function user()
     {
 
-        return $this->belongsTo("App\Models\Incidents\IncidentModel", "incident_id");
+        return $this->hasMany("App\Models\Users\User", "profile_id");
     }
 
     /*
-    * Relationship with reports table
+    * Relationship with profilehasmodule table
     */
-    function reports()
+    function modules()
     {
 
-        return $this->belongsTo("App\Models\Reports\ReportModel", "report_id");
-    }
-
-    /*
-    * Relationship with service_order_has_flight_plan table
-    */
-    function has_service_order()
-    {
-
-        return $this->hasMany("App\Models\Pivot\ServiceOrderHasFlightPlanModel", "flight_plan_id");
+        return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "profile_id");
     }
 }

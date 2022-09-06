@@ -14,6 +14,6 @@ class ServiceOrderHasFlightPlanModel extends Model
     protected $guarded = [];
 
     function flight_plan(){
-        return $this->belongsTo("App\Models\FlightPlans\FlightPlanModel", "flight_plan_id");
+        return $this->belongsTo("App\Models\FlightPlans\FlightPlan", "flight_plan_id");
     }
 }

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class UserCreatedNotification extends Notification
 {
@@ -21,7 +21,7 @@ class UserCreatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(UserModel $user, string $password)
+    public function __construct(User $user, string $password)
     {
         $this->user = $user;
         $this->password = $password;

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Pivot\ProfileHasModuleModel;
-use App\Models\Profiles\ProfileModel;
+use App\Models\Profiles\Profile;
 use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -17,10 +17,10 @@ class ProfilePanelService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Profiles\ProfileModel $profile_model
+     * @param App\Models\Profiles\Profile $profile_model
      * @param App\Models\Pivot\ProfileHasModuleModel $profile_has_module_model
      */
-    public function __construct(ProfileModel $profile_model, ProfileHasModuleModel $profile_has_module_model)
+    public function __construct(Profile $profile_model, ProfileHasModuleModel $profile_has_module_model)
     {
         $this->profileModel = $profile_model;
         $this->profileHasModuleModel = $profile_has_module_model;
@@ -34,7 +34,7 @@ class ProfilePanelService implements ServiceInterface
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters) : \Illuminate\Http\Response
+    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
         $data = $this->profileModel->with("module_privileges")
@@ -151,8 +151,6 @@ class ProfilePanelService implements ServiceInterface
             if (!empty($profile->user)) {
                 $profile->user()->update(["profile_id" => 5]);
             }
-
-            //$profile->module_privileges->delete();
 
             $profile->delete();
         });

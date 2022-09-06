@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Modules\ModuleModel;
+use App\Models\Modules\Module;
 
 class ModulesSeeder extends Seeder
 {
@@ -24,7 +24,6 @@ class ModulesSeeder extends Seeder
             ["name" => "Equipamentos"]
         ];
 
-        ModuleModel::insert($data);
-
+        Module::insert($data);
     }
 }

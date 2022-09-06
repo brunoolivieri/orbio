@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\Accesses\AnnualAccessesModel;
-use App\Models\Accesses\AccessedDevicesModel;
+use App\Models\Users\User;
+use App\Models\Accesses\AnnualTraffic;
+use App\Models\Accesses\AccessedDevice;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
@@ -23,10 +23,10 @@ class UserPanelService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\User\UserModel $userModel
+     * @param App\Models\Users\User $userModel
      * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasUserModel
      */
-    public function __construct(UserModel $userModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, AnnualAccessesModel $annualAcessesModel, AccessedDevicesModel $accessedDevicesModel)
+    public function __construct(User $userModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, AnnualTraffic $annualAcessesModel, AccessedDevice $accessedDevicesModel)
     {
         $this->userModel = $userModel;
         $this->serviceOrderHasUserModel = $serviceOrderHasUserModel;
@@ -45,7 +45,7 @@ class UserPanelService implements ServiceInterface
     public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = $this->userModel->with(["profile:id,name", "complementary_data:id"])
+        $data = $this->userModel->with(["profile:id,name", "personal_document:id"])
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)

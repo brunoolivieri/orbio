@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class UserUpdatedNotification extends Notification
 {
@@ -20,7 +20,7 @@ class UserUpdatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(UserModel $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Actions\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 // Custom
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 use App\Http\Requests\Auth\Login\LoginRequest;
 use App\Events\Auth\FirstSuccessfulLoginEvent;
 use App\Events\Auth\LoginSuccessfulEvent;
@@ -16,10 +16,10 @@ class LoginController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\User\UserModel $userModel
+     * @param App\Models\Users\User $userModel
      * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasUserModel
      */
-    public function __construct(UserModel $userModel)
+    public function __construct(User $userModel)
     {
         $this->userModel = $userModel;
     }

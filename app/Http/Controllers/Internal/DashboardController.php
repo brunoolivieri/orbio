@@ -6,18 +6,18 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\Profiles\ProfileModel;
-use App\Models\FlightPlans\FlightPlanModel;
-use App\Models\Orders\ServiceOrderModel;
-use App\Models\Reports\ReportModel;
-use App\Models\Accesses\AccessedDevicesModel;
-use App\Models\Accesses\AnnualAccessesModel;
+use App\Models\Users\User;
+use App\Models\Profiles\Profile;
+use App\Models\FlightPlans\FlightPlan;
+use App\Models\ServiceOrders\ServiceOrder;
+use App\Models\Reports\Report;
+use App\Models\Accesses\AccessedDevice;
+use App\Models\Accesses\AnnualTraffic;
 
 class DashboardController extends Controller
 {
 
-    function __construct(UserModel $userModel, ProfileModel $profileModel, FlightPlanModel $flightPlanModel, ServiceOrderModel $serviceOrderModel, ReportModel $reportModel, AccessedDevicesModel $accessedDevicesModel, AnnualAccessesModel $annualAccessesModel)
+    function __construct(User $userModel, Profile $profileModel, FlightPlan $flightPlanModel, ServiceOrder $serviceOrderModel, Report $reportModel, AccessedDevice $accessedDevicesModel, AnnualTraffic $annualAccessesModel)
     {
         $this->userModel = $userModel;
         $this->profileModel = $profileModel;

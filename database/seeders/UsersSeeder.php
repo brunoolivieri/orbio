@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class UsersSeeder extends Seeder
 {
@@ -16,8 +16,7 @@ class UsersSeeder extends Seeder
     public function run()
     {
 
-        // Call the factory of the UserModel
-        UserModel::factory()->count(250)->create();
-
+        // Call the factory of the User
+        User::factory()->count(250)->create();
     }
 }

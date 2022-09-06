@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Equipments\EquipmentModel;
+use App\Models\Equipments\Equipment;
 use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -14,7 +14,7 @@ use App\Contracts\ServiceInterface;
 class EquipmentService implements ServiceInterface
 {
 
-    function __construct(EquipmentModel $equipmentModel)
+    function __construct(Equipment $equipmentModel)
     {
         $this->equipmentModel = $equipmentModel;
     }

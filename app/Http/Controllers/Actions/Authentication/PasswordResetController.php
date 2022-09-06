@@ -6,13 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\PasswordReset\PasswordResetModel;
+use App\Models\Users\User;
+use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\ChangePasswordNotification;
 use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
 
 class PasswordResetController extends Controller
 {
+
+    function __construct(PasswordReset $passwordResetModel)
+    {
+        $this->passwordResetModel = $passwordResetModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -23,16 +29,17 @@ class PasswordResetController extends Controller
     {
         DB::transaction(function () use ($request) {
 
-            $token = PasswordResetModel::where("token", $request->token)->firstOrFail();
+            $record = $this->passwordResetModel->where("token", $request->token)->with("user")->firstOrFail();
 
-            $user = UserModel::findOrFail($token->user_id);
+            $record->user->update([
+                "password" => $request->new_password
+            ]);
 
-            $user->password = $request->new_password;
-            $user->save();
+            $record->refresh();
 
-            $user->password_resets()->delete();
+            $record->user->password_reset()->delete();
 
-            $token->user->notify(new ChangePasswordNotification($token->user));
+            $record->user->notify(new ChangePasswordNotification($record->user));
         });
 
         return response(["message" => "Senha alterada com sucesso!"], 200);

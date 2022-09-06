@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\Orders\ServiceOrderModel;
+use App\Models\Users\User;
+use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\Pivot\ServiceOrderHasUserModel;
 use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
@@ -20,12 +20,12 @@ class ServiceOrderService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\User\UserModel $userModel
-     * @param App\Models\Orders\ServiceOrderModel $serviceOrderModel
+     * @param App\Models\Users\User $userModel
+     * @param App\Models\ServiceOrders\ServiceOrder $serviceOrderModel
      * @param App\Models\Pivot\ServiceOrderHasUserModel $serviceOrderHasUserModel
      * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel
      */
-    public function __construct(UserModel $userModel, ServiceOrderModel $serviceOrderModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
+    public function __construct(User $userModel, ServiceOrder $serviceOrderModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
     {
         $this->userModel = $userModel;
         $this->serviceOrderModel = $serviceOrderModel;
@@ -45,8 +45,8 @@ class ServiceOrderService implements ServiceInterface
     {
 
         $data = $this->serviceOrderModel->where("deleted_at", null)
-            ->with("has_users")
-            ->with("has_flight_plans")
+            ->with("users")
+            ->with("flight_plans")
             ->filter($filters) // scope
             ->orderBy($order_by)
             ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
@@ -77,7 +77,7 @@ class ServiceOrderService implements ServiceInterface
                 [
                     "start_date" => $request->start_date,
                     "end_date" => $request->end_date,
-                    "numOS" => "os." . time(),
+                    "number" => "os." . time(),
                     "observation" => $request->observation,
                     "status" => $request->boolean("status")
                 ]
@@ -115,7 +115,7 @@ class ServiceOrderService implements ServiceInterface
         DB::transaction(function () use ($request, $service_order_id) {
 
             $service_order = $this->serviceOrderModel->findOrFail($service_order_id);
-            $creator = $this->userModel->findOrFail($service_order->has_users->has_creator->id);
+            $creator = $this->userModel->findOrFail($service_order->users->has_creator->id);
             $pilot = $this->userModel->findOrFail($request->pilot_id);
             $client = $this->userModel->findOrFail($request->client_id);
 
@@ -129,11 +129,11 @@ class ServiceOrderService implements ServiceInterface
             );
 
             // Desvinculation with all users through service_order_has_user table
-            $service_order->has_users()->delete();
+            $service_order->users()->delete();
 
             $this->serviceOrderHasUserModel->create([
                 "service_order_id" => $service_order->id,
-                "creator_id" => $service_order->has_users->has_creator->id,
+                "creator_id" => $service_order->users->has_creator->id,
                 "pilot_id" => $pilot->id,
                 "client_id" => $client->id
             ]);
@@ -168,12 +168,8 @@ class ServiceOrderService implements ServiceInterface
 
             $service_order = $this->serviceOrderModel->find($service_order_id);
 
-            $creator = $this->userModel->find($service_order->has_users->creator_id);
-            $pilot = $this->userModel->find($service_order->has_users->pilot_id);
-            $client = $this->userModel->find($service_order->has_users->client_id);
-
             // Desvinculation with all flight plans through service_order_has_flight_plans table
-            if ($service_order->has_flight_plans->count() > 0) {
+            if ($service_order->flight_plans->count() > 0) {
                 $this->serviceOrderHasFlightPlanModel->where("service_order_id", $service_order->id)->delete();
             }
 

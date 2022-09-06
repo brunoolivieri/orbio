@@ -18,7 +18,7 @@ class EquipmentModuleDronePanelController extends Controller
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Drones\DroneModel $drone
+     * @param App\Models\Drones\Drone $drone
      */
     public function __construct(DroneService $service)
     {

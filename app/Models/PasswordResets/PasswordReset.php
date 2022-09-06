@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\PasswordReset;
+namespace App\Models\PasswordResets;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PasswordResetModel extends Model
+class PasswordReset extends Model
 {
     use HasFactory;
 
@@ -14,7 +14,8 @@ class PasswordResetModel extends Model
     protected $guarded = [];
     const UPDATED_AT = null;
 
-    public function user(){
-        return $this->belongsTo("App\Models\User\UserModel", "user_id");
+    public function user()
+    {
+        return $this->belongsTo("App\Models\Users\User", "user_id");
     }
 }

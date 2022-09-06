@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 // Model
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class LoginSuccessfulEvent
 {
@@ -21,7 +21,7 @@ class LoginSuccessfulEvent
      *
      * @return void
      */
-    public function __construct(UserModel $user)
+    public function __construct(User $user)
     {
         $this->user = $user;
     }

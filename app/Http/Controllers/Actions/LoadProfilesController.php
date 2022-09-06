@@ -5,10 +5,16 @@ namespace App\Http\Controllers\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Profiles\ProfileModel;
+use App\Models\Profiles\Profile;
 
 class LoadProfilesController extends Controller
 {
+
+    function __construct(Profile $profileModel)
+    {
+        $this->profileModel = $profileModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -17,6 +23,6 @@ class LoadProfilesController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return ProfileModel::all();
+        return $this->profileModel->all();
     }
 }

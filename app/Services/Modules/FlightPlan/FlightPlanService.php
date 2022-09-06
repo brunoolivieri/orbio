@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 // Custom
 use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
-use App\Models\FlightPlans\FlightPlanModel;
-use App\Models\Reports\ReportModel;
+use App\Models\FlightPlans\FlightPlan;
+use App\Models\Reports\Report;
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -23,11 +23,11 @@ class FlightPlanService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\FlightPlans\FlightPlanModel $flightPlanModel
-     * @param App\Models\Reports\ReportModel $reportModel
+     * @param App\Models\FlightPlans\FlightPlan $flightPlanModel
+     * @param App\Models\Reports\Report $reportModel
      * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel
      */
-    public function __construct(FlightPlanModel $flightPlanModel, ReportModel $reportModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
+    public function __construct(FlightPlan $flightPlanModel, Report $reportModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
     {
         $this->flightPlanModel = $flightPlanModel;
         $this->reportModel = $reportModel;
@@ -45,7 +45,7 @@ class FlightPlanService implements ServiceInterface
     public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = FlightPlanModel::where("deleted_at", null)
+        $data = FlightPlan::where("deleted_at", null)
             ->with("incidents")
             ->with("reports")
             ->search($search) // scope
@@ -153,12 +153,12 @@ class FlightPlanService implements ServiceInterface
             $flight_plan =  $this->flightPlanModel->findOrFail($flight_plan_id);
 
             // Delete related report
-            if ($flight_plan->reports->count() > 0) {
-                $this->reportModel->where("id", $flight_plan->reports->id)->delete();
+            if ($flight_plan->report->count() > 0) {
+                $this->reportModel->where("id", $flight_plan->report->id)->delete();
             }
 
             // Delete relation in service order pivot table
-            if ($flight_plan->has_service_order->count() > 0) {
+            if ($flight_plan->service_orders->count() > 0) {
                 $this->serviceOrderHasFlightPlanModel->where("flight_plan_id", $flight_plan->id)->delete();
             }
 

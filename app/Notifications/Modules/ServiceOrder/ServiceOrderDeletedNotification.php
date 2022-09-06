@@ -7,8 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Custom
-use App\Models\User\UserModel;
-use App\Models\Orders\ServiceOrderModel;
+use App\Models\Users\User;
+use App\Models\ServiceOrders\ServiceOrder;
 
 class ServiceOrderDeletedNotification extends Notification
 {
@@ -22,7 +22,7 @@ class ServiceOrderDeletedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(UserModel $user, ServiceOrderModel $service_order)
+    public function __construct(User $user, ServiceOrder $service_order)
     {
         $this->user = $user;
         $this->service_order = $service_order;

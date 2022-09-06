@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User\UserModel;
+use App\Models\Users\User;
 
 class SuperAdminSeeder extends Seeder
 {
@@ -17,7 +17,7 @@ class SuperAdminSeeder extends Seeder
     public function run()
     {
 
-        UserModel::create([
+        User::create([
             "name" => "Master",
             "email" => env("ADMIN_EMAIL"),
             "password" => Hash::make(env("ADMIN_PASS")),

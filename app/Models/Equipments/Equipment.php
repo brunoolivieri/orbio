@@ -4,16 +4,15 @@ namespace App\Models\Equipments;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 // Custom
-use App\Models\Image\ImageModel;
+use App\Models\Images\Image;
 
-
-class EquipmentModel extends Model
+class Equipment extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
-    public $table = "equipments";
 
     /*
     * Scope for search
@@ -50,7 +49,8 @@ class EquipmentModel extends Model
     /*
     * Polymorphic relationship with table "images"
     */
-    function image(){
-        return $this->morphOne(ImageModel::class, 'imageable');
+    function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 // Custom
-use App\Models\Batteries\BatteryModel;
+use App\Models\Batteries\Battery;
 use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -14,7 +14,7 @@ use App\Contracts\ServiceInterface;
 class BatteryService implements ServiceInterface
 {
 
-    function __construct(BatteryModel $batteryModel)
+    function __construct(Battery $batteryModel)
     {
         $this->batteryModel = $batteryModel;
     }

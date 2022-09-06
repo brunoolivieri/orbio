@@ -4,14 +4,14 @@ namespace App\Models\Drones;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 // Custom
-use App\Models\Image\ImageModel;
+use App\Models\Images\Image;
 
-class DroneModel extends Model
+class Drone extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    public $table = "drones";
     protected $guarded = [];
 
     /*
@@ -54,6 +54,6 @@ class DroneModel extends Model
     */
     function image()
     {
-        return $this->morphOne(ImageModel::class, 'imageable');
+        return $this->morphOne(Image::class, 'imageable');
     }
 }

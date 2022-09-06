@@ -2,7 +2,7 @@
 
 namespace App\Observers;
 
-use App\Models\Orders\ServiceOrderModel;
+use App\Models\ServiceOrders\ServiceOrder;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderCreatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
@@ -12,23 +12,23 @@ class ServiceOrderObserver
 {
 
     /**
-     * Handle the ServiceOrderModel "creating" event.
+     * Handle the ServiceOrder "creating" event.
      *
-     * @param  \App\Models\Order\ServiceOrderModel  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
      * @return void
      */
-    public function creating(ServiceOrderModel $serviceOrderModel)
+    public function creating(ServiceOrder $serviceOrderModel)
     {
         $serviceOrderModel->id = Auth::user()->id;
     }
 
     /**
-     * Handle the ServiceOrderModel "created" event.
+     * Handle the ServiceOrder "created" event.
      *
-     * @param  \App\Models\Order\ServiceOrderModel  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
      * @return void
      */
-    public function created(ServiceOrderModel $serviceOrderModel)
+    public function created(ServiceOrder $serviceOrderModel)
     {
         $creator = Auth::user();
         $pilot = $serviceOrderModel->has_users->has_pilot;
@@ -40,12 +40,12 @@ class ServiceOrderObserver
     }
 
     /**
-     * Handle the ServiceOrderModel "updated" event.
+     * Handle the ServiceOrder "updated" event.
      *
-     * @param  \App\Models\Order\ServiceOrderModel  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
      * @return void
      */
-    public function updated(ServiceOrderModel $serviceOrderModel)
+    public function updated(ServiceOrder $serviceOrderModel)
     {
         $creator = $serviceOrderModel->has_users->has_creator;
         $pilot = $serviceOrderModel->has_users->has_pilot;
@@ -57,12 +57,12 @@ class ServiceOrderObserver
     }
 
     /**
-     * Handle the ServiceOrderModel "deleted" event.
+     * Handle the ServiceOrder "deleted" event.
      *
-     * @param  \App\Models\Order\ServiceOrderModel  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
      * @return void
      */
-    public function deleted(ServiceOrderModel $serviceOrderModel)
+    public function deleted(ServiceOrder $serviceOrderModel)
     {
         $creator = $serviceOrderModel->has_users->has_creator;
         $pilot = $serviceOrderModel->has_users->has_pilot;
@@ -74,23 +74,23 @@ class ServiceOrderObserver
     }
 
     /**
-     * Handle the ServiceOrderModel "restored" event.
+     * Handle the ServiceOrder "restored" event.
      *
-     * @param  \App\Models\Order\ServiceOrderModel  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
      * @return void
      */
-    public function restored(ServiceOrderModel $serviceOrderModel)
+    public function restored(ServiceOrder $serviceOrderModel)
     {
         //
     }
 
     /**
-     * Handle the ServiceOrderModel "force deleted" event.
+     * Handle the ServiceOrder "force deleted" event.
      *
-     * @param  \App\Models\Order\ServiceOrderModel  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
      * @return void
      */
-    public function forceDeleted(ServiceOrderModel $serviceOrderModel)
+    public function forceDeleted(ServiceOrder $serviceOrderModel)
     {
         //
     }
