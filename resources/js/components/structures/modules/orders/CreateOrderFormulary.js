@@ -20,7 +20,7 @@ import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
 import { StatusRadio } from '../../radio_group/StatusRadio';
-import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
+import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -33,20 +33,14 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
   const { AuthData } = useAuthentication();
 
-  const [controlledInput, setControlledInput] = React.useState({ pilot_id: "", client_id: "", observation: "", status: "1" });
-
+  const [controlledInput, setControlledInput] = React.useState({ pilot_id: "0", client_id: "0", observation: "", status: "1" });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" });
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [startDate, setStartDate] = React.useState(moment());
   const [endDate, setEndDate] = React.useState(moment());
-
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
-
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
@@ -271,7 +265,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
                 controlledInput={controlledInput}
                 helperText={fieldErrorMessage.pilot_id}
                 error={fieldError.pilot_id}
-                default={0}
+                value={controlledInput.pilot_id}
                 name={"pilot_id"}
               />
             </Box>
@@ -286,16 +280,15 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
                 controlledInput={controlledInput}
                 helperText={fieldErrorMessage.client_id}
                 error={fieldError.client_id}
-                default={0}
+                value={controlledInput.client_id}
                 name={"client_id"}
               />
             </Box>
 
             <Box sx={{ mb: 2 }}>
 
-              <ModalFlightPlansTable
+              <FlightPlansForServiceOrderModal
                 setFlightPlansSelected={setFlightPlansSelected}
-                defaultSelections={flightPlansSelected}
               />
 
             </Box>

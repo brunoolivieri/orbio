@@ -35,13 +35,22 @@ class PasswordTokenController extends Controller
             return response(["message" => "A conta foi desabilitada!"], 500);
         }
 
-        DB::transaction(function () use ($request, $user) {
+        DB::transaction(function () use ($user) {
 
-            $token = Str::random(10);
+            if ($user->password_reset()->exists()) {
+                $user->password_reset()->delete();
+            }
 
-            $user->password_reset()->delete();
+            $random_token = Str::random(10);
 
-            $this->passwordResetModel->insert(["user_id" => $user->id, "token" => $token]);
+            $this->passwordResetModel->insert(
+                [
+                    "user_id" => $user->id,
+                    "token" => $random_token
+                ]
+            );
+            
+            $user->refresh();
 
             $user->notify(new SendTokenNotification($user));
         });

@@ -4,9 +4,10 @@ namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-// Custom
-use App\Models\Pivot\ProfileHasModuleModel;
+// Models
+use App\Models\Pivot\ProfileModule;
 use App\Models\Profiles\Profile;
+// Resources
 use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
@@ -17,13 +18,13 @@ class ProfilePanelService implements ServiceInterface
     /**
      * Dependency injection.
      * 
-     * @param App\Models\Profiles\Profile $profile_model
-     * @param App\Models\Pivot\ProfileHasModuleModel $profile_has_module_model
+     * @param App\Models\Profiles\Profile $profileModel
+     * @param App\Models\Pivot\ProfileModule $profileModuleModel
      */
-    public function __construct(Profile $profile_model, ProfileHasModuleModel $profile_has_module_model)
+    public function __construct(Profile $profileModel, ProfileModule $profileModuleModel)
     {
-        $this->profileModel = $profile_model;
-        $this->profileHasModuleModel = $profile_has_module_model;
+        $this->profileModel = $profileModel;
+        $this->profileHasModuleModel = $profileModuleModel;
     }
 
     /**
@@ -37,7 +38,7 @@ class ProfilePanelService implements ServiceInterface
     public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = $this->profileModel->with("module_privileges")
+        $data = $this->profileModel->with("modules")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)

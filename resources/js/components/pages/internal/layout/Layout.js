@@ -7,7 +7,7 @@ import { Navigator } from './Navigator';
 import { Header } from './Header';
 import { InternalRoutes } from "../../../../routes/ReactRouter";
 import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
-import { GenericModalDialog } from "../../../structures/generic_modal_dialog/GenericModalDialog";
+import { GenericModalDialog } from "../../../structures/modals/dialog/GenericModalDialog";
 // Material UI
 import Box from '@mui/material/Box';
 // Assets

@@ -20,7 +20,7 @@ import { faComputer } from '@fortawesome/free-solid-svg-icons';
 import AxiosApi from "../../../../../services/AxiosApi";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { GenericModalDialog } from '../../../../structures/generic_modal_dialog/GenericModalDialog';
+import { GenericModalDialog } from '../../../../structures/modals/dialog/GenericModalDialog';
 // Assets
 import AlertImage from "../../../../assets/images/Alert/Alert_md.png";
 // Libs

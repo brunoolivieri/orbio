@@ -1,0 +1,20 @@
+<?php
+
+namespace App\Models\Pivot;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ServiceOrderFlightPlan extends Model
+{
+    use HasFactory;
+
+    protected $table = "service_order_has_flight_plan";
+    public $timestamps = false;
+    protected $guarded = [];
+
+    function flight_plan()
+    {
+        return $this->belongsTo("App\Models\FlightPlans\FlightPlan", "flight_plan_id");
+    }
+}

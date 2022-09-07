@@ -18,7 +18,7 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { StatusRadio } from '../../radio_group/StatusRadio';
-import { ModalFlightPlansTable } from '../../modal_flight_plans_table/ModalFlightPlansTable';
+import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
 import LinearProgress from '@mui/material/LinearProgress';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -298,7 +298,6 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   controlledInput={controlledInput}
                   helperText={fieldErrorMessage.pilot_id}
                   error={fieldError.pilot_id}
-                  default={props.record.pilot.id}
                   name={"pilot_id"}
                   value={controlledInput.pilot_id}
                 />
@@ -314,7 +313,6 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   controlledInput={controlledInput}
                   helperText={fieldErrorMessage.client_id}
                   error={fieldError.client_id}
-                  default={props.record.client.id}
                   name={"client_id"}
                   value={controlledInput.client_id}
                 />
@@ -322,10 +320,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
               <Box sx={{ mb: 2 }}>
 
-                <ModalFlightPlansTable
-                  setFlightPlansSelected={setFlightPlansSelected}
-                  defaultSelections={flightPlansSelected}
-                />
+                <FlightPlansForServiceOrderModal />
 
               </Box>
 

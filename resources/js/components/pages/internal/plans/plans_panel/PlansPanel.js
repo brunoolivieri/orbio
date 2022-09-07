@@ -31,6 +31,7 @@ import TablePagination from '@mui/material/TablePagination';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -43,7 +44,6 @@ import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
-import { useSnackbar } from 'notistack';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -51,7 +51,7 @@ const StyledHeadTableCell = styled(TableCell)({
 });
 
 
-export function PlansPanel() {
+export const PlansPanel = () => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -61,7 +61,7 @@ export function PlansPanel() {
   const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
   const [loading, setLoading] = React.useState(true);
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-  const [searchField, serSearchField] = React.useState("");
+  const [searchField, setSearchField] = React.useState("");
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -311,7 +311,7 @@ export function PlansPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar plano por ID"}
-            onChange={(e) => serSearchField(e.currentTarget.value)}
+            onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">

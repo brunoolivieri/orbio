@@ -29,17 +29,15 @@ class PasswordResetController extends Controller
     {
         DB::transaction(function () use ($request) {
 
-            $record = $this->passwordResetModel->where("token", $request->token)->with("user")->firstOrFail();
+            $password_reset = $this->passwordResetModel->where("token", $request->token)->with("user")->firstOrFail();
 
-            $record->user->update([
+            $password_reset->user->update([
                 "password" => $request->new_password
             ]);
 
-            $record->refresh();
+            $password_reset->delete();
 
-            $record->user->password_reset()->delete();
-
-            $record->user->notify(new ChangePasswordNotification($record->user));
+            $password_reset->user->notify(new ChangePasswordNotification($password_reset->user));
         });
 
         return response(["message" => "Senha alterada com sucesso!"], 200);

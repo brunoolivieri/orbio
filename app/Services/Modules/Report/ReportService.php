@@ -3,8 +3,9 @@
 namespace App\Services\Modules\Report;
 
 use Illuminate\Http\Request;
-// Custom
+// Models
 use App\Models\Reports\Report;
+// Resources
 use App\Http\Resources\Modules\Reports\ReportsPanelResource;
 
 class ReportService

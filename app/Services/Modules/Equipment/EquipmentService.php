@@ -5,10 +5,11 @@ namespace App\Services\Modules\Equipment;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-// Custom
+// Models
 use App\Models\Equipments\Equipment;
+// Resources
 use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
-// Contract
+// Contracts
 use App\Contracts\ServiceInterface;
 
 class EquipmentService implements ServiceInterface

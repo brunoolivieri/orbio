@@ -5,6 +5,9 @@ namespace App\Models\Profiles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+// Models
+use App\Models\Users\User;
+use App\Models\Modules\Module;
 
 class Profile extends Model
 {
@@ -56,6 +59,6 @@ class Profile extends Model
     function modules()
     {
 
-        return $this->hasMany("App\Models\Pivot\ProfileHasModuleModel", "profile_id");
+        return $this->hasMany("App\Models\Pivot\ProfileModule", "profile_id");
     }
 }

@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Modules\FlightPlan;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
-// Custom
+// Models
 use App\Models\FlightPlans\FlightPlanModel;
+// Form Request
 use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
+// Services
 use App\Services\Modules\FlightPlan\FlightPlanService;
 
 class FlightPlanModuleController extends Controller

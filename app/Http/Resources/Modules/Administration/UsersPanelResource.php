@@ -25,26 +25,25 @@ class UsersPanelResource extends JsonResource
     {
         $formated_data["records"] = array();
 
-        foreach ($this->data as $row => $record) {
+        foreach ($this->data as $row => $user) {
 
             $formated_data["records"][$row] = [
-                "id" => $record->id,
-                "name" => $record->name,
-                "profile_id" => $record->profile->id,
-                "profile_name" => $record->profile->name,
-                "complementary_data_id" => $record->complementary_data_id,
-                "email" => $record->email,
-                "status" => $record->status,
-                "last_access" => empty($record->last_access) ? "N/A" : date('d-m-Y h:i', strtotime($record->last_access)),
-                "created_at" => date('d-m-Y h:i', strtotime($record->created_at)),
-                "updated_at" => empty($record->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($record->updated_at))
+                "id" => $user->id,
+                "name" => $user->name,
+                "profile_id" => $user->profile->id,
+                "profile_name" => $user->profile->name,
+                "email" => $user->email,
+                "status" => $user->status,
+                "last_access" => empty($user->last_access) ? "N/A" : date('d-m-Y h:i', strtotime($user->last_access)),
+                "created_at" => date('d-m-Y h:i', strtotime($user->created_at)),
+                "updated_at" => empty($user->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($user->updated_at))
             ];
 
-            if ((bool) $record->status && empty($record->deleted_at)) {
+            if ((bool) $user->status && empty($user->deleted_at)) {
                 $formated_data["records"][$row]["status_badge"] = ["Ativo", "success"];
-            } else if ((bool) !$record->status && empty($record->deleted_at)) {
+            } else if ((bool) !$user->status && empty($user->deleted_at)) {
                 $formated_data["records"][$row]["status_badge"] = ["Inativo", "error"];
-            } else if (!empty($record->deleted_at)) {
+            } else if (!empty($user->deleted_at)) {
                 $formated_data["records"][$row]["status_badge"] = ["Removido", "error"];
             }
         }

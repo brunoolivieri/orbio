@@ -5,15 +5,17 @@ namespace App\Services\Modules\Administration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-// Custom
+// Models
 use App\Models\Users\User;
 use App\Models\Accesses\AnnualTraffic;
 use App\Models\Accesses\AccessedDevice;
-use App\Models\Pivot\ServiceOrderHasUserModel;
+use App\Models\Pivot\ServiceOrderUser;
+// Resources
+use App\Http\Resources\Modules\Administration\UsersPanelResource;
+// Notifications
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
 use App\Notifications\Modules\Administration\User\UserDisabledNotification;
-use App\Http\Resources\Modules\Administration\UsersPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;
 
@@ -24,12 +26,12 @@ class UserPanelService implements ServiceInterface
      * Dependency injection.
      * 
      * @param App\Models\Users\User $userModel
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasUserModel
+     * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderUser
      */
-    public function __construct(User $userModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, AnnualTraffic $annualAcessesModel, AccessedDevice $accessedDevicesModel)
+    public function __construct(User $userModel, ServiceOrderUser $ServiceOrderUser, AnnualTraffic $annualAcessesModel, AccessedDevice $accessedDevicesModel)
     {
         $this->userModel = $userModel;
-        $this->serviceOrderHasUserModel = $serviceOrderHasUserModel;
+        $this->ServiceOrderUser = $ServiceOrderUser;
         $this->annualAcessesModel = $annualAcessesModel;
         $this->accessedDevicesModel = $accessedDevicesModel;
     }
@@ -45,7 +47,7 @@ class UserPanelService implements ServiceInterface
     public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
     {
 
-        $data = $this->userModel->with(["profile:id,name", "personal_document:id"])
+        $data = $this->userModel->with(["profile:id,name"])
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -125,17 +127,17 @@ class UserPanelService implements ServiceInterface
             // If user is related to any service order as creator
             if ($user->service_order_has_user("creator_id")) {
 
-                $this->serviceOrderHasUserModel->where("creator_id", $user->id)->update(["creator_id" => null]);
+                $this->ServiceOrderUser->where("creator_id", $user->id)->update(["creator_id" => null]);
 
                 // If user is related to any service order as pilot
             } else if ($user->service_order_has_user("pilot_id")) {
 
-                $this->serviceOrderHasUserModel->where("pilot_id", $user->id)->update(["pilot_id" => null]);
+                $this->ServiceOrderUser->where("pilot_id", $user->id)->update(["pilot_id" => null]);
 
                 // If user is related to any service order as client
             } else if ($user->service_order_has_user("client_id")) {
 
-                $this->serviceOrderHasUserModel->where("client_id", $user->id)->update(["client_id" => null]);
+                $this->ServiceOrderUser->where("client_id", $user->id)->update(["client_id" => null]);
             }
 
             // The user record is soft deleted

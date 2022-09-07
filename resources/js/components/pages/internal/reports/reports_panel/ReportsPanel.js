@@ -308,9 +308,9 @@ export function ReportsPanel() {
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Exportar</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Inicio do vôo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Fim do vôo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Log do vôo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Inicio do voo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Fim do voo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Log do voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
                 </TableRow>
               </TableHead>

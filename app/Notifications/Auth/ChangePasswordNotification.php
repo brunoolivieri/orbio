@@ -5,7 +5,7 @@ namespace App\Notifications\Auth;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Custom
+// Models
 use App\Models\Users\User;
 
 class ChangePasswordNotification extends Notification

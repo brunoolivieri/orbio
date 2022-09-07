@@ -1,14 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-// Authentication
+// Authentication Actions
 use App\Http\Controllers\Actions\Authentication\{
     LoginController,
     LogoutController,
     PasswordResetController,
     PasswordTokenController
 };
-// Actions
+// Api Actions
+use App\Http\Controllers\Actions\Api\LoadDroneLogsController;
+// Dashboard Action
+use App\Http\Controllers\Actions\Dashboard\DashboardController;
+// Generic Actions
 use App\Http\Controllers\Actions\{
     LoadAuthData,
     LoadFlightPlansController,
@@ -19,7 +23,6 @@ use App\Http\Controllers\Actions\{
 };
 // Internal Controller 
 use App\Http\Controllers\Internal\{
-    DashboardController,
     MyAccountController,
     SupportController
 };
@@ -84,6 +87,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
+    Route::get('api/get-drone-logs', LoadDroneLogsController::class);
     Route::post('/api/get-auth-data', LoadAuthData::class);
     Route::get("/api/load-users", LoadUsersController::class);
     Route::get("/api/load-profiles", LoadProfilesController::class);

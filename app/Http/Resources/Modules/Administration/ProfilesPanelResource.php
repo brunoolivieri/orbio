@@ -26,10 +26,6 @@ class ProfilesPanelResource extends JsonResource
     {
 
         $formated_data = array();
-        $total_modules = Module::all()->count();
-        $arr_with_formated_records = array();
-        $profile_modules_privileges = array();
-        $profile_counter = 0;
 
         // Get each profile
         foreach ($this->data as $row => $profile) {

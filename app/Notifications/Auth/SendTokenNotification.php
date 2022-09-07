@@ -5,7 +5,7 @@ namespace App\Notifications\Auth;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Custom
+// Models
 use App\Models\Users\User;
 
 class SendTokenNotification extends Notification
@@ -47,7 +47,7 @@ class SendTokenNotification extends Notification
             ->subject('ORBIO - Código para alteração da senha')
             ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Recebemos um pedido para alteração da sua senha.")
-            ->line("Código: " . $notifiable->password_resets->token)
+            ->line("Código: " . $notifiable->password_reset->token)
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }
 

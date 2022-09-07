@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-// Custom
+// Form Request
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
+// Services
 use App\Services\Modules\Administration\ProfilePanelService;
 
 class AdministrationModuleProfilesController extends Controller

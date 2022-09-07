@@ -55,7 +55,7 @@ class MyAccountController extends Controller
     }
 
     /**
-     * Method for load complementary user account data.
+     * Method for load personal documents user account data.
      * 
      * @return \Illuminate\Http\Response
      */

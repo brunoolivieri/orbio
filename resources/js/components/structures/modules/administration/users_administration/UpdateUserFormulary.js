@@ -223,7 +223,6 @@ export const UpdateUserFormulary = React.memo((props) => {
                   primary_key={"id"}
                   key_content={"name"}
                   name={"profile"}
-                  default={props.record.profile_id}
                   onChange={handleInputChange}
                   error={fieldError.profile}
                   value={controlledInput.profile}

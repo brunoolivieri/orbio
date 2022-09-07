@@ -43,7 +43,7 @@ class FirstLoginSuccessfulListener
             // New Address record 
             $new_address = $this->userAddressModel->create();
 
-            // New complementary data record
+            // New personal documents data record
             $this->personalDocumentModel->create([
                 "user_id" => $user->id,
                 "address_id" => $new_address->id

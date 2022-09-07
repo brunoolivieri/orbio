@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\ServiceOrders\ServiceOrder;
 use Illuminate\Support\Facades\Auth;
+// Notifications
 use App\Notifications\Modules\ServiceOrder\ServiceOrderCreatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderDeletedNotification;

@@ -5,13 +5,14 @@ namespace App\Services\Modules\ServiceOrder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-// Custom
+// Models
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
-use App\Models\Pivot\ServiceOrderHasUserModel;
-use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
+use App\Models\Pivot\ServiceOrderUser;
+use App\Models\Pivot\ServiceOrderFlightPlan;
+// Resources
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
-// Contract
+// Contracts
 use App\Contracts\ServiceInterface;
 
 class ServiceOrderService implements ServiceInterface
@@ -22,15 +23,15 @@ class ServiceOrderService implements ServiceInterface
      * 
      * @param App\Models\Users\User $userModel
      * @param App\Models\ServiceOrders\ServiceOrder $serviceOrderModel
-     * @param App\Models\Pivot\ServiceOrderHasUserModel $serviceOrderHasUserModel
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel
+     * @param App\Models\Pivot\ServiceOrderUser $ServiceOrderUser
+     * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderFlightPlan
      */
-    public function __construct(User $userModel, ServiceOrder $serviceOrderModel, ServiceOrderHasUserModel $serviceOrderHasUserModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
+    public function __construct(User $userModel, ServiceOrder $serviceOrderModel, ServiceOrderUser $ServiceOrderUser, ServiceOrderFlightPlan $ServiceOrderFlightPlan)
     {
         $this->userModel = $userModel;
         $this->serviceOrderModel = $serviceOrderModel;
-        $this->serviceOrderHasUserModel = $serviceOrderHasUserModel;
-        $this->serviceOrderHasFlightPlanModel = $serviceOrderHasFlightPlanModel;
+        $this->ServiceOrderUser = $ServiceOrderUser;
+        $this->ServiceOrderFlightPlan = $ServiceOrderFlightPlan;
     }
 
     /**
@@ -83,16 +84,16 @@ class ServiceOrderService implements ServiceInterface
                 ]
             );
 
-            $this->serviceOrderHasUserModel->insert([
+            $this->ServiceOrderUser->create([
                 "service_order_id" => $new_service_order->id,
                 "creator_id" => $creator->id,
                 "pilot_id" => $pilot->id,
                 "client_id" => $client->id
             ]);
 
-            foreach ($request->flight_plans_ids as $index => $value) {
+            foreach ($request->flight_plans_ids as $value) {
 
-                $this->serviceOrderHasFlightPlanModel->insert([
+                $this->ServiceOrderFlightPlan->insert([
                     "service_order_id" => $new_service_order->id,
                     "flight_plan_id" => $value
                 ]);
@@ -131,7 +132,7 @@ class ServiceOrderService implements ServiceInterface
             // Desvinculation with all users through service_order_has_user table
             $service_order->users()->delete();
 
-            $this->serviceOrderHasUserModel->create([
+            $this->ServiceOrderUser->create([
                 "service_order_id" => $service_order->id,
                 "creator_id" => $service_order->users->has_creator->id,
                 "pilot_id" => $pilot->id,
@@ -139,11 +140,11 @@ class ServiceOrderService implements ServiceInterface
             ]);
 
             // Deleta as relações atuais com os planos de vôo 
-            $this->serviceOrderHasFlightPlanModel->where("service_order_id", $service_order->id)->delete();
+            $this->ServiceOrderFlightPlan->where("service_order_id", $service_order->id)->delete();
 
             // Cria novamente as relações com cada plano de vôo envolvido na ordem de serviço
             foreach ($request->flight_plans_ids as $index => $flight_plan_id) {
-                $this->serviceOrderHasFlightPlanModel->insert([
+                $this->ServiceOrderFlightPlan->insert([
                     "service_order_id" => (int) $service_order->id,
                     "flight_plan_id" => (int) $flight_plan_id
                 ]);
@@ -170,11 +171,11 @@ class ServiceOrderService implements ServiceInterface
 
             // Desvinculation with all flight plans through service_order_has_flight_plans table
             if ($service_order->flight_plans->count() > 0) {
-                $this->serviceOrderHasFlightPlanModel->where("service_order_id", $service_order->id)->delete();
+                $this->ServiceOrderFlightPlan->where("service_order_id", $service_order->id)->delete();
             }
 
             // Desvinculation with all users through service_order_has_user table
-            $this->serviceOrderHasUserModel->where("service_order_id", $service_order->id)->delete();
+            $this->ServiceOrderUser->where("service_order_id", $service_order->id)->delete();
 
             $service_order->delete();
         });

@@ -3,8 +3,9 @@
 namespace App\Services\Modules\Incident;
 
 use Illuminate\Http\Request;
-// Custom
+// Models
 use App\Models\Incidents\Incident;
+// Resouces
 use App\Http\Resources\Modules\Incidents\IncidentsPanelResource;
 // Contract
 use App\Contracts\ServiceInterface;

@@ -23,6 +23,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { Tooltip } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TablePagination from '@mui/material/TablePagination';
+import Stack from '@mui/material';
+import { useSnackbar } from 'notistack';
+import LinearProgress from '@mui/material';
 // Axios
 import AxiosApi from "../../../services/AxiosApi";
 // Fonts Awesome
@@ -38,83 +41,109 @@ const StyledHeadTableCell = styled(TableCell)({
 export const ModalFlightPlansTable = React.memo((props) => {
 
     const [loading, setLoading] = React.useState({ loading: true, error: false });
-    const [panelData, setPanelData] = React.useState({ records: [], total_records: 0, records_per_page: 0, total_pages: 0 });
-    const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
+    const [records, setRecords] = React.useState([]);
+    const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
+    const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
     const [selectedRecords, setSelectedRecords] = React.useState(props.defaultSelections);
-    const [valueSearched, setValueSearched] = React.useState("");
+    const [searchField, setSearchField] = React.useState("");
 
     const [open, setOpen] = React.useState(false);
 
+    const { enqueueSnackbar } = useSnackbar();
+
     React.useEffect(() => {
 
-        // Essa variável recebe: limit clause, where clause and the page number
-        const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
+        const limit = paginationConfig.limit;
+        const search = paginationConfig.search;
+        const page = paginationConfig.page;
+        const order_by = paginationConfig.order_by;
+        const filter = paginationConfig.filter;
 
-        AxiosApi.get(`/api/plans-module?args=${select_query_params}`)
+        AxiosApi.get(`/api/plans-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
             .then(function (response) {
 
-                setLoading({ loading: false, error: false });
-                setPanelData({
-                    records: response.data.records,
-                    total_records: response.data.total_records,
-                    records_per_page: response.data.records_per_page,
-                    total_pages: response.data.total_pages
-                });
+                //setLoading(false);
+                //setRecords(response.data.records);
+                //setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+
+                if (response.data.total_records > 1) {
+                    handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
+                } else {
+                    handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
+                }
 
             })
-            .catch(function () {
+            .catch(function (error) {
 
-                setLoading({ loading: false, error: true });
-                setPanelData({
-                    records: [],
-                    total_records: 0,
-                    records_per_page: 0,
-                    total_pages: 0
-                });
+                const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+                handleOpenSnackbar(error_message, "error");
+
+                setLoading(false);
+                setRecords([]);
+                setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
 
             });
-
-    }, [paginationParams]);
+    }, [[paginationConfig]]);
 
     const handleTablePageChange = (event, value) => {
 
-        setPaginationParams({
+        setPaginationConfig({
             page: value + 1,
-            limit: paginationParams.limit,
-            where: paginationParams.where
-        });
-
-    };
-
-    const handleSearch = () => {
-
-        setPaginationParams({
-            page: 1,
-            limit: paginationParams.limit,
-            where: valueSearched
+            limit: paginationConfig.limit,
+            order_by: "id",
+            search: paginationConfig.search,
+            total_records: 0,
+            filter: 0
         });
 
     }
 
     const handleChangeRowsPerPage = (event) => {
 
-        setPaginationParams({
+        setPaginationConfig({
             page: 1,
             limit: event.target.value,
-            where: paginationParams.where
+            order_by: "id",
+            search: paginationConfig.search,
+            total_records: 0,
+            filter: 0
+        });
+
+    }
+
+    function handleSearchSubmit(event) {
+        event.preventDefault();
+
+        setPaginationConfig({
+            page: 1,
+            limit: paginationConfig.limit,
+            order_by: "id",
+            search: searchField,
+            total_records: 0,
+            filter: 0
         });
 
     }
 
     const reloadTable = () => {
 
-        setLoading({ loading: true, error: false });
-        setPanelData({ records: [], total_records: 0, records_per_page: 0, total_pages: 0 });
+        setSelectedRecords([]);
 
-        setPaginationParams({
+        setLoading(true);
+        setRecords([]);
+        setPagination({
+            total_records: 0,
+            records_per_page: 0,
+            total_pages: 0
+        });
+
+        setPaginationConfig({
             page: 1,
-            limit: paginationParams.limit,
-            where: 0
+            limit: paginationConfig.limit,
+            order_by: "id",
+            search: 0,
+            total_records: 0,
+            filter: 0
         });
 
     }
@@ -131,27 +160,27 @@ export const ModalFlightPlansTable = React.memo((props) => {
 
         const record_id = parseInt(event.currentTarget.value);
 
-        let selectecRecordsClone = [...selectedRecords];
+        let selectedRecordsClone = [...selectedRecords];
 
         // Find if the clicked record ID is one of the already selected
         // Returns the index if exists, and -1 if not
         const indexOf = selectedRecords.indexOf(record_id);
 
         if (indexOf == -1) {
-
             // If not exists, push it
-            selectecRecordsClone.push(record_id);
-
+            selectedRecordsClone.push(record_id);
         } else {
-
             // If exists, remove it
-            selectecRecordsClone.splice(indexOf);
-
+            selectedRecordsClone.splice(indexOf);
         }
 
-        setSelectedRecords(selectecRecordsClone);
-        props.setFlightPlansSelected(selectecRecordsClone);
+        setSelectedRecords(selectedRecordsClone);
+        props.setFlightPlansSelected(selectedRecordsClone);
 
+    }
+
+    const handleOpenSnackbar = (text, variant) => {
+        enqueueSnackbar(text, { variant });
     }
 
     return (
@@ -178,33 +207,37 @@ export const ModalFlightPlansTable = React.memo((props) => {
                             <TextField
                                 fullWidth
                                 placeholder={"Pesquisar plano por ID"}
-                                variant="outlined"
-                                onChange={(e) => setValueSearched(e.currentTarget.value)}
-                                size="small"
+                                onChange={(e) => setSearchField(e.currentTarget.value)}
                                 InputProps={{
                                     startAdornment:
                                         <InputAdornment position="start">
-                                            <IconButton onClick={(e) => { handleSearch(e) }}>
+                                            <IconButton onClick={handleSearchSubmit}>
                                                 <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                                             </IconButton>
                                         </InputAdornment>,
                                     disableunderline: 1,
                                     sx: { fontSize: 'default' },
                                 }}
+                                variant="outlined"
+                                id="search_input"
                             />
                         </Grid>
 
-                        <Grid item>
-                            <TablePagination
-                                labelRowsPerPage="Linhas por página: "
-                                component="div"
-                                count={panelData.total_records}
-                                page={paginationParams.page - 1}
-                                onPageChange={handleTablePageChange}
-                                rowsPerPage={paginationParams.limit}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
-                        </Grid>
+                        {(!loading && records.length > 0) &&
+                            <Grid item>
+                                <Stack spacing={2}>
+                                    <TablePagination
+                                        labelRowsPerPage="Linhas por página: "
+                                        component="div"
+                                        count={pagination.total_records}
+                                        page={paginationConfig.page - 1}
+                                        onPageChange={handleTablePageChange}
+                                        rowsPerPage={paginationConfig.limit}
+                                        onRowsPerPageChange={handleChangeRowsPerPage}
+                                    />
+                                </Stack>
+                            </Grid>
+                        }
                     </Grid>
 
                     <TableContainer component={Paper}>
@@ -216,21 +249,13 @@ export const ModalFlightPlansTable = React.memo((props) => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {(loading && panelData.records.length == 0) ?
-                                    <>
-                                        {"CARREGANDO..."}
-                                    </>
-                                    :
-                                    <>
-
-                                        {panelData.records.map((record, index) =>
-                                            <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                                <TableCell><FormControlLabel label={record.id} control={<Checkbox value={record.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(record.id)} />} /></TableCell>
-                                                <TableCell align="center">{record.coordinates_file}</TableCell>
-                                            </TableRow>
-                                        )}
-                                    </>
-                                }
+                                {(!loading && records.length > 0) &&
+                                    records.map((row, index) => (
+                                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                            <TableCell><FormControlLabel label={row.id} control={<Checkbox value={row.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(row.id)} />} /></TableCell>
+                                            <TableCell align="center">{row.coordinates_file}</TableCell>
+                                        </TableRow>
+                                    ))}
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -240,6 +265,7 @@ export const ModalFlightPlansTable = React.memo((props) => {
                     <Button onClick={handleClose} variant="contained">Confirmar</Button>
                 </DialogActions>
             </Dialog>
+            {loading && <LinearProgress color="success" />}
         </>
     );
 });

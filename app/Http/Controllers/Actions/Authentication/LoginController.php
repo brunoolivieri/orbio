@@ -17,7 +17,7 @@ class LoginController extends Controller
      * Dependency injection.
      * 
      * @param App\Models\Users\User $userModel
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasUserModel
+     * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderUser
      */
     public function __construct(User $userModel)
     {

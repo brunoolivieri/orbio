@@ -73,7 +73,7 @@ class User extends Authenticatable
      */
     function profile_modules_relationship()
     {
-        return $this->hasManyThrough("App\Models\Pivot\ProfileHasModuleModel", "App\Models\Profiles\Profile");
+        return $this->hasManyThrough("App\Models\Pivot\ProfileModule", "App\Models\Profiles\Profile");
     }
 
     /*
@@ -81,7 +81,7 @@ class User extends Authenticatable
     */
     function service_order_has_user(string $field)
     {
-        return $this->hasMany("App\Models\Pivot\ServiceOrderHasUserModel", $field);
+        return $this->hasMany("App\Models\Pivot\ServiceOrderUser", $field);
     }
 
     /*

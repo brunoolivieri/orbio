@@ -19,6 +19,13 @@ class CreateProfilesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
+        Schema::create('profile_has_module', function (Blueprint $table) {
+            $table->foreignId('module_id')->constrained('modules');
+            $table->foreignId('profile_id')->constrained('profiles')->onDelete('cascade');
+            $table->boolean("read");
+            $table->boolean("write");
+        });
     }
 
     /**
@@ -29,5 +36,6 @@ class CreateProfilesTable extends Migration
     public function down()
     {
         Schema::dropIfExists('profiles');
+        Schema::dropIfExists('profile_has_module');
     }
 }

@@ -5,33 +5,34 @@ namespace App\Services\Modules\FlightPlan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
-// Custom
-use App\Models\Pivot\ServiceOrderHasFlightPlanModel;
+// Models
+use App\Models\Pivot\ServiceOrderFlightPlan;
 use App\Models\FlightPlans\FlightPlan;
 use App\Models\Reports\Report;
+// Resources
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
-// Contract
+// Contracts
 use App\Contracts\ServiceInterface;
-// Trait
-use App\Traits\DownloadFlightPlanTrait;
+// Traits
+use App\Traits\DownloadResource;
 
 class FlightPlanService implements ServiceInterface
 {
 
-    use DownloadFlightPlanTrait;
+    use DownloadResource;
 
     /**
      * Dependency injection.
      * 
      * @param App\Models\FlightPlans\FlightPlan $flightPlanModel
      * @param App\Models\Reports\Report $reportModel
-     * @param App\Models\Pivot\ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel
+     * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderFlightPlan
      */
-    public function __construct(FlightPlan $flightPlanModel, Report $reportModel, ServiceOrderHasFlightPlanModel $serviceOrderHasFlightPlanModel)
+    public function __construct(FlightPlan $flightPlanModel, Report $reportModel, ServiceOrderFlightPlan $ServiceOrderFlightPlan)
     {
         $this->flightPlanModel = $flightPlanModel;
         $this->reportModel = $reportModel;
-        $this->serviceOrderHasFlightPlanModel = $serviceOrderHasFlightPlanModel;
+        $this->ServiceOrderFlightPlan = $ServiceOrderFlightPlan;
     }
 
     /**
@@ -46,8 +47,8 @@ class FlightPlanService implements ServiceInterface
     {
 
         $data = FlightPlan::where("deleted_at", null)
-            ->with("incidents")
-            ->with("reports")
+            ->with("incident")
+            ->with("report")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -66,7 +67,7 @@ class FlightPlanService implements ServiceInterface
      * @param string $filename
      * @return \Illuminate\Http\Response
      */
-    public function downloadResource(string $filename)
+    public function downloadResource(string $filename): \Illuminate\Http\Response
     {
 
         if (Storage::disk("public")->exists("flight_plans/$filename")) {
@@ -159,7 +160,7 @@ class FlightPlanService implements ServiceInterface
 
             // Delete relation in service order pivot table
             if ($flight_plan->service_orders->count() > 0) {
-                $this->serviceOrderHasFlightPlanModel->where("flight_plan_id", $flight_plan->id)->delete();
+                $this->ServiceOrderFlightPlan->where("flight_plan_id", $flight_plan->id)->delete();
             }
 
             // Delete coordinates file from storage

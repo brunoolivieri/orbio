@@ -28,10 +28,10 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   const { AuthData } = useAuthentication();
 
-  const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "" });
+  const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "0" });
 
-  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false }); 
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null }); 
+  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null });
 
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
@@ -213,7 +213,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               key_content={"name"}
               error={fieldError.profile}
               name={"profile"}
-              default={0}
+              value={controlledInput.profile}
               setControlledInput={setControlledInput}
               controlledInput={controlledInput}
             />

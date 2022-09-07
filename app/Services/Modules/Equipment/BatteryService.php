@@ -5,10 +5,11 @@ namespace App\Services\Modules\Equipment;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-// Custom
+// Models
 use App\Models\Batteries\Battery;
+// Resources
 use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
-// Contract
+// Contracts
 use App\Contracts\ServiceInterface;
 
 class BatteryService implements ServiceInterface

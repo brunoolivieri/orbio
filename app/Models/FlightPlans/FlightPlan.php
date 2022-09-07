@@ -5,6 +5,8 @@ namespace App\Models\FlightPlans;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+// Model
+use App\Models\ServiceOrders\ServiceOrder;
 
 class FlightPlan extends Model
 {
@@ -65,6 +67,6 @@ class FlightPlan extends Model
     function service_orders()
     {
 
-        return $this->hasMany("App\Models\Pivot\ServiceOrderHasFlightPlanModel", "flight_plan_id");
+        return $this->hasMany("App\Models\Pivot\ServiceOrderFlightPlan", "flight_plan_id");
     }
 }
