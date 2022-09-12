@@ -21,6 +21,8 @@ So, instead of two separated folders, like "backend" and "frontend", here React 
 # Commands
 <p>To initiate Laravel server just type in the terminal and in project root folder.</p>
 <b>php artisan serve</b>
+<p>To mount and refresh Javascript and React code alterations.</p>
+<b>npm run watch</b>
 
 
 
