@@ -19,7 +19,7 @@
 So, instead of two separated folders, like "backend" and "frontend", here React and Laravel are "merged" in the same folder structure, and a blade view named commonly as "main" is used to render React JS.</p>
 
 # Commands
-<p>To install al the dependencies.</p>
+<p>To install all the dependencies.</p>
 <p><b>composer install</b></p>
 <p><b>npm install</b></p>
 <p>To initiate Laravel server just type in the terminal and in project root folder.</p>
