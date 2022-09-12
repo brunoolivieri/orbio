@@ -1,5 +1,5 @@
 # About
-<p>This is a monolithic management system that is being created with Laravel 9 and React.</p>
+<p>This is a monolithic management system that is being created with Laravel 9 and React. It has modules and roles, or profiles, that defines the access level of each user to each module. The modules are fixed, it is, cant be changed. Exists 5 native profiles wich can be changed, deleted, and allowed profiles can create more.</p>
 
 # Frontend
 <ul>
