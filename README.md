@@ -6,13 +6,13 @@
     <li>Javascript</li>
     <li>ReactJS</li>
     <li>Material UI</li>
-<ul>
+</ul>
 
 # Backend
 <ul>
     <li>Laravel 9</li>
     <li>Mysql</li>
-<ul>
+</ul>
 
 # Laravel and React Merge
 <p>They are integrated through laravel ui package. More specificaly, with this package, a scaffolding for React is created inside the resources Laravel folder.
