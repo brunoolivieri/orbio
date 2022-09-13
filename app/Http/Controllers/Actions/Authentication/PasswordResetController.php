@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Actions\Authentication;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 // Custom
-use App\Models\Users\User;
 use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\ChangePasswordNotification;
 use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
@@ -19,13 +17,7 @@ class PasswordResetController extends Controller
         $this->passwordResetModel = $passwordResetModel;
     }
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function __invoke(UpdatePasswordRequest $request)
+    public function __invoke(UpdatePasswordRequest $request) : \Illuminate\Http\Response
     {
         DB::transaction(function () use ($request) {
 

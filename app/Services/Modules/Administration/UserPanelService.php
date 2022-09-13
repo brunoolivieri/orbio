@@ -2,56 +2,26 @@
 
 namespace App\Services\Modules\Administration;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-// Models
-use App\Models\Users\User;
-use App\Models\Accesses\AnnualTraffic;
-use App\Models\Accesses\AccessedDevice;
-use App\Models\Pivot\ServiceOrderUser;
-// Resources
-use App\Http\Resources\Modules\Administration\UsersPanelResource;
-// Notifications
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
-use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
-use App\Notifications\Modules\Administration\User\UserDisabledNotification;
-// Contract
+// Repository
+use App\Repositories\Modules\Administration\UserRepository;
+// Resource
+use App\Http\Resources\Modules\Administration\UsersPanelResource;
+// Interface
 use App\Contracts\ServiceInterface;
 
 class UserPanelService implements ServiceInterface
 {
 
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Models\Users\User $userModel
-     * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderUser
-     */
-    public function __construct(User $userModel, ServiceOrderUser $ServiceOrderUser, AnnualTraffic $annualAcessesModel, AccessedDevice $accessedDevicesModel)
+    function __construct(UserRepository $userRepository)
     {
-        $this->userModel = $userModel;
-        $this->ServiceOrderUser = $ServiceOrderUser;
-        $this->annualAcessesModel = $annualAcessesModel;
-        $this->accessedDevicesModel = $accessedDevicesModel;
+        $this->repository = $userRepository;
     }
 
-    /**
-     * Load all users with their profiles with eloquent pagination.
-     *
-     * @param int $limit
-     * @param int $actual_page
-     * @param int|string $typed_search
-     * @return \Illuminate\Http\Response
-     */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
+    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-
-        $data = $this->userModel->with(["profile:id,name"])
-            ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
+        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
         if ($data->total() > 0) {
             return response(new UsersPanelResource($data), 200);
@@ -60,92 +30,28 @@ class UserPanelService implements ServiceInterface
         }
     }
 
-    /**
-     * Create User and send access data for his email.
-     *
-     * @param $request
-     * @return \Illuminate\Http\Response
-     */
-    public function createResource(Request $request): \Illuminate\Http\Response
+    public function createResource(array $data)
     {
+        $random_password = Str::random(10);
+        $data["random_password"] = $random_password;
 
-        DB::transaction(function () use ($request) {
+        $user = $this->repository->createOne(collect($data));
 
-            $random_password = Str::random(10);
+        $user->notify(new UserCreatedNotification($user, $random_password));
 
-            $user = $this->userModel->create([
-                "name" => $request->name,
-                "email" => $request->email,
-                "profile_id" => $request->profile_id,
-                "password" => $random_password
-            ]);
-
-
-            $user->notify(new UserCreatedNotification($user, $random_password));
-        });
-
-        return response(["message" => "Usuário criado com sucesso!"], 200);
+        return response(["message" => "Usuário criado com sucesso!"], 201);
     }
 
-    /**
-     * Update User.
-     *
-     * @param $request
-     * @return \Illuminate\Http\Response
-     */
-    public function updateResource(Request $request, $user_id): \Illuminate\Http\Response
+    public function updateResource(array $data, string $identifier)
     {
-
-        $user = $this->userModel->findOrFail($user_id);
-
-        $user->update([
-            "name" => $request->name,
-            "email" => $request->email,
-            "profile_id" => $request->profile_id
-        ]);
-
-        $user->refresh();
-
-        $user->notify(new UserUpdatedNotification($user));
+        $user = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Usuário atualizado com sucesso!"], 200);
     }
 
-    /**
-     * Soft delete user.
-     *
-     * @param int $user_id
-     * @return \Illuminate\Http\Response
-     */
-    public function deleteResource(int $user_id): \Illuminate\Http\Response
+    public function deleteResource(string $identifier)
     {
-
-        DB::transaction(function () use ($user_id) {
-
-            $user = $this->userModel->findOrFail($user_id);
-
-            // If user is related to any service order as creator
-            if ($user->service_order_has_user("creator_id")) {
-
-                $this->ServiceOrderUser->where("creator_id", $user->id)->update(["creator_id" => null]);
-
-                // If user is related to any service order as pilot
-            } else if ($user->service_order_has_user("pilot_id")) {
-
-                $this->ServiceOrderUser->where("pilot_id", $user->id)->update(["pilot_id" => null]);
-
-                // If user is related to any service order as client
-            } else if ($user->service_order_has_user("client_id")) {
-
-                $this->ServiceOrderUser->where("client_id", $user->id)->update(["client_id" => null]);
-            }
-
-            // The user record is soft deleted
-            $user->update(["status" => false]);
-            $user->delete();
-
-            $user->notify(new UserDisabledNotification($user));
-        });
+        $user = $this->repository->deleteOne($identifier);
 
         return response(["message" => "Usuário deletado com sucesso!"], 200);
     }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Actions\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
@@ -12,12 +11,6 @@ class LoadDroneLogsController extends Controller
 
     private array $logs = [];
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function __invoke(): \Illuminate\Http\Response
     {
         $ip = request()->ip;

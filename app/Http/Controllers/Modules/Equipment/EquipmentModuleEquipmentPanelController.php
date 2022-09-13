@@ -15,21 +15,11 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
     private EquipmentService $service;
 
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Models\Equipments\Equipment $equipment
-     */
     public function __construct(EquipmentService $service)
     {
         $this->service = $service;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
@@ -43,25 +33,13 @@ class EquipmentModuleEquipmentPanelController extends Controller
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreEquipmentRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->createResource($request);
+        return $this->service->createResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_read");
@@ -70,26 +48,13 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest $request
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateEquipmentRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->updateResource($request, $id);
+        return $this->service->updateResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]), $id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");

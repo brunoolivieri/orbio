@@ -7,8 +7,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
-// Custom Models
 use Database\Factories\UserFactory;
+// Models
+use App\Models\PersonalDocuments\PersonalDocument;
+use App\Models\Profiles\Profile;
+use App\Models\Modules\Module;
+use App\Models\ServiceOrders\ServiceOrder;
+use App\Models\PasswordResets\PasswordReset;
+use App\Models\Accesses\AnnualTraffic;
+use App\Models\Accesses\AccessedDevice;
+
+
 
 class User extends Authenticatable
 {
@@ -38,26 +47,18 @@ class User extends Authenticatable
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
 
-            foreach ($filters as $index => $filter) {
+            foreach ($filters as $filter) {
                 $query->where($filter["column"], $filter["value"]);
             }
         });
     }
 
     /*
-    * Relationship with user_complementary_data table
+    * Relationship one to one with personal documents table
     */
     function personal_document()
     {
-        return $this->hasOne("App\Models\PersonalDocuments\PersonalDocument", "user_id");
-    }
-
-    /*
-    * Relationship with sessions table
-    */
-    function sessions()
-    {
-        return $this->hasMany("App\Models\SessionModel", "user_id");
+        return $this->hasOne(PersonalDocument::class, "user_id");
     }
 
     /*
@@ -65,47 +66,47 @@ class User extends Authenticatable
     */
     function profile()
     {
-        return $this->belongsTo("App\Models\Profiles\Profile", "profile_id");
+        return $this->belongsTo(Profile::class, "profile_id");
     }
 
     /**
-     * Distant relationship with profile_has_module table through profile table
+     * Distant relationship with modules table through profile table
      */
-    function profile_modules_relationship()
+    function modules()
     {
-        return $this->hasManyThrough("App\Models\Pivot\ProfileModule", "App\Models\Profiles\Profile");
+        return $this->hasManyThrough(Module::class, Profile::class);
     }
 
     /*
-    * Relationship with service_order_has_user table as creator
+    * Relationship many to many with service orders table 
     */
-    function service_order_has_user(string $field)
+    function service_orders()
     {
-        return $this->hasMany("App\Models\Pivot\ServiceOrderUser", $field);
+        return $this->hasMany(ServiceOrder::class, "user_id");
     }
 
     /*
-    * Relationship with password_resets table
+    * Relationship one to one with password resets table
     */
     function password_reset()
     {
-        return $this->hasOne("App\Models\PasswordResets\PasswordReset", "user_id");
+        return $this->hasOne(PasswordReset::class, "user_id");
     }
 
     /*
-    * Relationship with annual_accesses table
+    * Relationship one to one with annual accesses table
     */
     function annual_accesses()
     {
-        return $this->hasOne("App\Models\Accesses\AnnualTraffic", "user_id");
+        return $this->hasOne(AnnualTraffic::class, "user_id");
     }
 
     /*
-    * Relationship with devices_accessed table
+    * Relationship one to one with devices accessed table
     */
     function devices_acessed()
     {
-        return $this->hasOne("App\Models\Accesses\AccessedDevice", "user_id");
+        return $this->hasOne(AccessedDevice::class, "user_id");
     }
 
     /**

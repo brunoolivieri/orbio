@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Model
+use App\Models\Incidents\Incident;
+use App\Models\Reports\Report;
 use App\Models\ServiceOrders\ServiceOrder;
 
 class FlightPlan extends Model
@@ -48,8 +50,7 @@ class FlightPlan extends Model
     */
     function incident()
     {
-
-        return $this->belongsTo("App\Models\Incidents\Incident", "incident_id");
+        return $this->belongsTo(Incident::class, "incident_id");
     }
 
     /*
@@ -57,16 +58,14 @@ class FlightPlan extends Model
     */
     function report()
     {
-
-        return $this->belongsTo("App\Models\Reports\Report", "report_id");
+        return $this->belongsTo(Report::class, "report_id");
     }
 
     /*
-    * Relationship one to many with service orders table
+    * Relationship many to many with service orders table
     */
     function service_orders()
     {
-
-        return $this->hasMany("App\Models\Pivot\ServiceOrderFlightPlan", "flight_plan_id");
+        return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan");
     }
 }

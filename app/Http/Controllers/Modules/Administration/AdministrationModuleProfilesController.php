@@ -14,24 +14,13 @@ class AdministrationModuleProfilesController extends Controller
 {
     private ProfilePanelService $service;
 
-    /**
-     * Dependency injection.
-     * 
-     * @param  App\Services\Administration\ProfilePanelService $service
-     */
     public function __construct(ProfilePanelService $service)
     {
         $this->service = $service;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(): \Illuminate\Http\Response
     {
-
         Gate::authorize('administration_read');
 
         return $this->service->loadResourceWithPagination(
@@ -43,56 +32,36 @@ class AdministrationModuleProfilesController extends Controller
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(ProfilePanelStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->createResource($request);
+        $this->service->createResource($request->validated());
+
+        return response(["message" => "Perfil criado com sucesso!"], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id): \Illuminate\Http\Response
+    public function show($id)
     {
         Gate::authorize('administration_read');
-
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest $request
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(ProfilePanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->updateResource($request, $id);
+        $this->service->updateResource($request->validated(), $id);
+
+        return response(["message" => "Perfil atualizdo com sucesso!"], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->deleteResource($id);
+        $this->service->deleteResource($id);
+
+        response(["message" => "Perfil deletado com sucesso!"], 200);
     }
 }

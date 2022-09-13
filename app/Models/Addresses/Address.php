@@ -5,13 +5,14 @@ namespace App\Models\Addresses;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\PersonalDocuments\PersonalDocument;
 
 class Address extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $table = "addresses";
-    protected $guarded = [];
+    protected $fillable = ['*'];
     public $timestamps = false;
 
     /*
@@ -19,6 +20,6 @@ class Address extends Model
     */
     function personal_document()
     {
-        $this->hasOne("App\Models\PersonalDocuments\PersonalDocument", "address_id");
+        $this->hasOne(PersonalDocument::class, "address_id");
     }
 }

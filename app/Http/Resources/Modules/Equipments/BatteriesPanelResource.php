@@ -10,6 +10,7 @@ class BatteriesPanelResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;
+    private array $formatedData = [];
 
     function __construct(LengthAwarePaginator $data){
         $this->data = $data;
@@ -23,12 +24,9 @@ class BatteriesPanelResource extends JsonResource
      */
     public function toArray($request)
     {
-
-        $formated_data["records"] = array();
-
         foreach($this->data as $row => $battery){
 
-            $formated_data["records"][$row] = [
+            $this->formatedData["records"][$row] = [
                 "id" => $battery->id,
                 "image_url" => Storage::url("images/battery/".$battery->image->path),
                 "name" => $battery->name,
@@ -42,11 +40,11 @@ class BatteriesPanelResource extends JsonResource
 
         }
 
-        $formated_data["total_records"] = $this->data->total();
-        $formated_data["records_per_page"] = $this->data->perPage();
-        $formated_data["total_pages"] = $this->data->lastPage();
+        $this->formatedData["total_records"] = $this->data->total();
+        $this->formatedData["records_per_page"] = $this->data->perPage();
+        $this->formatedData["total_pages"] = $this->data->lastPage();
 
-        return $formated_data;
+        return $this->formatedData;
 
     }
 }

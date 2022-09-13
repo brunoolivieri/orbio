@@ -13,24 +13,12 @@ use App\Events\Auth\LoginSuccessfulEvent;
 class LoginController extends Controller
 {
 
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Models\Users\User $userModel
-     * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderUser
-     */
     public function __construct(User $userModel)
     {
         $this->userModel = $userModel;
     }
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function __invoke(LoginRequest $request)
+    public function __invoke(LoginRequest $request) : \Illuminate\Http\Response
     {
 
         if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {

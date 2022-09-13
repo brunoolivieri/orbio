@@ -13,13 +13,13 @@ class Report extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "reports";
-    protected $guarded = [];
+    protected $fillable = ['*'];
 
     /*
-    * Relationship with flight plans table
+    * Relationship many to one with flight plans table
     */
-    function flight_plans()
+    function flight_plan()
     {
-        return $this->hasOne("App\Models\FlightPlans\FlightPlan", "report_id");
+        return $this->hasOne(FlightPlan::class, "report_id");
     }
 }

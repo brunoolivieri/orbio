@@ -3,19 +3,12 @@
 namespace App\Http\Controllers\Actions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// Custom
 use App\Models\Modules\Module;
 
 class LoadAuthData extends Controller
 {
-    /**
-     * Handle the incoming request.
-     * 
-     * @return \Illuminate\Http\Response
-     */
-    public function __invoke()
+    public function __invoke(): \Illuminate\Http\Response
     {
 
         // If logged user is the Super Admin

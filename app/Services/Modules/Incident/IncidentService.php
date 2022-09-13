@@ -2,43 +2,23 @@
 
 namespace App\Services\Modules\Incident;
 
-use Illuminate\Http\Request;
-// Models
-use App\Models\Incidents\Incident;
-// Resouces
+// Repository
+use App\Repositories\Modules\Incidents\IncidentRepository;
+// Resouce
 use App\Http\Resources\Modules\Incidents\IncidentsPanelResource;
-// Contract
+// Interface
 use App\Contracts\ServiceInterface;
 
 class IncidentService implements ServiceInterface
 {
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Models\Incidents\Incident $incidentModel
-     */
-    public function __construct(Incident $incidentModel)
+    public function __construct(IncidentRepository $incidentRepository)
     {
-        $this->incidentModel = $incidentModel;
+        $this->repository = $incidentRepository;
     }
 
-    /**
-     * Load all incidents with pagination.
-     *
-     * @param int $limit
-     * @param int $actual_page
-     * @param int|string $typed_search
-     * @return \Illuminate\Http\Response
-     */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
+    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-
-        $data = $this->incidentModel->where("deleted_at", null)
-            ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
+        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
         if ($data->total() > 0) {
             return response(new IncidentsPanelResource($data), 200);
@@ -47,45 +27,23 @@ class IncidentService implements ServiceInterface
         }
     }
 
-    /**
-     * Create incident.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function createResource(Request $request): \Illuminate\Http\Response
+    public function createResource(array $data)
     {
+        $incident = $this->repository->createOne(collect($data));
 
-        $this->incidentModel->create($request->only(["type", "date", "description"]));
-
-        return response(["message" => "Incidente criado com sucesso!"], 200);
+        return response(["message" => "Incidente criado com sucesso!"], 201);
     }
 
-    /**
-     * Update incident.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param int $incident_id
-     * @return \Illuminate\Http\Response
-     */
-    public function updateResource(Request $request, int $incident_id): \Illuminate\Http\Response
+    public function updateResource(array $data, string $identifier)
     {
-
-        $this->incidentModel->where('id', $incident_id)->update($request->only(["type", "description", "date"]));
+        $incident = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Incidente atualizado com sucesso!"], 200);
     }
 
-    /**
-     * Soft delete incident.
-     *
-     * @param int $incident_id
-     * @return \Illuminate\Http\Response
-     */
-    public function deleteResource(int $incident_id): \Illuminate\Http\Response
+    public function deleteResource(string $identifier)
     {
-
-        $this->incidentModel->where('id', $incident_id)->delete();
+        $incident = $this->repository->deleteOne($identifier);
 
         return response(["message" => "Incidente deletado com sucesso!"], 200);
     }

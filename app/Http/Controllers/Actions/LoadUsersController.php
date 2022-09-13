@@ -12,24 +12,18 @@ class LoadUsersController extends Controller
 
     function __construct(User $userModel)
     {
-        $this->userModel = $userModel;
+        $this->model = $userModel;
     }
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): \Illuminate\Http\Response
     {
         if (isset($request->where)) {
             $where = explode(".", $request->where);
-            $data = $this->userModel->where($where[0], $where[1])->get();
+            $data = $this->model->where($where[0], $where[1])->get();
         } else {
-            $data = $this->userModel->all();
+            $data = $this->model->all();
         }
 
-        return $data;
+        return response($data, 200);
     }
 }

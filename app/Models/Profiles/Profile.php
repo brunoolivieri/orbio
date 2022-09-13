@@ -13,8 +13,7 @@ class Profile extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "profiles";
-    protected $guarded = [];
+    protected $fillable = ['*'];
 
     /*
     * Scope for search
@@ -49,16 +48,14 @@ class Profile extends Model
     */
     function user()
     {
-
-        return $this->hasMany("App\Models\Users\User", "profile_id");
+        return $this->hasMany(User::class, "profile_id");
     }
 
     /*
-    * Relationship with profilehasmodule table
+    * Relationship many to many with modules table
     */
     function modules()
     {
-
-        return $this->hasMany("App\Models\Pivot\ProfileModule", "profile_id");
+        return $this->belongsToMany(Module::class, "profile_module");
     }
 }

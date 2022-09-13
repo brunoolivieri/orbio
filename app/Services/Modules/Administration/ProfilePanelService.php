@@ -2,47 +2,24 @@
 
 namespace App\Services\Modules\Administration;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-// Models
-use App\Models\Pivot\ProfileModule;
-use App\Models\Profiles\Profile;
-// Resources
+// Repository
+use App\Repositories\Modules\Administration\ProfileRepository;
+// Resource
 use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
-// Contract
+// Interface
 use App\Contracts\ServiceInterface;
 
 class ProfilePanelService implements ServiceInterface
 {
 
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Models\Profiles\Profile $profileModel
-     * @param App\Models\Pivot\ProfileModule $profileModuleModel
-     */
-    public function __construct(Profile $profileModel, ProfileModule $profileModuleModel)
+    function __construct(ProfileRepository $profileRepository)
     {
-        $this->profileModel = $profileModel;
-        $this->profileHasModuleModel = $profileModuleModel;
+        $this->repository = $profileRepository;
     }
 
-    /**
-     * Load all profiles with their modules relationships with pagination.
-     *
-     * @param int $limit
-     * @param int $actual_page
-     * @param int|string $typed_search
-     * @return \Illuminate\Http\Response
-     */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
+    function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-
-        $data = $this->profileModel->with("modules")
-            ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
+        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
         if ($data->total() > 0) {
             return response(new ProfilesPanelResource($data), 200);
@@ -51,110 +28,23 @@ class ProfilePanelService implements ServiceInterface
         }
     }
 
-    /**
-     * Create profile.
-     *
-     * @param $request
-     * @return \Illuminate\Http\Response
-     */
-    public function createResource(Request $request): \Illuminate\Http\Response
+    function createResource(array $data)
     {
+        $profile = $this->repository->createOne(collect($data));
 
-        DB::transaction(function () use ($request) {
-
-            $new_profile = $this->profileModel->create($request->validated());
-
-            $this->createProfileModulesRelationship((int) $new_profile->id);
-        });
-
-        return response(["message" => "Perfil criado com sucesso!"], 200);
+        return response(["message" => "Perfil criado com sucesso!"], 201);
     }
 
-    /**
-     * Called from "createProfile" method.
-     * Link new profile with modules.
-     *
-     * @param $new_profile_id
-     */
-    private function createProfileModulesRelationship(int $new_profile_id)
+    function updateResource(array $data, string $identifier)
     {
-
-        $this->profileHasModuleModel->insert([
-            ["module_id" => 1, "profile_id" => $new_profile_id, "read" => false, "write" => false],
-            ["module_id" => 2, "profile_id" => $new_profile_id, "read" => false, "write" => false],
-            ["module_id" => 3, "profile_id" => $new_profile_id, "read" => false, "write" => false],
-            ["module_id" => 4, "profile_id" => $new_profile_id, "read" => false, "write" => false],
-            ["module_id" => 5, "profile_id" => $new_profile_id, "read" => false, "write" => false],
-            ["module_id" => 6, "profile_id" => $new_profile_id, "read" => false, "write" => false]
-        ]);
-    }
-
-    /**
-     * Update profile.
-     *
-     * @param $request
-     * @param $profile_id
-     * @return \Illuminate\Http\Response
-     */
-    public function updateResource(Request $request, int $profile_id): \Illuminate\Http\Response
-    {
-
-        DB::transaction(function () use ($request, $profile_id) {
-
-            $this->profileModel->where('id', $profile_id)->update($request->validated());
-
-            $this->updateProfileModulesRelationship($profile_id, $request->privileges);
-        });
+        $profile = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Perfil atualizado com sucesso!"], 200);
     }
 
-    /**
-     * Called from "updateProfile" method.
-     * Update profile modules relationship.
-     *
-     * @param $id
-     * @param $profile_modules_relationship
-     */
-    private function updateProfileModulesRelationship(int $profile_id, $profile_modules_relationship)
+    function deleteResource(string $identifier)
     {
-
-        DB::transaction(function () use ($profile_id, $profile_modules_relationship) {
-
-            foreach ($profile_modules_relationship as $module_id => $module_privileges) {
-
-                $this->profileHasModuleModel->where('profile_id', $profile_id)
-                    ->where('module_id', $module_id)
-                    ->update(
-                        [
-                            'read' => $module_privileges["read"],
-                            'write' => $module_privileges["write"]
-                        ]
-                    );
-            }
-        });
-    }
-
-    /**
-     * Soft delete profile.
-     *
-     * @param $profile_id
-     * @return \Illuminate\Http\Response
-     */
-    public function deleteResource(int $profile_id): \Illuminate\Http\Response
-    {
-
-        DB::transaction(function () use ($profile_id) {
-
-            $profile = $this->profileModel->findOrFail($profile_id);
-
-            // Desvinculation with all users
-            if (!empty($profile->user)) {
-                $profile->user()->update(["profile_id" => 5]);
-            }
-
-            $profile->delete();
-        });
+        $profile = $this->repository->deleteOne($identifier);
 
         return response(["message" => "Perfil deletado com sucesso!"], 200);
     }

@@ -16,7 +16,6 @@ class SuperAdminSeeder extends Seeder
      */
     public function run()
     {
-
         User::create([
             "name" => "Master",
             "email" => env("ADMIN_EMAIL"),

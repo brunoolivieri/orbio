@@ -25,21 +25,21 @@ class ServiceOrderUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "start_date" => 'required|date',
-            "end_date" => 'required|date',
-            "pilot_id" => 'required|integer',
-            "client_id" => 'required|integer',
-            "observation" => 'required|string',
-            "status" => 'required|boolean',
-            "flight_plans_ids" => 'required|array|min:1', 
+            "start_date" => ['required', 'date'],
+            "end_date" => ['required', 'date'],
+            "pilot_id" => ['required', 'numeric'],
+            "client_id" => ['required', 'numeric'],
+            "observation" => ['required', 'string'],
+            "status" => ['required', 'boolean'],
+            "flight_plans_ids" => ['required', 'array', 'min:1']
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

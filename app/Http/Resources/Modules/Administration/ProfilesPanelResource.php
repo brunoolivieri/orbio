@@ -10,6 +10,7 @@ class ProfilesPanelResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;
+    private array $formatedData = [];
 
     function __construct(LengthAwarePaginator $data)
     {
@@ -24,16 +25,13 @@ class ProfilesPanelResource extends JsonResource
      */
     public function toArray($request)
     {
-
-        $formated_data = array();
-
         // Get each profile
         foreach ($this->data as $row => $profile) {
 
             // Get actual profile relationship with each module
             foreach ($profile->modules as $row => $profile_module) {
 
-                $profile_modules_relationship[$row] = [
+                $profile_modules[$row] = [
                     "module_id" => $profile_module->module->id,
                     "module_name" => $profile_module->module->name,
                     "read" => $profile_module->read,
@@ -41,14 +39,14 @@ class ProfilesPanelResource extends JsonResource
                 ];
             }
 
-            // Actual profile and its relationships with modules are stored in actual array key ($profile->id) of $formated_data 
-            $formated_data["records"][$profile->id] = ["profile_id" => $profile->id, "profile_name" =>  $profile->name, "profile_modules_relationship" => $profile_modules_relationship];
+            // Actual profile and its relationships with modules are stored in actual array key ($profile->id) of $this->formatedData 
+            $this->formatedData["records"][$profile->id] = ["profile_id" => $profile->id, "profile_name" =>  $profile->name, "profile_modules_relationship" => $profile_modules];
         }
 
-        $formated_data["total_records"] = $this->data->total();
-        $formated_data["records_per_page"] = $this->data->perPage();
-        $formated_data["total_pages"] = $this->data->lastPage();
+        $this->formatedData["total_records"] = $this->data->total();
+        $this->formatedData["records_per_page"] = $this->data->perPage();
+        $this->formatedData["total_pages"] = $this->data->lastPage();
 
-        return $formated_data;
+        return $this->formatedData;
     }
 }

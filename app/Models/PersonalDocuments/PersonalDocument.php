@@ -13,23 +13,22 @@ class PersonalDocument extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "personal_document";
-    protected $guarded = [];
+    protected $fillable = ['*'];
     public $timestamps = false;
 
     /*
-    * Relationship with users table
+    * Relationship one to one with users table
     */
     function user()
     {
-        return $this->belongsTo("App\Models\Users\User", "user_id");
+        return $this->belongsTo(User::class, "user_id");
     }
 
     /*
-    * Relationship with address table
+    * Relationship one to one with address table
     */
     function address()
     {
-        return $this->belongsTo("App\Models\Addresses\Address", "address_id");
+        return $this->belongsTo(Address::class, "address_id");
     }
 }

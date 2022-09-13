@@ -2,9 +2,11 @@
 
 namespace App\Observers;
 
-use App\Models\ServiceOrders\ServiceOrder;
+use Illuminate\Filesystem\Cache;
 use Illuminate\Support\Facades\Auth;
-// Notifications
+// Model
+use App\Models\ServiceOrders\ServiceOrder;
+// Notification
 use App\Notifications\Modules\ServiceOrder\ServiceOrderCreatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
 use App\Notifications\Modules\ServiceOrder\ServiceOrderDeletedNotification;
@@ -15,84 +17,109 @@ class ServiceOrderObserver
     /**
      * Handle the ServiceOrder "creating" event.
      *
-     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $service_order
      * @return void
      */
-    public function creating(ServiceOrder $serviceOrderModel)
+    public function creating(ServiceOrder $service_order)
     {
-        $serviceOrderModel->id = Auth::user()->id;
+        $service_order->id = Auth::user()->id;
     }
 
     /**
      * Handle the ServiceOrder "created" event.
      *
-     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $service_order
      * @return void
      */
-    public function created(ServiceOrder $serviceOrderModel)
+    public function created(ServiceOrder $service_order)
     {
-        $creator = Auth::user();
-        $pilot = $serviceOrderModel->has_users->has_pilot;
-        $client = $serviceOrderModel->has_users->has_client;
+        Cache::forget('service_orders');
 
-        $creator->notify(new ServiceOrderCreatedNotification($creator, $serviceOrderModel));
-        $pilot->notify(new ServiceOrderCreatedNotification($pilot, $serviceOrderModel));
-        $client->notify(new ServiceOrderCreatedNotification($client, $serviceOrderModel));
+        if ($service_order->users->count() > 0) {
+
+            foreach ($service_order->users as $record) {
+
+                if ($record->role === "pilot") {
+                    $pilot = $service_order->users->pivot;
+                } else if ($record->role === "client") {
+                    $client = $service_order->users->pivot;
+                }
+            }
+        }
+
+        $creator = Auth::user();
+
+        $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order));
+        $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order));
+        $client->notify(new ServiceOrderCreatedNotification($client, $service_order));
     }
 
     /**
      * Handle the ServiceOrder "updated" event.
      *
-     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $service_order
      * @return void
      */
-    public function updated(ServiceOrder $serviceOrderModel)
+    public function updated(ServiceOrder $service_order)
     {
-        $creator = $serviceOrderModel->has_users->has_creator;
-        $pilot = $serviceOrderModel->has_users->has_pilot;
-        $client = $serviceOrderModel->has_users->has_client;
+        Cache::forget('service_orders');
 
-        $creator->notify(new ServiceOrderUpdatedNotification($creator, $serviceOrderModel));
-        $pilot->notify(new ServiceOrderUpdatedNotification($pilot, $serviceOrderModel));
-        $client->notify(new ServiceOrderUpdatedNotification($client, $serviceOrderModel));
+        if ($service_order->users->count() > 0) {
+
+            foreach ($service_order->users as $record) {
+
+                if ($record->role === "creator") {
+                    $creator = $service_order->users->pivot;
+                } else if ($record->role === "pilot") {
+                    $pilot = $service_order->users->pivot;
+                } else if ($record->role === "client") {
+                    $client = $service_order->users->pivot;
+                }
+            }
+        }
+
+        $creator->notify(new ServiceOrderUpdatedNotification($creator, $service_order));
+        $pilot->notify(new ServiceOrderUpdatedNotification($pilot, $service_order));
+        $client->notify(new ServiceOrderUpdatedNotification($client, $service_order));
     }
 
     /**
      * Handle the ServiceOrder "deleted" event.
      *
-     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $service_order
      * @return void
      */
-    public function deleted(ServiceOrder $serviceOrderModel)
+    public function deleted(ServiceOrder $service_order)
     {
-        $creator = $serviceOrderModel->has_users->has_creator;
-        $pilot = $serviceOrderModel->has_users->has_pilot;
-        $client = $serviceOrderModel->has_users->has_client;
+        Cache::forget('service_orders');
 
-        $creator->notify(new ServiceOrderDeletedNotification($creator, $serviceOrderModel));
-        $pilot->notify(new ServiceOrderDeletedNotification($pilot, $serviceOrderModel));
-        $client->notify(new ServiceOrderDeletedNotification($client, $serviceOrderModel));
+        if ($service_order->users->count() > 0) {
+
+            foreach ($service_order->users as $record) {
+
+                if ($record->role === "creator") {
+                    $creator = $service_order->users->pivot;
+                } else if ($record->role === "pilot") {
+                    $pilot = $service_order->users->pivot;
+                } else if ($record->role === "client") {
+                    $client = $service_order->users->pivot;
+                }
+            }
+        }
+
+        $creator->notify(new ServiceOrderDeletedNotification($creator, $service_order));
+        $pilot->notify(new ServiceOrderDeletedNotification($pilot, $service_order));
+        $client->notify(new ServiceOrderDeletedNotification($client, $service_order));
     }
 
     /**
      * Handle the ServiceOrder "restored" event.
      *
-     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
+     * @param  \App\Models\Order\ServiceOrder  $service_order
      * @return void
      */
-    public function restored(ServiceOrder $serviceOrderModel)
+    public function restored(ServiceOrder $service_order)
     {
-        //
-    }
-
-    /**
-     * Handle the ServiceOrder "force deleted" event.
-     *
-     * @param  \App\Models\Order\ServiceOrder  $serviceOrderModel
-     * @return void
-     */
-    public function forceDeleted(ServiceOrder $serviceOrderModel)
-    {
-        //
+        Cache::forget('service_orders');
     }
 }

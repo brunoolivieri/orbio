@@ -15,9 +15,8 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->dateTime("start_date");
-            $table->dateTime("end_date");
-            $table->mediumText("flight_log");
+            $table->string("flight_log_file");
+            $table->string("report_file");
             $table->text("observation");
             $table->timestamps();
             $table->softDeletes();

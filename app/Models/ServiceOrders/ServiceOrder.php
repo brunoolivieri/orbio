@@ -13,7 +13,7 @@ class ServiceOrder extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = [];
+    protected $fillable = ['*'];
 
     /*
     * Scope for search
@@ -41,17 +41,19 @@ class ServiceOrder extends Model
         });
     }
 
+    /*
+    * Relationship many to many with users table
+    */
     function users()
     {
-        return $this->hasOne("App\Models\Pivot\ServiceOrderUser", "service_order_id");
+        return $this->belongsToMany(User::class, "user_id")->withTrashed();
     }
 
     /*
-    * Relationship with service_order_has_flight_plan table
+    * Relationship many to many with flight plans table
     */
     function flight_plans()
     {
-
-        return $this->hasMany("App\Models\Pivot\ServiceOrderFlightPlan", "service_order_id");
+        return $this->belongsToMany(FlightPlan::class, "flight_plan_id")->withTrashed();
     }
 }

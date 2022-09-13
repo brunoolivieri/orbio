@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 // Models
-use App\Models\Pivot\ServiceOrderFlightPlan;
 use App\Models\FlightPlans\FlightPlan;
 use App\Models\Reports\Report;
 // Resources
@@ -28,11 +27,10 @@ class FlightPlanService implements ServiceInterface
      * @param App\Models\Reports\Report $reportModel
      * @param App\Models\Pivot\ServiceOrderFlightPlan $ServiceOrderFlightPlan
      */
-    public function __construct(FlightPlan $flightPlanModel, Report $reportModel, ServiceOrderFlightPlan $ServiceOrderFlightPlan)
+    public function __construct(FlightPlan $flightPlanModel, Report $reportModel)
     {
         $this->flightPlanModel = $flightPlanModel;
         $this->reportModel = $reportModel;
-        $this->ServiceOrderFlightPlan = $ServiceOrderFlightPlan;
     }
 
     /**
@@ -43,7 +41,7 @@ class FlightPlanService implements ServiceInterface
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, string $order_by, int $page_number, int|string $search, int|array $filters): \Illuminate\Http\Response
+    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters): \Illuminate\Http\Response
     {
 
         $data = FlightPlan::where("deleted_at", null)
@@ -157,14 +155,6 @@ class FlightPlanService implements ServiceInterface
             if ($flight_plan->report->count() > 0) {
                 $this->reportModel->where("id", $flight_plan->report->id)->delete();
             }
-
-            // Delete relation in service order pivot table
-            if ($flight_plan->service_orders->count() > 0) {
-                $this->ServiceOrderFlightPlan->where("flight_plan_id", $flight_plan->id)->delete();
-            }
-
-            // Delete coordinates file from storage
-            Storage::disk('public')->delete("flight_plans/" . $flight_plan->coordinates_file);
 
             $flight_plan->delete();
         });

@@ -12,17 +12,13 @@ class LoadProfilesController extends Controller
 
     function __construct(Profile $profileModel)
     {
-        $this->profileModel = $profileModel;
+        $this->model = $profileModel;
     }
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function __invoke(Request $request)
+    public function __invoke(): \Illuminate\Http\Response
     {
-        return $this->profileModel->all();
+        $data = $this->model->all();
+
+        return response($data, 200);
     }
 }

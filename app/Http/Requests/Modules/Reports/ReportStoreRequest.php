@@ -25,29 +25,21 @@ class ReportStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            "flight_initial_date" => 'required|date',
-            "flight_final_date" => 'required|date',
-            "observation" => 'required|string',
-            "flight_log_file" => 'required|file|mimes:txt'
+            "description" => ['required', 'min:3', 'max:9999']
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
-            "flight_initial_date.required" => "A data inicial deve ser definida",
-            "flight_initial_date.date" => "A data inicial deve ser uma data válida",
-            "flight_final_date.required" => "A data final deve ser definida",
-            "flight_final_date.date" => "A data final deve ser uma data válida",
-            "observation.required" => "A observação deve ser informada",
-            "flight_log_file.required" => "O arquivo de log pós vôo deve ser enviado",
-            "flight_log_file.file" => "Os dados pós vôo devem ser enviados em um arquivo",
-            "flight_log_file.mimes" => "O arquivo de log pós vôo deve ter a extensão .txt"
+            "description.required" => "A descrição deve ser informada",
+            "description.min" => "A descrição deve ter pelo menos três caracteres",
+            "description.max" => "A descrição deve ter no máximo 9999 caracteres"
         ];
     }
 }

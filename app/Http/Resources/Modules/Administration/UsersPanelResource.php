@@ -9,6 +9,7 @@ class UsersPanelResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;
+    private array $formatedData = [];
 
     function __construct(LengthAwarePaginator $data)
     {
@@ -27,7 +28,7 @@ class UsersPanelResource extends JsonResource
 
         foreach ($this->data as $row => $user) {
 
-            $formated_data["records"][$row] = [
+            $this->formatedData["records"][$row] = [
                 "id" => $user->id,
                 "name" => $user->name,
                 "profile_id" => $user->profile->id,
@@ -40,18 +41,18 @@ class UsersPanelResource extends JsonResource
             ];
 
             if ((bool) $user->status && empty($user->deleted_at)) {
-                $formated_data["records"][$row]["status_badge"] = ["Ativo", "success"];
+                $this->formatedData["records"][$row]["status_badge"] = ["Ativo", "success"];
             } else if ((bool) !$user->status && empty($user->deleted_at)) {
-                $formated_data["records"][$row]["status_badge"] = ["Inativo", "error"];
+                $this->formatedData["records"][$row]["status_badge"] = ["Inativo", "error"];
             } else if (!empty($user->deleted_at)) {
-                $formated_data["records"][$row]["status_badge"] = ["Removido", "error"];
+                $this->formatedData["records"][$row]["status_badge"] = ["Removido", "error"];
             }
         }
 
-        $formated_data["total_records"] = $this->data->total();
-        $formated_data["records_per_page"] = $this->data->perPage();
-        $formated_data["total_pages"] = $this->data->lastPage();
+        $this->formatedData["total_records"] = $this->data->total();
+        $this->formatedData["records_per_page"] = $this->data->perPage();
+        $this->formatedData["total_pages"] = $this->data->lastPage();
 
-        return $formated_data;
+        return $this->formatedData;
     }
 }

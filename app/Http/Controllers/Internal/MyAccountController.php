@@ -20,14 +20,6 @@ use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
 class MyAccountController extends Controller
 {
-
-    /**
-     * Dependency injection.
-     * 
-     * @param App\Models\Users\User $userModel
-     * @param App\Models\PersonalDocuments\PersonalDocument $personalDocumentModel
-     * @param App\Models\Addresses\Address $userAddressModel
-     */
     public function __construct(User $userModel, PersonalDocument $personalDocumentModel, Address $userAddressModel)
     {
         $this->userModel = $userModel;
@@ -35,14 +27,8 @@ class MyAccountController extends Controller
         $this->userAddressModel = $userAddressModel;
     }
 
-    /**
-     * Method for load basic user account data.
-     * 
-     * @return \Illuminate\Http\Response
-     */
     function loadBasicData(): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->find(Auth::user()->id);
 
         return response([
@@ -54,11 +40,6 @@ class MyAccountController extends Controller
         ], 200);
     }
 
-    /**
-     * Method for load personal documents user account data.
-     * 
-     * @return \Illuminate\Http\Response
-     */
     function loadComplementaryData(): \Illuminate\Http\Response
     {
 
@@ -85,12 +66,6 @@ class MyAccountController extends Controller
         ], 200);
     }
 
-    /**
-     * Method for load user active sessions.
-     * 
-     * @param  App\Http\Requests\UserAccount\UpdateBasicDataRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     function loadActiveSessions(): \Illuminate\Http\Response
     {
 
@@ -112,15 +87,8 @@ class MyAccountController extends Controller
         return response($active_sessions, 200);
     }
 
-    /**
-     * Method for update user basic data.
-     * 
-     * @param  App\Http\Requests\UserAccount\UpdateBasicDataRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     function basicDataUpdate(UpdateBasicDataRequest $request): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->findOrFail(Auth::user()->id);
 
         $user->update($request->validated());
@@ -130,15 +98,8 @@ class MyAccountController extends Controller
         return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
     }
 
-    /**
-     * Method for update user documents data.
-     * 
-     * @param  App\Http\Requests\UserAccount\UpdateDocumentsRequest $request
-     * @return \Illuminate\Http\Response
-     */
     function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->personalDocumentModel->where("id", $user->personal_document->id)->update($request->validated());
@@ -148,15 +109,8 @@ class MyAccountController extends Controller
         return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
     }
 
-    /**
-     * Method for update user location data.
-     * 
-     * @param App\Http\Requests\UserAccount\UpdateAddressRequest $request
-     * @return \Illuminate\Http\Response
-     */
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());
@@ -166,15 +120,8 @@ class MyAccountController extends Controller
         return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
     }
 
-    /**
-     * Method for update user password.
-     * 
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     function passwordUpdate(UpdatePasswordRequest $request)
     {
-
         $user = $this->userModel->find(Auth::user()->id);
 
         $user->update($request->safe()->only(['new_password']));
@@ -184,15 +131,8 @@ class MyAccountController extends Controller
         return response(["message" => "Senha atualizada com sucesso!"], 200);
     }
 
-    /**
-     * Method for desactivate the user account.
-     * 
-     * @param string $id
-     * @return \Illuminate\Http\Response
-     */
     function accountDesactivation($id): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->find($id);
 
         $user->delete();

@@ -15,7 +15,6 @@ class ProfilesSeeder extends Seeder
      */
     public function run()
     {
-
         $data = [
             ["name" => "Super-Admin"],
             ["name" => "Sub-Admin"],
@@ -23,7 +22,6 @@ class ProfilesSeeder extends Seeder
             ["name" => "Cliente"],
             ["name" => "Visitante"]
         ];
-
 
         Profile::insert($data);
     }

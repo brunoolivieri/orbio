@@ -10,8 +10,10 @@ class FlightPlansPanelResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;
+    private array $formatedData = [];
 
-    function __construct(LengthAwarePaginator $data){
+    function __construct(LengthAwarePaginator $data)
+    {
         $this->data = $data;
     }
 
@@ -23,11 +25,9 @@ class FlightPlansPanelResource extends JsonResource
      */
     public function toArray($request)
     {
-        $formated_data["records"] = array();
+        foreach ($this->data as $row => $flight_plan) {
 
-        foreach($this->data as $row => $flight_plan){
-
-            $formated_data["records"][$row] = [
+            $this->formatedData["records"][$row] = [
                 "id" => $flight_plan->id,
                 "name" => $flight_plan->name,
                 "report_id" => $flight_plan->report_id,
@@ -35,36 +35,35 @@ class FlightPlansPanelResource extends JsonResource
                 "coordinates_file" => $flight_plan->coordinates_file,
                 "description" => $flight_plan->description,
                 "status" => $flight_plan->status,
-                "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->created_at)),
-                "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($flight_plan->updated_at))
+                "created_at" => date('d-m-Y h:i', strtotime($flight_plan->created_at)),
+                "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($flight_plan->updated_at))
             ];
 
-            if(!empty($flight_plan->report_id)){
-                $formated_data["records"][$row]["report"] = [
+            if (!empty($flight_plan->report_id)) {
+                $this->formatedData["records"][$row]["report"] = [
                     "id" => $flight_plan->report->id,
                     "start_date" => $flight_plan->report->start_date,
                     "end_date" => $flight_plan->report->end_date,
                     "flight_log" => $flight_plan->report->flight_log,
                     "observation" => $flight_plan->report->observation,
-                    "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->report->created_at))
+                    "created_at" => date('d-m-Y h:i', strtotime($flight_plan->report->created_at))
                 ];
             }
 
-            if(!empty($flight_plan->incident_id)){
-                $formated_data["records"][$row]["incident"] = [
+            if (!empty($flight_plan->incident_id)) {
+                $this->formatedData["records"][$row]["incident"] = [
                     "id" => $flight_plan->incident->id,
                     "type" => $flight_plan->incident->type,
-                    "date" => date( 'd-m-Y h:i', strtotime($flight_plan->incident->date)),
-                    "created_at" => date( 'd-m-Y h:i', strtotime($flight_plan->incident->created_at))
+                    "date" => date('d-m-Y h:i', strtotime($flight_plan->incident->date)),
+                    "created_at" => date('d-m-Y h:i', strtotime($flight_plan->incident->created_at))
                 ];
             }
-
         }
 
-        $formated_data["total_records"] = $this->data->total();
-        $formated_data["records_per_page"] = $this->data->perPage();
-        $formated_data["total_pages"] = $this->data->lastPage();
+        $this->formatedData["total_records"] = $this->data->total();
+        $this->formatedData["records_per_page"] = $this->data->perPage();
+        $this->formatedData["total_pages"] = $this->data->lastPage();
 
-        return $formated_data;
+        return $this->formatedData;
     }
 }
