@@ -29,6 +29,15 @@ class EquipmentService implements ServiceInterface
 
     public function createResource(array $data)
     {
+        // Filename is the hash of the content
+        $file_content = file_get_contents($data->get('image'));
+        $content_hash = md5($file_content);
+        $filename = "$content_hash.jpg";
+        $path = "public/images/equipment/" . $filename;
+
+        $data["file_content"] = $file_content;
+        $data["path"] = $path;
+
         $equipment = $this->repository->createOne(collect($data));
 
         return response(["message" => "Equipamento criado com sucesso!"], 201);
@@ -36,6 +45,21 @@ class EquipmentService implements ServiceInterface
 
     public function updateResource(array $data, string $identifier)
     {
+        if (!is_null($data['image'])) {
+
+            // Filename is the hash of the content
+            $file_content = file_get_contents($data->get('image'));
+            $content_hash = md5($file_content);
+            $filename = "$content_hash.jpg";
+            $path = "public/images/equipment/" . $filename;
+
+            $data["change_file"] = 1;
+            $data["file_content"] = $file_content;
+            $data["path"] = $path;
+        } else {
+            $data["change_file"] = 0;
+        }
+
         $equipment = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Equipamento atualizado com sucesso!"], 200);

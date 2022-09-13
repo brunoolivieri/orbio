@@ -29,21 +29,15 @@ class BatteryRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            // Filename is the hash of the content
-            $file_content = file_get_contents($data->get('image'));
-            $content_hash = md5($file_content);
-            $filename = "$content_hash.jpg";
-            $path = "public/images/battery/" . $filename;
-
             $battery = $this->batteryModel->create($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"]));
 
             $battery->image()->create([
-                "path" => $path
+                "path" => $data->get('path')
             ]);
 
             // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->put($path, $file_content);
+            if (!Storage::disk('public')->exists($data->get('path'))) {
+                Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
             }
 
             return $battery;
@@ -56,27 +50,18 @@ class BatteryRepository implements RepositoryInterface
 
             $battery = $this->batteryModel->findOrFail($identifier);
 
-            if (!is_null($data->get('image'))) {
+            $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"]));
 
-                // Filename is the hash of the content
-                $file_content = file_get_contents($data->get('image'));
-                $content_hash = md5($file_content);
-                $filename = "$content_hash.jpg";
-                $path = "public/images/battery/" . $filename;
-
-                $battery = $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"]));
+            if ($data->get('change_file') === 1) {
 
                 $battery->image()->update([
-                    "path" => $path
+                    "path" => $data->get('path')
                 ]);
 
                 // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($path)) {
-                    Storage::disk('public')->put($path, $file_content);
+                if (!Storage::disk('public')->exists($data->get('path'))) {
+                    Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
                 }
-            } else {
-
-                $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"]));
             }
 
             return $battery;

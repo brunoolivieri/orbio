@@ -29,21 +29,15 @@ class EquipmentRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            // Filename is the hash of the content
-            $file_content = file_get_contents($data->get('image'));
-            $content_hash = md5($file_content);
-            $filename = "$content_hash.jpg";
-            $path = "public/images/equipment/" . $filename;
-
             $equipment = $this->equipmentModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
 
             $equipment->image()->create([
-                "path" => $path
+                "path" => $data->get('path')
             ]);
 
             // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->put($path, $file_content);
+            if (!Storage::disk('public')->exists($data->get('path'))) {
+                Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
             }
 
             return $equipment;
@@ -56,27 +50,18 @@ class EquipmentRepository implements RepositoryInterface
 
             $equipment = $this->equipmentModel->findOrFail($identifier);
 
-            if (!is_null($data->get('image'))) {
+            $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
 
-                // Filename is the hash of the content
-                $file_content = file_get_contents($data->get('image'));
-                $content_hash = md5($file_content);
-                $filename = "$content_hash.jpg";
-                $path = "public/images/equipment/" . $filename;
-
-                $equipment = $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
+            if ($data->get('change_file') === 1) {
 
                 $equipment->image()->update([
-                    "path" => $filename
+                    "path" => $data->get('path')
                 ]);
 
                 // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($path)) {
-                    Storage::disk('public')->put($path, $file_content);
+                if (!Storage::disk('public')->exists($data->get('path'))) {
+                    Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
                 }
-            } else {
-
-                $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
             }
 
             return $equipment;

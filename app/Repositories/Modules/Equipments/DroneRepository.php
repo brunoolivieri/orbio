@@ -29,21 +29,15 @@ class DroneRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            // Filename is the hash of the content
-            $file_content = file_get_contents($data->get('image'));
-            $content_hash = md5($file_content);
-            $filename = "$content_hash.jpg";
-            $path = "public/images/drone/" . $filename;
-
             $drone = $this->droneModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
 
             $drone->image()->create([
-                "path" => $path
+                "path" => $data->get('path')
             ]);
 
             // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->put($path, $file_content);
+            if (!Storage::disk('public')->exists($data->get('path'))) {
+                Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
             }
 
             return $drone;
@@ -56,27 +50,18 @@ class DroneRepository implements RepositoryInterface
 
             $drone = $this->droneModel->findOrFail($identifier);
 
-            if (!is_null($data->get('image'))) {
+            $drone = $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
 
-                // Filename is the hash of the content
-                $file_content = file_get_contents($data->get('image'));
-                $content_hash = md5($file_content);
-                $filename = "$content_hash.jpg";
-                $path = "public/images/drone/" . $filename;
-
-                $drone = $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+            if ($data->get('change_file') === 1) {
 
                 $drone->image()->update([
-                    "path" => $path
+                    "path" => $data->get('path')
                 ]);
 
                 // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($path)) {
-                    Storage::disk('public')->put($path, $file_content);
+                if (!Storage::disk('public')->exists($data->get('path'))) {
+                    Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
                 }
-            } else {
-
-                $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
             }
 
             return $drone;

@@ -29,6 +29,15 @@ class DroneService implements ServiceInterface
 
     public function createResource(array $data)
     {
+        // Filename is the hash of the content
+        $file_content = file_get_contents($data['image']);
+        $content_hash = md5($file_content);
+        $filename = "$content_hash.jpg";
+        $path = "public/images/drone/" . $filename;
+
+        $data["file_content"] = $file_content;
+        $data["path"] = $path;
+
         $drone = $this->repository->createOne(collect($data));
 
         return response(["message" => "Drone criado com sucesso!"], 201);
@@ -36,6 +45,21 @@ class DroneService implements ServiceInterface
 
     public function updateResource(array $data, string $identifier)
     {
+        if (!is_null($data['image'])) {
+
+            // Filename is the hash of the content
+            $file_content = file_get_contents($data['image']);
+            $content_hash = md5($file_content);
+            $filename = "$content_hash.jpg";
+            $path = "public/images/drone/" . $filename;
+
+            $data["change_file"] = 1;
+            $data["file_content"] = $file_content;
+            $data["path"] = $path;
+        } else {
+            $data["change_file"] = 0;
+        }
+
         $drone = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Drone atualizado com sucesso!"], 200);

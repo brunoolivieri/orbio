@@ -29,6 +29,15 @@ class BatteryService implements ServiceInterface
 
     public function createResource(array $data)
     {
+        // Filename is the hash of the content
+        $file_content = file_get_contents($data->get('image'));
+        $content_hash = md5($file_content);
+        $filename = "$content_hash.jpg";
+        $path = "public/images/battery/" . $filename;
+
+        $data["file_content"] = $file_content;
+        $data["path"] = $path;
+
         $battery = $this->repository->createOne(collect($data));
 
         return response(["message" => "Bateria criada com sucesso!"], 201);
@@ -36,6 +45,21 @@ class BatteryService implements ServiceInterface
 
     public function updateResource(array $data, string $identifier)
     {
+        if (!is_null($data['image'])) {
+
+            // Filename is the hash of the content
+            $file_content = file_get_contents($data->get('image'));
+            $content_hash = md5($file_content);
+            $filename = "$content_hash.jpg";
+            $path = "public/images/battery/" . $filename;
+
+            $data["change_file"] = 1;
+            $data["file_content"] = $file_content;
+            $data["path"] = $path;
+        } else {
+            $data["change_file"] = 0;
+        }
+
         $battery = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Bateria atualizada com sucesso!"], 200);
