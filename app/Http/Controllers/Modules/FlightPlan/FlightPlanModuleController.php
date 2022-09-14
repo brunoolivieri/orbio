@@ -32,13 +32,12 @@ class FlightPlanModuleController extends Controller
             request()->order_by,
             request()->page,
             is_null(request()->search) ? "0" : request()->search,
-            request()->filter
+            request()->filter === "0" ? [] : request()->filter
         );
     }
 
     public function downloadFlightPlan(string $filename): \Illuminate\Http\Response
     {
-
         Gate::authorize('flight_plans_read');
 
         return $this->service->downloadResource($filename);
@@ -48,7 +47,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createResource($request);
+        return $this->service->createResource($request->only(["name", "coordinates_file", "description"]));
     }
 
     public function show($id): \Illuminate\Http\Response

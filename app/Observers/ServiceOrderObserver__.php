@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use Illuminate\Filesystem\Cache;
 use Illuminate\Support\Facades\Auth;
 // Model
 use App\Models\ServiceOrders\ServiceOrder;
@@ -33,21 +32,16 @@ class ServiceOrderObserver
      */
     public function created(ServiceOrder $service_order)
     {
+        foreach ($service_order->users as $record) {
 
-        if ($service_order->users->count() > 0) {
-
-            foreach ($service_order->users as $record) {
-
-                if ($record->role === "pilot") {
-                    $pilot = $service_order->users->pivot;
-                } else if ($record->role === "client") {
-                    $client = $service_order->users->pivot;
-                }
+            if ($record->pivot->role === "pilot") {
+                $pilot = $service_order->users;
+            } else if ($record->pivot->role === "client") {
+                $client = $service_order->users;
             }
         }
 
         $creator = Auth::user();
-
         $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order));
         $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order));
         $client->notify(new ServiceOrderCreatedNotification($client, $service_order));

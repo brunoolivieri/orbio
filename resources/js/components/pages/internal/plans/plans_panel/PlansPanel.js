@@ -183,7 +183,7 @@ export const PlansPanel = () => {
 
   const handleDownloadFlightPlan = ((filename) => {
 
-    AxiosApi.get(`/api/plans-module-download/${filename}?`, null, {
+    AxiosApi.get(`/api/plans-module-download/${filename}`, null, {
       responseType: 'blob'
     })
       .then(function (response) {

@@ -28,7 +28,11 @@ class FlightPlanRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        $flight_plan = $this->flightPlanModel->create($data->only(["report_id", "incident_id", "name", "coordinates_file", "description", "status"]));
+        $flight_plan = $this->flightPlanModel->create([
+            "name" => $data->get('name'),
+            "coordinates_file" => $data->get('filename'),
+            "description" => $data->get('description')
+        ]);
 
         // Flight plan is stored just if does not already exists
         if (!Storage::disk('public')->exists($data->get("path"))) {
@@ -54,11 +58,6 @@ class FlightPlanRepository implements RepositoryInterface
         return DB::transaction(function () use ($identifier) {
 
             $flight_plan =  $this->flightPlanModel->findOrFail($identifier);
-
-            // Delete related report
-            if ($flight_plan->report->count() > 0) {
-                $this->reportModel->where("id", $flight_plan->report->id)->delete();
-            }
 
             $flight_plan->delete();
 

@@ -28,15 +28,15 @@ class ServiceOrderModuleController extends Controller
             request()->order_by,
             request()->page,
             is_null(request()->search) ? "0" : request()->search,
-            request()->filter
+            request()->filter === "0" ? [] : request()->filter
         );
     }
 
     public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
-
-        return $this->service->createResource($request->validated());
+       
+        return $this->service->createResource($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "status", "number", "flight_plans_ids"]));
     }
 
     public function show($id): \Illuminate\Http\Response

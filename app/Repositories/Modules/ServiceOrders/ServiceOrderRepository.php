@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Modules\Administration;;
+namespace App\Repositories\Modules\ServiceOrders;
 
 use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -9,6 +9,10 @@ use Illuminate\Support\Collection;
 // Models
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
+// Notification
+use App\Notifications\Modules\ServiceOrder\ServiceOrderCreatedNotification;
+use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
+use App\Notifications\Modules\ServiceOrder\ServiceOrderDeletedNotification;
 
 class ServiceOrderRepository implements RepositoryInterface
 {
@@ -36,16 +40,21 @@ class ServiceOrderRepository implements RepositoryInterface
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
 
-            $new_service_order = $this->serviceOrderModel->create($data->only(["start_date", "end_date", "number", "observation", "status"]));
+            $service_order = $this->serviceOrderModel->create($data->only(["start_date", "end_date", "number", "observation", "status"])->all());
 
-            $new_service_order->users->attach($creator->id, ['role' => "creator"]);
-            $new_service_order->users->attach($pilot->id, ['role' => "pilot"]);
-            $new_service_order->users->attach($client->id, ['role' => "client"]);
+            $service_order->users()->attach($creator->id, ['role' => "creator"]);
+            $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
+            $service_order->users()->attach($client->id, ['role' => "client"]);
+
+            // *Put it in an event*
+            $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order));
+            $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order));
+            $client->notify(new ServiceOrderCreatedNotification($client, $service_order));
 
             // Create each many to many record through an array of ids
-            $new_service_order->flight_plans->attach($data->get('flight_plans_ids'));
+            $service_order->flight_plans()->attach($data->get('flight_plans_ids'));
 
-            return $new_service_order;
+            return $service_order;
         });
     }
 

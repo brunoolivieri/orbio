@@ -46,7 +46,7 @@ class ServiceOrder extends Model
     */
     function users()
     {
-        return $this->belongsToMany(User::class, "user_id")->withTrashed();
+        return $this->belongsToMany(User::class, "service_order_user")->withPivot('role')->withTrashed();
     }
 
     /*
@@ -54,6 +54,6 @@ class ServiceOrder extends Model
     */
     function flight_plans()
     {
-        return $this->belongsToMany(FlightPlan::class, "flight_plan_id")->withTrashed();
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withTrashed();
     }
 }

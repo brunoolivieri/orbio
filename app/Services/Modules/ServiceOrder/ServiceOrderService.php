@@ -3,7 +3,7 @@
 namespace App\Services\Modules\ServiceOrder;
 
 // Repository
-use App\Repositories\Modules\Administration\ServiceOrderRepository;
+use App\Repositories\Modules\ServiceOrders\ServiceOrderRepository;
 // Resources
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
 // Contracts
@@ -21,7 +21,7 @@ class ServiceOrderService implements ServiceInterface
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
         if ($data->total() > 0) {
-            return new ServiceOrdersPanelResource($data);
+            return response(new ServiceOrdersPanelResource($data), 200);
         } else {
             return response(["message" => "Nenhum perfil encontrado."], 404);
         }
@@ -29,6 +29,9 @@ class ServiceOrderService implements ServiceInterface
 
     public function createResource(array $data)
     {
+        $data["number"] = "os".time();
+        $data["status"] = boolval(intval($data["status"]));
+
         $service_order = $this->repository->createOne(collect($data));
 
         return response(["message" => "Ordem de serviço criada com sucesso!"], 201);

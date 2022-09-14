@@ -60,10 +60,11 @@ class FlightPlanService implements ServiceInterface
         $file_content = file_get_contents($data["coordinates_file"]);
         $file_content_hash = md5($file_content);
         $filename = $file_content_hash . ".txt";
-        $path = "public/flight_plans/" . $filename;
+        $path = "flight_plans/" . $filename;
 
         $data["description"] = $data["description"] === "none" ? "N/A" : $data["description"];
         $data["file_content"] = $file_content;
+        $data["filename"] = $filename;
         $data["path"] = $path;
 
         $flight_plan = $this->repository->createOne(collect($data));

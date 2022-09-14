@@ -38,14 +38,14 @@ class ServiceOrdersPanelResource extends JsonResource
             ];
 
             // ============================== RELATED FLIGHT PLANS ============================== //
-            
-            if ($service_order->flight_plans->count() > 0) {
-                foreach ($service_order->flight_plans as $index => $record) {
 
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["id"] = $record->pivot->id;
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["file"] = $record->pivot->coordinates_file;
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["status"] = $record->pivot->status;
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["deleted_at"] = $record->pivot->deleted_at;
+            if ($service_order->flight_plans->count() > 0) {
+                foreach ($service_order->flight_plans as $index => $flight_plan) {
+
+                    $this->formatedData["records"][$row]["flight_plans"][$index]["id"] = $flight_plan->id;
+                    $this->formatedData["records"][$row]["flight_plans"][$index]["file"] = $flight_plan->coordinates_file;
+                    $this->formatedData["records"][$row]["flight_plans"][$index]["status"] = $flight_plan->status;
+                    $this->formatedData["records"][$row]["flight_plans"][$index]["deleted_at"] = $flight_plan->deleted_at;
                 }
             } else {
                 $this->formatedData["records"][$row]["flight_plans"] = array();
@@ -54,20 +54,22 @@ class ServiceOrdersPanelResource extends JsonResource
             // ============================== RELATED USERS ============================== //
 
             if ($service_order->users->count() > 0) {
-                foreach ($service_order->users as $row => $record) {
+                foreach ($service_order->users as $row => $user) {
 
                     // Get creator, pilot and client 
-                    $this->formatedData["records"][$row][$record->role]["id"] = $record->pivot->id;
-                    $this->formatedData["records"][$row][$record->role]["profile_id"] = $record->pivot->profile_id;
-                    $this->formatedData["records"][$row][$record->role]["name"] = $record->pivot->name;
-                    $this->formatedData["records"][$row][$record->role]["status"] = $record->pivot->status;
-                    $this->formatedData["records"][$row][$record->role]["deleted_at"] = $record->pivot->deleted_at;
+                    $this->formatedData["records"][$row][$user->pivot->role]["id"] = $user->id;
+                    $this->formatedData["records"][$row][$user->pivot->role]["profile_id"] = $user->profile_id;
+                    $this->formatedData["records"][$row][$user->pivot->role]["name"] = $user->name;
+                    $this->formatedData["records"][$row][$user->pivot->role]["status"] = $user->status;
+                    $this->formatedData["records"][$row][$user->pivot->role]["deleted_at"] = $user->deleted_at;
                 }
             }
 
             $this->formatedData["total_records"] = $this->data->total();
             $this->formatedData["records_per_page"] = $this->data->perPage();
             $this->formatedData["total_pages"] = $this->data->lastPage();
+
+            dd($this->formatedData);
 
             return $this->formatedData;
         }

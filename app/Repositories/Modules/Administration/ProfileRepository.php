@@ -30,6 +30,7 @@ class ProfileRepository implements RepositoryInterface
 
             $profile = $this->profileModel->create($data->only(["name"])->all());
 
+            // *Turn into loop*
             $profile->modules()->attach(1, ["read" => false, "write" => false]);
             $profile->modules()->attach(2, ["read" => false, "write" => false]);
             $profile->modules()->attach(3, ["read" => false, "write" => false]);
@@ -51,19 +52,33 @@ class ProfileRepository implements RepositoryInterface
 
             $profile->update($data->only(["name"])->all());
 
-            if(!is_null($data->get("privileges"))){
-                foreach ($data->get("privileges") as $profile_privileges) {
-                    foreach ($profile->modules as $module) {
-    
-                        $profile->modules()->sync([
-                            $module->id => [
-                                'read' => $profile_privileges["read"],
-                                'write' => $profile_privileges["write"]
-                            ]
-                        ]);
-                    }
-                }
-            }
+            // *Turn into loop*
+            $profile->modules()->sync([
+                1 => [
+                    'read' => $data->get("privileges")[1]["read"],
+                    'write' => $data->get("privileges")[1]["write"]
+                ],
+                2 => [
+                    'read' => $data->get("privileges")[2]["read"],
+                    'write' => $data->get("privileges")[2]["write"]
+                ],
+                3 => [
+                    'read' => $data->get("privileges")[3]["read"],
+                    'write' => $data->get("privileges")[3]["write"]
+                ],
+                4 => [
+                    'read' => $data->get("privileges")[4]["read"],
+                    'write' => $data->get("privileges")[4]["write"]
+                ],
+                5 => [
+                    'read' => $data->get("privileges")[5]["read"],
+                    'write' => $data->get("privileges")[5]["write"]
+                ],
+                6 => [
+                    'read' => $data->get("privileges")[6]["read"],
+                    'write' => $data->get("privileges")[6]["write"]
+                ]
+            ]);
 
             $profile->refresh();
 

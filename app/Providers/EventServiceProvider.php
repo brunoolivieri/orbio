@@ -9,10 +9,7 @@ use App\Events\Auth\LoginSuccessfulEvent;
 //Listeners
 use App\Listeners\Auth\Login\FirstLoginSuccessfulListener;
 use App\Listeners\Auth\Login\LoginSuccessfulListener;
-// Observers
-use App\Observers\ServiceOrderObserver;
 // Models
-use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
 
 class EventServiceProvider extends ServiceProvider
@@ -47,6 +44,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        ServiceOrder::observe(ServiceOrderObserver::class);
+        //
     }
 }
