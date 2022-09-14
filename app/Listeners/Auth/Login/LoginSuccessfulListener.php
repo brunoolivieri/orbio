@@ -13,33 +13,23 @@ use App\Notifications\Auth\LoginNotification;
 
 class LoginSuccessfulListener
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct(User $userModel, AnnualTraffic $annualAccessesModel, AccessedDevice $accessedDevicesModel)
+
+    function __construct(User $userModel, AnnualTraffic $annualAccessesModel, AccessedDevice $accessedDevicesModel)
     {
         $this->userModel = $userModel;
         $this->annualAccessesModel = $annualAccessesModel;
         $this->accessedDevicesModel = $accessedDevicesModel;
     }
 
-    /**
-     * Handle the event.
-     *
-     * @param  object  $event
-     * @return void
-     */
-    public function handle($event)
+    function handle($event)
     {
-
         // Get actual date, month and device used
         $date = Carbon::now();
         $month_column = strtolower($date->format('F'));
         $device_column = "personal_computer";
 
         $user = $this->userModel->find($event->user->id);
+        
         $user->last_access = $date;
         $user->save();
 

@@ -9,5 +9,5 @@ class AccessedDevice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['*'];
+    protected $guarded = [];
 }

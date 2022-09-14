@@ -11,7 +11,7 @@ class PasswordReset extends Model
     use HasFactory;
 
     protected $primaryKey = "user_id";
-    protected $fillable = ['*'];
+    protected $guarded = [];
     const UPDATED_AT = null;
 
     public function user()

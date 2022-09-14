@@ -38,12 +38,14 @@ class ServiceOrdersPanelResource extends JsonResource
             ];
 
             // ============================== RELATED FLIGHT PLANS ============================== //
+            
             if ($service_order->flight_plans->count() > 0) {
                 foreach ($service_order->flight_plans as $index => $record) {
 
                     $this->formatedData["records"][$row]["flight_plans"][$index]["id"] = $record->pivot->id;
                     $this->formatedData["records"][$row]["flight_plans"][$index]["file"] = $record->pivot->coordinates_file;
                     $this->formatedData["records"][$row]["flight_plans"][$index]["status"] = $record->pivot->status;
+                    $this->formatedData["records"][$row]["flight_plans"][$index]["deleted_at"] = $record->pivot->deleted_at;
                 }
             } else {
                 $this->formatedData["records"][$row]["flight_plans"] = array();
@@ -59,6 +61,7 @@ class ServiceOrdersPanelResource extends JsonResource
                     $this->formatedData["records"][$row][$record->role]["profile_id"] = $record->pivot->profile_id;
                     $this->formatedData["records"][$row][$record->role]["name"] = $record->pivot->name;
                     $this->formatedData["records"][$row][$record->role]["status"] = $record->pivot->status;
+                    $this->formatedData["records"][$row][$record->role]["deleted_at"] = $record->pivot->deleted_at;
                 }
             }
 

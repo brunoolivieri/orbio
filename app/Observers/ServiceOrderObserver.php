@@ -33,7 +33,6 @@ class ServiceOrderObserver
      */
     public function created(ServiceOrder $service_order)
     {
-        Cache::forget('service_orders');
 
         if ($service_order->users->count() > 0) {
 
@@ -62,7 +61,6 @@ class ServiceOrderObserver
      */
     public function updated(ServiceOrder $service_order)
     {
-        Cache::forget('service_orders');
 
         if ($service_order->users->count() > 0) {
 
@@ -91,7 +89,6 @@ class ServiceOrderObserver
      */
     public function deleted(ServiceOrder $service_order)
     {
-        Cache::forget('service_orders');
 
         if ($service_order->users->count() > 0) {
 
@@ -120,6 +117,6 @@ class ServiceOrderObserver
      */
     public function restored(ServiceOrder $service_order)
     {
-        Cache::forget('service_orders');
+        //
     }
 }

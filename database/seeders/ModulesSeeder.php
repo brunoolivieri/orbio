@@ -14,13 +14,15 @@ class ModulesSeeder extends Seeder
      */
     public function run()
     {
-        Module::insert(
+        $data = [
             ["name" => "Administração"],
             ["name" => "Planos de voo"],
             ["name" => "Ordens de serviço"],
             ["name" => "Relatórios pós-voo"],
             ["name" => "Incidentes"],
             ["name" => "Equipamentos"]
-        );
+        ];
+
+        Module::insert($data);
     }
 }

@@ -18,9 +18,8 @@ class LoginController extends Controller
         $this->userModel = $userModel;
     }
 
-    public function __invoke(LoginRequest $request) : \Illuminate\Http\Response
+    public function __invoke(LoginRequest $request): \Illuminate\Http\Response
     {
-
         if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
 
             $request->session()->regenerate();
@@ -37,16 +36,16 @@ class LoginController extends Controller
 
                 LoginSuccessfulEvent::dispatch($user);
 
-                return response()->json(["message" => "Acesso autorizado!"], 200);
+                return response(["message" => "Acesso autorizado!"], 200);
 
                 // If user was deleted or just his account is disabled (turned inactive after first access)
             } else if ($user->trashed()) {
 
-                return response()->json(["message" => "Conta desabilitada. Contate o suporte!"], 500);
+                return response(["message" => "Conta desabilitada. Contate o suporte!"], 500);
             }
         } else {
 
-            return response()->json(["message" => "Credenciais inválidas!"], 500);
+            return response(["message" => "Credenciais inválidas!"], 500);
         }
     }
 }

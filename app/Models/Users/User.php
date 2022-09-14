@@ -17,8 +17,6 @@ use App\Models\PasswordResets\PasswordReset;
 use App\Models\Accesses\AnnualTraffic;
 use App\Models\Accesses\AccessedDevice;
 
-
-
 class User extends Authenticatable
 {
     use HasFactory, SoftDeletes, Notifiable;
@@ -94,9 +92,9 @@ class User extends Authenticatable
     }
 
     /*
-    * Relationship one to one with annual accesses table
+    * Relationship one to one with annual traffic table
     */
-    function annual_accesses()
+    function annual_traffic()
     {
         return $this->hasOne(AnnualTraffic::class, "user_id");
     }

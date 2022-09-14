@@ -12,5 +12,5 @@ class Module extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['*'];
+    protected $guarded = [];
 }

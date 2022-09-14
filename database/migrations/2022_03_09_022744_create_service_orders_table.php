@@ -43,8 +43,8 @@ class CreateServiceOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('service_orders');
         Schema::dropIfExists('service_order_user');
         Schema::dropIfExists('service_order_flight_plan');
+        Schema::dropIfExists('service_orders');
     }
 }

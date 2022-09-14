@@ -2,21 +2,30 @@
 
 namespace Tests\Feature\Api\Modules\Administration;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
+    
+    public function test_get_profiles()
     {
-        $response = $this->get('/');
+        $response = $this->getJson('/');
 
         $response->assertStatus(200);
+    }
+
+    public function test_create_profile()
+    {
+        //
+    }
+
+    public function test_update_profile()
+    {
+        //
+    }
+
+    public function test_delete_profile()
+    {
+        //
     }
 }

@@ -12,7 +12,7 @@ class Address extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = "addresses";
-    protected $fillable = ['*'];
+    protected $guarded = [];
     public $timestamps = false;
 
     /*

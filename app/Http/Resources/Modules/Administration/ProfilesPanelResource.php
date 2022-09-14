@@ -29,18 +29,18 @@ class ProfilesPanelResource extends JsonResource
         foreach ($this->data as $row => $profile) {
 
             // Get actual profile relationship with each module
-            foreach ($profile->modules as $row => $profile_module) {
+            foreach ($profile->modules as $row => $module) {
 
-                $profile_modules[$row] = [
-                    "module_id" => $profile_module->module->id,
-                    "module_name" => $profile_module->module->name,
-                    "read" => $profile_module->read,
-                    "write" => $profile_module->write
+                $modules_related[$row] = [
+                    "module_id" => $module->id,
+                    "module_name" => $module->name,
+                    "read" => $module->pivot->read,
+                    "write" => $module->pivot->write
                 ];
             }
 
             // Actual profile and its relationships with modules are stored in actual array key ($profile->id) of $this->formatedData 
-            $this->formatedData["records"][$profile->id] = ["profile_id" => $profile->id, "profile_name" =>  $profile->name, "profile_modules_relationship" => $profile_modules];
+            $this->formatedData["records"][$profile->id] = ["profile_id" => $profile->id, "profile_name" =>  $profile->name, "profile_modules_relationship" => $modules_related];
         }
 
         $this->formatedData["total_records"] = $this->data->total();

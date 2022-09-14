@@ -2,8 +2,6 @@
 
 namespace App\Listeners\Auth\Login;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
 // Custom
 use App\Models\Users\User;
@@ -14,25 +12,17 @@ use App\Models\Accesses\AccessedDevice;
 
 class FirstLoginSuccessfulListener
 {
-    /**
-     * Dependency injection.
-     */
-    public function __construct(User $userModel, Address $addressModel, PersonalDocument $personalDocumentModel, AnnualTraffic $annualAcessesModel, AccessedDevice $accessedDevicesModel)
+
+    function __construct(User $userModel, Address $addressModel, PersonalDocument $personalDocumentModel, AnnualTraffic $annualTrafficModel, AccessedDevice $accessedDevicesModel)
     {
         $this->userModel = $userModel;
         $this->userAddressModel = $addressModel;
         $this->personalDocumentModel = $personalDocumentModel;
-        $this->annualAcessesModel = $annualAcessesModel;
+        $this->annualTrafficModel = $annualTrafficModel;
         $this->accessedDevicesModel = $accessedDevicesModel;
     }
 
-    /**
-     * Handle the event.
-     *
-     * @param  object  $event
-     * @return void
-     */
-    public function handle($event)
+    function handle($event)
     {
         $user = $this->userModel->find($event->user->id);
 
@@ -50,7 +40,7 @@ class FirstLoginSuccessfulListener
             ]);
 
             // New annual access record - to count user montly accesses
-            $this->annualAcessesModel->create([
+            $this->annualTrafficModel->create([
                 "user_id" => $user->id
             ]);
 

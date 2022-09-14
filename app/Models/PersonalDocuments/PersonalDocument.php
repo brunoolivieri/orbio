@@ -13,7 +13,7 @@ class PersonalDocument extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['*'];
+    protected $guarded = [];
     public $timestamps = false;
 
     /*

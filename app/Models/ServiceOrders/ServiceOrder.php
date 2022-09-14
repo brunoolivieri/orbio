@@ -13,7 +13,7 @@ class ServiceOrder extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['*'];
+    protected $guarded = [];
 
     /*
     * Scope for search

@@ -30,72 +30,72 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::define("administration_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[0]["read"];
+            return $logged_user->profile->modules[0]->pivot->read;
         });
 
         Gate::define("administration_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[0]["write"];
+            return $logged_user->profile->modules[0]->pivot->write;
         });
 
         // === FLIGHT PLANS GATES === //
 
         Gate::define("flight_plans_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[1]["read"];
+            return $logged_user->profile->modules[1]->pivot->read;
         });
 
         Gate::define("flight_plans_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[1]["write"];
+            return $logged_user->profile->modules[1]->pivot->write;
         });
 
         // === SERVICE ORDERS GATES === //
 
         Gate::define("service_orders_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[2]["read"];
+            return $logged_user->profile->modules[2]->pivot->read;
         });
 
         Gate::define("service_orders_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[2]["write"];
+            return $logged_user->profile->modules[2]->pivot->write;
         });
 
         // === REPORTS GATES === //
 
         Gate::define("reports_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[3]["read"];
+            return $logged_user->profile->modules[3]->pivot->read;
         });
 
         Gate::define("reports_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[3]["write"];
+            return $logged_user->profile->modules[3]->pivot->write;
         });
 
         // === INCIDENTS GATES === //
 
         Gate::define("incidents_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[4]["read"];
+            return $logged_user->profile->modules[4]->pivot->read;
         });
 
         Gate::define("incidents_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[4]["write"];
+            return $logged_user->profile->modules[4]->pivot->write;
         });
 
         // === EQUIPMENTS GATES === //
 
         Gate::define("equipments_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[5]["read"];
+            return $logged_user->profile->modules[5]->pivot->read;
         });
 
         Gate::define("equipments_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[5]["write"];
+            return $logged_user->profile->modules[5]->pivot->write;
         });
     }
 }

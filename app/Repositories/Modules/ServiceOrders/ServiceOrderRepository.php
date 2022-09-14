@@ -38,31 +38,12 @@ class ServiceOrderRepository implements RepositoryInterface
 
             $new_service_order = $this->serviceOrderModel->create($data->only(["start_date", "end_date", "number", "observation", "status"]));
 
-            $this->serviceOrder->users->insert([
-                [
-                    "user_id" => $creator->id,
-                    "service_order_id" => $new_service_order->id,
-                    "role" => "creator"
-                ],
-                [
-                    "user_id" => $pilot->id,
-                    "service_order_id" => $new_service_order->id,
-                    "role" => "pilot"
-                ],
-                [
-                    "user_id" => $client->id,
-                    "service_order_id" => $new_service_order->id,
-                    "role" => "client"
-                ]
-            ]);
+            $new_service_order->users->attach($creator->id, ['role' => "creator"]);
+            $new_service_order->users->attach($pilot->id, ['role' => "pilot"]);
+            $new_service_order->users->attach($client->id, ['role' => "client"]);
 
-            foreach ($data->get('flight_plans_ids') as $flight_plan_id) {
-
-                $this->serviceOrder->users->insert([
-                    "service_order_id" => $new_service_order->id,
-                    "flight_plan_id" => $flight_plan_id
-                ]);
-            }
+            // Create each many to many record through an array of ids
+            $new_service_order->flight_plans->attach($data->get('flight_plans_ids'));
 
             return $new_service_order;
         });
@@ -78,30 +59,12 @@ class ServiceOrderRepository implements RepositoryInterface
 
             $service_order->update($data->only(["start_date", "end_date", "observation", "status"]));
 
-            // Update service order pilot
-            $this->serviceOrder->users->where("role", "pilot")->update(
-                [
-                    "user_id" => $pilot->id
-                ]
-            );
+            $service_order->users->attach($pilot->id, ['role' => "pilot"]);
+            $service_order->users->attach($client->id, ['role' => "client"]);
 
-            // Update service order client
-            $this->serviceOrder->users->where("role", "client")->update(
-                [
-                    "user_id" => $client->id
-                ]
-            );
-
-            // Delete related flight plans
-            $this->ServiceOrder->flight_plans->where("service_order_id", $service_order->id)->delete();
-
-            // Create again the relationship with flight plans
-            foreach ($data->get('flight_plans_ids') as $flight_plan_id) {
-                $this->ServiceOrder->flight_plans->insert([
-                    "service_order_id" => (int) $service_order->id,
-                    "flight_plan_id" => (int) $flight_plan_id
-                ]);
-            }
+            // Create each many to many record through an array of ids
+            // Any IDs that are not in the given array will be removed from the intermediate table
+            $service_order->flight_plans()->sync($data->get('flight_plans_ids'));
 
             return $service_order;
         });
