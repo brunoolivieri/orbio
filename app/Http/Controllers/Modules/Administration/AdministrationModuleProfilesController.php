@@ -51,7 +51,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $this->service->updateResource($request->validated(), $id);
+        $this->service->updateResource($request->only(["name", "privileges"]), $id);
 
         return response(["message" => "Perfil atualizdo com sucesso!"], 200);
     }
@@ -60,8 +60,6 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $this->service->deleteResource($id);
-
-        response(["message" => "Perfil deletado com sucesso!"], 200);
+        return $this->service->deleteResource($id);
     }
 }

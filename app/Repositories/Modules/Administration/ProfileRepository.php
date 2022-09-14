@@ -4,6 +4,7 @@ namespace App\Repositories\Modules\Administration;;
 
 use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 // Model
 use App\Models\Profiles\Profile;
 
@@ -25,37 +26,49 @@ class ProfileRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        $profile = $this->profileModel->create($data->only(["name"]));
+        $profile = DB::transaction(function () use ($data) {
 
-        $this->profileModel->modules->insert(
-            ["module_id" => 1, "profile_id" => $profile->id, "read" => false, "write" => false],
-            ["module_id" => 2, "profile_id" => $profile->id, "read" => false, "write" => false],
-            ["module_id" => 3, "profile_id" => $profile->id, "read" => false, "write" => false],
-            ["module_id" => 4, "profile_id" => $profile->id, "read" => false, "write" => false],
-            ["module_id" => 5, "profile_id" => $profile->id, "read" => false, "write" => false],
-            ["module_id" => 6, "profile_id" => $profile->id, "read" => false, "write" => false]
-        );
+            $profile = $this->profileModel->create($data->only(["name"])->all());
+
+            $profile->modules()->attach(1, ["read" => false, "write" => false]);
+            $profile->modules()->attach(2, ["read" => false, "write" => false]);
+            $profile->modules()->attach(3, ["read" => false, "write" => false]);
+            $profile->modules()->attach(4, ["read" => false, "write" => false]);
+            $profile->modules()->attach(5, ["read" => false, "write" => false]);
+            $profile->modules()->attach(6, ["read" => false, "write" => false]);
+
+            return $profile;
+        });
 
         return $profile;
     }
 
     function updateOne(Collection $data, string $identifier)
     {
-        $profile = $this->profileModel->findOrFail($identifier);
+        $profile = DB::transaction(function () use ($data, $identifier) {
 
-        $profile->update($data->only(["name"]));
+            $profile = $this->profileModel->findOrFail($identifier);
 
-        foreach ($data->get("privileges") as $profile_privileges) {
-            foreach ($profile->modules as $record) {
+            $profile->update($data->only(["name"])->all());
 
-                $record->pivot->update([
-                    'read' => $profile_privileges["read"],
-                    'write' => $profile_privileges["write"]
-                ]);
+            if(!is_null($data->get("privileges"))){
+                foreach ($data->get("privileges") as $profile_privileges) {
+                    foreach ($profile->modules as $module) {
+    
+                        $profile->modules()->sync([
+                            $module->id => [
+                                'read' => $profile_privileges["read"],
+                                'write' => $profile_privileges["write"]
+                            ]
+                        ]);
+                    }
+                }
             }
-        }
 
-        $profile->refresh();
+            $profile->refresh();
+
+            return $profile;
+        });
 
         return $profile;
     }

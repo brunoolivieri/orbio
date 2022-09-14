@@ -25,14 +25,16 @@ class UserRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        return $this->userModel->create($data->only(["name", "email", "profile_id", "password"]));
+        $user = $this->userModel->create($data->only(["name", "email", "profile_id", "password"])->all());
+
+        return $user;
     }
 
     function updateOne(Collection $data, string $identifier)
     {
         $user = $this->userModel->findOrFail($identifier);
 
-        $user->update($data->only(["name", "email", "profile_id"]));
+        $user->update($data->only(["name", "email", "profile_id"])->all());
 
         $user->refresh();
 

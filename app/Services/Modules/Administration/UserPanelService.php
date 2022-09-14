@@ -33,7 +33,7 @@ class UserPanelService implements ServiceInterface
     public function createResource(array $data)
     {
         $random_password = Str::random(10);
-        $data["random_password"] = $random_password;
+        $data["password"] = $random_password;
 
         $user = $this->repository->createOne(collect($data));
 
