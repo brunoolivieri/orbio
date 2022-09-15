@@ -232,7 +232,7 @@ export const Dashboard = React.memo(() => {
               </Card>
             </Grid>
 
-            <Grid item xs={10} md={5} lg={8} xl={8}>
+            <Grid item xs={10} sx={{ mt: 1 }}>
               <Typography variant="h6">Tráfego Anual</Typography>
               <Grid container>
                 <Grid item xs={12} sx={{ height: 300 }}>
@@ -241,26 +241,7 @@ export const Dashboard = React.memo(() => {
               </Grid>
             </Grid>
 
-            <Grid item xs={10} md={5} lg={2} xl={2}>
-              <Card sx={CardStyle}>
-                <CardHeader
-                  avatar={<FontAwesomeIcon icon={faLaptop} color="green" size='2x' />}
-                  title={<Typography variant="h6">Dispositivos</Typography>}
-                />
-                <Divider />
-                <CardContent sx={CardContentStyle}>
-                  <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={devices.chart} total={devices.total} />}
-                  </Box>
-                </CardContent>
-                <Divider />
-                <CardActions>
-                  labels
-                </CardActions>
-              </Card>
-            </Grid>
-
-            <Grid item xs={10}>
+            <Grid item xs={10} sx={{ mt: 1 }}>
               <Typography variant="h6">Novos usuários</Typography>
               <Grid container>
                 <Grid item xs={12} sx={{ height: 300 }}>

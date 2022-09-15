@@ -58,8 +58,7 @@ class DashboardController extends Controller
 
         $flight_plans_data = [
             "total" => $flight_plans_collection->count(),
-            "active" => $flight_plans_collection->where("deleted_at", "=", null)->where("status", 1)->count(),
-            "inative" => $flight_plans_collection->where("deleted_at", "=", null)->where("status", 0)->count(),
+            "active" => $flight_plans_collection->where("deleted_at", "=", null)->count(),
             "deleted" => $flight_plans_collection->where("deleted_at", "!=", null)->count()
         ];
 
@@ -249,12 +248,6 @@ class DashboardController extends Controller
                         "label" => "Ativos",
                         "value" => $flight_plans_data["active"] > 0 ? $flight_plans_data["active"] : "",
                         "color" => "#7FC97F"
-                    ],
-                    [
-                        "id" => "Inativos",
-                        "label" => "Inativos",
-                        "value" => $flight_plans_data["inative"] > 0 ? $flight_plans_data["inative"] : "",
-                        "color" => "#FDAE61"
                     ],
                     [
                         "id" => "Deletados",
