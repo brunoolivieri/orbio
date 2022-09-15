@@ -27,16 +27,11 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "0" });
-
   const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null });
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
@@ -228,7 +223,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Criar usuário e enviar email</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
 
         </Box>

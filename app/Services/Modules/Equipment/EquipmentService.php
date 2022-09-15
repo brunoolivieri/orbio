@@ -3,7 +3,7 @@
 namespace App\Services\Modules\Equipment;
 
 // Repository
-use App\Repositories\Modules\Equipment\EquipmentRepository;
+use App\Repositories\Modules\Equipments\EquipmentRepository;
 // Resources
 use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
 // Contracts
@@ -19,7 +19,7 @@ class EquipmentService implements ServiceInterface
     public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
-
+      
         if ($data->total() > 0) {
             return response(new EquipmentsPanelResource($data), 200);
         } else {
@@ -30,10 +30,10 @@ class EquipmentService implements ServiceInterface
     public function createResource(array $data)
     {
         // Filename is the hash of the content
-        $file_content = file_get_contents($data->get('image'));
+        $file_content = file_get_contents($data['image']);
         $content_hash = md5($file_content);
         $filename = "$content_hash.jpg";
-        $path = "public/images/equipment/" . $filename;
+        $path = "images/equipments/" . $filename;
 
         $data["file_content"] = $file_content;
         $data["path"] = $path;
@@ -45,13 +45,13 @@ class EquipmentService implements ServiceInterface
 
     public function updateResource(array $data, string $identifier)
     {
-        if (!is_null($data['image'])) {
+        if (isset($data['image'])) {
 
             // Filename is the hash of the content
-            $file_content = file_get_contents($data->get('image'));
+            $file_content = file_get_contents($data['image']);
             $content_hash = md5($file_content);
             $filename = "$content_hash.jpg";
-            $path = "public/images/equipment/" . $filename;
+            $path = "images/equipments/" . $filename;
 
             $data["change_file"] = 1;
             $data["file_content"] = $file_content;

@@ -16,6 +16,7 @@ use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\PasswordResets\PasswordReset;
 use App\Models\Accesses\AnnualTraffic;
 use App\Models\Accesses\AccessedDevice;
+use App\Models\Sessions\Session;
 
 class User extends Authenticatable
 {
@@ -105,6 +106,14 @@ class User extends Authenticatable
     function devices_acessed()
     {
         return $this->hasOne(AccessedDevice::class, "user_id");
+    }
+
+    /*
+    * Relationship with sessions table
+    */
+    function sessions()
+    {
+        return $this->hasMany(Session::class, "user_id");
     }
 
     /**

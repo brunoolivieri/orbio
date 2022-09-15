@@ -3,7 +3,7 @@
 namespace App\Services\Modules\Equipment;
 
 // Repository
-use App\Repositories\Modules\Equipment\BatteryRepository;
+use App\Repositories\Modules\Equipments\BatteryRepository;
 // Resources
 use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
 // Contracts
@@ -30,10 +30,10 @@ class BatteryService implements ServiceInterface
     public function createResource(array $data)
     {
         // Filename is the hash of the content
-        $file_content = file_get_contents($data->get('image'));
+        $file_content = file_get_contents($data['image']);
         $content_hash = md5($file_content);
         $filename = "$content_hash.jpg";
-        $path = "public/images/battery/" . $filename;
+        $path = "images/equipments/" . $filename;
 
         $data["file_content"] = $file_content;
         $data["path"] = $path;
@@ -45,13 +45,13 @@ class BatteryService implements ServiceInterface
 
     public function updateResource(array $data, string $identifier)
     {
-        if (!is_null($data['image'])) {
+        if (isset($data['image'])) {
 
             // Filename is the hash of the content
-            $file_content = file_get_contents($data->get('image'));
+            $file_content = file_get_contents($data['image']);
             $content_hash = md5($file_content);
             $filename = "$content_hash.jpg";
-            $path = "public/images/battery/" . $filename;
+            $path = "images/equipments/" . $filename;
 
             $data["change_file"] = 1;
             $data["file_content"] = $file_content;

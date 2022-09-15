@@ -330,26 +330,26 @@ export const OrdersPanel = React.memo(() => {
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
-                  records.map((row, index) => (
-                    <TableRow key={row.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                  records.map((record, index) => (
+                    <TableRow key={record.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={record.id} /></TableCell>
+                      <TableCell align="center">{record.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
-                        <BadgeIcon number={row.flight_plans.length > 0 ? row.flight_plans.length : "0"} color={"success"} />
+                        <BadgeIcon number={record.flight_plans.length > 0 ? record.flight_plans.length : "0"} color={"success"} />
                       </TableCell>
-                      <TableCell align="center">{row.number}</TableCell>
+                      <TableCell align="center">{record.number}</TableCell>
                       <TableCell align="center">
-                        {row.creator.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.creator.status == 1 ? <Chip label={row.creator.name} color={"success"} variant="outlined" /> : <Chip label={row.creator.name} color={"error"} variant="outlined" />)}
-                      </TableCell>
-                      <TableCell align="center">
-                        {row.pilot.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.pilot.status == 1 ? <Chip label={row.pilot.name} color={"success"} variant="outlined" /> : <Chip label={row.pilot.name} color={"error"} variant="outlined" />)}
+                        {record.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={record.users.creator.name} color={"success"} variant="outlined" />}
                       </TableCell>
                       <TableCell align="center">
-                        {row.client.id == 0 ? <Chip label={"Removido"} color={"error"} variant="outlined" /> : (row.client.status == 1 ? <Chip label={row.client.name} color={"success"} variant="outlined" /> : <Chip label={row.client.name} color={"error"} variant="outlined" />)}
+                        {record.users.pilot.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={record.users.pilot.name} color={"success"} variant="outlined" />}
                       </TableCell>
-                      <TableCell align="center">{row.observation}</TableCell>
-                      <TableCell align="center">{moment(row.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{moment(row.end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">
+                        {record.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={record.users.client.name} color={"success"} variant="outlined" />}
+                      </TableCell>
+                      <TableCell align="center">{record.observation}</TableCell>
+                      <TableCell align="center">{moment(record.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{moment(record.end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

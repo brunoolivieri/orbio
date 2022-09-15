@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 // Custom
 use App\Models\Users\User;
 use App\Models\PersonalDocuments\PersonalDocument;
@@ -66,21 +67,21 @@ class MyAccountController extends Controller
         ], 200);
     }
 
-    function loadActiveSessions(): \Illuminate\Http\Response
+    function loadActiveSessions(Request $request): \Illuminate\Http\Response
     {
 
         $active_sessions = [];
 
-        for ($count = 0; $count < count(Auth::user()->sessions); $count++) {
+        foreach (Auth::user()->sessions as $row => $session) {
 
-            $user_agent_array = explode(" ", Auth::user()->sessions[$count]->user_agent);
+            $user_agent_array = explode("/", $session->user_agent);
             $browser = $user_agent_array[count($user_agent_array) - 1];
 
-            $active_sessions[$count] = [
-                "id" => Auth::user()->sessions[$count]->id,
+            $active_sessions[$row] = [
+                "id" => Auth::user()->sessions[$row]->id,
                 "user_agent" => $browser,
-                "ip" => Auth::user()->sessions[$count]->ip_address,
-                "last_activity" => date('d-m-Y H:i:s', strtotime(Auth::user()->sessions[$count]->last_activity))
+                "ip" => Auth::user()->sessions[$row]->ip_address,
+                "last_activity" => date('d-m-Y H:i:s', strtotime(Auth::user()->sessions[$row]->last_activity))
             ];
         }
 

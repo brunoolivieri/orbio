@@ -46,7 +46,7 @@ class FlightPlanRepository implements RepositoryInterface
     {
         $flight_plan = $this->flightPlanModel->findOrFail($identifier);
 
-        $flight_plan->update($data->only(["report_id", "incident_id", "name", "description", "status"]));
+        $flight_plan->update($data->only(["report_id", "incident_id", "name", "description"]));
 
         $flight_plan->refresh();
 

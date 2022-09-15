@@ -9,6 +9,6 @@ class AnnualTraffic extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['*'];
+    protected $guarded = [];
     public $table = "annual_traffic";
 }

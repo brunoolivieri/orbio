@@ -325,7 +325,7 @@ export const AccountConfiguration = () => {
                                 </Paper>
                                 <Paper sx={{ boxShadow: 'none' }}>
                                     <Button variant="contained" color="error" onClick={() => { setOpenGenericModal(true) }}>
-                                        Desativar conta temporariamente
+                                        Desativar conta
                                     </Button>
                                 </Paper>
                             </Stack>

@@ -16,7 +16,7 @@ class IncidentRepository implements RepositoryInterface
 
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-        return $this->model->where("deleted_at", null)
+        return $this->incidentModel->where("deleted_at", null)
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -25,16 +25,16 @@ class IncidentRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        $incident = $this->model->create($data->only(["type", "date", "description"]));;
+        $incident = $this->incidentModel->create($data->only(["type", "date", "description"])->all());;
 
         return $incident;
     }
 
     function updateOne(Collection $data, string $identifier)
     {
-        $incident = $this->model->findOrFail($identifier);
+        $incident = $this->incidentModel->findOrFail($identifier);
 
-        $incident->update($data->only(["type", "date", "description"]));
+        $incident->update($data->only(["type", "date", "description"])->all());
 
         $incident->refresh();
 
@@ -43,7 +43,7 @@ class IncidentRepository implements RepositoryInterface
 
     function deleteOne(string $identifier)
     {
-        $incident = $this->model->findOrFail($identifier);
+        $incident = $this->incidentModel->findOrFail($identifier);
 
         $incident->delete();
 

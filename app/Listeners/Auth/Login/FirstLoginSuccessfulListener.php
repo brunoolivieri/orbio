@@ -30,6 +30,8 @@ class FirstLoginSuccessfulListener
 
             $user->update(["status" => 1]);
 
+            $user->refresh();
+
             // New Address record 
             $new_address = $this->userAddressModel->create();
 

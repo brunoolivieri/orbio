@@ -25,13 +25,9 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput] = React.useState({ id: props.record.id });
-
   const [open, setOpen] = React.useState(false);
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -154,7 +150,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Desativar</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
             </DialogActions>
 
           </Box>

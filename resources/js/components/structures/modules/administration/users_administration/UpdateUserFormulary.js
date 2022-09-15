@@ -26,16 +26,11 @@ export const UpdateUserFormulary = React.memo((props) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id });
-
   const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "", profile: "" });
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -241,7 +236,7 @@ export const UpdateUserFormulary = React.memo((props) => {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
             </DialogActions>
 
           </Box>

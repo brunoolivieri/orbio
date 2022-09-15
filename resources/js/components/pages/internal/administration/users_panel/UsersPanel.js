@@ -254,7 +254,7 @@ export function UsersPanel() {
         >
           <MenuItem ><Checkbox /> Ativos </MenuItem>
           <MenuItem ><Checkbox /> Inativos </MenuItem>
-          <MenuItem ><Checkbox /> Deletados </MenuItem>
+          <MenuItem ><Checkbox /> Desabilitados </MenuItem>
         </Menu>
 
         <Grid item>

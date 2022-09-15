@@ -56,9 +56,9 @@ class ServiceOrderUpdatedNotification extends Notification
             ->line("Data final: " . $this->service_order->end_date)
             ->line("Número: " . $this->service_order->number)
             ->line("Observação: " . $this->service_order->observation)
-            ->line("Criador: " . $this->service_order->has_users->has_creator->name)
-            ->line("Piloto: " . $this->service_order->has_users->has_pilot->name)
-            ->line("Cliente: " . $this->service_order->has_users->has_client->name)
+            ->line("Criador: " . $this->service_order->users)
+            ->line("Piloto: " . $this->service_order->users)
+            ->line("Cliente: " . $this->service_order->users)
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se desconhece a origem desse e-mail, ignore.');
     }

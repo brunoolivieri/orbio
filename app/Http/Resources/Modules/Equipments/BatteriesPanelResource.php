@@ -12,7 +12,8 @@ class BatteriesPanelResource extends JsonResource
     private LengthAwarePaginator $data;
     private array $formatedData = [];
 
-    function __construct(LengthAwarePaginator $data){
+    function __construct(LengthAwarePaginator $data)
+    {
         $this->data = $data;
     }
 
@@ -24,20 +25,19 @@ class BatteriesPanelResource extends JsonResource
      */
     public function toArray($request)
     {
-        foreach($this->data as $row => $battery){
+        foreach ($this->data as $row => $battery) {
 
             $this->formatedData["records"][$row] = [
                 "id" => $battery->id,
-                "image_url" => Storage::url("images/battery/".$battery->image->path),
+                "image_url" => Storage::url("images/battery/" . $battery->image->path),
                 "name" => $battery->name,
                 "manufacturer" => $battery->manufacturer,
                 "model" => $battery->model,
                 "serial_number" => $battery->serial_number,
-                "last_charge" => empty($battery->last_charge) ? "N/A" : date( 'Y-m-d h:i', strtotime($battery->last_charge)),
-                "created_at" => date( 'd-m-Y h:i', strtotime($battery->created_at)),
-                "updated_at" => empty($battery->updated_at) ? "N/A" : date( 'd-m-Y h:i', strtotime($battery->updated_at))
+                "last_charge" => empty($battery->last_charge) ? "N/A" : strtotime($battery->last_charge),
+                "created_at" => strtotime($battery->created_at),
+                "updated_at" => empty($battery->updated_at) ? "N/A" : strtotime($battery->updated_at)
             ];
-
         }
 
         $this->formatedData["total_records"] = $this->data->total();
@@ -45,6 +45,5 @@ class BatteriesPanelResource extends JsonResource
         $this->formatedData["total_pages"] = $this->data->lastPage();
 
         return $this->formatedData;
-
     }
 }

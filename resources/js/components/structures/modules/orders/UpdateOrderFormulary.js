@@ -31,21 +31,14 @@ export const UpdateOrderFormulary = React.memo((props) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.pilot.id, client_id: props.record.client.id, observation: props.record.observation, status: props.record.status });
-
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [startDate, setStartDate] = React.useState(null);
   const [endDate, setEndDate] = React.useState(null);
-
   const [open, setOpen] = React.useState(false);
-
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -319,9 +312,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
               </Box>
 
               <Box sx={{ mb: 2 }}>
-
                 <FlightPlansForServiceOrderModal />
-
               </Box>
 
               <TextField
@@ -357,7 +348,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" variant='contained' disabled={loading}>Confirmar atualização</Button>
+              <Button type="submit" variant='contained' disabled={loading}>Confirmar</Button>
             </DialogActions>
 
           </Box>

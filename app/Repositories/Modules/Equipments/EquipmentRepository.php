@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Modules\Equipment;
+namespace App\Repositories\Modules\Equipments;
 
 use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -29,7 +29,7 @@ class EquipmentRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $equipment = $this->equipmentModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
+            $equipment = $this->equipmentModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"])->all());
 
             $equipment->image()->create([
                 "path" => $data->get('path')
@@ -50,7 +50,7 @@ class EquipmentRepository implements RepositoryInterface
 
             $equipment = $this->equipmentModel->findOrFail($identifier);
 
-            $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"]));
+            $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"])->all());
 
             if ($data->get('change_file') === 1) {
 

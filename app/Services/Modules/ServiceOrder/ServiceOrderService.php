@@ -8,6 +8,12 @@ use App\Repositories\Modules\ServiceOrders\ServiceOrderRepository;
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
 // Contracts
 use App\Contracts\ServiceInterface;
+// Events
+use App\Events\Modules\ServiceOrder\{
+    ServiceOrderCreatedEvent,
+    ServiceOrderUpdatedEvent,
+    ServiceOrderDeletedEvent
+};
 
 class ServiceOrderService implements ServiceInterface
 {
@@ -29,17 +35,21 @@ class ServiceOrderService implements ServiceInterface
 
     public function createResource(array $data)
     {
-        $data["number"] = "os".time();
+        $data["number"] = "os" . time();
         $data["status"] = boolval(intval($data["status"]));
 
         $service_order = $this->repository->createOne(collect($data));
+
+        ServiceOrderCreatedEvent::dispatch($service_order);
 
         return response(["message" => "Ordem de serviço criada com sucesso!"], 201);
     }
 
     public function updateResource(array $data, string $identifier)
     {
-        $service_order = $this->repository->updateOne(collect($data));
+        $service_order = $this->repository->updateOne(collect($data), $identifier);
+
+        ServiceOrderUpdatedEvent::dispatch($service_order);
 
         return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
     }
@@ -47,6 +57,8 @@ class ServiceOrderService implements ServiceInterface
     public function deleteResource(string $identifier)
     {
         $service_order = $this->repository->deleteOne($identifier);
+
+        ServiceOrderDeletedEvent::dispatch($service_order);
 
         return response(["message" => "Ordem de serviço deletada com sucesso!"], 200);
     }

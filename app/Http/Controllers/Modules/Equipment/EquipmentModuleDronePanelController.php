@@ -28,7 +28,7 @@ class EquipmentModuleDronePanelController extends Controller
             request()->order_by,
             request()->page,
             is_null(request()->search) ? "0" : request()->search,
-            request()->filter
+            request()->filter === "0" ? [] : request()->filter
         );
     }
 
@@ -36,7 +36,7 @@ class EquipmentModuleDronePanelController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->createResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+        return $this->service->createResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
     }
 
     public function show($id): \Illuminate\Http\Response
@@ -48,10 +48,9 @@ class EquipmentModuleDronePanelController extends Controller
 
     public function update(UpdateDroneRequest $request, $id): \Illuminate\Http\Response
     {
-
         Gate::authorize("equipments_write");
 
-        return $this->service->updateResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]), $id);
+        return $this->service->updateResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response

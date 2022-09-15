@@ -12,7 +12,8 @@ class DronesPanelResource extends JsonResource
     private LengthAwarePaginator $data;
     private array $formatedData = [];
 
-    function __construct(LengthAwarePaginator $data){
+    function __construct(LengthAwarePaginator $data)
+    {
         $this->data = $data;
     }
 
@@ -24,11 +25,11 @@ class DronesPanelResource extends JsonResource
      */
     public function toArray($request)
     {
-        foreach($this->data as $row => $drone){
+        foreach ($this->data as $row => $drone) {
 
             $this->formatedData["records"][$row] = [
                 "id" => $drone->id,
-                "image_url" => Storage::url("images/drone/".$drone->image->path),
+                "image_url" => Storage::url($drone->image->path),
                 "name" => $drone->name,
                 "manufacturer" => $drone->manufacturer,
                 "model" => $drone->model,
@@ -36,10 +37,9 @@ class DronesPanelResource extends JsonResource
                 "serial_number" => $drone->serial_number,
                 "weight" => $drone->weight,
                 "observation" => $drone->observation,
-                "created_at" => date( 'd-m-Y h:i', strtotime($drone->created_at)),
-                "updated_at" => empty($drone->updated_at) ? "N/A" : date( 'Y-m-d h:i', strtotime($drone->updated_at))
+                "created_at" => strtotime($drone->created_at),
+                "updated_at" => empty($drone->updated_at) ? "N/A" : strtotime($drone->updated_at)
             ];
-
         }
 
         $this->formatedData["total_records"] = $this->data->total();
@@ -47,6 +47,5 @@ class DronesPanelResource extends JsonResource
         $this->formatedData["total_pages"] = $this->data->lastPage();
 
         return $this->formatedData;
-
     }
 }

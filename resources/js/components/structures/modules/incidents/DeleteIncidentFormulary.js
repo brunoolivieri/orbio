@@ -24,13 +24,9 @@ export function DeleteIncidentFormulary({ ...props }) {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput] = React.useState({ id: props.record.id });
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -150,7 +146,7 @@ export function DeleteIncidentFormulary({ ...props }) {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading}>Confirmar deleção</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
             </DialogActions>
 
           </Box>

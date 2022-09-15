@@ -9,10 +9,6 @@ use Illuminate\Support\Collection;
 // Models
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
-// Notification
-use App\Notifications\Modules\ServiceOrder\ServiceOrderCreatedNotification;
-use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
-use App\Notifications\Modules\ServiceOrder\ServiceOrderDeletedNotification;
 
 class ServiceOrderRepository implements RepositoryInterface
 {
@@ -46,11 +42,6 @@ class ServiceOrderRepository implements RepositoryInterface
             $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
             $service_order->users()->attach($client->id, ['role' => "client"]);
 
-            // *Put it in an event*
-            $creator->notify(new ServiceOrderCreatedNotification($creator, $service_order));
-            $pilot->notify(new ServiceOrderCreatedNotification($pilot, $service_order));
-            $client->notify(new ServiceOrderCreatedNotification($client, $service_order));
-
             // Create each many to many record through an array of ids
             $service_order->flight_plans()->attach($data->get('flight_plans_ids'));
 
@@ -66,10 +57,10 @@ class ServiceOrderRepository implements RepositoryInterface
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
 
-            $service_order->update($data->only(["start_date", "end_date", "observation", "status"]));
+            $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
 
-            $service_order->users->attach($pilot->id, ['role' => "pilot"]);
-            $service_order->users->attach($client->id, ['role' => "client"]);
+            $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
+            $service_order->users()->attach($client->id, ['role' => "client"]);
 
             // Create each many to many record through an array of ids
             // Any IDs that are not in the given array will be removed from the intermediate table
@@ -81,7 +72,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
     function deleteOne(string $identifier)
     {
-        $service_order = $this->serviceOrderModel->find($identifier);
+        $service_order = $this->serviceOrderModel->findOrFail($identifier);
 
         $service_order->delete();
 

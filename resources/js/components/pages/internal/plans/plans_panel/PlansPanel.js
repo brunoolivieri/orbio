@@ -20,7 +20,6 @@ import { styled } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
 import { Link } from "@mui/material";
 import InputAdornment from '@mui/material/InputAdornment';
 import Radio from '@mui/material/Radio';
@@ -295,8 +294,7 @@ export const PlansPanel = () => {
           }}
         >
           <MenuItem ><Checkbox /> Ativos </MenuItem>
-          <MenuItem ><Checkbox /> Inativos </MenuItem>
-          <MenuItem ><Checkbox /> Deletados </MenuItem>
+          <MenuItem ><Checkbox /> Desabilitados </MenuItem>
         </Menu>
 
         <Grid item>
@@ -360,7 +358,6 @@ export const PlansPanel = () => {
                   <StyledHeadTableCell align="center">Abrir</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                 </TableRow>
@@ -400,7 +397,6 @@ export const PlansPanel = () => {
                           </IconButton>
                         }
                       </TableCell>
-                      <TableCell align="center">{row.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
                       <TableCell align="center">{row.description}</TableCell>
                     </TableRow>

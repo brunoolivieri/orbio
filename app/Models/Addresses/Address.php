@@ -11,7 +11,7 @@ class Address extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = "addresses";
+    protected $table = "address";
     protected $guarded = [];
     public $timestamps = false;
 

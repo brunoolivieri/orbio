@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Repositories\Modules\Equipment;
+namespace App\Repositories\Modules\Equipments;
 
-use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
+// Interface
+use App\Contracts\RepositoryInterface;
 // Model
 use App\Models\Drones\Drone;
 
@@ -29,7 +30,7 @@ class DroneRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $drone = $this->droneModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+            $drone = $this->droneModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
 
             $drone->image()->create([
                 "path" => $data->get('path')
@@ -50,7 +51,7 @@ class DroneRepository implements RepositoryInterface
 
             $drone = $this->droneModel->findOrFail($identifier);
 
-            $drone = $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"]));
+            $drone = $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
 
             if ($data->get('change_file') === 1) {
 

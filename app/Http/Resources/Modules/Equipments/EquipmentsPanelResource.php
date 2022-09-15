@@ -29,7 +29,7 @@ class EquipmentsPanelResource extends JsonResource
 
             $this->formatedData["records"][$row] = [
                 "id" => $equipment->id,
-                "image_url" => Storage::url("images/equipment/" . $equipment->image->path),
+                "image_url" => Storage::url("images/equipments/" . $equipment->image->path),
                 "name" => $equipment->name,
                 "manufacturer" => $equipment->manufacturer,
                 "model" => $equipment->model,
@@ -37,9 +37,9 @@ class EquipmentsPanelResource extends JsonResource
                 "serial_number" => $equipment->serial_number,
                 "weight" => $equipment->weight,
                 "observation" => $equipment->observation,
-                "purchase_date" => empty($equipment->purchase_date) ? "N/A" : date('Y-m-d h:i', strtotime($equipment->purchase_date)),
-                "created_at" => date('d-m-Y h:i', strtotime($equipment->created_at)),
-                "updated_at" => empty($equipment->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($equipment->updated_at))
+                "purchase_date" => empty($equipment->purchase_date) ? "N/A" : strtotime($equipment->purchase_date),
+                "created_at" => strtotime($equipment->created_at),
+                "updated_at" => empty($equipment->updated_at) ? "N/A" : strtotime($equipment->updated_at)
             ];
         }
 

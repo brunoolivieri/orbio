@@ -30,12 +30,9 @@ export const UpdateProfileFormulary = React.memo((props) => {
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.profile_id, name: props.record.profile_name });
-
     const [fieldError, setFieldError] = React.useState({ name: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
     // Reducer Dispatch
@@ -266,7 +263,7 @@ export const UpdateProfileFormulary = React.memo((props) => {
 
                         <DialogActions>
                             <Button onClick={handleClose}>Cancelar</Button>
-                            <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
+                            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
                         </DialogActions>
 
                     </Box>

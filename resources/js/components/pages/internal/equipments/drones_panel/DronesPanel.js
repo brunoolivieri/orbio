@@ -254,7 +254,6 @@ export const DronesPanel = React.memo(() => {
                     }}
                 >
                     <MenuItem ><Checkbox /> Ativos </MenuItem>
-                    <MenuItem ><Checkbox /> Inativos </MenuItem>
                     <MenuItem ><Checkbox /> Deletados </MenuItem>
                 </Menu>
 

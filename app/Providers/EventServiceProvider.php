@@ -4,11 +4,23 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 // Events
-use App\Events\Auth\FirstSuccessfulLoginEvent;
-use App\Events\Auth\LoginSuccessfulEvent;
+use App\Events\Auth\{
+    FirstSuccessfulLoginEvent,
+    LoginSuccessfulEvent
+};
+use App\Events\Modules\ServiceOrder\ServiceOrderCreatedEvent;
+use App\Events\Modules\ServiceOrder\ServiceOrderUpdatedEvent;
+use App\Events\Modules\ServiceOrder\ServiceOrderDeletedEvent;
 //Listeners
-use App\Listeners\Auth\Login\FirstLoginSuccessfulListener;
-use App\Listeners\Auth\Login\LoginSuccessfulListener;
+use App\Listeners\Auth\Login\{
+    FirstLoginSuccessfulListener,
+    LoginSuccessfulListener
+};
+use App\Listeners\Modules\ServiceOrder\{
+    SendEmailAfterCreated,
+    SendEmailAfterUpdated,
+    SendEmailAfterDeleted
+};
 // Models
 use App\Models\ServiceOrders\ServiceOrder;
 
@@ -25,6 +37,15 @@ class EventServiceProvider extends ServiceProvider
         ],
         FirstSuccessfulLoginEvent::class => [
             FirstLoginSuccessfulListener::class
+        ],
+        ServiceOrderCreatedEvent::class => [
+            SendEmailAfterCreated::class
+        ],
+        ServiceOrderUpdatedEvent::class => [
+            SendEmailAfterUpdated::class
+        ],
+        ServiceOrderDeletedEvent::class => [
+            SendEmailAfterDeleted::class
         ]
     ];
 
@@ -34,7 +55,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $observers = [
-        ServiceOrder::class => [ServiceOrderObserver::class]
+        //
     ];
 
     /**

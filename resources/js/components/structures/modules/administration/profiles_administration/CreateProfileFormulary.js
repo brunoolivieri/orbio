@@ -26,16 +26,11 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput, setControlledInput] = React.useState({ name: "" });
-
   const [fieldError, setFieldError] = React.useState({ name: false });
   const [fiedlErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
-
   const [open, setOpen] = React.useState(false);
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -179,7 +174,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Criar perfil</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
 
         </Box>

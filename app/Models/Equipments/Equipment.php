@@ -12,6 +12,7 @@ class Equipment extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'equipments';
     protected $guarded = [];
 
     /*
@@ -19,17 +20,20 @@ class Equipment extends Model
     */
     function scopeSearch($query, $value_searched)
     {
-        return $query->when(is_numeric($value_searched), function ($query) use ($value_searched) {
+        return $query->when($value_searched, function ($query, $value_searched) {
 
-            $query->where('id', $value_searched)
-                ->orWhere('weight', $value_searched);
-        }, function ($query) use ($value_searched) {
+            $query->when(is_numeric($value_searched), function ($query) use ($value_searched) {
 
-            $query->where('name', 'LIKE', '%' . $value_searched . '%')
-                ->orWhere('manufacturer', 'LIKE', '%' . $value_searched . '%')
-                ->orWhere('model', 'LIKE', '%' . $value_searched . '%')
-                ->orWhere('record_number', 'LIKE', '%' . $value_searched . '%')
-                ->orWhere('serial_number', 'LIKE', '%' . $value_searched . '%');
+                $query->where('id', $value_searched)
+                    ->orWhere('weight', $value_searched);
+            }, function ($query) use ($value_searched) {
+
+                $query->where('name', 'LIKE', '%' . $value_searched . '%')
+                    ->orWhere('manufacturer', 'LIKE', '%' . $value_searched . '%')
+                    ->orWhere('model', 'LIKE', '%' . $value_searched . '%')
+                    ->orWhere('record_number', 'LIKE', '%' . $value_searched . '%')
+                    ->orWhere('serial_number', 'LIKE', '%' . $value_searched . '%');
+            });
         });
     }
 

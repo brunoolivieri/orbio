@@ -28,18 +28,12 @@ export function UpdateIncidentFormulary({ ...props }) {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description });
-
   const [fieldError, setFieldError] = React.useState({ date: false, type: false, description: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ date: "", type: "", description: "" });
-
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [open, setOpen] = React.useState(false);
-
   const [incidentDate, setIncidentDate] = React.useState(moment());
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -240,7 +234,7 @@ export function UpdateIncidentFormulary({ ...props }) {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading}>Confirmar atualização</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
             </DialogActions>
 
           </Box>

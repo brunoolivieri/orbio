@@ -17,7 +17,6 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { GenericSelect } from '../../input_select/GenericSelect';
-import { StatusRadio } from '../../radio_group/StatusRadio';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -27,16 +26,11 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, report_id: props.record.report_id, incident_id: props.record.incident_id, status: props.record.status, description: props.record.description });
-
-  const [fieldError, setFieldError] = React.useState({ name: false, description: false, status: false, report: false, incident: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", description: "", status: "", report: "", incident: "" });
-
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, report_id: props.record.report_id, incident_id: props.record.incident_id, description: props.record.description });
+  const [fieldError, setFieldError] = React.useState({ name: false, description: false, report: false, incident: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", description: "", report: "", incident: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
   const [loading, setLoading] = React.useState(false);
-
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -46,8 +40,8 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   }
 
   const handleClose = () => {
-    setFieldError({ status: false, description: false });
-    setFieldErrorMessage({ status: "", description: "" });
+    setFieldError({ description: false });
+    setFieldErrorMessage({ description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setLoading(false);
     setOpen(false);
@@ -69,14 +63,13 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
-    const statusValidate = controlledInput.status != null ? { error: false, message: "" } : { error: true, message: "O status deve ser 1 ou 0" };
     const reportValidate = Number(controlledInput.report_id) === 0 ? { error: true, message: "Selecione um relatório" } : { error: false, message: "" };
     const incidentValidate = Number(controlledInput.incident_id) === 0 ? { error: true, message: "Selecione um incidente" } : { error: false, message: "" };
 
-    setFieldError({ name: nameValidate.error, description: descriptionValidate.error, status: statusValidate.error, report: reportValidate.error, incident: incidentValidate.error });
-    setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message, status: statusValidate.message, report: reportValidate.message, incident: incidentValidate.message });
+    setFieldError({ name: nameValidate.error, description: descriptionValidate.error, report: reportValidate.error, incident: incidentValidate.error });
+    setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message, report: reportValidate.message, incident: incidentValidate.message });
 
-    return !(nameValidate.error || descriptionValidate.error || statusValidate.error);
+    return !(nameValidate.error || descriptionValidate.error);
 
   }
 
@@ -85,7 +78,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     AxiosApi.patch(`/api/plans-module/${controlledInput.id}`, {
       report_id: controlledInput.report_id,
       incident_id: controlledInput.incident_id,
-      status: controlledInput.status,
       description: controlledInput.description
     })
       .then(function (response) {
@@ -126,7 +118,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       name: { error: false, message: null },
       report_id: { error: false, message: null },
       incident_id: { error: false, message: null },
-      status: { error: false, message: null },
       description: { error: false, message: null }
     }
 
@@ -143,7 +134,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       name: request_errors.name.error,
       report: request_errors.report_id.error,
       incident: request_errors.incident_id.error,
-      status: request_errors.status.error,
       description: request_errors.description.error
     });
 
@@ -151,7 +141,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       name: request_errors.name.message,
       report: request_errors.report_id.message,
       incident: request_errors.incident_id.message,
-      status: request_errors.status.message,
       description: request_errors.description.message
     });
 
@@ -246,14 +235,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                 error={fieldError.description}
               />
 
-              <Box>
-                <StatusRadio
-                  default={props.record.status == 1 ? 1 : 0}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                />
-              </Box>
-
             </DialogContent>
 
             {(!loading && displayAlert.display) &&
@@ -264,7 +245,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
             </DialogActions>
 
           </Box>

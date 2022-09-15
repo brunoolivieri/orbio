@@ -42,10 +42,11 @@ class ServiceOrdersPanelResource extends JsonResource
             if ($service_order->flight_plans->count() > 0) {
                 foreach ($service_order->flight_plans as $index => $flight_plan) {
 
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["id"] = $flight_plan->id;
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["file"] = $flight_plan->coordinates_file;
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["status"] = $flight_plan->status;
-                    $this->formatedData["records"][$row]["flight_plans"][$index]["deleted_at"] = $flight_plan->deleted_at;
+                    $this->formatedData["records"][$row]["flight_plans"][$index] = [
+                        "id" => $flight_plan->id,
+                        "file" => $flight_plan->coordinates_file,
+                        "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
+                    ];
                 }
             } else {
                 $this->formatedData["records"][$row]["flight_plans"] = array();
@@ -53,25 +54,23 @@ class ServiceOrdersPanelResource extends JsonResource
 
             // ============================== RELATED USERS ============================== //
 
-            if ($service_order->users->count() > 0) {
-                foreach ($service_order->users as $row => $user) {
-
-                    // Get creator, pilot and client 
-                    $this->formatedData["records"][$row][$user->pivot->role]["id"] = $user->id;
-                    $this->formatedData["records"][$row][$user->pivot->role]["profile_id"] = $user->profile_id;
-                    $this->formatedData["records"][$row][$user->pivot->role]["name"] = $user->name;
-                    $this->formatedData["records"][$row][$user->pivot->role]["status"] = $user->status;
-                    $this->formatedData["records"][$row][$user->pivot->role]["deleted_at"] = $user->deleted_at;
-                }
+            // Get creator, pilot and client 
+            foreach ($service_order->users as $index => $user) {
+                $this->formatedData["records"][$row]["users"][$user->pivot->role] = [
+                    "id" => $user->id,
+                    "profile_id" => $user->profile_id,
+                    "name" => $user->name,
+                    "status" => $user->status,
+                    "deleted" => is_null($user->deleted_at) ? 0 : 1
+                ];
             }
 
-            $this->formatedData["total_records"] = $this->data->total();
-            $this->formatedData["records_per_page"] = $this->data->perPage();
-            $this->formatedData["total_pages"] = $this->data->lastPage();
-
-            dd($this->formatedData);
-
-            return $this->formatedData;
         }
+
+        $this->formatedData["total_records"] = $this->data->total();
+        $this->formatedData["records_per_page"] = $this->data->perPage();
+        $this->formatedData["total_pages"] = $this->data->lastPage();
+
+        return $this->formatedData;
     }
 }

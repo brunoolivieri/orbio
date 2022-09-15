@@ -23,18 +23,10 @@ export function DeleteOrderFormulary(props) {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
-
-  // States do formulário
   const [open, setOpen] = React.useState(false);
-
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
-  // State da acessibilidade do botão de executar o registro
   const [disabledButton, setDisabledButton] = React.useState(false);
-
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
@@ -49,10 +41,6 @@ export function DeleteOrderFormulary(props) {
     setOpen(false);
   }
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
@@ -64,10 +52,6 @@ export function DeleteOrderFormulary(props) {
 
   }
 
-  /*
- * Rotina 2
- * 
- */
   const requestServerOperation = (data) => {
 
     AxiosApi.delete(`/api/orders-module/${data.get("id")}`)
@@ -86,9 +70,6 @@ export function DeleteOrderFormulary(props) {
 
   }
 
-  /*
-  * Rotina 5A
-  */
   const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
@@ -106,15 +87,10 @@ export function DeleteOrderFormulary(props) {
 
   }
 
-  /*
-  * Rotina 5B
-  */
   function errorServerResponseTreatment(response_data) {
-
     setDisabledButton(false);
     let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
-
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
@@ -177,7 +153,7 @@ export function DeleteOrderFormulary(props) {
                 required
                 id="creator_name"
                 name="creator_name"
-                defaultValue={props.record.creator.name}
+                defaultValue={props.record.users.creator.name}
                 inputProps={{
                   readOnly: true
                 }}
@@ -193,7 +169,7 @@ export function DeleteOrderFormulary(props) {
 
             <DialogActions>
               <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton} variant="contained">Confirmar deleção</Button>
+              <Button type="submit" disabled={disabledButton} variant="contained">Confirmar</Button>
             </DialogActions>
 
           </Box>

@@ -28,7 +28,7 @@ class EquipmentModuleBatteryPanelController extends Controller
             request()->order_by,
             request()->page,
             is_null(request()->search) ? "0" : request()->search,
-            request()->filter
+            request()->filter === "0" ? [] : request()->filter
         );
     }
 

@@ -31,7 +31,7 @@ class IncidentsPanelResource extends JsonResource
                 "id" => $incident->id,
                 "type" => $incident->type,
                 "description" => $incident->description,
-                "date" => empty($incident->date) ? "N/A" : date('d-m-Y h:i', strtotime($incident->date)),
+                "date" => strtotime($incident->date),
                 "created_at" => date('d-m-Y h:i', strtotime($incident->created_at)),
                 "updated_at" => empty($incident->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($incident->updated_at))
             ];
