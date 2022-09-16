@@ -29,7 +29,7 @@ class ServiceOrderService implements ServiceInterface
         if ($data->total() > 0) {
             return response(new ServiceOrdersPanelResource($data), 200);
         } else {
-            return response(["message" => "Nenhum perfil encontrado."], 404);
+            return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
         }
     }
 

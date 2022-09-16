@@ -39,7 +39,10 @@ class LoadFlightPlansForServiceOrderController extends Controller
             ->orderBy($order_by)
             ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
-        return response(new ServiceOrdersFlightPlansResource($data, $service_order_id), 200);
-
+        if ($data->total() > 0) {
+            return response(new ServiceOrdersFlightPlansResource($data, $service_order_id), 200);
+        } else {
+            return response(["message" => "Nenhum plano de voo encontrado."], 404);
+        }
     }
 }

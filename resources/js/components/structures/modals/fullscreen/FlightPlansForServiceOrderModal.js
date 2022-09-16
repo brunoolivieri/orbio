@@ -77,8 +77,10 @@ export const FlightPlansForServiceOrderModal = (props) => {
             .then(function (response) {
 
                 setLoading(false);
-                setRecords(response.data.records);
-                setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+                if (response.data.total_records > 0) {
+                    setRecords(response.data.records);
+                    setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+                }
 
             })
             .catch(function (error) {
@@ -303,7 +305,12 @@ export const FlightPlansForServiceOrderModal = (props) => {
                                             <TableCell align="center">{record.file}</TableCell>
                                             <TableCell align="center" sx={{ color: record.incident === 1 ? '#00713A' : '#808991' }}>{<ReportIcon />}</TableCell>
                                         </TableRow>
-                                    ))}
+                                    ))
+                                }
+
+                                {(!loading && records.length == 0) &&
+                                    <p>Nenhum plano de voo encontrado.</p>
+                                }
                             </TableBody>
                         </Table>
                     </TableContainer>
