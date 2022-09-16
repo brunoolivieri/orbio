@@ -33,6 +33,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
@@ -371,7 +372,7 @@ export const PlansPanel = () => {
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${row.coordinates_file}`} target="_blank">
                           <Tooltip title="Ver plano">
-                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
                               <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
                             </IconButton>
                           </Tooltip>
@@ -397,7 +398,9 @@ export const PlansPanel = () => {
                           </IconButton>
                         }
                       </TableCell>
-                      <TableCell align="center">{row.incident_id == null ? "Sem dados" : row.incident_id}</TableCell>
+                      <TableCell align="center">
+                        <FontAwesomeIcon icon={faCircleExclamation} color={row.incident_id === null ? "#808991" : "#00713A"} size="lg" />
+                      </TableCell>
                       <TableCell align="center">{row.description}</TableCell>
                     </TableRow>
                   ))}
