@@ -17,7 +17,6 @@ import { LinesChart } from '../../../structures/charts/LinesChart.js';
 import { PizzaChart } from '../../../structures/charts/PizzaChart.js';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLaptop } from '@fortawesome/free-solid-svg-icons';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 import { faMap } from '@fortawesome/free-solid-svg-icons';

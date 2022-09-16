@@ -16,7 +16,6 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import TablePagination from '@mui/material/TablePagination';
 import Checkbox from '@mui/material/Checkbox';
-import { useSnackbar } from 'notistack';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import AppBar from '@mui/material/AppBar';
@@ -25,12 +24,15 @@ import Dialog from '@mui/material/Dialog';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
+import ReportIcon from '@mui/icons-material/Report';
+import { Link } from "@mui/material";
 // Axios
 import AxiosApi from '../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 // Auth
 //import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 
@@ -46,15 +48,12 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export const FlightPlansForServiceOrderModal = (props) => {
 
     const [open, setOpen] = React.useState(false);
-
     const [records, setRecords] = React.useState([]);
     const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
     const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
     const [loading, setLoading] = React.useState(true);
     const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [searchField, setSearchField] = React.useState("");
-
-    const { enqueueSnackbar } = useSnackbar();
 
     React.useEffect(() => {
         serverLoadRecords();
@@ -68,24 +67,24 @@ export const FlightPlansForServiceOrderModal = (props) => {
         const order_by = paginationConfig.order_by;
         const filter = paginationConfig.filter;
 
-        AxiosApi.get(`/api/plans-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+        let http_request = "api/load-flight-plans-service-order?";
+        if (props.serviceOrderId != null) {
+            http_request += `service_order=${props.serviceOrderId}&`;
+        }
+        http_request += `limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`;
+
+        AxiosApi.get(http_request)
             .then(function (response) {
 
                 setLoading(false);
                 setRecords(response.data.records);
                 setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-                if (response.data.total_records > 1) {
-                    handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
-                } else {
-                    handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
-                }
-
             })
             .catch(function (error) {
 
                 const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-                handleOpenSnackbar(error_message, "error");
+                console.log(error_message)
 
                 setLoading(false);
                 setRecords([]);
@@ -178,10 +177,6 @@ export const FlightPlansForServiceOrderModal = (props) => {
         setSelectedRecords(selectedRecordsClone);
         props.setFlightPlansSelected(selectedRecordsClone);
 
-    }
-
-    const handleOpenSnackbar = (text, variant) => {
-        enqueueSnackbar(text, { variant });
     }
 
     const handleClickOpen = () => {
@@ -286,15 +281,27 @@ export const FlightPlansForServiceOrderModal = (props) => {
                             <TableHead>
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Ver</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {(!loading && records.length > 0) &&
-                                    records.map((row, index) => (
+                                    records.map((record, index) => (
                                         <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                            <TableCell><FormControlLabel label={row.id} control={<Checkbox value={row.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(row.id)} />} /></TableCell>
-                                            <TableCell align="center">{row.coordinates_file}</TableCell>
+                                            <TableCell><FormControlLabel label={record.id} control={<Checkbox value={record.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(record.id) || record.selected === 1} />} /></TableCell>
+                                            <TableCell align="center">
+                                                <Link href={`/internal/map?file=${record.file}`} target="_blank">
+                                                    <Tooltip title="Ver plano">
+                                                        <IconButton>
+                                                            <FontAwesomeIcon icon={faEye} color="#00713A" size="sm" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                </Link>
+                                            </TableCell>
+                                            <TableCell align="center">{record.file}</TableCell>
+                                            <TableCell align="center" sx={{ color: record.incident === 1 ? '#00713A' : '#808991' }}>{<ReportIcon />}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>

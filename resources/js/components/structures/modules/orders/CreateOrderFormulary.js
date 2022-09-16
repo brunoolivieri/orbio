@@ -32,7 +32,6 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput, setControlledInput] = React.useState({ pilot_id: "0", client_id: "0", observation: "", status: "1" });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" });
@@ -289,6 +288,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
               <FlightPlansForServiceOrderModal
                 setFlightPlansSelected={setFlightPlansSelected}
+                serviceOrderId={null}
               />
 
             </Box>

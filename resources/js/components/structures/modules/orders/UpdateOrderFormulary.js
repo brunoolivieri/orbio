@@ -312,7 +312,10 @@ export const UpdateOrderFormulary = React.memo((props) => {
               </Box>
 
               <Box sx={{ mb: 2 }}>
-                <FlightPlansForServiceOrderModal />
+                <FlightPlansForServiceOrderModal
+                  setFlightPlansSelected={setFlightPlansSelected}
+                  serviceOrderId={controlledInput.id}
+                />
               </Box>
 
               <TextField
