@@ -323,7 +323,7 @@ export const OrdersPanel = React.memo(() => {
                   <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Início</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Fim</StyledHeadTableCell>
                 </TableRow>

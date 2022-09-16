@@ -311,7 +311,7 @@ export function ReportsPanel() {
                   <StyledHeadTableCell align="center">Inicio do voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Fim do voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Log do voo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">

@@ -323,7 +323,7 @@ export const EquipmentPanel = React.memo(() => {
                   <StyledHeadTableCell align="center">Nº do Registro</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Nº Serial</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Peso (kg)</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Compra</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
