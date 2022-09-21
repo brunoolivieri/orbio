@@ -20,6 +20,8 @@ import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ReplayIcon from '@mui/icons-material/Replay';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
+// Libs
+import moment from 'moment';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -57,25 +59,84 @@ export const DroneLogsList = React.memo((props) => {
 
             });
 
-    }, [refresh])
+    }, [refresh]);
+
+    const handleClickRecord = (event) => {
+
+        const log_id = parseInt(event.currentTarget.value);
+
+        // Clone for sync the modifications
+        let selectedLogsClone = [...props.selectedLogs];
+
+        // If one or more logs are already selected
+        if (selectedLogsClone.length > 0) {
+
+            let indexOf = selectedLogsClone.findIndex(log => log.id === log_id);
+
+            // If the log already exists
+            if (indexOf) {
+
+                // Remove log from clone
+                selectedLogsClone.splice(indexOf);
+
+                // If log is not already selected
+            } else {
+
+                // Find it by id
+                let log = logs.find(log => log.id === log_id);
+
+                // Push log for clone
+                selectedLogsClone.push(log);
+
+            }
+
+            // Update state with its modified clone
+            props.setSelectedLogs(selectedLogsClone);
+
+            // If there's not logs selected
+        } else {
+
+            console.log('ok')
+
+            // Find log that has the same ID and save it
+            logs.map((log) => {
+
+                if (log.id == log_id) {
+                    selectedLogsClone.push(log);
+
+                    // Update state with its modified clone
+                    props.setSelectedLogs(selectedLogsClone);
+                }
+
+            });
+
+        }
+
+    }
+
+    const handleSaveAndClose = () => {
+        console.log(props.selectedLogs)
+        setOpen(false);
+    }
 
     const handleClickOpen = () => {
         setOpen(true);
     };
 
-    const handleClose = () => {
+    const handleCloseUnsaved = () => {
+        props.setSelectedLogs([]);
         setOpen(false);
     };
 
     return (
         <>
             <Button variant="outlined" startIcon={<WifiIcon />} onClick={handleClickOpen}>
-                Connect
+                Logs disponíveis
             </Button>
             <Dialog
                 fullScreen
                 open={open}
-                onClose={handleClose}
+                onClose={handleCloseUnsaved}
                 TransitionComponent={Transition}
             >
                 <AppBar sx={{ position: 'relative', bgcolor: "#fff" }}>
@@ -83,7 +144,7 @@ export const DroneLogsList = React.memo((props) => {
                         <IconButton
                             edge="start"
                             color="primary"
-                            onClick={handleClose}
+                            onClick={handleCloseUnsaved}
                             aria-label="close"
                         >
                             <CloseIcon />
@@ -100,7 +161,7 @@ export const DroneLogsList = React.memo((props) => {
                                 </IconButton>
                             }
                         </Typography>
-                        <Button autoFocus color="primary" variant="contained">
+                        <Button autoFocus color="primary" variant="contained" onClick={handleSaveAndClose}>
                             CONFIRMAR
                         </Button>
                     </Toolbar>
@@ -116,6 +177,8 @@ export const DroneLogsList = React.memo((props) => {
                                     secondaryAction={
                                         <Checkbox
                                             edge="end"
+                                            value={log.id}
+                                            onChange={handleClickRecord}
                                         />
                                     }
                                     disablePadding
@@ -124,7 +187,7 @@ export const DroneLogsList = React.memo((props) => {
                                         <ListItemIcon>
                                             <InsertDriveFileIcon color={"success"} />
                                         </ListItemIcon>
-                                        <ListItemText id={index} primary={log.name} secondary={log.modified} />
+                                        <ListItemText id={index} primary={log.name} secondary={"Data: " + moment(log.datetime).format('DD/MM/YYYY') + " | Tamanho: " + log.size} />
                                     </ListItemButton>
                                 </ListItem>
                                 <Divider />
