@@ -222,8 +222,6 @@ export const PlansPanel = () => {
     enqueueSnackbar(text, { variant });
   }
 
-
-
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
 
 

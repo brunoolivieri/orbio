@@ -15,9 +15,10 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string("flight_log_file");
-            $table->string("report_file");
-            $table->text("observation");
+            $table->string("logname");
+            $table->string("report")->nullable(true);
+            $table->timestamp("log_timestamp");
+            $table->text("observation")->nullable(true);
             $table->timestamps();
             $table->softDeletes();
         });

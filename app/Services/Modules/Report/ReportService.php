@@ -31,14 +31,14 @@ class ReportService
      * @param int|string $typed_search
      * @return \Illuminate\Http\Response
      */
-    public function loadResourceWithPagination(int $limit, int $current_page, int|string $typed_search)
+    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
 
-        $data = Report::when($typed_search, function ($query, $typed_search) {
-            $query->where('id', $typed_search);
-        })
-            ->orderBy('id')
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $current_page);
+        $data = Report::with('log')
+            ->search($search) // scope
+            ->filter($filters) // scope
+            ->orderBy($order_by)
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
 
         if ($data->total() > 0) {
             return response(new ReportsPanelResource($data), 200);

@@ -9,7 +9,10 @@ use App\Http\Controllers\Actions\Authentication\{
     PasswordTokenController
 };
 // Api Actions
-use App\Http\Controllers\Actions\Api\LoadDroneLogsController;
+use App\Http\Controllers\Actions\Api\{
+    LoadDroneLogsController,
+    DownloadDroneLogController
+};
 // Dashboard Action
 use App\Http\Controllers\Actions\Dashboard\DashboardController;
 // Generic Actions
@@ -89,6 +92,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
     Route::get('api/get-drone-logs', LoadDroneLogsController::class);
+    Route::post('api/download-selected-logs', DownloadDroneLogController::class);
     Route::post('/api/get-auth-data', LoadAuthData::class);
     Route::get("/api/load-users", LoadUsersController::class);
     Route::get("/api/load-profiles", LoadProfilesController::class);

@@ -33,11 +33,12 @@ export const DroneLogsList = React.memo((props) => {
 
     const [loading, setLoading] = React.useState(true);
     const [refresh, setRefresh] = React.useState(false);
-    const [logs, setLogs] = React.useState([]);
+    const [logsList, setLogsList] = React.useState([]);
+    const [selectedLogs, setSelectedLogs] = React.useState(props.selectedLogs);
 
     React.useEffect(() => {
 
-        setLogs([]);
+        setLogsList([]);
 
         const ip = props.source.ip;
         const http_port = props.source.http_port;
@@ -45,17 +46,15 @@ export const DroneLogsList = React.memo((props) => {
         AxiosApi.get(`api/get-drone-logs?ip=${ip}&http_port=${http_port}`)
             .then(function (response) {
 
-                console.log(response.data)
-
                 setLoading(false);
-                setLogs(response.data);
+                setLogsList(response.data);
 
             })
             .catch(function (error) {
 
                 console.log(error)
                 setLoading(false);
-                setLogs([]);
+                setLogsList([]);
 
             });
 
@@ -63,59 +62,29 @@ export const DroneLogsList = React.memo((props) => {
 
     const handleClickRecord = (event) => {
 
-        const log_id = parseInt(event.currentTarget.value);
+        const log_name = event.currentTarget.value;
 
         // Clone for sync the modifications
-        let selectedLogsClone = [...props.selectedLogs];
+        let selectedLogsClone = [...selectedLogs];
 
-        // If one or more logs are already selected
-        if (selectedLogsClone.length > 0) {
+        const indexOf = selectedLogsClone.indexOf(log_name);
 
-            let indexOf = selectedLogsClone.findIndex(log => log.id === log_id);
+        if (indexOf == -1) {
 
-            // If the log already exists
-            if (indexOf) {
+            selectedLogsClone.push(log_name);
 
-                // Remove log from clone
-                selectedLogsClone.splice(indexOf);
 
-                // If log is not already selected
-            } else {
-
-                // Find it by id
-                let log = logs.find(log => log.id === log_id);
-
-                // Push log for clone
-                selectedLogsClone.push(log);
-
-            }
-
-            // Update state with its modified clone
-            props.setSelectedLogs(selectedLogsClone);
-
-            // If there's not logs selected
         } else {
 
-            console.log('ok')
-
-            // Find log that has the same ID and save it
-            logs.map((log) => {
-
-                if (log.id == log_id) {
-                    selectedLogsClone.push(log);
-
-                    // Update state with its modified clone
-                    props.setSelectedLogs(selectedLogsClone);
-                }
-
-            });
-
+            selectedLogsClone.splice(indexOf);
         }
+
+        setSelectedLogs(selectedLogsClone);
+        props.setSelectedLogs(selectedLogsClone);
 
     }
 
     const handleSaveAndClose = () => {
-        console.log(props.selectedLogs)
         setOpen(false);
     }
 
@@ -124,6 +93,7 @@ export const DroneLogsList = React.memo((props) => {
     };
 
     const handleCloseUnsaved = () => {
+        setSelectedLogs([]);
         props.setSelectedLogs([]);
         setOpen(false);
     };
@@ -131,7 +101,7 @@ export const DroneLogsList = React.memo((props) => {
     return (
         <>
             <Button variant="outlined" startIcon={<WifiIcon />} onClick={handleClickOpen}>
-                Logs disponíveis
+                {`Logs disponíveis: ${logsList.length - selectedLogs.length}`}
             </Button>
             <Dialog
                 fullScreen
@@ -168,8 +138,8 @@ export const DroneLogsList = React.memo((props) => {
                 </AppBar>
                 <List>
 
-                    {!loading && logs.length > 0 &&
-                        logs.map((log, index) =>
+                    {!loading && logsList.length > 0 &&
+                        logsList.map((log, index) =>
                             <>
                                 <ListItem
                                     button
@@ -177,8 +147,9 @@ export const DroneLogsList = React.memo((props) => {
                                     secondaryAction={
                                         <Checkbox
                                             edge="end"
-                                            value={log.id}
+                                            value={log.name}
                                             onChange={handleClickRecord}
+                                            checked={selectedLogs.includes(log.name)}
                                         />
                                     }
                                     disablePadding

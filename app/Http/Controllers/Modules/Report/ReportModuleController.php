@@ -26,12 +26,13 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_read');
 
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        return $this->service->loadResourceWithPagination(
+            request()->limit,
+            request()->order_by,
+            request()->page,
+            is_null(request()->search) ? "0" : request()->search,
+            request()->filter === "0" ? [] : request()->filter
+        );
     }
 
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response
@@ -43,14 +44,7 @@ class ReportModuleController extends Controller
 
     public function show($request): \Illuminate\Http\Response
     {
-        Gate::authorize('reports_read');
-
-        $args = explode(".", request()->args);
-        $limit = (int) $args[0];
-        $where_value = $args[1];
-        $actual_page = (int) $args[2];
-
-        return $this->service->loadResourceWithPagination($limit, $actual_page, $where_value);
+        //
     }
 
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response

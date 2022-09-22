@@ -5,7 +5,6 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
 import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
 import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
-import { GenerateReportFormulary } from "../../../../structures/modules/reports/GenerateReportFormulary";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
@@ -28,11 +27,15 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Checkbox from '@mui/material/Checkbox';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import moment from 'moment';
@@ -50,19 +53,14 @@ export function ReportsPanel() {
   const { AuthData } = useAuthentication();
 
   const [records, setRecords] = React.useState([]);
-
   const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-  const [paginationParams, setPaginationParams] = React.useState({ page: 1, limit: 10, where: 0, total_records: 0 });
-
+  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
   const [loading, setLoading] = React.useState(true);
-
-  // State do registro selecionado
-  // Quando um registro é selecionado, seu índice é salvo nesse state
-  // Os modais de update e delete são renderizados e recebem panelData.response.records[selectedRecordIndex]
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-
   const [searchField, setSearchField] = React.useState("");
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
 
   // Context do snackbar
   const { enqueueSnackbar } = useSnackbar();
@@ -70,65 +68,28 @@ export function ReportsPanel() {
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   React.useEffect(() => {
+    serverLoadRecords();
+  }, [paginationConfig]);
 
-    if (!paginationParams.where) {
+  function serverLoadRecords() {
 
-      requestToGetAllReports();
+    const limit = paginationConfig.limit;
+    const search = paginationConfig.search;
+    const page = paginationConfig.page;
+    const order_by = paginationConfig.order_by;
+    const filter = paginationConfig.filter;
 
-    } else {
-
-      requestToGetSearchedReports();
-
-    }
-
-  }, [paginationParams]);
-
-  function requestToGetAllReports() {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/reports-module?args=${select_query_params}`)
+    AxiosApi.get(`/api/reports-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
 
         setLoading(false);
-        setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setRecords(response.data);
+        setPagination({ total_records: response.data.total, records_per_page: response.data.per_page, total_pages: 1 });
 
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} relatórios`, "success");
+        if (response.data.total > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total} logs`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} relatório`, "success");
-        }
-
-      })
-      .catch(function (error) {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        setLoading(false);
-        setRecords([]);
-        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-      });
-
-  }
-
-  function requestToGetSearchedReports(module_middleware) {
-
-    const select_query_params = `${paginationParams.limit}.${paginationParams.where}.${paginationParams.page}`;
-
-    AxiosApi.get(`/api/reports-module/show?args=${select_query_params}&auth=${module_middleware}`)
-      .then(function (response) {
-
-        setLoading(false);
-        setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records_founded, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
-
-        if (response.data.total_records_founded > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records_founded} relatórios`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records_founded} relatório`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total} log`, "success");
         }
 
       })
@@ -147,20 +108,26 @@ export function ReportsPanel() {
 
   const handleTablePageChange = (event, value) => {
 
-    setPaginationParams({
+    setPaginationConfig({
       page: value + 1,
-      limit: paginationParams.limit,
-      where: paginationParams.where
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   };
 
   const handleChangeRowsPerPage = (event) => {
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
       limit: event.target.value,
-      where: paginationParams.where
+      order_by: "id",
+      search: paginationConfig.search,
+      total_records: 0,
+      filter: 0
     });
 
   };
@@ -168,31 +135,41 @@ export function ReportsPanel() {
   function handleSearchSubmit(event) {
     event.preventDefault();
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: searchField
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: searchField,
+      total_records: 0,
+      filter: 0
     });
 
   }
 
-  function reloadTable() {
+  const reloadTable = () => {
 
     setSelectedRecordIndex(null);
 
     setLoading(true);
     setRecords([]);
-    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
+    setPagination({
+      total_records: 0,
+      records_per_page: 0,
+      total_pages: 0
+    });
 
-    setPaginationParams({
+    setPaginationConfig({
       page: 1,
-      limit: paginationParams.limit,
-      where: 0
+      limit: paginationConfig.limit,
+      order_by: "id",
+      search: 0,
+      total_records: 0,
+      filter: 0
     });
 
   }
 
-  function handleClickRadio(event) {
+  const handleClickRadio = (event) => {
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
@@ -202,10 +179,15 @@ export function ReportsPanel() {
 
   }
 
-  function handleOpenSnackbar(text, variant) {
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleClose = () => {
+    setAnchorEl(null);
+  }
 
+  const handleOpenSnackbar = (text, variant) => {
     enqueueSnackbar(text, { variant });
-
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
@@ -249,6 +231,34 @@ export function ReportsPanel() {
         </Grid>
 
         <Grid item>
+          <Tooltip title="Filtros">
+            <IconButton
+              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+              id="basic-button"
+              aria-controls={open ? 'basic-menu' : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleClick}
+            >
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            'aria-labelledby': 'basic-button',
+          }}
+        >
+          <MenuItem ><Checkbox /> Ativos </MenuItem>
+          <MenuItem ><Checkbox /> Desabilitados </MenuItem>
+        </Menu>
+
+        <Grid item>
           <Tooltip title="Carregar">
             <IconButton onClick={reloadTable}>
               <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
@@ -259,7 +269,7 @@ export function ReportsPanel() {
         <Grid item xs>
           <TextField
             fullWidth
-            placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
+            placeholder={"Pesquisar plano por ID"}
             onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
@@ -273,11 +283,9 @@ export function ReportsPanel() {
             }}
             variant="outlined"
             id="search_input"
-            sx={{ borderRadius: 30 }}
           />
         </Grid>
 
-        {/* Geração da paginação */}
         {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>
@@ -285,9 +293,9 @@ export function ReportsPanel() {
                 labelRowsPerPage="Linhas por página: "
                 component="div"
                 count={pagination.total_records}
-                page={paginationParams.page - 1}
+                page={paginationConfig.page - 1}
                 onPageChange={handleTablePageChange}
-                rowsPerPage={paginationParams.limit}
+                rowsPerPage={paginationConfig.limit}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Stack>
@@ -307,23 +315,21 @@ export function ReportsPanel() {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Exportar</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Inicio do voo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Fim do voo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Log do voo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Log</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data do log</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
                   records.map((row, index) => (
-                    <TableRow key={row.report_id}>
+                    <TableRow key={row.id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center"><GenerateReportFormulary data={row} /></TableCell>
-                      <TableCell align="center">{moment(row.flight_start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{moment(row.flight_end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{row.flight_log}</TableCell>
-                      <TableCell align="center">{row.report_note}</TableCell>
+                      <TableCell align="center">{row.logname}</TableCell>
+                      <TableCell align="center">{row.report}</TableCell>
+                      <TableCell align="center">{moment(row.log_timestamp).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{row.observation}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
