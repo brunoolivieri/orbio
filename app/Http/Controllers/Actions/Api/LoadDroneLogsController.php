@@ -29,7 +29,7 @@ class LoadDroneLogsController extends Controller
         $count = 0;
         foreach ($kmz_files_array as $log) {
 
-            if (!Storage::disk("public")->exists("drone_logs/{$log['name']}")) {
+            if (!Storage::disk("public")->exists("logs/kmz/" . $log['name'])) {
 
                 $this->logs[$count] = $log;
                 $count++;
@@ -59,7 +59,7 @@ class LoadDroneLogsController extends Controller
         $modified = $log['modified'];
 
         return [
-            "id" => $index+1,
+            "id" => $index + 1,
             "datetime" => date("Y-m-d", $timestamp),
             "name" => $name,
             "size" => $size,
