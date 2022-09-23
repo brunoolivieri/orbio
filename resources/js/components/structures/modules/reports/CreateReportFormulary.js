@@ -37,7 +37,6 @@ export const CreateReportFormulary = React.memo(() => {
   const [selectedLogs, setSelectedLogs] = React.useState([]);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
   const handleDownloadLogs = (e) => {
@@ -85,7 +84,7 @@ export const CreateReportFormulary = React.memo(() => {
   return (
     <>
 
-      <Tooltip title="Carregar log">
+      <Tooltip title="Novo Log">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
           <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
         </IconButton>

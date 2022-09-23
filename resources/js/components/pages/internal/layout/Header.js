@@ -31,7 +31,7 @@ export const Header = React.memo(({ ...props }) => {
     { icon: <AdminPanelSettingsIcon sx={{ mr: 1 }} />, title: "ADMINISTRAÇÃO" },
     { icon: <MapIcon sx={{ mr: 1 }} />, title: "PLANOS DE VOO" },
     { icon: <AssignmentIcon sx={{ mr: 1 }} />, title: "ORDENS DE SERVIÇO" },
-    { icon: <AssessmentIcon sx={{ mr: 1 }} />, title: "RELATÓRIOS" },
+    { icon: <AssessmentIcon sx={{ mr: 1 }} />, title: "LOGS E RELATÓRIOS" },
     { icon: <ReportIcon sx={{ mr: 1 }} />, title: "INCIDENTES" },
     { icon: <HomeRepairServiceIcon sx={{ mr: 1 }} />, title: "EQUIPAMENTOS" },
     { icon: <HelpIcon sx={{ mr: 1 }} />, title: "SUPORTE" },

@@ -5,6 +5,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
 import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
 import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
+import { GenerateReportFormulary } from "../../../../structures/modules/reports/GenerateReportFormulary";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
@@ -30,6 +31,7 @@ import FormControl from '@mui/material/FormControl';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -37,9 +39,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Outros
-import moment from 'moment';
-import { useSnackbar } from 'notistack';
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -83,13 +83,13 @@ export function ReportsPanel() {
       .then(function (response) {
 
         setLoading(false);
-        setRecords(response.data);
-        setPagination({ total_records: response.data.total, records_per_page: response.data.per_page, total_pages: 1 });
+        setRecords(response.data.records);
+        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
-        if (response.data.total > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total} logs`, "success");
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} logs`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total} log`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} log`, "success");
         }
 
       })
@@ -104,6 +104,10 @@ export function ReportsPanel() {
 
       });
 
+  }
+
+  const handleDownloadReport = () => {
+    //console.log('download');
   }
 
   const handleTablePageChange = (event, value) => {
@@ -171,9 +175,11 @@ export function ReportsPanel() {
 
   const handleClickRadio = (event) => {
 
-    if (event.target.value === selectedRecordIndex) {
+    const value = event.target.value;
+
+    if (value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
-    } else if (event.target.value != selectedRecordIndex) {
+    } else if (value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
 
@@ -201,25 +207,24 @@ export function ReportsPanel() {
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {selectedRecordIndex === null &&
             <Tooltip title="Selecione um registro para editar">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
+                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(!loading && selectedRecordIndex != null) &&
             <UpdateReportFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {selectedRecordIndex === null &&
             <Tooltip title="Selecione um registro para excluir">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+              <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true} >
+                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -315,21 +320,31 @@ export function ReportsPanel() {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Log</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Log</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Data do log</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
-                  records.map((row, index) => (
-                    <TableRow key={row.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.logname}</TableCell>
-                      <TableCell align="center">{row.report}</TableCell>
-                      <TableCell align="center">{moment(row.log_timestamp).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{row.observation}</TableCell>
+                  records.map((report, index) => (
+                    <TableRow key={report.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={report.id} /></TableCell>
+                      <TableCell align="center">
+                        {report.path != 0 ?
+                          <Tooltip title={"Exportar relatório"}>
+                            <IconButton onClick={() => handleDownloadReport()}>
+                              <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
+                            </IconButton>
+                          </Tooltip>
+                          :
+                          <GenerateReportFormulary />
+                        }
+                      </TableCell>
+                      <TableCell align="center">{report.log.name}</TableCell>
+                      <TableCell align="center">{report.log.datetime}</TableCell>
+                      <TableCell align="center">{report.observation}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

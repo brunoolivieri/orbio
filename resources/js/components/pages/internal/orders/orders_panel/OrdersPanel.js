@@ -48,7 +48,6 @@ const StyledHeadTableCell = styled(TableCell)({
   fontWeight: 700
 });
 
-
 export const OrdersPanel = React.memo(() => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //

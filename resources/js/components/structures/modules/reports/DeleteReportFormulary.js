@@ -11,6 +11,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -18,99 +19,71 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import AxiosApi from '../../../../services/AxiosApi';
 
-export const DeleteReportFormulary = React.memo(({ ...props }) => {
+export const DeleteReportFormulary = React.memo((props) => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
-  // Utilizador do state global de autenticação
   const { AuthData } = useAuthentication();
-
-  // States do formulário
   const [open, setOpen] = React.useState(false);
-
-  // State da mensagem do alerta
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
-  // State da acessibilidade do botão de executar o registro
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
 
-  // Função para abrir o modal
   const handleClickOpen = () => {
     setOpen(true);
   }
 
-  // Função para fechar o modal
   const handleClose = () => {
     props.record_setter(null);
     setDisplayAlert({ display: false, type: "", message: "" });
-    setDisabledButton(false);
     setOpen(false);
   };
 
-  /*
- * Rotina 1
- * 
- */
   const handleSubmitOperation = (event) => {
     event.preventDefault();
 
     const data = new FormData(event.currentTarget);
 
-    setDisabledButton(true);
-
     requestServerOperation(data);
-
 
   }
 
-
-  /*
- * Rotina 2
- * 
- */
   function requestServerOperation(data) {
 
     AxiosApi.delete(`/api/reports-module/${data.get("id")}`)
       .then(function () {
 
+        setLoading(false);
         successServerResponseTreatment();
 
       })
       .catch(function (error) {
 
+        setLoading(false);
         errorServerResponseTreatment(error.response.data);
 
       });
 
   }
 
-  /*
-  * Rotina 3A
-  */
   function successServerResponseTreatment() {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
     setTimeout(() => {
 
+      props.record_setter(null);
       props.reload_table();
-      setDisabledButton(false);
       handleClose();
 
     }, 2000);
 
   }
 
-  /*
-  * Rotina 3B
-  */
   function errorServerResponseTreatment(response_data) {
-
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
+    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Erro do servidor!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
-
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
@@ -125,62 +98,58 @@ export const DeleteReportFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      {(props.selected_record.dom != null && open) &&
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+        <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.record.id})</DialogTitle>
 
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
-          <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.selected_record.data_cells.report_id})</DialogTitle>
+        {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-          {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+          <DialogContent>
 
-            <DialogContent>
+            <TextField
+              margin="dense"
+              id="id"
+              name="id"
+              label="ID"
+              type="text"
+              fullWidth
+              variant="outlined"
+              defaultValue={props.record.id}
+              InputProps={{
+                readOnly: true,
+              }}
+            />
 
-              <TextField
-                margin="dense"
-                id="id"
-                name="id"
-                label="ID"
-                type="text"
-                fullWidth
-                variant="outlined"
-                defaultValue={props.selected_record.data_cells.report_id}
-                InputProps={{
-                  readOnly: true,
-                }}
-                sx={{ mb: 2 }}
-              />
+            <TextField
+              margin="dense"
+              label="Log do vôo"
+              type="text"
+              fullWidth
+              variant="outlined"
+              defaultValue={props.record.log.name}
+              InputProps={{
+                inputProps: { min: 0, max: 1 },
+                readOnly: true
+              }}
+            />
 
-              <TextField
-                margin="dense"
-                id="flight_log"
-                name="flight_log"
-                label="Log do vôo"
-                type="text"
-                fullWidth
-                variant="outlined"
-                defaultValue={props.selected_record.data_cells.flight_log}
-                InputProps={{
-                  inputProps: { min: 0, max: 1 },
-                  readOnly: true
-                }}
-              />
+          </DialogContent>
 
-            </DialogContent>
+          {displayAlert.display &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            {displayAlert.display &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          {loading && <LinearProgress />}
 
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton}>Confirmar deleção</Button>
-            </DialogActions>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" disabled={loading}>Confirmar deleção</Button>
+          </DialogActions>
 
-          </Box>
+        </Box>
 
 
-        </Dialog>
-      }
+      </Dialog>
     </>
 
   );

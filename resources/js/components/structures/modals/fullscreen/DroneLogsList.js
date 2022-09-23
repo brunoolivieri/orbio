@@ -30,7 +30,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export const DroneLogsList = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-
     const [loading, setLoading] = React.useState(true);
     const [refresh, setRefresh] = React.useState(false);
     const [logsList, setLogsList] = React.useState([]);
@@ -47,7 +46,7 @@ export const DroneLogsList = React.memo((props) => {
             .then(function (response) {
 
                 setLoading(false);
-                setLogsList(response.data);
+                setLogsList(response.data.kmz);
 
             })
             .catch(function (error) {
