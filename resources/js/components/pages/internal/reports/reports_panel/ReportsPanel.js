@@ -339,7 +339,7 @@ export function ReportsPanel() {
                             </IconButton>
                           </Tooltip>
                           :
-                          <GenerateReportFormulary />
+                          <GenerateReportFormulary record={report} />
                         }
                       </TableCell>
                       <TableCell align="center">{report.log.name}</TableCell>

@@ -165,7 +165,6 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
       <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
 
-        {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
 
           <DialogContent>
