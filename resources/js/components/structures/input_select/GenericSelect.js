@@ -38,7 +38,7 @@ export const GenericSelect = React.memo((props) => {
 
     return (
         <>
-            <FormControl sx={{ margin: "5px 5px 0 0", minWidth: 120 }}>
+            <FormControl sx={{ minWidth: '100%' }}>
                 <InputLabel id="demo-simple-select-helper-label">{data.label_text}</InputLabel>
 
                 <Select
@@ -52,7 +52,7 @@ export const GenericSelect = React.memo((props) => {
                     disabled={loading}
                 >
 
-                    <MenuItem value={"0"} disabled>{loading ? "Carregando" : "Escolha uma opção"}</MenuItem>
+                    <MenuItem value={"0"} disabled>{loading ? "Carregando" : "Escolha"}</MenuItem>
 
                     {!loading &&
                         data.records.map((item) =>

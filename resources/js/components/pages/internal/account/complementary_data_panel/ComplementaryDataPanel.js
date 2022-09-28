@@ -16,8 +16,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import AxiosApi from "../../../../../services/AxiosApi";
 import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { SelectStates } from '../../../../structures/input_select/SelectStates';
-import { SelectCities } from '../../../../structures/input_select/SelectCities';
+import { GenericSelect } from '../../../../structures/input_select/GenericSelect';
 // Libs
 import { useSnackbar } from 'notistack';
 
@@ -44,10 +43,8 @@ export const ComplementaryDataPanel = React.memo(() => {
     const [addressUpdateLoading, setAddressUpdateLoading] = React.useState(false);
     const [documentUpdateLoading, setDocumentUpdateLoading] = React.useState(false);
     const [loadingFields, setLoadingFields] = React.useState(true);
-
     const [fieldError, setFieldError] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" });
-
     const [keyPressed, setKeyPressed] = React.useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
@@ -613,8 +610,35 @@ export const ComplementaryDataPanel = React.memo(() => {
 
                         <Grid item xs={12} sm={12}>
 
-                            <SelectStates controlledInput={controlledInput} setControlledInput={setControlledInput} error={fieldError.state} />
-                            <SelectCities controlledInput={controlledInput} setControlledInput={setControlledInput} selectedState={controlledInput.state} error={fieldError.city} />
+                            <GenericSelect
+                                label_text={"Estados"}
+                                data_source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
+                                primary_key={"id"}
+                                key_content={"sigla"}
+                                error={fieldError.state}
+                                name={"state"}
+                                value={controlledInput.state}
+                                setControlledInput={setControlledInput}
+                                controlledInput={controlledInput}
+                                onChange={handleInputChange}
+                            />
+
+                        </Grid>
+
+                        <Grid item xs={12} sm={12}>
+
+                            <GenericSelect
+                                label_text={"Cidades"}
+                                data_source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + controlledInput.state + "/municipios"}
+                                primary_key={"id"}
+                                key_content={"nome"}
+                                error={fieldError.city}
+                                name={"city"}
+                                value={controlledInput.city}
+                                setControlledInput={setControlledInput}
+                                controlledInput={controlledInput}
+                                onChange={handleInputChange}
+                            />
 
                         </Grid>
 
