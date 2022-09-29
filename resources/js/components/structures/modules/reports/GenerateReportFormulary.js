@@ -13,6 +13,7 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
+import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
@@ -23,6 +24,8 @@ import { GenericSelect } from '../../input_select/GenericSelect';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ReportBuilder } from '../../report_builder/ReportBuilder';
 import { DatePicker } from "../../date_picker/DatePicker";
+// Lib
+import AxiosApi from '../../../../services/AxiosApi';
 
 export const GenerateReportFormulary = React.memo((props) => {
 
@@ -32,6 +35,7 @@ export const GenerateReportFormulary = React.memo((props) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+  const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [controlledInput, setControlledInput] = React.useState({ name: '', client: '', farm: '', area: '', date: props.record.datetime, number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
@@ -56,6 +60,29 @@ export const GenerateReportFormulary = React.memo((props) => {
 
   const handleInputChange = (event) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+  }
+
+  const handleLoadWeather = () => {
+
+    if (selectedState == null || selectedCity == null) {
+      return '';
+    }
+
+    const state = selectedState;
+    const city = selectedCity;
+
+    AxiosApi.get(`https://api.hgbrasil.com/weather?key=43ccb418&city_name=${state},${city}`)
+      .then(function (response) {
+
+        console.log(response.data);
+
+      })
+      .catch(function (error) {
+
+        console.log(error);
+
+      });
+
   }
 
   // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
@@ -108,11 +135,11 @@ export const GenerateReportFormulary = React.memo((props) => {
                 <Grid item xs={4}>
                   <AutoCompleteState
                     label={"Estados"}
+                    name={"state"}
                     source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
                     primary_key={"id"}
                     key_text={"sigla"}
                     error={fieldError.state}
-                    name={"state"}
                     setSelectedState={setSelectedState}
                     setControlledInput={setControlledInput}
                     controlledInput={controlledInput}
@@ -123,11 +150,11 @@ export const GenerateReportFormulary = React.memo((props) => {
                   {(selectedState != null) &&
                     <AutoCompleteCity
                       label={"Cidades"}
+                      name={"city"}
                       source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + selectedState + "/municipios"}
                       primary_key={"id"}
                       key_text={"nome"}
                       error={fieldError.city}
-                      name={"city"}
                       setSelectedCity={setSelectedCity}
                       setControlledInput={setControlledInput}
                       controlledInput={controlledInput}
@@ -220,12 +247,12 @@ export const GenerateReportFormulary = React.memo((props) => {
 
             <Box>
 
-              <Typography component={'p'} mb={1}>Informe a data e região para buscar os dados climáticos.</Typography>
+              <Typography component={'p'} mb={1}>Para buscar os dados climáticos informe o estado, cidade e data do voo.</Typography>
 
               <Grid container spacing={2} columns={13}>
                 <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Tooltip title="Delete">
-                    <IconButton>
+                    <IconButton onClick={() => handleLoadWeather()}>
                       <SearchIcon />
                     </IconButton>
                   </Tooltip>
@@ -286,6 +313,8 @@ export const GenerateReportFormulary = React.memo((props) => {
           {displayAlert.display &&
             <Alert severity={displayAlert.type} variant="filled">{displayAlert.message}</Alert>
           }
+
+          {loading && <LinearProgress />}
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>

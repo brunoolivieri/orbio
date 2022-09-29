@@ -23,8 +23,9 @@ export function AutoCompleteCity(props) {
                 setOptions(options);
 
             })
-            .catch(function () {
+            .catch(function (error) {
 
+                console.log(error);
                 setOptions([]);
 
             });
@@ -32,7 +33,7 @@ export function AutoCompleteCity(props) {
     }, [open]);
 
     const handleChange = (event, value) => {
-        props.setSelectedState(value.label);
+        props.setSelectedCity(value.label);
     }
 
     return (
@@ -43,7 +44,7 @@ export function AutoCompleteCity(props) {
                 id={props.name}
                 options={options}
                 sx={{ width: '100%' }}
-                onChange={handleChange}
+                onChange={(event, value) => handleChange(event, value)}
                 name={props.name}
                 renderInput={(params) => <TextField {...params} label={props.label} />}
             />

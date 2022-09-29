@@ -1,0 +1,140 @@
+{
+    "country": "55",
+    "states": [
+        {
+            "name": "Acre",
+            "sigla": "AC",
+            "code": "12"
+        },
+        {
+            "name": "Alagoas",
+            "sigla": "AL",
+            "code": "27"
+        },
+        {
+            "name": "Amapá",
+            "sigla": "AP",
+            "code": "16"
+        },
+        {
+            "name": "Amazonas",
+            "sigla": "AM",
+            "code": "13"
+        },
+        {
+            "name": "Bahia",
+            "sigla": "BA",
+            "code": "29"
+        },
+        {
+            "name": "Ceará",
+            "sigla": "CE",
+            "code": "23"
+        },
+        {
+            "name": "Distrito Federal",
+            "sigla": "DF",
+            "code": "53"
+        },
+        {
+            "name": "Espírito Santo",
+            "sigla": "ES",
+            "code": "32"
+        },
+        {
+            "name": "Goiás",
+            "sigla": "GO",
+            "code": "52"
+        },
+        {
+            "name": "Maranhão",
+            "sigla": "MA",
+            "code": "21"
+        },
+        {
+            "name": "Mato Grosso",
+            "sigla": "MT",
+            "code": "51"
+        },
+        {
+            "name": "Mato Grosso do Sul",
+            "sigla": "MS",
+            "code": "50"
+        },
+        {
+            "name": "Minas Gerais",
+            "sigla": "MG",
+            "code": "31"
+        },
+        {
+            "name": "Pará",
+            "sigla": "PA",
+            "code": "15"
+        },
+        {
+            "name": "Paraíba",
+            "sigla": "PB",
+            "code": "25"
+        },
+        {
+            "name": "Paraná",
+            "sigla": "PR",
+            "code": "41"
+        },
+        {
+            "name": "Pernambuco",
+            "sigla": "PE",
+            "code": "26"
+        },
+        {
+            "name": "Piauí",
+            "sigla": "PI",
+            "code": "22"
+        },
+        {
+            "name": "Rio de Janeiro",
+            "sigla": "RJ",
+            "code": "33"
+        },
+        {
+            "name": "Rio Grande do Norte",
+            "sigla": "RN",
+            "code": "24"
+        },
+        {
+            "name": "Rio Grande do Sul",
+            "sigla": "RS",
+            "code": "43"
+        },
+        {
+            "name": "Rondônia",
+            "sigla": "RO",
+            "code": "11"
+        },
+        {
+            "name": "Roraima",
+            "sigla": "RR",
+            "code": "14"
+        },
+        {
+            "name": "Santa Catarina",
+            "sigla": "SC",
+            "code": "42"
+        },
+        {
+            "name": "São Paulo",
+            "sigla": "SP",
+            "code": "35"
+        },
+        {
+            "name": "Sergipe",
+            "sigla": "SE",
+            "code": "28"
+        },
+        {
+            "name": "Tocantins",
+            "sigla": "TO",
+            "code": "17"
+        }
+    ]
+}

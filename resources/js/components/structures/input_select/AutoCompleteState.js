@@ -23,8 +23,9 @@ export function AutoCompleteState(props) {
                 setOptions(options);
 
             })
-            .catch(function () {
+            .catch(function (error) {
 
+                console.log(error);
                 setOptions([]);
 
             });
