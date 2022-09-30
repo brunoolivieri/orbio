@@ -25,7 +25,8 @@ class ReportUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            "description" => ['required', 'min:3', 'max:9999']
+            "observation" => ['required', 'min:3', 'max:9999'],
+            "flight_plan_id" => ['nullable']
         ];
     }
 
@@ -37,9 +38,9 @@ class ReportUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            "description.required" => "A descrição deve ser informada",
-            "description.min" => "A descrição deve ter pelo menos três caracteres",
-            "description.max" => "A descrição deve ter no máximo 9999 caracteres"
+            "observation.required" => "A descrição deve ser informada",
+            "observation.min" => "A descrição deve ter pelo menos três caracteres",
+            "observation.max" => "A descrição deve ter no máximo 9999 caracteres"
         ];
     }
 }

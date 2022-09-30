@@ -368,7 +368,7 @@ export const PlansPanel = () => {
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">
-                        <Link href={`/internal/map?file=${row.coordinates_file}`} target="_blank">
+                        <Link href={`/internal/map?file=${row.file}`} target="_blank">
                           <Tooltip title="Ver plano">
                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
                               <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -378,13 +378,13 @@ export const PlansPanel = () => {
                       </TableCell>
                       <TableCell align="center">
                         <Tooltip title="Baixar plano">
-                          <IconButton onClick={() => handleDownloadFlightPlan(row.coordinates_file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
+                          <IconButton onClick={() => handleDownloadFlightPlan(row.file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
                             <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
                           </IconButton>
                         </Tooltip>
                       </TableCell>
                       <TableCell align="center">
-                        {row.report_id != null ?
+                        {row.log != null ?
                           <Tooltip title="Ver relatório">
                             <IconButton>
                               <FontAwesomeIcon icon={faFilePdf} color="#00713A" />

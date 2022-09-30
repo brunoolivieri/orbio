@@ -19,7 +19,7 @@ class FlightPlanRepository implements RepositoryInterface
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         return $this->flightPlanModel->with("incident")
-            ->with("report")
+            ->with("log")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -30,7 +30,8 @@ class FlightPlanRepository implements RepositoryInterface
     {
         $flight_plan = $this->flightPlanModel->create([
             "name" => $data->get('name'),
-            "coordinates_file" => $data->get('filename'),
+            "file" => $data->get('filename'),
+            "coordinates" => $data->get("coordinates"),
             "description" => $data->get('description')
         ]);
 

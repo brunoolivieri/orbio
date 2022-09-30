@@ -28,8 +28,6 @@ import moment from 'moment';
 
 export const UpdateOrderFormulary = React.memo((props) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
-
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
@@ -314,6 +312,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
               <Box sx={{ mb: 2 }}>
                 <FlightPlansForServiceOrderModal
                   setFlightPlansSelected={setFlightPlansSelected}
+                  flightPlansSelected={flightPlansSelected}
                   serviceOrderId={controlledInput.id}
                 />
               </Box>

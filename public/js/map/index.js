@@ -1381,13 +1381,14 @@ function savePath() {
 
     const typed_name = prompt('Digite um nome para o plano de voo');
     const timestamp = new Date().getTime();
+    const coordinates = coordinatesLongLat[0];
 
     // Criação de um novo registro na tabela de planos de vôo
-    storeFlightPlan(typed_name, timestamp, blob);
+    storeFlightPlan(typed_name, timestamp, coordinates, blob);
 }
 
 // == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
-function storeFlightPlan(typed_name, timestamp, blob) {
+function storeFlightPlan(typed_name, timestamp, coordinates, blob) {
 
     const filename = timestamp + ".txt";
     const file = new File([blob], filename);
@@ -1395,7 +1396,8 @@ function storeFlightPlan(typed_name, timestamp, blob) {
     let formData = new FormData();
     formData.append("name", typed_name);
     formData.append("description", "none");
-    formData.append("coordinates_file", file);
+    formData.append("file", file);
+    formData.append("coordinates", coordinates[0] + "," + coordinates[1]);
 
     axios.post("/api/plans-module", formData, {
         headers: {

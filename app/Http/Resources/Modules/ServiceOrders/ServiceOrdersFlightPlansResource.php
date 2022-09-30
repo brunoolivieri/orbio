@@ -27,7 +27,7 @@ class ServiceOrdersFlightPlansResource extends JsonResource
 
             $this->formatedData["records"][$row] = [
                 "id" => $flight_plan->id,
-                "file" => $flight_plan->coordinates_file,
+                "file" => $flight_plan->file,
                 "incident" => is_null($flight_plan->incident_id) ? 0 : 1
             ];
 

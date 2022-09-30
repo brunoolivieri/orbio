@@ -51,7 +51,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_write');
 
-        return $this->service->updateResource($request, $id);
+        return $this->service->updateResource($request->validated(), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response

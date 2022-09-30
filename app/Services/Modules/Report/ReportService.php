@@ -32,12 +32,14 @@ class ReportService
         //
     }
 
-    public function updateResource(Request $request, int $report_id)
+    public function updateResource(array $data, string $identifier)
     {
-        //
+        $report = $this->repository->updateOne(collect($data), $identifier);
+
+        return response(["message" => "Log atualizado com sucesso!"], 200);
     }
 
-    public function deleteResource(int $report_id)
+    public function deleteResource(string $identifier)
     {
         //
     }

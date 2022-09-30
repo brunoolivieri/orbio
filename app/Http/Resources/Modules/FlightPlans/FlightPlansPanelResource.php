@@ -29,21 +29,21 @@ class FlightPlansPanelResource extends JsonResource
             $this->formatedData["records"][$row] = [
                 "id" => $flight_plan->id,
                 "name" => $flight_plan->name,
-                "report_id" => $flight_plan->report_id,
+                "log" => $flight_plan->log,
                 "incident_id" => $flight_plan->incident_id,
-                "coordinates_file" => $flight_plan->coordinates_file,
+                "file" => $flight_plan->file,
+                "coordinates" => $flight_plan->coordinate,
                 "description" => $flight_plan->description,
                 "created_at" => date('d-m-Y h:i', strtotime($flight_plan->created_at)),
                 "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($flight_plan->updated_at))
             ];
 
-            if (!empty($flight_plan->report_id)) {
-                $this->formatedData["records"][$row]["report"] = [
-                    "id" => $flight_plan->report->id,
-                    "start_date" => $flight_plan->report->start_date,
-                    "end_date" => $flight_plan->report->end_date,
-                    "flight_log" => $flight_plan->report->flight_log,
-                    "observation" => $flight_plan->report->observation,
+            if (!empty($flight_plan->log)) {
+                $this->formatedData["records"][$row]["log"] = [
+                    "id" => $flight_plan->log->id,
+                    "report" => $flight_plan->log->report,
+                    "logname" => $flight_plan->log->logname,
+                    "observation" => $flight_plan->log->observation,
                     "created_at" => date('d-m-Y h:i', strtotime($flight_plan->report->created_at))
                 ];
             }

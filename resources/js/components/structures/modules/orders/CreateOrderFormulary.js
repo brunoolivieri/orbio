@@ -27,9 +27,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-export const CreateOrderFormulary = React.memo(({ ...props }) => {
-
-  // ============================================================================== STATES E OUTROS VALORES ============================================================================== //
+export const CreateOrderFormulary = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ pilot_id: "0", client_id: "0", observation: "", status: "1" });
@@ -39,8 +37,8 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
   const [loading, setLoading] = React.useState(false);
   const [startDate, setStartDate] = React.useState(moment());
   const [endDate, setEndDate] = React.useState(moment());
-  const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
   const [open, setOpen] = React.useState(false);
+  const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
   // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
 
@@ -57,7 +55,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
     setOpen(false);
   };
 
-  function handleRegistrationSubmit(event) {
+  const handleRegistrationSubmit = (event) => {
     event.preventDefault();
 
     if (formularyDataValidate()) {
@@ -288,6 +286,7 @@ export const CreateOrderFormulary = React.memo(({ ...props }) => {
 
               <FlightPlansForServiceOrderModal
                 setFlightPlansSelected={setFlightPlansSelected}
+                flightPlansSelected={flightPlansSelected}
                 serviceOrderId={null}
               />
 

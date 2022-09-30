@@ -56,9 +56,9 @@ class FlightPlan extends Model
     /*
     * Relationship one to one with reports table
     */
-    function report()
+    function log()
     {
-        return $this->belongsTo(Report::class, "report_id");
+        return $this->hasOne(Report::class, "flight_plan_id");
     }
 
     /*

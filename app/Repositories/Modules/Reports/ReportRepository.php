@@ -20,6 +20,7 @@ class ReportRepository implements RepositoryInterface
     {
         return $this->reportModel
             ->with("log")
+            ->with("flight_plan")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -33,11 +34,22 @@ class ReportRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        //
+        $report = $this->reportModel->findOrFail($identifier);
+
+        $report->update($data->only(["observation", "flight_plan_id"])->all());
+
+        $report->refresh();
+
+        return $report;
     }
 
     function deleteOne(string $identifier)
     {
-        //
+        $report = $this->reportModel->findOrFail($identifier);
+
+        $report->delete();
+
+        return $report;
+
     }
 }

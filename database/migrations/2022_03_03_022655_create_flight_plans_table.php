@@ -16,9 +16,9 @@ class CreateFlightPlansTable extends Migration
         Schema::create('flight_plans', function (Blueprint $table) {
             $table->id();
             $table->string("name");
-            $table->foreignId('report_id')->nullable(true)->constrained('reports')->onDelete('cascade');
             $table->foreignId('incident_id')->nullable(true)->constrained('incidents')->onDelete('cascade');
-            $table->string("coordinates_file");
+            $table->string("file");
+            $table->string("coordinates");
             $table->text("description");
             $table->timestamps();
             $table->softDeletes();

@@ -45,14 +45,14 @@ const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export const FlightPlansForServiceOrderModal = (props) => {
+export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
     const [records, setRecords] = React.useState([]);
     const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
     const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
     const [loading, setLoading] = React.useState(true);
-    const [selectedRecords, setSelectedRecords] = React.useState([]);
+    const [selectedRecords, setSelectedRecords] = React.useState(props.flightPlansSelected);
     const [searchField, setSearchField] = React.useState("");
 
     React.useEffect(() => {
@@ -121,7 +121,7 @@ export const FlightPlansForServiceOrderModal = (props) => {
 
     };
 
-    function handleSearchSubmit(event) {
+    const handleSearchSubmit = (event) => {
         event.preventDefault();
 
         setPaginationConfig({
@@ -320,4 +320,4 @@ export const FlightPlansForServiceOrderModal = (props) => {
             </Dialog>
         </div>
     );
-}
+});

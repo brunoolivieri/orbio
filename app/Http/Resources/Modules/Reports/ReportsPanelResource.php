@@ -30,6 +30,7 @@ class ReportsPanelResource extends JsonResource
             $this->formatedData["records"][$row] = [
                 "id" => $report->id,
                 "path" => empty($report->report) ? 0 : $report->report,
+                "flight_plan" => $report->flight_plan,
                 "log" => [
                     "name" => $report->logname,
                     "path" => $report->log->path,
@@ -38,6 +39,14 @@ class ReportsPanelResource extends JsonResource
                 ],
                 "observation" => empty($report->observation) ? "N/A" : $report->observation
             ];
+
+            if (!empty($report->flight_plan)) {
+                $this->formatedData["records"][$row]["flight_plan"] = [
+                    "name" => $report->flight_plan->name,
+                    "path" => $report->flight_plan->file,
+                    "coordinates" => $report->flight_plan->coordinates
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

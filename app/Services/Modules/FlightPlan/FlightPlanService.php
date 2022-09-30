@@ -52,12 +52,12 @@ class FlightPlanService implements ServiceInterface
 
     function createResource(array $data)
     {
-        if (is_null($data["coordinates_file"])) {
+        if (is_null($data["file"])) {
             return response(["message" => "Falha na criação do plano de voo."], 500);
         }
 
         // Filename is the hash of the content
-        $file_content = file_get_contents($data["coordinates_file"]);
+        $file_content = file_get_contents($data["file"]);
         $file_content_hash = md5($file_content);
         $filename = $file_content_hash . ".txt";
         $path = "flight_plans/" . $filename;

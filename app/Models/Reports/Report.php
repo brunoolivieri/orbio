@@ -48,7 +48,7 @@ class Report extends Model
     */
     function flight_plan()
     {
-        return $this->hasOne(FlightPlan::class, "report_id");
+        return $this->belongsTo(FlightPlan::class);
     }
 
     /*

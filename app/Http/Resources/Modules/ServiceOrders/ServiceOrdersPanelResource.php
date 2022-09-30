@@ -44,7 +44,7 @@ class ServiceOrdersPanelResource extends JsonResource
 
                     $this->formatedData["records"][$row]["flight_plans"][$index] = [
                         "id" => $flight_plan->id,
-                        "file" => $flight_plan->coordinates_file,
+                        "file" => $flight_plan->file,
                         "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                     ];
                 }
@@ -64,7 +64,6 @@ class ServiceOrdersPanelResource extends JsonResource
                     "deleted" => is_null($user->deleted_at) ? 0 : 1
                 ];
             }
-
         }
 
         $this->formatedData["total_records"] = $this->data->total();

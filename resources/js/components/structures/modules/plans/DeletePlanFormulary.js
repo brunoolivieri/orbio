@@ -129,7 +129,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
                 inputProps={{
                   readOnly: true
                 }}
-                defaultValue={props.record.coordinates_file}
+                defaultValue={props.record.file}
               />
 
             </DialogContent>

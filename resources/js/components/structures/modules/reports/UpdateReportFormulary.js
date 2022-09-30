@@ -19,6 +19,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
+import { GenericSelect } from '../../input_select/GenericSelect';
 
 export const UpdateReportFormulary = React.memo((props) => {
 
@@ -26,8 +27,8 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
   const [open, setOpen] = React.useState(false);
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, observation: props.record.observation });
-  const [fieldError, setFieldError] = React.useState({ observation: false });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, observation: props.record.observation, flight_plan_id: props.record.flight_plan_id != null ? props.record.flight_plan_id : "0" });
+  const [fieldError, setFieldError] = React.useState({ observation: false, flight_plan_id: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ observation: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
@@ -58,20 +59,20 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   }
 
-  function submitedDataValidate() {
+  const submitedDataValidate = () => {
 
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
 
-    setFieldError({ observation: observationValidate.error });
+    setFieldError({ observation: observationValidate.error, flight_plan_id: false });
     setFieldErrorMessage({ observation: observationValidate.message });
 
     return !observationValidate.error;
 
   }
 
-  function requestServerOperation(data) {
+  const requestServerOperation = () => {
 
-    AxiosApi.patch(`/api/reports-module/${data.get("id")}`, controlledInput)
+    AxiosApi.patch(`/api/reports-module/${controlledInput.id}`, controlledInput)
       .then(function () {
 
         setLoading(false);
@@ -87,7 +88,7 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   }
 
-  function successServerResponseTreatment() {
+  const successServerResponseTreatment = () => {
 
     setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -102,9 +103,9 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   }
 
-  function errorServerResponseTreatment(response_data) {
+  const errorServerResponseTreatment = (data) => {
 
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Erro do servidor!";
+    let error_message = (data.message != "" && data.message != undefined) ? data.message : "Erro do servidor!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
     // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -113,11 +114,11 @@ export const UpdateReportFormulary = React.memo((props) => {
     }
 
     // Coleta dos objetos de erro existentes na response
-    for (let prop in response_data.errors) {
+    for (let prop in data.errors) {
 
       input_errors[prop] = {
         error: true,
-        message: response_data.errors[prop][0]
+        message: data.errors[prop][0]
       }
 
     }
@@ -155,48 +156,67 @@ export const UpdateReportFormulary = React.memo((props) => {
 
           <DialogContent>
 
-            <TextField
-              margin="dense"
-              id="id"
-              name="id"
-              label="ID"
-              type="text"
-              fullWidth
-              variant="outlined"
-              value={controlledInput.id}
-              defaultValue={props.record.id}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                margin="dense"
+                id="id"
+                name="id"
+                label="ID"
+                type="text"
+                fullWidth
+                variant="outlined"
+                defaultValue={props.record.id}
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Box>
 
-            <TextField
-              margin="dense"
-              label="Log do vôo"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.record.log.name}
-              InputProps={{
-                inputProps: { min: 0, max: 1 },
-                readOnly: true
-              }}
-            />
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                margin="dense"
+                label="Log do vôo"
+                type="text"
+                fullWidth
+                variant="outlined"
+                defaultValue={props.record.log.name}
+                InputProps={{
+                  inputProps: { min: 0, max: 1 },
+                  readOnly: true
+                }}
+              />
+            </Box>
 
-            <TextField
-              margin="dense"
-              id="observation"
-              name="observation"
-              label="Observação"
-              type="text"
-              fullWidth
-              variant="outlined"
-              value={controlledInput.observation}
-              defaultValue={props.record.observation}
-              helperText={fieldErrorMessage.observation}
-              error={fieldError.observation}
-              onChange={handleInputChange}
-            />
+            <Box sx={{ mb: 2 }}>
+              <TextField
+                margin="dense"
+                id="observation"
+                name="observation"
+                label="Observação"
+                type="text"
+                fullWidth
+                variant="outlined"
+                value={controlledInput.observation}
+                helperText={fieldErrorMessage.observation}
+                error={fieldError.observation}
+                onChange={handleInputChange}
+              />
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <GenericSelect
+                label_text="Planos de voo"
+                data_source={"/api/load-flight_plans"}
+                primary_key={"id"}
+                key_content={"name"}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                helperText={fieldErrorMessage.flight_plan_id}
+                error={fieldError.client_id}
+                name={"flight_plan_id"}
+                value={controlledInput.flight_plan_id}
+              />
+            </Box>
 
           </DialogContent>
 

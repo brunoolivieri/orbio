@@ -16,6 +16,7 @@ class CreateReportsTable extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->string("logname");
+            $table->foreignId('flight_plan_id')->nullable(true)->constrained('flight_plans')->onDelete('cascade');
             $table->string("report")->nullable(true);
             $table->timestamp("log_timestamp");
             $table->text("observation")->nullable(true);

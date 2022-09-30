@@ -45,7 +45,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createResource($request->only(["name", "coordinates_file", "description"]));
+        return $this->service->createResource($request->only(["name", "file", "description", "coordinates"]));
     }
 
     public function show($id): \Illuminate\Http\Response

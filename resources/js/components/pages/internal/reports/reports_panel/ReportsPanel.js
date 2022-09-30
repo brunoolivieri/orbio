@@ -31,9 +31,11 @@ import FormControl from '@mui/material/FormControl';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import { Link } from "@mui/material";
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -320,31 +322,47 @@ export function ReportsPanel() {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Log</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Data do log</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
-                  records.map((report, index) => (
-                    <TableRow key={report.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={report.id} /></TableCell>
+                  records.map((log, index) => (
+                    <TableRow key={log.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
+                      <TableCell align="center">{log.log.name}</TableCell>
                       <TableCell align="center">
-                        {report.path != 0 ?
+                        {log.flight_plan != null ?
+                          <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
+                            <Tooltip title="Ver plano">
+                              <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
+                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                              </IconButton>
+                            </Tooltip>
+                          </Link>
+                          :
+                          <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
+                            <FontAwesomeIcon icon={faEye} color={"#808991"} size="sm" />
+                          </IconButton>
+                        }
+                      </TableCell>
+                      <TableCell align="center">
+                        {log.path != 0 ?
                           <Tooltip title={"Exportar relatório"}>
                             <IconButton onClick={() => handleDownloadReport()}>
                               <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
                             </IconButton>
                           </Tooltip>
                           :
-                          <GenerateReportFormulary record={report} />
+                          <GenerateReportFormulary record={log} />
                         }
                       </TableCell>
-                      <TableCell align="center">{report.log.name}</TableCell>
-                      <TableCell align="center">{report.log.datetime}</TableCell>
-                      <TableCell align="center">{report.observation}</TableCell>
+                      <TableCell align="center">{log.log.datetime}</TableCell>
+                      <TableCell align="center">{log.observation}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
