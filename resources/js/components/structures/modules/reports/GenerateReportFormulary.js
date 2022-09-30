@@ -29,22 +29,17 @@ import AxiosApi from '../../../../services/AxiosApi';
 
 export const GenerateReportFormulary = React.memo((props) => {
 
-  // API - states and cities: https://servicodados.ibge.gov.br/api/docs/localidades#api-Municipios-municipiosGet
-  // API - weather: 
-
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES AND VARIABLES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-  const [controlledInput, setControlledInput] = React.useState({ name: '', client: '', farm: '', area: '', date: props.record.datetime, number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
+  const [controlledInput, setControlledInput] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: props.record.datetime, number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
   const [fieldError, setFieldError] = React.useState({ name: false, client: false, state: false, city: false, farm: false, area: false, date: false, number: false, product: false, responsible: false, temperature: false, humidity: false, wind: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: '', number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
-  const [selectedState, setSelectedState] = React.useState(null);
-  const [selectedCity, setSelectedCity] = React.useState(null);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -85,7 +80,7 @@ export const GenerateReportFormulary = React.memo((props) => {
 
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+  // ============================================================================== STRUCTURE ============================================================================== //
 
   return (
     <>
@@ -115,6 +110,9 @@ export const GenerateReportFormulary = React.memo((props) => {
                     fullWidth
                     variant="outlined"
                     onChange={handleInputChange}
+                    value={controlledInput.name}
+                    error={fieldError.name}
+                    helperText={fieldErrorMessage.name}
                   />
                 </Grid>
 
@@ -133,33 +131,37 @@ export const GenerateReportFormulary = React.memo((props) => {
                 </Grid>
 
                 <Grid item xs={4}>
-                  <AutoCompleteState
-                    label={"Estados"}
-                    name={"state"}
-                    source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
-                    primary_key={"id"}
-                    key_text={"sigla"}
+                  <TextField
+                    id="name"
+                    name="state"
+                    label="Estado"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    value={controlledInput.state}
                     error={fieldError.state}
-                    setSelectedState={setSelectedState}
-                    setControlledInput={setControlledInput}
-                    controlledInput={controlledInput}
+                    helperText={fieldErrorMessage.state}
+                    inputProps={{
+                      readOnly: true
+                    }}
                   />
                 </Grid>
 
                 <Grid item xs={4}>
-                  {(selectedState != null) &&
-                    <AutoCompleteCity
-                      label={"Cidades"}
-                      name={"city"}
-                      source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + selectedState + "/municipios"}
-                      primary_key={"id"}
-                      key_text={"nome"}
-                      error={fieldError.city}
-                      setSelectedCity={setSelectedCity}
-                      setControlledInput={setControlledInput}
-                      controlledInput={controlledInput}
-                    />
-                  }
+                  <TextField
+                    id="name"
+                    name="city"
+                    label="Cidade"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    value={controlledInput.city}
+                    error={fieldError.city}
+                    helperText={fieldErrorMessage.city}
+                    inputProps={{
+                      readOnly: true
+                    }}
+                  />
                 </Grid>
 
                 <Grid item xs={12} sm={12}>

@@ -1397,7 +1397,7 @@ function storeFlightPlan(typed_name, timestamp, coordinates, blob) {
     formData.append("name", typed_name);
     formData.append("description", "none");
     formData.append("file", file);
-    formData.append("coordinates", coordinates[0] + "," + coordinates[1]);
+    formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
 
     axios.post("/api/plans-module", formData, {
         headers: {

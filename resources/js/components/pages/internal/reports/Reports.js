@@ -16,7 +16,7 @@ export const Reports = React.memo(() => {
 
   return (
     <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
-      <Box sx={{ my: 5, mx: 2 }} color="text.secondary">
+      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
         <ReportsPanel />
 

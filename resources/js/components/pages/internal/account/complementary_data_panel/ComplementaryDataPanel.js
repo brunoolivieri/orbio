@@ -17,6 +17,8 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericSelect } from '../../../../structures/input_select/GenericSelect';
+import { AutoCompleteCity } from '../../../../structures/input_select/AutoCompleteCity';
+import { AutoCompleteState } from '../../../../structures/input_select/AutoCompleteState';
 // Libs
 import { useSnackbar } from 'notistack';
 
@@ -35,8 +37,6 @@ export const ComplementaryDataPanel = React.memo(() => {
         address: "Carregando",
         number: "Carregando",
         cep: "Carregando",
-        city: "0",
-        state: "0",
         complement: "Carregando"
     });
 
@@ -46,6 +46,8 @@ export const ComplementaryDataPanel = React.memo(() => {
     const [fieldError, setFieldError] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" });
     const [keyPressed, setKeyPressed] = React.useState(null);
+    const [selectedState, setSelectedState] = React.useState(null);
+    const [selectedCity, setSelectedCity] = React.useState(null);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -64,8 +66,6 @@ export const ComplementaryDataPanel = React.memo(() => {
             address: "Carregando",
             number: "Carregando",
             cep: "Carregando",
-            city: "0",
-            state: "0",
             complement: "Carregando"
         });
 
@@ -110,8 +110,6 @@ export const ComplementaryDataPanel = React.memo(() => {
                     address: "Erro",
                     number: "Erro",
                     cep: "Erro",
-                    city: "Erro",
-                    state: "Erro",
                     complement: "Erro"
                 });
                 handleOpenSnackbar("Erro no carregamento dos dados.", "error");
@@ -203,8 +201,8 @@ export const ComplementaryDataPanel = React.memo(() => {
         const addressValidate = FormValidation(controlledInput.address, 3);
         const numberValidate = FormValidation(controlledInput.number, null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
         const cepValidate = FormValidation(controlledInput.cep, null, null, cepPattern, "CEP");
-        const cityValidate = controlledInput.city != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
-        const stateValidate = controlledInput.state != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
+        const cityValidate = selectedCity != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
+        const stateValidate = selectedState != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
         const complementValidate = FormValidation(controlledInput.complement);
 
         setFieldError(
@@ -281,8 +279,8 @@ export const ComplementaryDataPanel = React.memo(() => {
             address: controlledInput.address,
             number: controlledInput.number,
             cep: controlledInput.cep,
-            city: controlledInput.city,
-            state: controlledInput.state,
+            city: selectedCity,
+            state: selectedState,
             complement: controlledInput.complement
         })
             .then(function (response) {
@@ -606,43 +604,46 @@ export const ComplementaryDataPanel = React.memo(() => {
 
                     <Typography variant="h5" marginBottom={2}>Endereço</Typography>
 
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} columns={10}>
 
-                        <Grid item xs={12} sm={12}>
-
-                            <GenericSelect
-                                label_text={"Estados"}
-                                data_source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
-                                primary_key={"id"}
-                                key_content={"sigla"}
-                                error={fieldError.state}
+                        <Grid item xs={5} lg={2} xl={2}>
+                            <AutoCompleteState
+                                label={"Estados"}
                                 name={"state"}
-                                value={controlledInput.state}
-                                setControlledInput={setControlledInput}
-                                controlledInput={controlledInput}
-                                onChange={handleInputChange}
-                            />
-
-                        </Grid>
-
-                        <Grid item xs={12} sm={12}>
-
-                            <GenericSelect
-                                label_text={"Cidades"}
-                                data_source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + controlledInput.state + "/municipios"}
+                                source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
                                 primary_key={"id"}
-                                key_content={"nome"}
-                                error={fieldError.city}
-                                name={"city"}
-                                value={controlledInput.city}
+                                key_text={"sigla"}
+                                error={fieldError.state}
+                                setSelectedState={setSelectedState}
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}
-                                onChange={handleInputChange}
                             />
-
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={5} lg={2} xl={2}>
+                            {(selectedState != null) ?
+                                <AutoCompleteCity
+                                    label={"Cidades"}
+                                    name={"city"}
+                                    source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + selectedState + "/municipios"}
+                                    primary_key={"id"}
+                                    key_text={"nome"}
+                                    error={fieldError.city}
+                                    setSelectedCity={setSelectedCity}
+                                    setControlledInput={setControlledInput}
+                                    controlledInput={controlledInput}
+                                />
+                                :
+                                <TextField
+                                    label="Selecione um estado"
+                                    disabled
+                                    fullWidth
+                                    variant="outlined"
+                                />
+                            }
+                        </Grid>
+
+                        <Grid item xs={7} lg={3} xl={3}>
                             <TextField
                                 id="cep"
                                 name="cep"
@@ -663,22 +664,7 @@ export const ComplementaryDataPanel = React.memo(() => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="address"
-                                name="address"
-                                label="Logradouro"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.address}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.address}
-                                error={fieldError.address}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={3} lg={3} xl={3}>
                             <TextField
                                 id="number"
                                 name="number"
@@ -693,7 +679,22 @@ export const ComplementaryDataPanel = React.memo(() => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={10} sm={6} lg={5} xl={5}>
+                            <TextField
+                                id="address"
+                                name="address"
+                                label="Logradouro"
+                                fullWidth
+                                variant="outlined"
+                                value={controlledInput.address}
+                                disabled={loadingFields}
+                                helperText={fieldErrorMessage.address}
+                                error={fieldError.address}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={10} sm={4} lg={5} xl={5}>
                             <TextField
                                 id="complement"
                                 name="complement"
