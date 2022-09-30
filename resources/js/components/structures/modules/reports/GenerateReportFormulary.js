@@ -18,8 +18,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { AutoCompleteState } from '../../input_select/AutoCompleteState';
-import { AutoCompleteCity } from '../../input_select/AutoCompleteCity';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ReportBuilder } from '../../report_builder/ReportBuilder';
@@ -59,12 +57,8 @@ export const GenerateReportFormulary = React.memo((props) => {
 
   const handleLoadWeather = () => {
 
-    if (selectedState == null || selectedCity == null) {
-      return '';
-    }
-
-    const state = selectedState;
-    const city = selectedCity;
+    const state = controlledInput.state;
+    const city = controlledInput.city;
 
     AxiosApi.get(`https://api.hgbrasil.com/weather?key=43ccb418&city_name=${state},${city}`)
       .then(function (response) {
