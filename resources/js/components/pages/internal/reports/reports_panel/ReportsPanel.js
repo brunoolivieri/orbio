@@ -36,6 +36,7 @@ import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -345,20 +346,31 @@ export function ReportsPanel() {
                             </Tooltip>
                           </Link>
                           :
-                          <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                            <FontAwesomeIcon icon={faEye} color={"#808991"} size="sm" />
-                          </IconButton>
+                          <Tooltip title={"Um plano de voo é necessário"}>
+                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
+                              <FontAwesomeIcon icon={faEye} color={"#808991"} size="sm" />
+                            </IconButton>
+                          </Tooltip>
                         }
                       </TableCell>
                       <TableCell align="center">
-                        {log.path != 0 ?
-                          <Tooltip title={"Exportar relatório"}>
-                            <IconButton onClick={() => handleDownloadReport()}>
-                              <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
-                            </IconButton>
-                          </Tooltip>
-                          :
-                          <GenerateReportFormulary record={log} />
+                        {
+                          log.flight_plan != null ?
+                            (log.path != null ?
+                              <Tooltip title={"Exportar relatório"}>
+                                <IconButton onClick={() => handleDownloadReport()}>
+                                  <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
+                                </IconButton>
+                              </Tooltip>
+                              :
+                              <GenerateReportFormulary record={log} />
+                            )
+                            :
+                            <Tooltip title={"Um plano de voo é necessário"}>
+                              <IconButton>
+                                <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#808991"} />
+                              </IconButton>
+                            </Tooltip>
                         }
                       </TableCell>
                       <TableCell align="center">{log.log.datetime}</TableCell>

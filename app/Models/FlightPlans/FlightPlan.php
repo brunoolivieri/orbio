@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Model
 use App\Models\Incidents\Incident;
+use App\Models\Users\User;
 use App\Models\Reports\Report;
 use App\Models\ServiceOrders\ServiceOrder;
 
@@ -43,6 +44,14 @@ class FlightPlan extends Model
                 $query->where($filter["column"], $filter["value"]);
             }
         });
+    }
+
+    /*
+    * Relationship one to one with user table
+    */
+    function user()
+    {
+        return $this->belongsTo(User::class, "creator_id");
     }
 
     /*

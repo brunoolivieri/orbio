@@ -353,6 +353,7 @@ export const PlansPanel = () => {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Abrir</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
@@ -366,6 +367,7 @@ export const PlansPanel = () => {
                   records.map((row, index) => (
                     <TableRow key={row.id} >
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
+                      <TableCell align="center">{row.creator.name}</TableCell>
                       <TableCell align="center">{row.name}</TableCell>
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${row.file}`} target="_blank">

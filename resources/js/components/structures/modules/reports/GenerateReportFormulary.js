@@ -33,7 +33,7 @@ export const GenerateReportFormulary = React.memo((props) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-  const [controlledInput, setControlledInput] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: props.record.datetime, number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
+  const [controlledInput, setControlledInput] = React.useState({ name: '', client: '', state: props.record.flight_plan.localization.state, city: props.record.flight_plan.localization.city, farm: '', area: '', date: props.record.datetime, number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
   const [fieldError, setFieldError] = React.useState({ name: false, client: false, state: false, city: false, farm: false, area: false, date: false, number: false, product: false, responsible: false, temperature: false, humidity: false, wind: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: '', number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
 
@@ -96,7 +96,7 @@ export const GenerateReportFormulary = React.memo((props) => {
             <Box mb={2}>
 
               <Grid container spacing={2}>
-                <Grid item xs={12}>
+                <Grid item xs={6}>
                   <TextField
                     id="name"
                     name="name"
@@ -110,7 +110,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <GenericSelect
                     label_text={"Cliente"}
                     data_source={"/api/load-users?where=profile_id.4"}
@@ -124,7 +124,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <TextField
                     id="name"
                     name="state"
@@ -141,7 +141,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                   />
                 </Grid>
 
-                <Grid item xs={4}>
+                <Grid item xs={6}>
                   <TextField
                     id="name"
                     name="city"
@@ -247,7 +247,7 @@ export const GenerateReportFormulary = React.memo((props) => {
 
               <Grid container spacing={2} columns={13}>
                 <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <Tooltip title="Delete">
+                  <Tooltip title="Carregar clima">
                     <IconButton onClick={() => handleLoadWeather()}>
                       <SearchIcon />
                     </IconButton>

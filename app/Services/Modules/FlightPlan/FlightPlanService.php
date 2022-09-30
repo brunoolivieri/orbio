@@ -2,8 +2,8 @@
 
 namespace App\Services\Modules\FlightPlan;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 // Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
 // Resources
@@ -66,6 +66,11 @@ class FlightPlanService implements ServiceInterface
         $data["file_content"] = $file_content;
         $data["filename"] = $filename;
         $data["path"] = $path;
+
+        $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["coordinates"] . "&key=" . env("GOOGLE_API_KEY"))["results"][0]["address_components"];
+
+        $data["city"] = $address_components[2]["long_name"];
+        $data["state"] = $address_components[4]["short_name"];
 
         $flight_plan = $this->repository->createOne(collect($data));
 

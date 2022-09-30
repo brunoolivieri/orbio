@@ -28,11 +28,20 @@ class FlightPlansPanelResource extends JsonResource
 
             $this->formatedData["records"][$row] = [
                 "id" => $flight_plan->id,
+                "creator" => [
+                    "name" => $flight_plan->user->name,
+                    "email" => $flight_plan->user->email,
+                    "deleted_at" => $flight_plan->user->deleted_at
+                ],
                 "name" => $flight_plan->name,
                 "log" => $flight_plan->log,
                 "incident_id" => $flight_plan->incident_id,
                 "file" => $flight_plan->file,
-                "coordinates" => $flight_plan->coordinate,
+                "localization" => [
+                    "coordinates" => $flight_plan->coordinates,
+                    "state" => $flight_plan->state,
+                    "city" => $flight_plan->city
+                ],
                 "description" => $flight_plan->description,
                 "created_at" => date('d-m-Y h:i', strtotime($flight_plan->created_at)),
                 "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($flight_plan->updated_at))

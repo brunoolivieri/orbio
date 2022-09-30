@@ -6,6 +6,7 @@ use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 // Model
 use App\Models\FlightPlans\FlightPlan;
 
@@ -29,10 +30,13 @@ class FlightPlanRepository implements RepositoryInterface
     function createOne(Collection $data)
     {
         $flight_plan = $this->flightPlanModel->create([
-            "name" => $data->get('name'),
-            "file" => $data->get('filename'),
+            "creator_id" => Auth::user()->id,
+            "name" => $data->get("name"),
+            "file" => $data->get("filename"),
             "coordinates" => $data->get("coordinates"),
-            "description" => $data->get('description')
+            "state" => $data->get("state"),
+            "city" => $data->get("city"),
+            "description" => $data->get("description")
         ]);
 
         // Flight plan is stored just if does not already exists

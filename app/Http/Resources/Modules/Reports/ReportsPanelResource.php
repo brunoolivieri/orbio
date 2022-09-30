@@ -29,7 +29,7 @@ class ReportsPanelResource extends JsonResource
 
             $this->formatedData["records"][$row] = [
                 "id" => $report->id,
-                "path" => empty($report->report) ? 0 : $report->report,
+                "path" => empty($report->report) ? null : $report->report,
                 "flight_plan" => $report->flight_plan,
                 "log" => [
                     "name" => $report->logname,
@@ -44,7 +44,11 @@ class ReportsPanelResource extends JsonResource
                 $this->formatedData["records"][$row]["flight_plan"] = [
                     "name" => $report->flight_plan->name,
                     "path" => $report->flight_plan->file,
-                    "coordinates" => $report->flight_plan->coordinates
+                    "localization" => [
+                        "coordinates" => $report->flight_plan->coordinates,
+                        "state" => $report->flight_plan->state,
+                        "city" => $report->flight_plan->city
+                    ]
                 ];
             }
         }
