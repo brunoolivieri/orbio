@@ -53,7 +53,7 @@ class FlightPlansPanelResource extends JsonResource
                     "report" => $flight_plan->log->report,
                     "logname" => $flight_plan->log->logname,
                     "observation" => $flight_plan->log->observation,
-                    "created_at" => date('d-m-Y h:i', strtotime($flight_plan->report->created_at))
+                    "created_at" => date('d-m-Y h:i', strtotime($flight_plan->log->created_at))
                 ];
             }
 

@@ -70,7 +70,7 @@ class FlightPlanService implements ServiceInterface
         $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["coordinates"] . "&key=" . env("GOOGLE_API_KEY"))["results"][0]["address_components"];
 
         $data["city"] = $address_components[2]["long_name"];
-        $data["state"] = $address_components[4]["short_name"];
+        $data["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
 
         $flight_plan = $this->repository->createOne(collect($data));
 
