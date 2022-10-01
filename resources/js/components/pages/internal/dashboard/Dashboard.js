@@ -216,7 +216,7 @@ export const Dashboard = React.memo(() => {
               <Card sx={CardStyle}>
                 <CardHeader
                   avatar={<FontAwesomeIcon icon={faChartColumn} color="green" size='2x' />}
-                  title={<Typography variant="h6">Relatórios</Typography>}
+                  title={<Typography variant="h6">Logs</Typography>}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
