@@ -20,10 +20,11 @@ import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { ReportBuilder } from '../../report_builder/ReportBuilder';
 import { DatePicker } from "../../date_picker/DatePicker";
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
+// Custom
+import Logo from "../../../assets/images/Logos/Birdview.png";
 
 export const GenerateReportFormulary = React.memo((props) => {
 
@@ -33,11 +34,35 @@ export const GenerateReportFormulary = React.memo((props) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-  const [controlledInput, setControlledInput] = React.useState({ name: '', client: '', state: props.record.flight_plan.localization.state, city: props.record.flight_plan.localization.city, farm: '', area: '', date: props.record.datetime, number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
-  const [fieldError, setFieldError] = React.useState({ name: false, client: false, state: false, city: false, farm: false, area: false, date: false, number: false, product: false, responsible: false, temperature: false, humidity: false, wind: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: '', number: '', product: '', responsible: '', temperature: '', humidity: '', wind: '' });
+  const [controlledInput, setControlledInput] = React.useState(
+    {
+      image: Logo,
+      name: '',
+      client: '',
+      state: props.record.flight_plan.localization.state,
+      city: props.record.flight_plan.localization.city,
+      farm: '',
+      area: '',
+      date: props.record.log.datetime,
+      number: '',
+      dosage: '',
+      provider: '',
+      responsible: '',
+      temperature: '',
+      humidity: '',
+      wind: ''
+    });
+
+  const [fieldError, setFieldError] = React.useState({ name: false, client: false, state: false, city: false, farm: false, area: false, date: false, number: false, dosage: false, responsible: false, provider: false, temperature: false, humidity: false, wind: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: '', number: '', dosage: '', responsible: '', provider: '', temperature: '', humidity: '', wind: '' });
 
   // ============================================================================== FUNCTIONS ============================================================================== //
+
+  React.useEffect(() => {
+    if (controlledInput.temperature == '' && controlledInput.humidity == '' && controlledInput.wind == '') {
+      handleLoadWeather();
+    }
+  }, []);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -60,10 +85,14 @@ export const GenerateReportFormulary = React.memo((props) => {
     const state = controlledInput.state;
     const city = controlledInput.city;
 
-    AxiosApi.get(`https://api.hgbrasil.com/weather?key=43ccb418&city_name=${state},${city}`)
-      .then(function (response) {
+    AxiosApi.get(`api/get-weather-data?state=${state}&city=${city}`)
+      .then((response) => {
 
-        console.log(response.data);
+        const temperature = response.data.temperature;
+        const humidity = response.data.humidity;
+        const wind = response.data.wind_speedy.split(" ")[0];
+
+        setControlledInput({ ...controlledInput, ['temperature']: temperature, ['humidity']: humidity, ['wind']: wind });
 
       })
       .catch(function (error) {
@@ -71,6 +100,107 @@ export const GenerateReportFormulary = React.memo((props) => {
         console.log(error);
 
       });
+  }
+
+  const handleReportGenerate = (e) => {
+    e.preventDefault();
+
+    AxiosApi.post("api/export-report-pdf", controlledInput)
+      .then((response) => {
+
+        const base64PDF = response.data;
+
+        let bin = atob(base64PDF);
+        let obj = document.createElement('object');
+        obj.style.width = '100%';
+        obj.style.height = '842pt';
+        obj.type = 'application/pdf';
+        obj.data = 'data:application/pdf;base64,' + base64PDF;
+        document.body.appendChild(obj);
+
+        // Insert a link that allows the user to download the PDF file
+        let link = document.createElement('a');
+        link.innerHTML = 'Download PDF file';
+        link.download = 'file.pdf';
+        link.href = 'data:application/octet-stream;base64,' + base64PDF;
+        document.body.appendChild(link);
+        link.click();
+
+      })
+      .catch(function (error) {
+
+        console.log(error);
+        errorServerRequestTreatment(error.response);
+
+      });
+
+  }
+
+  const errorServerRequestTreatment = (response) => {
+
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
+    setDisplayAlert({ display: true, type: "error", message: error_message });
+
+    // Errors by key that can be returned from backend validation
+    let request_errors = {
+      name: { error: false, message: null },
+      client: { error: false, message: null },
+      state: { error: false, message: null },
+      city: { error: false, message: null },
+      farm: { error: false, message: null },
+      area: { error: false, message: null },
+      date: { error: false, message: null },
+      number: { error: false, message: null },
+      dosage: { error: false, message: null },
+      temperature: { error: false, message: null },
+      humidity: { error: false, message: null },
+      wind: { error: false, message: null },
+      provider: { error: false, message: null },
+      responsible: { error: false, message: null }
+    }
+
+    // Get errors by their key 
+    for (let prop in response.data.errors) {
+
+      request_errors[prop] = {
+        error: true,
+        message: response.data.errors[prop][0]
+      }
+
+    }
+
+    setFieldError({
+      name: request_errors.name.error,
+      client: request_errors.client.error,
+      state: request_errors.state.error,
+      city: request_errors.city.error,
+      farm: request_errors.farm.error,
+      area: request_errors.area.error,
+      date: request_errors.date.error,
+      number: request_errors.number.error,
+      dosage: request_errors.dosage.error,
+      temperature: request_errors.temperature.error,
+      humidity: request_errors.humidity.error,
+      wind: request_errors.wind.error,
+      provider: request_errors.provider.error,
+      responsible: request_errors.responsible.error
+    });
+
+    setFieldErrorMessage({
+      name: request_errors.name.message,
+      client: request_errors.client.message,
+      city: request_errors.city.message,
+      farm: request_errors.farm.message,
+      area: request_errors.area.message,
+      date: request_errors.date.message,
+      number: request_errors.number.message,
+      dosage: request_errors.dosage.message,
+      temperature: request_errors.temperature.message,
+      humidity: request_errors.humidity.message,
+      wind: request_errors.wind.message,
+      provider: request_errors.provider.message,
+      responsible: request_errors.responsible.message
+    });
 
   }
 
@@ -89,7 +219,7 @@ export const GenerateReportFormulary = React.memo((props) => {
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-        <Box component="form" noValidate>
+        <Box component="form" noValidate onSubmit={handleReportGenerate}>
 
           <DialogContent>
 
@@ -114,7 +244,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                   <GenericSelect
                     label_text={"Cliente"}
                     data_source={"/api/load-users?where=profile_id.4"}
-                    primary_key={"id"}
+                    primary_key={"name"}
                     key_content={"name"}
                     error={fieldError.client}
                     name={"client"}
@@ -193,9 +323,11 @@ export const GenerateReportFormulary = React.memo((props) => {
                   <DatePicker
                     name="date"
                     label="Data da aplicação"
+                    inputFormat="dd/MM/yyyy hh:mm"
                     helperText={fieldErrorMessage.date}
                     error={fieldError.date}
                     value={controlledInput.date}
+                    onChange={handleInputChange}
                   />
                 </Grid>
 
@@ -214,14 +346,14 @@ export const GenerateReportFormulary = React.memo((props) => {
 
                 <Grid item xs={6}>
                   <TextField
-                    name="product"
-                    label="Ovos/Ha"
+                    name="dosage"
+                    label="Dosagem"
                     fullWidth
                     variant="outlined"
                     onChange={handleInputChange}
-                    helperText={fieldErrorMessage.product}
-                    error={fieldError.product}
-                    value={controlledInput.product}
+                    helperText={fieldErrorMessage.dosage}
+                    error={fieldError.dosage}
+                    value={controlledInput.dosage}
                   />
                 </Grid>
 
@@ -235,6 +367,19 @@ export const GenerateReportFormulary = React.memo((props) => {
                     helperText={fieldErrorMessage.responsible}
                     error={fieldError.responsible}
                     value={controlledInput.responsible}
+                  />
+                </Grid>
+
+                <Grid item xs={12}>
+                  <TextField
+                    name="provider"
+                    label="Fornecedor"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    helperText={fieldErrorMessage.provider}
+                    error={fieldError.provider}
+                    value={controlledInput.provider}
                   />
                 </Grid>
               </Grid>
@@ -256,8 +401,6 @@ export const GenerateReportFormulary = React.memo((props) => {
 
                 <Grid item xs={4}>
                   <TextField
-                    id="name"
-                    name="name"
                     label="Temperatura (Cº)"
                     fullWidth
                     variant="outlined"
@@ -267,13 +410,12 @@ export const GenerateReportFormulary = React.memo((props) => {
                     inputProps={{
                       readOnly: true
                     }}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
 
                 <Grid item xs={4}>
                   <TextField
-                    id="email"
-                    name="email"
                     label="Umidade"
                     fullWidth
                     variant="outlined"
@@ -283,13 +425,12 @@ export const GenerateReportFormulary = React.memo((props) => {
                     inputProps={{
                       readOnly: true
                     }}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
 
                 <Grid item xs={4}>
                   <TextField
-                    id="email"
-                    name="email"
                     label="Vento (Km/h)"
                     fullWidth
                     helperText={fieldErrorMessage.wind}
@@ -298,6 +439,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                     inputProps={{
                       readOnly: true
                     }}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
               </Grid>
@@ -307,15 +449,14 @@ export const GenerateReportFormulary = React.memo((props) => {
           </DialogContent>
 
           {displayAlert.display &&
-            <Alert severity={displayAlert.type} variant="filled">{displayAlert.message}</Alert>
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
           }
 
           {loading && <LinearProgress />}
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <ReportBuilder />
-            <Button type="submit" variant="contained">Confirmar</Button>
+            <Button type="submit" variant='contained'>Exportar</Button>
           </DialogActions>
 
         </Box>

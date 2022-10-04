@@ -43,6 +43,8 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+// Lib
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -373,7 +375,7 @@ export function ReportsPanel() {
                             </Tooltip>
                         }
                       </TableCell>
-                      <TableCell align="center">{log.log.datetime}</TableCell>
+                      <TableCell align="center">{moment(log.log.datetime).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">{log.observation}</TableCell>
                     </TableRow>
                   ))}

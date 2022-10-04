@@ -67,7 +67,7 @@ class FlightPlanService implements ServiceInterface
         $data["filename"] = $filename;
         $data["path"] = $path;
 
-        $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["coordinates"] . "&key=" . env("GOOGLE_API_KEY"))["results"][0]["address_components"];
+        $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["coordinates"] . "&key=" . env("MIX_GOOGLE_API_KEY"))["results"][0]["address_components"];
 
         $data["city"] = $address_components[2]["long_name"];
         $data["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];

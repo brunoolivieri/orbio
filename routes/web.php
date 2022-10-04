@@ -11,7 +11,8 @@ use App\Http\Controllers\Actions\Authentication\{
 // Api Actions
 use App\Http\Controllers\Actions\Api\{
     LoadDroneLogsController,
-    DownloadDroneLogController
+    DownloadDroneLogController,
+    WeatherDataController
 };
 // Dashboard Action
 use App\Http\Controllers\Actions\Dashboard\DashboardController;
@@ -23,7 +24,8 @@ use App\Http\Controllers\Actions\{
     LoadProfilesController,
     LoadReportsController,
     LoadUsersController,
-    LoadFlightPlansForServiceOrderController
+    LoadFlightPlansForServiceOrderController,
+    MakePDFController
 };
 // Internal Controller 
 use App\Http\Controllers\Internal\{
@@ -91,6 +93,8 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
+    Route::post('api/export-report-pdf', MakePDFController::class);
+    Route::get('api/get-weather-data', WeatherDataController::class);
     Route::get('api/get-drone-logs', LoadDroneLogsController::class);
     Route::post('api/download-selected-logs', DownloadDroneLogController::class);
     Route::post('/api/get-auth-data', LoadAuthData::class);

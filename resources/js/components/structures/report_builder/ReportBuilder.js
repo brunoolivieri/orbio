@@ -6,6 +6,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+// Assets
+import BirdviewLogo from "../../assets/images/Logos/Birdview.png";
 
 // Create styles
 const styles = StyleSheet.create({
@@ -14,10 +16,25 @@ const styles = StyleSheet.create({
         height: "650px"
     },
     page: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding: 40
+    },
+    container: {
+        display: 'flex',
+        flexDirection: 'column'
     },
     section: {
         flexGrow: 1
+    },
+    top_text: {
+        padding: '5px 5px 5px 0',
+        fontSize: '12px',
+        fontWeight: '900'
+    },
+    logo: {
+        width: '90px',
+        height: '40px',
+        marginBottom: '20px'
     }
 });
 
@@ -25,8 +42,11 @@ export const ReportBuilder = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
 
+    const [report, setReport] = React.useState({});
+
     const handleClickOpen = () => {
         setOpen(true);
+        setReport(props.data);
     }
 
     const handleClose = () => {
@@ -55,11 +75,24 @@ export const ReportBuilder = React.memo((props) => {
                             <Page size="A4" style={styles.page}>
 
                                 <View style={styles.section}>
-                                    <Text>Section #1</Text>
+
+                                    <Image
+                                        src={BirdviewLogo}
+                                        style={styles.logo}
+                                    ></Image>
+                                    <Text style={styles.top_text}>{`RELATÓRIO: ${report.name}`.toUpperCase()}</Text>
+                                    <Text style={styles.top_text}>{`CLIENTE: ${report.client}`.toUpperCase()}</Text>
+                                    <Text style={styles.top_text}>{`REGIÃO: ${report.city}, ${report.state}`.toUpperCase()}</Text>
+                                    <Text style={styles.top_text}>{`FAZENDA: ${report.farm}`.toUpperCase()}</Text>
+
                                 </View>
-                                <View style={styles.section}>
-                                    <Text>Section #2</Text>
-                                </View>
+                                
+                                <Text style={styles.top_text}>{`RELATÓRIO: ${report.name}`.toUpperCase()}</Text>
+                                <Text style={styles.top_text}>{`CLIENTE: ${report.client}`.toUpperCase()}</Text>
+                                <Text style={styles.top_text}>{`REGIÃO: ${report.city}, ${report.state}`.toUpperCase()}</Text>
+                                <Text style={styles.top_text}>{`FAZENDA: ${report.farm}`.toUpperCase()}</Text>
+
+
                             </Page>
                         </Document>
                     </PDFViewer>

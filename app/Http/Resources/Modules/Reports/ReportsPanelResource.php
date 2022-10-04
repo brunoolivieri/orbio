@@ -34,7 +34,7 @@ class ReportsPanelResource extends JsonResource
                 "log" => [
                     "name" => $report->logname,
                     "path" => $report->log->path,
-                    "datetime" => date("d-m-Y", strtotime($report->log_timestamp))
+                    "datetime" => strtotime($report->log_timestamp)
 
                 ],
                 "observation" => empty($report->observation) ? "N/A" : $report->observation
