@@ -7,6 +7,7 @@
 
         <!-- FONT -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
 
         <!-- FONTSAWESOME KIT -->
         <script src="https://kit.fontawesome.com/49b7b83709.js" crossorigin="anonymous"></script>

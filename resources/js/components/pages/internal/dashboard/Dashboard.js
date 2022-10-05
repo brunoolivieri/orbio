@@ -29,15 +29,15 @@ import { usePage } from '../../../context/PageContext.js';
 const CardStyle = {
   minWidth: "100%",
   maxWidth: "100%",
-  margin: 'auto',
-  borderRadius: 0
+  borderRadius: 0,
+  backgroundColor: "#16529B"
 }
 
 const CardContentStyle = {
   bgcolor: '#fff'
 }
 
-const paperStyle = {
+const PaperStyle = {
   maxWidth: "95%",
   margin: 'auto',
   overflow: 'visible',
@@ -45,6 +45,23 @@ const paperStyle = {
   mt: 2,
   boxShadow: 0,
   bgcolor: 'transparent'
+}
+
+const PieGridItem = {
+  paddingRight: {
+    xs: 0,
+    lg: 1
+  }
+}
+
+const LineChartContainerStyle = {
+  mt: 1,
+  backgroundColor: '#fff',
+  borderRadius: 0,
+  display: {
+    xs: 'none',
+    md: 'block'
+  }
 }
 
 export const Dashboard = React.memo(() => {
@@ -131,16 +148,16 @@ export const Dashboard = React.memo(() => {
   return (
     <>
 
-      <Paper sx={paperStyle}>
+      <Paper sx={PaperStyle}>
 
         <Toolbar>
-          <Grid container spacing={1} columns={10}>
+          <Grid container spacing={0} columns={10}>
 
-            <Grid item xs={10} md={5} lg={5} xl={2}>
+            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
               <Card sx={CardStyle}>
                 <CardHeader
-                  avatar={<FontAwesomeIcon icon={faUsers} color="green" size='2x' />}
-                  title={<Typography variant="h6">Usuários</Typography>}
+                  avatar={<FontAwesomeIcon icon={faUsers} color="white" size='2x' />}
+                  title={<Typography variant="h6" color={"white"}>Usuários</Typography>}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
@@ -155,11 +172,11 @@ export const Dashboard = React.memo(() => {
               </Card>
             </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2}>
+            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
               <Card sx={CardStyle}>
                 <CardHeader
-                  avatar={<FontAwesomeIcon icon={faIdCardClip} color="green" size='2x' />}
-                  title={<Typography variant="h6">Perfis</Typography>}
+                  avatar={<FontAwesomeIcon icon={faIdCardClip} color="white" size='2x' />}
+                  title={<Typography variant="h6" color={"white"} > Perfis</Typography>}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
@@ -174,11 +191,11 @@ export const Dashboard = React.memo(() => {
               </Card>
             </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2}>
+            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
               <Card sx={CardStyle}>
                 <CardHeader
-                  avatar={<FontAwesomeIcon icon={faMap} color="green" size='2x' />}
-                  title={<Typography variant="h6">Planos de voo</Typography>}
+                  avatar={<FontAwesomeIcon icon={faMap} color="white" size='2x' />}
+                  title={<Typography variant="h6" color={"white"} > Planos de voo</Typography>}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
@@ -193,11 +210,11 @@ export const Dashboard = React.memo(() => {
               </Card>
             </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2}>
+            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
               <Card sx={CardStyle}>
                 <CardHeader
-                  avatar={<FontAwesomeIcon icon={faClipboard} color="green" size='2x' />}
-                  title={<Typography variant="h6">Ordens de serviço</Typography>}
+                  avatar={<FontAwesomeIcon icon={faClipboard} color="white" size='2x' />}
+                  title={<Typography variant="h6" color={"white"}>Ordens de serviço</Typography>}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
@@ -215,8 +232,8 @@ export const Dashboard = React.memo(() => {
             <Grid item xs={10} md={5} lg={5} xl={2}>
               <Card sx={CardStyle}>
                 <CardHeader
-                  avatar={<FontAwesomeIcon icon={faChartColumn} color="green" size='2x' />}
-                  title={<Typography variant="h6">Logs</Typography>}
+                  avatar={<FontAwesomeIcon icon={faChartColumn} color="white" size='2x' />}
+                  title={<Typography variant="h6" color={"white"}>Logs</Typography>}
                 />
                 <Divider />
                 <CardContent sx={CardContentStyle}>
@@ -231,8 +248,8 @@ export const Dashboard = React.memo(() => {
               </Card>
             </Grid>
 
-            <Grid item xs={10} sx={{ mt: 1 }}>
-              <Typography variant="h6">Tráfego Anual</Typography>
+            <Grid item xs={10} sx={LineChartContainerStyle}>
+              <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Tráfego Anual</Typography>
               <Grid container>
                 <Grid item xs={12} sx={{ height: 300 }}>
                   {!loading && <LinesChart data={traffic} />}
@@ -240,8 +257,8 @@ export const Dashboard = React.memo(() => {
               </Grid>
             </Grid>
 
-            <Grid item xs={10} sx={{ mt: 1 }}>
-              <Typography variant="h6">Novos usuários</Typography>
+            <Grid item xs={10} sx={LineChartContainerStyle}>
+              <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Novos usuários</Typography>
               <Grid container>
                 <Grid item xs={12} sx={{ height: 300 }}>
                   {!loading && <LinesChart data={registrations} />}
@@ -249,9 +266,9 @@ export const Dashboard = React.memo(() => {
               </Grid>
             </Grid>
 
-          </Grid>
-        </Toolbar>
-      </Paper>
+          </Grid >
+        </Toolbar >
+      </Paper >
 
       {
         /*  <Paper sx={lastSectionStyle}>

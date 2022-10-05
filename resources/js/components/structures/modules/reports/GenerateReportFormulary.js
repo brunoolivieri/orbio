@@ -21,11 +21,10 @@ import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DatePicker } from "../../date_picker/DatePicker";
-import { ReportBuilder } from "../../../structures/report_builder/ReportBuilder";
+import { ReportDocumentVisualization, ReportDocument } from "../../../structures/report_builder/ReportBuilder";
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
-// Custom
-import Logo from "../../../assets/images/Logos/Birdview.png";
+
 
 export const GenerateReportFormulary = React.memo((props) => {
 
@@ -33,6 +32,7 @@ export const GenerateReportFormulary = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
     const [loading, setLoading] = React.useState(false);
+    const [weatherLoading, setWeatherLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
     const [controlledInput, setControlledInput] = React.useState(
@@ -82,11 +82,15 @@ export const GenerateReportFormulary = React.memo((props) => {
 
     const handleLoadWeather = () => {
 
+        setWeatherLoading(true);
+
         const state = controlledInput.state;
         const city = controlledInput.city;
 
         AxiosApi.get(`api/get-weather-data?state=${state}&city=${city}`)
             .then((response) => {
+
+                setWeatherLoading(false);
 
                 const temperature = response.data.temperature;
                 const humidity = response.data.humidity;
@@ -97,9 +101,111 @@ export const GenerateReportFormulary = React.memo((props) => {
             })
             .catch(function (error) {
 
+                setWeatherLoading(false);
                 console.log(error);
 
             });
+    }
+
+    const handleReportGenerate = (e) => {
+        e.preventDefault();
+
+        /*AxiosApi.post("api/export-report-pdf", controlledInput)
+            .then((response) => {
+
+                const base64PDF = response.data;
+
+                let bin = atob(base64PDF);
+                let obj = document.createElement('object');
+                obj.style.width = '100%';
+                obj.style.height = '842pt';
+                obj.type = 'application/pdf';
+                obj.data = 'data:application/pdf;base64,' + base64PDF;
+                document.body.appendChild(obj);
+
+                // Insert a link that allows the user to download the PDF file
+                let link = document.createElement('a');
+                link.innerHTML = 'Download PDF file';
+                link.download = 'file.pdf';
+                link.href = 'data:application/octet-stream;base64,' + base64PDF;
+                document.body.appendChild(link);
+                link.click();
+
+            })
+            .catch(function (error) {
+
+                console.log(error);
+                errorServerRequestTreatment(error.response);
+
+            });*/
+
+    }
+
+    const errorServerRequestTreatment = (response) => {
+
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
+        setDisplayAlert({ display: true, type: "error", message: error_message });
+
+        // Errors by key that can be returned from backend validation
+        let request_errors = {
+            name: { error: false, message: null },
+            client: { error: false, message: null },
+            state: { error: false, message: null },
+            city: { error: false, message: null },
+            farm: { error: false, message: null },
+            area: { error: false, message: null },
+            date: { error: false, message: null },
+            number: { error: false, message: null },
+            dosage: { error: false, message: null },
+            temperature: { error: false, message: null },
+            humidity: { error: false, message: null },
+            wind: { error: false, message: null },
+            provider: { error: false, message: null },
+            responsible: { error: false, message: null }
+        }
+
+        // Get errors by their key 
+        for (let prop in response.data.errors) {
+
+            request_errors[prop] = {
+                error: true,
+                message: response.data.errors[prop][0]
+            }
+
+        }
+
+        setFieldError({
+            name: request_errors.name.error,
+            client: request_errors.client.error,
+            state: request_errors.state.error,
+            city: request_errors.city.error,
+            farm: request_errors.farm.error,
+            area: request_errors.area.error,
+            date: request_errors.date.error,
+            number: request_errors.number.error,
+            dosage: request_errors.dosage.error,
+            temperature: request_errors.temperature.error,
+            humidity: request_errors.humidity.error,
+            wind: request_errors.wind.error,
+            provider: request_errors.provider.error,
+            responsible: request_errors.responsible.error
+        });
+
+        setFieldErrorMessage({
+            name: request_errors.name.message,
+            client: request_errors.client.message,
+            city: request_errors.city.message,
+            farm: request_errors.farm.message,
+            area: request_errors.area.message,
+            date: request_errors.date.message,
+            number: request_errors.number.message,
+            dosage: request_errors.dosage.message,
+            temperature: request_errors.temperature.message,
+            humidity: request_errors.humidity.message,
+            wind: request_errors.wind.message,
+            provider: request_errors.provider.message,
+            responsible: request_errors.responsible.message
+        });
     }
 
     // ============================================================================== STRUCTURE ============================================================================== //
@@ -117,7 +223,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                 <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
 
                 {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-                <Box component="form" noValidate>
+                <Box component="form" noValidate onSubmit={handleReportGenerate}>
 
                     <DialogContent>
 
@@ -286,7 +392,7 @@ export const GenerateReportFormulary = React.memo((props) => {
 
                         <Box>
 
-                            <Typography component={'p'} mb={1}>Para buscar os dados climáticos informe o estado, cidade e data do voo.</Typography>
+                            <Typography component={'p'} mb={3}>Para buscar os dados climáticos informe o estado, cidade e data.</Typography>
 
                             <Grid container spacing={2} columns={13}>
                                 <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -304,7 +410,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                                         variant="outlined"
                                         helperText={fieldErrorMessage.temperature}
                                         error={fieldError.temperature}
-                                        value={controlledInput.temperature}
+                                        value={weatherLoading ? "Carregando" : controlledInput.temperature}
                                         inputProps={{
                                             readOnly: true
                                         }}
@@ -319,7 +425,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                                         variant="outlined"
                                         helperText={fieldErrorMessage.humidity}
                                         error={fieldError.humidity}
-                                        value={controlledInput.humidity}
+                                        value={weatherLoading ? "Carregando" : controlledInput.humidity}
                                         inputProps={{
                                             readOnly: true
                                         }}
@@ -333,7 +439,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                                         fullWidth
                                         helperText={fieldErrorMessage.wind}
                                         error={fieldError.wind}
-                                        value={controlledInput.wind}
+                                        value={weatherLoading ? "Carregando" : controlledInput.wind}
                                         inputProps={{
                                             readOnly: true
                                         }}
@@ -354,7 +460,7 @@ export const GenerateReportFormulary = React.memo((props) => {
 
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
-                        <ReportBuilder data={controlledInput} />
+                        <ReportDocumentVisualization data={controlledInput} />
                         <Button type="submit" variant='contained'>Exportar</Button>
                     </DialogActions>
 

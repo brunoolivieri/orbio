@@ -3,7 +3,8 @@ import * as React from 'react';
 // Custom
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext"; // State global de autenticação
 import AxiosApi from "../../../../services/AxiosApi"; // Axios para comunicação com o backend via AJAX
-import { Navigator } from './Navigator';
+import { NavigatorToggle } from './NavigatorToggle';
+import { NavigatorFixed } from './NavigatorFixed';
 import { Header } from './Header';
 import { InternalRoutes } from "../../../../routes/ReactRouter";
 import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
@@ -87,18 +88,20 @@ export const Layout = React.memo(() => {
       }
 
       {AuthData.status &&
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#EAEFF1' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#333' }}>
           <Box
             component="nav"
             sx={{ flexShrink: { sm: 0 } }}
           >
-
-            <Navigator
+            
+            <NavigatorToggle
               PaperProps={{ style: { width: drawerWidth } }}
               variant="temporary"
               open={menuOpen}
               onClose={handleDrawerToggle}
             />
+
+            <NavigatorFixed />
 
           </Box>
           <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>

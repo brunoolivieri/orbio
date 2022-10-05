@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -8,8 +8,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 // Assets
 import BirdviewLogo from "../../assets/images/Logos/Birdview.png";
 // Libs
-import { Page, Text, View, Document, StyleSheet, PDFViewer, Image } from '@react-pdf/renderer';
-import { style } from '@mui/system';
+import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, usePDF } from '@react-pdf/renderer';
 import moment from 'moment/moment';
 
 // Create styles
@@ -66,15 +65,104 @@ const styles = StyleSheet.create({
     },
 });
 
-export const ReportBuilder = React.memo((props) => {
+export const ReportDocument = React.memo((props) => {
+
+    const[data, setData] = React.useState(props.data);
+
+    return (
+        <Document>
+
+            {/* FIRST PAGE */}
+            <Page size="A4" style={styles.page}>
+                <>
+                    <View style={styles.section}>
+                        <Image
+                            src={BirdviewLogo}
+                            style={styles.logo}
+                        ></Image>
+                        <Text style={styles.top_legends}>{`RELATÓRIO: ${data.name}`.toUpperCase()}</Text>
+                        <Text style={styles.top_legends}>{`CLIENTE: ${data.client}`.toUpperCase()}</Text>
+                        <Text style={styles.top_legends}>{`REGIÃO: ${data.city}, ${data.state}`.toUpperCase()}</Text>
+                        <Text style={styles.top_legends}>{`FAZENDA: ${data.farm}`.toUpperCase()}</Text>
+                    </View>
+
+                    <View style={styles.table_section}>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_head, flexBasis: '160px' }}>{"ÁREA TOTAL APLICADA (ha)"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '130px', textAlign: 'center' }}>{"DATA DA APLICAÇÃO"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '115px', textAlign: 'center' }}>{"Nº DA APLICAÇÃO"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '100px', textAlign: 'center' }}>{"DOSAGEM/Ha"}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '160px', textAlign: 'center' }}>{data.area}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '130px', textAlign: 'center' }}>{moment(data.date).format('DD/MM/YYYY')}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '115px', textAlign: 'center' }}>{data.number}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '100px', textAlign: 'center' }}>{data.dosage}</Text>
+                        </View>
+                    </View>
+
+
+                    <View style={styles.table_section}>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_head, flexBasis: '200px', textAlign: 'center' }}>{"CONDIÇÕES CLIMÁTICAS"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"INICIAL"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"FINAL"}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"TEMPERATURA (Cº)"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.temperature}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.temperature}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"UMIDADE"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.humidity}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.humidity}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"VENTO (Km/h)"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.wind}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.wind}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"FORNECEDOR"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{data.provider}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"RESPONSÁVEL"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{data.responsible}</Text>
+                        </View>
+                    </View>
+
+                </>
+            </Page>
+
+            {/* SECOND PAGE */}
+            <Page size="A4" style={styles.page}>
+                <>
+                    <View style={styles.table_row}>
+                        <Image
+                            src={BirdviewLogo}
+                            style={styles.logo}
+                        ></Image>
+                    </View>
+                </>
+            </Page>
+
+        </Document>
+
+    )
+});
+
+export const ReportDocumentVisualization = React.memo((props) => {
+
+    const [instance, updateInstance] = usePDF(ReportDocument);
 
     const [open, setOpen] = React.useState(false);
-
-    const [report, setReport] = React.useState({});
+    const [data, setData] = React.useState();
 
     const handleClickOpen = () => {
         setOpen(true);
-        setReport(props.data);
+        setData(props.data);
     }
 
     const handleClose = () => {
@@ -99,70 +187,7 @@ export const ReportBuilder = React.memo((props) => {
                 <DialogContent>
 
                     <PDFViewer style={styles.viewer}>
-                        <Document>
-                            <Page size="A4" style={styles.page}>
-                                <>
-                                    <View style={styles.section}>
-                                        <Image
-                                            src={BirdviewLogo}
-                                            style={styles.logo}
-                                        ></Image>
-                                        <Text style={styles.top_legends}>{`RELATÓRIO: ${report.name}`.toUpperCase()}</Text>
-                                        <Text style={styles.top_legends}>{`CLIENTE: ${report.client}`.toUpperCase()}</Text>
-                                        <Text style={styles.top_legends}>{`REGIÃO: ${report.city}, ${report.state}`.toUpperCase()}</Text>
-                                        <Text style={styles.top_legends}>{`FAZENDA: ${report.farm}`.toUpperCase()}</Text>
-                                    </View>
-
-                                    <View style={styles.table_section}>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_head, flexBasis: '160px' }}>{"ÁREA TOTAL APLICADA (ha)"}</Text>
-                                            <Text style={{ ...styles.table_head, flexBasis: '130px', textAlign: 'center' }}>{"DATA DA APLICAÇÃO"}</Text>
-                                            <Text style={{ ...styles.table_head, flexBasis: '115px', textAlign: 'center' }}>{"Nº DA APLICAÇÃO"}</Text>
-                                            <Text style={{ ...styles.table_head, flexBasis: '100px', textAlign: 'center' }}>{"DOSAGEM/Ha"}</Text>
-                                        </View>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_data, flexBasis: '160px', textAlign: 'center' }}>{report.area}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '130px', textAlign: 'center' }}>{moment(report.date).format('DD/MM/YYYY')}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '115px', textAlign: 'center' }}>{report.number}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '100px', textAlign: 'center' }}>{report.dosage}</Text>
-                                        </View>
-                                    </View>
-
-
-                                    <View style={styles.table_section}>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_head, flexBasis: '200px', textAlign: 'center' }}>{"CONDIÇÕES CLIMÁTICAS"}</Text>
-                                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"INICIAL"}</Text>
-                                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"FINAL"}</Text>
-                                        </View>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"TEMPERATURA (Cº)"}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{report.temperature}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{report.temperature}</Text>
-                                        </View>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"UMIDADE"}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{report.humidity}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{report.humidity}</Text>
-                                        </View>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"VENTO (Km/h)"}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{report.wind}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{report.wind}</Text>
-                                        </View>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"FORNECEDOR"}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{report.provider}</Text>
-                                        </View>
-                                        <View style={styles.table_row}>
-                                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"RESPONSÁVEL"}</Text>
-                                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{report.provider}</Text>
-                                        </View>
-                                    </View>
-
-                                </>
-                            </Page>
-                        </Document>
+                        <ReportDocument data={data} />
                     </PDFViewer>
 
                 </DialogContent>

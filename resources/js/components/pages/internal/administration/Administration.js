@@ -14,6 +14,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers } from '@fortawesome/free-solid-svg-icons';
 import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
 
+const item = {
+  '&:hover, &:focus': {
+    bgcolor: '#E3EEFA',
+    color: '#2065D1',
+    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
+  }
+};
+
 export const Administration = React.memo(() => {
 
   const [actualPanel, setActualPanel] = React.useState("users");
@@ -27,15 +35,21 @@ export const Administration = React.memo(() => {
   return (
     <>
 
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5, mb: 2 }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', mb: 1 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
-            <Switcher panelStateSetter={setActualPanel} options={[{ page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> }, { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }]} />
+            <Switcher
+              panelStateSetter={setActualPanel}
+              options={[
+                { page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> },
+                { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }
+              ]}
+            />
           </Grid>
         </Grid>
       </Paper>
 
-      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+      <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
           {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}

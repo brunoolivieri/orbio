@@ -8,12 +8,12 @@ import { Login } from "../components/pages/external/login/Login";
 import { ForgotPassword } from "../components/pages/external/forgotpassword/ForgotPassword";
 import { Layout } from "../components/pages/internal/layout/Layout";
 import { Dashboard } from "../components/pages/internal/Dashboard/Dashboard";
-import { Plans } from "../components/pages/internal/plans/Plans";
+import { FlightPlans } from "../components/pages/internal/flight_plans/FlightPlans";
 import { Reports } from "../components/pages/internal/reports/Reports";
 import { Account } from "../components/pages/internal/account/Account";
 import { Administration } from "../components/pages/internal/administration/Administration";
 import { Support } from "../components/pages/internal/support/Support";
-import { ServiceOrders } from "../components/pages/internal/orders/ServiceOrders";
+import { ServiceOrders } from "../components/pages/internal/service_orders/ServiceOrders";
 import { Incidents } from "../components/pages/internal/incidents/Incidents";
 import { Equipments } from "../components/pages/internal/equipments/Equipments";
 
@@ -40,7 +40,7 @@ export function InternalRoutes() {
 
         <Routes>
             <Route index element={<Dashboard />} />
-            <Route exact path="planos" element={<Plans />} />
+            <Route exact path="planos" element={<FlightPlans />} />
             <Route exact path="relatorios" element={<Reports />} />
             <Route exact path="conta" element={<Account />} />
             <Route exact path="administracao" element={<Administration />} />

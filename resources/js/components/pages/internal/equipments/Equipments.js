@@ -24,7 +24,7 @@ export const Equipments = React.memo(() => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5, mb: 2 }}>
+      <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', mb: 1 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             <Switcher panelStateSetter={setActualPanel} options={[{ page: "drones", title: "Drones", icon: '' }, { page: "batteries", title: "Baterias", icon: '' }, { page: "equipments", title: "Equipamentos", icon: '' }]} />
@@ -32,7 +32,7 @@ export const Equipments = React.memo(() => {
         </Grid>
       </Paper>
 
-      <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+      <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
           {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}

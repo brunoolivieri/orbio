@@ -1,7 +1,16 @@
 import * as React from 'react';
-import ToggleButton from '@mui/material/ToggleButton';
+import MuiToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
+const ToggleButton = styled(MuiToggleButton)({
+  "&.Mui-selected, &.Mui-selected:hover": {
+    color: "#fff",
+    backgroundColor: '#007937',
+    boxShadow: 'rgba(0, 0, 0, 0.16) 3px'
+  }
+});
 
 export function Switcher({ ...props }) {
 
@@ -22,7 +31,7 @@ export function Switcher({ ...props }) {
     >
       {props.options.map((item, index) => (
         <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex", border: 'none' }} key={index}>
-          <Typography sx={{ marginRight: 2, fontWeight: 600 }}>{item.title.toUpperCase()}</Typography> {item.icon}
+          <Typography sx={{ marginRight: 2 }}>{item.title.toUpperCase()}</Typography> {item.icon}
         </ToggleButton>
       ))}
     </ToggleButtonGroup>

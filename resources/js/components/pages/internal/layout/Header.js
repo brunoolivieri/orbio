@@ -55,8 +55,10 @@ export const Header = React.memo(({ ...props }) => {
         </Toolbar>
       </AppBar>
       <AppBar position="static" sx={{ boxShadow: 1, bgcolor: '#16529B' }}>
-        <Toolbar>
-          <Typography sx={{ mr: 1, ml: 1 }}>{pages[pageIndex].icon}</Typography>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
+          <Box>
+            {pages[pageIndex].icon}
+          </Box>
           <Box>
             <Typography variant="h7" fontWeight={600} color={"#fff"}>{pages[pageIndex].title}</Typography>
           </Box>

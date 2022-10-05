@@ -969,7 +969,7 @@ function createIntermediateWaypoints(initialPath, finalDestination, initialFinal
 
 function drawAllWaypoints() {
 
-    console.log(window.initialPath.length);
+    //console.log(window.initialPath.length);
     var objWp01 = {
         'type': 'geojson',
         'data': {
@@ -994,7 +994,7 @@ function drawAllWaypoints() {
         }
     });
 
-    console.log(window.finalDestination.length);
+    //console.log(window.finalDestination.length);
     var objWp02 = {
         'type': 'geojson',
         'data': {
@@ -1019,7 +1019,7 @@ function drawAllWaypoints() {
         }
     });
 
-    console.log(window.initialFinalPath[1].length);
+    //console.log(window.initialFinalPath[1].length);
     var objWp03 = {
         'type': 'geojson',
         'data': {
@@ -1500,7 +1500,7 @@ function importKMLPolygon(e) {
 
         // Percorrendo todas as coordenadas e quebrando as informações de lat e long
         for (i = 0; i < coordinates.length - 1; i++) {
-            console.log(coordinates[i]);
+           // console.log(coordinates[i]);
 
             latLong = coordinates[i].split(",");
             kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -1575,7 +1575,7 @@ function importMPPolygon(e) {
         coordinatesLongLat = kmlArea;
         home = kmlArea[0];
 
-        console.log(coordinatesLongLat);
+       // console.log(coordinatesLongLat);
 
         // Acessando o centroide da área para posicionar no mapa
         var polygon = turf.polygon([kmlArea]);
@@ -1668,7 +1668,7 @@ function proccessFileContentsToOpenIt(contents) {
             txtPath[index] = [Number(line[9]), Number(line[8])];
             index++
         }
-        console.log(Number(line[3]));
+        //console.log(Number(line[3]));
 
     }
 
@@ -1712,7 +1712,7 @@ function calculateTxtDistance(txtPath) {
 
     // Distância percorrida pela rota importada do arquivo
     totalDistance = 0;
-    console.log(speed.value);
+    //console.log(speed.value);
     for (j = 0; j < txtPath.length - 1; j++) {
         totalDistance += turf.distance(turf.point([txtPath[j][0], txtPath[j][1]]), turf.point([txtPath[j + 1][0], txtPath[j + 1][1]]));
     }
