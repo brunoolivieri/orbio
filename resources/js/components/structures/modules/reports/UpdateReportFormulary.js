@@ -228,7 +228,7 @@ export const UpdateReportFormulary = React.memo((props) => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading}>Confirmar</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
 
         </Box>

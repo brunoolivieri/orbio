@@ -164,7 +164,7 @@ export const UpdateUserFormulary = React.memo((props) => {
 
       {(props.record != null && open) &&
 
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
           <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >

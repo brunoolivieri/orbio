@@ -29,6 +29,9 @@ class IncidentService implements ServiceInterface
 
     public function createResource(array $data)
     {
+
+        $data["date"] = date("Y-m-d", strtotime($data["date"]));
+
         $incident = $this->repository->createOne(collect($data));
 
         return response(["message" => "Incidente criado com sucesso!"], 201);

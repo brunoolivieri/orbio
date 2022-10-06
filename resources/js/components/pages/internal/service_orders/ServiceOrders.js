@@ -16,7 +16,7 @@ export const ServiceOrders = () => {
 
     return (
         <>
-            <Paper sx={{ maxWidth: "95%", margin: 'auto', overflow: 'hidden' }}>
+            <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
                 <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
                     <ServiceOrdersPanel />
                 </Box>

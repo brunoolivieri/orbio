@@ -31,7 +31,7 @@ import { Link } from 'react-router-dom';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 
-const drawerWidth = 240;
+const drawerWidth = 210;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -122,7 +122,7 @@ export const NavigatorFixed = () => {
             id: "Módulos",
             children: [
                 { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: AuthData.data.user_powers["1"].profile_powers.read == 1 ? true : false, path: "administracao" },
-                { id: 'Planos', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
+                { id: 'Planos e Logs', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
                 { id: 'Ordens', icon: <AssignmentIcon />, access: AuthData.data.user_powers["3"].profile_powers.read == 1 ? true : false, path: "ordens" },
                 { id: 'Relatórios', icon: <AssessmentIcon />, access: AuthData.data.user_powers["4"].profile_powers.read == 1 ? true : false, path: "relatorios" },
                 { id: 'Incidentes', icon: <ReportIcon />, access: AuthData.data.user_powers["5"].profile_powers.read == 1 ? true : false, path: "incidentes" },
@@ -147,7 +147,7 @@ export const NavigatorFixed = () => {
     };
 
     return (
-        <Box sx={{ display: { xs: 'none', lg: 'flex' } }}>
+        <Box sx={{ display: { xs: 'none', md: 'none', lg: 'flex', xl: 'flex' } }}>
             <CssBaseline />
             <AppBar position="fixed" open={open}>
                 <Toolbar >
@@ -180,6 +180,7 @@ export const NavigatorFixed = () => {
                     {categories.map(({ id, children }) => (
                         children.map(({ id: childId, icon, active, access, path }) => (
                             access &&
+
                             < ListItem key={childId} disablePadding sx={{ display: 'block' }}>
                                 <Link to={path} style={{ width: '100%', display: 'block' }}>
                                     <ListItemButton
@@ -202,8 +203,12 @@ export const NavigatorFixed = () => {
                                         </ListItemIcon>
                                         <ListItemText primary={childId} sx={{ opacity: open ? 1 : 0, color: '#000' }} />
                                     </ListItemButton>
+
+
                                 </Link>
+
                             </ListItem>
+
                         ))
                     ))}
 

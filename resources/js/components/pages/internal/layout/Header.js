@@ -29,9 +29,9 @@ export const Header = React.memo(({ ...props }) => {
   const pages = [
     { icon: <DashboardIcon />, title: "DASHBOARD" },
     { icon: <AdminPanelSettingsIcon sx={{ mr: 1 }} />, title: "ADMINISTRAÇÃO" },
-    { icon: <MapIcon sx={{ mr: 1 }} />, title: "PLANOS DE VOO" },
+    { icon: <MapIcon sx={{ mr: 1 }} />, title: "PLANOS DE VOO E LOGS" },
     { icon: <AssignmentIcon sx={{ mr: 1 }} />, title: "ORDENS DE SERVIÇO" },
-    { icon: <AssessmentIcon sx={{ mr: 1 }} />, title: "LOGS E RELATÓRIOS" },
+    { icon: <AssessmentIcon sx={{ mr: 1 }} />, title: "RELATÓRIOS" },
     { icon: <ReportIcon sx={{ mr: 1 }} />, title: "INCIDENTES" },
     { icon: <HomeRepairServiceIcon sx={{ mr: 1 }} />, title: "EQUIPAMENTOS" },
     { icon: <HelpIcon sx={{ mr: 1 }} />, title: "SUPORTE" },
@@ -55,10 +55,7 @@ export const Header = React.memo(({ ...props }) => {
         </Toolbar>
       </AppBar>
       <AppBar position="static" sx={{ boxShadow: 1, bgcolor: '#16529B' }}>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'start', alignItems: 'center' }}>
-          <Box>
-            {pages[pageIndex].icon}
-          </Box>
+        <Toolbar>
           <Box>
             <Typography variant="h7" fontWeight={600} color={"#fff"}>{pages[pageIndex].title}</Typography>
           </Box>

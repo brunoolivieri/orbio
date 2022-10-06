@@ -27,15 +27,16 @@ class IncidentStoreRequest extends FormRequest
         return [
             "date" => "required|date",
             "type" => "required",
-            "description" => "required|string"
+            "description" => "required|string",
+            "flight_plan_id" => "nullable"
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

@@ -161,7 +161,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       </Tooltip>
 
       {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
           <DialogTitle>EDIÇÃO | PLANO DE VOO (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
@@ -209,6 +209,9 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
                 />
+              </Box>
+
+              <Box sx={{ mb: 2 }}>
                 <GenericSelect
                   label_text={"Incidente"}
                   data_source={"/api/load-incidents"}

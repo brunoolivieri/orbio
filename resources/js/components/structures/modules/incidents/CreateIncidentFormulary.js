@@ -13,29 +13,31 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
+import Grid from '@mui/material/Grid';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-// Outros
+// Libs
 import moment from 'moment';
 // Custom
 import { DateTimeSingle } from "../../date_picker/DateTimeSingle";
+import { DatePicker } from '../../date_picker/DatePicker';
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
+import { GenericSelect } from '../../input_select/GenericSelect';
 
 export const CreateIncidentFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ type: "", description: "" });
-  const [fieldError, setFieldError] = React.useState({ date: false, type: false, description: false });
+  const [controlledInput, setControlledInput] = React.useState({ flight_plan_id: "0", type: "", description: "", date: moment() });
+  const [fieldError, setFieldError] = React.useState({ flight_plan_id: false, date: false, type: false, description: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ date: "", type: "", description: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [incidentDate, setIncidentDate] = React.useState(moment());
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -55,6 +57,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
   const handleRegistrationSubmit = (event) => {
     event.preventDefault();
 
+    console.log(controlledInput)
+
     if (formularyDataValidation()) {
 
       setLoading(true);
@@ -66,7 +70,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
 
   const formularyDataValidation = () => {
 
-    const incidentDateValidate = incidentDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+    const incidentDateValidate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
     const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
 
@@ -79,11 +83,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
 
   const requestServerOperation = () => {
 
-    AxiosApi.post(`/api/incidents-module`, {
-      date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
-      type: controlledInput.type,
-      description: controlledInput.description
-    })
+    AxiosApi.post(`/api/incidents-module`, controlledInput)
       .then(function (response) {
 
         setLoading(false);
@@ -162,7 +162,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
         <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
 
         {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
@@ -170,48 +170,70 @@ export const CreateIncidentFormulary = React.memo((props) => {
 
           <DialogContent>
 
-            <DialogContentText sx={{ mb: 3 }}>
+            <DialogContentText mb={2}>
               Formulário para criação de um registro de incidente.
             </DialogContentText>
 
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-              <DateTimeSingle
-                event={setIncidentDate}
-                label={"Data do incidente"}
-                helperText={fieldErrorMessage.date}
-                error={fieldError.date}
-                defaultValue={moment()}
-                operation={"create"}
-                read_only={false}
-              />
-            </Box>
+            <Grid container columns={10}>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Tipo do incidente"
-              fullWidth
-              variant="outlined"
-              required
-              name="type"
-              onChange={handleInputChange}
-              helperText={fieldErrorMessage.type}
-              error={fieldError.type}
-              sx={{ mb: 2 }}
-            />
+              <Grid item xs={5} mb={1}>
+                <DatePicker
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  name={"date"}
+                  label={"Data do incidente"}
+                  error={fieldError.date}
+                  value={controlledInput.date}
+                  operation={"create"}
+                  read_only={false}
+                />
+              </Grid>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Descrição"
-              fullWidth
-              variant="outlined"
-              required
-              name="description"
-              onChange={handleInputChange}
-              helperText={fieldErrorMessage.description}
-              error={fieldError.description}
-            />
+              <Grid item xs={5} mb={1}>
+                <GenericSelect
+                  label_text="Plano de voo (opcional)"
+                  data_source={"/api/load-flight_plans"}
+                  primary_key={"id"}
+                  key_content={"name"}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  error={fieldError.flight_plan_id}
+                  name={"flight_plan_id"}
+                  value={controlledInput.flight_plan_id}
+                />
+              </Grid>
+
+              <Grid item xs={10} mb={1}>
+                <TextField
+                  type="text"
+                  margin="dense"
+                  label="Tipo do incidente"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  name="type"
+                  onChange={handleInputChange}
+                  helperText={fieldErrorMessage.type}
+                  error={fieldError.type}
+                />
+              </Grid>
+
+              <Grid item xs={10}>
+                <TextField
+                  type="text"
+                  margin="dense"
+                  label="Descrição"
+                  fullWidth
+                  variant="outlined"
+                  required
+                  name="description"
+                  onChange={handleInputChange}
+                  helperText={fieldErrorMessage.description}
+                  error={fieldError.description}
+                />
+              </Grid>
+
+            </Grid>
 
           </DialogContent>
 

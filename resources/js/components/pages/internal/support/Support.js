@@ -17,7 +17,7 @@ export const Support = React.memo(() => {
 
   return (
 
-    <Paper sx={{ maxWidth: "90%", margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+    <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
       <AppBar
         position="static"
         color="default"

@@ -90,7 +90,7 @@ export const CreateReportFormulary = React.memo(() => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
         <DialogTitle>DOWNLOAD DE LOG</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleDownloadLogs} >

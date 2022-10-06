@@ -27,31 +27,12 @@ import AxiosApi from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
 
 const CardStyle = {
-  minWidth: "100%",
-  maxWidth: "100%",
   borderRadius: 0,
   backgroundColor: "#16529B"
 }
 
 const CardContentStyle = {
   bgcolor: '#fff'
-}
-
-const PaperStyle = {
-  maxWidth: "95%",
-  margin: 'auto',
-  overflow: 'visible',
-  padding: 1,
-  mt: 2,
-  boxShadow: 0,
-  bgcolor: 'transparent'
-}
-
-const PieGridItem = {
-  paddingRight: {
-    xs: 0,
-    lg: 1
-  }
 }
 
 const LineChartContainerStyle = {
@@ -147,127 +128,123 @@ export const Dashboard = React.memo(() => {
 
   return (
     <>
+      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, backgroundColor: 'transparent' }}>
+        <Grid container spacing={0} columns={10}>
 
-      <Paper sx={PaperStyle}>
+          <Grid item xs={10} md={2}>
+            <Card sx={CardStyle}>
+              <CardHeader
+                avatar={<FontAwesomeIcon icon={faUsers} color="white" size='2x' />}
+                title={<Typography variant="h6" color={"white"}>Usuários</Typography>}
+              />
+              <Divider />
+              <CardContent sx={CardContentStyle}>
+                <Box width={'100%'} textAlign="center">
+                  {loading ? <CircularProgress /> : <PizzaChart data={users.chart} total={users.total} />}
+                </Box>
+              </CardContent>
+              <Divider />
+              <CardActions>
+                labels
+              </CardActions>
+            </Card>
+          </Grid>
 
-        <Toolbar>
-          <Grid container spacing={0} columns={10}>
+          <Grid item xs={10} md={2}>
+            <Card sx={CardStyle}>
+              <CardHeader
+                avatar={<FontAwesomeIcon icon={faIdCardClip} color="white" size='2x' />}
+                title={<Typography variant="h6" color={"white"} > Perfis</Typography>}
+              />
+              <Divider />
+              <CardContent sx={CardContentStyle}>
+                <Box width={'100%'} textAlign="center">
+                  {loading ? <CircularProgress /> : <PizzaChart data={profiles.chart} total={profiles.total} />}
+                </Box>
+              </CardContent>
+              <Divider />
+              <CardActions>
+                labels
+              </CardActions>
+            </Card>
+          </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
-              <Card sx={CardStyle}>
-                <CardHeader
-                  avatar={<FontAwesomeIcon icon={faUsers} color="white" size='2x' />}
-                  title={<Typography variant="h6" color={"white"}>Usuários</Typography>}
-                />
-                <Divider />
-                <CardContent sx={CardContentStyle}>
-                  <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={users.chart} total={users.total} />}
-                  </Box>
-                </CardContent>
-                <Divider />
-                <CardActions>
-                  labels
-                </CardActions>
-              </Card>
-            </Grid>
+          <Grid item xs={10} md={2}>
+            <Card sx={CardStyle}>
+              <CardHeader
+                avatar={<FontAwesomeIcon icon={faMap} color="white" size='2x' />}
+                title={<Typography variant="h6" color={"white"} > Planos de voo</Typography>}
+              />
+              <Divider />
+              <CardContent sx={CardContentStyle}>
+                <Box width={'100%'} textAlign="center">
+                  {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} total={flightPlans.total} />}
+                </Box>
+              </CardContent>
+              <Divider />
+              <CardActions>
+                labels
+              </CardActions>
+            </Card>
+          </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
-              <Card sx={CardStyle}>
-                <CardHeader
-                  avatar={<FontAwesomeIcon icon={faIdCardClip} color="white" size='2x' />}
-                  title={<Typography variant="h6" color={"white"} > Perfis</Typography>}
-                />
-                <Divider />
-                <CardContent sx={CardContentStyle}>
-                  <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={profiles.chart} total={profiles.total} />}
-                  </Box>
-                </CardContent>
-                <Divider />
-                <CardActions>
-                  labels
-                </CardActions>
-              </Card>
-            </Grid>
+          <Grid item xs={10} md={2}>
+            <Card sx={CardStyle}>
+              <CardHeader
+                avatar={<FontAwesomeIcon icon={faClipboard} color="white" size='2x' />}
+                title={<Typography variant="h6" color={"white"}>Ordens de serviço</Typography>}
+              />
+              <Divider />
+              <CardContent sx={CardContentStyle}>
+                <Box width={'100%'} textAlign="center">
+                  {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} total={serviceOrders.total} />}
+                </Box>
+              </CardContent>
+              <Divider />
+              <CardActions>
+                labels
+              </CardActions>
+            </Card>
+          </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
-              <Card sx={CardStyle}>
-                <CardHeader
-                  avatar={<FontAwesomeIcon icon={faMap} color="white" size='2x' />}
-                  title={<Typography variant="h6" color={"white"} > Planos de voo</Typography>}
-                />
-                <Divider />
-                <CardContent sx={CardContentStyle}>
-                  <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} total={flightPlans.total} />}
-                  </Box>
-                </CardContent>
-                <Divider />
-                <CardActions>
-                  labels
-                </CardActions>
-              </Card>
-            </Grid>
+          <Grid item xs={10} md={2}>
+            <Card sx={CardStyle}>
+              <CardHeader
+                avatar={<FontAwesomeIcon icon={faChartColumn} color="white" size='2x' />}
+                title={<Typography variant="h6" color={"white"}>Logs</Typography>}
+              />
+              <Divider />
+              <CardContent sx={CardContentStyle}>
+                <Box width={'100%'} textAlign="center">
+                  {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} total={reports.total} />}
+                </Box>
+              </CardContent>
+              <Divider />
+              <CardActions>
+                labels
+              </CardActions>
+            </Card>
+          </Grid>
 
-            <Grid item xs={10} md={5} lg={5} xl={2} sx={PieGridItem}>
-              <Card sx={CardStyle}>
-                <CardHeader
-                  avatar={<FontAwesomeIcon icon={faClipboard} color="white" size='2x' />}
-                  title={<Typography variant="h6" color={"white"}>Ordens de serviço</Typography>}
-                />
-                <Divider />
-                <CardContent sx={CardContentStyle}>
-                  <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} total={serviceOrders.total} />}
-                  </Box>
-                </CardContent>
-                <Divider />
-                <CardActions>
-                  labels
-                </CardActions>
-              </Card>
-            </Grid>
-
-            <Grid item xs={10} md={5} lg={5} xl={2}>
-              <Card sx={CardStyle}>
-                <CardHeader
-                  avatar={<FontAwesomeIcon icon={faChartColumn} color="white" size='2x' />}
-                  title={<Typography variant="h6" color={"white"}>Logs</Typography>}
-                />
-                <Divider />
-                <CardContent sx={CardContentStyle}>
-                  <Box width={'100%'} textAlign="center">
-                    {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} total={reports.total} />}
-                  </Box>
-                </CardContent>
-                <Divider />
-                <CardActions>
-                  labels
-                </CardActions>
-              </Card>
-            </Grid>
-
-            <Grid item xs={10} sx={LineChartContainerStyle}>
-              <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Tráfego Anual</Typography>
-              <Grid container>
-                <Grid item xs={12} sx={{ height: 300 }}>
-                  {!loading && <LinesChart data={traffic} />}
-                </Grid>
+          <Grid item xs={10} sx={LineChartContainerStyle}>
+            <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Tráfego Anual</Typography>
+            <Grid container>
+              <Grid item xs={12} sx={{ height: 300 }}>
+                {!loading && <LinesChart data={traffic} />}
               </Grid>
             </Grid>
+          </Grid>
 
-            <Grid item xs={10} sx={LineChartContainerStyle}>
-              <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Novos usuários</Typography>
-              <Grid container>
-                <Grid item xs={12} sx={{ height: 300 }}>
-                  {!loading && <LinesChart data={registrations} />}
-                </Grid>
+          <Grid item xs={10} sx={LineChartContainerStyle}>
+            <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Novos usuários</Typography>
+            <Grid container>
+              <Grid item xs={12} sx={{ height: 300 }}>
+                {!loading && <LinesChart data={registrations} />}
               </Grid>
             </Grid>
+          </Grid>
 
-          </Grid >
-        </Toolbar >
+        </Grid >
       </Paper >
 
       {

@@ -55,7 +55,7 @@
 
  	<div id='map'></div>
 
-	<div class="calculation-box">
+	 <div class="calculation-box">
 		<p>Desenhe um polígono</p>
 		<span id="calculated-area">0 ha</span> | 
 		<span id="calculated-distance">0 Km</span> | 
@@ -115,29 +115,41 @@
 			</div>	
 		
 			<div class="mb-2">	
-				<input type="checkbox" name="wp-grid" id="wp-grid" checked="checked" />
-				<label for="wp-grid" id="label-grid" class="form-label">WP Grid</label>
-			</div>
+    			<input type="checkbox" name="wp-grid" id="wp-grid" />
+    			<label for="wp-grid" id="label-grid" class="form-label">WP Grid</label>
+    		</div>
 
-			<div class="mb-2">	
-				<label for="altitude" id="label-altitude" class="form-label">Altitude: 10m</label>
-				<input type="range" min="10" max="50" value="10" name="altitude" id="altitude"/>
-			</div>
+    		<div class="mb-2">	
+    			<input type="checkbox" name="opt" id="opt" />
+    			<input type="hidden" name="extra-distance" id="extra-distance" value="0">
+    			<label for="opt" id="label-opt" class="form-label">Otimizar</label>
+    		</div>
 
-			<div class="mb-2">	
-				<label for="speed" id="label-speed" class="form-label">Velocidade: 8m/s</label>
-				<input type="range" min="1" max="15" value="8" name="speed" id="speed"/>
-			</div>
-			
-			<div>	
-				<label for="distance" id="label-distance" class="form-label">Distância: 50m</label>
-				<input type="range" min="1" max="100" value="50" name="distance" id="distance"/>
-			</div>
+    		<div class="mb-2">	
+    			<label for="max-flight-time" id="label-max-flight-time" class="form-label">Tempo: 15min</label>
+    			<input type="range" min="5" max="20" value="15" name="max-flight-time" id="max-flight-time"/>
+    		</div>
+
+	    	<div class="mb-2">	
+    			<label for="altitude" id="label-altitude" class="form-label">Altitude: 10m</label>
+    			<input type="range" min="10" max="50" value="10" name="altitude" id="altitude"/>
+    		</div>
+
+    		<div class="mb-2">	
+    			<label for="speed" id="label-speed" class="form-label">Velocidade: 8m/s</label>
+    			<input type="range" min="1" max="15" value="8" name="speed" id="speed"/>
+    		</div>
+    		
+	    	<div>	
+    			<label for="distance" id="label-distance" class="form-label">Distância: 50m</label>
+    			<input type="range" min="1" max="100" value="50" name="distance" id="distance"/>
+    		</div>
 
 		</form>
 	</div>	
 
 	<!-- Modal Missão -->
+	<!-- 
 	<nav id="menu-options" style="display: none">
 		<ul class="menu-options">
 			<li id="btn-clean">Novo</li>
@@ -147,6 +159,36 @@
 				</label>	
 			</li>
 			<li id="btn-save">Salvar</li>
+			<li>
+				<label>Importar Ponto
+					<input type="file" id="file-import" hidden/>
+				</label>
+			</li>
+			<li>
+				<label>Importar Poly
+					<input type="file" id="file-import-poly" hidden/>
+				</label>
+			</li>
+			<li>
+				<label>Importar MP
+					<input type="file" id="file-import-mp" hidden/>
+				</label>
+			</li>
+		</ul>
+	</nav>
+	-->
+
+	<nav id="menu-options" style="display: none">
+		<ul class="menu-options">
+			<li id="btn-clean">Novo</li>
+			<li>
+				<label>Abrir
+					<input type="file" id="file-input" hidden/>
+				</label>	
+			</li>
+			<li id="btn-save">Salvar Rota Multi</li>
+			<li id="btn-full-save">Salvar Rota Única</li>
+			<li id="btn-save-csv">Salvar Rota CSV</li>
 			<li>
 				<label>Importar Ponto
 					<input type="file" id="file-import" hidden/>

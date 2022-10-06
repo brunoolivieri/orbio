@@ -4,14 +4,17 @@ namespace App\Repositories\Modules\Incidents;
 
 use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 // Model
 use App\Models\Incidents\Incident;
+use App\Models\FlightPlans\FlightPlan;
 
 class IncidentRepository implements RepositoryInterface
 {
-    public function __construct(Incident $incidentModel)
+    public function __construct(Incident $incidentModel, FlightPlan $flightPlanModel)
     {
         $this->incidentModel = $incidentModel;
+        $this->flightPlanModel = $flightPlanModel;
     }
 
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
@@ -25,9 +28,19 @@ class IncidentRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        $incident = $this->incidentModel->create($data->only(["type", "date", "description"])->all());;
 
-        return $incident;
+        return DB::transaction(function () use ($data) {
+
+            $incident = $this->incidentModel->create($data->only(["type", "date", "description"])->all());
+
+            if ($data->get('flight_plan_id') != "0") {
+                $this->flightPlanModel->where("id", $data->get("flight_plan_id"))->update([
+                    "incident_id" => $incident->id
+                ]);
+            }
+
+            return $incident;
+        });
     }
 
     function updateOne(Collection $data, string $identifier)

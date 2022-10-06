@@ -16,7 +16,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import AxiosApi from "../../../../../services/AxiosApi";
 import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { GenericSelect } from '../../../../structures/input_select/GenericSelect';
 import { AutoCompleteCity } from '../../../../structures/input_select/AutoCompleteCity';
 import { AutoCompleteState } from '../../../../structures/input_select/AutoCompleteState';
 // Libs

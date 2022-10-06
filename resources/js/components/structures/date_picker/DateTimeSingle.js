@@ -6,16 +6,12 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 export const DateTimeSingle = React.memo((props) => {
 
-    const [value, setValue] = React.useState(new Date(props.defaultValue));
+    const [value, setValue] = React.useState(new Date(props.value));
 
-    React.useEffect(() => {
-        props.event(value);
-    }, []);
+    const handleChange = (value) => {
 
-    const handleChange = (newValue) => {
-
-        setValue(newValue);
-        props.event(newValue);
+        setValue(value);
+        props.setControlledInput({ ...props.controlledInput, [props.name]: value });
 
     }
 
@@ -25,7 +21,7 @@ export const DateTimeSingle = React.memo((props) => {
                 renderInput={(props) => <TextField {...props} />}
                 label={props.label}
                 value={value}
-                onChange={(newValue) => { handleChange(newValue) }}
+                onChange={(value) => { handleChange(value) }}
                 inputFormat="dd/MM/yyyy hh:mm"
                 readOnly={props.read_only}
             />

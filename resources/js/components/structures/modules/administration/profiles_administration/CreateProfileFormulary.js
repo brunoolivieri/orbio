@@ -142,7 +142,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
         <DialogTitle>CADASTRO DE PERFIL</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleRegistrationProfile} >

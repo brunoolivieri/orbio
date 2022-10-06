@@ -279,10 +279,9 @@ export function UsersPanel() {
                 </InputAdornment>,
               disableunderline: 1,
               sx: { fontSize: 'default' },
+              disableUnderline: true,
             }}
-            variant="outlined"
-            id="search_input"
-            sx={{ borderRadius: 30 }}
+            variant="standard"
           />
         </Grid>
 

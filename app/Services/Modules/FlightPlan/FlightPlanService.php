@@ -44,6 +44,7 @@ class FlightPlanService implements ServiceInterface
             return response($contents)->withHeaders([
                 "Content-type" => mime_content_type($path)
             ]);
+            
         } else {
 
             return response(["message" => "Nenhum arquivo encontrado."], 404);

@@ -99,7 +99,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
       {(props.record != null && open) &&
 
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
           <DialogTitle>DESATIVAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 
           {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}

@@ -39,4 +39,12 @@ class Incident extends Model
             }
         });
     }
+
+    /*
+    * Relationship one to one with flight plans table
+    */
+    function flight_plan()
+    {
+        return $this->hasOne(FlightPlan::class, "incident_id");
+    }
 }

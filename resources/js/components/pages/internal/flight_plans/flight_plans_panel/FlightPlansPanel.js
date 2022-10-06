@@ -36,11 +36,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
@@ -318,9 +319,9 @@ export const FlightPlansPanel = () => {
                 </InputAdornment>,
               disableunderline: 1,
               sx: { fontSize: 'default' },
+              disableUnderline: true
             }}
-            variant="outlined"
-            id="search_input"
+            variant="standard"
           />
         </Grid>
 
@@ -355,11 +356,11 @@ export const FlightPlansPanel = () => {
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Abrir</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Rotas</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
@@ -369,39 +370,44 @@ export const FlightPlansPanel = () => {
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
                       <TableCell align="center">{row.creator.name}</TableCell>
                       <TableCell align="center">{row.name}</TableCell>
+                      <TableCell align="center">{row.description}</TableCell>
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${row.file}`} target="_blank">
                           <Tooltip title="Ver plano">
                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="md" />
                             </IconButton>
                           </Tooltip>
                         </Link>
                       </TableCell>
                       <TableCell align="center">
-                        <Tooltip title="Baixar plano">
+                        <Tooltip title="Rotas .txt">
                           <IconButton onClick={() => handleDownloadFlightPlan(row.file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
-                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
+                            <FontAwesomeIcon icon={faFile} size="md" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Rotas .csv">
+                          <IconButton disabled={true}>
+                            <FontAwesomeIcon icon={faFileCsv} size="md" color={"#808991"} />
                           </IconButton>
                         </Tooltip>
                       </TableCell>
                       <TableCell align="center">
-                        {row.log.report != null ?
+                        {row.log != null ?
                           <Tooltip title="Ver relatório">
                             <IconButton>
-                              <FontAwesomeIcon icon={faFilePdf} color="#00713A" />
+                              <FontAwesomeIcon icon={faFilePdf} color={row.log.report ? "#00713A" : "#808991"} size="md" />
                             </IconButton>
                           </Tooltip>
                           :
                           <IconButton disabled>
-                            <FontAwesomeIcon icon={faFilePdf} color="#808991" />
+                            <FontAwesomeIcon icon={faFilePdf} color="#808991" size="md" />
                           </IconButton>
                         }
                       </TableCell>
                       <TableCell align="center">
                         <FontAwesomeIcon icon={faCircleExclamation} color={row.incident_id === null ? "#808991" : "#00713A"} size="lg" />
                       </TableCell>
-                      <TableCell align="center">{row.description}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

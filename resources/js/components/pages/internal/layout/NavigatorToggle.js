@@ -69,7 +69,7 @@ export const NavigatorToggle = React.memo((props) => {
   ]), []);
 
   return (
-    <Drawer {...props} sx={{ display: { xs: 'block', lg: 'none' } }}>
+    <Drawer {...props} sx={{ display: { xs: 'block', md: 'block', lg: 'none', xl: 'none' } }}>
       <List disablePadding>
 
         <ListItem sx={{ fontSize: 20, display: 'flex', justifyContent: 'center' }}>

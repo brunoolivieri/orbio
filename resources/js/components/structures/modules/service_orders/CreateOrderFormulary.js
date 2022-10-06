@@ -216,7 +216,7 @@ export const CreateOrderFormulary = React.memo((props) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
         <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >

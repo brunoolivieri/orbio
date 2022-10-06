@@ -89,11 +89,12 @@ export const Layout = React.memo(() => {
 
       {AuthData.status &&
         <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#333' }}>
+          <NavigatorFixed /> 
           <Box
             component="nav"
             sx={{ flexShrink: { sm: 0 } }}
           >
-            
+
             <NavigatorToggle
               PaperProps={{ style: { width: drawerWidth } }}
               variant="temporary"
@@ -101,12 +102,10 @@ export const Layout = React.memo(() => {
               onClose={handleDrawerToggle}
             />
 
-            <NavigatorFixed />
-
           </Box>
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ flexGrow: 1 }}>
             <Header onDrawerToggle={handleDrawerToggle} />
-            <Box component="main" sx={{ flex: 1, py: 6, px: 4 }}>
+            <Box component="main" sx={{ flexGrow: 1, py: 6, px: 4 }}>
 
               {/* Conteúdo variável de cada página */}
               {AuthData.status &&

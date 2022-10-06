@@ -290,9 +290,9 @@ export function ReportsPanel() {
                 </InputAdornment>,
               disableunderline: 1,
               sx: { fontSize: 'default' },
+              disableUnderline: true
             }}
-            variant="outlined"
-            id="search_input"
+            variant="standard"
           />
         </Grid>
 

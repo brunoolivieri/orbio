@@ -28,7 +28,7 @@ export const Account = () => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: '95%', margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
+      <Paper sx={{ maxWidth: '100%', margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
         <Grid container spacing={1} alignItems="center">
           <Grid item xs>
             <Switcher panelStateSetter={setActualPanel} options={[{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }]} />

@@ -221,7 +221,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
                 </IconButton>
             </Tooltip>
 
-            <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+            <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
                 <DialogTitle>CADASTRO DE BATERIA</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleBatteryRegistrationSubmit} >

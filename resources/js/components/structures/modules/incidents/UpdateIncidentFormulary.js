@@ -161,7 +161,7 @@ export function UpdateIncidentFormulary({ ...props }) {
 
       {(props.record != null && open) &&
 
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }}>
+        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
           <DialogTitle>ATUALIZAÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >

@@ -38,7 +38,7 @@ export const GenerateReportFormulary = React.memo((props) => {
     const [controlledInput, setControlledInput] = React.useState(
         {
             name: '',
-            client: '',
+            client: '0',
             state: props.record.flight_plan.localization.state,
             city: props.record.flight_plan.localization.city,
             farm: '',
@@ -47,7 +47,7 @@ export const GenerateReportFormulary = React.memo((props) => {
             number: '',
             dosage: '',
             provider: '',
-            responsible: '',
+            responsible: '0',
             temperature: '',
             humidity: '',
             wind: ''
@@ -230,7 +230,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                         <Box mb={2}>
 
                             <Grid container spacing={2}>
-                                <Grid item xs={6}>
+                                <Grid item xs={12}>
                                     <TextField
                                         id="name"
                                         name="name"
@@ -241,20 +241,6 @@ export const GenerateReportFormulary = React.memo((props) => {
                                         value={controlledInput.name}
                                         error={fieldError.name}
                                         helperText={fieldErrorMessage.name}
-                                    />
-                                </Grid>
-
-                                <Grid item xs={6}>
-                                    <GenericSelect
-                                        label_text={"Cliente"}
-                                        data_source={"/api/load-users?where=profile_id.4"}
-                                        primary_key={"name"}
-                                        key_content={"name"}
-                                        error={fieldError.client}
-                                        name={"client"}
-                                        value={controlledInput.client}
-                                        setControlledInput={setControlledInput}
-                                        controlledInput={controlledInput}
                                     />
                                 </Grid>
 
@@ -361,16 +347,31 @@ export const GenerateReportFormulary = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={12}>
-                                    <TextField
-                                        name="responsible"
-                                        label="Responsável"
-                                        fullWidth
-                                        variant="outlined"
-                                        onChange={handleInputChange}
-                                        helperText={fieldErrorMessage.responsible}
+                                <Grid item xs={6}>
+                                    <GenericSelect
+                                        label_text={"Responsável (piloto)"}
+                                        data_source={"/api/load-users?where=profile_id.3"}
+                                        primary_key={"name"}
+                                        key_content={"name"}
                                         error={fieldError.responsible}
+                                        name={"responsible"}
                                         value={controlledInput.responsible}
+                                        setControlledInput={setControlledInput}
+                                        controlledInput={controlledInput}
+                                    />
+                                </Grid>
+
+                                <Grid item xs={6}>
+                                    <GenericSelect
+                                        label_text={"Cliente"}
+                                        data_source={"/api/load-users?where=profile_id.4"}
+                                        primary_key={"name"}
+                                        key_content={"name"}
+                                        error={fieldError.client}
+                                        name={"client"}
+                                        value={controlledInput.client}
+                                        setControlledInput={setControlledInput}
+                                        controlledInput={controlledInput}
                                     />
                                 </Grid>
 
