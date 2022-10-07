@@ -45,6 +45,6 @@ class Incident extends Model
     */
     function flight_plan()
     {
-        return $this->hasOne(FlightPlan::class, "incident_id");
+        return $this->belongsTo(FlightPlan::class, "flight_plan_id");
     }
 }

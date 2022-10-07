@@ -15,9 +15,12 @@ class CreateLogsTable extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
+            $table->string("flight_plan_id")->constrained('flight_plans')->nullable(true);
+            $table->string('name');
             $table->string("path");
-            $table->morphs("logable");
+            $table->timestamp("timestamp");
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -6,6 +6,7 @@ use App\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 // Models
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
@@ -36,7 +37,16 @@ class ServiceOrderRepository implements RepositoryInterface
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
 
-            $service_order = $this->serviceOrderModel->create($data->only(["start_date", "end_date", "number", "observation", "status"])->all());
+            $data = [
+                "uuid" => Str::uuid(),
+                "start_date" => $data->get("start_date"),
+                "end_date" => $data->get("end_date"),
+                "number" => $data->get("number"),
+                "observation" => $data->get("observation"),
+                "status" => $data->get("status")
+            ];
+
+            $service_order = $this->serviceOrderModel->create($data);
 
             $service_order->users()->attach($creator->id, ['role' => "creator"]);
             $service_order->users()->attach($pilot->id, ['role' => "pilot"]);

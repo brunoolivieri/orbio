@@ -35,6 +35,7 @@ import Checkbox from '@mui/material/Checkbox';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -317,37 +318,51 @@ export const ServiceOrdersPanel = React.memo(() => {
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">NumOS</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Número</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Início</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Fim</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
-                  records.map((record, index) => (
-                    <TableRow key={record.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={record.id} /></TableCell>
-                      <TableCell align="center">{record.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                  records.map((service_order, index) => (
+                    <TableRow key={service_order.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={service_order.id} /></TableCell>
+                      <TableCell align="center">{service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
-                        <BadgeIcon number={record.flight_plans.length > 0 ? record.flight_plans.length : "0"} color={"success"} />
+                        <BadgeIcon number={service_order.flight_plans.length > 0 ? service_order.flight_plans.length : "0"} color={"success"} />
                       </TableCell>
-                      <TableCell align="center">{record.number}</TableCell>
+                      <TableCell align="center">{service_order.number}</TableCell>
                       <TableCell align="center">
-                        {record.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={record.users.creator.name} color={"success"} variant="outlined" />}
-                      </TableCell>
-                      <TableCell align="center">
-                        {record.users.pilot.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={record.users.pilot.name} color={"success"} variant="outlined" />}
+                        {service_order.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.creator.name} color={"success"} variant="outlined" />}
                       </TableCell>
                       <TableCell align="center">
-                        {record.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={record.users.client.name} color={"success"} variant="outlined" />}
+                        {service_order.users.pilot.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.pilot.name} color={"success"} variant="outlined" />}
                       </TableCell>
-                      <TableCell align="center">{record.observation}</TableCell>
-                      <TableCell align="center">{moment(record.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{moment(record.end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">
+                        {service_order.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.client.name} color={"success"} variant="outlined" />}
+                      </TableCell>
+                      <TableCell align="center">{service_order.observation}</TableCell>
+                      <TableCell align="center">{moment(service_order.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{moment(service_order.end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">
+                        {service_order.report != null ?
+                          <Tooltip title="Ver relatório">
+                            <IconButton>
+                              <FontAwesomeIcon icon={faFilePdf} color={service_order.report ? "#00713A" : "#808991"} size="md" />
+                            </IconButton>
+                          </Tooltip>
+                          :
+                          <IconButton disabled>
+                            <FontAwesomeIcon icon={faFilePdf} color="#808991" size="md" />
+                          </IconButton>
+                        }
+                      </TableCell>
                     </TableRow>
                   ))}
               </TableBody>

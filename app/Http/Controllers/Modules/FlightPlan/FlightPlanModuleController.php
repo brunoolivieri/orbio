@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // Form Request
-use App\Http\Requests\Modules\FlightPlans\FlightPlanStoreRequest;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 // Services
 use App\Services\Modules\FlightPlan\FlightPlanService;

@@ -10,6 +10,7 @@ use App\Models\Incidents\Incident;
 use App\Models\Users\User;
 use App\Models\Reports\Report;
 use App\Models\ServiceOrders\ServiceOrder;
+use App\Models\Logs\Log;
 
 class FlightPlan extends Model
 {
@@ -57,17 +58,17 @@ class FlightPlan extends Model
     /*
     * Relationship one to one with incidents table
     */
-    function incident()
+    function incidents()
     {
-        return $this->belongsTo(Incident::class, "incident_id");
+        return $this->hasMany(Incident::class, "flight_plan_id");
     }
 
     /*
-    * Relationship one to one with reports table
+    * Relationship one to one with logs table
     */
-    function log()
+    function logs()
     {
-        return $this->hasOne(Report::class, "flight_plan_id");
+        return $this->hasMany(Log::class, "flight_plan_id");
     }
 
     /*

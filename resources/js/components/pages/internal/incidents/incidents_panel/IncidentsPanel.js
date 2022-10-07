@@ -312,9 +312,9 @@ export const IncidentsPanel = React.memo(() => {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Tipo do incidente</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Tipo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Data do incidente</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">

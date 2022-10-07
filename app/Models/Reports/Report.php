@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 // Models
 use App\Models\FlightPlans\FlightPlan;
 use App\Models\Logs\Log;
+use App\Models\ServiceOrders\ServiceOrder;
 
 class Report extends Model
 {
@@ -25,7 +26,7 @@ class Report extends Model
             if (is_numeric($value_searched)) {
                 $query->where('id', $value_searched);
             } else {
-                $query->where('logname', 'LIKE', '%' . $value_searched . '%');
+                $query->where('name', 'LIKE', '%' . $value_searched . '%');
             }
         });
     }
@@ -44,18 +45,18 @@ class Report extends Model
     }
 
     /*
-    * Relationship many to one with flight plans table
+    * Relationship one to one with service order table
     */
-    function flight_plan()
+    function service_order()
     {
-        return $this->belongsTo(FlightPlan::class);
+        return $this->hasOne(ServiceOrder::class, 'report_id');
     }
 
     /*
-    * Polymorphic relationship with table "logs"
+    * Relationship one to many with flight plans via service order table
     */
-    function log()
+    function flight_plans()
     {
-        return $this->morphOne(Log::class, 'logable');
+        return $this->hasManyThrough(ServiceOrder::class, 'flight_plan_id');
     }
 }

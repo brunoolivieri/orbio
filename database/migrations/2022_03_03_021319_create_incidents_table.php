@@ -15,6 +15,7 @@ class CreateIncidentsTable extends Migration
     {
         Schema::create('incidents', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('flight_plan_id')->constrained('flight_plans')->nullable(true);
             $table->string("type");
             $table->text("description");
             $table->dateTime("date")->useCurrent();

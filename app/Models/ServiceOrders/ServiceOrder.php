@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 // Models
 use App\Models\Users\User;
 use App\Models\FlightPlans\FlightPlan;
+use App\Models\Reports\Report;
 
 class ServiceOrder extends Model
 {
@@ -56,4 +57,16 @@ class ServiceOrder extends Model
     {
         return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withTrashed();
     }
+
+    /*
+    * Relationship one to one with report
+    */
+    function report()
+    {
+        return $this->belongsTo(Report::class, "report_id")->withTrashed();
+    }
+
+
+
+    
 }

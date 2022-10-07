@@ -34,8 +34,9 @@ class FlightPlansPanelResource extends JsonResource
                     "deleted_at" => $flight_plan->user->deleted_at
                 ],
                 "name" => $flight_plan->name,
-                "log" => $flight_plan->log,
-                "incident_id" => $flight_plan->incident_id,
+                "service_orders" => $flight_plan->service_orders,
+                "logs" => $flight_plan->logs,
+                "incidents" => $flight_plan->incidents,
                 "file" => $flight_plan->file,
                 "localization" => [
                     "coordinates" => $flight_plan->coordinates,

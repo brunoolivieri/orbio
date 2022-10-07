@@ -19,8 +19,8 @@ class FlightPlanRepository implements RepositoryInterface
 
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-        return $this->flightPlanModel->with("incident")
-            ->with("log")
+        return $this->flightPlanModel
+            ->with(["incidents", "service_orders", "logs"])
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)

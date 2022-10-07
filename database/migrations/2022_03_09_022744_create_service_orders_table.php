@@ -15,6 +15,8 @@ class CreateServiceOrdersTable extends Migration
     {
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
+            $table->uuid("uuid");
+            $table->foreignId("report_id")->constrained('reports');
             $table->string("number");
             $table->dateTime("start_date");
             $table->dateTime("end_date");
@@ -24,12 +26,14 @@ class CreateServiceOrdersTable extends Migration
             $table->softDeletes();
         });
 
+        // Relationship with users
         Schema::create('service_order_user', function (Blueprint $table) {
             $table->foreignId("service_order_id")->constrained('service_orders');
             $table->foreignId("user_id")->constrained('users');
             $table->string("role");
         });
 
+        // Relationship with flight plans
         Schema::create('service_order_flight_plan', function (Blueprint $table) {
             $table->foreignId("service_order_id")->constrained('service_orders');
             $table->foreignId("flight_plan_id")->constrained('flight_plans');

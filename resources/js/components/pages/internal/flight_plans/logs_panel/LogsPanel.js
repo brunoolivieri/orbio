@@ -2,10 +2,9 @@
 import * as React from 'react';
 // Custom
 import AxiosApi from "../../../../../services/AxiosApi";
-import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
-import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
-import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
-import { GenerateReportFormulary } from "../../../../structures/modules/reports/GenerateReportFormulary";
+import { CreateLogFormulary } from '../../../../structures/modules/flight_plans/logs/CreateLogFormulary';
+import { UpdateLogFormulary } from '../../../../structures/modules/flight_plans/logs/UpdateLogFormulary';
+import { DeleteLogFormulary } from '../../../../structures/modules/flight_plans/logs/DeleteLogFormulary';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
@@ -36,13 +35,11 @@ import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 // Lib
 import moment from 'moment';
 
@@ -76,7 +73,7 @@ export function LogsPanel() {
         serverLoadRecords();
     }, [paginationConfig]);
 
-    function serverLoadRecords() {
+    const serverLoadRecords = () => {
 
         const limit = paginationConfig.limit;
         const search = paginationConfig.search;
@@ -84,8 +81,8 @@ export function LogsPanel() {
         const order_by = paginationConfig.order_by;
         const filter = paginationConfig.filter;
 
-        AxiosApi.get(`/api/reports-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
-            .then(function (response) {
+        AxiosApi.get(`/api/plans-module-logs?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+            .then((response) => {
 
                 setLoading(false);
                 setRecords(response.data.records);
@@ -98,7 +95,7 @@ export function LogsPanel() {
                 }
 
             })
-            .catch(function (error) {
+            .catch((error) => {
 
                 const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
                 handleOpenSnackbar(error_message, "error");
@@ -109,10 +106,6 @@ export function LogsPanel() {
 
             });
 
-    }
-
-    const handleDownloadReport = () => {
-        //console.log('download');
     }
 
     const handleTablePageChange = (event, value) => {
@@ -208,7 +201,7 @@ export function LogsPanel() {
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
-                    <CreateReportFormulary reload_table={reloadTable} />
+                    <CreateLogFormulary reload_table={reloadTable} />
                 </Grid>
 
                 <Grid item>
@@ -221,7 +214,7 @@ export function LogsPanel() {
                     }
 
                     {(!loading && selectedRecordIndex != null) &&
-                        <UpdateReportFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+                        <UpdateLogFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
                     }
                 </Grid>
 
@@ -236,7 +229,7 @@ export function LogsPanel() {
 
                     {/* O modal é renderizado apenas quando um registro já foi selecionado */}
                     {(!loading && selectedRecordIndex != null) &&
-                        <DeleteReportFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+                        <DeleteLogFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
                     }
                 </Grid>
 
@@ -325,11 +318,9 @@ export function LogsPanel() {
                             <TableHead>
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Log</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Data do log</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Visualizar rota</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Name</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody className="tbody">
@@ -337,7 +328,6 @@ export function LogsPanel() {
                                     records.map((log, index) => (
                                         <TableRow key={log.id}>
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
-                                            <TableCell align="center">{log.log.name}</TableCell>
                                             <TableCell align="center">
                                                 {log.flight_plan != null ?
                                                     <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
@@ -355,28 +345,8 @@ export function LogsPanel() {
                                                     </Tooltip>
                                                 }
                                             </TableCell>
-                                            <TableCell align="center">
-                                                {
-                                                    log.flight_plan != null ?
-                                                        (log.path != null ?
-                                                            <Tooltip title={"Exportar relatório"}>
-                                                                <IconButton onClick={() => handleDownloadReport()}>
-                                                                    <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
-                                                                </IconButton>
-                                                            </Tooltip>
-                                                            :
-                                                            <GenerateReportFormulary record={log} />
-                                                        )
-                                                        :
-                                                        <Tooltip title={"Um plano de voo é necessário"}>
-                                                            <IconButton>
-                                                                <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#808991"} />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                }
-                                            </TableCell>
-                                            <TableCell align="center">{moment(log.log.datetime).format('DD-MM-YYYY hh:mm')}</TableCell>
-                                            <TableCell align="center">{log.observation}</TableCell>
+                                            <TableCell align="center">{log.name}</TableCell>
+                                            <TableCell align="center">{moment(log.timestamp).format('DD-MM-YYYY hh:mm')}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>

@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Modules\Report;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
+// Form Request
+use App\Http\Requests\PDF\ReportPDFRequest;
 // Custom
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;

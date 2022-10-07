@@ -26,9 +26,9 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, report_id: props.record.report_id, incident_id: props.record.incident_id, description: props.record.description });
-  const [fieldError, setFieldError] = React.useState({ name: false, description: false, report: false, incident: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", description: "", report: "", incident: "" });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, incident_id: props.record.incident_id, description: props.record.description });
+  const [fieldError, setFieldError] = React.useState({ name: false, description: false, incident: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", description: "", incident: "0" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -63,11 +63,10 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
-    const reportValidate = Number(controlledInput.report_id) === 0 ? { error: true, message: "Selecione um relatório" } : { error: false, message: "" };
     const incidentValidate = Number(controlledInput.incident_id) === 0 ? { error: true, message: "Selecione um incidente" } : { error: false, message: "" };
 
-    setFieldError({ name: nameValidate.error, description: descriptionValidate.error, report: reportValidate.error, incident: incidentValidate.error });
-    setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message, report: reportValidate.message, incident: incidentValidate.message });
+    setFieldError({ name: nameValidate.error, description: descriptionValidate.error, incident: incidentValidate.error });
+    setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message, incident: incidentValidate.message });
 
     return !(nameValidate.error || descriptionValidate.error);
 
@@ -76,7 +75,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   const requestServerOperation = () => {
 
     AxiosApi.patch(`/api/plans-module/${controlledInput.id}`, {
-      report_id: controlledInput.report_id,
       incident_id: controlledInput.incident_id,
       description: controlledInput.description
     })
@@ -116,7 +114,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
     let request_errors = {
       name: { error: false, message: null },
-      report_id: { error: false, message: null },
       incident_id: { error: false, message: null },
       description: { error: false, message: null }
     }
@@ -132,14 +129,12 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
     setFieldError({
       name: request_errors.name.error,
-      report: request_errors.report_id.error,
       incident: request_errors.incident_id.error,
       description: request_errors.description.error
     });
 
     setFieldErrorMessage({
       name: request_errors.name.message,
-      report: request_errors.report_id.message,
       incident: request_errors.incident_id.message,
       description: request_errors.description.message
     });
@@ -199,24 +194,10 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
               <Box sx={{ mb: 2 }}>
                 <GenericSelect
-                  label_text={"Relatório"}
-                  data_source={"/api/load-reports"}
-                  primary_key={"id"}
-                  key_content={"id"}
-                  error={fieldError.report}
-                  default={props.record.report_id != null ? props.record.report_id : 0}
-                  name={"report_id"}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                />
-              </Box>
-
-              <Box sx={{ mb: 2 }}>
-                <GenericSelect
                   label_text={"Incidente"}
                   data_source={"/api/load-incidents"}
                   primary_key={"id"}
-                  key_content={"id"}
+                  key_content={"type"}
                   error={fieldError.incident}
                   default={props.record.incident_id != null ? props.record.incident_id : 0}
                   name={"incident_id"}

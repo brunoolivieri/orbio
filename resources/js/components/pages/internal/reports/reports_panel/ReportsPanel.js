@@ -92,9 +92,9 @@ export function ReportsPanel() {
         setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
 
         if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} logs`, "success");
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} relatórios`, "success");
         } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} log`, "success");
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} relatório`, "success");
         }
 
       })
@@ -325,11 +325,10 @@ export function ReportsPanel() {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Log</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Data do log</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Exportar</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
@@ -377,6 +376,26 @@ export function ReportsPanel() {
                       </TableCell>
                       <TableCell align="center">{moment(log.log.datetime).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">{log.observation}</TableCell>
+                      {/* <TableCell align="center">
+                        {
+                            log.flight_plan != null ?
+                                (log.path != null ?
+                                    <Tooltip title={"Exportar relatório"}>
+                                        <IconButton onClick={() => handleDownloadReport()}>
+                                            <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
+                                        </IconButton>
+                                    </Tooltip>
+                                    :
+                                    <GenerateReportFormulary record={log} />
+                                )
+                                :
+                                <Tooltip title={"Um plano de voo é necessário"}>
+                                    <IconButton>
+                                        <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#808991"} />
+                                    </IconButton>
+                                </Tooltip>
+                        }
+                    </TableCell> */}
                     </TableRow>
                   ))}
               </TableBody>

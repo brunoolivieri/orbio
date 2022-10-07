@@ -24,8 +24,7 @@ use App\Http\Controllers\Actions\{
     LoadProfilesController,
     LoadReportsController,
     LoadUsersController,
-    LoadFlightPlansForServiceOrderController,
-    MakePDFController
+    LoadFlightPlansForServiceOrderController
 };
 // Internal Controller 
 use App\Http\Controllers\Internal\{
@@ -38,7 +37,10 @@ use App\Http\Controllers\Modules\Administration\{
     AdministrationModuleProfilesController
 };
 use App\Http\Controllers\Modules\Report\ReportModuleController;
-use App\Http\Controllers\Modules\FlightPlan\FlightPlanModuleController;
+use App\Http\Controllers\Modules\FlightPlan\{
+    FlightPlanModuleController,
+    FlightPlanModuleLogController
+};
 use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 use App\Http\Controllers\Modules\Equipment\{
@@ -86,6 +88,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("/api/admin-module-profile", AdministrationModuleProfilesController::class);
     Route::ApiResource("/api/reports-module", ReportModuleController::class);
     Route::ApiResource("/api/plans-module", FlightPlanModuleController::class);
+    Route::ApiResource("/api/plans-module-logs", FlightPlanModuleLogController::class);
     Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
     Route::ApiResource("/api/orders-module", ServiceOrderModuleController::class);
     Route::ApiResource("/api/incidents-module", IncidentModuleController::class);
@@ -93,7 +96,6 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
-    Route::post('api/export-report-pdf', MakePDFController::class);
     Route::get('api/get-weather-data', WeatherDataController::class);
     Route::get('api/get-drone-logs', LoadDroneLogsController::class);
     Route::post('api/download-selected-logs', DownloadDroneLogController::class);
