@@ -29,8 +29,8 @@ class FlightPlansLogPanelResource extends JsonResource
 
             $this->formatedData["records"][$row] = [
                 "id" => $log->id,
-                "flight_plan" => $log->flight_plan,
                 "name" => $log->name,
+                "flight_plan" => null,
                 "filename" => $log->filename,
                 "path" => $log->path,
                 "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),
@@ -38,6 +38,14 @@ class FlightPlansLogPanelResource extends JsonResource
                 "updated_at" => $log->updated_at,
                 "deleted_at" => $log->deleted_at
             ];
+
+            if (!empty($log->flight_plan)) {
+
+                $this->formatedData["records"][$row]["flight_plan"] = [
+                    "id" => $log->flight_plan->id,
+                    "path" => empty($log->flight_plan->file) ? null : $log->flight_plan->file
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

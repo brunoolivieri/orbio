@@ -21,7 +21,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
@@ -35,7 +35,7 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
 
     const htmlImage = React.useRef();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -92,6 +92,8 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
     }
+
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

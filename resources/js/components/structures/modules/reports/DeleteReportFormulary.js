@@ -21,14 +21,14 @@ import AxiosApi from '../../../../services/AxiosApi';
 
 export const DeleteReportFormulary = React.memo((props) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -86,7 +86,7 @@ export const DeleteReportFormulary = React.memo((props) => {
     setDisplayAlert({ display: true, type: "error", message: error_message });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
 
   return (

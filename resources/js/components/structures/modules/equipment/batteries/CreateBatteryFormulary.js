@@ -36,18 +36,12 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
     const { AuthData } = useAuthentication();
 
     const [controlledInput, setControlledInput] = React.useState({ name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" });
-
     const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [loading, setLoading] = React.useState(false);
-
     const [open, setOpen] = React.useState(false);
-
     const [chargeDate, setChargeDate] = React.useState(moment());
-
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
     const htmlImage = React.useRef();
@@ -211,7 +205,7 @@ export const CreateBatteryFormulary = React.memo(({ ...props }) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    // ============================================================================== STRUCTURES ============================================================================== //
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

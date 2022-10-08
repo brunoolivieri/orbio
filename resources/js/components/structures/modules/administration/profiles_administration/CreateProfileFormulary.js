@@ -23,7 +23,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 export const CreateProfileFormulary = React.memo(({ ...props }) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ name: "" });
@@ -33,7 +33,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -132,7 +132,7 @@ export const CreateProfileFormulary = React.memo(({ ...props }) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

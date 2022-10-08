@@ -47,6 +47,6 @@ class Log extends Model
     */
     function flight_plan()
     {
-        return $this->belongsTo(FlightPlan::class, "flight_plan_id");
+        return $this->belongsTo(FlightPlan::class, "flight_plan_id", "id");
     }
 }

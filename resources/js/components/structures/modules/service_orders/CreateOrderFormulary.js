@@ -29,6 +29,8 @@ import moment from 'moment';
 
 export const CreateOrderFormulary = React.memo((props) => {
 
+  // ============================================================================== STATES ============================================================================== //
+
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ pilot_id: "0", client_id: "0", observation: "", status: "1" });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
@@ -40,7 +42,7 @@ export const CreateOrderFormulary = React.memo((props) => {
   const [open, setOpen] = React.useState(false);
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
-  // ============================================================================== FUNÇÕES/ROTINAS ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -206,7 +208,7 @@ export const CreateOrderFormulary = React.memo((props) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

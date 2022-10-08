@@ -21,19 +21,16 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 export const DeleteBatteryFormulary = React.memo((props) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
     const [controlledInput] = React.useState({ id: props.record.id });
-
     const [loading, setLoading] = React.useState(false);
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [open, setOpen] = React.useState(false);
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+     // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -89,6 +86,8 @@ export const DeleteBatteryFormulary = React.memo((props) => {
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
     }
+
+     // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

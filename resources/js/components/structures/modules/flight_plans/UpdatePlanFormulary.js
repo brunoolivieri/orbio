@@ -16,14 +16,13 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { GenericSelect } from '../../input_select/GenericSelect';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
@@ -33,7 +32,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -64,6 +63,8 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
 
+    console.log(controlledInput)
+
     setFieldError({ name: nameValidate.error, description: descriptionValidate.error });
     setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message });
 
@@ -86,7 +87,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       .catch(function (error) {
 
         setLoading(false);
-        errorServerResponseTreatment(error.response);
+        errorServerResponseTreatment(error.response.data);
 
       });
 
@@ -105,9 +106,9 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   }
 
-  const errorServerResponseTreatment = (response) => {
-
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
+  const errorServerResponseTreatment = (response_data) => {
+    console.log(response_data)
+    const error_message = response_data.message ? response_data.message : "Erro do servidor";
 
     setDisplayAlert({ display: true, type: "error", message: error_message });
 
@@ -116,11 +117,11 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       description: { error: false, message: null }
     }
 
-    for (let prop in response.data.errors) {
+    for (let prop in response_data.errors) {
 
       request_errors[prop] = {
         error: true,
-        message: ""
+        message: response_data.errors[prop][0]
       }
 
     }
@@ -141,7 +142,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>
@@ -182,6 +183,7 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
                 type="text"
                 fullWidth
                 variant="outlined"
+                onChange={handleInputChange}
                 defaultValue={props.record.name}
                 helperText={fieldErrorMessage.name}
                 error={fieldError.name}

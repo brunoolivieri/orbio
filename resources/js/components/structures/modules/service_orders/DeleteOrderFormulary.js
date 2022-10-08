@@ -21,7 +21,7 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 export function DeleteOrderFormulary(props) {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [open, setOpen] = React.useState(false);
@@ -29,7 +29,7 @@ export function DeleteOrderFormulary(props) {
   const [disabledButton, setDisabledButton] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -91,7 +91,7 @@ export function DeleteOrderFormulary(props) {
     setDisplayAlert({ display: true, type: "error", message: error_message });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

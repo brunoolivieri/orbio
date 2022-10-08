@@ -23,17 +23,17 @@ import { GenericSelect } from '../../../input_select/GenericSelect';
 
 export const UpdateLogFormulary = React.memo((props) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, flight_plan_id: props.record.flight_plan_id != null ? props.record.flight_plan_id : "0" });
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, flight_plan_id: props.record.flight_plan != null ? props.record.flight_plan.id : "0" });
     const [fieldError, setFieldError] = React.useState({ name: false, flight_plan_id: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
     const [loading, setLoading] = React.useState(false);
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -72,7 +72,13 @@ export const UpdateLogFormulary = React.memo((props) => {
 
     const requestServerOperation = () => {
 
-        AxiosApi.patch(`/api/plans-module-logs/${controlledInput.id}`, controlledInput)
+        const data = {
+            id: controlledInput.id,
+            name: controlledInput.name,
+            flight_plan_id: controlledInput.flight_plan_id === "0" ? null : controlledInput.flight_plan_id
+        }
+
+        AxiosApi.patch(`/api/plans-module-logs/${controlledInput.id}`, data)
             .then(function () {
 
                 setLoading(false);
@@ -103,9 +109,9 @@ export const UpdateLogFormulary = React.memo((props) => {
 
     }
 
-    const errorServerResponseTreatment = (data) => {
+    const errorServerResponseTreatment = (response_data) => {
 
-        let error_message = (data.message != "" && data.message != undefined) ? data.message : "Erro do servidor!";
+        let error_message = response_data.message ? response_data.message : "Erro do servidor!";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
@@ -115,11 +121,11 @@ export const UpdateLogFormulary = React.memo((props) => {
         }
 
         // Coleta dos objetos de erro existentes na response
-        for (let prop in data.errors) {
+        for (let prop in response_data.errors) {
 
             input_errors[prop] = {
                 error: true,
-                message: data.errors[prop][0]
+                message: response_data.errors[prop][0]
             }
 
         }
@@ -140,7 +146,7 @@ export const UpdateLogFormulary = React.memo((props) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>
@@ -178,18 +184,15 @@ export const UpdateLogFormulary = React.memo((props) => {
                         <Box sx={{ mb: 2 }}>
                             <TextField
                                 margin="dense"
-                                label="Log do vôo"
+                                label="Nome customizado"
                                 type="text"
                                 fullWidth
+                                name="name"
                                 variant="outlined"
                                 value={controlledInput.name}
                                 onChange={handleInputChange}
                                 helperText={fieldErrorMessage.name}
                                 error={fieldError.name}
-                                InputProps={{
-                                    inputProps: { min: 0, max: 1 },
-                                    readOnly: true
-                                }}
                             />
                         </Box>
 

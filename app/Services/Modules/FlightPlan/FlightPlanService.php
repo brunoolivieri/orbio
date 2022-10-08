@@ -77,7 +77,6 @@ class FlightPlanService implements ServiceInterface
 
     function updateResource(array $data, string $identifier)
     {
-        $data["description"] = $data["description"] === "none" ? "N/A" : $data["description"];
 
         return $this->repository->updateOne(collect($data), $identifier);
     }

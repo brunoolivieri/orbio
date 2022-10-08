@@ -272,7 +272,7 @@ export const LogsPanel = () => {
                 <Grid item xs>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar plano por ID"}
+                        placeholder={"Pesquisar plano por id e nome"}
                         onChange={(e) => setSearchField(e.currentTarget.value)}
                         InputProps={{
                             startAdornment:
@@ -318,9 +318,9 @@ export const LogsPanel = () => {
                             <TableHead>
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Visualizar rota</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Name</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Filename</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Rota</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Nome do arquivo</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
@@ -331,7 +331,7 @@ export const LogsPanel = () => {
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
                                             <TableCell align="center">
                                                 {log.flight_plan != null ?
-                                                    <Link href={`/internal/map?file=${log.id}`} target="_blank">
+                                                    <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
                                                         <Tooltip title="Ver plano">
                                                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
                                                                 <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />

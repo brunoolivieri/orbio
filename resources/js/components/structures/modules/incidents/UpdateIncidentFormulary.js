@@ -25,7 +25,7 @@ import { DateTimeSingle } from "../../date_picker/DateTimeSingle";
 
 export function UpdateIncidentFormulary({ ...props }) {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description });
@@ -36,7 +36,7 @@ export function UpdateIncidentFormulary({ ...props }) {
   const [open, setOpen] = React.useState(false);
   const [incidentDate, setIncidentDate] = React.useState(moment());
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -149,7 +149,7 @@ export function UpdateIncidentFormulary({ ...props }) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

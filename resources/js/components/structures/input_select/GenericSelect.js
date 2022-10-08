@@ -48,7 +48,7 @@ export const GenericSelect = React.memo((props) => {
                     label={data.label_text}
                     onChange={handleChange}
                     name={props.name}
-                    error={(!loading && data.records.length == 0)}
+                    error={(!loading && data.records.length == 0) || props.error}
                     disabled={loading}
                 >
 

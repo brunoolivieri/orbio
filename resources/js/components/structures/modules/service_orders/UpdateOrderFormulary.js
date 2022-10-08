@@ -28,6 +28,8 @@ import moment from 'moment';
 
 export const UpdateOrderFormulary = React.memo((props) => {
 
+  // ============================================================================== STATES ============================================================================== //
+
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
@@ -39,7 +41,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
   const [open, setOpen] = React.useState(false);
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
 
@@ -219,7 +221,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

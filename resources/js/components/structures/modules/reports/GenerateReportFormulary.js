@@ -21,14 +21,14 @@ import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DatePicker } from "../../date_picker/DatePicker";
-import { ReportDocumentVisualization, ReportDocument } from "../../../structures/report_builder/ReportBuilder";
+import { ReportDocumentVisualization } from "../../../structures/report_builder/ReportBuilder";
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
 
 
 export const GenerateReportFormulary = React.memo((props) => {
 
-    // ============================================================================== STATES AND VARIABLES ============================================================================== //
+    // ============================================================================== STATES  ============================================================================== //
 
     const { AuthData } = useAuthentication();
     const [loading, setLoading] = React.useState(false);
@@ -208,7 +208,7 @@ export const GenerateReportFormulary = React.memo((props) => {
         });
     }
 
-    // ============================================================================== STRUCTURE ============================================================================== //
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

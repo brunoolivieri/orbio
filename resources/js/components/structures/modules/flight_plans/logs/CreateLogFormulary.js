@@ -27,7 +27,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 export const CreateLogFormulary = React.memo(() => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
@@ -37,7 +37,7 @@ export const CreateLogFormulary = React.memo(() => {
     const [selectedLogs, setSelectedLogs] = React.useState([]);
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleDownloadLogs = (e) => {
         e.preventDefault();
@@ -79,7 +79,7 @@ export const CreateLogFormulary = React.memo(() => {
         setOpen(false);
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

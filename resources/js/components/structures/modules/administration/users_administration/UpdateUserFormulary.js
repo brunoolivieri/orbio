@@ -23,7 +23,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 
 export const UpdateUserFormulary = React.memo((props) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id });
@@ -33,7 +33,7 @@ export const UpdateUserFormulary = React.memo((props) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -151,7 +151,7 @@ export const UpdateUserFormulary = React.memo((props) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

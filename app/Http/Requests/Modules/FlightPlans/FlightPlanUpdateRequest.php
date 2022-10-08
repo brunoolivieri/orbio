@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Session;
 
 class FlightPlanUpdateRequest extends FormRequest
 {
-     /**
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -28,16 +28,16 @@ class FlightPlanUpdateRequest extends FormRequest
         $flight_plan_id_parameter = $this->route("plans_module");
 
         return [
-            "name" => "required|unique:flight_plans,name,".$flight_plan_id_parameter,
-            "description" => 'required|string',
+            "name" => ["required", "unique:flight_plans,name,$flight_plan_id_parameter"],
+            "description" => ["required"]
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

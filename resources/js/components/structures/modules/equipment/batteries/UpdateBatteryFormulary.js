@@ -31,28 +31,22 @@ const Input = styled('input')({
 
 export const UpdateBatteryFormulary = React.memo((props) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge, image: "" });
-
     const [fieldError, setFieldError] = React.useState({ name: false, manufacturer: false, model: false, serial_number: false, last_charge: false, image: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", manufacturer: "", model: "", serial_number: "", last_charge: "", image: "" });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [loading, setLoading] = React.useState(false);
-
     const [uploadedImage, setUploadedImage] = React.useState(null);
-
     const [open, setOpen] = React.useState(false);
-
     const [chargeDate, setChargeDate] = React.useState(moment());
 
     const htmlImage = React.useRef();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -213,6 +207,8 @@ export const UpdateBatteryFormulary = React.memo((props) => {
     const handleInputChange = (event) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
+
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

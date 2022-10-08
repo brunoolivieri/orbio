@@ -37,18 +37,12 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
     const { AuthData } = useAuthentication();
 
     const [controlledInput, setControlledInput] = React.useState({ name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-
     const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [loading, setLoading] = React.useState(false);
-
     const [open, setOpen] = React.useState(false);
-
     const [purchaseDate, setPurchaseDate] = React.useState(moment());
-
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
     const htmlImage = React.useRef();
@@ -230,6 +224,8 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
     const handleInputChange = (event) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
+
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>

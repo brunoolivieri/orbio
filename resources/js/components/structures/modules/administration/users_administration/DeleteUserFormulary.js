@@ -22,7 +22,7 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput] = React.useState({ id: props.record.id });
@@ -30,7 +30,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -87,7 +87,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>

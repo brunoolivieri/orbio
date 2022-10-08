@@ -174,8 +174,6 @@ export const FlightPlansPanel = () => {
 
   const handleClickRadio = (event) => {
 
-    console.log(event.target.value)
-
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
@@ -310,7 +308,7 @@ export const FlightPlansPanel = () => {
         <Grid item xs>
           <TextField
             fullWidth
-            placeholder={"Pesquisar plano por ID"}
+            placeholder={"Pesquisar plano por id e nome"}
             onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
