@@ -29,7 +29,6 @@ class FlightPlanUpdateRequest extends FormRequest
 
         return [
             "name" => "required|unique:flight_plans,name,".$flight_plan_id_parameter,
-            "incident_id" => 'nullable|integer',
             "description" => 'required|string',
         ];
     }

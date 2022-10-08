@@ -51,12 +51,4 @@ class Report extends Model
     {
         return $this->hasOne(ServiceOrder::class, 'report_id');
     }
-
-    /*
-    * Relationship one to many with flight plans via service order table
-    */
-    function flight_plans()
-    {
-        return $this->hasManyThrough(ServiceOrder::class, 'flight_plan_id');
-    }
 }

@@ -50,7 +50,8 @@ class FlightPlanLogService implements ServiceInterface
 
             $data = [
                 "flight_plan_id" => null,
-                "name" => $logname,
+                "name" => Str::random(10),
+                "filename" => $logname,
                 "path" => $path,
                 "timestamp" => $timestamp
             ];
@@ -63,9 +64,11 @@ class FlightPlanLogService implements ServiceInterface
 
     function updateResource(array $data, string $identifier)
     {
+        return $this->repository->updateOne(collect($data), $identifier);
     }
 
     function deleteResource(string $identifier)
     {
+        return $this->repository->deleteOne($identifier);
     }
 }

@@ -44,7 +44,6 @@ class FlightPlanService implements ServiceInterface
             return response($contents)->withHeaders([
                 "Content-type" => mime_content_type($path)
             ]);
-            
         } else {
 
             return response(["message" => "Nenhum arquivo encontrado."], 404);
@@ -73,24 +72,18 @@ class FlightPlanService implements ServiceInterface
         $data["city"] = $address_components[2]["long_name"];
         $data["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
 
-        $flight_plan = $this->repository->createOne(collect($data));
-
-        return response(["message" => "Plano de voo criado com sucesso!"], 200);
+        return $this->repository->createOne(collect($data));
     }
 
     function updateResource(array $data, string $identifier)
     {
-        $flight_plan = $this->repository->updateOne(collect($data), $identifier);
-
         $data["description"] = $data["description"] === "none" ? "N/A" : $data["description"];
 
-        return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
+        return $this->repository->updateOne(collect($data), $identifier);
     }
 
     function deleteResource(string $identifier)
     {
-        $flight_plan = $this->repository->deleteOne($identifier);
-
-        return response(["message" => "Plano de voo deletado com sucesso!"], 200);
+        return $this->repository->deleteOne($identifier);
     }
 }

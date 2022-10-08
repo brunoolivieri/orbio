@@ -16,7 +16,8 @@ class CreateLogsTable extends Migration
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
             $table->string("flight_plan_id")->constrained('flight_plans')->nullable(true);
-            $table->string('name');
+            $table->string('name')->unique();
+            $table->string('filename');
             $table->string("path");
             $table->timestamp("timestamp");
             $table->timestamps();

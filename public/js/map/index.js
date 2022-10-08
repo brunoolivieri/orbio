@@ -1,3 +1,5 @@
+//import axios from "axios";
+
 // Token gerado para uso no MAPBOX-GL
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
 
@@ -788,7 +790,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
 
             // Verificando o tempo de voo baseado na distância parcial atual percorrida
             calculateFlightTime(partialDistance);
-            console.log(time);
+            //console.log(time);
 
             // Acessando o limite máximo de tempo definido pelo usuário
             maxFlightTime = Number.parseInt(document.getElementById('max-flight-time').value) * 60;
@@ -806,7 +808,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
         }
     }
 
-    console.log(breakpoints);
+    //console.log(breakpoints);
 
     // Distância percorrida na fase 03 da rota
     for (j = 0; j < initialFinalPath[1].length - 1; j++) {
@@ -1417,7 +1419,7 @@ function saveFullPath() {
         }
     } else {
         index = 0;
-        console.log(finalDestination);
+        //console.log(finalDestination);
         for (i = j; i < (finalDestination.length) + j - 1; i++) {
             content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
             index++;
@@ -1479,7 +1481,7 @@ function savePath() {
     inputSpeed = document.getElementById("speed").value;
     var speed = (inputSpeed == '') ? 8 : inputSpeed;
 
-    console.log("quantos breakpoints: " + breakpoints.length);
+    //console.log("quantos breakpoints: " + breakpoints.length);
 
     // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
     for (k = 0; k <= breakpoints.length; k++) {
@@ -1617,6 +1619,7 @@ function storeFlightPlan(typed_name, timestamp, coordinates, blob) {
     formData.append("description", "none");
     formData.append("file", file);
     formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
+    
 
     axios.post("/api/plans-module", formData, {
         headers: {
@@ -1646,7 +1649,7 @@ function importKMLPoint(e) {
     cleanLayers();
     cleanPolygon();
 
-    console.log(marcador);
+    //console.log(marcador);
     // Apagando o marcador anterior
     marcador.remove();
 
@@ -1719,7 +1722,7 @@ function importKMLPolygon(e) {
 
         // Percorrendo todas as coordenadas e quebrando as informações de lat e long
         for (i = 0; i < coordinates.length - 1; i++) {
-            console.log(coordinates[i]);
+            //console.log(coordinates[i]);
 
             latLong = coordinates[i].split(",");
             kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -1794,7 +1797,7 @@ function importMPPolygon(e) {
         coordinatesLongLat = kmlArea;
         home = kmlArea[0];
 
-        console.log(coordinatesLongLat);
+        //console.log(coordinatesLongLat);
 
         // Acessando o centroide da área para posicionar no mapa
         var polygon = turf.polygon([kmlArea]);

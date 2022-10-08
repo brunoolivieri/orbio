@@ -27,9 +27,9 @@ export const UpdateLogFormulary = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, observation: props.record.observation, flight_plan_id: props.record.flight_plan_id != null ? props.record.flight_plan_id : "0" });
-    const [fieldError, setFieldError] = React.useState({ observation: false, flight_plan_id: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ observation: "" });
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, flight_plan_id: props.record.flight_plan_id != null ? props.record.flight_plan_id : "0" });
+    const [fieldError, setFieldError] = React.useState({ name: false, flight_plan_id: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
     const [loading, setLoading] = React.useState(false);
 
@@ -40,8 +40,8 @@ export const UpdateLogFormulary = React.memo((props) => {
     }
 
     const handleClose = () => {
-        setFieldError({ observation: false });
-        setFieldErrorMessage({ observation: "" });
+        setFieldError({ name: false });
+        setFieldErrorMessage({ name: "" });
         setDisplayAlert({ display: false, type: "", message: "" });
         setOpen(false);
         setLoading(false);
@@ -61,12 +61,12 @@ export const UpdateLogFormulary = React.memo((props) => {
 
     const submitedDataValidate = () => {
 
-        const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
+        const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
 
-        setFieldError({ observation: observationValidate.error, flight_plan_id: false });
-        setFieldErrorMessage({ observation: observationValidate.message });
+        setFieldError({ name: nameValidate.error, flight_plan_id: false });
+        setFieldErrorMessage({ name: nameValidate.message });
 
-        return !observationValidate.error;
+        return !nameValidate.error;
 
     }
 
@@ -110,7 +110,8 @@ export const UpdateLogFormulary = React.memo((props) => {
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
-            observation: { error: false, message: null },
+            name: { error: false, message: null },
+            flight_plan_id: { error: false, message: null }
         }
 
         // Coleta dos objetos de erro existentes na response
@@ -124,11 +125,13 @@ export const UpdateLogFormulary = React.memo((props) => {
         }
 
         setFieldError({
-            observation: input_errors.observation.error
+            name: input_errors.name.error,
+            flight_plan_id: input_errors.flight_plan_id.error
         });
 
         setFieldErrorMessage({
-            observation: input_errors.observation.message
+            name: input_errors.name.message,
+            flight_plan_id: input_errors.flight_plan_id.message
         });
 
     }
@@ -179,27 +182,14 @@ export const UpdateLogFormulary = React.memo((props) => {
                                 type="text"
                                 fullWidth
                                 variant="outlined"
-                                defaultValue={props.record.log.name}
+                                value={controlledInput.name}
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
                                 InputProps={{
                                     inputProps: { min: 0, max: 1 },
                                     readOnly: true
                                 }}
-                            />
-                        </Box>
-
-                        <Box sx={{ mb: 2 }}>
-                            <TextField
-                                margin="dense"
-                                id="observation"
-                                name="observation"
-                                label="Observação"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.observation}
-                                helperText={fieldErrorMessage.observation}
-                                error={fieldError.observation}
-                                onChange={handleInputChange}
                             />
                         </Box>
 
@@ -211,8 +201,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                                 key_content={"name"}
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}
-                                helperText={fieldErrorMessage.flight_plan_id}
-                                error={fieldError.client_id}
+                                error={fieldError.flight_plan_id}
                                 name={"flight_plan_id"}
                                 value={controlledInput.flight_plan_id}
                             />

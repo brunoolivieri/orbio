@@ -35,6 +35,7 @@ class FlightPlanLogRepository implements RepositoryInterface
             $this->logModel->create([
                 "flight_plan_id" => $data->get("flight_plan_id"),
                 "name" => $data->get("name"),
+                "filename" => $data->get("filename"),
                 "path" => $data->get("path"),
                 "timestamp" => $data->get("timestamp")
             ]);
@@ -45,9 +46,25 @@ class FlightPlanLogRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
+
+        $log = $this->logModel->findOrFail($identifier);
+
+        $log->update([
+            "name" => $data->get("name"),
+            "flight_plan_id" => $data->get("flight_plan_id")
+        ]);
+
+        $log->refresh();
+
+        return response(["message" => "Log atualizado com sucesso!"], 200);
     }
 
     function deleteOne(string $identifier)
     {
+        $log = $this->logModel->findOrFail($identifier);
+
+        $log->delete();
+
+        return response(["message" => "Log deletado com sucesso!"], 200);
     }
 }

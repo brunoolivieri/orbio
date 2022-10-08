@@ -11,7 +11,6 @@ use App\Http\Controllers\Actions\Authentication\{
 // Api Actions
 use App\Http\Controllers\Actions\Api\{
     LoadDroneLogsController,
-    DownloadDroneLogController,
     WeatherDataController
 };
 // Dashboard Action
@@ -98,7 +97,6 @@ Route::middleware(["session.auth"])->group(function () {
     // Actions
     Route::get('api/get-weather-data', WeatherDataController::class);
     Route::get('api/get-drone-logs', LoadDroneLogsController::class);
-    Route::post('api/download-selected-logs', DownloadDroneLogController::class);
     Route::post('/api/get-auth-data', LoadAuthData::class);
     Route::get("/api/load-users", LoadUsersController::class);
     Route::get("/api/load-profiles", LoadProfilesController::class);

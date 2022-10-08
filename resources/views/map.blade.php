@@ -34,7 +34,7 @@
 	<script src="{{ asset('js/map/es6-promise.auto.min.js') }}"></script>
 
 	<!-- AXIOS -->
-	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 	<!-- BOOTSTRAP -->
 	<link href="{{ asset('css/map/bootstrap.min.css') }}" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -147,36 +147,6 @@
 
 		</form>
 	</div>	
-
-	<!-- Modal Missão -->
-	<!-- 
-	<nav id="menu-options" style="display: none">
-		<ul class="menu-options">
-			<li id="btn-clean">Novo</li>
-			<li>
-				<label>Abrir
-					<input type="file" id="file-input" hidden/>
-				</label>	
-			</li>
-			<li id="btn-save">Salvar</li>
-			<li>
-				<label>Importar Ponto
-					<input type="file" id="file-import" hidden/>
-				</label>
-			</li>
-			<li>
-				<label>Importar Poly
-					<input type="file" id="file-import-poly" hidden/>
-				</label>
-			</li>
-			<li>
-				<label>Importar MP
-					<input type="file" id="file-import-mp" hidden/>
-				</label>
-			</li>
-		</ul>
-	</nav>
-	-->
 
 	<nav id="menu-options" style="display: none">
 		<ul class="menu-options">

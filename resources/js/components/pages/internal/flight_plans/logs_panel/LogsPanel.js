@@ -48,7 +48,7 @@ const StyledHeadTableCell = styled(TableCell)({
     fontWeight: 700
 });
 
-export function LogsPanel() {
+export const LogsPanel = () => {
 
     // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
 
@@ -320,6 +320,7 @@ export function LogsPanel() {
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Visualizar rota</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Name</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Filename</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
@@ -330,7 +331,7 @@ export function LogsPanel() {
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
                                             <TableCell align="center">
                                                 {log.flight_plan != null ?
-                                                    <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
+                                                    <Link href={`/internal/map?file=${log.id}`} target="_blank">
                                                         <Tooltip title="Ver plano">
                                                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
                                                                 <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -346,6 +347,7 @@ export function LogsPanel() {
                                                 }
                                             </TableCell>
                                             <TableCell align="center">{log.name}</TableCell>
+                                            <TableCell align="center">{log.filename}</TableCell>
                                             <TableCell align="center">{moment(log.timestamp).format('DD-MM-YYYY hh:mm')}</TableCell>
                                         </TableRow>
                                     ))}

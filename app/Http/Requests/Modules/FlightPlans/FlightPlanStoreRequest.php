@@ -25,11 +25,10 @@ class FlightPlanStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => "required|unique:flight_plans,name",
-            "incident_id" => 'nullable|integer',
-            "description" => 'required|string',
-            "file" => 'required|file|mimes:txt,kml',
-            "coordinates" => 'required'
+            "name" => ["required", "unique:flight_plans", "name"],
+            "description" => ["required", "string"],
+            "file" => ["required", "file", "mimes:txt,kml"],
+            "coordinates" => ["required"]
         ];
     }
 

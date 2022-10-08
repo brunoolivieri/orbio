@@ -52,7 +52,6 @@ const StyledHeadTableCell = styled(TableCell)({
   fontWeight: 700
 });
 
-
 export const FlightPlansPanel = () => {
 
   // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
@@ -136,7 +135,7 @@ export const FlightPlansPanel = () => {
 
   };
 
-  function handleSearchSubmit(event) {
+  const handleSearchSubmit = (event) => {
     event.preventDefault();
 
     setPaginationConfig({
@@ -174,6 +173,8 @@ export const FlightPlansPanel = () => {
   }
 
   const handleClickRadio = (event) => {
+
+    console.log(event.target.value)
 
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);

@@ -20,7 +20,7 @@ class FlightPlanRepository implements RepositoryInterface
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         return $this->flightPlanModel
-            ->with(["incidents", "service_orders", "logs"])
+            ->with(["service_orders", "logs"])
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -29,6 +29,12 @@ class FlightPlanRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
+
+        // Flight plan is stored just if does not already exists
+        if (Storage::disk('public')->exists($data->get("path"))) {
+            return response(["message" => "O plano de voo já existe!"], 500);
+        }
+
         $flight_plan = $this->flightPlanModel->create([
             "creator_id" => Auth::user()->id,
             "name" => $data->get("name"),
@@ -39,23 +45,20 @@ class FlightPlanRepository implements RepositoryInterface
             "description" => $data->get("description")
         ]);
 
-        // Flight plan is stored just if does not already exists
-        if (!Storage::disk('public')->exists($data->get("path"))) {
-            Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
-        }
+        Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
 
-        return $flight_plan;
+        return response($flight_plan, 200);
     }
 
     function updateOne(Collection $data, string $identifier)
     {
         $flight_plan = $this->flightPlanModel->findOrFail($identifier);
 
-        $flight_plan->update($data->only(["report_id", "incident_id", "name", "description"]));
+        $flight_plan->update($data->only(["name", "description"]));
 
         $flight_plan->refresh();
 
-        return $flight_plan;
+        response(["message" => "Plano de voo atualizado com sucesso!"], 200);
     }
 
     function deleteOne(string $identifier)
@@ -66,7 +69,7 @@ class FlightPlanRepository implements RepositoryInterface
 
             $flight_plan->delete();
 
-            return $flight_plan;
+            response(["message" => "Plano de voo deletado com sucesso!"], 200);
         });
     }
 }

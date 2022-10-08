@@ -67,7 +67,7 @@ export const DeleteLogFormulary = React.memo((props) => {
 
     }
 
-    function successServerResponseTreatment() {
+    const successServerResponseTreatment = () => {
 
         setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
 
@@ -81,7 +81,7 @@ export const DeleteLogFormulary = React.memo((props) => {
 
     }
 
-    function errorServerResponseTreatment(response_data) {
+    const errorServerResponseTreatment = (response_data) => {
         let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Erro do servidor!";
         setDisplayAlert({ display: true, type: "error", message: error_message });
     }
@@ -126,7 +126,7 @@ export const DeleteLogFormulary = React.memo((props) => {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            defaultValue={props.record.log.name}
+                            defaultValue={props.record.name}
                             InputProps={{
                                 inputProps: { min: 0, max: 1 },
                                 readOnly: true

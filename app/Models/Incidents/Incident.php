@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Models
 use App\Models\FlightPlans\FlightPlan;
+use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class Incident extends Model
 {
@@ -41,10 +42,10 @@ class Incident extends Model
     }
 
     /*
-    * Relationship one to one with flight plans table
+    * Relationship with flight plan related to a service order
     */
     function flight_plan()
     {
-        return $this->belongsTo(FlightPlan::class, "flight_plan_id");
+        return $this->hasOne(ServiceOrderFlightPlan::class, "service_order_flight_plan_id");
     }
 }

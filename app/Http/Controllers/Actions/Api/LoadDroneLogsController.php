@@ -50,22 +50,22 @@ class LoadDroneLogsController extends Controller
     {
         $formated_log_set = [];
         $count = 0;
-        foreach ($logs_by_type as $index => $log) {
+        foreach ($logs_by_type as $log) {
 
             if ($log['size'] > 0) {
 
                 if ($type === "tlog") {
-                    if (!Storage::disk("public")->exists("logs/tlog/" . $log['name'])) {
+                    if (!Storage::disk("public")->exists("flight_plans/logs/tlog/" . $log['name'])) {
                         $formated_log_set[$count] = $this->tlogFormatting($log, $count);
                         $count++;
                     }
                 } else if ($type === "bin") {
-                    if (!Storage::disk("public")->exists("logs/bin/" . $log['name'])) {
+                    if (!Storage::disk("public")->exists("flight_plans/logs/bin/" . $log['name'])) {
                         $formated_log_set[$count] = $this->kmzFormatting($log, $count);
                         $count++;
                     }
                 } else if ($type === "kmz") {
-                    if (!Storage::disk("public")->exists("logs/kmz/" . $log['name'])) {
+                    if (!Storage::disk("public")->exists("flight_plans/logs/kmz/" . $log['name'])) {
                         $formated_log_set[$count] = $this->binFormatting($log, $count);
                         $count++;
                     }

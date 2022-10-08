@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // Services
 use App\Services\Modules\FlightPlan\FlightPlanLogService;
+// Request
+use App\Http\Requests\Modules\FlightPlans\Logs\UpdateLogRequest;
 
 class FlightPlanModuleLogController extends Controller
 {
@@ -67,9 +69,11 @@ class FlightPlanModuleLogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id): \Illuminate\Http\Response
+    public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
+       
+        return $this->service->updateResource($request->only(["name", "flight_plan_id"]), $id);
     }
 
     /**

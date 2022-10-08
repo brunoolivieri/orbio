@@ -31,8 +31,9 @@ class FlightPlansLogPanelResource extends JsonResource
                 "id" => $log->id,
                 "flight_plan" => $log->flight_plan,
                 "name" => $log->name,
+                "filename" => $log->filename,
                 "path" => $log->path,
-                "timestamp" => $log->timestamp,
+                "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),
                 "created_at" => $log->created_at,
                 "updated_at" => $log->updated_at,
                 "deleted_at" => $log->deleted_at

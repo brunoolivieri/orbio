@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 // Model
 use App\Models\Incidents\Incident;
 use App\Models\Users\User;
-use App\Models\Reports\Report;
 use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\Logs\Log;
+use App\Models\Pivot\ServiceOrderFlightPlan;
+use App\Models\Pivot\ServiceOrderReport;
 
 class FlightPlan extends Model
 {
@@ -56,14 +57,6 @@ class FlightPlan extends Model
     }
 
     /*
-    * Relationship one to one with incidents table
-    */
-    function incidents()
-    {
-        return $this->hasMany(Incident::class, "flight_plan_id");
-    }
-
-    /*
     * Relationship one to one with logs table
     */
     function logs()
@@ -76,6 +69,6 @@ class FlightPlan extends Model
     */
     function service_orders()
     {
-        return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan");
+        return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan")->withPivot("incident_id");
     }
 }

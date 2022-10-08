@@ -21,12 +21,6 @@ class CreateReportsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
-
-        Schema::create('report_flight_plan', function (Blueprint $table) {
-            $table->foreignId('report_id')->constrained('modules');
-            $table->foreignId('flight_plan_id')->constrained('profiles')->onDelete('cascade');
-            $table->timestamps();
-        });
     }
 
     /**
