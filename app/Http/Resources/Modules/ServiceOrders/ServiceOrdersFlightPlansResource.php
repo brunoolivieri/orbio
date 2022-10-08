@@ -23,18 +23,39 @@ class ServiceOrdersFlightPlansResource extends JsonResource
      */
     public function toArray($request)
     {
-        foreach ($this->data as $row => $flight_plan) {
+        foreach ($this->data as $flight_plan_row => $flight_plan) {
 
-            $this->formatedData["records"][$row] = [
+            $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
+                "creator" => [
+                    "name" => $flight_plan->user->name,
+                    "email" => $flight_plan->user->email,
+                    "deleted_at" => $flight_plan->user->deleted_at
+                ],
+                "name" => $flight_plan->name,
                 "file" => $flight_plan->file,
-                "incident" => is_null($flight_plan->incident_id) ? 0 : 1
+                "incident" => 0
             ];
+
+            if (!empty($flight_plan->logs)) {
+
+                foreach ($flight_plan->logs as $log_row => $log) {
+
+                    $this->formatedData["records"][$flight_plan_row]["logs"][$log_row] = [
+                        "id" => $log->id,
+                        "name" => $log->name,
+                        "path" => $log->path,
+                        "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),
+                        "created_at" => $log->created_at,
+                        "deleted_at" => $log->deleted_at
+                    ];
+                }
+            }
 
             // Related service orders
             foreach ($flight_plan->service_orders as $service_order) {
 
-                $this->formatedData["records"][$row]["selected"] = intval($service_order->id) === intval($this->service_order_id) ? 1 : 0;
+                $this->formatedData["records"][$flight_plan_row]["selected"] = intval($service_order->id) === intval($this->service_order_id) ? 1 : 0;
             }
         }
 

@@ -13,12 +13,16 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { GenericSelect } from '../../input_select/GenericSelect';
-import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
+import { DatePicker } from '../../date_picker/DatePicker';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
 // Fontsawesome
@@ -32,13 +36,11 @@ export const CreateOrderFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ pilot_id: "0", client_id: "0", observation: "", status: "1" });
+  const [controlledInput, setControlledInput] = React.useState({ pilot_id: "", client_id: "", observation: "", status: "1", start_date: "", end_date: "" });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
-  const [startDate, setStartDate] = React.useState(moment());
-  const [endDate, setEndDate] = React.useState(moment());
   const [open, setOpen] = React.useState(false);
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
@@ -46,13 +48,13 @@ export const CreateOrderFormulary = React.memo((props) => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setControlledInput({ pilot_id: "0", client_id: "0", observation: "", status: "1", start_date: moment(), end_date: moment() });
   }
 
   const handleClose = () => {
     setFieldError({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
     setFieldErrorMessage({ start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setControlledInput({ pilot_id: "", client_id: "", observation: "", status: "1" });
     setLoading(false);
     setOpen(false);
   };
@@ -80,8 +82,8 @@ export const CreateOrderFormulary = React.memo((props) => {
 
   const formularyDataValidate = () => {
 
-    const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
+    const startDateValidate = controlledInput.startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+    const endDateValidate = controlledInput.endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const orderNoteValidate = FormValidation(controlledInput.observation, 3, null, null, null);
@@ -114,15 +116,15 @@ export const CreateOrderFormulary = React.memo((props) => {
 
   function verifyDateInterval() {
 
-    return moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss');
+    return moment(controlledInput.startDate).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD');
 
   }
 
   const requestServerOperation = () => {
 
     AxiosApi.post(`/api/orders-module`, {
-      start_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-      end_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+      start_date: controlledInput.start_date,
+      end_date: controlledInput.end_date,
       pilot_id: controlledInput.pilot_id,
       client_id: controlledInput.client_id,
       observation: controlledInput.observation,
@@ -231,23 +233,25 @@ export const CreateOrderFormulary = React.memo((props) => {
 
             <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
               <Box sx={{ mr: 1 }}>
-                <DateTimeSingle
-                  event={setStartDate}
-                  label={"Inicio da ordem de serviço"}
-                  helperText={fieldErrorMessage.flight_start_date}
-                  error={fieldError.flight_start_date}
-                  defaultValue={moment()}
+                <DatePicker
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  name={"start_date"}
+                  label={"Data inicial"}
+                  error={fieldError.start_date}
+                  value={controlledInput.start_date}
                   operation={"create"}
                   read_only={false}
                 />
               </Box>
               <Box>
-                <DateTimeSingle
-                  event={setEndDate}
-                  label={"Término da ordem de serviço"}
-                  helperText={fieldErrorMessage.flight_end_date}
-                  error={fieldError.flight_end_date}
-                  defaultValue={moment()}
+                <DatePicker
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  name={"end_date"}
+                  label={"Data final"}
+                  error={fieldError.end_date}
+                  value={controlledInput.end_date}
                   operation={"create"}
                   read_only={false}
                 />
@@ -284,15 +288,39 @@ export const CreateOrderFormulary = React.memo((props) => {
               />
             </Box>
 
-            <Box sx={{ mb: 2 }}>
-
+            <Box sx={{ mb: 1 }}>
               <FlightPlansForServiceOrderModal
                 setFlightPlansSelected={setFlightPlansSelected}
                 flightPlansSelected={flightPlansSelected}
                 serviceOrderId={null}
               />
-
             </Box>
+
+            {flightPlansSelected.length > 0 &&
+              <List
+                sx={{
+                  maxWidth: '100%',
+                  minWidth: '100%',
+                  bgcolor: '#F5F5F5',
+                  position: 'relative',
+                  overflow: 'auto',
+                  maxHeight: 200,
+                  '& ul': { padding: 0 },
+                  mt: 2
+                }}
+                subheader={<li />}
+              >
+                <ul>
+                  <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Planos de voo selecionados: " + flightPlansSelected.length}</ListSubheader>
+                  {flightPlansSelected.map((flight_plan, index) => (
+                    <ListItem key={index}>
+                      <ListItemText primary={flight_plan.name} />
+                    </ListItem>
+                  ))}
+                </ul>
+
+              </List>
+            }
 
             <TextField
               type="text"

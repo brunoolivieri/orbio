@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\FlightPlans\FlightPlan;
 // Resource
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersFlightPlansResource;
+// Repository
+use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
 
 class LoadFlightPlansForServiceOrderController extends Controller
 {
-    function __construct(FlightPlan $flightPlanModel)
+    function __construct(FlightPlanRepository $repository)
     {
-        $this->flightPlanModel = $flightPlanModel;
+        $this->repository = $repository;
     }
 
     /**
@@ -33,11 +35,7 @@ class LoadFlightPlansForServiceOrderController extends Controller
         $order_by = request()->order_by;
         $service_order_id = isset(request()->service_order) ? request()->service_order : null;
 
-        $data = $this->flightPlanModel->with("incident")
-            ->with("service_orders")
-            ->search($search) // scope
-            ->orderBy($order_by)
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
+        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, []);
 
         if ($data->total() > 0) {
             return response(new ServiceOrdersFlightPlansResource($data, $service_order_id), 200);

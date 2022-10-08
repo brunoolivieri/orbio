@@ -77,6 +77,9 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
             .then(function (response) {
 
                 setLoading(false);
+
+                console.log(response.data.records)
+
                 if (response.data.total_records > 0) {
                     setRecords(response.data.records);
                     setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -202,7 +205,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
-                {selectedRecords.length == 0 ? "SELECIONAR PLANOS DE VOO" : "PLANOS DE VOO SELECIONADOS: " + selectedRecords.length}
+                {"Planos de voo disponíveis: " + (records.length - selectedRecords.length)}
             </Button>
             <Dialog
                 fullScreen
@@ -223,8 +226,8 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                         <Typography sx={{ ml: 2, flex: 1, color: '#1976D2' }} variant="h7" component="div">
                             {""}
                         </Typography>
-                        <Button autoFocus color="primary" onClick={handleCommit}>
-                            CONFIRMAR
+                        <Button autoFocus color="primary" onClick={handleCommit} variant="contained">
+                            Salvar
                         </Button>
                     </Toolbar>
                 </AppBar>
@@ -244,7 +247,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                         <Grid item xs>
                             <TextField
                                 fullWidth
-                                placeholder={"Pesquisar plano por ID"}
+                                placeholder={"Pesquisar plano por id e nome"}
                                 onChange={(e) => setSearchField(e.currentTarget.value)}
                                 InputProps={{
                                     startAdornment:
@@ -283,18 +286,23 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             <TableHead>
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Ver</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Ver</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {(!loading && records.length > 0) &&
-                                    records.map((record, index) => (
+                                    records.map((flight_plan, index) => (
                                         <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                            <TableCell><FormControlLabel label={record.id} control={<Checkbox value={record.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(record.id) || record.selected === 1} />} /></TableCell>
+                                            <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(flight_plan.id) || flight_plan.selected === 1} />} /></TableCell>
+                                            <TableCell align="center">{flight_plan.creator.name}</TableCell>
+                                            <TableCell align="center">{flight_plan.name}</TableCell>
+                                            <TableCell align="center">{flight_plan.file}</TableCell>
                                             <TableCell align="center">
-                                                <Link href={`/internal/map?file=${record.file}`} target="_blank">
+                                                <Link href={`/internal/map?file=${flight_plan.file}`} target="_blank">
                                                     <Tooltip title="Ver plano">
                                                         <IconButton>
                                                             <FontAwesomeIcon icon={faEye} color="#00713A" size="sm" />
@@ -302,8 +310,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                                                     </Tooltip>
                                                 </Link>
                                             </TableCell>
-                                            <TableCell align="center">{record.file}</TableCell>
-                                            <TableCell align="center" sx={{ color: record.incident === 1 ? '#00713A' : '#808991' }}>{<ReportIcon />}</TableCell>
+                                            <TableCell align="center" sx={{ color: flight_plan.incident === 1 ? '#00713A' : '#808991' }}>{<ReportIcon />}</TableCell>
                                         </TableRow>
                                     ))
                                 }
