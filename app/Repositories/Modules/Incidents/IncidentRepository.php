@@ -7,18 +7,19 @@ use Illuminate\Support\Collection;
 // Model
 use App\Models\Incidents\Incident;
 use App\Models\FlightPlans\FlightPlan;
+use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class IncidentRepository implements RepositoryInterface
 {
-    public function __construct(Incident $incidentModel)
+    public function __construct(Incident $incidentModel, ServiceOrderFlightPlan $flightPlanServiceOrderModel)
     {
         $this->incidentModel = $incidentModel;
+        $this->flightPlanServiceOrderModel = $flightPlanServiceOrderModel;
     }
 
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         return $this->incidentModel
-            ->with("flight_plan")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)
@@ -28,9 +29,16 @@ class IncidentRepository implements RepositoryInterface
     function createOne(Collection $data)
     {
 
-        $incident = $this->incidentModel->create($data->only(["type", "date", "description", "flight_plan_id"])->all());
+        $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
 
-        return $incident;
+        $incident = $this->incidentModel->create([
+            "type" => $data->get("type"),
+            "date" => $data->get("date"),
+            "description" => $data->get("description"),
+            "service_order_flight_plan_id" => $service_order_flight_plan->id
+        ]);
+
+        return response(["message" => "Incidente criado com sucesso!"], 201);
     }
 
     function updateOne(Collection $data, string $identifier)
@@ -41,7 +49,7 @@ class IncidentRepository implements RepositoryInterface
 
         $incident->refresh();
 
-        return $incident;
+        return response(["message" => "Incidente atualizado com sucesso!"], 200);
     }
 
     function deleteOne(string $identifier)
@@ -50,6 +58,6 @@ class IncidentRepository implements RepositoryInterface
 
         $incident->delete();
 
-        return $incident;
+        return response(["message" => "Incidente deletado com sucesso!"], 200);
     }
 }

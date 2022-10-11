@@ -33,8 +33,7 @@ import Checkbox from '@mui/material/Checkbox';
 import { useSnackbar } from 'notistack';
 import Badge from '@mui/material/Badge';
 import ErrorIcon from '@mui/icons-material/Error';
-import Button from '@mui/material/Button';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -89,6 +88,7 @@ export const FlightPlansPanel = () => {
         setLoading(false);
         setRecords(response.data.records);
         setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        console.log(response.data.records)
 
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
@@ -358,6 +358,7 @@ export const FlightPlansPanel = () => {
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Exportar</StyledHeadTableCell>
                 </TableRow>
@@ -378,6 +379,15 @@ export const FlightPlansPanel = () => {
                             </IconButton>
                           </Tooltip>
                         </Link>
+                      </TableCell>
+                      <TableCell align="center">
+                        {flight_plan.service_orders.length === 0 ?
+                          <AssignmentIcon color="disabled" />
+                          :
+                          <Badge badgeContent={flight_plan.service_orders.length} color="success">
+                            <AssignmentIcon color="action" />
+                          </Badge>
+                        }
                       </TableCell>
                       <TableCell align="center">
                         {flight_plan.incidents.length === 0 ?

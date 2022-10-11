@@ -6,7 +6,6 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateOrderFormulary } from "../../../../structures/modules/service_orders/CreateOrderFormulary";
 import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
-import { BadgeIcon } from "../../../../structures/badge_icon/BadgeIcon";
 import LinearProgress from '@mui/material/LinearProgress';
 // MaterialUI
 import { Table } from "@mui/material";
@@ -28,10 +27,13 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
+import Badge from '@mui/material/Badge';
 import TablePagination from '@mui/material/TablePagination';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
+import ErrorIcon from '@mui/icons-material/Error';
+import MapIcon from '@mui/icons-material/Map';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
@@ -323,8 +325,8 @@ export const ServiceOrdersPanel = React.memo(() => {
                   <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Início</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Fim</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Duração (dias)</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
@@ -335,7 +337,13 @@ export const ServiceOrdersPanel = React.memo(() => {
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={service_order.id} /></TableCell>
                       <TableCell align="center">{service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                       <TableCell align="center">
-                        <BadgeIcon number={service_order.flight_plans.length > 0 ? service_order.flight_plans.length : "0"} color={"success"} />
+                        {service_order.flight_plans.length === 0 ?
+                          <MapIcon color="disabled" />
+                          :
+                          <Badge badgeContent={service_order.flight_plans.length} color="success">
+                            <MapIcon color="action" />
+                          </Badge>
+                        }
                       </TableCell>
                       <TableCell align="center">{service_order.number}</TableCell>
                       <TableCell align="center">
@@ -348,18 +356,26 @@ export const ServiceOrdersPanel = React.memo(() => {
                         {service_order.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.client.name} color={"success"} variant="outlined" />}
                       </TableCell>
                       <TableCell align="center">{service_order.observation}</TableCell>
-                      <TableCell align="center">{moment(service_order.start_date).format('DD-MM-YYYY hh:mm')}</TableCell>
-                      <TableCell align="center">{moment(service_order.end_date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{moment(service_order.end_date).diff(moment(service_order.start_date), 'days')}</TableCell>
+                      <TableCell align="center">
+                        {service_order.incidents === 0 ?
+                          <ErrorIcon color="disabled" />
+                          :
+                          <Badge badgeContent={service_order.incidents} color="success">
+                            <ErrorIcon color="action" />
+                          </Badge>
+                        }
+                      </TableCell>
                       <TableCell align="center">
                         {service_order.report != null ?
                           <Tooltip title="Ver relatório">
                             <IconButton>
-                              <FontAwesomeIcon icon={faFilePdf} color={service_order.report ? "#00713A" : "#808991"} size="md" />
+                              <FontAwesomeIcon icon={faFilePdf} color={service_order.report ? "#00713A" : "#808991"} />
                             </IconButton>
                           </Tooltip>
                           :
                           <IconButton disabled>
-                            <FontAwesomeIcon icon={faFilePdf} color="#808991" size="md" />
+                            <FontAwesomeIcon icon={faFilePdf} color="#808991" />
                           </IconButton>
                         }
                       </TableCell>

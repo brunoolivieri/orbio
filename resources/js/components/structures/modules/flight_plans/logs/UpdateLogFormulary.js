@@ -12,6 +12,7 @@ import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import LinearProgress from '@mui/material/LinearProgress';
+import FormHelperText from '@mui/material/FormHelperText';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -29,7 +30,7 @@ export const UpdateLogFormulary = React.memo((props) => {
     const [open, setOpen] = React.useState(false);
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, flight_plan_id: props.record.flight_plan != null ? props.record.flight_plan.id : "0" });
     const [fieldError, setFieldError] = React.useState({ name: false, flight_plan_id: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "" });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", flight_plan_id: "" });
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
     const [loading, setLoading] = React.useState(false);
 
@@ -160,7 +161,6 @@ export const UpdateLogFormulary = React.memo((props) => {
             <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
                 <DialogTitle>ATUALIZAÇÃO | RELATÓRIO (ID: {props.record.report_id})</DialogTitle>
 
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
                     <DialogContent>
@@ -199,7 +199,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                         <Box sx={{ mb: 2 }}>
                             <GenericSelect
                                 label_text="Planos de voo"
-                                data_source={"/api/load-flight_plans"}
+                                data_source={"/api/load-flight-plans"}
                                 primary_key={"id"}
                                 key_content={"name"}
                                 setControlledInput={setControlledInput}
@@ -208,6 +208,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                                 name={"flight_plan_id"}
                                 value={controlledInput.flight_plan_id}
                             />
+                            <FormHelperText>{fieldErrorMessage.flight_plan_id}</FormHelperText>
                         </Box>
 
                     </DialogContent>

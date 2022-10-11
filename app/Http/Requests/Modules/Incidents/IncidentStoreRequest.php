@@ -27,8 +27,9 @@ class IncidentStoreRequest extends FormRequest
         return [
             "date" => "required|date",
             "type" => "required",
-            "description" => "required|string",
-            "flight_plan_id" => "nullable"
+            "description" => "required",
+            "flight_plan_id" => "required",
+            "service_order_id" => "required"
         ];
     }
 
@@ -43,7 +44,9 @@ class IncidentStoreRequest extends FormRequest
             "date.required" => "A data do incidente deve ser definida",
             "date.date" => "Deve ser um formato de data válido",
             "type.required" => "O tipo do incidente deve ser informado",
-            "description.required" => "A descrição deve ser informada"
+            "description.required" => "A descrição deve ser informada",
+            "flight_plan_id.required" => "Um plano de voo precisa ser selecionado",
+            "service_order_id.required" => "Uma ordem de serviço precisa ser selecionada"
         ];
     }
 }

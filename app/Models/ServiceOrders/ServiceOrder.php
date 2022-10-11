@@ -55,7 +55,7 @@ class ServiceOrder extends Model
     */
     function flight_plans()
     {
-        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withTrashed();
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withPivot("id")->withTrashed();
     }
 
     /*
@@ -65,8 +65,4 @@ class ServiceOrder extends Model
     {
         return $this->belongsTo(Report::class, "report_id")->withTrashed();
     }
-
-
-
-    
 }

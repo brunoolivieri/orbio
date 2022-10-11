@@ -27,22 +27,24 @@ class IncidentUpdateRequest extends FormRequest
         return [
             "date" => "required|date",
             "type" => "required",
-            "description" => "required|string"
+            "description" => "required|string",
+            "flight_plan_id" => "required"
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
             "date.required" => "A data do incidente deve ser definida",
             "date.date" => "Deve ser um formato de data válido",
             "type.required" => "O tipo do incidente deve ser informado",
-            "description.required" => "A descrição deve ser informada"
+            "description.required" => "A descrição deve ser informada",
+            "flight_plan_id.required" => "O plano de voo precisa ser informado"
         ];
     }
 }

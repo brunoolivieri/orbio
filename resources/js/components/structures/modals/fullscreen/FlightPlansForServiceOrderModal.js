@@ -78,8 +78,6 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
                 setLoading(false);
 
-                console.log(response.data.records)
-
                 if (response.data.total_records > 0) {
                     setRecords(response.data.records);
                     setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -88,8 +86,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
             })
             .catch(function (error) {
 
-                const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-                console.log(error_message)
+                console.log(error)
 
                 setLoading(false);
                 setRecords([]);

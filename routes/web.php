@@ -23,7 +23,9 @@ use App\Http\Controllers\Actions\{
     LoadProfilesController,
     LoadReportsController,
     LoadUsersController,
-    LoadFlightPlansForServiceOrderController
+    LoadFlightPlansForServiceOrderController,
+    LoadServiceOrders,
+    LoadServiceOrderByFlightPlan
 };
 // Internal Controller 
 use App\Http\Controllers\Internal\{
@@ -100,7 +102,8 @@ Route::middleware(["session.auth"])->group(function () {
     Route::post('/api/get-auth-data', LoadAuthData::class);
     Route::get("/api/load-users", LoadUsersController::class);
     Route::get("/api/load-profiles", LoadProfilesController::class);
-    Route::get("/api/load-flight_plans", LoadFlightPlansController::class);
+    Route::get("/api/load-flight-plans", LoadFlightPlansController::class);
+    Route::get("api/load-service-orders-by-flight-plan", LoadServiceOrderByFlightPlan::class);
     Route::get("/api/load-incidents", LoadIncidentsController::class);
     Route::get("/api/load-reports", LoadReportsController::class);
     Route::get("api/load-flight-plans-service-order", LoadFlightPlansForServiceOrderController::class);

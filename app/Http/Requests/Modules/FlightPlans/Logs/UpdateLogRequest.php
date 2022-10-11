@@ -24,10 +24,10 @@ class UpdateLogRequest extends FormRequest
     public function rules()
     {
         $log_id = $this->route("plans_module_log");
-    
+
         return [
-            "name" => ["required", "unique:logs,name," . $log_id, "min:3"],
-            "flight_plan_id" => ["required", "unique:logs,flight_plan_id", "exists:flight_plans,id"]
+            "name" => ["required", "unique:logs,name,$log_id", "min:3"],
+            "flight_plan_id" => ["required", "unique:logs,flight_plan_id,$log_id"]
         ];
     }
 
@@ -43,8 +43,7 @@ class UpdateLogRequest extends FormRequest
             'name.unique' => "Já existe um log com esse nome",
             "name.min" => "O nome deve ter pelo menos 3 caracteres",
             "flight_plan_id.required" => "Um plano de voo deve ser vinculado",
-            "flight_plan_id.unique" => "Esse plano de voo já está vinculado a outro log",
-            "flight_plan_id.exists" => "O plano de voo selecionado não existe"
+            "flight_plan_id.unique" => "Esse plano de voo já está vinculado a outro log"
         ];
     }
 }

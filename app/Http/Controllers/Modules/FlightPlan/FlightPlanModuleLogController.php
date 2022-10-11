@@ -72,7 +72,7 @@ class FlightPlanModuleLogController extends Controller
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-       
+
         return $this->service->updateResource($request->only(["name", "flight_plan_id"]), $id);
     }
 
@@ -85,5 +85,7 @@ class FlightPlanModuleLogController extends Controller
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
+
+        return $this->service->deleteResource($id);
     }
 }

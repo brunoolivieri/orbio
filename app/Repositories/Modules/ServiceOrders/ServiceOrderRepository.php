@@ -37,16 +37,15 @@ class ServiceOrderRepository implements RepositoryInterface
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
 
-            $data = [
+            $service_order = $this->serviceOrderModel->create([
                 "uuid" => Str::uuid(),
-                "start_date" => $data->get("start_date"),
-                "end_date" => $data->get("end_date"),
+                "start_date" => date("Y-m-d", strtotime($data->get("start_date"))),
+                "end_date" => date("Y-m-d", strtotime($data->get("end_date"))),
                 "number" => $data->get("number"),
                 "observation" => $data->get("observation"),
-                "status" => $data->get("status")
-            ];
-
-            $service_order = $this->serviceOrderModel->create($data);
+                "status" => $data->get("status"),
+                "report_id" => null
+            ]);
 
             $service_order->users()->attach($creator->id, ['role' => "creator"]);
             $service_order->users()->attach($pilot->id, ['role' => "pilot"]);

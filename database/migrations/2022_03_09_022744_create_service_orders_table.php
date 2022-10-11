@@ -16,7 +16,7 @@ class CreateServiceOrdersTable extends Migration
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
             $table->uuid("uuid");
-            $table->foreignId("report_id")->constrained('reports')->nullable(true);
+            $table->foreignId("report_id")->nullable(true)->constrained('reports');
             $table->string("number");
             $table->dateTime("start_date");
             $table->dateTime("end_date");
@@ -35,9 +35,9 @@ class CreateServiceOrdersTable extends Migration
 
         // Relationship with flight plans 
         Schema::create('service_order_flight_plan', function (Blueprint $table) {
+            $table->id();
             $table->foreignId("service_order_id")->constrained('service_orders');
             $table->foreignId("flight_plan_id")->constrained('flight_plans');
-            $table->foreignId("incident_id")->constrained('incidents');
         });
     }
 
@@ -48,8 +48,8 @@ class CreateServiceOrdersTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('service_orders');
         Schema::dropIfExists('service_order_user');
         Schema::dropIfExists('service_order_flight_plan');
-        Schema::dropIfExists('service_orders');
     }
 }

@@ -11,11 +11,12 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
+import FormHelperText from '@mui/material/FormHelperText';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { DateTimeSingle } from '../../date_picker/DateTimeSingle';
+import { DatePicker } from '../../date_picker/DatePicker';
 import { GenericSelect } from '../../input_select/GenericSelect';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
@@ -28,16 +29,16 @@ import moment from 'moment';
 
 export const UpdateOrderFormulary = React.memo((props) => {
 
+  console.log(props)
+
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status, start_date: props.record.start_date, end_date: props.record.end_date });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
-  const [startDate, setStartDate] = React.useState(null);
-  const [endDate, setEndDate] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
 
@@ -89,8 +90,8 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
   const formularyDataValidate = () => {
 
-    const startDateValidate = startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const endDateValidate = endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
+    const startDateValidate = controlledInput.start_date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+    const endDateValidate = controlledInput.end_date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, "observação");
@@ -123,15 +124,15 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
   function verifyDateInterval() {
 
-    return moment(startDate).format('YYYY-MM-DD hh:mm:ss') < moment(endDate).format('YYYY-MM-DD hh:mm:ss');
+    return moment(controlledInput.start_date).format('YYYY-MM-DD hh:mm:ss') < moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss');
 
   }
 
   const requestServerOperation = () => {
 
     AxiosApi.patch(`/api/orders-module/${controlledInput.id}`, {
-      start_date: moment(startDate).format('YYYY-MM-DD hh:mm:ss'),
-      end_date: moment(endDate).format('YYYY-MM-DD hh:mm:ss'),
+      start_date: moment(controlledInput.start_date).format('YYYY-MM-DD hh:mm:ss'),
+      end_date: moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: controlledInput.pilot_id,
       client_id: controlledInput.client_id,
       observation: controlledInput.observation,
@@ -258,24 +259,27 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
               <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
                 <Box sx={{ mr: 1 }}>
-                  <DateTimeSingle
-                    event={setStartDate}
-                    label={"Inicio da ordem de serviço"}
-                    helperText={fieldErrorMessage.start_date}
+                  <DatePicker
+                    setControlledInput={setControlledInput}
+                    controlledInput={controlledInput}
+                    name={"start_date"}
+                    label={"Data inicial"}
                     error={fieldError.start_date}
-                    defaultValue={props.record.start_date}
-                    operation={"update"}
+                    value={controlledInput.start_date}
+                    operation={"create"}
                     read_only={false}
                   />
+                  <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
                 </Box>
                 <Box>
-                  <DateTimeSingle
-                    event={setEndDate}
-                    label={"Fim da ordem de serviço"}
-                    helperText={fieldErrorMessage.start_date}
-                    error={fieldError.start_date}
-                    defaultValue={props.record.end_date}
-                    operation={"update"}
+                  <DatePicker
+                    setControlledInput={setControlledInput}
+                    controlledInput={controlledInput}
+                    name={"end_date"}
+                    label={"Data final"}
+                    error={fieldError.end_date}
+                    value={controlledInput.end_date}
+                    operation={"create"}
                     read_only={false}
                   />
                 </Box>
@@ -304,11 +308,11 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   key_content={"name"}
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
-                  helperText={fieldErrorMessage.client_id}
                   error={fieldError.client_id}
                   name={"client_id"}
                   value={controlledInput.client_id}
                 />
+                <FormHelperText>{fieldErrorMessage.client_id}</FormHelperText>
               </Box>
 
               <Box sx={{ mb: 2 }}>

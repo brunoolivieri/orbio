@@ -8,6 +8,7 @@ import { UpdateIncidentFormulary } from "../../../../structures/modules/incident
 import { DeleteIncidentFormulary } from "../../../../structures/modules/incidents/DeleteIncidentFormulary";
 import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
+import { Link } from "@mui/material";
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
@@ -31,6 +32,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 // Fonts Awesome
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -315,16 +317,28 @@ export const IncidentsPanel = React.memo(() => {
                   <StyledHeadTableCell align="center">Tipo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
                 </TableRow>
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
-                  records.map((row, index) => (
-                    <TableRow key={row.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.type}</TableCell>
-                      <TableCell align="center">{row.description}</TableCell>
-                      <TableCell align="center">{moment(row.date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                  records.map((incident, index) => (
+                    <TableRow key={incident.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={incident.id} /></TableCell>
+                      <TableCell align="center">{incident.type}</TableCell>
+                      <TableCell align="center">{incident.description}</TableCell>
+                      <TableCell align="center">{moment(incident.date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">
+                        <Link href={`/internal/map?file=${incident.service_order.flight_plan.file}`} target="_blank">
+                          <Tooltip title="Ver plano">
+                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
+                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                            </IconButton>
+                          </Tooltip>
+                        </Link>
+                      </TableCell>
+                      <TableCell align="center">{incident.service_order.number}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

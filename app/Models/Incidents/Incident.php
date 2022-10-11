@@ -42,10 +42,10 @@ class Incident extends Model
     }
 
     /*
-    * Relationship with flight plan related to a service order
+    * Relationship with flight plan
     */
-    function flight_plan()
+    function service_order_flight_plan()
     {
-        return $this->hasOne(ServiceOrderFlightPlan::class, "service_order_flight_plan_id");
+        return $this->belongsTo(ServiceOrderFlightPlan::class, "service_order_flight_plan_id", "id");
     }
 }

@@ -29,7 +29,6 @@ class FlightPlanRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-
         // Flight plan is stored just if does not already exists
         if (Storage::disk('public')->exists($data->get("path"))) {
             return response(["message" => "O plano de voo já existe!"], 500);
@@ -54,11 +53,11 @@ class FlightPlanRepository implements RepositoryInterface
     {
         $flight_plan = $this->flightPlanModel->findOrFail($identifier);
 
-        $flight_plan->update($data->only(["name", "description"]));
+        $flight_plan->update($data->only(["name", "description"])->all());
 
         $flight_plan->refresh();
 
-        response(["message" => "Plano de voo atualizado com sucesso!"], 200);
+        return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
     }
 
     function deleteOne(string $identifier)

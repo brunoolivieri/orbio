@@ -37,7 +37,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
         
-        return $this->service->createResource($request->only("date", "type", "description", "flight_plan_id"));
+        return $this->service->createResource($request->only("date", "type", "description", "flight_plan_id", "service_order_id"));
     }
 
     public function show($id): \Illuminate\Http\Response

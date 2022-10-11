@@ -33,8 +33,7 @@ class ServiceOrdersFlightPlansResource extends JsonResource
                     "deleted_at" => $flight_plan->user->deleted_at
                 ],
                 "name" => $flight_plan->name,
-                "file" => $flight_plan->file,
-                "incident" => 0
+                "file" => $flight_plan->file
             ];
 
             if (!empty($flight_plan->logs)) {

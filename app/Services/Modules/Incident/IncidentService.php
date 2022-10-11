@@ -32,22 +32,16 @@ class IncidentService implements ServiceInterface
 
         $data["date"] = date("Y-m-d", strtotime($data["date"]));
 
-        $incident = $this->repository->createOne(collect($data));
-
-        return response(["message" => "Incidente criado com sucesso!"], 201);
+        return $this->repository->createOne(collect($data));
     }
 
     public function updateResource(array $data, string $identifier)
     {
-        $incident = $this->repository->updateOne(collect($data), $identifier);
-
-        return response(["message" => "Incidente atualizado com sucesso!"], 200);
+        return $this->repository->updateOne(collect($data), $identifier);
     }
 
     public function deleteResource(string $identifier)
     {
-        $incident = $this->repository->deleteOne($identifier);
-
-        return response(["message" => "Incidente deletado com sucesso!"], 200);
+        return $this->repository->deleteOne($identifier);
     }
 }

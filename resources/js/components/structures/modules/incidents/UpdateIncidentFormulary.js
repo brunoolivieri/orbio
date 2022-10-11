@@ -11,7 +11,9 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from "@mui/material";
+import Grid from '@mui/material/Grid';
 import LinearProgress from '@mui/material/LinearProgress';
+import FormHelperText from '@mui/material/FormHelperText';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -21,25 +23,26 @@ import moment from 'moment';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
-import { DateTimeSingle } from "../../date_picker/DateTimeSingle";
+import { DatePicker } from '../../date_picker/DatePicker';
+import { GenericSelect } from '../../input_select/GenericSelect';
 
-export function UpdateIncidentFormulary({ ...props }) {
+export const UpdateIncidentFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description });
+  const [controlledInput, setControlledInput] = React.useState({ id: "", flight_plan_id: "", service_order_id: "", type: "", description: "", date: "" });
   const [fieldError, setFieldError] = React.useState({ date: false, type: false, description: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ date: "", type: "", description: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [incidentDate, setIncidentDate] = React.useState(moment());
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
+    setControlledInput({ id: props.record.id, flight_plan_id: props.record.service_order.flight_plan.id, service_order_id: props.record.service_order.id, type: props.record.type, description: props.record.description, date: props.record.date });
   }
 
   const handleClose = () => {
@@ -64,7 +67,7 @@ export function UpdateIncidentFormulary({ ...props }) {
 
   const formularyDataValidation = () => {
 
-    const incidentDateValidate = incidentDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+    const incidentDateValidate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
     const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
 
@@ -78,7 +81,7 @@ export function UpdateIncidentFormulary({ ...props }) {
   const requestServerOperation = () => {
 
     AxiosApi.patch(`/api/incidents-module/${controlledInput.id}`, {
-      date: moment(incidentDate).format('YYYY-MM-DD hh:mm:ss'),
+      date: moment(controlledInput.date).format('YYYY-MM-DD'),
       type: controlledInput.type,
       description: controlledInput.description,
     })
@@ -168,61 +171,84 @@ export function UpdateIncidentFormulary({ ...props }) {
 
             <DialogContent>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="ID do incidente"
-                fullWidth
-                variant="outlined"
-                required
-                name="id"
-                InputProps={{
-                  readOnly: true
-                }}
-                defaultValue={props.record.id}
-                sx={{ mb: 2 }}
-              />
+              <Grid item container spacing={1}>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                <DateTimeSingle
-                  event={setIncidentDate}
-                  label={"Data do incidente"}
-                  helperText={fieldErrorMessage.date}
-                  error={fieldError.date}
-                  defaultValue={props.record.date}
-                  operation={"create"}
-                  read_only={false}
-                />
-              </Box>
+                <Grid item xs={12}>
+                  <DatePicker
+                    setControlledInput={setControlledInput}
+                    controlledInput={controlledInput}
+                    name={"date"}
+                    label={"Data do incidente"}
+                    error={fieldError.date}
+                    value={controlledInput.date}
+                    operation={"create"}
+                    read_only={false}
+                  />
+                </Grid>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="Tipo do incidente"
-                fullWidth
-                variant="outlined"
-                required
-                name="type"
-                onChange={handleInputChange}
-                helperText={fieldErrorMessage.type}
-                error={fieldError.type}
-                defaultValue={props.record.type}
-                sx={{ mb: 2 }}
-              />
+                <Grid item xs={12}>
+                  <TextField
+                    type="text"
+                    margin="dense"
+                    label="Tipo do incidente"
+                    fullWidth
+                    variant="outlined"
+                    name="type"
+                    onChange={handleInputChange}
+                    helperText={fieldErrorMessage.type}
+                    error={fieldError.type}
+                  />
+                </Grid>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="Descrição"
-                fullWidth
-                variant="outlined"
-                required
-                name="description"
-                onChange={handleInputChange}
-                helperText={fieldErrorMessage.description}
-                error={fieldError.description}
-                defaultValue={props.record.description}
-              />
+                <Grid item xs={12} mb={1}>
+                  <TextField
+                    type="text"
+                    margin="dense"
+                    label="Descrição"
+                    fullWidth
+                    variant="outlined"
+                    name="description"
+                    onChange={handleInputChange}
+                    helperText={fieldErrorMessage.description}
+                    error={fieldError.description}
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <GenericSelect
+                    label_text="Plano de voo"
+                    data_source={"/api/load-flight-plans"}
+                    primary_key={"id"}
+                    key_content={"name"}
+                    setControlledInput={setControlledInput}
+                    controlledInput={controlledInput}
+                    error={fieldError.flight_plan_id}
+                    name={"flight_plan_id"}
+                    value={controlledInput.flight_plan_id}
+                  />
+                  <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
+                </Grid>
+
+                <Grid item xs={6}>
+                  {controlledInput.flight_plan_id != "0" &&
+                    <>
+                      <GenericSelect
+                        label_text={"Ordem de serviço"}
+                        data_source={`/api/load-service-orders-by-flight-plan?flight_plan_id=${controlledInput.flight_plan_id}`}
+                        primary_key={"id"}
+                        key_content={"number"}
+                        setControlledInput={setControlledInput}
+                        controlledInput={controlledInput}
+                        error={fieldError.service_order_id}
+                        name={"service_order_id"}
+                        value={controlledInput.service_order_id}
+                      />
+                      <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
+                    </>
+                  }
+                </Grid>
+
+              </Grid>
 
             </DialogContent>
 
@@ -239,9 +265,9 @@ export function UpdateIncidentFormulary({ ...props }) {
 
           </Box>
 
-        </Dialog>
+        </Dialog >
       }
     </>
   )
 
-}
+})

@@ -77,7 +77,6 @@ class FlightPlanService implements ServiceInterface
 
     function updateResource(array $data, string $identifier)
     {
-
         return $this->repository->updateOne(collect($data), $identifier);
     }
 

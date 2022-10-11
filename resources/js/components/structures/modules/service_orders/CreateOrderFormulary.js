@@ -17,6 +17,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import FormHelperText from '@mui/material/FormHelperText';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -36,7 +37,7 @@ export const CreateOrderFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ pilot_id: "", client_id: "", observation: "", status: "1", start_date: "", end_date: "" });
+  const [controlledInput, setControlledInput] = React.useState({ pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -72,7 +73,7 @@ export const CreateOrderFormulary = React.memo((props) => {
       } else {
 
         setLoading(false);
-        setDisplayAlert({ display: true, type: "error", message: "Erro! A data inicial deve anteceder a final." });
+        setDisplayAlert({ display: true, type: "error", message: "A data inicial deve anteceder a final." });
 
       }
 
@@ -82,11 +83,11 @@ export const CreateOrderFormulary = React.memo((props) => {
 
   const formularyDataValidate = () => {
 
-    const startDateValidate = controlledInput.startDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const endDateValidate = controlledInput.endDate != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
+    const startDateValidate = moment(controlledInput.startDate).format("YYYY-MM_DD") != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+    const endDateValidate = moment(controlledInput.endDate).format("YYYY-MM_DD") != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
-    const orderNoteValidate = FormValidation(controlledInput.observation, 3, null, null, null);
+    const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
     const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
@@ -95,7 +96,7 @@ export const CreateOrderFormulary = React.memo((props) => {
       end_date: endDateValidate.error,
       pilot_id: pilotNameValidate.error,
       client_id: clientNameValidate.error,
-      observation: orderNoteValidate.error,
+      observation: observationValidate.error,
       flight_plans: fligthPlansValidate.error,
       status: statusValidate.error
     });
@@ -105,18 +106,18 @@ export const CreateOrderFormulary = React.memo((props) => {
       end_date: endDateValidate.message,
       pilot_id: pilotNameValidate.message,
       client_id: clientNameValidate.message,
-      observation: orderNoteValidate.message,
+      observation: observationValidate.message,
       flight_plans: fligthPlansValidate.message,
       status: statusValidate.message
     });
 
-    return !(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || orderNoteValidate.error || fligthPlansValidate.error || statusValidate.error);
+    return !(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
 
   };
 
   function verifyDateInterval() {
 
-    return moment(controlledInput.startDate).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD');
+    return moment(controlledInput.start_date).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD');
 
   }
 
@@ -243,6 +244,7 @@ export const CreateOrderFormulary = React.memo((props) => {
                   operation={"create"}
                   read_only={false}
                 />
+                <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
               </Box>
               <Box>
                 <DatePicker
@@ -266,11 +268,11 @@ export const CreateOrderFormulary = React.memo((props) => {
                 key_content={"name"}
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
-                helperText={fieldErrorMessage.pilot_id}
                 error={fieldError.pilot_id}
                 value={controlledInput.pilot_id}
                 name={"pilot_id"}
               />
+              <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
             </Box>
 
             <Box sx={{ mb: 2 }}>
@@ -281,11 +283,11 @@ export const CreateOrderFormulary = React.memo((props) => {
                 key_content={"name"}
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
-                helperText={fieldErrorMessage.client_id}
                 error={fieldError.client_id}
                 value={controlledInput.client_id}
                 name={"client_id"}
               />
+              <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
             </Box>
 
             <Box sx={{ mb: 1 }}>
@@ -312,9 +314,9 @@ export const CreateOrderFormulary = React.memo((props) => {
               >
                 <ul>
                   <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Planos de voo selecionados: " + flightPlansSelected.length}</ListSubheader>
-                  {flightPlansSelected.map((flight_plan, index) => (
+                  {flightPlansSelected.map((flight_plan_id, index) => (
                     <ListItem key={index}>
-                      <ListItemText primary={flight_plan.name} />
+                      <ListItemText primary={flight_plan_id} />
                     </ListItem>
                   ))}
                 </ul>
