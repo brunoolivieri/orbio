@@ -12,6 +12,10 @@ import { Alert } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import FormHelperText from '@mui/material/FormHelperText';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -28,8 +32,6 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 
 export const UpdateOrderFormulary = React.memo((props) => {
-
-  console.log(props)
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -322,6 +324,32 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   serviceOrderId={controlledInput.id}
                 />
               </Box>
+
+              {flightPlansSelected.length > 0 &&
+                <List
+                  sx={{
+                    maxWidth: '100%',
+                    minWidth: '100%',
+                    bgcolor: '#F5F5F5',
+                    position: 'relative',
+                    overflow: 'auto',
+                    maxHeight: 200,
+                    '& ul': { padding: 0 },
+                    mt: 2
+                  }}
+                  subheader={<li />}
+                >
+                  <ul>
+                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Planos de voo selecionados: " + flightPlansSelected.length}</ListSubheader>
+                    {flightPlansSelected.map((flight_plan_id, index) => (
+                      <ListItem key={index}>
+                        <ListItemText primary={flight_plan_id} />
+                      </ListItem>
+                    ))}
+                  </ul>
+
+                </List>
+              }
 
               <TextField
                 type="text"

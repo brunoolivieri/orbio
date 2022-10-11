@@ -88,7 +88,6 @@ export const FlightPlansPanel = () => {
         setLoading(false);
         setRecords(response.data.records);
         setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
-        console.log(response.data.records)
 
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
@@ -394,7 +393,7 @@ export const FlightPlansPanel = () => {
                           <ErrorIcon color="disabled" />
                           :
                           <Badge badgeContent={flight_plan.incidents.length} color="success">
-                            <ErrorIcon style={{ color: "#00713A" }} />
+                            <ErrorIcon color="action" />
                           </Badge>
                         }
                       </TableCell>
