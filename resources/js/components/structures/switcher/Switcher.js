@@ -6,8 +6,8 @@ import { styled } from '@mui/material/styles';
 
 const ToggleButton = styled(MuiToggleButton)({
   "&.Mui-selected, &.Mui-selected:hover": {
-    color: "#fff",
-    backgroundColor: '#007937'
+    color: "#007937",
+    backgroundColor: '#fff'
   }
 });
 
@@ -26,10 +26,9 @@ export function Switcher({ ...props }) {
       exclusive
       onChange={handleChange}
       fullWidth
-      sx={{ bgcolor: '#fff' }}
     >
       {props.options.map((item, index) => (
-        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex", border: 'none' }} key={index}>
+        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex", border: 'none', borderRadius: 5 }} key={index}>
           <Typography sx={{ marginRight: 2 }}>{item.title.toUpperCase()}</Typography> {item.icon}
         </ToggleButton>
       ))}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { ResponsiveLine } from '@nivo/line'
 
 const CustomSymbol = ({ size, color, borderWidth, borderColor }) => (
-    <g>
+    <>
         <circle fill="#fff" r={size / 2} strokeWidth={borderWidth} stroke={borderColor} />
         <circle
             r={size / 5}
@@ -11,7 +11,7 @@ const CustomSymbol = ({ size, color, borderWidth, borderColor }) => (
             fill={color}
             fillOpacity={0.35}
         />
-    </g>
+    </>
 );
 
 export const LinesChart = React.memo((props) => {

@@ -9,257 +9,182 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'notistack';
 import { Box } from '@mui/system';
+import { useTheme } from '@mui/material/styles';
 import CardHeader from '@mui/material/CardHeader';
+import CardMedia from '@mui/material/CardMedia';
 import { Divider } from '@mui/material';
 import { CardActions } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import SkipNextIcon from '@mui/icons-material/SkipNext';
 // React Chart
 import { LinesChart } from '../../../structures/charts/LinesChart.js';
 import { PizzaChart } from '../../../structures/charts/PizzaChart.js';
-// Fonts Awesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers } from '@fortawesome/free-solid-svg-icons';
-import { faIdCardClip } from '@fortawesome/free-solid-svg-icons';
-import { faMap } from '@fortawesome/free-solid-svg-icons';
-import { faClipboard } from '@fortawesome/free-solid-svg-icons';
-import { faChartColumn } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
 
 const CardStyle = {
-  borderRadius: 0,
-  backgroundColor: "#16529B"
-}
-
-const CardContentStyle = {
-  bgcolor: '#fff'
-}
-
-const LineChartContainerStyle = {
-  mt: 1,
-  backgroundColor: '#fff',
-  borderRadius: 0,
-  display: {
-    xs: 'none',
-    md: 'block'
-  }
+    bgcolor: '#fff',
+    minWidth: 200,
+    minHeight: 200,
+    padding: 1,
+    display: 'flex',
+    flexDirection: 'column'
 }
 
 export const Dashboard = React.memo(() => {
 
-  const [loading, setLoading] = React.useState(true);
-  const [users, setUsers] = React.useState({ total: 0, chart: [{}] });
-  const [profiles, setProfiles] = React.useState({ total: 0, chart: [{}] });
-  const [flightPlans, setFlightPlans] = React.useState({ total: 0, chart: [{}] });
-  const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
-  const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
-  const [registrations, setRegistrations] = React.useState([{}]);
-  const [devices, setDevices] = React.useState([{}]);
-  const [traffic, setTraffic] = React.useState([{}]);
+    const theme = useTheme();
 
-  // Context do snackbar
-  const { enqueueSnackbar } = useSnackbar();
+    const [loading, setLoading] = React.useState(true);
+    const [users, setUsers] = React.useState({ total: 0, chart: [{}] });
+    const [profiles, setProfiles] = React.useState({ total: 0, chart: [{}] });
+    const [flightPlans, setFlightPlans] = React.useState({ total: 0, chart: [{}] });
+    const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
+    const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
+    const [registrations, setRegistrations] = React.useState([{}]);
+    const [devices, setDevices] = React.useState([{}]);
+    const [traffic, setTraffic] = React.useState([{}]);
 
-  // Context page
-  const { setPageIndex } = usePage();
+    // Context do snackbar
+    const { enqueueSnackbar } = useSnackbar();
 
-  React.useEffect(() => {
+    // Context page
+    const { setPageIndex } = usePage();
 
-    setPageIndex(0);
+    React.useEffect(() => {
 
-    AxiosApi.get("/api/load-dashboard-metrics")
-      .then(function (response) {
+        setPageIndex(0);
 
-        setLoading(false);
+        AxiosApi.get("/api/load-dashboard-metrics")
+            .then(function (response) {
 
-        setUsers({
-          total: response.data.users.total,
-          chart: response.data.users.chart
-        });
+                setLoading(false);
 
-        setProfiles({
-          total: response.data.profiles.total,
-          chart: response.data.profiles.chart
-        });
+                setUsers({
+                    total: response.data.users.total,
+                    chart: response.data.users.chart
+                });
 
-        setFlightPlans({
-          total: response.data.flight_plans.total,
-          chart: response.data.flight_plans.chart
-        });
+                setProfiles({
+                    total: response.data.profiles.total,
+                    chart: response.data.profiles.chart
+                });
 
-        setServiceOrders({
-          total: response.data.service_orders.total,
-          chart: response.data.service_orders.chart
-        });
+                setFlightPlans({
+                    total: response.data.flight_plans.total,
+                    chart: response.data.flight_plans.chart
+                });
 
-        setReports({
-          total: response.data.reports.total,
-          chart: response.data.reports.chart
-        });
+                setServiceOrders({
+                    total: response.data.service_orders.total,
+                    chart: response.data.service_orders.chart
+                });
 
-        setDevices({
-          total: response.data.devices.total,
-          chart: response.data.devices.chart
-        });
+                setReports({
+                    total: response.data.reports.total,
+                    chart: response.data.reports.chart
+                });
 
-        setTraffic(response.data.traffic);
+                setDevices({
+                    total: response.data.devices.total,
+                    chart: response.data.devices.chart
+                });
 
-        setRegistrations(response.data.registrations);
+                setTraffic(response.data.traffic);
 
-        handleOpenSnackbar("Métricas carregadas", "success");
 
-      })
-      .catch(function (error) {
+                setRegistrations(response.data.registrations);
 
-        console.log(error)
+                handleOpenSnackbar("Métricas carregadas", "success");
 
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
+            })
+            .catch(function (error) {
 
-        setLoading(false);
+                console.log(error)
 
-      });
+                const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
+                handleOpenSnackbar(error_message, "error");
 
-  }, []);
+                setLoading(false);
 
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
-  }
+            });
 
-  return (
-    <>
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, backgroundColor: 'transparent' }}>
-        <Grid container spacing={0} columns={10}>
+    }, []); 275
 
-          <Grid item xs={10} md={2}>
-            <Card sx={CardStyle}>
-              <CardHeader
-                avatar={<FontAwesomeIcon icon={faUsers} color="white" size='2x' />}
-                title={<Typography variant="h6" color={"white"}>Usuários</Typography>}
-              />
-              <Divider />
-              <CardContent sx={CardContentStyle}>
-                <Box width={'100%'} textAlign="center">
-                  {loading ? <CircularProgress /> : <PizzaChart data={users.chart} total={users.total} />}
-                </Box>
-              </CardContent>
-              <Divider />
-              <CardActions>
-                labels
-              </CardActions>
-            </Card>
-          </Grid>
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
+    }
 
-          <Grid item xs={10} md={2}>
-            <Card sx={CardStyle}>
-              <CardHeader
-                avatar={<FontAwesomeIcon icon={faIdCardClip} color="white" size='2x' />}
-                title={<Typography variant="h6" color={"white"} > Perfis</Typography>}
-              />
-              <Divider />
-              <CardContent sx={CardContentStyle}>
-                <Box width={'100%'} textAlign="center">
-                  {loading ? <CircularProgress /> : <PizzaChart data={profiles.chart} total={profiles.total} />}
-                </Box>
-              </CardContent>
-              <Divider />
-              <CardActions>
-                labels
-              </CardActions>
-            </Card>
-          </Grid>
+    return (
+        <>
+            <Paper sx={{ width: "100%", backgroundColor: 'transparent', boxShadow: 0 }}>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={12}>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={CardStyle}>
+                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                                <Typography variant="h6">
+                                    Usuários
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 3 }}>
+                                chart
+                            </Box>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={CardStyle}>
+                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                                <Typography variant="h6">
+                                    Perfis
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 3 }}>
+                                chart
+                            </Box>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={CardStyle}>
+                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                                <Typography variant="h6">
+                                    Planos de voo
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 3 }}>
+                                chart
+                            </Box>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card sx={CardStyle}>
+                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                                <Typography variant="h6">
+                                    Ordens de serviço
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 3 }}>
+                                chart
+                            </Box>
+                        </Card>
+                    </Grid>
+                </Grid >
+            </Paper >
 
-          <Grid item xs={10} md={2}>
-            <Card sx={CardStyle}>
-              <CardHeader
-                avatar={<FontAwesomeIcon icon={faMap} color="white" size='2x' />}
-                title={<Typography variant="h6" color={"white"} > Planos de voo</Typography>}
-              />
-              <Divider />
-              <CardContent sx={CardContentStyle}>
-                <Box width={'100%'} textAlign="center">
-                  {loading ? <CircularProgress /> : <PizzaChart data={flightPlans.chart} total={flightPlans.total} />}
-                </Box>
-              </CardContent>
-              <Divider />
-              <CardActions>
-                labels
-              </CardActions>
-            </Card>
-          </Grid>
+            <Paper sx={{ width: "100%", backgroundColor: '#fff', mt: 1 }}>
+                <Grid container>
+                    <Grid item xs={12} lg={6} bgcolor={"red"}>
+                        chart
+                    </Grid>
+                    <Grid item xs={12} lg={6} bgcolor={"green"}>
+                        chart
+                    </Grid>
+                </Grid>
+            </Paper>
+        </>
 
-          <Grid item xs={10} md={2}>
-            <Card sx={CardStyle}>
-              <CardHeader
-                avatar={<FontAwesomeIcon icon={faClipboard} color="white" size='2x' />}
-                title={<Typography variant="h6" color={"white"}>Ordens de serviço</Typography>}
-              />
-              <Divider />
-              <CardContent sx={CardContentStyle}>
-                <Box width={'100%'} textAlign="center">
-                  {loading ? <CircularProgress /> : <PizzaChart data={serviceOrders.chart} total={serviceOrders.total} />}
-                </Box>
-              </CardContent>
-              <Divider />
-              <CardActions>
-                labels
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={10} md={2}>
-            <Card sx={CardStyle}>
-              <CardHeader
-                avatar={<FontAwesomeIcon icon={faChartColumn} color="white" size='2x' />}
-                title={<Typography variant="h6" color={"white"}>Logs</Typography>}
-              />
-              <Divider />
-              <CardContent sx={CardContentStyle}>
-                <Box width={'100%'} textAlign="center">
-                  {loading ? <CircularProgress /> : <PizzaChart data={reports.chart} total={reports.total} />}
-                </Box>
-              </CardContent>
-              <Divider />
-              <CardActions>
-                labels
-              </CardActions>
-            </Card>
-          </Grid>
-
-          <Grid item xs={10} sx={LineChartContainerStyle}>
-            <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Tráfego Anual</Typography>
-            <Grid container>
-              <Grid item xs={12} sx={{ height: 300 }}>
-                {!loading && <LinesChart data={traffic} />}
-              </Grid>
-            </Grid>
-          </Grid>
-
-          <Grid item xs={10} sx={LineChartContainerStyle}>
-            <Typography variant="h6" sx={{ ml: 2, mt: 2 }}>Novos usuários</Typography>
-            <Grid container>
-              <Grid item xs={12} sx={{ height: 300 }}>
-                {!loading && <LinesChart data={registrations} />}
-              </Grid>
-            </Grid>
-          </Grid>
-
-        </Grid >
-      </Paper >
-
-      {
-        /*  <Paper sx={lastSectionStyle}>
-          <Typography variant="h5">Novos usuários</Typography>
-          <Grid container>
-            <Grid item xs={12} sx={{ height: 350 }}>
-              {!loading && <LinesChart data={registrations} />}
-            </Grid>
-          </Grid>
-        </Paper> 
-      */
-      }
-    </>
-
-  )
+    )
 
 });

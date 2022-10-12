@@ -285,7 +285,7 @@ export const ServiceOrdersPanel = React.memo(() => {
               sx: { fontSize: 'default' },
               disableUnderline: true
             }}
-            variant="standard"
+            variant="outlined"
           />
         </Grid>
 

@@ -281,7 +281,7 @@ export function UsersPanel() {
               sx: { fontSize: 'default' },
               disableUnderline: true,
             }}
-            variant="standard"
+            variant="outlined"
           />
         </Grid>
 

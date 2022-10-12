@@ -24,12 +24,8 @@ export const Equipments = React.memo(() => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1 }}>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item xs>
-            <Switcher panelStateSetter={setActualPanel} options={[{ page: "drones", title: "Drones", icon: '' }, { page: "batteries", title: "Baterias", icon: '' }, { page: "equipments", title: "Equipamentos", icon: '' }]} />
-          </Grid>
-        </Grid>
+      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
+        <Switcher panelStateSetter={setActualPanel} options={[{ page: "drones", title: "Drones", icon: '' }, { page: "batteries", title: "Baterias", icon: '' }, { page: "equipments", title: "Equipamentos", icon: '' }]} />
       </Paper>
 
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>

@@ -44,6 +44,8 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Libs
+import moment from 'moment/moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -319,7 +321,7 @@ export const FlightPlansPanel = () => {
               sx: { fontSize: 'default' },
               disableUnderline: true
             }}
-            variant="standard"
+            variant="outlined"
           />
         </Grid>
 
@@ -352,9 +354,10 @@ export const FlightPlansPanel = () => {
               <TableHead>
                 <TableRow>
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
@@ -366,9 +369,10 @@ export const FlightPlansPanel = () => {
                   records.map((flight_plan, index) => (
                     <TableRow key={flight_plan.id} >
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={flight_plan.id} /></TableCell>
-                      <TableCell align="center">{flight_plan.creator.name}</TableCell>
                       <TableCell align="center">{flight_plan.name}</TableCell>
                       <TableCell align="center">{flight_plan.description}</TableCell>
+                      <TableCell align="center">{flight_plan.creator.name}</TableCell>
+                      <TableCell align="center">{moment(flight_plan.created_at).format("DD/MM/YYYY")}</TableCell>
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${flight_plan.file}`} target="_blank">
                           <Tooltip title="Ver plano">

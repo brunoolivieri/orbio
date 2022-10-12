@@ -282,7 +282,7 @@ export const BatteriesPanel = React.memo(() => {
                             sx: { fontSize: 'default' },
                             disableUnderline: true
                         }}
-                        variant="standard"
+                        variant="outlined"
                     />
                 </Grid>
 

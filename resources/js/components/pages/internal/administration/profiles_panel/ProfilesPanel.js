@@ -278,7 +278,7 @@ export function ProfilesPanel() {
               sx: { fontSize: 'default' },
               disableUnderline: true
             }}
-            variant="standard"
+            variant="outlined"
           />
         </Grid>
 

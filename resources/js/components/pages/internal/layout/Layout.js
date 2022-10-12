@@ -88,8 +88,8 @@ export const Layout = React.memo(() => {
       }
 
       {AuthData.status &&
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#333' }}>
-          <NavigatorFixed /> 
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#EBEEF1' }}>
+          <NavigatorFixed />
           <Box
             component="nav"
             sx={{ flexShrink: { sm: 0 } }}

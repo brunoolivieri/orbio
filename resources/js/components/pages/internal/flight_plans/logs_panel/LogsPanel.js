@@ -285,7 +285,7 @@ export const LogsPanel = () => {
                             sx: { fontSize: 'default' },
                             disableUnderline: true
                         }}
-                        variant="standard"
+                        variant="outlined"
                     />
                 </Grid>
 
@@ -348,7 +348,7 @@ export const LogsPanel = () => {
                                             </TableCell>
                                             <TableCell align="center">{log.name}</TableCell>
                                             <TableCell align="center">{log.filename}</TableCell>
-                                            <TableCell align="center">{moment(log.timestamp).format('DD-MM-YYYY')}</TableCell>
+                                            <TableCell align="center">{moment(log.timestamp).format('DD/MM/YYYY')}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>

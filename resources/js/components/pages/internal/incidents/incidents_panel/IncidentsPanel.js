@@ -281,7 +281,7 @@ export const IncidentsPanel = React.memo(() => {
               sx: { fontSize: 'default' },
               disableUnderline: true
             }}
-            variant="standard"
+            variant="outlined"
           />
         </Grid>
 
@@ -328,7 +328,7 @@ export const IncidentsPanel = React.memo(() => {
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={incident.id} /></TableCell>
                       <TableCell align="center">{incident.type}</TableCell>
                       <TableCell align="center">{incident.description}</TableCell>
-                      <TableCell align="center">{moment(incident.date).format('DD-MM-YYYY hh:mm')}</TableCell>
+                      <TableCell align="center">{moment(incident.date).format('DD/MM/YYYY')}</TableCell>
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${incident.service_order.flight_plan.file}`} target="_blank">
                           <Tooltip title={`Ver plano ${incident.service_order.flight_plan.name}`}>

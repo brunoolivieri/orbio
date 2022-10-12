@@ -292,7 +292,7 @@ export function ReportsPanel() {
               sx: { fontSize: 'default' },
               disableUnderline: true
             }}
-            variant="standard"
+            variant="outlined"
           />
         </Grid>
 

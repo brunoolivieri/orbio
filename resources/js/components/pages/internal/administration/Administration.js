@@ -35,18 +35,14 @@ export const Administration = React.memo(() => {
   return (
     <>
 
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1 }}>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item xs>
-            <Switcher
-              panelStateSetter={setActualPanel}
-              options={[
-                { page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> },
-                { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }
-              ]}
-            />
-          </Grid>
-        </Grid>
+      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
+        <Switcher
+          panelStateSetter={setActualPanel}
+          options={[
+            { page: "users", title: "Usuários", icon: <FontAwesomeIcon icon={faUsers} /> },
+            { page: "profiles", title: "Perfis", icon: <FontAwesomeIcon icon={faIdCardClip} /> }
+          ]}
+        />
       </Paper>
 
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
