@@ -331,7 +331,7 @@ export const IncidentsPanel = React.memo(() => {
                       <TableCell align="center">{moment(incident.date).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${incident.service_order.flight_plan.file}`} target="_blank">
-                          <Tooltip title="Ver plano">
+                          <Tooltip title={`Ver plano ${incident.service_order.flight_plan.name}`}>
                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
                               <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
                             </IconButton>

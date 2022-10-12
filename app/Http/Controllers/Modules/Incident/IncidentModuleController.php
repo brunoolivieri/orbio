@@ -36,7 +36,7 @@ class IncidentModuleController extends Controller
     public function store(IncidentStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
-        
+
         return $this->service->createResource($request->only("date", "type", "description", "flight_plan_id", "service_order_id"));
     }
 
@@ -50,8 +50,8 @@ class IncidentModuleController extends Controller
     public function update(IncidentUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
-
-        return $this->service->updateResource($request->validated(), $id);
+        
+        return $this->service->updateResource($request->only(["type", "description", "date", "flight_plan_id", "service_order_id"]), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response

@@ -15,7 +15,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { GenericSelect } from '../../../input_select/GenericSelect';
+import { SelectAttributeControl } from '../../../input_select/SelectAttributeControl';
 import AxiosApi from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -212,7 +212,7 @@ export const UpdateUserFormulary = React.memo((props) => {
               />
 
               <Box sx={{ width: "auto", mb: 2 }}>
-                <GenericSelect
+                <SelectAttributeControl
                   label_text={"Perfil"}
                   data_source={"/api/load-profiles"}
                   primary_key={"id"}

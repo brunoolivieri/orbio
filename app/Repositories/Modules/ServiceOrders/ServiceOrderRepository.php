@@ -10,13 +10,15 @@ use Illuminate\Support\Str;
 // Models
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
+use App\Models\Incidents\Incident;
 
 class ServiceOrderRepository implements RepositoryInterface
 {
-    public function __construct(User $userModel, ServiceOrder $serviceOrderModel)
+    public function __construct(User $userModel, ServiceOrder $serviceOrderModel, Incident $incidentModel)
     {
         $this->userModel = $userModel;
         $this->serviceOrderModel = $serviceOrderModel;
+        $this->incidentModel = $incidentModel;
     }
 
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
@@ -70,6 +72,20 @@ class ServiceOrderRepository implements RepositoryInterface
 
             $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
             $service_order->users()->attach($client->id, ['role' => "client"]);
+
+            // If any flight plan with incidents has changed, delete it, because a incident just exists related to a flight plan in a service order
+            // Deletion of unselected flight plan and its incidents
+            foreach ($service_order->flight_plans as $index => $flight_plan) {
+
+                // If the flight plan id not exists in array of ids of selected flight plans
+                if (!in_array($flight_plan->id, $data->get('flight_plans_ids'))) {
+
+                    // Thus, the flight plan was unselected in this service order and need to be deleted
+                    // I will force delete in this case, because an incident cant exist by itself, alone, so is better to delete forever 
+                    $this->incidentModel->where("service_order_flight_plan_id", $service_order->flight_plans[$index]->pivot->id)->forceDelete();
+                    $service_order->flight_plans[$index]->pivot->forceDelete();
+                }
+            }
 
             // Create each many to many record through an array of ids
             // Any IDs that are not in the given array will be removed from the intermediate table

@@ -294,7 +294,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                                 {(!loading && records.length > 0) &&
                                     records.map((flight_plan, index) => (
                                         <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                            <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(flight_plan.id) || flight_plan.selected === 1} />} /></TableCell>
+                                            <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(flight_plan.id)} />} /></TableCell>
                                             <TableCell align="center">{flight_plan.creator.name}</TableCell>
                                             <TableCell align="center">{flight_plan.name}</TableCell>
                                             <TableCell align="center">{flight_plan.file}</TableCell>

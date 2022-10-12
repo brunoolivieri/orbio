@@ -20,7 +20,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import AxiosApi from '../../../../../services/AxiosApi';
-import { GenericSelect } from '../../../input_select/GenericSelect';
+import { SelectAttributeControl } from '../../../input_select/SelectAttributeControl';
 
 export const UpdateLogFormulary = React.memo((props) => {
 
@@ -197,7 +197,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                         </Box>
 
                         <Box sx={{ mb: 2 }}>
-                            <GenericSelect
+                            <SelectAttributeControl
                                 label_text="Planos de voo"
                                 data_source={"/api/load-flight-plans"}
                                 primary_key={"id"}

@@ -44,15 +44,11 @@ class UserPanelService implements ServiceInterface
 
     public function updateResource(array $data, string $identifier)
     {
-        $user = $this->repository->updateOne(collect($data), $identifier);
-
-        return response(["message" => "Usuário atualizado com sucesso!"], 200);
+        return $this->repository->updateOne(collect($data), $identifier);
     }
 
     public function deleteResource(string $identifier)
     {
-        $user = $this->repository->deleteOne($identifier);
-
-        return response(["message" => "Usuário deletado com sucesso!"], 200);
+        return $this->repository->deleteOne($identifier);
     }
 }

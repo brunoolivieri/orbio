@@ -1,4 +1,4 @@
-// React
+// Reactdata
 import * as React from 'react';
 // Material UI
 import Button from '@mui/material/Button';
@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import AxiosApi from '../../../../../services/AxiosApi';
-import { GenericSelect } from '../../../input_select/GenericSelect';
+import { SelectAttributeControl } from '../../../input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 
@@ -200,7 +200,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               sx={{ mb: 2 }}
             />
 
-            <GenericSelect
+            <SelectAttributeControl
               label_text={"Perfil"}
               data_source={"/api/load-profiles"}
               primary_key={"id"}

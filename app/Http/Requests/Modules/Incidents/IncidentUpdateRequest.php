@@ -44,7 +44,7 @@ class IncidentUpdateRequest extends FormRequest
             "date.date" => "Deve ser um formato de data válido",
             "type.required" => "O tipo do incidente deve ser informado",
             "description.required" => "A descrição deve ser informada",
-            "flight_plan_id.required" => "O plano de voo precisa ser informado"
+            "flight_plan_id.required" => "Um plano de voo precisa ser selecionado"
         ];
     }
 }

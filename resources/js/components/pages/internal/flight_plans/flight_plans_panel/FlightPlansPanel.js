@@ -44,7 +44,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Outros
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -389,10 +388,10 @@ export const FlightPlansPanel = () => {
                         }
                       </TableCell>
                       <TableCell align="center">
-                        {flight_plan.incidents.length === 0 ?
+                        {flight_plan.incidents === 0 ?
                           <ErrorIcon color="disabled" />
                           :
-                          <Badge badgeContent={flight_plan.incidents.length} color="success">
+                          <Badge badgeContent={flight_plan.incidents} color="success">
                             <ErrorIcon color="action" />
                           </Badge>
                         }

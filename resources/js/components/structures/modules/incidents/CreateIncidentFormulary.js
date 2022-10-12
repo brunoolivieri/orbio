@@ -24,35 +24,70 @@ import { DatePicker } from '../../date_picker/DatePicker';
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
-import { GenericSelect } from '../../input_select/GenericSelect';
+import { SelectExternalData } from '../../input_select/SelectExternalData';
 
 export const CreateIncidentFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ flight_plan_id: "", service_order_id: "", type: "", description: "", date: "" });
+  const [controlledInput, setControlledInput] = React.useState({ type: "", description: "", date: "" });
   const [fieldError, setFieldError] = React.useState({ flight_plan_id: false, service_order_id: false, date: false, type: false, description: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ flight_plan_id: "", service_order_id: "", date: "", type: "", description: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
+  // Select Inputs
+  const [serviceOrdersByFlightPlan, setServiceOrdersByFlightPlan] = React.useState([]);
+  const [flightPlans, setFlightPlans] = React.useState([]);
+  const [selectedFlightPlan, setSelectedFlightPlan] = React.useState("0");
+  const [selectedServiceOrder, setSelectedServiceOrder] = React.useState("0");
+
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
-    setOpen(true);
-    setControlledInput({ flight_plan_id: "0", service_order_id: "0", type: "", description: "", date: moment() });
-  }
 
-  const handleClose = () => {
+    setOpen(true);
+    setLoading(false);
+
     setFieldError({ date: false, type: false, description: false });
     setFieldErrorMessage({ date: "", type: "", description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setControlledInput({ type: "", description: "" });
-    setLoading(false);
+    setControlledInput({ type: "", description: "", date: moment() });
+
+    AxiosApi.get("/api/load-flight-plans", {
+    })
+      .then(function (response) {
+        setFlightPlans(response.data);
+        setSelectedFlightPlan("0");
+        setSelectedServiceOrder("0");
+      })
+      .catch(function (error) {
+        setLoading(false);
+        errorServerResponseTreatment(error.response);
+      });
+  }
+
+  const handleClose = () => {
     setOpen(false);
   }
+
+  React.useEffect(() => {
+
+    const url = "/api/load-service-orders-by-flight-plan?flight_plan_id=" + selectedFlightPlan;
+
+    AxiosApi.get(url, {
+    })
+      .then(function (response) {
+        setServiceOrdersByFlightPlan(response.data);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        errorServerResponseTreatment(error.response);
+      });
+
+  }, [selectedFlightPlan]);
 
   const handleRegistrationSubmit = (event) => {
     event.preventDefault();
@@ -71,8 +106,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
     const incidentDateValidate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
     const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
-    const incidentFlightPlanValidate = controlledInput.flight_plan_id != "0" ? { error: false, message: "" } : { error: false, message: "O plano de voo precisa ser selecionado" };
-    const incidentDateFlightPlanServiceOrderValidate = controlledInput.service_order_id != "0" ? { error: false, message: "" } : { error: false, message: "A ordem de serviço precisa ser selecionada" }
+    const incidentFlightPlanValidate = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: false, message: "O plano de voo precisa ser selecionado" };
+    const incidentDateFlightPlanServiceOrderValidate = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: false, message: "A ordem de serviço precisa ser selecionada" }
 
     setFieldError({ flight_plan_id: incidentFlightPlanValidate.error, service_order_id: incidentDateFlightPlanServiceOrderValidate.error, date: incidentDateValidate.error, type: incidentTypeValidate.error, description: incidentNoteValidate.error });
     setFieldErrorMessage({ flight_plan_id: incidentFlightPlanValidate.message, service_order_id: incidentDateFlightPlanServiceOrderValidate.message, date: incidentDateValidate.message, type: incidentTypeValidate.message, description: incidentNoteValidate.message });
@@ -83,7 +118,13 @@ export const CreateIncidentFormulary = React.memo((props) => {
 
   const requestServerOperation = () => {
 
-    AxiosApi.post(`/api/incidents-module`, controlledInput)
+    AxiosApi.post(`/api/incidents-module`, {
+      date: moment(controlledInput.date).format('YYYY-MM-DD'),
+      type: controlledInput.type,
+      description: controlledInput.description,
+      flight_plan_id: selectedFlightPlan,
+      service_order_id: selectedServiceOrder
+    })
       .then(function (response) {
 
         setLoading(false);
@@ -213,38 +254,29 @@ export const CreateIncidentFormulary = React.memo((props) => {
               </Grid>
 
               <Grid item xs={6}>
-                <GenericSelect
-                  label_text="Plano de voo"
-                  data_source={"/api/load-flight-plans"}
+                <SelectExternalData
+                  label_text={"Plano de voo"}
                   primary_key={"id"}
                   key_content={"name"}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
+                  setter={setSelectedFlightPlan}
+                  options={flightPlans}
                   error={fieldError.flight_plan_id}
-                  name={"flight_plan_id"}
-                  value={controlledInput.flight_plan_id}
+                  value={selectedFlightPlan}
                 />
                 <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
               </Grid>
 
               <Grid item xs={6}>
-                {controlledInput.flight_plan_id != "0" &&
-                  <>
-                    <GenericSelect
-                      label_text={"Ordem de serviço"}
-                      data_source={`/api/load-service-orders-by-flight-plan?flight_plan_id=${controlledInput.flight_plan_id}`}
-                      primary_key={"id"}
-                      key_content={"number"}
-                      setControlledInput={setControlledInput}
-                      controlledInput={controlledInput}
-                      error={fieldError.service_order_id}
-                      name={"service_order_id"}
-                      value={controlledInput.service_order_id}
-                    />
-                    <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
-                  </>
-
-                }
+                <SelectExternalData
+                  label_text={"Ordem de serviço"}
+                  primary_key={"id"}
+                  key_content={"number"}
+                  setter={setSelectedServiceOrder}
+                  options={serviceOrdersByFlightPlan}
+                  error={fieldError.service_order_id}
+                  value={selectedServiceOrder}
+                />
+                <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
               </Grid>
 
             </Grid>

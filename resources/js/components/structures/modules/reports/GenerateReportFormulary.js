@@ -18,7 +18,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { GenericSelect } from '../../input_select/GenericSelect';
+import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DatePicker } from "../../date_picker/DatePicker";
 import { ReportDocumentVisualization } from "../../../structures/report_builder/ReportBuilder";
@@ -348,7 +348,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <GenericSelect
+                                    <SelectAttributeControl
                                         label_text={"Responsável (piloto)"}
                                         data_source={"/api/load-users?where=profile_id.3"}
                                         primary_key={"name"}
@@ -362,7 +362,7 @@ export const GenerateReportFormulary = React.memo((props) => {
                                 </Grid>
 
                                 <Grid item xs={6}>
-                                    <GenericSelect
+                                    <SelectAttributeControl
                                         label_text={"Cliente"}
                                         data_source={"/api/load-users?where=profile_id.4"}
                                         primary_key={"name"}

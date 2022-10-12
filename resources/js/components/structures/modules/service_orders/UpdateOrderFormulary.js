@@ -21,7 +21,7 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 import { FormValidation } from '../../../../utils/FormValidation';
 import AxiosApi from '../../../../services/AxiosApi';
 import { DatePicker } from '../../date_picker/DatePicker';
-import { GenericSelect } from '../../input_select/GenericSelect';
+import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
 import LinearProgress from '@mui/material/LinearProgress';
@@ -36,7 +36,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status, start_date: props.record.start_date, end_date: props.record.end_date });
+  const [controlledInput, setControlledInput] = React.useState({ id: "", pilot_id: "", client_id: "", observation: "", status: "", start_date: "", end_date: "" });
   const [fieldError, setFieldError] = React.useState({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -46,26 +46,17 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  React.useEffect(() => {
-
-    const order_flight_plans = props.record.flight_plans;
-    let flight_plans_only_ids = [];
-
-    flight_plans_only_ids = order_flight_plans.map((flight_plan) => flight_plan.id);
-
-    setFlightPlansSelected(flight_plans_only_ids);
-
-  }, []);
-
   const handleClickOpen = () => {
     setOpen(true);
-  }
-
-  const handleClose = () => {
+    setLoading(false);
+    setControlledInput({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status, start_date: props.record.start_date, end_date: props.record.end_date });
     setFieldError({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
     setFieldErrorMessage({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setLoading(false);
+    setFlightPlansSelected(props.record.flight_plans.map((flight_plan) => flight_plan.id));
+  }
+
+  const handleClose = () => {
     setOpen(false);
   }
 
@@ -288,7 +279,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
               </Box>
 
               <Box sx={{ mb: 2 }}>
-                <GenericSelect
+                <SelectAttributeControl
                   label_text="Piloto"
                   data_source={"/api/load-users?where=profile_id.3"}
                   primary_key={"id"}
@@ -303,7 +294,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
               </Box>
 
               <Box sx={{ mb: 2 }}>
-                <GenericSelect
+                <SelectAttributeControl
                   label_text="Cliente"
                   data_source={"/api/load-users?where=profile_id.4"}
                   primary_key={"id"}

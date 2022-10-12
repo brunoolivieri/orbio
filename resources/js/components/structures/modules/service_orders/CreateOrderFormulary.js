@@ -22,7 +22,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
-import { GenericSelect } from '../../input_select/GenericSelect';
+import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
 import { DatePicker } from '../../date_picker/DatePicker';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
@@ -261,7 +261,7 @@ export const CreateOrderFormulary = React.memo((props) => {
             </Box>
 
             <Box sx={{ mb: 2 }}>
-              <GenericSelect
+              <SelectAttributeControl
                 label_text="Piloto"
                 data_source={"/api/load-users?where=profile_id.3"}
                 primary_key={"id"}
@@ -276,7 +276,7 @@ export const CreateOrderFormulary = React.memo((props) => {
             </Box>
 
             <Box sx={{ mb: 2 }}>
-              <GenericSelect
+              <SelectAttributeControl
                 label_text="Cliente"
                 data_source={"/api/load-users?where=profile_id.4"}
                 primary_key={"id"}

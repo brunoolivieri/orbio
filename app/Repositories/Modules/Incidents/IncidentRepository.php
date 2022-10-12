@@ -45,7 +45,14 @@ class IncidentRepository implements RepositoryInterface
     {
         $incident = $this->incidentModel->findOrFail($identifier);
 
-        $incident->update($data->only(["type", "date", "description", "flight_plan_id"])->all());
+        $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
+
+        $incident->update([
+            "type" => $data->get("type"),
+            "date" => $data->get("date"),
+            "description" => $data->get("description"),
+            "service_order_flight_plan_id" => $service_order_flight_plan->id
+        ]);
 
         $incident->refresh();
 
