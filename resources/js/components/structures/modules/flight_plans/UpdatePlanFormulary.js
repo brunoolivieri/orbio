@@ -152,73 +152,77 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
-          <DialogTitle>EDIÇÃO | PLANO DE VOO (ID: {props.record.id})</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>EDIÇÃO | PLANO DE VOO (ID: {props.record.id})</DialogTitle>
 
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-            <DialogContent>
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+          <DialogContent>
 
-              <TextField
-                margin="dense"
-                id="id"
-                name="id"
-                label="ID do plano"
-                type="text"
-                fullWidth
-                variant="outlined"
-                onChange={handleInputChange}
-                defaultValue={props.record.id}
-                inputProps={{
-                  readOnly: true
-                }}
-                sx={{ mb: 2 }}
-              />
+            <TextField
+              margin="dense"
+              id="id"
+              name="id"
+              label="ID do plano"
+              type="text"
+              fullWidth
+              variant="outlined"
+              onChange={handleInputChange}
+              defaultValue={props.record.id}
+              inputProps={{
+                readOnly: true
+              }}
+              sx={{ mb: 2 }}
+            />
 
-              <TextField
-                margin="dense"
-                id="name"
-                name="name"
-                label="Nome do plano"
-                type="text"
-                fullWidth
-                variant="outlined"
-                onChange={handleInputChange}
-                defaultValue={props.record.name}
-                helperText={fieldErrorMessage.name}
-                error={fieldError.name}
-                sx={{ mb: 2 }}
-              />
+            <TextField
+              margin="dense"
+              id="name"
+              name="name"
+              label="Nome do plano"
+              type="text"
+              fullWidth
+              variant="outlined"
+              onChange={handleInputChange}
+              defaultValue={props.record.name}
+              helperText={fieldErrorMessage.name}
+              error={fieldError.name}
+              sx={{ mb: 2 }}
+            />
 
-              <TextField
-                margin="dense"
-                name="description"
-                label="Descrição"
-                type="text"
-                fullWidth
-                variant="outlined"
-                onChange={handleInputChange}
-                defaultValue={props.record.description}
-                helperText={fieldErrorMessage.description}
-                error={fieldError.description}
-              />
+            <TextField
+              margin="dense"
+              name="description"
+              label="Descrição"
+              type="text"
+              fullWidth
+              variant="outlined"
+              onChange={handleInputChange}
+              defaultValue={props.record.description}
+              helperText={fieldErrorMessage.description}
+              error={fieldError.description}
+            />
 
-            </DialogContent>
+          </DialogContent>
 
-            {(!loading && displayAlert.display) &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          {(!loading && displayAlert.display) &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            {loading && <LinearProgress />}
+          {loading && <LinearProgress />}
 
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-            </DialogActions>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+          </DialogActions>
 
-          </Box>
-        </Dialog>
-      }
+        </Box>
+      </Dialog>
     </>
   );
 });

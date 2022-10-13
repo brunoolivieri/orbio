@@ -96,63 +96,65 @@ export function DeleteIncidentFormulary({ ...props }) {
         </IconButton>
       </Tooltip>
 
-      {(props.record != null && open) &&
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
 
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
-          <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+          <DialogContent>
 
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+            <TextField
+              type="text"
+              margin="dense"
+              label="ID do incidente"
+              fullWidth
+              variant="outlined"
+              required
+              id="id"
+              name="id"
+              InputProps={{
+                readOnly: true
+              }}
+              defaultValue={props.record.id}
+              sx={{ mb: 2 }}
+            />
 
-            <DialogContent>
+            <TextField
+              type="text"
+              margin="dense"
+              label="Tipo do incidente"
+              fullWidth
+              variant="outlined"
+              required
+              id="type"
+              name="type"
+              defaultValue={props.record.type}
+              InputProps={{
+                readOnly: true
+              }}
+            />
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="ID do incidente"
-                fullWidth
-                variant="outlined"
-                required
-                id="id"
-                name="id"
-                InputProps={{
-                  readOnly: true
-                }}
-                defaultValue={props.record.id}
-                sx={{ mb: 2 }}
-              />
+          </DialogContent>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="Tipo do incidente"
-                fullWidth
-                variant="outlined"
-                required
-                id="type"
-                name="type"
-                defaultValue={props.record.type}
-                InputProps={{
-                  readOnly: true
-                }}
-              />
+          {(!loading && displayAlert.display) &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            </DialogContent>
+          {loading && <LinearProgress />}
 
-            {(!loading && displayAlert.display) &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+          </DialogActions>
 
-            {loading && <LinearProgress />}
+        </Box>
 
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-            </DialogActions>
-
-          </Box>
-
-        </Dialog>
-      }
+      </Dialog>
     </>
   )
 

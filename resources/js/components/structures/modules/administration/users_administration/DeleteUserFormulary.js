@@ -97,66 +97,66 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      {(props.record != null && open) &&
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>DESATIVAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
 
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
-          <DialogTitle>DESATIVAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+          <DialogContent>
 
-          {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+            <DialogContentText mb={2}>
+              O usuário será desvinculado das ordens de serviço e tornado um visitante.
+            </DialogContentText>
 
-            <DialogContent>
+            <TextField
+              margin="dense"
+              id="id"
+              name="id"
+              label="ID do usuário"
+              type="text"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                readOnly: true
+              }}
+              defaultValue={props.record.id}
+              sx={{ mb: 2 }}
+            />
 
-              <DialogContentText mb={2}>
-                O usuário será desvinculado das ordens de serviço e seu nível acesso será alterado para o de um visitante.
-              </DialogContentText>
+            <TextField
+              margin="dense"
+              id="name"
+              name="name"
+              label="Nome"
+              type="text"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                readOnly: true
+              }}
+              defaultValue={props.record.name}
+            />
 
-              <TextField
-                margin="dense"
-                id="id"
-                name="id"
-                label="ID do usuário"
-                type="text"
-                fullWidth
-                variant="outlined"
-                inputProps={{
-                  readOnly: true
-                }}
-                defaultValue={props.record.id}
-                sx={{ mb: 2 }}
-              />
+          </DialogContent>
 
-              <TextField
-                margin="dense"
-                id="name"
-                name="name"
-                label="Nome"
-                type="text"
-                fullWidth
-                variant="outlined"
-                inputProps={{
-                  readOnly: true
-                }}
-                defaultValue={props.record.name}
-              />
+          {displayAlert.display &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            </DialogContent>
+          {loading && <LinearProgress />}
 
-            {displayAlert.display &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+          </DialogActions>
 
-            {loading && <LinearProgress />}
-
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-            </DialogActions>
-
-          </Box>
-
-        </Dialog>
-      }
+        </Box>
+      </Dialog>
     </>
 
   );

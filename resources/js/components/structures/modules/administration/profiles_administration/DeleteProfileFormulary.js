@@ -99,7 +99,13 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
         {(props.record != null && open) && (native_profiles.indexOf(props.record.profile_id) == -1) &&
           <>
             <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>

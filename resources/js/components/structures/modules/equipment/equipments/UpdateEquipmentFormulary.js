@@ -254,7 +254,13 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                 </IconButton>
             </Tooltip>
 
-            <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                PaperProps={{ style: { borderRadius: 15 } }}
+                fullWidth
+                maxWidth="md"
+            >
                 <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleEquipmentUpdateSubmit} >

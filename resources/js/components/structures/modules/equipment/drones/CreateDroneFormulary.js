@@ -31,20 +31,13 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput, setControlledInput] = React.useState({ name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-
     const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [loading, setLoading] = React.useState(false);
-
     const [open, setOpen] = React.useState(false);
-
     const [uploadedImage, setUploadedImage] = React.useState(null);
-
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -224,11 +217,16 @@ export const CreateDroneFormulary = React.memo(({ ...props }) => {
                 </IconButton>
             </Tooltip>
 
-            <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                PaperProps={{ style: { borderRadius: 15 } }}
+                fullWidth
+                maxWidth="md"
+            >
                 <DialogTitle>CADASTRO DE DRONE</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
-
                     <DialogContent>
 
                         <TextField

@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -18,6 +17,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
 import FormHelperText from '@mui/material/FormHelperText';
+import Avatar from '@mui/material/Avatar';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import MapIcon from '@mui/icons-material/Map';
+import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -43,7 +46,7 @@ export const CreateOrderFormulary = React.memo((props) => {
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
+  const [flightPlans, setFlightPlans] = React.useState([]);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -88,7 +91,7 @@ export const CreateOrderFormulary = React.memo((props) => {
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
-    const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
+    const fligthPlansValidate = flightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setFieldError({
@@ -130,7 +133,7 @@ export const CreateOrderFormulary = React.memo((props) => {
       client_id: controlledInput.client_id,
       observation: controlledInput.observation,
       status: controlledInput.status,
-      flight_plans_ids: flightPlansSelected
+      flight_plans: flightPlans
     })
       .then(function (response) {
 
@@ -221,18 +224,19 @@ export const CreateOrderFormulary = React.memo((props) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
         <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
-
           <DialogContent>
 
-            <DialogContentText sx={{ mb: 3 }}>
-              Formulário para criação de uma ordem de serviço.
-            </DialogContentText>
-
-            <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+            <Box sx={{ display: "flex", mb: 2 }}>
               <Box sx={{ mr: 1 }}>
                 <DatePicker
                   setControlledInput={setControlledInput}
@@ -275,7 +279,7 @@ export const CreateOrderFormulary = React.memo((props) => {
               <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
             </Box>
 
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 1 }}>
               <SelectAttributeControl
                 label_text="Cliente"
                 data_source={"/api/load-users?where=profile_id.4"}
@@ -290,39 +294,55 @@ export const CreateOrderFormulary = React.memo((props) => {
               <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
             </Box>
 
-            <Box sx={{ mb: 1 }}>
-              <FlightPlansForServiceOrderModal
-                setFlightPlansSelected={setFlightPlansSelected}
-                flightPlansSelected={flightPlansSelected}
-                serviceOrderId={null}
-              />
+            <Box sx={{ mb: 2 }}>
+              <Box>
+                <FlightPlansForServiceOrderModal
+                  setFlightPlans={setFlightPlans}
+                  flightPlans={flightPlans}
+                  serviceOrderId={null}
+                />
+              </Box>
+              {flightPlans.length > 0 &&
+                <List
+                  dense={true}
+                  sx={{
+                    maxWidth: '100%',
+                    minWidth: '100%',
+                    bgcolor: '#F5F5F5',
+                    position: 'relative',
+                    overflow: 'auto',
+                    maxHeight: 200,
+                    '& ul': { padding: 0 },
+                    mt: 2
+                  }}
+                  subheader={<li />}
+                >
+                  <ul>
+                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + flightPlans.length}</ListSubheader>
+                    {flightPlans.map((flight_plan, index) => (
+                      <ListItem
+                        key={index}
+                        secondaryAction={
+                          <IconButton edge="end" aria-label="comments">
+                            <SettingsIcon />
+                          </IconButton>
+                        }
+                      >
+                        <ListItemAvatar>
+                          <Avatar>
+                            <MapIcon style={{ color: '#007937' }} />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`ID: ${flight_plan.id}`}
+                          secondary={`Nome: ${flight_plan.name}`}
+                        />
+                      </ListItem>
+                    ))}
+                  </ul>
+                </List>
+              }
             </Box>
-
-            {flightPlansSelected.length > 0 &&
-              <List
-                sx={{
-                  maxWidth: '100%',
-                  minWidth: '100%',
-                  bgcolor: '#F5F5F5',
-                  position: 'relative',
-                  overflow: 'auto',
-                  maxHeight: 200,
-                  '& ul': { padding: 0 },
-                  mt: 2
-                }}
-                subheader={<li />}
-              >
-                <ul>
-                  <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Planos de voo selecionados: " + flightPlansSelected.length}</ListSubheader>
-                  {flightPlansSelected.map((flight_plan_id, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={flight_plan_id} />
-                    </ListItem>
-                  ))}
-                </ul>
-
-              </List>
-            }
 
             <TextField
               type="text"

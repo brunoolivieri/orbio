@@ -50,11 +50,15 @@ class ServiceOrdersPanelResource extends JsonResource
                 $this->formatedData["records"][$row]["flight_plans"][$index] = [
                     "id" => $flight_plan->id,
                     "file" => $flight_plan->file,
+                    "name" => $flight_plan->name,
+                    "drone_id" => $flight_plan->pivot->drone_id,
+                    "battery_id" => $flight_plan->pivot->battery_id,
+                    "equipment_id" => $flight_plan->pivot->equipment_id,
                     "incidents" => $incidents,
                     "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];
 
-                if($incidents->count() > 0){
+                if ($incidents->count() > 0) {
                     $this->formatedData["records"][$row]["incidents"] += $incidents->count();
                 }
             }

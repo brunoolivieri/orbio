@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Custom
 use App\Models\Images\Image;
+use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class Equipment extends Model
 {

@@ -52,7 +52,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
     const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
     const [loading, setLoading] = React.useState(true);
-    const [selectedRecords, setSelectedRecords] = React.useState(props.flightPlansSelected);
+    const [selectedFlightPlans, setSelectedFlightPlans] = React.useState(props.flightPlans);
     const [searchField, setSearchField] = React.useState("");
 
     React.useEffect(() => {
@@ -137,7 +137,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const reloadTable = () => {
 
-        setSelectedRecords([]);
+        setSelectedFlightPlans([]);
 
         setLoading(true);
         setRecords([]);
@@ -158,26 +158,33 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     }
 
-    const handleClickRecord = (event) => {
+    const handleClickRecord = (flight_plan) => {
 
-        const record_id = parseInt(event.currentTarget.value);
+        // Percorrer os selecionados
+        // Verificar o que é igual ao clicado  e retirar
+        // Se nenhum for, adicionar
 
-        let selectedRecordsClone = [...selectedRecords];
+        let selected_flight_plans_clone = [...selectedFlightPlans];
 
-        // Find if the clicked record ID is one of the already selected
-        // Returns the index if exists, and -1 if not
-        const indexOf = selectedRecords.indexOf(record_id);
+        // Filtered array wouldnt have the item with id equal to the selected
+        let filtered_selections = selected_flight_plans_clone.filter((item) => item.id != flight_plan.id);
 
-        if (indexOf == -1) {
-            // If not exists, push it
-            selectedRecordsClone.push(record_id);
+        // If no items were removed
+        if (filtered_selections.length === selected_flight_plans_clone.length) {
+
+            // So the item is not selected and needs to be saved
+            selected_flight_plans_clone.push({ id: flight_plan.id, name: flight_plan.name, drone_id: null, battery_id: null, equipment_id: null });
+
         } else {
-            // If exists, remove it
-            selectedRecordsClone.splice(indexOf);
+
+            // So the item already exists and needs to be unsaved
+            const index_to_remove = selected_flight_plans_clone.filter((item, index) => { if (item.id === flight_plan.id) return index; });
+            selected_flight_plans_clone.splice(index_to_remove, 1);
+
         }
 
-        setSelectedRecords(selectedRecordsClone);
-        props.setFlightPlansSelected(selectedRecordsClone);
+        setSelectedFlightPlans(selected_flight_plans_clone);
+        props.setFlightPlans(selected_flight_plans_clone);
 
     }
 
@@ -188,9 +195,9 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     const handleClose = () => {
         setOpen(false);
 
-        if (selectedRecords.length == 0) {
-            setSelectedRecords([]);
-            props.setFlightPlansSelected([]);
+        if (selectedFlightPlans.length == 0) {
+            setSelectedFlightPlans([]);
+            props.setFlightPlans([]);
         }
 
     }
@@ -202,7 +209,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
-                {"Planos de voo disponíveis: " + (records.length - selectedRecords.length)}
+                {"Planos de voo disponíveis: " + (records.length - selectedFlightPlans.length)}
             </Button>
             <Dialog
                 fullScreen
@@ -294,7 +301,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                                 {(!loading && records.length > 0) &&
                                     records.map((flight_plan, index) => (
                                         <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                            <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={(e) => { handleClickRecord(e) }} checked={selectedRecords.includes(flight_plan.id)} />} /></TableCell>
+                                            <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={() => { handleClickRecord(flight_plan) }} checked={selectedFlightPlans.find((item) => item.id === flight_plan.id)} />} /></TableCell>
                                             <TableCell align="center">{flight_plan.creator.name}</TableCell>
                                             <TableCell align="center">{flight_plan.name}</TableCell>
                                             <TableCell align="center">{flight_plan.file}</TableCell>

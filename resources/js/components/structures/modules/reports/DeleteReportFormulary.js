@@ -98,10 +98,15 @@ export const DeleteReportFormulary = React.memo((props) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
         <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.record.id})</DialogTitle>
 
-        {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
           <DialogContent>

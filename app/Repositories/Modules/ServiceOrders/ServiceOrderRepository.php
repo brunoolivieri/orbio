@@ -35,9 +35,7 @@ class ServiceOrderRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $creator = $this->userModel->findOrFail(Auth::user()->id);
-            $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
-            $client = $this->userModel->findOrFail($data->get('client_id'));
+            // ==== Create service order ==== //
 
             $service_order = $this->serviceOrderModel->create([
                 "uuid" => Str::uuid(),
@@ -49,12 +47,25 @@ class ServiceOrderRepository implements RepositoryInterface
                 "report_id" => null
             ]);
 
+            // ==== Attach service order to the correspondent users ==== //
+
+            $creator = $this->userModel->findOrFail(Auth::user()->id);
+            $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
+            $client = $this->userModel->findOrFail($data->get('client_id'));
+
             $service_order->users()->attach($creator->id, ['role' => "creator"]);
             $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
             $service_order->users()->attach($client->id, ['role' => "client"]);
 
-            // Create each many to many record through an array of ids
-            $service_order->flight_plans()->attach($data->get('flight_plans_ids'));
+            // ==== Attach service order the selected flight plans with equipments ==== //
+
+            foreach ($data->get('flight_plans') as $flight_plan) {
+
+                $flight_plan_id = $flight_plan["id"];
+                $equipments_by_id = ["drone_id" => $flight_plan["drone_id"], "battery_id" => $flight_plan["battery_id"], "equipment_id" => $flight_plan["equipment_id"]];
+
+                $service_order->flight_plans()->attach($flight_plan_id, $equipments_by_id);
+            }
 
             return $service_order;
         });
@@ -64,32 +75,49 @@ class ServiceOrderRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $identifier) {
 
+            // ==== Update service order ==== //
+
             $service_order = $this->serviceOrderModel->findOrFail($identifier);
+            $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
+
+            // ==== Update service order users relationship ==== //
+
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
 
-            $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
+            $service_order->users()->sync([
+                [$pilot->id => ['role' => "pilot"]],
+                [$client->id => ['role' => "client"]]
+            ]);
 
-            $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
-            $service_order->users()->attach($client->id, ['role' => "client"]);
+            // ==== Update service order flight plans relationship ==== //
+
+            // Get only ids from selected flight plans - they will be necessary later
+            $new_flight_plans_ids = [];
+            foreach ($data->get('flight_plans') as $index => $flight_plan) {
+                $new_flight_plans_ids[$index] = $flight_plan["id"];
+            }
 
             // If any flight plan with incidents has changed, delete it, because a incident just exists related to a flight plan in a service order
             // Deletion of unselected flight plan and its incidents
-            foreach ($service_order->flight_plans as $index => $flight_plan) {
+            foreach ($service_order->flight_plans as $index => $stored_flight_plan) {
 
-                // If the flight plan id not exists in array of ids of selected flight plans
-                if (!in_array($flight_plan->id, $data->get('flight_plans_ids'))) {
+                // If the flight plan id not exists in array of ids of new flight plans
+                if (!in_array($stored_flight_plan->id, $new_flight_plans_ids)) {
 
-                    // Thus, the flight plan was unselected in this service order and need to be deleted
-                    // I will force delete in this case, because an incident cant exist by itself, alone, so is better to delete forever 
-                    $this->incidentModel->where("service_order_flight_plan_id", $service_order->flight_plans[$index]->pivot->id)->forceDelete();
-                    $service_order->flight_plans[$index]->pivot->forceDelete();
+                    // Thus, the flight plan was unselected in this service order and the related incidents need to be deleted
+                    // After the pivot relation will be deleted with "sync" method
+                    $this->incidentModel->where("service_order_flight_plan_id", $stored_flight_plan->pivot->id)->forceDelete();
                 }
             }
 
-            // Create each many to many record through an array of ids
-            // Any IDs that are not in the given array will be removed from the intermediate table
-            $service_order->flight_plans()->sync($data->get('flight_plans_ids'));
+            foreach ($data->get('flight_plans') as $flight_plan) {
+
+                $flight_plan_id = $flight_plan["id"];
+                $equipments_by_id = ["drone_id" => $flight_plan["drone_id"], "battery_id" => $flight_plan["battery_id"], "equipment_id" => $flight_plan["equipment_id"]];
+
+                $service_order->flight_plans()->sync([$flight_plan_id => $equipments_by_id]);
+            }
 
             return $service_order;
         });

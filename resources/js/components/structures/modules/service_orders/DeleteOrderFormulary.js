@@ -102,79 +102,81 @@ export function DeleteOrderFormulary(props) {
         </IconButton>
       </Tooltip>
 
-      {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
-          <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
 
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-            <DialogContent>
+          <DialogContent>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="ID da ordem de serviço"
-                fullWidth
-                variant="outlined"
-                required
-                id="id"
-                name="id"
-                defaultValue={props.record.id}
-                inputProps={{
-                  readOnly: true
-                }}
-                sx={{ mb: 2 }}
-              />
+            <TextField
+              type="text"
+              margin="dense"
+              label="ID da ordem de serviço"
+              fullWidth
+              variant="outlined"
+              required
+              id="id"
+              name="id"
+              defaultValue={props.record.id}
+              inputProps={{
+                readOnly: true
+              }}
+              sx={{ mb: 2 }}
+            />
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="Número da ordem de serviço"
-                fullWidth
-                variant="outlined"
-                required
-                id="numos"
-                name="numos"
-                defaultValue={props.record.number}
-                inputProps={{
-                  readOnly: true
-                }}
-                sx={{ mb: 2 }}
-              />
+            <TextField
+              type="text"
+              margin="dense"
+              label="Número da ordem de serviço"
+              fullWidth
+              variant="outlined"
+              required
+              id="numos"
+              name="numos"
+              defaultValue={props.record.number}
+              inputProps={{
+                readOnly: true
+              }}
+              sx={{ mb: 2 }}
+            />
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="Nome do criador"
-                fullWidth
-                variant="outlined"
-                required
-                id="creator_name"
-                name="creator_name"
-                defaultValue={props.record.users.creator.name}
-                inputProps={{
-                  readOnly: true
-                }}
-              />
+            <TextField
+              type="text"
+              margin="dense"
+              label="Nome do criador"
+              fullWidth
+              variant="outlined"
+              required
+              id="creator_name"
+              name="creator_name"
+              defaultValue={props.record.users.creator.name}
+              inputProps={{
+                readOnly: true
+              }}
+            />
 
-            </DialogContent>
+          </DialogContent>
 
-            {displayAlert.display &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          {displayAlert.display &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            {loading && <LinearProgress />}
+          {loading && <LinearProgress />}
 
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={disabledButton} variant="contained">Confirmar</Button>
-            </DialogActions>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" disabled={disabledButton} variant="contained">Confirmar</Button>
+          </DialogActions>
 
-          </Box>
-
-
-        </Dialog>
-      }
+        </Box>
+      </Dialog>
     </>
 
   );

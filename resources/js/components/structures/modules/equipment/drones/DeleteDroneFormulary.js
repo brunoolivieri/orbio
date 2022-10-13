@@ -24,15 +24,10 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput] = React.useState({ id: props.record.id });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [loading, setLoading] = React.useState(false);
-
     const [open, setOpen] = React.useState(false);
-
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -103,11 +98,16 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                 </IconButton>
             </Tooltip>
 
-            <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                PaperProps={{ style: { borderRadius: 15 } }}
+                fullWidth
+                maxWidth="md"
+            >
                 <DialogTitle>DELEÇÃO | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleDroneDeleteSubmit} >
-
                     <DialogContent>
 
                         <TextField

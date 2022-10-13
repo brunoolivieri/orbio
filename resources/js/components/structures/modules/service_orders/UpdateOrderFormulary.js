@@ -16,6 +16,10 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import ListSubheader from '@mui/material/ListSubheader';
+import Avatar from '@mui/material/Avatar';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import MapIcon from '@mui/icons-material/Map';
+import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -42,7 +46,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [flightPlansSelected, setFlightPlansSelected] = React.useState([]);
+  const [flightPlans, setFlightPlans] = React.useState([]);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -53,7 +57,15 @@ export const UpdateOrderFormulary = React.memo((props) => {
     setFieldError({ start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false });
     setFieldErrorMessage({ start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
-    setFlightPlansSelected(props.record.flight_plans.map((flight_plan) => flight_plan.id));
+    setFlightPlans(props.record.flight_plans.map((flight_plan) => {
+      return {
+        id: flight_plan.id,
+        name: flight_plan.name,
+        drone_id: flight_plan.drone_id,
+        battery_id: flight_plan.battery_id,
+        equipment_id: flight_plan.equipment_id
+      }
+    }));
   }
 
   const handleClose = () => {
@@ -88,7 +100,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, "observação");
-    const fligthPlansValidate = flightPlansSelected != null ? { error: false, message: "" } : { error: true, message: "" };
+    const fligthPlansValidate = flightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setFieldError({
@@ -130,7 +142,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
       client_id: controlledInput.client_id,
       observation: controlledInput.observation,
       status: controlledInput.status,
-      flight_plans_ids: flightPlansSelected
+      flight_plans: flightPlans
     })
       .then(function (response) {
 
@@ -226,98 +238,104 @@ export const UpdateOrderFormulary = React.memo((props) => {
         </IconButton>
       </Tooltip>
 
-      {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
-          <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
 
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-            <DialogContent>
+          <DialogContent>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="ID da ordem de serviço"
-                fullWidth
-                variant="outlined"
-                required
-                id="id"
-                name="id"
-                defaultValue={props.record.id}
-                sx={{ mb: 2 }}
-                InputProps={{
-                  readOnly: true
-                }}
+            <TextField
+              type="text"
+              margin="dense"
+              label="ID da ordem de serviço"
+              fullWidth
+              variant="outlined"
+              required
+              id="id"
+              name="id"
+              defaultValue={props.record.id}
+              sx={{ mb: 2 }}
+              InputProps={{
+                readOnly: true
+              }}
+            />
+
+            <Box sx={{ display: "flex", mb: 2 }}>
+              <Box sx={{ mr: 1 }}>
+                <DatePicker
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  name={"start_date"}
+                  label={"Data inicial"}
+                  error={fieldError.start_date}
+                  value={controlledInput.start_date}
+                  operation={"create"}
+                  read_only={false}
+                />
+                <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
+              </Box>
+              <Box>
+                <DatePicker
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  name={"end_date"}
+                  label={"Data final"}
+                  error={fieldError.end_date}
+                  value={controlledInput.end_date}
+                  operation={"create"}
+                  read_only={false}
+                />
+              </Box>
+            </Box>
+
+            <Box sx={{ mb: 2 }}>
+              <SelectAttributeControl
+                label_text="Piloto"
+                data_source={"/api/load-users?where=profile_id.3"}
+                primary_key={"id"}
+                key_content={"name"}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                helperText={fieldErrorMessage.pilot_id}
+                error={fieldError.pilot_id}
+                name={"pilot_id"}
+                value={controlledInput.pilot_id}
               />
+            </Box>
 
-              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
-                <Box sx={{ mr: 1 }}>
-                  <DatePicker
-                    setControlledInput={setControlledInput}
-                    controlledInput={controlledInput}
-                    name={"start_date"}
-                    label={"Data inicial"}
-                    error={fieldError.start_date}
-                    value={controlledInput.start_date}
-                    operation={"create"}
-                    read_only={false}
-                  />
-                  <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
-                </Box>
-                <Box>
-                  <DatePicker
-                    setControlledInput={setControlledInput}
-                    controlledInput={controlledInput}
-                    name={"end_date"}
-                    label={"Data final"}
-                    error={fieldError.end_date}
-                    value={controlledInput.end_date}
-                    operation={"create"}
-                    read_only={false}
-                  />
-                </Box>
-              </Box>
+            <Box sx={{ mb: 2 }}>
+              <SelectAttributeControl
+                label_text="Cliente"
+                data_source={"/api/load-users?where=profile_id.4"}
+                primary_key={"id"}
+                key_content={"name"}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                error={fieldError.client_id}
+                name={"client_id"}
+                value={controlledInput.client_id}
+              />
+              <FormHelperText>{fieldErrorMessage.client_id}</FormHelperText>
+            </Box>
 
-              <Box sx={{ mb: 2 }}>
-                <SelectAttributeControl
-                  label_text="Piloto"
-                  data_source={"/api/load-users?where=profile_id.3"}
-                  primary_key={"id"}
-                  key_content={"name"}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  helperText={fieldErrorMessage.pilot_id}
-                  error={fieldError.pilot_id}
-                  name={"pilot_id"}
-                  value={controlledInput.pilot_id}
-                />
-              </Box>
-
-              <Box sx={{ mb: 2 }}>
-                <SelectAttributeControl
-                  label_text="Cliente"
-                  data_source={"/api/load-users?where=profile_id.4"}
-                  primary_key={"id"}
-                  key_content={"name"}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  error={fieldError.client_id}
-                  name={"client_id"}
-                  value={controlledInput.client_id}
-                />
-                <FormHelperText>{fieldErrorMessage.client_id}</FormHelperText>
-              </Box>
-
-              <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 1 }}>
+              <Box>
                 <FlightPlansForServiceOrderModal
-                  setFlightPlansSelected={setFlightPlansSelected}
-                  flightPlansSelected={flightPlansSelected}
+                  setFlightPlans={setFlightPlans}
+                  flightPlans={flightPlans}
                   serviceOrderId={controlledInput.id}
                 />
               </Box>
-
-              {flightPlansSelected.length > 0 &&
+              {flightPlans.length > 0 &&
                 <List
+                  dense={true}
                   sx={{
                     maxWidth: '100%',
                     minWidth: '100%',
@@ -331,57 +349,73 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   subheader={<li />}
                 >
                   <ul>
-                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Planos de voo selecionados: " + flightPlansSelected.length}</ListSubheader>
-                    {flightPlansSelected.map((flight_plan_id, index) => (
-                      <ListItem key={index}>
-                        <ListItemText primary={flight_plan_id} />
+                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + flightPlans.length}</ListSubheader>
+                    {flightPlans.map((flight_plan, index) => (
+                      <ListItem
+                        key={index}
+                        secondaryAction={
+                          <IconButton edge="end" aria-label="comments">
+                            <SettingsIcon />
+                          </IconButton>
+                        }
+                      >
+                        <ListItemAvatar>
+                          <Avatar>
+                            <MapIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`ID: ${flight_plan.id}`}
+                          secondary={`Nome: ${flight_plan.name}`}
+                        />
                       </ListItem>
                     ))}
                   </ul>
-
                 </List>
               }
+            </Box>
 
-              <TextField
-                type="text"
-                margin="dense"
-                label="Observação"
-                fullWidth
-                variant="outlined"
-                required
-                name="observation"
-                onChange={handleInputChange}
-                helperText={fieldErrorMessage.observation}
-                error={fieldError.observation}
-                defaultValue={props.record.observation}
-                sx={{ mb: 2 }}
+
+            <TextField
+              type="text"
+              margin="dense"
+              label="Observação"
+              fullWidth
+              variant="outlined"
+              required
+              name="observation"
+              onChange={handleInputChange}
+              helperText={fieldErrorMessage.observation}
+              error={fieldError.observation}
+              defaultValue={props.record.observation}
+              sx={{ mb: 2 }}
+            />
+
+            <Box>
+              <StatusRadio
+                default={props.record.status == 1 ? 1 : 0}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
               />
+            </Box>
 
-              <Box>
-                <StatusRadio
-                  default={props.record.status == 1 ? 1 : 0}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                />
-              </Box>
+          </DialogContent>
 
-            </DialogContent>
+          {(!loading && displayAlert.display) &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            {(!loading && displayAlert.display) &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          {loading && <LinearProgress />}
 
-            {loading && <LinearProgress />}
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" variant='contained' disabled={loading}>Confirmar</Button>
+          </DialogActions>
 
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" variant='contained' disabled={loading}>Confirmar</Button>
-            </DialogActions>
+        </Box>
 
-          </Box>
+      </Dialog>
 
-        </Dialog>
-      }
     </>
 
   );

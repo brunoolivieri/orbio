@@ -15,15 +15,18 @@ class ServiceOrderFlightPlan extends Model
 
     public $table = "service_order_flight_plan";
 
-    function flight_plan(){
+    function flight_plan()
+    {
         return $this->belongsTo(FlightPlan::class, "flight_plan_id", "id");
     }
 
-    function service_order(){
+    function service_order()
+    {
         return $this->belongsTo(ServiceOrder::class, "service_order_id", "id");
     }
 
-    function incidents(){
+    function incidents()
+    {
         return $this->hasMany(Incident::class, "service_order_flight_plan_id");
     }
 }

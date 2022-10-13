@@ -69,6 +69,6 @@ class FlightPlan extends Model
     */
     function service_orders()
     {
-        return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan")->withPivot("id");
+        return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan")->withPivot(["id", "drone_id", "battery_id", "equipment_id"]);
     }
 }

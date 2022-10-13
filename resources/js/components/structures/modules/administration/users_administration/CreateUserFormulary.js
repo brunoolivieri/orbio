@@ -162,7 +162,13 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >

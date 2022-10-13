@@ -21,7 +21,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 
 export const DeleteBatteryFormulary = React.memo((props) => {
 
-     // ============================================================================== STATES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
@@ -30,7 +30,7 @@ export const DeleteBatteryFormulary = React.memo((props) => {
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
     const [open, setOpen] = React.useState(false);
 
-     // ============================================================================== FUNCTIONS ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -87,7 +87,7 @@ export const DeleteBatteryFormulary = React.memo((props) => {
 
     }
 
-     // ============================================================================== STRUCTURES - MUI ============================================================================== //
+    // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
     return (
         <>
@@ -97,7 +97,13 @@ export const DeleteBatteryFormulary = React.memo((props) => {
                 </IconButton>
             </Tooltip>
 
-            <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                PaperProps={{ style: { borderRadius: 15 } }}
+                fullWidth
+                maxWidth="md"
+            >
                 <DialogTitle>DELEÇÃO DE BATERIA | ID: {props.record.id}</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >

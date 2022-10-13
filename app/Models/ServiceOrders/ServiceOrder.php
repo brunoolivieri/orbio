@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Models
-use App\Models\Users\User;
-use App\Models\FlightPlans\FlightPlan;
-use App\Models\Reports\Report;
+use App\Models\{
+    Users\User,
+    FlightPlans\FlightPlan,
+    Reports\Report
+};
 
 class ServiceOrder extends Model
 {
@@ -55,7 +57,7 @@ class ServiceOrder extends Model
     */
     function flight_plans()
     {
-        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withPivot("id")->withTrashed();
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withPivot(["id", "drone_id", "battery_id", "equipment_id"])->withTrashed();
     }
 
     /*

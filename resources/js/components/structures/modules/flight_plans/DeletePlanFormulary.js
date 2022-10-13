@@ -97,57 +97,61 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
         </IconButton>
       </Tooltip>
 
-      {(props.record != null && open) &&
-        <Dialog open={open} onClose={handleClose} PaperProps={{ style: { borderRadius: 15 } }} fullWidth>
-          <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.id})</DialogTitle>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{ style: { borderRadius: 15 } }}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.id})</DialogTitle>
 
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-            <DialogContent>
+          <DialogContent>
 
-              <TextField
-                margin="dense"
-                id="id"
-                name="id"
-                label="ID do plano"
-                type="text"
-                fullWidth
-                variant="outlined"
-                inputProps={{
-                  readOnly: true
-                }}
-                value={props.record.id}
-                sx={{ mb: 2 }}
-              />
+            <TextField
+              margin="dense"
+              id="id"
+              name="id"
+              label="ID do plano"
+              type="text"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                readOnly: true
+              }}
+              value={props.record.id}
+              sx={{ mb: 2 }}
+            />
 
-              <TextField
-                margin="dense"
-                label="Arquivo"
-                type="text"
-                fullWidth
-                variant="outlined"
-                inputProps={{
-                  readOnly: true
-                }}
-                defaultValue={props.record.file}
-              />
+            <TextField
+              margin="dense"
+              label="Arquivo"
+              type="text"
+              fullWidth
+              variant="outlined"
+              inputProps={{
+                readOnly: true
+              }}
+              defaultValue={props.record.file}
+            />
 
-            </DialogContent>
+          </DialogContent>
 
-            {(!loading && displayAlert.display) &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+          {(!loading && displayAlert.display) &&
+            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+          }
 
-            {loading && <LinearProgress />}
+          {loading && <LinearProgress />}
 
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-            </DialogActions>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancelar</Button>
+            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+          </DialogActions>
 
-          </Box>
-        </Dialog>
-      }
+        </Box>
+      </Dialog>
     </>
 
   );
