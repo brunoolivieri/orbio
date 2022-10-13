@@ -44,6 +44,8 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Outros
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -370,7 +372,7 @@ export const FlightPlansPanel = () => {
                       <TableCell align="center">{flight_plan.name}</TableCell>
                       <TableCell align="center">{flight_plan.description}</TableCell>
                       <TableCell align="center">{flight_plan.creator.name}</TableCell>
-                      <TableCell align="center">{flight_plan.created_at}</TableCell>
+                      <TableCell align="center">{moment(flight_plan.created_at).format("DD/MM/YYYY")}</TableCell>
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${flight_plan.file}`} target="_blank">
                           <Tooltip title="Ver plano">

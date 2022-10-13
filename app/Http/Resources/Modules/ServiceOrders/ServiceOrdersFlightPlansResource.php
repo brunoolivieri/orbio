@@ -32,6 +32,7 @@ class ServiceOrdersFlightPlansResource extends JsonResource
                     "email" => $flight_plan->user->email,
                     "deleted_at" => $flight_plan->user->deleted_at
                 ],
+                "created_at" => date("Y-m-d", strtotime($flight_plan->created_at)),
                 "name" => $flight_plan->name,
                 "file" => $flight_plan->file
             ];
@@ -44,7 +45,7 @@ class ServiceOrdersFlightPlansResource extends JsonResource
                         "id" => $log->id,
                         "name" => $log->name,
                         "path" => $log->path,
-                        "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),
+                        "timestamp" => date('Y-m-d', strtotime($log->timestamp)),
                         "created_at" => $log->created_at,
                         "deleted_at" => $log->deleted_at
                     ];

@@ -34,9 +34,9 @@ class BatteriesPanelResource extends JsonResource
                 "manufacturer" => $battery->manufacturer,
                 "model" => $battery->model,
                 "serial_number" => $battery->serial_number,
-                "last_charge" => empty($battery->last_charge) ? "N/A" : strtotime($battery->last_charge),
-                "created_at" => strtotime($battery->created_at),
-                "updated_at" => empty($battery->updated_at) ? "N/A" : strtotime($battery->updated_at)
+                "last_charge" => empty($battery->last_charge) ? "N/A" : date("Y-m-d", strtotime($battery->last_charge)),
+                "created_at" => date("Y-m-d", strtotime($battery->created_at)),
+                "updated_at" => empty($battery->updated_at) ? "N/A" : date("Y-m-d", strtotime($battery->updated_at))
             ];
         }
 

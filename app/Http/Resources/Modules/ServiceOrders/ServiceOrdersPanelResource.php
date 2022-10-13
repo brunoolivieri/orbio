@@ -36,8 +36,8 @@ class ServiceOrdersPanelResource extends JsonResource
                 "flight_plans" => [],
                 "incidents" => 0,
                 "observation" => $service_order->observation,
-                "created_at" => strtotime($service_order->created_at),
-                "updated_at" => empty($service_order->updated_at) ? "N/A" : strtotime($service_order->updated_at)
+                "created_at" => date("Y-m-d", strtotime($service_order->created_at)),
+                "updated_at" => empty($service_order->updated_at) ? "N/A" : date("Y-m-d", strtotime($service_order->updated_at))
             ];
 
             // ============================== RELATED FLIGHT PLANS WITH INCIDENTS ============================== //

@@ -32,9 +32,9 @@ class IncidentsPanelResource extends JsonResource
                 "id" => $incident->id,
                 "type" => $incident->type,
                 "description" => $incident->description,
-                "date" => strtotime($incident->date),
-                "created_at" => date('d-m-Y h:i', strtotime($incident->created_at)),
-                "updated_at" => empty($incident->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($incident->updated_at))
+                "date" => date('Y-m-d', strtotime($incident->date)),
+                "created_at" => date('Y-m-d', strtotime($incident->created_at)),
+                "updated_at" => empty($incident->updated_at) ? "N/A" : date('Y-m-d', strtotime($incident->updated_at))
             ];
 
             // Get related service order // Table "service_order_flight_plan"

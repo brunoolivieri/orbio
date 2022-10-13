@@ -39,6 +39,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Outros
 import { useSnackbar } from 'notistack';
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -339,7 +340,7 @@ export const EquipmentPanel = React.memo(() => {
                       <TableCell align="center">{row.serial_number}</TableCell>
                       <TableCell align="center">{row.weight}</TableCell>
                       <TableCell align="center">{row.observation}</TableCell>
-                      <TableCell align="center">{row.purchase_date}</TableCell>
+                      <TableCell align="center">{moment(row.purchase_date).format("DD/MM/YYYY")}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>

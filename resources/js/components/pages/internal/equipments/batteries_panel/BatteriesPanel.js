@@ -334,7 +334,7 @@ export const BatteriesPanel = React.memo(() => {
                                             <TableCell align="center">{row.manufacturer}</TableCell>
                                             <TableCell align="center">{row.model}</TableCell>
                                             <TableCell align="center">{row.serial_number}</TableCell>
-                                            <TableCell align="center">{moment(row.last_charge).format('DD-MM-YYYY hh:mm')}</TableCell>
+                                            <TableCell align="center">{moment(row.last_charge).format('DD/MM/YYYY')}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>

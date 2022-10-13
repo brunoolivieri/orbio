@@ -327,6 +327,7 @@ export function ReportsPanel() {
                   <StyledHeadTableCell>ID</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Planos de voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Observação</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Exportar</StyledHeadTableCell>
                 </TableRow>

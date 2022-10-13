@@ -35,6 +35,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 // Auth
 //import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
     color: '#fff',
@@ -291,6 +292,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Criação</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Ver</StyledHeadTableCell>
@@ -303,6 +305,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                                         <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                             <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={() => { handleClickRecord(flight_plan) }} checked={selectedFlightPlans.find((item) => item.id === flight_plan.id)} />} /></TableCell>
                                             <TableCell align="center">{flight_plan.creator.name}</TableCell>
+                                            <TableCell align="center">{moment(flight_plan.created_at).format("DD/MM/YYYY")}</TableCell>
                                             <TableCell align="center">{flight_plan.name}</TableCell>
                                             <TableCell align="center">{flight_plan.file}</TableCell>
                                             <TableCell align="center">
