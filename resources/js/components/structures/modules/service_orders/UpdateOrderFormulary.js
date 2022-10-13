@@ -140,6 +140,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
       end_date: moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss'),
       pilot_id: controlledInput.pilot_id,
       client_id: controlledInput.client_id,
+      creator_id: props.record.users.creator.id,
       observation: controlledInput.observation,
       status: controlledInput.status,
       flight_plans: flightPlans

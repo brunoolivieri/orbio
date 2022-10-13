@@ -82,12 +82,14 @@ class ServiceOrderRepository implements RepositoryInterface
 
             // ==== Update service order users relationship ==== //
 
+            $creator = $this->userModel->findOrFail($data->get('creator_id'));
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
 
             $service_order->users()->sync([
-                [$pilot->id => ['role' => "pilot"]],
-                [$client->id => ['role' => "client"]]
+                $creator->id, ['role' => "creator"],
+                $pilot->id => ['role' => "pilot"],
+                $client->id => ['role' => "client"]
             ]);
 
             // ==== Update service order flight plans relationship ==== //
@@ -118,6 +120,8 @@ class ServiceOrderRepository implements RepositoryInterface
 
                 $service_order->flight_plans()->sync([$flight_plan_id => $equipments_by_id]);
             }
+
+            $service_order->refresh();
 
             return $service_order;
         });

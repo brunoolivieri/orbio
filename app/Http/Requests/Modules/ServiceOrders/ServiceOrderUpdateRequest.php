@@ -31,7 +31,7 @@ class ServiceOrderUpdateRequest extends FormRequest
             "client_id" => ['required', 'numeric'],
             "observation" => ['required', 'string'],
             "status" => ['required', 'boolean'],
-            "flight_plans_ids" => ['required', 'array', 'min:1']
+            "flight_plans" => ['required', 'array']
         ];
     }
 
@@ -50,8 +50,7 @@ class ServiceOrderUpdateRequest extends FormRequest
             'observation.required' => "A observação deve ser informada",
             'status.required' => "O status deve ser definido",
             'status.boolean' => "O status deve ser 1 ou 0",
-            'flight_plans_ids.required' => "O plano de voo deve ser selecionado",
-            'flight_plans_ids.min' => "No mínimo 1 plano de voo deve ser selecionado"
+            'flight_plans.required' => "Selecione no mínimo 1 plano de voo"
         ];
     }
 }

@@ -330,7 +330,7 @@ export const CreateOrderFormulary = React.memo((props) => {
                       >
                         <ListItemAvatar>
                           <Avatar>
-                            <MapIcon style={{ color: '#007937' }} />
+                            <MapIcon />
                           </Avatar>
                         </ListItemAvatar>
                         <ListItemText
