@@ -281,9 +281,7 @@ export const ServiceOrdersPanel = React.memo(() => {
                     <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                   </IconButton>
                 </InputAdornment>,
-              disableunderline: 1,
-              sx: { fontSize: 'default' },
-              disableUnderline: true
+              sx: { fontSize: 'default' }
             }}
             variant="outlined"
           />

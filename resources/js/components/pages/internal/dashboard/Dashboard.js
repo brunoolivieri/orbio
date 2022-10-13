@@ -58,7 +58,7 @@ export const Dashboard = React.memo(() => {
 
         setPageIndex(0);
 
-        AxiosApi.get("/api/load-dashboard-metrics")
+        /*AxiosApi.get("/api/load-dashboard-metrics")
             .then(function (response) {
 
                 setLoading(false);
@@ -111,6 +111,7 @@ export const Dashboard = React.memo(() => {
                 setLoading(false);
 
             });
+            */
 
     }, []); 275
 

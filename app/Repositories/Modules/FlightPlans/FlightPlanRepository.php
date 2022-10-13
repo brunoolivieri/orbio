@@ -66,6 +66,13 @@ class FlightPlanRepository implements RepositoryInterface
 
             $flight_plan =  $this->flightPlanModel->findOrFail($identifier);
 
+            // Check if user is related to a active service order 
+            foreach ($flight_plan->service_orders as $service_order) {
+                if ($service_order->status) {
+                    return response(["message" => "Possui vínculo com uma ordem de serviço ativa!"], 500);
+                }
+            }
+
             $flight_plan->delete();
 
             response(["message" => "Plano de voo deletado com sucesso!"], 200);

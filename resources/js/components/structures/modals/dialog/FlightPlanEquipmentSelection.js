@@ -14,17 +14,16 @@ import { SelectAttributeControl } from '../../input_select/SelectAttributeContro
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({ id: '', array_index: '', drone_id: '', battery_id: '', equipment_id: '' });
+    const [controlledInput, setControlledInput] = React.useState({
+        id: props.current.data.id,
+        array_index: props.current.array_index,
+        drone_id: props.current.data.drone_id,
+        battery_id: props.current.data.battery_id,
+        equipment_id: props.current.data.equipment_id
+    });
 
     const handleClickOpen = () => {
         setOpen(true);
-        setControlledInput({
-            id: props.current.data.id,
-            array_index: props.current.index,
-            drone_id: props.current.data.drone_id,
-            battery_id: props.current.data.battery_id,
-            equipment_id: props.current.data.equipment_id
-        });
     };
 
     const handleClose = () => {
@@ -33,13 +32,17 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const handleSave = () => {
 
-        let flightPlansCloneToModify = [...props.flightPlans];
+        // Create clone of selected flight plans array
+        let flightPlansClone = [...props.flightPlans];
 
-        flightPlansCloneToModify[controlledInput.array_index].drone_id = controlledInput.drone_id;
-        flightPlansCloneToModify[controlledInput.array_index].battery_id = controlledInput.battery_id;
-        flightPlansCloneToModify[controlledInput.array_index].equipment_id = controlledInput.equipment_id;
+        // Set equipments value into clone first
+        flightPlansClone[controlledInput.array_index].drone_id = controlledInput.drone_id;
+        flightPlansClone[controlledInput.array_index].battery_id = controlledInput.battery_id;
+        flightPlansClone[controlledInput.array_index].equipment_id = controlledInput.equipment_id;
+        // Sync clone and original array
+        props.setFlightPlans(flightPlansClone);
 
-        props.setFlightPlans(flightPlansCloneToModify);
+        handleClose();
 
     }
 
@@ -66,7 +69,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                         variant="outlined"
                         required
                         name="flight_plan_id"
-                        value={controlledInput.flight_plan_id}
+                        value={props.current.data.id}
                         sx={{ mb: 2 }}
                         InputProps={{
                             readOnly: true
@@ -132,7 +135,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                 </DialogContent>
 
                 <DialogActions>
-                    <Button onClick={handleClose}>Close</Button>
+                    <Button onClick={handleClose}>Fechar</Button>
                     <Button onClick={handleSave} variant="contained">Salvar</Button>
                 </DialogActions>
 

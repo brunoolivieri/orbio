@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Custom
 use App\Models\Images\Image;
+use App\Models\FlightPlans\FlightPlan;
 
 class Drone extends Model
 {
@@ -55,5 +56,9 @@ class Drone extends Model
     function image()
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    function service_order_flight_plan(){
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "drone_id")->withPivot(["id", "battery_id", "equipment_id"]);
     }
 }
