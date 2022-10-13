@@ -20,7 +20,6 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Avatar from '@mui/material/Avatar';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import MapIcon from '@mui/icons-material/Map';
-import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -29,6 +28,7 @@ import { SelectAttributeControl } from '../../input_select/SelectAttributeContro
 import { DatePicker } from '../../date_picker/DatePicker';
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
+import { FlightPlanEquipmentSelection } from '../../modals/dialog/FlightPlanEquipmentSelection';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -245,7 +245,6 @@ export const CreateOrderFormulary = React.memo((props) => {
                   label={"Data inicial"}
                   error={fieldError.start_date}
                   value={controlledInput.start_date}
-                  operation={"create"}
                   read_only={false}
                 />
                 <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
@@ -323,9 +322,11 @@ export const CreateOrderFormulary = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <IconButton edge="end" aria-label="comments">
-                            <SettingsIcon />
-                          </IconButton>
+                          <FlightPlanEquipmentSelection
+                            flightPlans={flightPlans}
+                            setFlightPlans={setFlightPlans}
+                            current={{ index: index, data: flight_plan }}
+                          />
                         }
                       >
                         <ListItemAvatar>

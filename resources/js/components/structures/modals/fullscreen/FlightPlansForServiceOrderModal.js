@@ -173,7 +173,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         if (filtered_selections.length === selected_flight_plans_clone.length) {
 
             // So the item is not selected and needs to be saved
-            selected_flight_plans_clone.push({ id: flight_plan.id, name: flight_plan.name, drone_id: null, battery_id: null, equipment_id: null });
+            selected_flight_plans_clone.push({ id: flight_plan.id, name: flight_plan.name, drone_id: "0", battery_id: "0", equipment_id: "0" });
 
         } else {
 

@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import styled from '@emotion/styled';
 import LinearProgress from '@mui/material/LinearProgress';
+import FormHelperText from '@mui/material/FormHelperText';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -20,15 +21,19 @@ import { faFile } from '@fortawesome/free-regular-svg-icons';
 // Moment
 import moment from 'moment';
 // Custom
-import { DateTimeSingle } from '../../../date_picker/DateTimeSingle';
+import { DatePicker } from '../../../date_picker/DatePicker';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
-
 const Input = styled('input')({
     display: 'none',
 });
+
+const initialControlledInput = { name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: moment() };
+const initialFieldError = { image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false };
+const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" };
+const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
@@ -36,13 +41,12 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
 
     const { AuthData } = useAuthentication();
 
-    const [controlledInput, setControlledInput] = React.useState({ name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-    const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-    const [purchaseDate, setPurchaseDate] = React.useState(moment());
     const [uploadedImage, setUploadedImage] = React.useState(null);
 
     const htmlImage = React.useRef();
@@ -54,10 +58,6 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
     }
 
     const handleClose = () => {
-        setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-        setFieldErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
-        setDisplayAlert({ display: false, type: "", message: "" });
-        setLoading(false);
         setOpen(false);
     }
 
@@ -83,7 +83,7 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
         let weightValidation = FormValidation(controlledInput.weight);
         let observationValidation = FormValidation(controlledInput.observation, 3);
         let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
-        let purchaseValidation = purchaseDate == null ? { error: true, message: "A data da compra precisa ser informada" } : { error: false, message: "" }
+        let purchaseValidation = controlledInput.purchase_date ? { error: false, message: "" } : { error: true, message: "A data da compra precisa ser informada" };
 
         setFieldError({
             image: imageValidation.error,
@@ -124,7 +124,7 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
         formData.append("weight", controlledInput.weight);
         formData.append("observation", controlledInput.observation);
         formData.append("image", uploadedImage);
-        formData.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
+        formData.append("purchase_date", moment(controlledInput.purchase_date).format('YYYY-MM-DD'));
 
         AxiosApi.post(`/api/equipments-module-equipment`, formData)
             .then(function (response) {
@@ -339,16 +339,16 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
                             error={fieldError.observation}
                         />
 
-                        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                            <DateTimeSingle
-                                event={setPurchaseDate}
+                        <Box sx={{ display: "flex", mt: 2 }}>
+                            <DatePicker
+                                setControlledInput={setControlledInput}
+                                controlledInput={controlledInput}
+                                name={"purchase_date"}
                                 label={"Data da compra"}
-                                helperText={fieldErrorMessage.purchase_date}
                                 error={fieldError.purchase_date}
-                                defaultValue={moment()}
-                                operation={"create"}
-                                read_only={false}
+                                value={controlledInput.purchase_date}
                             />
+                            <FormHelperText error>{fieldErrorMessage.purchase_date}</FormHelperText>
                         </Box>
 
                         <Box sx={{ mt: 2, display: 'flex' }}>

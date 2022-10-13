@@ -19,7 +19,6 @@ import ListSubheader from '@mui/material/ListSubheader';
 import Avatar from '@mui/material/Avatar';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import MapIcon from '@mui/icons-material/Map';
-import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -29,6 +28,7 @@ import { SelectAttributeControl } from '../../input_select/SelectAttributeContro
 import { StatusRadio } from '../../radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../../modals/fullscreen/FlightPlansForServiceOrderModal';
 import LinearProgress from '@mui/material/LinearProgress';
+import { FlightPlanEquipmentSelection } from '../../modals/dialog/FlightPlanEquipmentSelection';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -355,9 +355,11 @@ export const UpdateOrderFormulary = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <IconButton edge="end" aria-label="comments">
-                            <SettingsIcon />
-                          </IconButton>
+                          <FlightPlanEquipmentSelection
+                            flightPlans={flightPlans}
+                            setFlightPlans={setFlightPlans}
+                            current={{ index: index, data: flight_plan }}
+                          />
                         }
                       >
                         <ListItemAvatar>

@@ -45,7 +45,7 @@ class FlightPlansPanelResource extends JsonResource
                     "city" => $flight_plan->city
                 ],
                 "description" => $flight_plan->description,
-                "created_at" => date('d-m-Y h:i', strtotime($flight_plan->created_at)),
+                "created_at" => date('d/m/Y', strtotime($flight_plan->created_at)),
                 "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date('d-m-Y h:i', strtotime($flight_plan->updated_at))
             ];
 

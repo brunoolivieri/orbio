@@ -49,7 +49,7 @@ class ServiceOrderModuleController extends Controller
     public function update(ServiceOrderUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
-
+       
         return $this->service->updateResource($request->only(["start_date", "end_date", "pilot_id", "creator_id", "client_id", "observation", "status", "number", "flight_plans"]), $id);
     }
 

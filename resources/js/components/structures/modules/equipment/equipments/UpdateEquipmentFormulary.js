@@ -13,6 +13,7 @@ import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import styled from '@emotion/styled';
 import LinearProgress from '@mui/material/LinearProgress';
+import FormHelperText from '@mui/material/FormHelperText';
 // Moment
 import moment from 'moment';
 // Fonts Awesome
@@ -20,7 +21,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { DateTimeSingle } from '../../../date_picker/DateTimeSingle';
+import { DatePicker } from '../../../date_picker/DatePicker';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -43,22 +44,15 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         record_number: props.record.record_number,
         serial_number: props.record.serial_number,
         weight: props.record.weight,
-        observation: props.record.observation
+        observation: props.record.observation,
+        purchase_date: props.record.purchase_date
     });
-
     const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
-
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-
     const [loading, setLoading] = React.useState(false);
-
     const [uploadedImage, setUploadedImage] = React.useState(null);
-
     const [open, setOpen] = React.useState(false);
-
-    const [purchaseDate, setPurchaseDate] = React.useState(moment());
 
     const htmlImage = React.useRef();
 
@@ -69,10 +63,6 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     }
 
     const handleClose = () => {
-        setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-        setFieldErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
-        setDisplayAlert({ display: false, type: "", message: "" });
-        setLoading(false);
         setOpen(false);
     }
 
@@ -97,7 +87,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         let serialNumberValidation = FormValidation(controlledInput.serial_number);
         let weightValidation = FormValidation(controlledInput.weight);
         let observationValidation = FormValidation(controlledInput.observation, 3);
-        let purchaseValidation = purchaseDate == null ? { error: true, message: "A data da compra precisa ser informada" } : { error: false, message: "" }
+        let purchaseValidation = controlledInput.purchase_date ? { error: false, message: "" } : { error: true, message: "A data da compra precisa ser informada" };
 
         setFieldError({
             image: false,
@@ -137,7 +127,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         formData.append("serial_number", controlledInput.serial_number);
         formData.append("weight", controlledInput.weight);
         formData.append("observation", controlledInput.observation);
-        formData.append("purchase_date", moment(purchaseDate).format('YYYY-MM-DD hh:mm:ss'));
+        formData.append("purchase_date", moment(controlledInput.purchase_date).format('YYYY-MM-DD'));
         formData.append('_method', 'PATCH');
 
         if (uploadedImage !== null) {
@@ -387,15 +377,15 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                         />
 
                         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                            <DateTimeSingle
-                                event={setPurchaseDate}
+                            <DatePicker
+                                setControlledInput={setControlledInput}
+                                controlledInput={controlledInput}
+                                name={"purchase_date"}
                                 label={"Data da compra"}
-                                helperText={fieldErrorMessage.purchase_date}
                                 error={fieldError.purchase_date}
-                                defaultValue={props.record.purchase_date}
-                                operation={"create"}
-                                read_only={false}
+                                value={controlledInput.purchase_date}
                             />
+                            <FormHelperText error>{fieldErrorMessage.purchase_date}</FormHelperText>
                         </Box>
 
                         <Box sx={{ mt: 2, display: 'flex' }}>

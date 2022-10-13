@@ -12,6 +12,7 @@ import { IconButton } from '@mui/material';
 import Box from '@mui/material/Box';
 import { Alert } from '@mui/material';
 import styled from '@emotion/styled';
+import FormHelperText from '@mui/material/FormHelperText';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -19,7 +20,7 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Moment
 import moment from 'moment';
 // Custom
-import { DateTimeSingle } from '../../../date_picker/DateTimeSingle';
+import { DatePicker } from '../../../date_picker/DatePicker';
 import AxiosApi from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -35,14 +36,13 @@ export const UpdateBatteryFormulary = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
 
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge, image: "" });
+    const [open, setOpen] = React.useState(false);
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge });
     const [fieldError, setFieldError] = React.useState({ name: false, manufacturer: false, model: false, serial_number: false, last_charge: false, image: false });
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", manufacturer: "", model: "", serial_number: "", last_charge: "", image: "" });
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
-    const [open, setOpen] = React.useState(false);
-    const [chargeDate, setChargeDate] = React.useState(moment());
 
     const htmlImage = React.useRef();
 
@@ -50,14 +50,10 @@ export const UpdateBatteryFormulary = React.memo((props) => {
 
     const handleClickOpen = () => {
         setOpen(true);
+        setLoading(false);
     }
 
     const handleClose = () => {
-        setFieldError({ name: false, manufacturer: false, model: false, serial_number: false, last_charge: false, image: false });
-        setFieldErrorMessage({ name: "", manufacturer: "", model: "", serial_number: "", last_charge: "", image: "" });
-        setDisplayAlert({ display: false, type: "", message: "" });
-        setControlledInput({ name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" });
-        setLoading(false);
         setOpen(false);
     }
 
@@ -79,7 +75,7 @@ export const UpdateBatteryFormulary = React.memo((props) => {
         let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
         let modelValidation = FormValidation(controlledInput.model);
         let serialNumberValidation = FormValidation(controlledInput.serial_number);
-        let lastChargeValidation = chargeDate == null ? { error: true, message: "A data da última carga precisa ser informada" } : { error: false, message: "" };
+        let lastChargeValidation = controlledInput.last_charge ? { error: false, message: "" } : { error: true, message: "A data da última carga precisa ser informada" };
 
         setFieldError({
             image: false,
@@ -111,7 +107,7 @@ export const UpdateBatteryFormulary = React.memo((props) => {
         formData.append("manufacturer", controlledInput.manufacturer);
         formData.append("model", controlledInput.model);
         formData.append("serial_number", controlledInput.serial_number);
-        formData.append("last_charge", moment(chargeDate).format('YYYY-MM-DD hh:mm:ss'));
+        formData.append("last_charge", moment(controlledInput.last_charge).format('YYYY-MM-DD'));
         formData.append('_method', 'PATCH');
 
         if (uploadedImage !== null) {
@@ -306,16 +302,16 @@ export const UpdateBatteryFormulary = React.memo((props) => {
                             onChange={handleInputChange}
                         />
 
-                        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                            <DateTimeSingle
-                                event={setChargeDate}
+                        <Box sx={{ display: "flex", mt: 2 }}>
+                            <DatePicker
+                                setControlledInput={setControlledInput}
+                                controlledInput={controlledInput}
+                                name={"last_charge"}
                                 label={"Data da última carga"}
-                                helperText={fieldErrorMessage.last_charge}
                                 error={fieldError.last_charge}
-                                defaultValue={props.record.last_charge}
-                                operation={"create"}
-                                read_only={false}
+                                value={controlledInput.last_charge}
                             />
+                            <FormHelperText error>{fieldErrorMessage.last_charge}</FormHelperText>
                         </Box>
 
                         <Box sx={{ mt: 2, display: 'flex' }}>
