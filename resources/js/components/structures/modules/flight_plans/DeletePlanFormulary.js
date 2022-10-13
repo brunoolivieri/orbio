@@ -61,7 +61,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
       .catch(function (error) {
 
         setLoading(false);
-        errorServerResponseTreatment(error.response.data);
+        errorServerResponseTreatment(error.response);
 
       });
 
@@ -69,7 +69,7 @@ export const DeletePlanFormulary = React.memo(({ ...props }) => {
 
   const successServerResponseTreatment = (response) => {
 
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setDisplayAlert({ display: true, type: "success", message:response.data.message });
 
     setTimeout(() => {
       props.record_setter(null);

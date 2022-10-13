@@ -278,8 +278,7 @@ export const DronesPanel = React.memo(() => {
                                     </IconButton>
                                 </InputAdornment>,
                             disableunderline: 1,
-                            sx: { fontSize: 'default' },
-                            disableUnderline: true
+                            sx: { fontSize: 'default' }
                         }}
                         variant="outlined"
                     />

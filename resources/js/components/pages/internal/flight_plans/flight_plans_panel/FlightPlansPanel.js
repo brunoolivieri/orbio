@@ -318,8 +318,7 @@ export const FlightPlansPanel = () => {
                   </IconButton>
                 </InputAdornment>,
               disableunderline: 1,
-              sx: { fontSize: 'default' },
-              disableUnderline: true
+              sx: { fontSize: 'default' }
             }}
             variant="outlined"
           />
