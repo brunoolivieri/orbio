@@ -14,13 +14,13 @@ import { SelectAttributeControl } from '../../input_select/SelectAttributeContro
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({ flight_plan_id: '', flight_plan_index: '', drone_id: '', battery_id: '', equipment_id: '' });
+    const [controlledInput, setControlledInput] = React.useState({ id: '', array_index: '', drone_id: '', battery_id: '', equipment_id: '' });
 
     const handleClickOpen = () => {
         setOpen(true);
         setControlledInput({
-            flight_plan_id: props.current.data.id,
-            index: props.current.index,
+            id: props.current.data.id,
+            array_index: props.current.index,
             drone_id: props.current.data.drone_id,
             battery_id: props.current.data.battery_id,
             equipment_id: props.current.data.equipment_id
@@ -32,7 +32,15 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
     };
 
     const handleSave = () => {
-        console.log(controlledInput);
+
+        let flightPlansCloneToModify = [...props.flightPlans];
+
+        flightPlansCloneToModify[controlledInput.array_index].drone_id = controlledInput.drone_id;
+        flightPlansCloneToModify[controlledInput.array_index].battery_id = controlledInput.battery_id;
+        flightPlansCloneToModify[controlledInput.array_index].equipment_id = controlledInput.equipment_id;
+
+        props.setFlightPlans(flightPlansCloneToModify);
+
     }
 
     return (

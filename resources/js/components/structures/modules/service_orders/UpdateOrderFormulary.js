@@ -358,7 +358,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
                           <FlightPlanEquipmentSelection
                             flightPlans={flightPlans}
                             setFlightPlans={setFlightPlans}
-                            current={{ index: index, data: flight_plan }}
+                            current={{ array_index: index, data: flight_plan }}
                           />
                         }
                       >
