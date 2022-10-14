@@ -131,7 +131,7 @@ export const Dashboard = React.memo(() => {
                                 </Typography>
                             </Box>
                             <Box sx={{ flexGrow: 1 }}>
-                                chart
+                                horizontal line chart
                             </Box>
                         </Card>
                     </Grid>
@@ -143,7 +143,7 @@ export const Dashboard = React.memo(() => {
                                 </Typography>
                             </Box>
                             <Box sx={{ flexGrow: 3 }}>
-                                chart
+                                horizontal line chart
                             </Box>
                         </Card>
                     </Grid>
@@ -155,7 +155,7 @@ export const Dashboard = React.memo(() => {
                                 </Typography>
                             </Box>
                             <Box sx={{ flexGrow: 1 }}>
-                                chart
+                                horizontal line chart
                             </Box>
                         </Card>
                     </Grid>
@@ -167,7 +167,7 @@ export const Dashboard = React.memo(() => {
                                 </Typography>
                             </Box>
                             <Box sx={{ flexGrow: 1 }}>
-                                chart
+                                horizontal line chart
                             </Box>
                         </Card>
                     </Grid>

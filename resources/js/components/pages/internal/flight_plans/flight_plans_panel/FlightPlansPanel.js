@@ -36,6 +36,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -229,21 +230,30 @@ export const FlightPlansPanel = () => {
   return (
     <>
       <Grid container spacing={1} alignItems="center" mb={1}>
+
         <Grid item>
-          <Tooltip title="Novo Plano">
-            <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
-              <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
-              </IconButton>
-            </Link>
-          </Tooltip>
+          {selectedRecordIndex &&
+            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+              <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+            </IconButton>
+          }
+
+          {selectedRecordIndex === null &&
+            <Tooltip title="Novo Plano">
+              <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
+                <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                  <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                </IconButton>
+              </Link>
+            </Tooltip>
+          }
         </Grid>
 
         <Grid item>
           {selectedRecordIndex == null &&
-            <Tooltip title="Selecione um registro para editar">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -256,9 +266,9 @@ export const FlightPlansPanel = () => {
 
         <Grid item>
           {selectedRecordIndex == null &&
-            <Tooltip title="Selecione um registro para excluir">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -270,16 +280,22 @@ export const FlightPlansPanel = () => {
         </Grid>
 
         <Grid item>
+          <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
+            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+          </IconButton>
+        </Grid>
+
+        <Grid item>
           <Tooltip title="Filtros">
             <IconButton
-              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+              disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}
               id="basic-button"
               aria-controls={open ? 'basic-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
             >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
             </IconButton>
           </Tooltip>
         </Grid>
@@ -376,7 +392,7 @@ export const FlightPlansPanel = () => {
                         <Link href={`/internal/map?file=${flight_plan.file}`} target="_blank">
                           <Tooltip title="Ver plano">
                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                             </IconButton>
                           </Tooltip>
                         </Link>
@@ -402,7 +418,7 @@ export const FlightPlansPanel = () => {
                       <TableCell align="center">
                         <Tooltip title="Rotas .txt">
                           <IconButton onClick={() => handleDownloadFlightPlan(flight_plan.file)} disabled={AuthData.data.user_powers["2"].profile_powers.read == 1 ? false : true}>
-                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#808991"} />
+                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} />
                           </IconButton>
                         </Tooltip>
                       </TableCell>

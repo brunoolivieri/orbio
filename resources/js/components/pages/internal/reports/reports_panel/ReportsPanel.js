@@ -35,7 +35,9 @@ import { Link } from "@mui/material";
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -208,14 +210,22 @@ export function ReportsPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateReportFormulary reload_table={reloadTable} />
+          {selectedRecordIndex &&
+            <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+              <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+            </IconButton>
+          }
+
+          {selectedRecordIndex === null &&
+            <CreateReportFormulary reload_table={reloadTable} />
+          }
         </Grid>
 
         <Grid item>
           {selectedRecordIndex === null &&
-            <Tooltip title="Selecione um registro para editar">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -227,9 +237,9 @@ export function ReportsPanel() {
 
         <Grid item>
           {selectedRecordIndex === null &&
-            <Tooltip title="Selecione um registro para excluir">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -238,6 +248,12 @@ export function ReportsPanel() {
           {(!loading && selectedRecordIndex != null) &&
             <DeleteReportFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
+        </Grid>
+
+        <Grid item>
+          <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true} >
+            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+          </IconButton>
         </Grid>
 
         <Grid item>
@@ -250,7 +266,7 @@ export function ReportsPanel() {
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
             >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
             </IconButton>
           </Tooltip>
         </Grid>
@@ -342,14 +358,14 @@ export function ReportsPanel() {
                           <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
                             <Tooltip title="Ver plano">
                               <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                               </IconButton>
                             </Tooltip>
                           </Link>
                           :
                           <Tooltip title={"Um plano de voo é necessário"}>
                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                              <FontAwesomeIcon icon={faEye} color={"#808991"} size="sm" />
+                              <FontAwesomeIcon icon={faEye} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                           </Tooltip>
                         }
@@ -369,7 +385,7 @@ export function ReportsPanel() {
                             :
                             <Tooltip title={"Um plano de voo é necessário"}>
                               <IconButton>
-                                <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#808991"} />
+                                <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#E0E0E0"} />
                               </IconButton>
                             </Tooltip>
                         }
@@ -391,7 +407,7 @@ export function ReportsPanel() {
                                 :
                                 <Tooltip title={"Um plano de voo é necessário"}>
                                     <IconButton>
-                                        <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#808991"} />
+                                        <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#E0E0E0"} />
                                     </IconButton>
                                 </Tooltip>
                         }

@@ -32,9 +32,11 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 // Fonts Awesome
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -198,14 +200,22 @@ export const IncidentsPanel = React.memo(() => {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateIncidentFormulary reload_table={reloadTable} />
+          {selectedRecordIndex &&
+            <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}>
+              <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+            </IconButton>
+          }
+
+          {selectedRecordIndex === null &&
+            <CreateIncidentFormulary reload_table={reloadTable} />
+          }
         </Grid>
 
         <Grid item>
           {selectedRecordIndex == null &&
-            <Tooltip title="Selecione um registro para editar">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -217,9 +227,9 @@ export const IncidentsPanel = React.memo(() => {
 
         <Grid item>
           {selectedRecordIndex == null &&
-            <Tooltip title="Selecione um registro para excluir">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -230,16 +240,22 @@ export const IncidentsPanel = React.memo(() => {
         </Grid>
 
         <Grid item>
+          <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true} >
+            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+          </IconButton>
+        </Grid>
+
+        <Grid item>
           <Tooltip title="Filtros">
             <IconButton
-              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+              disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}
               id="basic-button"
               aria-controls={open ? 'basic-menu' : undefined}
               aria-haspopup="true"
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
             >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
             </IconButton>
           </Tooltip>
         </Grid>
@@ -331,8 +347,8 @@ export const IncidentsPanel = React.memo(() => {
                       <TableCell align="center">
                         <Link href={`/internal/map?file=${incident.service_order.flight_plan.file}`} target="_blank">
                           <Tooltip title={`Ver plano ${incident.service_order.flight_plan.name}`}>
-                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                            <IconButton disabled={!AuthData.data.user_powers["5"].profile_powers.read == 1}>
+                              <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["5"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                             </IconButton>
                           </Tooltip>
                         </Link>

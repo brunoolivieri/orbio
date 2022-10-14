@@ -34,7 +34,9 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -193,19 +195,26 @@ export function ProfilesPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          <CreateProfileFormulary reload_table={reloadTable} />
+          {selectedRecordIndex &&
+            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
+              <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+            </IconButton>
+          }
+
+          {selectedRecordIndex === null &&
+            <CreateProfileFormulary reload_table={reloadTable} />
+          }
         </Grid>
 
         <Grid item>
           {selectedRecordIndex == null &&
-            <Tooltip title="Selecione um registro para editar">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
-                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(!loading && selectedRecordIndex != null) &&
             <UpdateProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
@@ -213,9 +222,9 @@ export function ProfilesPanel() {
 
         <Grid item>
           {selectedRecordIndex == null &&
-            <Tooltip title="Selecione um registro para excluir">
+            <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
-                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
@@ -224,6 +233,12 @@ export function ProfilesPanel() {
           {(!loading && selectedRecordIndex != null) &&
             <DeleteProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
+        </Grid>
+
+        <Grid item>
+          <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+          </IconButton>
         </Grid>
 
         <Grid item>
@@ -236,7 +251,7 @@ export function ProfilesPanel() {
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
             >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
             </IconButton>
           </Tooltip>
         </Grid>

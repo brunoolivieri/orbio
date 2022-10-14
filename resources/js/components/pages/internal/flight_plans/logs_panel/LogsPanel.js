@@ -34,7 +34,9 @@ import { Link } from "@mui/material";
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -201,14 +203,22 @@ export const LogsPanel = () => {
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
-                    <CreateLogFormulary reload_table={reloadTable} />
+                    {selectedRecordIndex &&
+                        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                            <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+                        </IconButton>
+                    }
+
+                    {selectedRecordIndex === null &&
+                        <CreateLogFormulary reload_table={reloadTable} />
+                    }
                 </Grid>
 
                 <Grid item>
                     {selectedRecordIndex === null &&
-                        <Tooltip title="Selecione um registro para editar">
-                            <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
-                                <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                        <Tooltip title="Selecione um registro">
+                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                                <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
                     }
@@ -220,9 +230,9 @@ export const LogsPanel = () => {
 
                 <Grid item>
                     {selectedRecordIndex === null &&
-                        <Tooltip title="Selecione um registro para excluir">
-                            <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true} >
-                                <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                        <Tooltip title="Selecione um registro">
+                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
+                                <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
                     }
@@ -234,16 +244,22 @@ export const LogsPanel = () => {
                 </Grid>
 
                 <Grid item>
+                    <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
+                        <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+                    </IconButton>
+                </Grid>
+
+                <Grid item>
                     <Tooltip title="Filtros">
                         <IconButton
-                            disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+                            disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}
                             id="basic-button"
                             aria-controls={open ? 'basic-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}
                             onClick={handleClick}
                         >
-                            <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                            <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
                         </IconButton>
                     </Tooltip>
                 </Grid>
