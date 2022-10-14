@@ -125,19 +125,19 @@ export const Dashboard = React.memo(() => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={12}>
                     <Grid item xs={12} sm={6} md={3}>
                         <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
                                 <Typography variant="h6">
                                     Usuários
                                 </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 3 }}>
+                            <Box sx={{ flexGrow: 1 }}>
                                 chart
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
                                 <Typography variant="h6">
                                     Perfis
                                 </Typography>
@@ -149,24 +149,24 @@ export const Dashboard = React.memo(() => {
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
                                 <Typography variant="h6">
                                     Planos de voo
                                 </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 3 }}>
+                            <Box sx={{ flexGrow: 1 }}>
                                 chart
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
                         <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexGrow: 1 }}>
+                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
                                 <Typography variant="h6">
                                     Ordens de serviço
                                 </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 3 }}>
+                            <Box sx={{ flexGrow: 1 }}>
                                 chart
                             </Box>
                         </Card>

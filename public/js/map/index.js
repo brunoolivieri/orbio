@@ -1118,10 +1118,6 @@ btnClean.addEventListener("click", cleanPolygon);
 
 // ==== MENU: ABRIR ==== //
 // A função de leitura do arquivo é chamada sempre que o input file é modificado
-//document.getElementById('file-input').addEventListener('change', openTxtFile, false);
-
-// ==== MENU: ABRIR ==== //
-// A função de leitura do arquivo é chamada sempre que o input file é modificado
 document.getElementById('file-input').addEventListener('change', openTxtFileFromComputer, false);
 
 // ==== ABRIR PLANO POR QUERY STRING ==== //
@@ -1212,7 +1208,7 @@ btnMarker.onclick = function () {
     }
 }
 
-// ========= OPÇÕES DE AJUDA ========= //
+// ========= AÇÕES DO MENU LATERAL ESQUERDO ========= //
 
 var video = document.getElementById('video').addEventListener('click', helpOptions);
 var novo = document.getElementById('novo').addEventListener('click', helpOptions);
@@ -1619,7 +1615,7 @@ function storeFlightPlan(typed_name, timestamp, coordinates, blob) {
     formData.append("description", "none");
     formData.append("file", file);
     formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
-    
+
 
     axios.post("/api/plans-module", formData, {
         headers: {
@@ -1825,12 +1821,20 @@ function importMPPolygon(e) {
 // ==== CARREGAMENTO DAS ROTAS DO ARQUIVO TXT EXISTENTE NO STORAGE ==== //
 function openTxtFileFromStorage(file_content) {
 
+    // Limpando layers, campos e polígono
+    cleanLayers();
+    cleanPolygon();
+
     proccessFileContentsToOpenIt(file_content);
 
 }
 
 // === CARREGAMENTO DAS ROTAS DO ARQUIVO TXT EXISTENTE NO COMPUTADOR DO USUÁRIO === //
 function openTxtFileFromComputer(e) {
+
+    // Limpando layers, campos e polígono
+    cleanLayers();
+    cleanPolygon();
 
     var file = e.target.files[0];
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
@@ -1852,10 +1856,6 @@ function openTxtFileFromComputer(e) {
 
 // ==== ROTINA PARA PROCESSAMENTO DO CONTEÚDO DE UM ARQUIVO EXISTENTE === //
 function proccessFileContentsToOpenIt(contents) {
-
-    // Limpando layers, campos e polígono
-    cleanLayers();
-    cleanPolygon();
 
     // Quebrando as linhas do arquivo em um array
     var lines = contents.split("\n");
