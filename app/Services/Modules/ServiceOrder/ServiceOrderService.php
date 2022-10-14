@@ -38,6 +38,15 @@ class ServiceOrderService implements ServiceInterface
         $data["number"] = "os" . time();
         $data["status"] = boolval(intval($data["status"]));
 
+        // Change, if its "0", each equipment value for null
+        foreach ($data["flight_plans"] as $index => $flight_plan) {
+            foreach ($flight_plan as $key => $value) {
+                if ($value === "0") {
+                    $data["flight_plans"][$index][$key] = null;
+                }
+            }
+        }
+
         $service_order = $this->repository->createOne(collect($data));
 
         ServiceOrderCreatedEvent::dispatch($service_order);

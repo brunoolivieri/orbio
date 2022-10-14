@@ -35,7 +35,7 @@ class ServiceOrderModuleController extends Controller
     public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
-        
+       
         return $this->service->createResource($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "status", "number", "flight_plans"]));
     }
 

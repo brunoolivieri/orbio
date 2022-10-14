@@ -26,13 +26,6 @@ class CreateServiceOrdersTable extends Migration
             $table->softDeletes();
         });
 
-        // Relationship with users
-        Schema::create('service_order_user', function (Blueprint $table) {
-            $table->foreignId("service_order_id")->constrained('service_orders');
-            $table->foreignId("user_id")->constrained('users');
-            $table->string("role");
-        });
-
         // Relationship with flight plans and equipments
         Schema::create('service_order_flight_plan', function (Blueprint $table) {
             $table->id();
@@ -41,6 +34,13 @@ class CreateServiceOrdersTable extends Migration
             $table->foreignId('drone_id')->nullable(true)->constrained('drones');
             $table->foreignId('battery_id')->nullable(true)->constrained('batteries');
             $table->foreignId('equipment_id')->nullable(true)->constrained('equipments');
+        });
+
+        // Relationship with users
+        Schema::create('service_order_user', function (Blueprint $table) {
+            $table->foreignId("service_order_id")->constrained('service_orders');
+            $table->foreignId("user_id")->constrained('users');
+            $table->string("role");
         });
     }
 
@@ -51,8 +51,8 @@ class CreateServiceOrdersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('service_orders');
         Schema::dropIfExists('service_order_user');
-        Schema::dropIfExists('service_order_flight_plan_equipment');
+        Schema::dropIfExists('service_order_flight_plan');
+        Schema::dropIfExists('service_orders');
     }
 }
