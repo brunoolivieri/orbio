@@ -81,7 +81,7 @@ export const BatteriesPanel = React.memo(() => {
 
         AxiosApi.get(`/api/equipments-module-battery?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
             .then(function (response) {
-
+                console.log(response.data.records)
                 setLoading(false);
                 setRecords(response.data.records);
                 setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -285,7 +285,7 @@ export const BatteriesPanel = React.memo(() => {
                 <Grid item xs>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar uma bateria"}
+                        placeholder={"Pesquisar bateria por ID e nome"}
                         onChange={(e) => setSearchField(e.currentTarget.value)}
                         InputProps={{
                             startAdornment:

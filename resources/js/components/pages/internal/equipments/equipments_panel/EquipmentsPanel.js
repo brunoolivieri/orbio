@@ -285,7 +285,7 @@ export const EquipmentPanel = React.memo(() => {
         <Grid item xs>
           <TextField
             fullWidth
-            placeholder={"Pesquisar um equipamento"}
+            placeholder={"Pesquisar equipamento por ID e nome"}
             onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:

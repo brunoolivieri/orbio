@@ -51,6 +51,12 @@ class ServiceOrdersPanelResource extends JsonResource
                     "id" => $flight_plan->id,
                     "file" => $flight_plan->file,
                     "name" => $flight_plan->name,
+                    "logs" => $flight_plan->logs,
+                    "localization" => [
+                        "coordinates" => $flight_plan->coordinates,
+                        "city" => $flight_plan->city,
+                        "state" =>  $flight_plan->state
+                    ],
                     "drone_id" => $flight_plan->pivot->drone_id,
                     "battery_id" => $flight_plan->pivot->battery_id,
                     "equipment_id" => $flight_plan->pivot->equipment_id,

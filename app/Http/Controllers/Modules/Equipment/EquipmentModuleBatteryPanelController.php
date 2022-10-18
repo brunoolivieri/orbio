@@ -35,7 +35,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     public function store(StoreBatteryRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
-
+        
         return $this->service->createResource($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
     }
 

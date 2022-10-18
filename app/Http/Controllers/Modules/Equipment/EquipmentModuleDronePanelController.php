@@ -35,7 +35,7 @@ class EquipmentModuleDronePanelController extends Controller
     public function store(StoreDroneRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
-
+        
         return $this->service->createResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
     }
 

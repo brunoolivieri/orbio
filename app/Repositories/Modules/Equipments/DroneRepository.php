@@ -29,9 +29,9 @@ class DroneRepository implements RepositoryInterface
     function createOne(Collection $data)
     {
         return DB::transaction(function () use ($data) {
-
+            
             $drone = $this->droneModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
-
+            
             $drone->image()->create([
                 "path" => $data->get('path')
             ]);

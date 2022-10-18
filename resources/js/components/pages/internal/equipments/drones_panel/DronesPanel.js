@@ -80,7 +80,7 @@ export const DronesPanel = React.memo(() => {
 
         AxiosApi.get(`/api/equipments-module-drone?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
             .then(function (response) {
-
+               
                 setLoading(false);
                 setRecords(response.data.records);
                 setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -284,7 +284,7 @@ export const DronesPanel = React.memo(() => {
                 <Grid item xs>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar um drone"}
+                        placeholder={"Pesquisar drone por ID e nome"}
                         onChange={(e) => setSearchField(e.currentTarget.value)}
                         InputProps={{
                             startAdornment:

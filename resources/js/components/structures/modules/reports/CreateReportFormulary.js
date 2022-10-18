@@ -18,6 +18,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { ServiceOrderForReport } from '../../modals/fullscreen/ServiceOrderForReport';
 import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DatePicker } from "../../date_picker/DatePicker";
@@ -25,6 +26,59 @@ import { ReportDocumentVisualization } from "../../../structures/report_builder/
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
 
+const initialControlledInput = {
+  name: '',
+  client: '0',
+  state: '',
+  city: '',
+  farm: '',
+  area: '',
+  date: '',
+  number: '',
+  dosage: '',
+  provider: '',
+  flight_plans: [],
+  responsible: '0',
+  temperature: '',
+  humidity: '',
+  wind: ''
+}
+
+const initialFieldError = {
+  service_order: false,
+  name: false,
+  client: false,
+  state: false,
+  city: false,
+  farm: false,
+  area: false,
+  date: false,
+  number: false,
+  dosage: false,
+  responsible: false,
+  provider: false,
+  temperature: false,
+  humidity: false,
+  wind: false
+}
+
+const initialFieldErrorMessage = {
+  service_order: '',
+  name: '',
+  client: '',
+  state: '',
+  city: '',
+  farm: '',
+  area: '',
+  date: '',
+  number: '',
+  dosage: '',
+  responsible: '',
+  provider: '',
+  temperature: '',
+  humidity: '',
+  wind: ''
+}
 
 export const CreateReportFormulary = () => {
 
@@ -34,30 +88,11 @@ export const CreateReportFormulary = () => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
-  const [fieldError, setFieldError] = React.useState({ name: false, client: false, state: false, city: false, farm: false, area: false, date: false, number: false, dosage: false, responsible: false, provider: false, temperature: false, humidity: false, wind: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: '', client: '', state: '', city: '', farm: '', area: '', date: '', number: '', dosage: '', responsible: '', provider: '', temperature: '', humidity: '', wind: '' });
-
+  const [fieldError, setFieldError] = React.useState(initialFieldError);
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
   const [weatherLoading, setWeatherLoading] = React.useState(false);
-  const [controlledInput, setControlledInput] = React.useState(
-    {
-      name: '',
-      client: '0',
-      state: '',
-      city: '',
-      farm: '',
-      area: '',
-      date: '',
-      number: '',
-      dosage: '',
-      provider: '',
-      responsible: '0',
-      temperature: '',
-      humidity: '',
-      wind: ''
-    });
-
-  const [serviceOrders, setServiceOrders] = React.useState([]);
-  const [selectedServiceOrder, setSelectedServiceOrder] = React.useState("0");
+  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+  const [serviceOrder, setServiceOrder] = React.useState(null);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -66,11 +101,8 @@ export const CreateReportFormulary = () => {
   }
 
   const handleClose = () => {
-
     setDisplayAlert({ display: false, type: "", message: "" });
-
     setOpen(false);
-
   }
 
   const handleInputChange = (event) => {
@@ -226,14 +258,37 @@ export const CreateReportFormulary = () => {
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
 
         <Box component="form" noValidate onSubmit={handleReportGenerate}>
-
           <DialogContent>
 
-            {selectedServiceOrder != "0" &&
+            <Box mb={3}>
+              <ServiceOrderForReport
+                serviceOrder={serviceOrder}
+                setControlledInput={setControlledInput}
+                setServiceOrder={setServiceOrder}
+                serviceOrderId={null}
+              />
+            </Box>
+
+            {serviceOrder &&
               <>
                 <Box mb={2}>
 
                   <Grid container spacing={2}>
+
+                    <Grid item xs={6}>
+                      <SelectAttributeControl
+                        label_text={"Responsável (piloto)"}
+                        data_source={"/api/load-users?where=profile_id.3"}
+                        primary_key={"name"}
+                        key_content={"name"}
+                        error={fieldError.responsible}
+                        name={"responsible"}
+                        value={controlledInput.responsible}
+                        setControlledInput={setControlledInput}
+                        controlledInput={controlledInput}
+                      />
+                    </Grid>
+
                     <Grid item xs={12}>
                       <TextField
                         id="name"
@@ -297,6 +352,7 @@ export const CreateReportFormulary = () => {
                   </Grid>
 
                 </Box>
+
                 <Box mb={2}>
 
                   <Grid container spacing={2}>

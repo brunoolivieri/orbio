@@ -195,12 +195,8 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const handleClose = () => {
         setOpen(false);
-
-        if (selectedFlightPlans.length == 0) {
-            setSelectedFlightPlans([]);
-            props.setFlightPlans([]);
-        }
-
+        setSelectedFlightPlans([]);
+        props.setFlightPlans([]);
     }
 
     const handleCommit = () => {
