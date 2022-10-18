@@ -85,7 +85,7 @@ export const CreateReportFormulary = () => {
   // ============================================================================== STATES  ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [loading, setLoading] = React.useState(false);
+  const [loading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -139,35 +139,34 @@ export const CreateReportFormulary = () => {
   const handleReportGenerate = (e) => {
     e.preventDefault();
 
-    /*AxiosApi.post("api/export-report-pdf", controlledInput)
-        .then((response) => {
+    AxiosApi.post("api/export-report-pdf", controlledInput)
+      .then((response) => {
 
-            const base64PDF = response.data;
+        const base64PDF = response.data;
 
-            let bin = atob(base64PDF);
-            let obj = document.createElement('object');
-            obj.style.width = '100%';
-            obj.style.height = '842pt';
-            obj.type = 'application/pdf';
-            obj.data = 'data:application/pdf;base64,' + base64PDF;
-            document.body.appendChild(obj);
+        let bin = atob(base64PDF);
+        let obj = document.createElement('object');
+        obj.style.width = '100%';
+        obj.style.height = '842pt';
+        obj.type = 'application/pdf';
+        obj.data = 'data:application/pdf;base64,' + base64PDF;
+        document.body.appendChild(obj);
 
-            // Insert a link that allows the user to download the PDF file
-            let link = document.createElement('a');
-            link.innerHTML = 'Download PDF file';
-            link.download = 'file.pdf';
-            link.href = 'data:application/octet-stream;base64,' + base64PDF;
-            document.body.appendChild(link);
-            link.click();
+        // Insert a link that allows the user to download the PDF file
+        let link = document.createElement('a');
+        link.innerHTML = 'Download PDF file';
+        link.download = 'file.pdf';
+        link.href = 'data:application/octet-stream;base64,' + base64PDF;
+        document.body.appendChild(link);
+        link.click();
 
-        })
-        .catch(function (error) {
+      })
+      .catch(function (error) {
 
-            console.log(error);
-            errorServerRequestTreatment(error.response);
+        console.log(error);
+        errorServerRequestTreatment(error.response);
 
-        });*/
-
+      });
   }
 
   const errorServerRequestTreatment = (response) => {
