@@ -33,9 +33,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import LinearProgress from '@mui/material/LinearProgress';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 // Custom
@@ -333,32 +333,23 @@ export const ServiceOrderForReport = React.memo((props) => {
                                         <TableRow>
                                             <StyledHeadTableCell>ID</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Número</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Duração (dias)</StyledHeadTableCell>
+                                            <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
+                                            <StyledHeadTableCell align="center">Logs</StyledHeadTableCell>
                                         </TableRow>
                                     </TableHead>
                                     <TableBody className="tbody">
                                         {(!loading && records.length > 0) &&
                                             records.map((service_order) => (
                                                 <TableRow key={service_order.id}>
-                                                    <TableCell><FormControlLabel value={service_order.id} control={<Radio onClick={() => { handleClickRadio(service_order) }} />} label={service_order.id} /></TableCell>
+                                                    <TableCell><FormControlLabel value={service_order.id} control={<Radio onClick={() => { handleClickRadio(service_order) }} />} label={service_order.id} disabled={service_order.total_logs == 0} /></TableCell>
                                                     <TableCell align="center">{service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.flight_plans.length === 0 ?
-                                                            <MapIcon color="disabled" />
-                                                            :
-                                                            <Badge badgeContent={service_order.flight_plans.length} color="success">
-                                                                <MapIcon color="action" />
-                                                            </Badge>
-                                                        }
-                                                    </TableCell>
                                                     <TableCell align="center">{service_order.number}</TableCell>
                                                     <TableCell align="center">
                                                         {service_order.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.creator.name} color={"success"} variant="outlined" />}
@@ -372,25 +363,30 @@ export const ServiceOrderForReport = React.memo((props) => {
                                                     <TableCell align="center">{service_order.observation}</TableCell>
                                                     <TableCell align="center">{moment(service_order.end_date).diff(moment(service_order.start_date), 'days')}</TableCell>
                                                     <TableCell align="center">
-                                                        {service_order.incidents === 0 ?
+                                                        {service_order.flight_plans.length === 0 ?
+                                                            <MapIcon color="disabled" />
+                                                            :
+                                                            <Badge badgeContent={service_order.flight_plans.length} color="success">
+                                                                <MapIcon color="action" />
+                                                            </Badge>
+                                                        }
+                                                    </TableCell>
+                                                    <TableCell align="center">
+                                                        {service_order.total_incidents === 0 ?
                                                             <ErrorIcon color="disabled" />
                                                             :
-                                                            <Badge badgeContent={service_order.incidents} color="success">
+                                                            <Badge badgeContent={service_order.total_incidents} color="success">
                                                                 <ErrorIcon color="action" />
                                                             </Badge>
                                                         }
                                                     </TableCell>
                                                     <TableCell align="center">
-                                                        {service_order.report != null ?
-                                                            <Tooltip title="Ver relatório">
-                                                                <IconButton>
-                                                                    <FontAwesomeIcon icon={faFilePdf} color={service_order.report ? "#00713A" : "#E0E0E0"} />
-                                                                </IconButton>
-                                                            </Tooltip>
+                                                        {service_order.total_logs > 0 ?
+                                                            <Badge badgeContent={service_order.total_incidents} color="success">
+                                                                <InsertDriveFileIcon color="action" />
+                                                            </Badge>
                                                             :
-                                                            <IconButton disabled>
-                                                                <FontAwesomeIcon icon={faFilePdf} color="#E0E0E0" />
-                                                            </IconButton>
+                                                            <InsertDriveFileIcon style={{ color: "#E0E0E0" }} />
                                                         }
                                                     </TableCell>
                                                 </TableRow>

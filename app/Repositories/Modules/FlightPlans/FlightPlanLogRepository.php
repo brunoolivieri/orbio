@@ -47,10 +47,9 @@ class FlightPlanLogRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-
         $log = $this->logModel->findOrFail($identifier);
-
-        $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
+        
+        $service_order_flight_plan = $this->serviceOrderFlightPlanModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
 
         $log->update([
             "name" => $data->get("name"),

@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 use App\Services\Modules\ServiceOrder\ServiceOrderService;
+// Resources
+use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
 
 class ServiceOrderModuleController extends Controller
 {

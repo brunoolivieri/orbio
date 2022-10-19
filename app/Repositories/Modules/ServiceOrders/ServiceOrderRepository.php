@@ -23,8 +23,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
     function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-        return $this->serviceOrderModel::with("users")
-            ->with("flight_plans")
+        return $this->serviceOrderModel::with("flight_plans", "users")
             ->search($search) // scope
             ->filter($filters) // scope
             ->orderBy($order_by)

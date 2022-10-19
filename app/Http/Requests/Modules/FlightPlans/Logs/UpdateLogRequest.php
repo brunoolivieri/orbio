@@ -27,7 +27,7 @@ class UpdateLogRequest extends FormRequest
 
         return [
             "name" => ["required", "unique:logs,name,$log_id", "min:3"],
-            "flight_plan_id" => ["required", "unique:logs,flight_plan_id,$log_id"],
+            "flight_plan_id" => ["required", "unique:service_order_flight_plan,flight_plan_id,$log_id"],
             "service_order_id" => ["required"]
         ];
     }

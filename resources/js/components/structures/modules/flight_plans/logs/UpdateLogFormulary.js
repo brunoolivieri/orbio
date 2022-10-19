@@ -117,8 +117,8 @@ export const UpdateLogFormulary = React.memo((props) => {
         const data = {
             id: controlledInput.id,
             name: controlledInput.name,
-            flight_plan_id: controlledInput.flight_plan_id,
-            service_order_id: controlledInput.service_order_id
+            flight_plan_id: selectedFlightPlan,
+            service_order_id: selectedServiceOrder
         }
 
         AxiosApi.patch(`/api/plans-module-logs/${controlledInput.id}`, data)

@@ -27,7 +27,7 @@ class ServiceOrderService implements ServiceInterface
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
         if ($data->total() > 0) {
-            return response(new ServiceOrdersPanelResource($data));
+            return response(new ServiceOrdersPanelResource($data), 200);
         } else {
             return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
         }

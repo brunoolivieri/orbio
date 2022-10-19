@@ -35,7 +35,8 @@ class ServiceOrdersPanelResource extends JsonResource
                 "end_date" => $service_order->end_date,
                 "status" => $service_order->status,
                 "flight_plans" => [],
-                "incidents" => 0,
+                "total_incidents" => 0,
+                "total_logs" => 0,
                 "observation" => $service_order->observation,
                 "created_at" => date("Y-m-d", strtotime($service_order->created_at)),
                 "updated_at" => empty($service_order->updated_at) ? "N/A" : date("Y-m-d", strtotime($service_order->updated_at))
@@ -66,9 +67,8 @@ class ServiceOrdersPanelResource extends JsonResource
                     "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];
 
-                if ($incidents->count() > 0) {
-                    $this->formatedData["records"][$row]["incidents"] += $incidents->count();
-                }
+                $this->formatedData["records"][$row]["total_incidents"] += $incidents->count();
+                $this->formatedData["records"][$row]["total_logs"] += $logs->count();
             }
 
             // ============================== RELATED USERS ============================== //

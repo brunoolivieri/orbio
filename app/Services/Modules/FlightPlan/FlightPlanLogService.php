@@ -64,6 +64,12 @@ class FlightPlanLogService implements ServiceInterface
 
     function updateResource(array $data, string $identifier)
     {
+        foreach ($data as $key => $value) {
+            if ($value === "0") {
+                $data[$key] = null;
+            }
+        }
+        
         return $this->repository->updateOne(collect($data), $identifier);
     }
 

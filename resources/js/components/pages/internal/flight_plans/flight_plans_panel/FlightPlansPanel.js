@@ -413,7 +413,7 @@ export const FlightPlansPanel = () => {
                           <InsertDriveFileIcon color="disabled" />
                           :
                           <Badge badgeContent={flight_plan.total_logs} color="success">
-                            <ErrorIcon color="action" />
+                            <InsertDriveFileIcon color="action" />
                           </Badge>
                         }
                       </TableCell>

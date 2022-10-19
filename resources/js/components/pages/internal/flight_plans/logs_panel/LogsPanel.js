@@ -335,11 +335,11 @@ export const LogsPanel = () => {
                             <TableHead>
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Nome do arquivo</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody className="tbody">
@@ -347,6 +347,9 @@ export const LogsPanel = () => {
                                     records.map((log, index) => (
                                         <TableRow key={log.id}>
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
+                                            <TableCell align="center">{log.name}</TableCell>
+                                            <TableCell align="center">{log.filename}</TableCell>
+                                            <TableCell align="center">{moment(log.timestamp).format('DD/MM/YYYY')}</TableCell>
                                             <TableCell align="center">
                                                 {log.flight_plan ?
                                                     <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
@@ -368,7 +371,7 @@ export const LogsPanel = () => {
                                                 {log.service_order ?
                                                     <Tooltip title={log.service_order.number}>
                                                         <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                            <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                                                            <AssignmentIcon style={{ color: "#00713A" }} />
                                                         </IconButton>
                                                     </Tooltip>
                                                     :
@@ -379,9 +382,6 @@ export const LogsPanel = () => {
                                                     </Tooltip>
                                                 }
                                             </TableCell>
-                                            <TableCell align="center">{log.name}</TableCell>
-                                            <TableCell align="center">{log.filename}</TableCell>
-                                            <TableCell align="center">{moment(log.timestamp).format('DD/MM/YYYY')}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>
