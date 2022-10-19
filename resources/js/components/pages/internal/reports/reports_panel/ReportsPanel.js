@@ -5,7 +5,6 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
 import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
 import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
-import { GenerateReportFormulary } from "../../../../structures/modules/reports/GenerateReportFormulary";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
@@ -38,7 +37,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -371,47 +369,14 @@ export function ReportsPanel() {
                         }
                       </TableCell>
                       <TableCell align="center">
-                        {
-                          log.flight_plan != null ?
-                            (log.path != null ?
-                              <Tooltip title={"Exportar relatório"}>
-                                <IconButton onClick={() => handleDownloadReport()}>
-                                  <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
-                                </IconButton>
-                              </Tooltip>
-                              :
-                              <GenerateReportFormulary record={log} />
-                            )
-                            :
-                            <Tooltip title={"Um plano de voo é necessário"}>
-                              <IconButton>
-                                <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#E0E0E0"} />
-                              </IconButton>
-                            </Tooltip>
-                        }
+                        <Tooltip title={"Exportar relatório"}>
+                          <IconButton onClick={() => handleDownloadReport()}>
+                            <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                       <TableCell align="center">{moment(log.log.datetime).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">{log.observation}</TableCell>
-                      {/* <TableCell align="center">
-                        {
-                            log.flight_plan != null ?
-                                (log.path != null ?
-                                    <Tooltip title={"Exportar relatório"}>
-                                        <IconButton onClick={() => handleDownloadReport()}>
-                                            <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
-                                        </IconButton>
-                                    </Tooltip>
-                                    :
-                                    <GenerateReportFormulary record={log} />
-                                )
-                                :
-                                <Tooltip title={"Um plano de voo é necessário"}>
-                                    <IconButton>
-                                        <FontAwesomeIcon icon={faFileCirclePlus} size="sm" color={"#E0E0E0"} />
-                                    </IconButton>
-                                </Tooltip>
-                        }
-                    </TableCell> */}
                     </TableRow>
                   ))}
               </TableBody>

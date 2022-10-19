@@ -35,7 +35,6 @@ export const Administration = React.memo(() => {
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}
           {actualPanel == "users" ? <UsersPanel /> : <ProfilesPanel />}
 
         </Box>

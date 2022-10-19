@@ -23,6 +23,7 @@ import { SelectAttributeControl } from '../../input_select/SelectAttributeContro
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DatePicker } from "../../date_picker/DatePicker";
 import { ReportDocumentVisualization } from "../../../structures/report_builder/ReportBuilder";
+import { Switcher } from '../../switcher/Switcher';
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
 
@@ -95,6 +96,8 @@ export const CreateReportFormulary = () => {
   const [serviceOrder, setServiceOrder] = React.useState(null);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
+
+  console.log(serviceOrder)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -268,7 +271,7 @@ export const CreateReportFormulary = () => {
               />
             </Box>
 
-            {serviceOrder &&
+            {null &&
               <>
                 <Box mb={2}>
 
@@ -288,7 +291,7 @@ export const CreateReportFormulary = () => {
                       />
                     </Grid>
 
-                    <Grid item xs={12}>
+                    <Grid item xs={6}>
                       <TextField
                         id="name"
                         name="name"
@@ -351,6 +354,8 @@ export const CreateReportFormulary = () => {
                   </Grid>
 
                 </Box>
+
+
 
                 <Box mb={2}>
 
