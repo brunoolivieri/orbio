@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\FlightPlans\FlightPlan;
 use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\Incidents\Incident;
+use App\Models\Logs\Log;
 
 class ServiceOrderFlightPlan extends Model
 {
@@ -28,5 +29,10 @@ class ServiceOrderFlightPlan extends Model
     function incidents()
     {
         return $this->hasMany(Incident::class, "service_order_flight_plan_id");
+    }
+
+    function logs()
+    {
+        return $this->hasMany(Log::class, "service_order_flight_plan_id");
     }
 }

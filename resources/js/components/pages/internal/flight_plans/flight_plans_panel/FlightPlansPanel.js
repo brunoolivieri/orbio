@@ -34,6 +34,7 @@ import { useSnackbar } from 'notistack';
 import Badge from '@mui/material/Badge';
 import ErrorIcon from '@mui/icons-material/Error';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -375,6 +376,7 @@ export const FlightPlansPanel = () => {
                   <StyledHeadTableCell align="center">Data criação</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Visualizar</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Ordens de serviço</StyledHeadTableCell>
+                  <StyledHeadTableCell align="center">Logs</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Exportar</StyledHeadTableCell>
                 </TableRow>
@@ -407,10 +409,19 @@ export const FlightPlansPanel = () => {
                         }
                       </TableCell>
                       <TableCell align="center">
-                        {flight_plan.incidents === 0 ?
+                        {flight_plan.total_logs === 0 ?
+                          <InsertDriveFileIcon color="disabled" />
+                          :
+                          <Badge badgeContent={flight_plan.total_logs} color="success">
+                            <ErrorIcon color="action" />
+                          </Badge>
+                        }
+                      </TableCell>
+                      <TableCell align="center">
+                        {flight_plan.total_incidents === 0 ?
                           <ErrorIcon color="disabled" />
                           :
-                          <Badge badgeContent={flight_plan.incidents} color="success">
+                          <Badge badgeContent={flight_plan.total_incidents} color="success">
                             <ErrorIcon color="action" />
                           </Badge>
                         }

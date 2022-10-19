@@ -15,7 +15,7 @@ class CreateLogsTable extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string("flight_plan_id")->constrained('flight_plans')->nullable(true);
+            $table->foreignId('service_order_flight_plan_id')->nullable(true)->constrained('service_order_flight_plan');
             $table->string('name')->unique();
             $table->string('filename');
             $table->string("path");

@@ -44,7 +44,7 @@ class IncidentRepository implements RepositoryInterface
     function updateOne(Collection $data, string $identifier)
     {
         $incident = $this->incidentModel->findOrFail($identifier);
-
+        
         $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
 
         $incident->update([

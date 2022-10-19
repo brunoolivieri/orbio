@@ -57,14 +57,6 @@ class FlightPlan extends Model
     }
 
     /*
-    * Relationship one to one with logs table
-    */
-    function logs()
-    {
-        return $this->hasMany(Log::class, "flight_plan_id");
-    }
-
-    /*
     * Relationship many to many with service orders table
     */
     function service_orders()

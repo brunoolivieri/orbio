@@ -73,7 +73,7 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateResource($request->only(["name", "flight_plan_id"]), $id);
+        return $this->service->updateResource($request->only(["name", "flight_plan_id", "service_order_id"]), $id);
     }
 
     /**

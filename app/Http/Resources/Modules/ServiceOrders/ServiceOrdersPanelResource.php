@@ -5,6 +5,7 @@ namespace App\Http\Resources\Modules\ServiceOrders;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Incidents\Incident;
+use App\Models\Logs\Log;
 
 class ServiceOrdersPanelResource extends JsonResource
 {
@@ -46,12 +47,13 @@ class ServiceOrdersPanelResource extends JsonResource
             foreach ($service_order->flight_plans as $index => $flight_plan) {
 
                 $incidents = Incident::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
+                $logs = Log::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
 
                 $this->formatedData["records"][$row]["flight_plans"][$index] = [
                     "id" => $flight_plan->id,
                     "file" => $flight_plan->file,
                     "name" => $flight_plan->name,
-                    "logs" => $flight_plan->logs,
+                    "logs" => $logs,
                     "localization" => [
                         "coordinates" => $flight_plan->coordinates,
                         "city" => $flight_plan->city,

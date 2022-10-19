@@ -30,6 +30,7 @@ class FlightPlansLogPanelResource extends JsonResource
             $this->formatedData["records"][$row] = [
                 "id" => $log->id,
                 "name" => $log->name,
+                "service_order" => null,
                 "flight_plan" => null,
                 "filename" => $log->filename,
                 "path" => $log->path,
@@ -39,11 +40,23 @@ class FlightPlansLogPanelResource extends JsonResource
                 "deleted_at" => $log->deleted_at
             ];
 
-            if (!empty($log->flight_plan)) {
+            if (!empty($log->service_order_flight_plan)) {
+
+                // Get related service order // Table "service_order_flight_plan"
+                $service_order = $log->service_order_flight_plan->service_order;
+                // Get related flight plan // Table "service_order_flight_plan"
+                $flight_plan = $log->service_order_flight_plan->flight_plan;
+
+                $this->formatedData["records"][$row]["service_order"] = [
+                    "id" => $service_order->id,
+                    "number" => $service_order->number,
+                    "status" => $service_order->status,
+                    "created_at" => strtotime($service_order->created_at)
+                ];
 
                 $this->formatedData["records"][$row]["flight_plan"] = [
-                    "id" => $log->flight_plan->id,
-                    "path" => empty($log->flight_plan->file) ? null : $log->flight_plan->file
+                    "id" =>  $flight_plan->id,
+                    "path" => $flight_plan->file
                 ];
             }
         }

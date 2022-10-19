@@ -5,6 +5,7 @@ namespace App\Http\Resources\Modules\FlightPlans;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Incidents\Incident;
+use App\Models\Logs\Log;
 
 class FlightPlansPanelResource extends JsonResource
 {
@@ -37,7 +38,8 @@ class FlightPlansPanelResource extends JsonResource
                 "name" => $flight_plan->name,
                 "service_orders" => [],
                 "logs" => [],
-                "incidents" => 0, //$flight_plan->pivot->incident_id
+                "total_incidents" => 0, 
+                "total_logs" => 0,
                 "file" => $flight_plan->file,
                 "localization" => [
                     "coordinates" => $flight_plan->coordinates,
@@ -56,37 +58,23 @@ class FlightPlansPanelResource extends JsonResource
 
                 foreach ($flight_plan->service_orders as $service_order_row => $service_order) {
 
-                    // Incidents ocurrs with flight plans IN service orders
-                    $flight_plan_service_order_incidents = Incident::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
+                    // Incidents of flight plan IN service orders
+                    $incidents = Incident::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
+                    $logs = Log::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
 
                     $this->formatedData["records"][$flight_plan_row]["service_orders"][$service_order_row] = [
                         "id" => $service_order->id,
                         "number" => $service_order->number,
                         "status" => $service_order->status,
                         "created_at" => strtotime($service_order->created_at),
-                        "incidents" => $flight_plan_service_order_incidents // incidents in this service order
+                        "incidents" => $incidents, // incidents of flight plan in this service order
+                        "logs" => $logs // logs of flight plan in this service order
                     ];
 
-                    $this->formatedData["records"][$flight_plan_row]["incidents"] += $flight_plan_service_order_incidents->count();
+                    $this->formatedData["records"][$flight_plan_row]["total_incidents"] += $incidents->count();
+                    $this->formatedData["records"][$flight_plan_row]["total_logs"] += $logs->count();
                 }
-            }
 
-            // ==== SERVICE ORDERS AND INCIDENTS RELATED TO THIS FLIGHT PLAN ==== //
-
-            // If flight plan has logs
-            if (!empty($flight_plan->logs)) {
-
-                foreach ($flight_plan->logs as $log_row => $log) {
-
-                    $this->formatedData["records"][$flight_plan_row]["logs"][$log_row] = [
-                        "id" => $log->id,
-                        "name" => $log->name,
-                        "path" => $log->path,
-                        "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),
-                        "created_at" => $log->created_at,
-                        "deleted_at" => $log->deleted_at
-                    ];
-                }
             }
         }
 

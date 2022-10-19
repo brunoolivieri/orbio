@@ -32,6 +32,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Checkbox from '@mui/material/Checkbox';
 import { Link } from "@mui/material";
 import { useSnackbar } from 'notistack';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -334,7 +335,8 @@ export const LogsPanel = () => {
                             <TableHead>
                                 <TableRow>
                                     <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Rota</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
+                                    <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Nome do arquivo</StyledHeadTableCell>
                                     <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
@@ -346,18 +348,33 @@ export const LogsPanel = () => {
                                         <TableRow key={log.id}>
                                             <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
                                             <TableCell align="center">
-                                                {log.flight_plan != null ?
+                                                {log.flight_plan ?
                                                     <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
                                                         <Tooltip title="Ver plano">
                                                             <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                                                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                                                             </IconButton>
                                                         </Tooltip>
                                                     </Link>
                                                     :
-                                                    <Tooltip title={"Um plano de voo é necessário"}>
+                                                    <Tooltip title={"Nenhum plano de voo vinculado"}>
                                                         <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                            <FontAwesomeIcon icon={faEye} color={"#808991"} size="sm" />
+                                                            <FontAwesomeIcon icon={faEye} color={"#E0E0E0"} size="sm" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                }
+                                            </TableCell>
+                                            <TableCell align="center">
+                                                {log.service_order ?
+                                                    <Tooltip title={log.service_order.number}>
+                                                        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
+                                                            <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                    :
+                                                    <Tooltip title={"Nenhuma ordem de serviço vinculada"}>
+                                                        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
+                                                            <AssignmentIcon color="disabled" />
                                                         </IconButton>
                                                     </Tooltip>
                                                 }

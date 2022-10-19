@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Models
-use App\Models\FlightPlans\FlightPlan;
+use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class Log extends Model
 {
@@ -43,10 +43,10 @@ class Log extends Model
     }
 
     /*
-    * Relationship with flight plans table
+    * Relationship with flight plan
     */
-    function flight_plan()
+    function service_order_flight_plan()
     {
-        return $this->belongsTo(FlightPlan::class, "flight_plan_id", "id");
+        return $this->belongsTo(ServiceOrderFlightPlan::class, "service_order_flight_plan_id", "id");
     }
 }
