@@ -27,7 +27,7 @@ class UpdateLogRequest extends FormRequest
 
         return [
             "name" => ["required", "unique:logs,name,$log_id", "min:3"],
-            "flight_plan_id" => ["required", "unique:service_order_flight_plan,flight_plan_id,$log_id"],
+            "flight_plan_id" => ["required"],
             "service_order_id" => ["required"]
         ];
     }
@@ -44,7 +44,6 @@ class UpdateLogRequest extends FormRequest
             'name.unique' => "Já existe um log com esse nome",
             "name.min" => "O nome deve ter pelo menos 3 caracteres",
             "flight_plan_id.required" => "Um plano de voo deve ser vinculado",
-            "flight_plan_id.unique" => "Esse plano de voo já está vinculado a outro log",
             "service_order_id.required" => "Selecione a ordem de serviço"
         ];
     }

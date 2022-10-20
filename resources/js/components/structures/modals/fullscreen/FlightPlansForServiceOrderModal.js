@@ -297,8 +297,8 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             </TableHead>
                             <TableBody>
                                 {(!loading && records.length > 0) &&
-                                    records.map((flight_plan, index) => (
-                                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                                    records.map((flight_plan) => (
+                                        <TableRow key={flight_plan.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                                             <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={() => { handleClickRecord(flight_plan) }} checked={selectedFlightPlans.find((item) => item.id === flight_plan.id)} />} /></TableCell>
                                             <TableCell align="center">{flight_plan.creator.name}</TableCell>
                                             <TableCell align="center">{moment(flight_plan.created_at).format("DD/MM/YYYY")}</TableCell>

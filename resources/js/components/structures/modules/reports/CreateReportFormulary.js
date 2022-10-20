@@ -11,19 +11,23 @@ import { Alert, IconButton } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import SearchIcon from '@mui/icons-material/Search';
 import LinearProgress from '@mui/material/LinearProgress';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { FlightPlanDataForReport } from '../../modals/dialog/FlightPlanDataForReport';
 import { ServiceOrderForReport } from '../../modals/fullscreen/ServiceOrderForReport';
 import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { DatePicker } from "../../date_picker/DatePicker";
-import { ReportDocumentVisualization } from "../../../structures/report_builder/ReportBuilder";
-import { Switcher } from '../../switcher/Switcher';
+import { ReportVisualization } from '../../modals/fullscreen/ReportVisualization';
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
 
@@ -32,17 +36,7 @@ const initialControlledInput = {
   client: '0',
   state: '',
   city: '',
-  farm: '',
-  area: '',
-  date: '',
-  number: '',
-  dosage: '',
-  provider: '',
-  flight_plans: [],
-  responsible: '0',
-  temperature: '',
-  humidity: '',
-  wind: ''
+  farm: ''
 }
 
 const initialFieldError = {
@@ -51,16 +45,7 @@ const initialFieldError = {
   client: false,
   state: false,
   city: false,
-  farm: false,
-  area: false,
-  date: false,
-  number: false,
-  dosage: false,
-  responsible: false,
-  provider: false,
-  temperature: false,
-  humidity: false,
-  wind: false
+  farm: false
 }
 
 const initialFieldErrorMessage = {
@@ -69,16 +54,7 @@ const initialFieldErrorMessage = {
   client: '',
   state: '',
   city: '',
-  farm: '',
-  area: '',
-  date: '',
-  number: '',
-  dosage: '',
-  responsible: '',
-  provider: '',
-  temperature: '',
-  humidity: '',
-  wind: ''
+  farm: ''
 }
 
 export const CreateReportFormulary = () => {
@@ -91,13 +67,11 @@ export const CreateReportFormulary = () => {
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-  const [weatherLoading, setWeatherLoading] = React.useState(false);
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
   const [serviceOrder, setServiceOrder] = React.useState(null);
+  const [flightPlansData, setFlightPlansData] = React.useState(null);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
-
-  console.log(serviceOrder)
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -112,33 +86,6 @@ export const CreateReportFormulary = () => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  const handleLoadWeather = () => {
-
-    setWeatherLoading(true);
-
-    const state = controlledInput.state;
-    const city = controlledInput.city;
-
-    AxiosApi.get(`api/get-weather-data?state=${state}&city=${city}`)
-      .then((response) => {
-
-        setWeatherLoading(false);
-
-        const temperature = response.data.temperature;
-        const humidity = response.data.humidity;
-        const wind = response.data.wind_speedy.split(" ")[0];
-
-        setControlledInput({ ...controlledInput, ['temperature']: temperature, ['humidity']: humidity, ['wind']: wind });
-
-      })
-      .catch(function (error) {
-
-        setWeatherLoading(false);
-        console.log(error);
-
-      });
-  }
-
   const handleReportGenerate = (e) => {
     e.preventDefault();
 
@@ -147,7 +94,7 @@ export const CreateReportFormulary = () => {
 
         const base64PDF = response.data;
 
-        let bin = atob(base64PDF);
+        //let bin = atob(base64PDF);
         let obj = document.createElement('object');
         obj.style.width = '100%';
         obj.style.height = '842pt';
@@ -184,14 +131,6 @@ export const CreateReportFormulary = () => {
       state: { error: false, message: null },
       city: { error: false, message: null },
       farm: { error: false, message: null },
-      area: { error: false, message: null },
-      date: { error: false, message: null },
-      number: { error: false, message: null },
-      dosage: { error: false, message: null },
-      temperature: { error: false, message: null },
-      humidity: { error: false, message: null },
-      wind: { error: false, message: null },
-      provider: { error: false, message: null },
       responsible: { error: false, message: null }
     }
 
@@ -211,14 +150,6 @@ export const CreateReportFormulary = () => {
       state: request_errors.state.error,
       city: request_errors.city.error,
       farm: request_errors.farm.error,
-      area: request_errors.area.error,
-      date: request_errors.date.error,
-      number: request_errors.number.error,
-      dosage: request_errors.dosage.error,
-      temperature: request_errors.temperature.error,
-      humidity: request_errors.humidity.error,
-      wind: request_errors.wind.error,
-      provider: request_errors.provider.error,
       responsible: request_errors.responsible.error
     });
 
@@ -227,14 +158,6 @@ export const CreateReportFormulary = () => {
       client: request_errors.client.message,
       city: request_errors.city.message,
       farm: request_errors.farm.message,
-      area: request_errors.area.message,
-      date: request_errors.date.message,
-      number: request_errors.number.message,
-      dosage: request_errors.dosage.message,
-      temperature: request_errors.temperature.message,
-      humidity: request_errors.humidity.message,
-      wind: request_errors.wind.message,
-      provider: request_errors.provider.message,
       responsible: request_errors.responsible.message
     });
   }
@@ -271,248 +194,130 @@ export const CreateReportFormulary = () => {
               />
             </Box>
 
-            {null &&
+            {serviceOrder &&
               <>
-                <Box mb={2}>
+                <Grid container spacing={2} mb={2}>
 
-                  <Grid container spacing={2}>
-
-                    <Grid item xs={6}>
-                      <SelectAttributeControl
-                        label_text={"Responsável (piloto)"}
-                        data_source={"/api/load-users?where=profile_id.3"}
-                        primary_key={"name"}
-                        key_content={"name"}
-                        error={fieldError.responsible}
-                        name={"responsible"}
-                        value={controlledInput.responsible}
-                        setControlledInput={setControlledInput}
-                        controlledInput={controlledInput}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        id="name"
-                        name="name"
-                        label="Nome do relatório"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        value={controlledInput.name}
-                        error={fieldError.name}
-                        helperText={fieldErrorMessage.name}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        id="name"
-                        name="state"
-                        label="Estado"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        value={controlledInput.state}
-                        error={fieldError.state}
-                        helperText={fieldErrorMessage.state}
-                        inputProps={{
-                          readOnly: true
-                        }}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        id="name"
-                        name="city"
-                        label="Cidade"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        value={controlledInput.city}
-                        error={fieldError.city}
-                        helperText={fieldErrorMessage.city}
-                        inputProps={{
-                          readOnly: true
-                        }}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} sm={12}>
-                      <TextField
-                        name="farm"
-                        label="Fazenda"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        helperText={fieldErrorMessage.farm}
-                        error={fieldError.farm}
-                        value={controlledInput.farm}
-                      />
-                    </Grid>
+                  <Grid item xs={6}>
+                    <SelectAttributeControl
+                      label_text={"Responsável (piloto)"}
+                      data_source={"/api/load-users?where=profile_id.3"}
+                      primary_key={"name"}
+                      key_content={"name"}
+                      error={fieldError.responsible}
+                      name={"responsible"}
+                      value={controlledInput.responsible}
+                      setControlledInput={setControlledInput}
+                      controlledInput={controlledInput}
+                    />
                   </Grid>
 
-                </Box>
-
-
-
-                <Box mb={2}>
-
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <TextField
-                        name="area"
-                        label="Área total aplicada"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        helperText={fieldErrorMessage.area}
-                        error={fieldError.area}
-                        value={controlledInput.area}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <DatePicker
-                        name="date"
-                        label="Data da aplicação"
-                        inputFormat="dd/MM/yyyy hh:mm"
-                        helperText={fieldErrorMessage.date}
-                        error={fieldError.date}
-                        value={controlledInput.date}
-                        onChange={handleInputChange}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        name="number"
-                        label="Número da aplicação"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        helperText={fieldErrorMessage.number}
-                        error={fieldError.number}
-                        value={controlledInput.number}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <TextField
-                        name="dosage"
-                        label="Dosagem"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        helperText={fieldErrorMessage.dosage}
-                        error={fieldError.dosage}
-                        value={controlledInput.dosage}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <SelectAttributeControl
-                        label_text={"Responsável (piloto)"}
-                        data_source={"/api/load-users?where=profile_id.3"}
-                        primary_key={"name"}
-                        key_content={"name"}
-                        error={fieldError.responsible}
-                        name={"responsible"}
-                        value={controlledInput.responsible}
-                        setControlledInput={setControlledInput}
-                        controlledInput={controlledInput}
-                      />
-                    </Grid>
-
-                    <Grid item xs={6}>
-                      <SelectAttributeControl
-                        label_text={"Cliente"}
-                        data_source={"/api/load-users?where=profile_id.4"}
-                        primary_key={"name"}
-                        key_content={"name"}
-                        error={fieldError.client}
-                        name={"client"}
-                        value={controlledInput.client}
-                        setControlledInput={setControlledInput}
-                        controlledInput={controlledInput}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <TextField
-                        name="provider"
-                        label="Fornecedor"
-                        fullWidth
-                        variant="outlined"
-                        onChange={handleInputChange}
-                        helperText={fieldErrorMessage.provider}
-                        error={fieldError.provider}
-                        value={controlledInput.provider}
-                      />
-                    </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      id="name"
+                      name="name"
+                      label="Nome do relatório"
+                      fullWidth
+                      variant="outlined"
+                      onChange={handleInputChange}
+                      value={controlledInput.name}
+                      error={fieldError.name}
+                      helperText={fieldErrorMessage.name}
+                    />
                   </Grid>
 
-                </Box>
-                <Box>
-
-                  <Typography component={'p'} mb={3}>Para buscar os dados climáticos informe o estado, cidade e data.</Typography>
-
-                  <Grid container spacing={2} columns={13}>
-                    <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                      <Tooltip title="Carregar clima">
-                        <IconButton onClick={() => handleLoadWeather()}>
-                          <SearchIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Grid>
-
-                    <Grid item xs={4}>
-                      <TextField
-                        label="Temperatura (Cº)"
-                        fullWidth
-                        variant="outlined"
-                        helperText={fieldErrorMessage.temperature}
-                        error={fieldError.temperature}
-                        value={weatherLoading ? "Carregando" : controlledInput.temperature}
-                        inputProps={{
-                          readOnly: true
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-
-                    <Grid item xs={4}>
-                      <TextField
-                        label="Umidade"
-                        fullWidth
-                        variant="outlined"
-                        helperText={fieldErrorMessage.humidity}
-                        error={fieldError.humidity}
-                        value={weatherLoading ? "Carregando" : controlledInput.humidity}
-                        inputProps={{
-                          readOnly: true
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
-
-                    <Grid item xs={4}>
-                      <TextField
-                        label="Vento (Km/h)"
-                        fullWidth
-                        helperText={fieldErrorMessage.wind}
-                        error={fieldError.wind}
-                        value={weatherLoading ? "Carregando" : controlledInput.wind}
-                        inputProps={{
-                          readOnly: true
-                        }}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </Grid>
+                  {/* State and city are updated on ServiceOrderForReport modal */}
+                  <Grid item xs={6}>
+                    <TextField
+                      id="name"
+                      name="state"
+                      label="Estado"
+                      fullWidth
+                      variant="outlined"
+                      onChange={handleInputChange}
+                      value={controlledInput.state}
+                      error={fieldError.state}
+                      helperText={fieldErrorMessage.state}
+                      inputProps={{
+                        readOnly: true
+                      }}
+                    />
                   </Grid>
 
-                </Box>
+                  <Grid item xs={6}>
+                    <TextField
+                      id="name"
+                      name="city"
+                      label="Cidade"
+                      fullWidth
+                      variant="outlined"
+                      onChange={handleInputChange}
+                      value={controlledInput.city}
+                      error={fieldError.city}
+                      helperText={fieldErrorMessage.city}
+                      inputProps={{
+                        readOnly: true
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} sm={12}>
+                    <TextField
+                      name="farm"
+                      label="Fazenda"
+                      fullWidth
+                      variant="outlined"
+                      onChange={handleInputChange}
+                      helperText={fieldErrorMessage.farm}
+                      error={fieldError.farm}
+                      value={controlledInput.farm}
+                    />
+                  </Grid>
+                </Grid>
+
+                {serviceOrder.flight_plans.length > 0 &&
+                  <List
+                    dense={true}
+                    sx={{
+                      maxWidth: '100%',
+                      minWidth: '100%',
+                      bgcolor: '#F5F5F5',
+                      position: 'relative',
+                      overflow: 'auto',
+                      maxHeight: 200,
+                      '& ul': { padding: 0 },
+                      mt: 2
+                    }}
+                    subheader={<li />}
+                  >
+                    <ul>
+                      <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{`PLANOS DE VOO: ${serviceOrder.flight_plans.length}`}</ListSubheader>
+                      {serviceOrder.flight_plans.map((flight_plan, index) => (
+                        <ListItem
+                          key={index}
+                          secondaryAction={
+                            <FlightPlanDataForReport
+                              flightPlans={flightPlansData}
+                              setFlightPlans={setFlightPlansData}
+                              current={{ array_index: index, data: flight_plan }}
+                              controlledInput={controlledInput}
+                            />
+                          }
+                        >
+                          <ListItemAvatar>
+                            <Avatar>
+                              <CheckCircleIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={`ID: ${flight_plan.id}`}
+                            secondary={`Nome: ${flight_plan.name}`}
+                          />
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </List>
+                }
               </>
             }
           </DialogContent>
@@ -525,7 +330,7 @@ export const CreateReportFormulary = () => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <ReportDocumentVisualization data={controlledInput} />
+            <ReportVisualization data={controlledInput} />
             <Button type="submit" variant='contained'>Exportar</Button>
           </DialogActions>
 

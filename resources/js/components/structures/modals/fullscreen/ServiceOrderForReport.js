@@ -201,23 +201,19 @@ export const ServiceOrderForReport = React.memo((props) => {
 
         } else if (service_order_id != selectedRecordID) {
 
+            // Get state and city based in one of the flight plans
+            const service_order_state = service_order.flight_plans[0].localization.state;
+            const service_order_city = service_order.flight_plans[0].localization.city;
+
             setSelectedRecordID(service_order_id);
             props.setServiceOrder(service_order);
             props.setControlledInput({
                 name: '',
                 client: service_order.users.client.name,
-                state: service_order.flight_plans[0].localization.state,
-                city: service_order.flight_plans[0].localization.city,
+                state: service_order_state,
+                city: service_order_city,
                 farm: '',
-                area: '',
-                date: moment(),
-                number: '',
-                dosage: '',
-                provider: '',
-                responsible: service_order.users.pilot.name,
-                temperature: '',
-                humidity: '',
-                wind: ''
+                responsible: service_order.users.pilot.name
             });
         }
 
