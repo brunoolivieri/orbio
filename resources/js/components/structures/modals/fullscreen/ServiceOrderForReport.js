@@ -198,6 +198,7 @@ export const ServiceOrderForReport = React.memo((props) => {
             setSelectedRecordID(null);
             props.setServiceOrder(null);
             props.setControlledInput(resetParentControlledInput);
+            props.setFlightPlansData(null);
 
         } else if (service_order_id != selectedRecordID) {
 
@@ -215,6 +216,30 @@ export const ServiceOrderForReport = React.memo((props) => {
                 farm: '',
                 responsible: service_order.users.pilot.name
             });
+
+            // Get necessary data from each flight plan to use in report
+            let flight_plans_for_report = [];
+            flight_plans_for_report = service_order.flight_plans.map(flight_plan => {
+                return {
+                    id: flight_plan.id,
+                    name: flight_plan.name,
+                    city: flight_plan.localization.city,
+                    state: flight_plan.localization.state,
+                    date: moment(), // need to be date from log
+                    area: '',
+                    number: '',
+                    dosage: '',
+                    responsible: service_order.users.pilot.name,
+                    provider: '',
+                    temperature: '',
+                    humidity: '',
+                    wind: '',
+                    completed: false
+                }
+            });
+
+            props.setFlightPlans(flight_plans_for_report);
+
         }
 
     }

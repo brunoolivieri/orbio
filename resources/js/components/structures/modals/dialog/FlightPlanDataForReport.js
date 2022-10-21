@@ -14,7 +14,6 @@ import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
 import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
-import { ReportVisualization } from '../fullscreen/ReportVisualization';
 import { DatePicker } from "../../date_picker/DatePicker";
 // Lib
 import AxiosApi from '../../../../services/AxiosApi';
@@ -50,19 +49,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
 
     const [loading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({
-        city: props.current.data.localization.city,
-        state: props.current.data.localization.state,
-        area: '', 
-        date: moment(),
-        number: '',
-        dosage: '',
-        responsible: props.controlledInput.responsible,
-        provider: '',
-        temperature: '',
-        humidity: '',
-        wind: ''
-    });
+    const [controlledInput, setControlledInput] = React.useState(props.current.data);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
@@ -77,6 +64,40 @@ export const FlightPlanDataForReport = React.memo((props) => {
     const handleClose = () => {
         setDisplayAlert({ display: false, type: "", message: "" });
         setOpen(false);
+    }
+
+    const handleSave = () => {
+
+        // Must be 10
+        let cont_validated_inputs = 0;
+
+        for (let key in controlledInput) {
+            if (key != 'completed' && key != 'date') {
+                if (controlledInput[key].length > 0) {
+                    cont_validated_inputs++;
+                }
+            } else if (key != 'completed' && key === 'date') {
+                if (moment(controlledInput[key]).format('YYYY-MM-DD').length > 0) {
+                    cont_validated_inputs++;
+                }
+            }
+        }
+
+        // Clone from original flightPlans array to modify it
+        let flight_plans_data_clone = [...props.flightPlans];
+
+        // If form was completed or not
+        if (cont_validated_inputs != 10) {
+            controlledInput.completed = false;
+        } else {
+            controlledInput.completed = true;
+        }
+
+        flight_plans_data_clone[props.current.array_index] = controlledInput;
+        console.log(flight_plans_data_clone);
+        props.setFlightPlans(flight_plans_data_clone);
+        handleClose();
+
     }
 
     const handleInputChange = (event) => {
@@ -127,7 +148,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
                 fullWidth
                 maxWidth="lg"
             >
-                <DialogTitle>{`PLANO DE VOO | ID: ${props.current.data.id}`}</DialogTitle>
+                <DialogTitle>{`PLANO DE VOO | ID: ${controlledInput.id}`}</DialogTitle>
                 <DialogContent>
 
                     <Grid container spacing={2} sx={{ mt: 2, mb: 2 }}>
@@ -258,7 +279,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
                                 variant="outlined"
                                 helperText={fieldErrorMessage.temperature}
                                 error={fieldError.temperature}
-                                value={weatherLoading ? "Carregando" : controlledInput.temperature}
+                                value={controlledInput.temperature}
                                 inputProps={{
                                     readOnly: true
                                 }}
@@ -273,7 +294,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
                                 variant="outlined"
                                 helperText={fieldErrorMessage.humidity}
                                 error={fieldError.humidity}
-                                value={weatherLoading ? "Carregando" : controlledInput.humidity}
+                                value={controlledInput.humidity}
                                 inputProps={{
                                     readOnly: true
                                 }}
@@ -287,7 +308,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
                                 fullWidth
                                 helperText={fieldErrorMessage.wind}
                                 error={fieldError.wind}
-                                value={weatherLoading ? "Carregando" : controlledInput.wind}
+                                value={controlledInput.wind}
                                 inputProps={{
                                     readOnly: true
                                 }}
@@ -304,8 +325,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
 
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <ReportVisualization data={controlledInput} />
-                    <Button type="submit" variant='contained'>Exportar</Button>
+                    <Button variant='contained' onClick={handleSave}>Salvar</Button>
                 </DialogActions>
 
             </Dialog >

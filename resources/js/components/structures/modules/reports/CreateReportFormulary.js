@@ -69,7 +69,7 @@ export const CreateReportFormulary = () => {
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
   const [serviceOrder, setServiceOrder] = React.useState(null);
-  const [flightPlansData, setFlightPlansData] = React.useState(null);
+  const [flightPlans, setFlightPlans] = React.useState(null);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -191,6 +191,7 @@ export const CreateReportFormulary = () => {
                 setControlledInput={setControlledInput}
                 setServiceOrder={setServiceOrder}
                 serviceOrderId={null}
+                setFlightPlans={setFlightPlans}
               />
             </Box>
 
@@ -275,7 +276,7 @@ export const CreateReportFormulary = () => {
                   </Grid>
                 </Grid>
 
-                {serviceOrder.flight_plans.length > 0 &&
+                {flightPlans.length > 0 &&
                   <List
                     dense={true}
                     sx={{
@@ -292,20 +293,19 @@ export const CreateReportFormulary = () => {
                   >
                     <ul>
                       <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{`PLANOS DE VOO: ${serviceOrder.flight_plans.length}`}</ListSubheader>
-                      {serviceOrder.flight_plans.map((flight_plan, index) => (
+                      {flightPlans.map((flight_plan, index) => (
                         <ListItem
                           key={index}
                           secondaryAction={
                             <FlightPlanDataForReport
-                              flightPlans={flightPlansData}
-                              setFlightPlans={setFlightPlansData}
+                              flightPlans={flightPlans}
+                              setFlightPlans={setFlightPlans}
                               current={{ array_index: index, data: flight_plan }}
-                              controlledInput={controlledInput}
                             />
                           }
                         >
                           <ListItemAvatar>
-                            <Avatar>
+                            <Avatar sx={{ bgcolor: flight_plan.completed ? '#4CAF50' : '' }}>
                               <CheckCircleIcon />
                             </Avatar>
                           </ListItemAvatar>
