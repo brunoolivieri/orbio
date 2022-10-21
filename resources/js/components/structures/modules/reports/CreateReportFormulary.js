@@ -75,6 +75,8 @@ export const CreateReportFormulary = () => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setServiceOrder(null);
+    setFlightPlans(null);
   }
 
   const handleClose = () => {
