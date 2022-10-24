@@ -332,7 +332,7 @@ export const CreateReportFormulary = () => {
 
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <ReportVisualization data={controlledInput} />
+            {serviceOrder && <ReportVisualization basicData={controlledInput} flightPlans={flightPlans} />}
             <Button type="submit" variant='contained'>Exportar</Button>
           </DialogActions>
 

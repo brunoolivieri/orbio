@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 
 export const ReportStructure = React.memo((props) => {
 
-    const [data, setData] = React.useState(props.data);
+    const [data] = React.useState(props.data);
 
     return (
         <Document>
@@ -86,69 +86,67 @@ export const ReportStructure = React.memo((props) => {
                         <Text style={styles.top_legends}>{`FAZENDA: ${data.farm}`.toUpperCase()}</Text>
                     </View>
 
-                    <View style={styles.table_section}>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_head, flexBasis: '160px', textAlign: 'center' }}>{"ÁREA TOTAL APLICADA (ha)"}</Text>
-                            <Text style={{ ...styles.table_head, flexBasis: '130px', textAlign: 'center' }}>{"DATA DA APLICAÇÃO"}</Text>
-                            <Text style={{ ...styles.table_head, flexBasis: '115px', textAlign: 'center' }}>{"Nº DA APLICAÇÃO"}</Text>
-                            <Text style={{ ...styles.table_head, flexBasis: '100px', textAlign: 'center' }}>{"DOSAGEM/Ha"}</Text>
-                        </View>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_data, flexBasis: '160px', textAlign: 'center' }}>{data.area}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '130px', textAlign: 'center' }}>{moment(data.date).format('DD/MM/YYYY')}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '115px', textAlign: 'center' }}>{data.number}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '100px', textAlign: 'center' }}>{data.dosage}</Text>
-                        </View>
-                    </View>
-
-
-                    <View style={styles.table_section}>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_head, flexBasis: '200px', textAlign: 'center' }}>{"CONDIÇÕES CLIMÁTICAS"}</Text>
-                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"INICIAL"}</Text>
-                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"FINAL"}</Text>
-                        </View>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"TEMPERATURA (Cº)"}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.temperature}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.temperature}</Text>
-                        </View>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"UMIDADE"}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.humidity}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.humidity}</Text>
-                        </View>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"VENTO (Km/h)"}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.wind}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{data.wind}</Text>
-                        </View>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"FORNECEDOR"}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{data.provider}</Text>
-                        </View>
-                        <View style={styles.table_row}>
-                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"RESPONSÁVEL"}</Text>
-                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{data.responsible}</Text>
-                        </View>
-                    </View>
-
                 </>
             </Page>
 
-            {/* SECOND PAGE */}
-            <Page size="A4" style={styles.page}>
+            {data.flight_plans.map((flight_plan, index) => (
                 <>
-                    <View style={styles.table_row}>
-                        <Image
-                            src={BirdviewLogo}
-                            style={styles.logo}
-                        ></Image>
-                    </View>
-                </>
-            </Page>
+                    <Page size="A4" style={styles.page}>
+                        <View style={styles.section}>
+                            <Text style={styles.top_legends}>
+                                {`PLANO DE VOO: ${flight_plan.name}`.toUpperCase()}
+                            </Text>
+                        </View>
+                        <View style={styles.table_section}>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_head, flexBasis: '160px', textAlign: 'center' }}>{"ÁREA TOTAL APLICADA (ha)"}</Text>
+                                <Text style={{ ...styles.table_head, flexBasis: '130px', textAlign: 'center' }}>{"DATA DA APLICAÇÃO"}</Text>
+                                <Text style={{ ...styles.table_head, flexBasis: '115px', textAlign: 'center' }}>{"Nº DA APLICAÇÃO"}</Text>
+                                <Text style={{ ...styles.table_head, flexBasis: '100px', textAlign: 'center' }}>{"DOSAGEM/Ha"}</Text>
+                            </View>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_data, flexBasis: '160px', textAlign: 'center' }}>{flight_plan.area}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '130px', textAlign: 'center' }}>{moment(flight_plan.date).format('DD/MM/YYYY')}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '115px', textAlign: 'center' }}>{flight_plan.number}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '100px', textAlign: 'center' }}>{flight_plan.dosage}</Text>
+                            </View>
+                        </View>
 
-        </Document>
+                        <View style={styles.table_section}>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_head, flexBasis: '200px', textAlign: 'center' }}>{"CONDIÇÕES CLIMÁTICAS"}</Text>
+                                <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"INICIAL"}</Text>
+                                <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"FINAL"}</Text>
+                            </View>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"TEMPERATURA (Cº)"}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.temperature}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.temperature}</Text>
+                            </View>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"UMIDADE"}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.humidity}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.humidity}</Text>
+                            </View>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"VENTO (Km/h)"}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.wind}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.wind}</Text>
+                            </View>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"FORNECEDOR"}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.provider}</Text>
+                            </View>
+                            <View style={styles.table_row}>
+                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"RESPONSÁVEL"}</Text>
+                                <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.responsible}</Text>
+                            </View>
+                        </View>
+                    </Page>
+                </>
+            ))}
+
+        </Document >
 
     )
 });
@@ -162,7 +160,9 @@ export const ReportVisualization = React.memo((props) => {
 
     const handleClickOpen = () => {
         setOpen(true);
-        setData(props.data);
+
+        const data = { ...props.basicData, flight_plans: props.flightPlans };
+        setData(data);
     }
 
     const handleClose = () => {
