@@ -17,7 +17,7 @@ class PasswordResetController extends Controller
         $this->passwordResetModel = $passwordResetModel;
     }
 
-    public function __invoke(UpdatePasswordRequest $request): \Illuminate\Http\Response
+    public function __invoke(UpdatePasswordRequest $request)
     {
         DB::transaction(function () use ($request) {
 

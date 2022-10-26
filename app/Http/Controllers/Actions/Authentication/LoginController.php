@@ -18,7 +18,7 @@ class LoginController extends Controller
         $this->userModel = $userModel;
     }
 
-    public function __invoke(LoginRequest $request): \Illuminate\Http\Response
+    public function __invoke(LoginRequest $request)
     {
         if (Auth::attempt(["email" => $request->email, "password" => $request->password, "deleted_at" => null])) {
 

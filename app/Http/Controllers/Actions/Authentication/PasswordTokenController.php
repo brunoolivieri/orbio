@@ -21,7 +21,7 @@ class PasswordTokenController extends Controller
         $this->passwordResetModel = $passwordResetModel;
     }
 
-    public function __invoke(PasswordResetTokenRequest $request): \Illuminate\Http\Response
+    public function __invoke(PasswordResetTokenRequest $request)
     {
         $user = $this->userModel->where("email", $request->email)->with("password_reset")->firstOrFail();
 

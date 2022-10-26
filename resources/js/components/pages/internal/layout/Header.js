@@ -1,29 +1,16 @@
 // React 
 import * as React from 'react';
+// Material UI
+import { MenuOpenIcon, AccountCircleIcon, AssessmentIcon, MapIcon, DashboardIcon, AdminPanelSettingsIcon, HelpIcon, AssignmentIcon, ReportIcon, HomeRepairServiceIcon } from '@mui/icons-material';
+import { AppBar, IconButton, Toolbar, Box, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
 // Custom
 import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";
 import { usePage } from '../../../context/PageContext';
-// Material UI
-import PropTypes from 'prop-types';
-import AppBar from '@mui/material/AppBar';
-import IconButton from '@mui/material/IconButton';
-import Toolbar from '@mui/material/Toolbar';
-import { Box, Typography } from '@mui/material';
-import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AssessmentIcon from '@mui/icons-material/Assessment';
-import MapIcon from '@mui/icons-material/Map';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import HelpIcon from '@mui/icons-material/Help';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import ReportIcon from '@mui/icons-material/Report';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 
-export const Header = React.memo(({ ...props }) => {
+export const Header = React.memo((props) => {
 
   const { onDrawerToggle } = props;
-
   const { pageIndex } = usePage();
 
   const pages = [
