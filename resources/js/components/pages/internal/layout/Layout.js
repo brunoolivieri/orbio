@@ -1,5 +1,6 @@
-// React
 import * as React from 'react';
+// Material UI
+import Box from '@mui/material/Box';
 // Custom
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext"; // State global de autenticação
 import AxiosApi from "../../../../services/AxiosApi"; // Axios para comunicação com o backend via AJAX
@@ -9,27 +10,22 @@ import { Header } from './Header';
 import { InternalRoutes } from "../../../../routes/ReactRouter";
 import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
 import { GenericModalDialog } from "../../../structures/modals/dialog/GenericModalDialog";
-// Material UI
-import Box from '@mui/material/Box';
 // Assets
 import ErrorImage from "../../../assets/images/Error/Error_md.png";
 
 const drawerWidth = 265;
 
-export const Layout = React.memo(() => {
+export const Layout = () => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData, setAuthData } = useAuthentication();
-
   const [operationStatus, setOperationStatus] = React.useState({ type: null, title: null, message: null, image: null });
-
   const [menuOpen, setMenuOpen] = React.useState(false);
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
-
     setOperationStatus({ type: "loading", title: "Processando....", message: null });
 
     AxiosApi.post("/api/get-auth-data")
@@ -49,17 +45,15 @@ export const Layout = React.memo(() => {
         }, [3000]);
 
       });
-
   }, []);
 
-  const handleDrawerToggle = () => {
+  function handleDrawerToggle() {
     setMenuOpen(!menuOpen);
-  };
+  }
 
   // =============================================================== ESTRUTURAÇÃO DA PÁGINA  =============================================================== //
 
   return (
-
     <>
       {operationStatus.type == "loading" &&
         <BackdropLoading />
@@ -120,7 +114,5 @@ export const Layout = React.memo(() => {
         </Box>
       }
     </>
-
   )
-
-});
+}

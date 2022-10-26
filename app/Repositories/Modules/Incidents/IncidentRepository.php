@@ -28,7 +28,6 @@ class IncidentRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-
         $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
 
         $incident = $this->incidentModel->create([
@@ -38,13 +37,13 @@ class IncidentRepository implements RepositoryInterface
             "service_order_flight_plan_id" => $service_order_flight_plan->id
         ]);
 
-        return response(["message" => "Incidente criado com sucesso!"], 201);
+        return $incident;
     }
 
     function updateOne(Collection $data, string $identifier)
     {
         $incident = $this->incidentModel->findOrFail($identifier);
-        
+
         $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
 
         $incident->update([
@@ -56,7 +55,7 @@ class IncidentRepository implements RepositoryInterface
 
         $incident->refresh();
 
-        return response(["message" => "Incidente atualizado com sucesso!"], 200);
+        return $incident;
     }
 
     function deleteOne(string $identifier)
@@ -65,6 +64,6 @@ class IncidentRepository implements RepositoryInterface
 
         $incident->delete();
 
-        return response(["message" => "Incidente deletado com sucesso!"], 200);
+        return $incident;
     }
 }

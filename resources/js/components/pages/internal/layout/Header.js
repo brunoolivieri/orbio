@@ -1,6 +1,6 @@
-// React 
 import * as React from 'react';
 // Material UI
+import { AppBar, IconButton, Toolbar, Box, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import MapIcon from '@mui/icons-material/Map';
@@ -11,7 +11,6 @@ import ReportIcon from '@mui/icons-material/Report';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
-import { AppBar, IconButton, Toolbar, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 // Custom
 import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";

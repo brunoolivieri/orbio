@@ -1,16 +1,6 @@
-// React
 import * as React from 'react';
-// Custom
-import { Link } from 'react-router-dom';
-import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Material UI
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import Box from '@mui/material/Box';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import { Drawer, List, Box, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import MapIcon from '@mui/icons-material/Map';
@@ -20,6 +10,9 @@ import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ReportIcon from '@mui/icons-material/Report';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+// Custom
+import { Link } from 'react-router-dom';
+import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Assets
 import EmbrapaLogo from "../../../assets/images/Logos/Embrapa.png";
 
@@ -94,9 +87,7 @@ export const NavigatorToggle = React.memo((props) => {
             ))}
           </Box>
         ))}
-
       </List>
-
     </Drawer>
   );
 });
