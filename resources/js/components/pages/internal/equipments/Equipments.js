@@ -1,21 +1,18 @@
 // React
 import * as React from 'react';
 // Material UI
-import Paper from '@mui/material/Paper';
-import { Grid } from "@mui/material";
-import { Box } from "@mui/system";
+import { Paper, Box } from '@mui/material';
 import { Switcher } from "../../../structures/switcher/Switcher";
 // Panels
 import { DronesPanel } from './drones_panel/DronesPanel';
 import { BatteriesPanel } from './batteries_panel/BatteriesPanel';
 import { EquipmentPanel } from './equipments_panel/EquipmentsPanel';
-// Context
+// Custom
 import { usePage } from '../../../context/PageContext';
 
-export const Equipments = React.memo(() => {
+export const Equipments = () => {
 
   const [actualPanel, setActualPanel] = React.useState("drones");
-
   const { setPageIndex } = usePage();
 
   React.useEffect(() => {
@@ -31,11 +28,10 @@ export const Equipments = React.memo(() => {
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {/* VARIAÇÃO DOS PAINÉIS - DE USUÁRIOS E PERFIS DE USUÁRIO */}
           {actualPanel == "drones" ? <DronesPanel /> : (actualPanel == "batteries" ? <BatteriesPanel /> : <EquipmentPanel />)}
 
         </Box>
       </Paper>
     </>
   )
-});
+}
