@@ -72,16 +72,22 @@ class FlightPlanService implements ServiceInterface
         $data["city"] = $address_components[2]["long_name"];
         $data["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
 
-        return $this->repository->createOne(collect($data));
+        $flight_plan = $this->repository->createOne(collect($data));
+
+        return response(["message" => "Plano de voo criado com sucesso!"], 200);
     }
 
     function updateResource(array $data, string $identifier)
     {
-        return $this->repository->updateOne(collect($data), $identifier);
+        $flight_plan = $this->repository->updateOne(collect($data), $identifier);
+
+        return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
     }
 
     function deleteResource(string $identifier)
     {
-        return $this->repository->deleteOne($identifier);
+        $flight_plan = $this->repository->deleteOne($identifier);
+
+        return response(["message" => "Plano de voo deletado com sucesso!"], 200);
     }
 }

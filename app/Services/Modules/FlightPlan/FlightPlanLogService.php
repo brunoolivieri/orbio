@@ -33,7 +33,6 @@ class FlightPlanLogService implements ServiceInterface
 
     function createResource(array $data)
     {
-
         $ip = $data["ip"];
         $http_port = $data["http_port"];
         $selected_logs = $data["logs"];
@@ -69,12 +68,16 @@ class FlightPlanLogService implements ServiceInterface
                 $data[$key] = null;
             }
         }
-        
-        return $this->repository->updateOne(collect($data), $identifier);
+
+        $log = $this->repository->updateOne(collect($data), $identifier);
+
+        return response(["message" => "Log atualizado com sucesso!"], 200);
     }
 
     function deleteResource(string $identifier)
     {
-        return $this->repository->deleteOne($identifier);
+        $log = $this->repository->deleteOne($identifier);
+
+        return response(["message" => "Log deletado com sucesso!"], 200);
     }
 }

@@ -1,9 +1,7 @@
 
 import * as React from 'react';
 // Material UI
-import Paper from '@mui/material/Paper';
-import { Box } from "@mui/system";
-import { Grid } from "@mui/material";
+import { Paper, Box } from '@mui/material';
 // Custom
 import { FlightPlansPanel } from "./flight_plans_panel/FlightPlansPanel";
 import { LogsPanel } from "./logs_panel/LogsPanel";
@@ -21,7 +19,6 @@ export const FlightPlans = React.memo(() => {
 
   return (
     <>
-
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
         <Switcher
           panelStateSetter={setActualPanel}
@@ -34,14 +31,9 @@ export const FlightPlans = React.memo(() => {
 
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-
           {actualPanel === "flight_plans" ? <FlightPlansPanel /> : <LogsPanel />}
-
         </Box>
       </Paper>
-
     </>
-
   )
-
 });

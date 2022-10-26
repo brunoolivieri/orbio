@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Modules\Equipment;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 // Custom
 use App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest;
@@ -38,14 +37,6 @@ class EquipmentModuleEquipmentPanelController extends Controller
         Gate::authorize("equipments_write");
 
         return $this->service->createResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
-    }
-
-    public function show($id): \Illuminate\Http\Response
-    {
-        Gate::authorize("equipments_read");
-
-        //
-
     }
 
     public function update(UpdateEquipmentRequest $request, $id): \Illuminate\Http\Response

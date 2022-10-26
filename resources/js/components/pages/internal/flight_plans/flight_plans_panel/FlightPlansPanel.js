@@ -1,37 +1,8 @@
 // React
 import * as React from 'react';
-// Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import AxiosApi from "../../../../../services/AxiosApi";
-import { UpdatePlanFormulary } from "../../../../structures/modules/flight_plans/UpdatePlanFormulary";
-import { DeletePlanFormulary } from "../../../../structures/modules/flight_plans/DeletePlanFormulary";
-import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
-import { Table } from "@mui/material";
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import { Link } from "@mui/material";
-import InputAdornment from '@mui/material/InputAdornment';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import TablePagination from '@mui/material/TablePagination';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
+import { Table, Link, Badge, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
 import { useSnackbar } from 'notistack';
-import Badge from '@mui/material/Badge';
 import ErrorIcon from '@mui/icons-material/Error';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
@@ -46,6 +17,12 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Custom
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
+import { UpdatePlanFormulary } from "../../../../structures/modules/flight_plans/UpdatePlanFormulary";
+import { DeletePlanFormulary } from "../../../../structures/modules/flight_plans/DeletePlanFormulary";
+import LinearProgress from '@mui/material/LinearProgress';
 // Outros
 import moment from 'moment';
 
@@ -54,40 +31,35 @@ const StyledHeadTableCell = styled(TableCell)({
   fontWeight: 700
 });
 
+const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
+const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
+
 export const FlightPlansPanel = () => {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [records, setRecords] = React.useState([]);
-  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
+  const [pagination, setPagination] = React.useState(initialPagination);
+  const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
   const [loading, setLoading] = React.useState(true);
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
   const [searchField, setSearchField] = React.useState("");
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
   const { enqueueSnackbar } = useSnackbar();
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
-    serverLoadRecords();
-  }, [paginationConfig]);
-
-  const serverLoadRecords = () => {
-
     const limit = paginationConfig.limit;
     const search = paginationConfig.search;
     const page = paginationConfig.page;
     const order_by = paginationConfig.order_by;
     const filter = paginationConfig.filter;
 
-    AxiosApi.get(`/api/plans-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+    axios.get(`/api/plans-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
-
         setLoading(false);
         setRecords(response.data.records);
         setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -97,22 +69,16 @@ export const FlightPlansPanel = () => {
         } else {
           handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
         }
-
       })
       .catch(function (error) {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
+        handleOpenSnackbar(error.response.data.message, "error");
         setLoading(false);
         setRecords([]);
         setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
       });
-  }
+  }, [paginationConfig]);
 
-  const handleTablePageChange = (event, value) => {
-
+  function handleTablePageChange(event, value) {
     setPaginationConfig({
       page: value + 1,
       limit: paginationConfig.limit,
@@ -121,11 +87,9 @@ export const FlightPlansPanel = () => {
       total_records: 0,
       filter: 0
     });
+  }
 
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-
+  function handleChangeRowsPerPage(event) {
     setPaginationConfig({
       page: 1,
       limit: event.target.value,
@@ -134,12 +98,10 @@ export const FlightPlansPanel = () => {
       total_records: 0,
       filter: 0
     });
+  }
 
-  };
-
-  const handleSearchSubmit = (event) => {
+  function handleSearchSubmit(event) {
     event.preventDefault();
-
     setPaginationConfig({
       page: 1,
       limit: paginationConfig.limit,
@@ -148,20 +110,14 @@ export const FlightPlansPanel = () => {
       total_records: 0,
       filter: 0
     });
-
   }
 
-  const reloadTable = () => {
-
+  function reloadTable() {
     setSelectedRecordIndex(null);
 
     setLoading(true);
     setRecords([]);
-    setPagination({
-      total_records: 0,
-      records_per_page: 0,
-      total_pages: 0
-    });
+    setPagination(initialPagination);
 
     setPaginationConfig({
       page: 1,
@@ -171,61 +127,49 @@ export const FlightPlansPanel = () => {
       total_records: 0,
       filter: 0
     });
-
   }
 
-  const handleClickRadio = (event) => {
-
+  function handleClickRadio(event) {
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
-
   }
 
-  const handleDownloadFlightPlan = ((filename) => {
-
-    AxiosApi.get(`/api/plans-module-download/${filename}`, null, {
+  function handleDownloadFlightPlan(filename) {
+    axios.get(`/api/plans-module-download/${filename}`, null, {
       responseType: 'blob'
     })
       .then(function (response) {
+        handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
 
-        if (response.status === 200) {
-
-          handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
-
-          // Download forçado do arquivo com o conteúdo retornado do servidor
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement('a');
-          link.href = url;
-          link.setAttribute('download', `${filename}`); //or any other extension
-          document.body.appendChild(link);
-          link.click();
-
-        }
-
+        // Download forçado do arquivo com o conteúdo retornado do servidor
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${filename}`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
       })
       .catch(function () {
-
         handleOpenSnackbar(`O download não foi realizado! Arquivo: ${filename}`, "error");
-
       });
+  }
 
-  });
-
-  const handleClick = (event) => {
+  function handleClick(event) {
     setAnchorEl(event.currentTarget);
   }
-  const handleClose = () => {
+
+  function handleClose() {
     setAnchorEl(null);
   }
 
-  const handleOpenSnackbar = (text, variant) => {
+  function handleOpenSnackbar(text, variant) {
     enqueueSnackbar(text, { variant });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
 
   return (

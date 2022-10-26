@@ -39,13 +39,6 @@ class EquipmentModuleBatteryPanelController extends Controller
         return $this->service->createResource($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
     }
 
-    public function show($id): \Illuminate\Http\Response
-    {
-        Gate::authorize("equipments_read");
-
-        //
-    }
-
     public function update(UpdateBatteryRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");

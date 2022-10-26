@@ -52,17 +52,6 @@ class FlightPlanModuleLogController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id): \Illuminate\Http\Response
-    {
-        Gate::authorize('flight_plans_read');
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -72,7 +61,7 @@ class FlightPlanModuleLogController extends Controller
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-       
+
         return $this->service->updateResource($request->only(["name", "flight_plan_id", "service_order_id"]), $id);
     }
 

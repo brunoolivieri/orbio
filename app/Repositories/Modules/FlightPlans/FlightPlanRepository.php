@@ -46,7 +46,7 @@ class FlightPlanRepository implements RepositoryInterface
 
         Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
 
-        return response($flight_plan, 200);
+        return $flight_plan;
     }
 
     function updateOne(Collection $data, string $identifier)
@@ -57,7 +57,7 @@ class FlightPlanRepository implements RepositoryInterface
 
         $flight_plan->refresh();
 
-        return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
+        return $flight_plan;
     }
 
     function deleteOne(string $identifier)
@@ -75,7 +75,7 @@ class FlightPlanRepository implements RepositoryInterface
 
             $flight_plan->delete();
 
-            response(["message" => "Plano de voo deletado com sucesso!"], 200);
+            return $flight_plan;
         });
     }
 }

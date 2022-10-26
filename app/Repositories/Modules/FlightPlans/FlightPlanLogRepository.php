@@ -31,25 +31,24 @@ class FlightPlanLogRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-
         DB::transaction(function () use ($data) {
 
-            $this->logModel->create([
+            $log = $this->logModel->create([
                 "name" => $data->get("name"),
                 "filename" => $data->get("filename"),
                 "path" => $data->get("path"),
                 "timestamp" => $data->get("timestamp")
             ]);
-        });
 
-        Storage::disk('public')->put($data->get("path"), $data->get('file_content'));
+            Storage::disk('public')->put($data->get("path"), $data->get('file_content'));
+        });
     }
 
     function updateOne(Collection $data, string $identifier)
     {
         $log = $this->logModel->findOrFail($identifier);
-        
-        $service_order_flight_plan = $this->serviceOrderFlightPlanModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
+
+        $service_order_flight_plan = $this->serviceOrderFlightPlanModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->firstOrFail();
 
         $log->update([
             "name" => $data->get("name"),
@@ -58,7 +57,7 @@ class FlightPlanLogRepository implements RepositoryInterface
 
         $log->refresh();
 
-        return response(["message" => "Log atualizado com sucesso!"], 200);
+        return $log;
     }
 
     function deleteOne(string $identifier)
@@ -67,6 +66,6 @@ class FlightPlanLogRepository implements RepositoryInterface
 
         $log->delete();
 
-        return response(["message" => "Log deletado com sucesso!"], 200);
+        return $log;
     }
 }

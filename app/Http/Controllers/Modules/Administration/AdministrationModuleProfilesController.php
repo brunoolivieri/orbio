@@ -41,12 +41,6 @@ class AdministrationModuleProfilesController extends Controller
         return response(["message" => "Perfil criado com sucesso!"], 201);
     }
 
-    public function show($id)
-    {
-        Gate::authorize('administration_read');
-        //
-    }
-
     public function update(ProfilePanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');

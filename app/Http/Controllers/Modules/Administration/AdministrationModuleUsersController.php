@@ -38,12 +38,6 @@ class AdministrationModuleUsersController extends Controller
         return $this->service->createResource($request->validated());
     }
 
-    public function show()
-    {
-        Gate::authorize('administration_read');
-        //
-    }
-
     public function update(UserPanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
