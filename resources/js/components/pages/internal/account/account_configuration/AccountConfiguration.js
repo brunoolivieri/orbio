@@ -2,6 +2,7 @@
 import * as React from 'react';
 // Material UI
 import { Tooltip, Typography, IconButton, Grid, TextField, Button, Paper, Stack, Divider, Card, CardContent, Box } from '@mui/material';
+import styled from '@emotion/styled';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +16,6 @@ import { GenericModalDialog } from '../../../../structures/modals/dialog/Generic
 import AlertImage from "../../../../assets/images/Alert/Alert_md.png";
 // Libs
 import { useSnackbar } from 'notistack';
-import styled from '@emotion/styled';
 
 const PaperStyled = styled(Paper)({
     boxShadow: 'none',
@@ -29,6 +29,9 @@ const initialControlledInput = {
     new_password_confirmation: ""
 }
 
+const initialFieldError = { actual_password: false, new_password: false, new_password_confirmation: false };
+const initialFieldErrorMessage = { actual_password: "", new_password: "", new_password_confirmation: "" };
+
 export const AccountConfiguration = () => {
 
     // ============================================================================== STATES ============================================================================== //
@@ -38,8 +41,8 @@ export const AccountConfiguration = () => {
     const [sessions, setSessions] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [updateLoading, setUpdateLoading] = React.useState(false);
-    const [fieldError, setFieldError] = React.useState({ actual_password: false, new_password: false, new_password_confirmation: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ actual_password: "", new_password: "", new_password_confirmation: "" });
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
@@ -117,12 +120,10 @@ export const AccountConfiguration = () => {
         }
 
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -153,11 +154,11 @@ export const AccountConfiguration = () => {
             });
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    const handleOpenSnackbar = (text, variant) => {
+    function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
     }
 

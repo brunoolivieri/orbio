@@ -13,7 +13,7 @@ import { Button } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import AxiosApi from "../../../../../services/AxiosApi";
+import axios from "../../../../../services/AxiosApi";
 import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { AutoCompleteCity } from '../../../../structures/input_select/AutoCompleteCity';
@@ -21,58 +21,45 @@ import { AutoCompleteState } from '../../../../structures/input_select/AutoCompl
 // Libs
 import { useSnackbar } from 'notistack';
 
+const initialControlledInput = {
+    anac_license: "Carregando",
+    cpf: "Carregando",
+    cnpj: "Carregando",
+    telephone: "Carregando",
+    cellphone: "Carregando",
+    company_name: "Carregando",
+    trading_name: "Carregando",
+    address: "Carregando",
+    number: "Carregando",
+    cep: "Carregando",
+    complement: "Carregando"
+};
+
+const initialFieldError = { anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false };
+const initialFieldErrorMessage = { anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" };
+
 export const ComplementaryDataPanel = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState({
-        anac_license: "Carregando",
-        cpf: "Carregando",
-        cnpj: "Carregando",
-        telephone: "Carregando",
-        cellphone: "Carregando",
-        company_name: "Carregando",
-        trading_name: "Carregando",
-        address: "Carregando",
-        number: "Carregando",
-        cep: "Carregando",
-        complement: "Carregando"
-    });
-
+    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [addressUpdateLoading, setAddressUpdateLoading] = React.useState(false);
     const [documentUpdateLoading, setDocumentUpdateLoading] = React.useState(false);
     const [loadingFields, setLoadingFields] = React.useState(true);
-    const [fieldError, setFieldError] = React.useState({ anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" });
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
     const [keyPressed, setKeyPressed] = React.useState(null);
     const [selectedState, setSelectedState] = React.useState(null);
     const [selectedCity, setSelectedCity] = React.useState(null);
-
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
+        setControlledInput(initialControlledInput);
 
-        setControlledInput({
-            anac_license: "Carregando",
-            cpf: "Carregando",
-            cnpj: "Carregando",
-            telephone: "Carregando",
-            cellphone: "Carregando",
-            company_name: "Carregando",
-            trading_name: "Carregando",
-            address: "Carregando",
-            number: "Carregando",
-            cep: "Carregando",
-            complement: "Carregando"
-        });
-
-        AxiosApi.get("/api/load-complementary-account-data")
+        axios.get("/api/load-complementary-account-data")
             .then(function (response) {
-
-                //console.log(response.data)
-
                 setLoadingFields(false);
                 setAddressUpdateLoading(false);
                 setDocumentUpdateLoading(false);
@@ -91,10 +78,8 @@ export const ComplementaryDataPanel = React.memo(() => {
                     state: response.data.address.state,
                     complement: response.data.address.complement ? response.data.address.complement : ""
                 });
-
             })
-            .catch(function () {
-
+            .catch(function (error) {
                 setLoadingFields(false);
                 setAddressUpdateLoading(false);
                 setDocumentUpdateLoading(false);
@@ -111,44 +96,34 @@ export const ComplementaryDataPanel = React.memo(() => {
                     cep: "Erro",
                     complement: "Erro"
                 });
-                handleOpenSnackbar("Erro no carregamento dos dados.", "error");
-
+                handleOpenSnackbar(error.response.data.message, "error");
             });
 
     }, [loadingFields]);
 
-    const handleDocumentsSubmitForm = (event) => {
-        event.preventDefault();
-
-        if (documentFormularyDataValidation()) {
+    function handleDocumentsSubmitForm(e) {
+        e.preventDefault();
+        if (documentFormValidation()) {
             setDocumentUpdateLoading(true);
             documentsRequestServerOperation();
         }
-
     }
 
-    const handleAddressSubmitForm = (event) => {
-        event.preventDefault();
-
-        if (addressFormularyDataValidation()) {
+    function handleAddressSubmitForm(e) {
+        e.preventDefault();
+        if (addressFormValidation()) {
             setAddressUpdateLoading(true);
             addressRequestServerOperation();
         }
-
     }
 
-    const documentFormularyDataValidation = () => {
+    function documentFormValidation() {
 
-        const anacLicensePattern = /^\d{6}$/;
-        const cpfPattern = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
-        const cnpjPattern = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/;
-        const phonePattern = /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/;
-
-        const anacLicenseValidate = FormValidation(controlledInput.anac_license, 3, null, anacLicensePattern, "HABILITAÇÃO ANAC");
-        const cpfValidate = FormValidation(controlledInput.cpf, null, null, cpfPattern, "CPF");
-        const cnpjValidate = FormValidation(controlledInput.cnpj, null, null, cnpjPattern, "CNPJ");
-        const telephoneValidate = FormValidation(controlledInput.telephone, null, null, phonePattern, "NÚMERO DE TELEFONE");
-        const cellphoneValidate = FormValidation(controlledInput.cellphone, null, null, phonePattern, "NÚMERO DE CELULAR");
+        const anacLicenseValidate = FormValidation(controlledInput.anac_license, 3, null, /^\d{6}$/, "HABILITAÇÃO ANAC");
+        const cpfValidate = FormValidation(controlledInput.cpf, null, null, /^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF");
+        const cnpjValidate = FormValidation(controlledInput.cnpj, null, null, /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, "CNPJ");
+        const telephoneValidate = FormValidation(controlledInput.telephone, null, null, /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/, "NÚMERO DE TELEFONE");
+        const cellphoneValidate = FormValidation(controlledInput.cellphone, null, null, /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/, "NÚMERO DE CELULAR");
         const companyNameValidate = FormValidation(controlledInput.company_name, 3);
         const tradingNameValidate = FormValidation(controlledInput.trading_name, 3);
 
@@ -192,14 +167,11 @@ export const ComplementaryDataPanel = React.memo(() => {
 
     }
 
-    const addressFormularyDataValidation = () => {
-
-        const adressNumberPattern = /^\d+$/;
-        const cepPattern = /^[0-9]{5}-[0-9]{3}$/;
+    function addressFormValidation() {
 
         const addressValidate = FormValidation(controlledInput.address, 3);
-        const numberValidate = FormValidation(controlledInput.number, null, null, adressNumberPattern, "NÚMERO DE ENDEREÇO");
-        const cepValidate = FormValidation(controlledInput.cep, null, null, cepPattern, "CEP");
+        const numberValidate = FormValidation(controlledInput.number, null, null, /^\d+$/, "NÚMERO DE ENDEREÇO");
+        const cepValidate = FormValidation(controlledInput.cep, null, null, /^[0-9]{5}-[0-9]{3}$/, "CEP");
         const cityValidate = selectedCity != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
         const stateValidate = selectedState != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
         const complementValidate = FormValidation(controlledInput.complement);
@@ -243,9 +215,8 @@ export const ComplementaryDataPanel = React.memo(() => {
         return !(addressValidate.error || numberValidate.error || cepValidate.error || cityValidate.error || stateValidate.error || complementValidate.error);
     }
 
-    const documentsRequestServerOperation = () => {
-
-        AxiosApi.patch("/api/update-documents-data", {
+    function documentsRequestServerOperation() {
+        axios.patch("/api/update-documents-data", {
             complementary_data_id: controlledInput.complementary_data_id,
             address_id: controlledInput.address_id,
             anac_license: controlledInput.anac_license,
@@ -257,24 +228,18 @@ export const ComplementaryDataPanel = React.memo(() => {
             trading_name: controlledInput.trading_name
         })
             .then(function (response) {
-
                 setDocumentUpdateLoading(false);
                 setLoadingFields(true);
                 handleOpenSnackbar(response.data.message, "success");
-
             })
             .catch(function (error) {
-
                 setDocumentUpdateLoading(false);
                 documentsErrorRequestServerOperation(error.response);
-
             });
-
     }
 
-    const addressRequestServerOperation = () => {
-
-        AxiosApi.patch("/api/update-address-data", {
+    function addressRequestServerOperation() {
+        axios.patch("/api/update-address-data", {
             address: controlledInput.address,
             number: controlledInput.number,
             cep: controlledInput.cep,
@@ -295,15 +260,11 @@ export const ComplementaryDataPanel = React.memo(() => {
                 addressErrorRequestServerOperation(error.response);
 
             });
-
     }
 
-    const documentsErrorRequestServerOperation = (response) => {
+    function documentsErrorRequestServerOperation(response) {
+        handleOpenSnackbar(response.data.message, "error");
 
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {
             anac_license: { error: false, message: null },
             cpf: { error: false, message: null },
@@ -314,14 +275,11 @@ export const ComplementaryDataPanel = React.memo(() => {
             trading_name: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -359,12 +317,9 @@ export const ComplementaryDataPanel = React.memo(() => {
 
     }
 
-    const addressErrorRequestServerOperation = (response) => {
+    function addressErrorRequestServerOperation(response) {
+        handleOpenSnackbar(response.data.message, "error");
 
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {
             address: { error: false, message: null },
             number: { error: false, message: null },
@@ -374,14 +329,11 @@ export const ComplementaryDataPanel = React.memo(() => {
             complement: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -417,20 +369,20 @@ export const ComplementaryDataPanel = React.memo(() => {
         });
     }
 
-    const reloadFormulary = () => {
+    function reloadFormulary() {
         setLoadingFields(true);
     }
 
-    const handleInputChange = (event) => {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    function handleInputChange(e) {
+        setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
     }
 
 
-    const handleInputSetMask = (event) => {
-        InputMask(event, keyPressed);
+    function handleInputSetMask(e) {
+        InputMask(e, keyPressed);
     }
 
-    const handleOpenSnackbar = (text, variant) => {
+    function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
     }
 
@@ -439,7 +391,6 @@ export const ComplementaryDataPanel = React.memo(() => {
     return (
         <>
             <Grid container spacing={1} alignItems="center">
-
                 <Grid item>
                     <Tooltip title="Carregar">
                         <IconButton onClick={reloadFormulary}>
@@ -447,7 +398,6 @@ export const ComplementaryDataPanel = React.memo(() => {
                         </IconButton>
                     </Tooltip>
                 </Grid>
-
             </Grid>
 
             <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >

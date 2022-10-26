@@ -1,76 +1,63 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import { Box } from '@mui/system';
-import { Paper } from '@mui/material';
-import { Button } from '@mui/material';
+import { Tooltip, IconButton, Grid, TextField, Box, Paper, Button } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import AxiosApi from "../../../../../services/AxiosApi";
+import axios from "../../../../../services/AxiosApi";
 import { FormValidation } from '../../../../../utils/FormValidation';
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
+const initialControlledInput = { name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" };
+const errorControlledInput = { name: "Erro", email: "Erro", profile: "Erro", last_access: "Erro", last_update: "Erro" };
+const initialFieldError = { name: false, email: false };
+const initialFieldErrorMessage = { name: "", email: "" };
+
 export const BasicDataPanel = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
+    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [updateLoading, setUpdateLoading] = React.useState(false);
     const [loadingFields, setLoadingFields] = React.useState(true);
-    const [fieldError, setFieldError] = React.useState({ name: false, email: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "" });
-
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-
-        setControlledInput({ name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" });
-
-        AxiosApi.get("/api/load-basic-account-data")
+        setControlledInput(initialControlledInput);
+        axios.get("/api/load-basic-account-data")
             .then(function (response) {
-
                 setLoadingFields(false);
                 setUpdateLoading(false);
                 setControlledInput({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD-MM-YYYY hh:mm') });
-
             })
-            .catch(function () {
-
+            .catch(function (error) {
                 setLoadingFields(false);
                 setUpdateLoading(false);
-                setControlledInput({ name: "Erro", email: "Erro", profile: "Erro", last_access: "Erro", last_update: "Erro" });
-                handleOpenSnackbar("Erro no carregamento dos dados.", "error");
-
+                setControlledInput(errorControlledInput);
+                handleOpenSnackbar(error.response.data.message, "error");
             });
 
     }, [loadingFields]);
 
-    const handleSubmitBasicDataForm = (event) => {
+    function handleSubmitBasicDataForm(event) {
         event.preventDefault();
-
-        if (formularyDataValidation()) {
+        if (formValidation()) {
             setUpdateLoading(true);
             requestServerOperation();
         }
-
     }
 
-    const formularyDataValidation = () => {
-
-        const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
+    function formValidation() {
         const nameValidate = FormValidation(controlledInput.name, 3);
-        const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+        const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
 
         setFieldError({ name: nameValidate.error, email: emailValidate.error });
         setFieldErrorMessage({ name: nameValidate.message, email: emailValidate.message });
@@ -79,14 +66,12 @@ export const BasicDataPanel = React.memo(() => {
 
     }
 
-    const requestServerOperation = () => {
-
+    function requestServerOperation() {
         const body_data = {
             name: controlledInput.name,
             email: controlledInput.email
         }
-
-        AxiosApi.patch(`/api/update-basic-data`, body_data)
+        axios.patch(`/api/update-basic-data`, body_data)
             .then(function (response) {
                 setUpdateLoading(false);
                 setLoadingFields(true);
@@ -98,25 +83,19 @@ export const BasicDataPanel = React.memo(() => {
             });
     }
 
-    const serverErrorResponseTreatment = (response) => {
+    function serverErrorResponseTreatment(response) {
+        handleOpenSnackbar(response.data.message, "error");
 
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {
             name: { error: false, message: null },
             email: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -131,15 +110,15 @@ export const BasicDataPanel = React.memo(() => {
 
     }
 
-    const reloadFormulary = () => {
+    function reloadFormulary() {
         setLoadingFields(true);
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    const handleOpenSnackbar = (text, variant) => {
+    function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
     }
 
@@ -147,9 +126,7 @@ export const BasicDataPanel = React.memo(() => {
 
     return (
         <>
-
             <Grid container spacing={1} alignItems="center">
-
                 <Grid item>
                     <Tooltip title="Carregar">
                         <IconButton onClick={reloadFormulary}>
@@ -157,7 +134,6 @@ export const BasicDataPanel = React.memo(() => {
                         </IconButton>
                     </Tooltip>
                 </Grid>
-
             </Grid>
 
             < Box component="form" noValidate onSubmit={handleSubmitBasicDataForm} sx={{ mt: 2 }} >
@@ -237,11 +213,8 @@ export const BasicDataPanel = React.memo(() => {
                     <Button type="submit" variant="contained" color="primary" disabled={updateLoading || loadingFields} sx={{ mt: 2 }}>
                         {updateLoading ? "Processando..." : "Atualizar"}
                     </Button>
-
                 </Paper>
             </Box>
-
-
         </>
     );
 

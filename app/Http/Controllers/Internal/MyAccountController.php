@@ -5,19 +5,26 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-// Custom
-use App\Models\Users\User;
-use App\Models\PersonalDocuments\PersonalDocument;
-use App\Models\Addresses\Address;
-use App\Http\Requests\UserAccount\UpdateBasicDataRequest;
-use App\Http\Requests\UserAccount\UpdateDocumentsRequest;
-use App\Http\Requests\UserAccount\UpdateAddressRequest;
-use App\Http\Requests\UserAccount\UpdatePasswordRequest;
-use App\Notifications\Account\BasicDataUpdatedNotification;
-use App\Notifications\Account\DocumentsUpdatedNotification;
-use App\Notifications\Account\AddressUpdatedNotification;
-use App\Notifications\Auth\ChangePasswordNotification;
-use App\Notifications\Modules\Administration\User\UserDisabledNotification;
+use App\Models\{
+    Users\User,
+    PersonalDocuments\PersonalDocument,
+    Addresses\Address
+};
+use App\Http\Requests\UserAccount\{
+    UpdateBasicDataRequest,
+    UpdateDocumentsRequest,
+    UpdateAddressRequest,
+    UpdatePasswordRequest
+};
+use App\Notifications\Account\{
+    BasicDataUpdatedNotification,
+    DocumentsUpdatedNotification,
+    AddressUpdatedNotification
+};
+use App\Notifications\{
+    Auth\ChangePasswordNotification,
+    Modules\Administration\User\UserDisabledNotification
+};
 
 class MyAccountController extends Controller
 {
