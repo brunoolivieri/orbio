@@ -1,19 +1,14 @@
 // React
 import * as React from 'react';
-// Custom
-import { FormValidation } from '../../../../utils/FormValidation';
-import AxiosApi from '../../../../services/AxiosApi';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
+import { Button, TextField, Grid, Box, Container, Typography } from '@mui/material';
 import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSnackbar } from 'notistack';
+// Custom
+import { FormValidation } from '../../../../utils/FormValidation';
+import axios from '../../../../services/AxiosApi';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsersGear } from '@fortawesome/free-solid-svg-icons';
@@ -31,180 +26,115 @@ const useStyles = makeStyles((theme) => ({
 
 export const ForgotPassword = () => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== VARIABLES ============================================================================== //
 
     const [controlledInput, setControlledInput] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" });
-
-    const [fieldError, setFieldError] = React.useState({ email: false, code: false, new_password: false, new_password_confirmation: false }); // State para o efeito de erro - true ou false
-    const [fieldErrorMessage, setFiedlErrorMessage] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
-
+    const [fieldError, setFieldError] = React.useState({ email: false, code: false, new_password: false, new_password_confirmation: false });
+    const [fieldErrorMessage, setFiedlErrorMessage] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" });
     const [codeSent, setCodeSent] = React.useState(false);
-
-    const [codeTimer, setTimer] = React.useState(0);
-
+    const [timer, setTimer] = React.useState(0);
     const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
-
     const classes = useStyles();
-
-    // Context do snackbar
     const { enqueueSnackbar } = useSnackbar();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== ROUTINES ============================================================================== //
 
-    const handleCodeSubmit = (event) => {
-        event.preventDefault();
-
-        if (formularyDataValidate("SEND_CODE")) {
-
+    function handleCodeSubmit(e) {
+        e.preventDefault();
+        if (formSendCodeValidation()) {
             setLoading({ send_code: true, change_password: false });
             sendCodeServerRequest();
-
         }
-
     }
 
-    const handleChangePasswordSubmit = (event) => {
-        event.preventDefault();
-
-        if (formularyDataValidate("CHANGE_PASSWORD")) {
-
+    function handleChangePasswordSubmit(e) {
+        e.preventDefault();
+        if (formChangePasswordValidation()) {
             setLoading({ send_code: false, change_password: true });
             changePasswordServerRequest();
-
         }
+    }
+
+    function formSendCodeValidation() {
+
+        const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
+
+        setFieldError({ email: emailValidate.error, code: false, new_password: false, new_password_confirmation: false });
+        setFiedlErrorMessage({ email: emailValidate.message, code: false, new_password: false, new_password_confirmation: false });
+
+        return !emailValidate.error;
 
     }
 
-    const formularyDataValidate = (formulary) => {
+    function formChangePasswordValidation() {
 
-        if (formulary === "SEND_CODE") {
+        const codeValidate = controlledInput.code.length == 10 ? { error: false, message: "" } : { error: true, message: "código inválido" };
+        const passwordValidate = FormValidation(controlledInput.new_password, 8, null, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "senha");
+        const passwordConfirmValidate = controlledInput.new_password == controlledInput.new_password_confirmation ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
 
-            const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-            const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+        setFieldError({ email: false, code: codeValidate.error, new_password: passwordValidate.error, new_password_confirmation: passwordConfirmValidate.error });
+        setFiedlErrorMessage({ email: "", code: codeValidate.message, new_password: passwordValidate.message, new_password_confirmation: passwordConfirmValidate.message });
 
-            setFieldError({ email: emailValidate.error, code: false, new_password: false, new_password_confirmation: false });
-            setFiedlErrorMessage({ email: emailValidate.message, code: false, new_password: false, new_password_confirmation: false });
-
-            return !emailValidate.error;
-
-        } else if (formulary === "CHANGE_PASSWORD") {
-
-            const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-
-            const codeValidate = controlledInput.code.length == 10 ? { error: false, message: "" } : { error: true, message: "código inválido" };
-            const passwordValidate = FormValidation(controlledInput.new_password, 8, null, passwordPattern, "senha");
-            const passwordConfirmValidate = controlledInput.new_password == controlledInput.new_password_confirmation ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
-
-            setFieldError({ email: false, code: codeValidate.error, new_password: passwordValidate.error, new_password_confirmation: passwordConfirmValidate.error });
-            setFiedlErrorMessage({ email: "", code: codeValidate.message, new_password: passwordValidate.message, new_password_confirmation: passwordConfirmValidate.message });
-
-            return !(codeValidate.error || passwordValidate.error || passwordConfirmValidate.error);
-
-        }
+        return !(codeValidate.error || passwordValidate.error || passwordConfirmValidate.error);
 
     }
 
-    const sendCodeServerRequest = () => {
-
-        AxiosApi.post("/api/auth/password-token", {
+    function sendCodeServerRequest() {
+        axios.post("/api/auth/password-token", {
             email: controlledInput.email
         })
             .then(function (response) {
-
-                setLoading({ send_code: false, change_password: false });
-                sendCodeSuccessServerResponseTreatment(response);
-
+                successSendCodeResponse();
+                handleOpenSnackbar(response.data.message, "success");
             }).catch((error) => {
-
                 setLoading({ send_code: false, change_password: false });
-                sendCodeErrorServerResponseTreatment(error.response);
-
+                errorResponse(error.response);
             });
-
     }
 
-    const changePasswordServerRequest = () => {
-
-        AxiosApi.post("/api/auth/change-password", {
+    function changePasswordServerRequest() {
+        axios.post("/api/auth/change-password", {
             token: controlledInput.code,
             new_password: controlledInput.new_password,
             new_password_confirmation: controlledInput.new_password_confirmation
         })
             .then(function (response) {
-
-                setLoading({ send_code: false, change_password: false });
-                changePasswordSuccessServerResponseTreatment(response);
-
+                successChangePasswordResponse();
+                handleOpenSnackbar(response.data.message, "success");
             }).catch((error) => {
-
                 setLoading({ send_code: false, change_password: false });
-                changePasswordErrorServerResponseTreatment(error.response);
-
+                errorResponse(error.response);
             });
-
     }
 
-    const sendCodeSuccessServerResponseTreatment = (response) => {
-
-        handleOpenSnackbar(response.data.message, "success");
-
-        setTimer(60);
+    function successSendCodeResponse() {
+        setTimer(10);
         setCodeSent(true);
-
+        setLoading({ send_code: false, change_password: false });
     }
 
-    const sendCodeErrorServerResponseTreatment = (response) => {
-
-        handleOpenSnackbar("Erro. Tente novamente.", "error");
-
-        let request_errors = {
-            email: { error: false, message: "" }
-        }
-
-        for (let prop in response.data.errors) {
-
-            request_errors[prop] = {
-                error: true,
-                message: response.data.errors[prop][0]
-            }
-
-        }
-
-        setFieldError({ name: false, email: request_errors.email.error, new_password: false, new_password_confirmation: false });
-        setFiedlErrorMessage({ name: "", email: request_errors.email.message, new_password: "", new_password_confirmation: "" });
-
-    }
-
-    const changePasswordSuccessServerResponseTreatment = (response) => {
-
-        handleOpenSnackbar(response.data.message, "success");
-
+    function successChangePasswordResponse() {
+        setLoading({ send_code: false, change_password: false });
         setTimeout(() => {
             window.location.href = "/login";
         }, 2000);
-
-
     }
 
-    const changePasswordErrorServerResponseTreatment = (response) => {
+    const errorResponse = (response) => {
+        handleOpenSnackbar(response.data.message, "error");
 
-        handleOpenSnackbar("Erro do servidor", "error");
-
-        // Errors by key that can be returned from backend validation 
         let request_errors = {
+            email: { error: false, message: "" },
             token: { error: false, message: "" },
             new_password: { error: false, message: "" },
             new_password_confirmation: { error: false, message: "" }
         }
 
-        // Get errors by their key 
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({ name: request_errors.name.error, email: request_errors.email.error, new_password: request_errors.new_password.error, new_password_confirmation: request_errors.new_password_confirmation.error });
@@ -217,18 +147,19 @@ export const ForgotPassword = () => {
     }
 
     React.useEffect(() => {
-        if (codeTimer > 0) {
-            setTimeout(() => {
-                setTimer(codeTimer - 1);
-            }, 1000);
+        if (timer === 0) {
+            return ''
         }
-    }, [codeTimer]);
+        setTimeout(() => {
+            setTimer((previously) => previously - 1);
+        }, 1000);
+    }, [timer])
 
     function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
@@ -259,7 +190,7 @@ export const ForgotPassword = () => {
                             name="email"
                             autoFocus
                             onChange={handleInputChange}
-                            disabled={codeTimer > 0}
+                            disabled={timer > 0}
                             error={fieldError.email}
                             helperText={fieldErrorMessage.email}
                         />
@@ -270,9 +201,9 @@ export const ForgotPassword = () => {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 1, mb: 2, borderRadius: 5 }}
-                                disabled={codeTimer > 0}
+                                disabled={timer > 0}
                             >
-                                {codeTimer === 0 ? "Enviar código" : codeTimer}
+                                {timer === 0 ? "Enviar código" : timer}
                             </Button>
                         }
 
@@ -289,8 +220,8 @@ export const ForgotPassword = () => {
                                 Enviando código
                             </LoadingButton>
                         }
-
                     </Box>
+                    
                     <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"

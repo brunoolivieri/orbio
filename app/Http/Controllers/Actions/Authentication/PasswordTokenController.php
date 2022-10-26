@@ -21,12 +21,14 @@ class PasswordTokenController extends Controller
         $this->passwordResetModel = $passwordResetModel;
     }
 
-    public function __invoke(PasswordResetTokenRequest $request) : \Illuminate\Http\Response
+    public function __invoke(PasswordResetTokenRequest $request): \Illuminate\Http\Response
     {
         $user = $this->userModel->where("email", $request->email)->with("password_reset")->firstOrFail();
 
         if ($user->trashed()) {
-            return response(["message" => "A conta foi desabilitada!"], 500);
+            return response()->json([
+                "message" => "Conta desabilitada.!"
+            ], 500);
         }
 
         DB::transaction(function () use ($user) {
@@ -35,12 +37,12 @@ class PasswordTokenController extends Controller
                 $user->password_reset()->delete();
             }
 
-            $random_token = Str::random(10);
+            $token = Str::random(10);
 
             $this->passwordResetModel->insert(
                 [
                     "user_id" => $user->id,
-                    "token" => $random_token
+                    "token" => $token
                 ]
             );
 
@@ -49,6 +51,8 @@ class PasswordTokenController extends Controller
             $user->notify(new SendTokenNotification($user));
         });
 
-        return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
+        return response()->json([
+            "message" => "Sucesso! Confira o seu e-mail!"
+        ], 200);
     }
 }

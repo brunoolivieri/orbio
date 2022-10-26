@@ -20,32 +20,27 @@ class LoginController extends Controller
 
     public function __invoke(LoginRequest $request): \Illuminate\Http\Response
     {
-        if (Auth::attempt(["email" => $request->email, "password" => $request->password])) {
-
-            $request->session()->regenerate();
+        if (Auth::attempt(["email" => $request->email, "password" => $request->password, "deleted_at" => null])) {
 
             $user = $this->userModel->find(Auth::user()->id);
 
-            // if user was not deleted
-            if (!$user->trashed()) {
+            $request->session()->regenerate();
 
-                // If is the first login
-                if (!$user->status && is_null($user->last_access)) {
-                    FirstSuccessfulLoginEvent::dispatch($user);
-                }
-
-                LoginSuccessfulEvent::dispatch($user);
-
-                return response(["message" => "Acesso autorizado!"], 200);
-
-                // If user was deleted or just his account is disabled (turned inactive after first access)
-            } else if ($user->trashed()) {
-
-                return response(["message" => "Conta desabilitada. Contate o suporte!"], 500);
+            // If is the first login
+            if (!$user->status && is_null($user->last_access)) {
+                FirstSuccessfulLoginEvent::dispatch($user);
             }
+
+            LoginSuccessfulEvent::dispatch($user);
+
+            return response()->json([
+                "message" => "Acesso autorizado!"
+            ], 200);
         } else {
 
-            return response(["message" => "Credenciais inválidas!"], 500);
+            return response()->json([
+                "message" => "Credenciais inválidas!"
+            ], 500);
         }
     }
 }

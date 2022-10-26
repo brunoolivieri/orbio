@@ -1,21 +1,13 @@
 // React
 import * as React from 'react';
-// Custom
-import AxiosApi from '../../../../services/AxiosApi';
-import { FormValidation } from '../../../../utils/FormValidation';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import { Alert } from '@mui/material';
+import { Button, TextField, FormControlLabel, Checkbox, Paper, Box, Grid, Typography, Alert } from '@mui/material';
 import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+// Custom
+import axios from '../../../../services/AxiosApi';
+import { FormValidation } from '../../../../utils/FormValidation';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
@@ -33,113 +25,85 @@ const useStyles = makeStyles((theme) => ({
 
 export function Login() {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== VARIABLES ============================================================================== //
 
     const [controlledInput, setControlledInput] = React.useState({ email: "", password: "" });
-
-    const [fieldError, setFieldError] = React.useState({ email: false, password: false }); // State para o efeito de erro - true ou false
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ email: "", password: "" }); // State para a mensagem do erro - objeto com mensagens para cada campo
-
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "error", message: "" });
-
+    const [fieldError, setFieldError] = React.useState({ email: false, password: false });
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ email: "", password: "" });
+    const [alert, setAlert] = React.useState({ show: false, type: "error", message: "" });
     const [loading, setLoading] = React.useState(false);
-
     const classes = useStyles();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== ROUTINES ============================================================================== //
 
-    function handleLoginSubmit(event) {
-        event.preventDefault();
-
-        if (formularyDataValidate()) {
-
+    function handleLoginSubmit(e) {
+        e.preventDefault();
+        if (formValidation()) {
             setLoading(true);
             requestServerOperation();
-
         }
-
     }
 
-    function formularyDataValidate() {
+    function formValidation() {
 
-        const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
-        const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+        const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
         const passwordValidate = FormValidation(controlledInput.password);
 
         setFieldError({ email: emailValidate.error, password: passwordValidate.error });
         setFieldErrorMessage({ email: emailValidate.message, password: passwordValidate.message });
 
-        // If its true, return false, and vice-versa
-        return emailValidate.error || passwordValidate.error ? false : true;
+        return !(emailValidate.error || passwordValidate.error);
 
     }
 
     function requestServerOperation() {
-
-        AxiosApi.post("/api/auth/login", {
+        axios.post("/api/auth/login", {
             email: controlledInput.email,
             password: controlledInput.password
         })
             .then(function (response) {
-
-                successServerResponseTreatment(response);
-
+                successResponse(response);
             })
             .catch(function (error) {
-
-                setLoading(false);
-                errorServerResponseTreatment(error.response);
-
+                errorResponse(error.response);
             });
-
     }
 
-    function successServerResponseTreatment(response) {
-
-        setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
+    function successResponse(response) {
+        setAlert({ show: true, type: "success", message: response.data.message });
         setTimeout(() => {
             window.location.href = "/internal";
         }, [1000])
-
     }
 
-    function errorServerResponseTreatment(response) {
+    function errorResponse(response) {
+        setLoading(false);
+        setAlert({ show: true, type: "error", message: response.data.message });
 
-        const message = response.data.message ? response.data.message : "Erro do servidor";
-
-        setDisplayAlert({ display: true, type: "error", message: message });
-
-        // Errors by key that can be returned from backend validation 
         let request_errors = {
             email: { error: false, message: null },
             password: { error: false, message: null }
         }
 
-        // Get errors by their key 
         for (let prop in response.data.errors) {
 
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({ email: request_errors.email.error, password: request_errors.password.error });
         setFieldErrorMessage({ email: request_errors.email.message, password: request_errors.password.message });
-
     }
 
-    const handleInputChange = (event) => {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    function handleInputChange(e) {
+        setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
-
         <>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <Grid
@@ -148,7 +112,7 @@ export function Login() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundColor: "#222",
+                        backgroundColor: "#111",
                         backgroundImage: 'url()',
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'cover',
@@ -171,7 +135,7 @@ export function Login() {
                         </Box>
 
                         <Typography component="h1" variant="h5">
-                            Acessar
+                            Acessar a conta
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
                             <TextField
@@ -206,7 +170,7 @@ export function Login() {
                                     type="submit"
                                     fullWidth
                                     variant="contained"
-                                    sx={{ mt: 1, mb: 2, borderRadius: 5 }}
+                                    sx={{ mt: 1, mb: 2, borderRadius: 2 }}
                                     color="primary"
                                 >
                                     Acessar
@@ -234,8 +198,8 @@ export function Login() {
                                 </Grid>
                             </Grid>
 
-                            {displayAlert.display &&
-                                <Alert severity={displayAlert.type} fullWidth>{displayAlert.message}</Alert>
+                            {alert.show &&
+                                <Alert severity={alert.type} fullWidth>{alert.message}</Alert>
                             }
                         </Box>
                     </Box>

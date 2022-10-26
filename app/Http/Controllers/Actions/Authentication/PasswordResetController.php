@@ -17,7 +17,7 @@ class PasswordResetController extends Controller
         $this->passwordResetModel = $passwordResetModel;
     }
 
-    public function __invoke(UpdatePasswordRequest $request) : \Illuminate\Http\Response
+    public function __invoke(UpdatePasswordRequest $request): \Illuminate\Http\Response
     {
         DB::transaction(function () use ($request) {
 
@@ -32,6 +32,8 @@ class PasswordResetController extends Controller
             $password_reset->user->notify(new ChangePasswordNotification($password_reset->user));
         });
 
-        return response(["message" => "Senha alterada com sucesso!"], 200);
+        return response()->json([
+            "message" => "Senha alterada com sucesso!"
+        ], 200);
     }
 }
