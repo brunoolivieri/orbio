@@ -26,7 +26,7 @@ class ProfileRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        $profile = DB::transaction(function () use ($data) {
+        return DB::transaction(function () use ($data) {
 
             $profile = $this->profileModel->create($data->only(["name"])->all());
 
@@ -40,13 +40,11 @@ class ProfileRepository implements RepositoryInterface
 
             return $profile;
         });
-
-        return $profile;
     }
 
     function updateOne(Collection $data, string $identifier)
     {
-        $profile = DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $identifier) {
 
             $profile = $this->profileModel->findOrFail($identifier);
 
@@ -84,8 +82,6 @@ class ProfileRepository implements RepositoryInterface
 
             return $profile;
         });
-
-        return $profile;
     }
 
     function deleteOne(string $identifier)

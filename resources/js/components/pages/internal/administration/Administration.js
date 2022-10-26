@@ -9,10 +9,9 @@ import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 import { Switcher } from "../../../structures/switcher/Switcher";
 
-export const Administration = React.memo(() => {
+export const Administration = () => {
 
   const [actualPanel, setActualPanel] = React.useState("users");
-  // Context page
   const { setPageIndex } = usePage();
 
   React.useEffect(() => {
@@ -21,7 +20,6 @@ export const Administration = React.memo(() => {
 
   return (
     <>
-
       <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
         <Switcher
           panelStateSetter={setActualPanel}
@@ -39,8 +37,6 @@ export const Administration = React.memo(() => {
 
         </Box>
       </Paper>
-
     </>
   )
-
-});
+}

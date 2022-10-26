@@ -1,37 +1,9 @@
 // React
 import * as React from "react";
-// Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import AxiosApi from "../../../../../services/AxiosApi";
-import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
-import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
-import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
-import LinearProgress from '@mui/material/LinearProgress';
 // Material UI
+import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TableRow, Paper, Checkbox, Stack, TextField, FormGroup, FormControlLabel, InputAdornment, Radio, RadioGroup, FormControl, TablePagination, Menu, MenuItem } from "@mui/material";
 import styled from "@emotion/styled";
-import { Table } from "@mui/material";
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Checkbox from '@mui/material/Checkbox';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import { InputAdornment } from "@mui/material";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControl from '@mui/material/FormControl';
 import { useSnackbar } from 'notistack';
-import TablePagination from '@mui/material/TablePagination';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -41,47 +13,48 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Custom
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
+import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
+import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
+import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
+import LinearProgress from '@mui/material/LinearProgress';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
   fontWeight: 700
 });
 
+const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
+const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
+
 export function ProfilesPanel() {
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [records, setRecords] = React.useState([]);
-  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
+  const [pagination, setPagination] = React.useState(initialPagination);
+  const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
   const [loading, setLoading] = React.useState(true);
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
   const [searchField, setSearchField] = React.useState("");
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
-  // context do snackbar
   const { enqueueSnackbar } = useSnackbar();
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
-    serverLoadRecords();
-  }, [paginationConfig]);
-
-  const serverLoadRecords = () => {
-
     const limit = paginationConfig.limit;
     const search = paginationConfig.search;
     const page = paginationConfig.page;
     const order_by = paginationConfig.order_by;
     const filter = paginationConfig.filter;
 
-    AxiosApi.get(`/api/admin-module-profile?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+    axios.get(`/api/admin-module-profile?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
-
         setLoading(false);
         setRecords(response.data.records);
         setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -91,24 +64,16 @@ export function ProfilesPanel() {
         } else {
           handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
         }
-
       })
       .catch(function (error) {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
+        handleOpenSnackbar(error.response.data.message, "error");
         setLoading(false);
         setRecords([]);
         setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
       });
-
-
-  }
+  }, [paginationConfig]);
 
   const handleTablePageChange = (event, value) => {
-
     setPaginationConfig({
       page: value + 1,
       limit: paginationConfig.limit,
@@ -117,12 +82,10 @@ export function ProfilesPanel() {
       total_records: 0,
       filter: 0
     });
-
   };
 
   function handleSearchSubmit(event) {
     event.preventDefault();
-
     setPaginationConfig({
       page: 1,
       limit: paginationConfig.limit,
@@ -131,17 +94,13 @@ export function ProfilesPanel() {
       total_records: 0,
       filter: 0
     });
-
   }
 
   function reloadTable() {
-
     setSelectedRecordIndex(null);
-
     setLoading(true);
     setRecords([]);
-    setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
+    setPagination(initialPagination);
     setPaginationConfig({
       page: 1,
       limit: paginationConfig.limit,
@@ -154,7 +113,6 @@ export function ProfilesPanel() {
   }
 
   const handleChangeRowsPerPage = (event) => {
-
     setPaginationConfig({
       page: 1,
       limit: event.target.value,
@@ -163,23 +121,21 @@ export function ProfilesPanel() {
       total_records: 0,
       filter: 0
     });
-
   }
 
   function handleClickRadio(event) {
-
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
-
   }
 
-  const handleClick = (event) => {
+  function handleClick(event) {
     setAnchorEl(event.currentTarget);
   }
-  const handleClose = () => {
+
+  function handleClose() {
     setAnchorEl(null);
   }
 
@@ -187,8 +143,7 @@ export function ProfilesPanel() {
     enqueueSnackbar(text, { variant });
   }
 
-
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - COMPONENTES DO MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>

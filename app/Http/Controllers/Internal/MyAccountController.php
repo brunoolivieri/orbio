@@ -37,7 +37,7 @@ class MyAccountController extends Controller
 
     function loadBasicData(): \Illuminate\Http\Response
     {
-        $user = $this->userModel->find(Auth::user()->id);
+        $user = $this->userModel->findOrFail(Auth::user()->id);
 
         return response([
             "name" => $user->name,
@@ -51,7 +51,7 @@ class MyAccountController extends Controller
     function loadComplementaryData(): \Illuminate\Http\Response
     {
 
-        $user = $this->userModel->find(Auth::user()->id);
+        $user = $this->userModel->findOrFail(Auth::user()->id);
 
         return response([
             "complementary" => [
