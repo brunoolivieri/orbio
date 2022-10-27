@@ -7,6 +7,7 @@ import ErrorIcon from '@mui/icons-material/Error';
 import MapIcon from '@mui/icons-material/Map';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
@@ -203,7 +204,7 @@ export const ServiceOrdersPanel = () => {
 
         <Grid item>
           <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
           </IconButton>
         </Grid>
 
@@ -235,6 +236,15 @@ export const ServiceOrdersPanel = () => {
           <MenuItem ><Checkbox /> Inativos </MenuItem>
           <MenuItem ><Checkbox /> Deletados </MenuItem>
         </Menu>
+
+        <Grid item>
+          <Tooltip title="Exportar dados">
+            <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true}
+            >
+              <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["3"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
 
         <Grid item>
           <Tooltip title="Carregar">

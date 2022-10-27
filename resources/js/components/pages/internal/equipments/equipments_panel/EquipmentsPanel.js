@@ -199,7 +199,7 @@ export const EquipmentPanel = React.memo(() => {
 
         <Grid item>
           <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
           </IconButton>
         </Grid>
 

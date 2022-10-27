@@ -6,6 +6,7 @@ import { useSnackbar } from 'notistack';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -196,7 +197,7 @@ export const LogsPanel = () => {
 
                 <Grid item>
                     <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
-                        <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+                        <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
                     </IconButton>
                 </Grid>
 
@@ -227,6 +228,15 @@ export const LogsPanel = () => {
                     <MenuItem ><Checkbox /> Ativos </MenuItem>
                     <MenuItem ><Checkbox /> Desabilitados </MenuItem>
                 </Menu>
+
+                <Grid item>
+                    <Tooltip title="Exportar dados">
+                        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}
+                        >
+                            <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
 
                 <Grid item>
                     <Tooltip title="Carregar">

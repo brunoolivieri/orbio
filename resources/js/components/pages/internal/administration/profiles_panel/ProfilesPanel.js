@@ -4,15 +4,6 @@ import * as React from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TableRow, Paper, Checkbox, Stack, TextField, FormGroup, FormControlLabel, InputAdornment, Radio, RadioGroup, FormControl, TablePagination, Menu, MenuItem } from "@mui/material";
 import styled from "@emotion/styled";
 import { useSnackbar } from 'notistack';
-// Fontsawesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
@@ -20,6 +11,16 @@ import { CreateProfileFormulary } from "../../../../structures/modules/administr
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
 import LinearProgress from '@mui/material/LinearProgress';
+// Fontsawesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { faFilter } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -192,7 +193,7 @@ export function ProfilesPanel() {
 
         <Grid item>
           <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={"#E0E0E0"} size="sm" />
+            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
           </IconButton>
         </Grid>
 
@@ -223,6 +224,15 @@ export function ProfilesPanel() {
           <MenuItem ><Checkbox /> Ativos </MenuItem>
           <MenuItem ><Checkbox /> Desabilitados </MenuItem>
         </Menu>
+
+        <Grid item>
+          <Tooltip title="Exportar dados">
+            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
+            >
+              <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+            </IconButton>
+          </Tooltip>
+        </Grid>
 
         <Grid item>
           <Tooltip title="Carregar">
