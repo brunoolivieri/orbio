@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconBu
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -232,6 +233,15 @@ export const BatteriesPanel = () => {
                     <MenuItem ><Checkbox /> Ativos </MenuItem>
                     <MenuItem ><Checkbox /> Deletados </MenuItem>
                 </Menu>
+
+                <Grid item>
+                    <Tooltip title="Exportar dados">
+                        <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}
+                        >
+                            <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
 
                 <Grid item>
                     <Tooltip title="Carregar">

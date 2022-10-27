@@ -185,7 +185,6 @@ export function ProfilesPanel() {
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(!loading && selectedRecordIndex != null) &&
             <DeleteProfileFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
