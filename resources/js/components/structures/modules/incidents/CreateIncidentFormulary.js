@@ -1,19 +1,6 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
-import Grid from '@mui/material/Grid';
-import FormHelperText from '@mui/material/FormHelperText';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, Grid, FormHelperText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -21,23 +8,27 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 // Custom
 import { DatePicker } from '../../date_picker/DatePicker';
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { SelectExternalData } from '../../input_select/SelectExternalData';
+
+const initialControlledInput = { type: "", description: "", date: moment() };
+const initialFieldError = { name: false, description: false };
+const initialFieldErrorMessage = { name: "", description: "" };
+const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const CreateIncidentFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ type: "", description: "", date: "" });
-  const [fieldError, setFieldError] = React.useState({ flight_plan_id: false, service_order_id: false, date: false, type: false, description: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ flight_plan_id: "", service_order_id: "", date: "", type: "", description: "" });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+  const [fieldError, setFieldError] = React.useState(initialFieldError);
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-
   // Select Inputs
   const [serviceOrdersByFlightPlan, setServiceOrdersByFlightPlan] = React.useState([]);
   const [flightPlans, setFlightPlans] = React.useState([]);
@@ -47,16 +38,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
-
     setOpen(true);
-    setLoading(false);
-
-    setFieldError({ date: false, type: false, description: false });
-    setFieldErrorMessage({ date: "", type: "", description: "" });
-    setDisplayAlert({ display: false, type: "", message: "" });
-    setControlledInput({ type: "", description: "", date: moment() });
-
-    AxiosApi.get("/api/load-flight-plans", {
+    axios.get("/api/load-flight-plans", {
     })
       .then(function (response) {
         setFlightPlans(response.data);
@@ -65,44 +48,41 @@ export const CreateIncidentFormulary = React.memo((props) => {
       })
       .catch(function (error) {
         setLoading(false);
-        errorServerResponseTreatment(error.response);
+        errorResponse(error.response);
       });
   }
 
   const handleClose = () => {
     setOpen(false);
+    setLoading(false);
+    setFieldError(initialFieldError);
+    setFieldErrorMessage(initialFieldErrorMessage);
+    setDisplayAlert(initialDisplatAlert);
+    setControlledInput(initialControlledInput);
   }
 
   React.useEffect(() => {
-
     const url = "/api/load-service-orders-by-flight-plan?flight_plan_id=" + selectedFlightPlan;
-
-    AxiosApi.get(url, {
+    axios.get(url, {
     })
       .then(function (response) {
         setServiceOrdersByFlightPlan(response.data);
       })
       .catch(function (error) {
         setLoading(false);
-        errorServerResponseTreatment(error.response);
+        errorResponse(error.response);
       });
-
   }, [selectedFlightPlan]);
 
   const handleRegistrationSubmit = (event) => {
     event.preventDefault();
-
-    if (formularyDataValidation()) {
-
+    if (formValidation()) {
       setLoading(true);
       requestServerOperation();
-
     }
-
   }
 
-  const formularyDataValidation = () => {
-
+  const formValidation = () => {
     const incidentDateValidate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
     const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
@@ -113,12 +93,10 @@ export const CreateIncidentFormulary = React.memo((props) => {
     setFieldErrorMessage({ flight_plan_id: incidentFlightPlanValidate.message, service_order_id: incidentDateFlightPlanServiceOrderValidate.message, date: incidentDateValidate.message, type: incidentTypeValidate.message, description: incidentNoteValidate.message });
 
     return !(incidentFlightPlanValidate.error || incidentDateFlightPlanServiceOrderValidate.error || incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error);
-
   }
 
   const requestServerOperation = () => {
-
-    AxiosApi.post(`/api/incidents-module`, {
+    axios.post(`/api/incidents-module`, {
       date: moment(controlledInput.date).format('YYYY-MM-DD'),
       type: controlledInput.type,
       description: controlledInput.description,
@@ -126,52 +104,38 @@ export const CreateIncidentFormulary = React.memo((props) => {
       service_order_id: selectedServiceOrder
     })
       .then(function (response) {
-
         setLoading(false);
-        successServerResponseTreatment(response);
-
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response);
-
+        errorResponse(error.response);
       });
-
   }
 
-  const successServerResponseTreatment = (response) => {
-
+  const successResponse = (response) => {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
     setTimeout(() => {
       props.reload_table();
       setLoading(false);
       handleClose();
     }, 2000);
-
   }
 
-  const errorServerResponseTreatment = (response) => {
+  const errorResponse = (response) => {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
-    // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
     let request_errors = {
       date: { error: false, message: null },
       type: { error: false, message: null },
       description: { error: false, message: null }
     }
 
-    // Coleta dos objetos de erro existentes na response
     for (let prop in response.data.errors) {
-
       request_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
-
     }
 
     setFieldError({
@@ -185,7 +149,6 @@ export const CreateIncidentFormulary = React.memo((props) => {
       type: request_errors.type.message,
       description: request_errors.description.message
     });
-
   }
 
   const handleInputChange = (event) => {
@@ -196,7 +159,6 @@ export const CreateIncidentFormulary = React.memo((props) => {
 
   return (
     <>
-
       <Tooltip title="Novo incidente">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}>
           <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
@@ -211,11 +173,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
         maxWidth="md"
       >
         <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
-
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
-
           <DialogContent>
-
             <Grid item container spacing={1}>
 
               <Grid item xs={12}>
@@ -284,9 +243,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
                 />
                 <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
               </Grid>
-
             </Grid>
-
           </DialogContent>
 
           {
@@ -300,12 +257,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box >
-
       </Dialog >
-
     </>
   )
-
 });

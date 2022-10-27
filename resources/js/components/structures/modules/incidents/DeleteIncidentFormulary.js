@@ -1,31 +1,22 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from "@mui/material";
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 
-export function DeleteIncidentFormulary({ ...props }) {
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
+export const DeleteIncidentFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput] = React.useState({ id: props.record.id });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -43,47 +34,33 @@ export function DeleteIncidentFormulary({ ...props }) {
 
   const handleSubmitOperation = (event) => {
     event.preventDefault();
-
     setLoading(false);
     requestServerOperation();
-
   }
 
   const requestServerOperation = () => {
-
-    AxiosApi.delete(`/api/incidents-module/${controlledInput.id}`)
+    axios.delete(`/api/incidents-module/${controlledInput.id}`)
       .then(function (response) {
-
         setLoading(false);
-        successServerResponseTreatment(response);
-
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response);
-
+        errorResponse(error.response);
       });
-
   }
 
-  function successServerResponseTreatment(response) {
-
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
     setTimeout(() => {
       props.reload_table();
       setLoading(false);
       handleClose();
     }, 2000);
-
   }
 
-  function errorServerResponseTreatment(response) {
-
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -104,7 +81,6 @@ export function DeleteIncidentFormulary({ ...props }) {
         maxWidth="md"
       >
         <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
-
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
           <DialogContent>
 
@@ -151,11 +127,8 @@ export function DeleteIncidentFormulary({ ...props }) {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box>
-
       </Dialog>
     </>
   )
-
-}
+});

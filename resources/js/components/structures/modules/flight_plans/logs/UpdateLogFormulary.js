@@ -1,27 +1,18 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
-import FormHelperText from '@mui/material/FormHelperText';
-import Grid from '@mui/material/Grid';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, FormHelperText, Grid, TextField } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { SelectExternalData } from '../../../input_select/SelectExternalData';
+
+const initialFieldError = { name: false, flight_plan_id: false };
+const initialFieldErrorMessage = { name: "", flight_plan_id: "" };
+const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const UpdateLogFormulary = React.memo((props) => {
 
@@ -34,9 +25,9 @@ export const UpdateLogFormulary = React.memo((props) => {
         flight_plan_id: props.record.flight_plan != null ? props.record.flight_plan.id : "0",
         service_order_id: props.record.service_order != null ? props.record.service_order.id : "0"
     });
-    const [fieldError, setFieldError] = React.useState({ name: false, flight_plan_id: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", flight_plan_id: "" });
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
 
     // Select Inputs
@@ -50,11 +41,10 @@ export const UpdateLogFormulary = React.memo((props) => {
     const handleClickOpen = () => {
         setOpen(true);
         setLoading(false);
-        setFieldError({ name: false });
-        setFieldErrorMessage({ name: "" });
-        setDisplayAlert({ display: false, type: "", message: "" });
-
-        AxiosApi.get("/api/load-flight-plans", {
+        setFieldError(initialFieldError);
+        setFieldErrorMessage(initialFieldErrorMessage);
+        setDisplayAlert(initialDisplatAlert);
+        axios.get("/api/load-flight-plans", {
         })
             .then(function (response) {
                 setFlightPlans(response.data);
@@ -63,44 +53,36 @@ export const UpdateLogFormulary = React.memo((props) => {
             })
             .catch(function (error) {
                 setLoading(false);
-                errorServerResponseTreatment(error.response);
+                errorResponse(error.response);
             });
     }
 
     const handleClose = () => {
         setOpen(false);
-    };
+    }
 
     React.useEffect(() => {
-
         const url = "/api/load-service-orders-by-flight-plan?flight_plan_id=" + selectedFlightPlan;
-
-        AxiosApi.get(url, {
+        axios.get(url, {
         })
             .then(function (response) {
                 setServiceOrdersByFlightPlan(response.data);
             })
             .catch(function (error) {
                 setLoading(false);
-                errorServerResponseTreatment(error.response);
+                errorResponse(error.response);
             });
-
     }, [selectedFlightPlan]);
 
     const handleSubmitOperation = (event) => {
         event.preventDefault();
-
-        if (submitedDataValidate()) {
-
+        if (formValidation()) {
             setLoading(true);
             requestServerOperation();
-
         }
-
     }
 
-    const submitedDataValidate = () => {
-
+    const formValidation = () => {
         const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
         const flight_plan_validate = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um plano de voo" };
         const service_order_validate = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: true, message: "Selecione uma ordem de serviço" };
@@ -109,69 +91,50 @@ export const UpdateLogFormulary = React.memo((props) => {
         setFieldErrorMessage({ name: nameValidate.message, flight_plan_id: flight_plan_validate.message, service_order_id: service_order_validate.message });
 
         return !(nameValidate.error || flight_plan_validate.error || service_order_validate.error);
-
     }
 
     const requestServerOperation = () => {
-
         const data = {
             id: controlledInput.id,
             name: controlledInput.name,
             flight_plan_id: selectedFlightPlan,
             service_order_id: selectedServiceOrder
         }
-
-        AxiosApi.patch(`/api/plans-module-logs/${controlledInput.id}`, data)
-            .then(function () {
-
+        axios.patch(`/api/plans-module-logs/${controlledInput.id}`, data)
+            .then(function (response) {
                 setLoading(false);
-                successServerResponseTreatment();
-
+                successResponse(response);
             })
             .catch(function (error) {
-
                 setLoading(false);
-                errorServerResponseTreatment(error.response.data);
-
+                errorResponse(error.response);
             });
-
     }
 
-    const successServerResponseTreatment = () => {
-
-        setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
-
+    const successResponse = (response) => {
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-
             props.record_setter(null);
             props.reload_table();
             setLoading(false);
             handleClose();
-
         }, 2000);
-
     }
 
-    const errorServerResponseTreatment = (response_data) => {
+    const errorResponse = (response) => {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        let error_message = response_data.message ? response_data.message : "Erro do servidor!";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let input_errors = {
             name: { error: false, message: null },
             flight_plan_id: { error: false, message: null },
             service_order_id: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
-        for (let prop in response_data.errors) {
-
+        for (let prop in response.data.errors) {
             input_errors[prop] = {
                 error: true,
-                message: response_data.errors[prop][0]
+                message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -185,7 +148,6 @@ export const UpdateLogFormulary = React.memo((props) => {
             flight_plan_id: input_errors.flight_plan_id.message,
             service_order_id: input_errors.service_order_id.message
         });
-
     }
 
     const handleInputChange = (event) => {
@@ -211,9 +173,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>ATUALIZAÇÃO | RELATÓRIO (ID: {props.record.report_id})</DialogTitle>
-
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-
                     <DialogContent>
 
                         <Grid item container spacing={1}>
@@ -274,7 +234,6 @@ export const UpdateLogFormulary = React.memo((props) => {
                                 />
                                 <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
                             </Grid>
-
                         </Grid>
 
                     </DialogContent>
@@ -289,13 +248,8 @@ export const UpdateLogFormulary = React.memo((props) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog>
-
         </>
-
     );
-
 });

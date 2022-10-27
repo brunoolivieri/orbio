@@ -1,31 +1,23 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
+
+const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const DeleteLogFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
+    const [controlledInput] = React.useState({ id: props.record.id, name: props.record.name });
     const [open, setOpen] = React.useState(false);
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -42,56 +34,38 @@ export const DeleteLogFormulary = React.memo((props) => {
 
     const handleSubmitOperation = (event) => {
         event.preventDefault();
-
-        const data = new FormData(event.currentTarget);
-
-        requestServerOperation(data);
-
+        requestServerOperation();
     }
 
-    function requestServerOperation(data) {
-
-        AxiosApi.delete(`/api/plans-module-logs/${data.get("id")}`)
-            .then(function () {
-
+    function requestServerOperation() {
+        axios.delete(`/api/plans-module-logs/${controlledInput.id}`)
+            .then(function (response) {
                 setLoading(false);
-                successServerResponseTreatment();
-
+                successResponse(response);
             })
             .catch(function (error) {
-
                 setLoading(false);
-                errorServerResponseTreatment(error.response.data);
-
+                errorResponse(error.response.data);
             });
-
     }
 
-    const successServerResponseTreatment = () => {
-
-        setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
-
+    const successResponse = (response) => {
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-
             props.record_setter(null);
             props.reload_table();
             handleClose();
-
         }, 2000);
-
     }
 
-    const errorServerResponseTreatment = (response_data) => {
-        let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Erro do servidor!";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
+    const errorResponse = (response) => {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
 
-    // ============================================================================== STRUCTURES - MUI ============================================================================== //
-
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
-
             <Tooltip title="Deletar">
                 <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
                     <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
@@ -106,10 +80,7 @@ export const DeleteLogFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.record.id})</DialogTitle>
-
-                {/* Formulário da criação/registro do usuário - Componente Box do tipo "form" */}
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-
                     <DialogContent>
 
                         <TextField
@@ -120,7 +91,7 @@ export const DeleteLogFormulary = React.memo((props) => {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            defaultValue={props.record.id}
+                            value={controlledInput.id}
                             InputProps={{
                                 readOnly: true,
                             }}
@@ -132,7 +103,7 @@ export const DeleteLogFormulary = React.memo((props) => {
                             type="text"
                             fullWidth
                             variant="outlined"
-                            defaultValue={props.record.name}
+                            value={controlledInput.name}
                             InputProps={{
                                 inputProps: { min: 0, max: 1 },
                                 readOnly: true
@@ -151,13 +122,8 @@ export const DeleteLogFormulary = React.memo((props) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading}>Confirmar deleção</Button>
                     </DialogActions>
-
                 </Box>
-
-
             </Dialog>
         </>
-
     );
-
 });

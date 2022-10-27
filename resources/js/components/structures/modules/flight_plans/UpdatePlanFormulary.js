@@ -1,34 +1,27 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-export const UpdatePlanFormulary = React.memo(({ ...props }) => {
+const initialFieldError = { name: false, description: false };
+const initialFieldErrorMessage = { name: "", description: "" };
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
+export const UpdatePlanFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
-  const [fieldError, setFieldError] = React.useState({ name: false, description: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", description: "" });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [fieldError, setFieldError] = React.useState(initialFieldError);
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -48,69 +41,49 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
 
   const handleSubmitOperation = (event) => {
     event.preventDefault();
-
-    if (formularyDataValidate()) {
-
+    if (formValidation()) {
       setLoading(true);
       requestServerOperation();
-
     }
-
   }
 
-  const formularyDataValidate = () => {
-
+  const formValidation = () => {
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
-
-    console.log(controlledInput)
 
     setFieldError({ name: nameValidate.error, description: descriptionValidate.error });
     setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message });
 
     return !(nameValidate.error || descriptionValidate.error);
-
   }
 
   const requestServerOperation = () => {
-
-    AxiosApi.patch(`/api/plans-module/${controlledInput.id}`, {
+    axios.patch(`/api/plans-module/${controlledInput.id}`, {
       name: controlledInput.name,
       description: controlledInput.description
     })
       .then(function (response) {
-
         setLoading(false);
-        successServerResponseTreatment(response);
-
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response.data);
-
+        errorResponse(error.response.data);
       });
-
   }
 
-  const successServerResponseTreatment = (response) => {
-
+  const successResponse = (response) => {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
     setTimeout(() => {
       props.record_setter(null);
       props.reload_table();
       setLoading(false);
       handleClose();
     }, 2000);
-
   }
 
-  const errorServerResponseTreatment = (response_data) => {
-    console.log(response_data)
-    const error_message = response_data.message ? response_data.message : "Erro do servidor";
-
-    setDisplayAlert({ display: true, type: "error", message: error_message });
+  const errorResponse = (response_data) => {
+    setDisplayAlert({ display: true, type: "error", message: response_data.message });
 
     let request_errors = {
       name: { error: false, message: null },
@@ -118,12 +91,10 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
     }
 
     for (let prop in response_data.errors) {
-
       request_errors[prop] = {
         error: true,
         message: response_data.errors[prop][0]
       }
-
     }
 
     setFieldError({
@@ -135,7 +106,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
       name: request_errors.name.message,
       description: request_errors.description.message
     });
-
   }
 
   const handleInputChange = (event) => {
@@ -160,7 +130,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
         maxWidth="md"
       >
         <DialogTitle>EDIÇÃO | PLANO DE VOO (ID: {props.record.id})</DialogTitle>
-
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
           <DialogContent>
 
@@ -207,7 +176,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
               helperText={fieldErrorMessage.description}
               error={fieldError.description}
             />
-
           </DialogContent>
 
           {(!loading && displayAlert.display) &&
@@ -220,7 +188,6 @@ export const UpdatePlanFormulary = React.memo(({ ...props }) => {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box>
       </Dialog>
     </>

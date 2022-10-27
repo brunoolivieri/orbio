@@ -1,21 +1,6 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DroneConnectionConfig } from '../../../modals/dialog/DroneConnectionConfig';
@@ -25,6 +10,9 @@ import AxiosApi from '../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
+const initialConnection = { ssid: "EMBRAPA-BV", ip: "201.49.23.53", ssh_port: 22, http_port: 3000 };
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
 export const CreateLogFormulary = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
@@ -32,10 +20,10 @@ export const CreateLogFormulary = React.memo(() => {
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
     const [downloadLoading, setDownloadLoading] = React.useState(false);
-    const [connection, setConnection] = React.useState({ ssid: "EMBRAPA-BV", ip: "201.49.23.53", ssh_port: 22, http_port: 3000 });
+    const [connection, setConnection] = React.useState(initialConnection);
     const [setLogs] = React.useState([]);
     const [selectedLogs, setSelectedLogs] = React.useState([]);
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -51,22 +39,16 @@ export const CreateLogFormulary = React.memo(() => {
             logs: selectedLogs
         })
             .then(function (response) {
-
                 setDownloadLoading(false);
                 setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
                 setTimeout(() => {
                     handleClose();
                 }, 2000);
-
             })
             .catch(function (error) {
-
                 console.log(error)
                 setDownloadLoading(false);
-                const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-                setDisplayAlert({ display: true, type: "error", message: error_message });
-
+                setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
             });
     }
 
@@ -79,11 +61,10 @@ export const CreateLogFormulary = React.memo(() => {
         setOpen(false);
     }
 
-    // ============================================================================== STRUCTURES - MUI ============================================================================== //
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
-
             <Tooltip title="Novo Log">
                 <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
                     <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -98,9 +79,7 @@ export const CreateLogFormulary = React.memo(() => {
                 maxWidth="md"
             >
                 <DialogTitle>DOWNLOAD DE LOG</DialogTitle>
-
                 <Box component="form" noValidate onSubmit={handleDownloadLogs} >
-
                     <DialogContent>
 
                         <DialogContentText sx={{ mb: 2 }}>
@@ -163,9 +142,7 @@ export const CreateLogFormulary = React.memo(() => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={selectedLogs.length === 0 || downloadLoading} variant="contained">Salvar</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog >
         </>
     );

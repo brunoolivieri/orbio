@@ -1,31 +1,24 @@
 // React
 import * as React from 'react';
-// MaterialUI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+// Material UI
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-export function DeleteOrderFormulary(props) {
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
+export const DeleteOrderFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [controlledInput] = React.useState({ id: props.record.id, number: props.record.number, creator: props.record.users.creator.name });
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [disabledButton, setDisabledButton] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -36,66 +29,49 @@ export function DeleteOrderFormulary(props) {
   }
 
   const handleClose = () => {
-    setDisplayAlert({ display: false, type: "", message: "" });
+    setDisplayAlert(initialDisplatAlert);
     setDisabledButton(false);
     setOpen(false);
   }
 
   const handleSubmitOperation = (event) => {
     event.preventDefault();
-
-    const data = new FormData(event.currentTarget);
-
     setDisabledButton(true);
     setLoading(true);
-    requestServerOperation(data);
-
+    requestServerOperation();
   }
 
-  const requestServerOperation = (data) => {
-
-    AxiosApi.delete(`/api/orders-module/${data.get("id")}`)
-      .then(function () {
-
+  const requestServerOperation = () => {
+    axios.delete(`/api/orders-module/${controlledInput.id}`)
+      .then(function (response) {
         setLoading(false);
-        successServerResponseTreatment();
-
+        setDisabledButton(false);
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response.data);
-
+        setDisabledButton(false);
+        errorResponse(error.response);
       });
-
   }
 
-  const successServerResponseTreatment = () => {
-
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
-
+  const successResponse = (response) => {
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-
       props.record_setter(null);
       props.reload_table();
-      setDisabledButton(false);
       handleClose();
-
     }, 2000);
-
   }
 
-  function errorServerResponseTreatment(response_data) {
-    setDisabledButton(false);
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Houve um erro na realização da operação!";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
     <>
-
       <Tooltip title="Deletar">
         <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
@@ -110,9 +86,7 @@ export function DeleteOrderFormulary(props) {
         maxWidth="md"
       >
         <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
-
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-
           <DialogContent>
 
             <TextField
@@ -124,7 +98,7 @@ export function DeleteOrderFormulary(props) {
               required
               id="id"
               name="id"
-              defaultValue={props.record.id}
+              value={controlledInput.id}
               inputProps={{
                 readOnly: true
               }}
@@ -161,7 +135,6 @@ export function DeleteOrderFormulary(props) {
                 readOnly: true
               }}
             />
-
           </DialogContent>
 
           {displayAlert.display &&
@@ -174,12 +147,8 @@ export function DeleteOrderFormulary(props) {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={disabledButton} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box>
       </Dialog>
     </>
-
   );
-
-
-}
+});
