@@ -10,7 +10,7 @@ import moment from 'moment';
 // Custom
 import { DatePicker } from '../../../date_picker/DatePicker';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
 const Input = styled('input')({
@@ -48,14 +48,10 @@ export const CreateEquipmentFormulary = React.memo((props) => {
 
     const handleEquipmentRegistrationSubmit = (event) => {
         event.preventDefault();
-
         if (formularyDataValidate()) {
-
             setLoading(true);
             requestServerOperation();
-
         }
-
     }
 
     const formularyDataValidate = () => {
@@ -99,7 +95,6 @@ export const CreateEquipmentFormulary = React.memo((props) => {
     }
 
     const requestServerOperation = () => {
-
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);
@@ -111,7 +106,7 @@ export const CreateEquipmentFormulary = React.memo((props) => {
         formData.append("image", uploadedImage);
         formData.append("purchase_date", moment(controlledInput.purchase_date).format('YYYY-MM-DD'));
 
-        AxiosApi.post(`/api/equipments-module-equipment`, formData)
+        axios.post(`/api/equipments-module-equipment`, formData)
             .then(function (response) {
 
                 setLoading(false);
@@ -124,27 +119,20 @@ export const CreateEquipmentFormulary = React.memo((props) => {
                 errorServerResponseTreatment(error.response);
 
             });
-
     }
 
     const successServerResponseTreatment = (response) => {
-
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
         setTimeout(() => {
             props.reload_table();
             setLoading(false);
             handleClose();
         }, 2000);
-
     }
 
     const errorServerResponseTreatment = (response) => {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {
             image: { error: false, message: null },
             name: { error: false, message: null },
@@ -157,14 +145,11 @@ export const CreateEquipmentFormulary = React.memo((props) => {
             purchase_date: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -190,27 +175,21 @@ export const CreateEquipmentFormulary = React.memo((props) => {
             observation: request_errors.observation.message,
             purchase_date: request_errors.purchase_date.message
         });
-
     }
 
     const handleUploadedImage = (event) => {
-
         const file = event.currentTarget.files[0];
-
         if (file && file.type.startsWith('image/')) {
-
             htmlImage.current.src = URL.createObjectURL(file);
-
             setUploadedImage(event.target.files[0]);
         }
-
     }
 
     const handleInputChange = (event) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    // ============================================================================== STRUCTURES - MUI ============================================================================== //
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
@@ -228,9 +207,7 @@ export const CreateEquipmentFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>CADASTRO DE EQUIPAMENTO</DialogTitle>
-
                 <Box component="form" noValidate onSubmit={handleEquipmentRegistrationSubmit} >
-
                     <DialogContent>
 
                         <TextField
@@ -361,11 +338,8 @@ export const CreateEquipmentFormulary = React.memo((props) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Criar equipamento</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog>
         </>
     )
-
 });

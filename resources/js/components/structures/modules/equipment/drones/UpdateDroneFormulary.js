@@ -369,9 +369,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog>
         </>
     )

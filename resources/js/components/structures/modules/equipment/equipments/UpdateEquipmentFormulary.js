@@ -57,14 +57,10 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
 
     const handleEquipmentUpdateSubmit = (event) => {
         event.preventDefault();
-
         if (formValidation()) {
-
             setLoading(true);
             requestServerOperation();
-
         }
-
     }
 
     const formValidation = () => {
@@ -219,9 +215,7 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
-
                 <Box component="form" noValidate onSubmit={handleEquipmentUpdateSubmit} >
-
                     <DialogContent>
 
                         <TextField

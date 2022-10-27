@@ -27,7 +27,7 @@ export const DeleteEquipmentFormulary = React.memo((props) => {
     }
 
     const handleClose = () => {
-        setDisplayAlert({ display: false, type: "", message: "" });
+        setDisplayAlert(initialDisplatAlert);
         setLoading(false);
         setOpen(false);
     }
@@ -81,9 +81,7 @@ export const DeleteEquipmentFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>DELEÇÃO | ID: {props.record.id}</DialogTitle>
-
                 <Box component="form" noValidate onSubmit={handleEquipmentDeleteSubmit} >
-
                     <DialogContent>
 
                         <TextField
