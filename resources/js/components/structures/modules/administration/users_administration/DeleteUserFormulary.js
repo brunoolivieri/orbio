@@ -1,24 +1,14 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import { DialogContentText } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
+
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
@@ -27,67 +17,53 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   const { AuthData } = useAuthentication();
   const [controlledInput] = React.useState({ id: props.record.id });
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  const handleClose = () => {
-    setDisplayAlert({ display: false, type: "", message: "" });
+  function handleClose() {
+    setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
+  function handleSubmitOperation(event) {
     event.preventDefault();
-
     setLoading(true);
     requestServerOperation();
-
   }
 
-  const requestServerOperation = () => {
-
-    AxiosApi.delete(`/api/admin-module-user/${controlledInput.id}`)
+  function requestServerOperation() {
+    axios.delete(`/api/admin-module-user/${controlledInput.id}`)
       .then(function (response) {
-
         setLoading(false);
-        successServerResponseTreatment(response);
-
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response);
-
+        errorResponse(error.response);
       });
-
   }
 
-  const successServerResponseTreatment = (response) => {
-
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
     setTimeout(() => {
       props.record_setter(null);
       props.reload_table();
       handleClose();
     }, 2000);
-
   }
 
-  const errorServerResponseTreatment = (response) => {
-
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
@@ -154,11 +130,8 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box>
       </Dialog>
     </>
-
   );
-
 });

@@ -1,19 +1,6 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import styled from '@emotion/styled';
-import LinearProgress from '@mui/material/LinearProgress';
-import FormHelperText from '@mui/material/FormHelperText';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -35,12 +22,11 @@ const initialFieldError = { image: false, name: false, manufacturer: false, mode
 const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" };
 const initialDisplatAlert = { display: false, type: "", message: "" };
 
-export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
+export const CreateEquipmentFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -48,7 +34,6 @@ export const CreateEquipmentFormulary = React.memo(({ ...props }) => {
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
-
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //

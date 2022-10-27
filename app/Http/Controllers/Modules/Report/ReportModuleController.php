@@ -41,11 +41,6 @@ class ReportModuleController extends Controller
         return $this->service->createResource($request);
     }
 
-    public function show($request): \Illuminate\Http\Response
-    {
-        //
-    }
-
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');

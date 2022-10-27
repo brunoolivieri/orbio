@@ -1,30 +1,17 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import styled from '@emotion/styled';
-import FormHelperText from '@mui/material/FormHelperText';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
-// Moment
-import moment from 'moment';
 // Custom
 import { DatePicker } from '../../../date_picker/DatePicker';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import LinearProgress from '@mui/material/LinearProgress';
+// Moment
+import moment from 'moment';
 
 const Input = styled('input')({
     display: 'none',
@@ -40,7 +27,6 @@ export const CreateBatteryFormulary = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [open, setOpen] = React.useState(false);
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -48,40 +34,34 @@ export const CreateBatteryFormulary = React.memo((props) => {
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
-
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
+    function handleClose() {
         setOpen(false);
         setLoading(false);
     }
 
-    const handleBatteryRegistrationSubmit = (event) => {
+    function handleBatteryRegistrationSubmit(event) {
         event.preventDefault();
-
-        if (formularyDataValidation()) {
-
+        if (formValidation()) {
             setLoading(true);
             requestServerOperation();
-
         }
-
     }
 
-    const formularyDataValidation = () => {
-
-        let nameValidation = FormValidation(controlledInput.name, 3);
-        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
-        let modelValidation = FormValidation(controlledInput.model);
-        let serialNumberValidation = FormValidation(controlledInput.serial_number);
-        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
-        let lastChargeValidation = controlledInput.last_charge ? { error: false, message: "" } : { error: true, message: "A data da última carga precisa ser informada" };
+    function formValidation() {
+        const nameValidation = FormValidation(controlledInput.name, 3);
+        const manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
+        const modelValidation = FormValidation(controlledInput.model);
+        const serialNumberValidation = FormValidation(controlledInput.serial_number);
+        const imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
+        const lastChargeValidation = controlledInput.last_charge ? { error: false, message: "" } : { error: true, message: "A data da última carga precisa ser informada" };
 
         setFieldError({
             image: imageValidation.error,
@@ -103,11 +83,9 @@ export const CreateBatteryFormulary = React.memo((props) => {
         });
 
         return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || serialNumberValidation.error || lastChargeValidation.error || imageValidation.error);
-
     }
 
-    const requestServerOperation = () => {
-
+    function requestServerOperation() {
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);
@@ -116,40 +94,29 @@ export const CreateBatteryFormulary = React.memo((props) => {
         formData.append("last_charge", moment(controlledInput.last_charge).format('YYYY-MM-DD'));
         formData.append("image", uploadedImage);
 
-        AxiosApi.post("/api/equipments-module-battery", formData)
+        axios.post("/api/equipments-module-battery", formData)
             .then(function (response) {
-
                 setLoading(false);
-                successServerResponseTreatment(response);
-
+                successResponse(response);
             })
             .catch(function (error) {
-
                 setLoading(false);
-                errorServerResponseTreatment(error.response);
-
+                errorResponse(error.response);
             });
-
     }
 
-    const successServerResponseTreatment = (response) => {
-
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
         setTimeout(() => {
             props.reload_table();
             setLoading(false);
             handleClose();
         }, 2000);
-
     }
 
-    const errorServerResponseTreatment = (response) => {
+    function errorResponse(response) {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {
             image: { error: false, message: null },
             name: { error: false, message: null },
@@ -159,14 +126,11 @@ export const CreateBatteryFormulary = React.memo((props) => {
             last_charge: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -186,23 +150,17 @@ export const CreateBatteryFormulary = React.memo((props) => {
             serial_number: request_errors.serial_number.message,
             last_charge: request_errors.last_charge.error
         });
-
     }
 
-    const handleUploadedImage = (event) => {
-
+    function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
-
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
-
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-
             setUploadedImage(uploaded_file);
         }
-
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 

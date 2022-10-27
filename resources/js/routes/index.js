@@ -17,10 +17,8 @@ import { ServiceOrders } from "../components/pages/internal/service_orders/Servi
 import { Incidents } from "../components/pages/internal/incidents/Incidents";
 import { Equipments } from "../components/pages/internal/equipments/Equipments";
 
-export function ReactRoutes() {
-
+export function MainRoutes() {
     return (
-
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
@@ -29,15 +27,11 @@ export function ReactRoutes() {
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
-
     )
-
 }
 
 export function InternalRoutes() {
-
     return (
-
         <Routes>
             <Route index element={<Dashboard />} />
             <Route exact path="planos" element={<FlightPlans />} />
@@ -49,6 +43,5 @@ export function InternalRoutes() {
             <Route exact path="incidentes" element={<Incidents />} />
             <Route exact path="equipamentos" element={<Equipments />} />
         </Routes>
-
     )
 }

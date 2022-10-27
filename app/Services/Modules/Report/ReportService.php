@@ -2,7 +2,6 @@
 
 namespace App\Services\Modules\Report;
 
-use Illuminate\Http\Request;
 // Models
 use App\Repositories\Modules\Reports\ReportRepository;
 // Resources

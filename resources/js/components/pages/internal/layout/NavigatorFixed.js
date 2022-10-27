@@ -129,11 +129,11 @@ export const NavigatorFixed = () => {
 
     const handleDrawerOpen = () => {
         setOpen(true);
-    };
+    }
 
     const handleDrawerClose = () => {
         setOpen(false);
-    };
+    }
 
     return (
         <Box sx={{ display: { xs: 'none', md: 'none', lg: 'flex', xl: 'flex' } }}>

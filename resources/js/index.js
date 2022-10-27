@@ -8,7 +8,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { AuthProvider } from './components/context/InternalRoutesAuth/AuthenticationContext';
 import { PageProvider } from './components/context/PageContext';
 // Libs
-import { ReactRoutes } from "./routes/ReactRouter";
+import { MainRoutes } from "./routes/index";
 import { SnackbarProvider } from 'notistack';
 // Theme
 import { theme } from './components/pages/internal/layout/theme';
@@ -23,7 +23,7 @@ export default function Index() {
             <ThemeProvider theme={theme}>
               <CssBaseline />
               <SnackbarProvider maxSnack={3}>
-                <ReactRoutes />
+                <MainRoutes />
               </SnackbarProvider>
             </ThemeProvider>
           </AuthProvider>

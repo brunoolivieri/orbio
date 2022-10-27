@@ -1,25 +1,18 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { SelectAttributeControl } from '../../../input_select/SelectAttributeControl';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+
+const initialFieldError = { name: false, email: false, profile: false };
+const initialFieldErrorMessage = { name: "", email: "", profile: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateUserFormulary = React.memo((props) => {
 
@@ -27,43 +20,36 @@ export const UpdateUserFormulary = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile_id });
-  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", email: "", profile: "" });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [fieldError, setFieldError] = React.useState(initialFieldError);
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  const handleClose = () => {
-    setFieldError({ email: false, name: false, profile: false });
-    setFieldErrorMessage({ email: "", name: "", profile: "" });
-    setDisplayAlert({ display: false, type: "", message: "" });
+  function handleClose() {
+    setFieldError(initialFieldError);
+    setFieldErrorMessage(initialFieldErrorMessage);
+    setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
+  function handleSubmitOperation(event) {
     event.preventDefault();
-
-    if (submitedDataValidate()) {
-
+    if (formValidation()) {
       setLoading(true);
       requestServerOperation();
-
     }
-
   }
 
-  const submitedDataValidate = () => {
-
-    const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
-    const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+  function formValidation() {
+    const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
     const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
 
@@ -71,66 +57,48 @@ export const UpdateUserFormulary = React.memo((props) => {
     setFieldErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message });
 
     return !(emailValidate.error === true || nameValidate.error === true || profileValidate.error);
-
   }
 
-  const requestServerOperation = () => {
-
-    AxiosApi.patch(`/api/admin-module-user/${controlledInput.id}`, {
+  function requestServerOperation() {
+    axios.patch(`/api/admin-module-user/${controlledInput.id}`, {
       name: controlledInput.name,
       email: controlledInput.email,
       status: controlledInput.status,
       profile_id: controlledInput.profile
     })
       .then((response) => {
-
         setLoading(false);
-        successServerResponseTreatment(response);
-
+        successResponse(response);
       })
       .catch((error) => {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response);
-
+        errorResponse(error.response);
       });
-
   }
 
-  const successServerResponseTreatment = (response) => {
-
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
     setTimeout(() => {
-
       props.reload_table();
       setLoading(false);
       handleClose();
-
     }, 2000);
-
   }
 
-  const errorServerResponseTreatment = (response) => {
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
-    // Errors by key that can be returned from backend validation 
     let request_errors = {
       email: { error: false, message: null },
       name: { error: false, message: null },
       profile_id: { error: false, message: null }
     }
 
-    // Get errors by their key 
     for (let prop in response.data.errors) {
-
       request_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
-
     }
 
     setFieldError({
@@ -144,18 +112,16 @@ export const UpdateUserFormulary = React.memo((props) => {
       name: request_errors.name.message,
       profile: request_errors.profile_id.message
     });
-
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
-
       <Tooltip title="Editar">
         <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
@@ -241,10 +207,8 @@ export const UpdateUserFormulary = React.memo((props) => {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box>
       </Dialog>
     </>
   );
-
 });

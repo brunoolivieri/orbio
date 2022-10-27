@@ -1,24 +1,12 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import styled from '@emotion/styled';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
@@ -26,9 +14,13 @@ const Input = styled('input')({
     display: 'none',
 });
 
+const initialFieldError = { image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false };
+const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" };
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
 export const UpdateDroneFormulary = React.memo(({ ...props }) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
 
@@ -42,49 +34,44 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         weight: props.record.weight,
         observation: props.record.observation
     });
-    const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const htmlImage = React.useRef();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
-        setFieldError({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false });
-        setFieldErrorMessage({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" });
-        setDisplayAlert({ display: false, type: "", message: "" });
+    function handleClose() {
+        setFieldError(initialFieldError);
+        setFieldErrorMessage(initialFieldErrorMessage);
+        setDisplayAlert(initialDisplatAlert);
         setLoading(false);
         setOpen(false);
     }
 
-    const handleDroneUpdateSubmit = (event) => {
+    function handleDroneUpdateSubmit(event) {
         event.preventDefault();
-
-        if (formularyDataValidation()) {
-
+        if (formValidation()) {
             setLoading(false);
             requestServerOperation();
-
         }
-
     }
 
-    const formularyDataValidation = () => {
-
-        let nameValidation = FormValidation(controlledInput.name, 3);
-        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
-        let modelValidation = FormValidation(controlledInput.model);
-        let recordNumberValidation = FormValidation(controlledInput.record_number);
-        let serialNumberValidation = FormValidation(controlledInput.serial_number);
-        let weightValidation = FormValidation(controlledInput.weight);
-        let observationValidation = FormValidation(controlledInput.observation);
+    function formValidation() {
+        const nameValidation = FormValidation(controlledInput.name, 3);
+        const manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
+        const modelValidation = FormValidation(controlledInput.model);
+        const recordNumberValidation = FormValidation(controlledInput.record_number);
+        const serialNumberValidation = FormValidation(controlledInput.serial_number);
+        const weightValidation = FormValidation(controlledInput.weight);
+        const observationValidation = FormValidation(controlledInput.observation);
 
         setFieldError({
             image: false,
@@ -110,11 +97,9 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
         });
 
         return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error);
-
     }
 
-    const requestServerOperation = () => {
-
+    function requestServerOperation() {
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);
@@ -129,7 +114,7 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
             formData.append("image", uploadedImage);
         }
 
-        AxiosApi.post(`/api/equipments-module-drone/${controlledInput.id}`, formData)
+        axios.post(`/api/equipments-module-drone/${controlledInput.id}`, formData)
             .then(function (response) {
                 setLoading(false);
                 successServerResponseTreatment(response);
@@ -141,22 +126,17 @@ export const UpdateDroneFormulary = React.memo(({ ...props }) => {
     }
 
     function successServerResponseTreatment(response) {
-
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
         setTimeout(() => {
             props.record_setter(null);
             props.reload_table();
             setLoading(false);
             handleClose();
         }, 2000);
-
     }
 
     function errorServerResponseTreatment(response) {
-
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
         // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {

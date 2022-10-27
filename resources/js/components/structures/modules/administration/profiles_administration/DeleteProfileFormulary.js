@@ -1,25 +1,14 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Box, Alert, IconButton, Tooltip, LinearProgress } from '@mui/material/';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-const native_profiles = [1, 2, 3, 4, 5];
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
@@ -27,66 +16,52 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
   const { AuthData } = useAuthentication();
   const [controlledInput] = React.useState({ id: props.record.profile_id });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  const handleClose = () => {
-    setDisplayAlert({ display: false, type: "", message: "" });
+  function handleClose() {
+    setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
+  function handleSubmitOperation(event) {
     event.preventDefault();
-
     setLoading(true);
     requestServerOperation();
-
   }
 
-  const requestServerOperation = () => {
-
-    AxiosApi.delete(`/api/admin-module-profile/${controlledInput.id}`)
+  function requestServerOperation() {
+    axios.delete(`/api/admin-module-profile/${controlledInput.id}`)
       .then(function (response) {
-
         setLoading(false);
-        successServerResponseTreatment(response);
-
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response);
-
+        errorResponse(error.response);
       });
-
   }
 
-  const successServerResponseTreatment = (response) => {
-
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
     setTimeout(() => {
       props.record_setter(null);
       props.reload_table();
       setLoading(false);
       handleClose();
     }, 2000);
-
   }
 
-  function errorServerResponseTreatment(response) {
-
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -106,61 +81,56 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
         fullWidth
         maxWidth="md"
       >
-        {(props.record != null && open) && (native_profiles.indexOf(props.record.profile_id) == -1) &&
-          <>
-            <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
+        <>
+          <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
 
-            <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
-              <DialogContent>
+            <DialogContent>
 
-                <TextField
-                  margin="dense"
-                  defaultValue={props.record.profile_id}
-                  id="id"
-                  name="id"
-                  label="ID do perfil"
-                  fullWidth
-                  variant="outlined"
-                  sx={{ mb: 2 }}
-                  InputProps={{
-                    readOnly: true
-                  }}
-                />
+              <TextField
+                margin="dense"
+                defaultValue={props.record.profile_id}
+                id="id"
+                name="id"
+                label="ID do perfil"
+                fullWidth
+                variant="outlined"
+                sx={{ mb: 2 }}
+                InputProps={{
+                  readOnly: true
+                }}
+              />
 
-                <TextField
-                  margin="dense"
-                  defaultValue={props.record.profile_name}
-                  id="name"
-                  name="name"
-                  label="Nome do perfil"
-                  fullWidth
-                  variant="outlined"
-                  InputProps={{
-                    readOnly: true
-                  }}
-                />
+              <TextField
+                margin="dense"
+                defaultValue={props.record.profile_name}
+                id="name"
+                name="name"
+                label="Nome do perfil"
+                fullWidth
+                variant="outlined"
+                InputProps={{
+                  readOnly: true
+                }}
+              />
 
-              </DialogContent>
+            </DialogContent>
 
-              {(!loading && displayAlert.display) &&
-                <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-              }
+            {(!loading && displayAlert.display) &&
+              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+            }
 
-              {loading && <LinearProgress />}
+            {loading && <LinearProgress />}
 
-              <DialogActions>
-                <Button onClick={handleClose}>Cancelar</Button>
-                <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-              </DialogActions>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancelar</Button>
+              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+            </DialogActions>
 
-            </Box>
-          </>
-        }
-
+          </Box>
+        </>
       </Dialog>
     </>
-
   );
-
 });

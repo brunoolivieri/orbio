@@ -1,37 +1,8 @@
 // React
 import * as React from 'react';
-// Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import AxiosApi from "../../../../../services/AxiosApi";
-import { CreateOrderFormulary } from "../../../../structures/modules/service_orders/CreateOrderFormulary";
-import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
-import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
-import LinearProgress from '@mui/material/LinearProgress';
 // MaterialUI
-import { Table } from "@mui/material";
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
-import { InputAdornment } from "@mui/material";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import Badge from '@mui/material/Badge';
-import TablePagination from '@mui/material/TablePagination';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import Checkbox from '@mui/material/Checkbox';
+import { Table, TableBody, TableCell, TableContainer, Badge, TableHead, Tooltip, IconButton, Grid, Chip, TextField, styled, TableRow, Paper, Stack, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
+import { useSnackbar } from 'notistack';
 import ErrorIcon from '@mui/icons-material/Error';
 import MapIcon from '@mui/icons-material/Map';
 // Fontsawesome
@@ -44,33 +15,40 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Custom
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import AxiosApi from "../../../../../services/AxiosApi";
+import { CreateOrderFormulary } from "../../../../structures/modules/service_orders/CreateOrderFormulary";
+import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
+import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
+import LinearProgress from '@mui/material/LinearProgress';
 // Libs
 import moment from 'moment';
-import { useSnackbar } from 'notistack';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
   fontWeight: 700
 });
 
-export const ServiceOrdersPanel = React.memo(() => {
+const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
+const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
 
-  // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+export const ServiceOrdersPanel = () => {
+
+  // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
   const [records, setRecords] = React.useState([]);
-  const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-  const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
+  const [pagination, setPagination] = React.useState(initialPagination);
+  const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
   const [loading, setLoading] = React.useState(true);
   const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
   const [searchField, setSearchField] = React.useState("");
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
   const { enqueueSnackbar } = useSnackbar();
 
-  // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+  // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
     serverLoadRecords();
@@ -86,7 +64,6 @@ export const ServiceOrdersPanel = React.memo(() => {
 
     AxiosApi.get(`/api/orders-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
       .then(function (response) {
-
         setLoading(false);
         setRecords(response.data.records);
         setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
@@ -96,24 +73,16 @@ export const ServiceOrdersPanel = React.memo(() => {
         } else {
           handleOpenSnackbar(`Foi encontrado ${response.data.total_records} ordens de serviço`, "success");
         }
-
       })
       .catch(function (error) {
-
-        const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-        handleOpenSnackbar(error_message, "error");
-
+        handleOpenSnackbar(error.response.data.message, "error");
         setLoading(false);
         setRecords([]);
         setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
       });
-
-
   }
 
-  const handleTablePageChange = (event, value) => {
-
+  function handleTablePageChange(event, value) {
     setPaginationConfig({
       page: value + 1,
       limit: paginationConfig.limit,
@@ -122,11 +91,9 @@ export const ServiceOrdersPanel = React.memo(() => {
       total_records: 0,
       filter: 0
     });
+  }
 
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-
+  function handleChangeRowsPerPage(event) {
     setPaginationConfig({
       page: 1,
       limit: event.target.value,
@@ -135,12 +102,10 @@ export const ServiceOrdersPanel = React.memo(() => {
       total_records: 0,
       filter: 0
     });
-
-  };
+  }
 
   function handleSearchSubmit(event) {
     event.preventDefault();
-
     setPaginationConfig({
       page: 1,
       limit: paginationConfig.limit,
@@ -149,13 +114,10 @@ export const ServiceOrdersPanel = React.memo(() => {
       total_records: 0,
       filter: 0
     });
-
   }
 
-  const reloadTable = () => {
-
+  function reloadTable() {
     setSelectedRecordIndex(null);
-
     setLoading(true);
     setRecords([]);
     setPagination({
@@ -172,31 +134,28 @@ export const ServiceOrdersPanel = React.memo(() => {
       total_records: 0,
       filter: 0
     });
-
   }
 
-  const handleClickRadio = (event) => {
-
+  function handleClickRadio(event) {
     if (event.target.value === selectedRecordIndex) {
       setSelectedRecordIndex(null);
     } else if (event.target.value != selectedRecordIndex) {
       setSelectedRecordIndex(event.target.value);
     }
-
   }
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  function handleClick(e) {
+    setAnchorEl(e.currentTarget);
   }
-  const handleClose = () => {
+  function handleClose() {
     setAnchorEl(null);
   }
 
-  const handleOpenSnackbar = (text, variant) => {
+  function handleOpenSnackbar(text, variant) {
     enqueueSnackbar(text, { variant });
   }
 
-  // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
@@ -403,4 +362,4 @@ export const ServiceOrdersPanel = React.memo(() => {
       {loading && <LinearProgress color="success" />}
     </>
   );
-});
+}

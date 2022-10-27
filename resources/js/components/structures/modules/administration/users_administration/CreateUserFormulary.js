@@ -1,135 +1,105 @@
-// Reactdata
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { SelectAttributeControl } from '../../../input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
+
+const initialControlledInput = { name: "", email: "", profile: "0" };
+const initialFieldError = { name: false, email: false, profile: false };
+const initialFieldErrorMessage = { name: "", email: "", profile: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateUserFormulary = React.memo(({ ...props }) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ name: "", email: "", profile: "0" });
-  const [fieldError, setFieldError] = React.useState({ name: false, email: false, profile: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: null, email: null, profile: null });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+  const [fieldError, setFieldError] = React.useState(initialFieldError);
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
-  };
+  }
 
-  const handleClose = () => {
-    setFieldError({ name: false, email: false, profile: false });
-    setFieldErrorMessage({ name: null, email: null, profile: null });
-    setDisplayAlert({ display: false, type: "", message: "" });
-    setControlledInput({ name: "", email: "", profile: "" });
+  function handleClose() {
+    setControlledInput(initialControlledInput);
+    setFieldError(initialFieldError);
+    setFieldErrorMessage(initialFieldErrorMessage);
+    setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
-  const handleRegistrationSubmit = (event) => {
+  function handleRegistrationSubmit(event) {
     event.preventDefault();
-
-    if (formularyDataValidate()) {
-
+    if (formValidation()) {
       setLoading(true);
       requestServerOperation();
-
     }
-
   }
 
-  const formularyDataValidate = () => {
-
-    const emailPattern = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-
+  function formValidation() {
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
-    const emailValidate = FormValidation(controlledInput.email, null, null, emailPattern, "e-mail");
+    const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
     const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
 
     setFieldError({ name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error });
     setFieldErrorMessage({ name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message });
 
     return !(nameValidate.error || emailValidate.error || profileValidate.error);
-
   }
 
-  const requestServerOperation = () => {
-
-    AxiosApi.post(`/api/admin-module-user`, {
+  function requestServerOperation() {
+    axios.post(`/api/admin-module-user`, {
       email: controlledInput.email,
       name: controlledInput.name,
       profile_id: controlledInput.profile
     })
-      .then(function () {
-
+      .then(function (response) {
         setLoading(false);
-        successServerResponseTreatment();
-
+        successResponse(response);
       })
       .catch(function (error) {
-
         setLoading(false);
-        errorServerResponseTreatment(error.response);
-
+        errorResponse(error.response);
       });
-
   }
 
-  const successServerResponseTreatment = () => {
-
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
-
+  function successResponse(response) {
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reload_table();
       setLoading(false);
       handleClose();
     }, 2000);
-
   }
 
-  const errorServerResponseTreatment = (response) => {
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
-    // Errors by key that can be returned from backend validation
     let request_errors = {
       name: { error: false, message: null },
       email: { error: false, message: null },
       profile_id: { error: false, message: null }
     }
 
-    // Get errors by their key 
     for (let prop in response.data.errors) {
-
       request_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
-
     }
 
     setFieldError({
@@ -143,19 +113,16 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
       email: request_errors.email.message,
       profile: request_errors.profile_id.message
     });
-
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
-    <div>
-
-      {/* Botão para abrir o formulário */}
+    <>
       <Tooltip title="Novo Usuário">
         <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
           <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
@@ -230,10 +197,8 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
-
         </Box>
-
       </Dialog>
-    </div>
+    </>
   );
 });

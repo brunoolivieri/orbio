@@ -1,91 +1,69 @@
 // React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import LinearProgress from '@mui/material/LinearProgress';
 
-export const DeleteDroneFormulary = React.memo(({ ...props }) => {
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
+export const DeleteDroneFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
     const [controlledInput] = React.useState({ id: props.record.id });
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
-        setDisplayAlert({ display: false, type: "", message: "" });
+    function handleClose() {
+        setDisplayAlert(initialDisplatAlert);
         setLoading(false);
         setOpen(false);
     }
 
-    const handleDroneDeleteSubmit = (event) => {
+    function handleDroneDeleteSubmit(event) {
         event.preventDefault();
-
         setLoading(true);
         requestServerOperation();
-
     }
 
-    const requestServerOperation = () => {
-
-        AxiosApi.delete(`/api/equipments-module-drone/${controlledInput.id}`)
+    function requestServerOperation() {
+        axios.delete(`/api/equipments-module-drone/${controlledInput.id}`)
             .then(function (response) {
-
                 setLoading(false);
-                successServerResponseTreatment(response);
-
+                successResponse(response);
             })
             .catch(function (error) {
-
                 setLoading(false);
-                errorServerResponseTreatment(error.response);
-
+                errorResponse(error.response);
             });
-
     }
 
-    const successServerResponseTreatment = (response) => {
-
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
         setTimeout(() => {
             props.record_setter(null);
             props.reload_table();
             setLoading(false);
             handleClose();
         }, 2000);
-
     }
 
-    const errorServerResponseTreatment = (response) => {
-
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
+    function errorResponse(response) {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
 
     // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -231,11 +209,8 @@ export const DeleteDroneFormulary = React.memo(({ ...props }) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog>
         </>
     );
-
 });

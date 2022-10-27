@@ -1,41 +1,31 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import styled from '@emotion/styled';
-import LinearProgress from '@mui/material/LinearProgress';
-import FormHelperText from '@mui/material/FormHelperText';
-// Moment
-import moment from 'moment';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { DatePicker } from '../../../date_picker/DatePicker';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+// Moment
+import moment from 'moment';
 
 const Input = styled('input')({
     display: 'none',
 });
 
-export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
+const initialFieldError = { image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false };
+const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" };
+const initialDisplatAlert = { display: false, type: "", message: "" };
+
+export const UpdateEquipmentFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput, setControlledInput] = React.useState({
         id: props.record.id,
         name: props.record.name,
@@ -47,13 +37,12 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         observation: props.record.observation,
         purchase_date: props.record.purchase_date
     });
-    const [fieldError, setFieldError] = React.useState({ image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" });
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
     const [open, setOpen] = React.useState(false);
-
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -69,7 +58,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
     const handleEquipmentUpdateSubmit = (event) => {
         event.preventDefault();
 
-        if (formularyDataValidate()) {
+        if (formValidation()) {
 
             setLoading(true);
             requestServerOperation();
@@ -78,7 +67,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
 
     }
 
-    const formularyDataValidate = () => {
+    const formValidation = () => {
 
         let nameValidation = FormValidation(controlledInput.name, 3);
         let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
@@ -114,11 +103,9 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
         });
 
         return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error);
-
     }
 
     const requestServerOperation = () => {
-
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);
@@ -134,40 +121,29 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             formData.append("image", uploadedImage);
         }
 
-        AxiosApi.post(`/api/equipments-module-equipment/${controlledInput.id}`, formData)
+        axios.post(`/api/equipments-module-equipment/${controlledInput.id}`, formData)
             .then(function (response) {
-
                 setLoading(false);
-                successServerResponseTreatment(response);
-
+                successResponse(response);
             })
             .catch(function (error) {
-
                 setLoading(false);
-                errorServerResponseTreatment(error.response);
-
+                errorResponse(error.response);
             });
-
     }
 
-    const successServerResponseTreatment = (response) => {
-
+    const successResponse = (response) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
         setTimeout(() => {
             props.reload_table();
             setLoading(false);
             handleClose();
         }, 2000);
-
     }
 
-    const errorServerResponseTreatment = (response) => {
+    const errorResponse = (response) => {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
-        // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
         let request_errors = {
             image: { error: false, message: null },
             name: { error: false, message: null },
@@ -180,14 +156,11 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             purchase_date: { error: false, message: null }
         }
 
-        // Coleta dos objetos de erro existentes na response
         for (let prop in response.data.errors) {
-
             request_errors[prop] = {
                 error: true,
                 message: response.data.errors[prop][0]
             }
-
         }
 
         setFieldError({
@@ -213,28 +186,22 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
             observation: request_errors.observation.message,
             purchase_date: request_errors.purchase_date.message
         });
+    }
 
+    const handleUploadedImage = (event) => {
+        const uploaded_file = event.currentTarget.files[0];
+        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+            htmlImage.current.src = "";
+            htmlImage.current.src = URL.createObjectURL(uploaded_file);
+            setUploadedImage(event.target.files[0]);
+        }
     }
 
     const handleInputChange = (event) => {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    const handleUploadedImage = (event) => {
-
-        const uploaded_file = event.currentTarget.files[0];
-
-        if (uploaded_file && uploaded_file.type.startsWith('image/')) {
-
-            htmlImage.current.src = "";
-            htmlImage.current.src = URL.createObjectURL(uploaded_file);
-
-            setUploadedImage(event.target.files[0]);
-        }
-
-    }
-
-    // ============================================================================== STRUCTURES - MUI ============================================================================== //
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
@@ -413,9 +380,7 @@ export const UpdateEquipmentFormulary = React.memo(({ ...props }) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog>
         </>
     )

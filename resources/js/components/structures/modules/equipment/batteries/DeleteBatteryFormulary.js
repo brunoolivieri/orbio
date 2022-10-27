@@ -1,90 +1,66 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import LinearProgress from '@mui/material/LinearProgress';
+
+const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const DeleteBatteryFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput] = React.useState({ id: props.record.id });
     const [loading, setLoading] = React.useState(false);
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [open, setOpen] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
+    function handleClose() {
         setDisplayAlert({ display: false, type: "", message: "" });
         setLoading(false);
         setOpen(false);
     }
 
-    const handleDroneRegistrationSubmit = (event) => {
+    function handleDroneRegistrationSubmit(event) {
         event.preventDefault();
-
         setLoading(true);
         requestServerOperation();
-
     }
 
-    const requestServerOperation = () => {
-
-        AxiosApi.delete(`/api/equipments-module-battery/${controlledInput.id}`)
+    function requestServerOperation() {
+        axios.delete(`/api/equipments-module-battery/${controlledInput.id}`)
             .then(function (response) {
-
                 setLoading(false);
-                successServerResponseTreatment(response);
-
+                successResponse(response);
             })
             .catch(function (error) {
-
                 setLoading(false);
-                errorServerResponseTreatment(error.response.data);
-
+                errorResponse(error.response.data);
             });
-
     }
 
-    const successServerResponseTreatment = (response) => {
-
+    const successResponse = (response) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
-
         setTimeout(() => {
             props.reload_table();
             setLoading(false);
             handleClose();
         }, 2000);
-
     }
 
-    const errorServerResponseTreatment = (response) => {
-
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
+    const errorResponse = (response) => {
+        setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
 
     // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -197,11 +173,8 @@ export const DeleteBatteryFormulary = React.memo((props) => {
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
                     </DialogActions>
-
                 </Box>
-
             </Dialog>
         </>
     )
-
 });
