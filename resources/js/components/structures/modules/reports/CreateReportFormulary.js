@@ -27,9 +27,9 @@ import { FlightPlanDataForReport } from '../../modals/dialog/FlightPlanDataForRe
 import { ServiceOrderForReport } from '../../modals/fullscreen/ServiceOrderForReport';
 import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import { ReportVisualization } from '../../modals/fullscreen/ReportVisualization';
+import { ReportVisualization, DownloadReport } from '../../modals/fullscreen/ReportBuilder';
 // Lib
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 
 const initialControlledInput = {
   name: '',
@@ -70,6 +70,7 @@ export const CreateReportFormulary = () => {
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
   const [serviceOrder, setServiceOrder] = React.useState(null);
   const [flightPlans, setFlightPlans] = React.useState(null);
+  const [canSave, setCanSave] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -88,45 +89,35 @@ export const CreateReportFormulary = () => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  const handleReportGenerate = (e) => {
-    e.preventDefault();
+  const handleRequestServerToSaveReport = (blob) => {
 
-    AxiosApi.post("api/export-report-pdf", controlledInput)
+    const data = {
+      name: controlledInput.name,
+      service_order_id: serviceOrder.id,
+      flight_plans: flightPlans,
+      observation: null,
+      blob: blob
+    }
+
+    console.log(data)
+
+    /*axios.post("/api/reports-module", data)
       .then((response) => {
 
-        const base64PDF = response.data;
-
-        //let bin = atob(base64PDF);
-        let obj = document.createElement('object');
-        obj.style.width = '100%';
-        obj.style.height = '842pt';
-        obj.type = 'application/pdf';
-        obj.data = 'data:application/pdf;base64,' + base64PDF;
-        document.body.appendChild(obj);
-
-        // Insert a link that allows the user to download the PDF file
-        let link = document.createElement('a');
-        link.innerHTML = 'Download PDF file';
-        link.download = 'file.pdf';
-        link.href = 'data:application/octet-stream;base64,' + base64PDF;
-        document.body.appendChild(link);
-        link.click();
+        //
 
       })
       .catch(function (error) {
 
         console.log(error);
-        errorServerRequestTreatment(error.response);
+        errorResponse(error.response);
 
-      });
+      });*/
   }
 
-  const errorServerRequestTreatment = (response) => {
+  const errorResponse = (response) => {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
-
-    // Errors by key that can be returned from backend validation
     let request_errors = {
       name: { error: false, message: null },
       client: { error: false, message: null },
@@ -136,14 +127,11 @@ export const CreateReportFormulary = () => {
       responsible: { error: false, message: null }
     }
 
-    // Get errors by their key 
     for (let prop in response.data.errors) {
-
       request_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
-
     }
 
     setFieldError({
@@ -164,6 +152,15 @@ export const CreateReportFormulary = () => {
     });
   }
 
+  React.useEffect(() => {
+    if (flightPlans) {
+      const is_data_completed = flightPlans.length == flightPlans.reduce((acm, current) => {
+        return acm += current.completed ? 1 : 0
+      }, 0);
+      setCanSave(is_data_completed);
+    }
+  }, [flightPlans]);
+
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
@@ -183,8 +180,7 @@ export const CreateReportFormulary = () => {
         maxWidth="md"
       >
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
-
-        <Box component="form" noValidate onSubmit={handleReportGenerate}>
+        <Box component="form" noValidate>
           <DialogContent>
 
             <Box mb={3}>
@@ -333,15 +329,10 @@ export const CreateReportFormulary = () => {
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
             {serviceOrder && <ReportVisualization basicData={controlledInput} flightPlans={flightPlans} />}
-            <Button type="submit" variant='contained'>Exportar</Button>
+            {flightPlans && <DownloadReport data={controlledInput} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleRequestServerToSaveReport} />}
           </DialogActions>
-
         </Box>
-
-
       </Dialog >
     </>
-
   );
-
 }

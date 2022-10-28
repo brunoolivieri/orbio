@@ -37,7 +37,7 @@ class ReportModuleController extends Controller
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-
+        dd('oook');
         return $this->service->createResource($request);
     }
 

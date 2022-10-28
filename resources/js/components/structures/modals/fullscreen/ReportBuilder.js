@@ -5,10 +5,12 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Assets
 import BirdviewLogo from "../../../assets/images/Logos/Birdview.png";
 // Libs
-import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, usePDF } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, BlobProvider, pdf } from '@react-pdf/renderer';
 import moment from 'moment/moment';
 
 // Create styles
@@ -65,33 +67,27 @@ const styles = StyleSheet.create({
     },
 });
 
-export const ReportStructure = React.memo((props) => {
-
-    const [data] = React.useState(props.data);
+export const ReportDocument = React.memo((props) => {
 
     return (
         <Document>
-
-            {/* FIRST PAGE */}
-            <Page size="A4" style={styles.page}>
+            {props.data.flight_plans.map((flight_plan, index) => (
                 <>
-                    <View style={styles.section}>
-                        <Image
-                            src={BirdviewLogo}
-                            style={styles.logo}
-                        ></Image>
-                        <Text style={styles.top_legends}>{`RELATÓRIO: ${data.name}`.toUpperCase()}</Text>
-                        <Text style={styles.top_legends}>{`CLIENTE: ${data.client}`.toUpperCase()}</Text>
-                        <Text style={styles.top_legends}>{`REGIÃO: ${data.city}, ${data.state}`.toUpperCase()}</Text>
-                        <Text style={styles.top_legends}>{`FAZENDA: ${data.farm}`.toUpperCase()}</Text>
-                    </View>
+                    <Page size="A4" style={styles.page} key={flight_plan.id}>
 
-                </>
-            </Page>
+                        {index === 0 &&
+                            <View style={styles.section}>
+                                <Image
+                                    src={BirdviewLogo}
+                                    style={styles.logo}
+                                ></Image>
+                                <Text style={styles.top_legends}>{`RELATÓRIO: ${props.data.name}`.toUpperCase()}</Text>
+                                <Text style={styles.top_legends}>{`CLIENTE: ${props.data.client}`.toUpperCase()}</Text>
+                                <Text style={styles.top_legends}>{`REGIÃO: ${props.data.city}, ${props.data.state}`.toUpperCase()}</Text>
+                                <Text style={styles.top_legends}>{`FAZENDA: ${props.data.farm}`.toUpperCase()}</Text>
+                            </View>
+                        }
 
-            {data.flight_plans.map((flight_plan) => (
-                <>
-                    <Page size="A4" style={styles.page}>
                         <View style={styles.section}>
                             <Text style={styles.top_legends}>
                                 {`PLANO DE VOO: ${flight_plan.name}`.toUpperCase()}
@@ -145,24 +141,16 @@ export const ReportStructure = React.memo((props) => {
                     </Page>
                 </>
             ))}
-
         </Document >
-
     )
 });
 
 export const ReportVisualization = React.memo((props) => {
 
-    const [instance, updateInstance] = usePDF(ReportStructure);
-
     const [open, setOpen] = React.useState(false);
-    const [data, setData] = React.useState();
 
     const handleClickOpen = () => {
         setOpen(true);
-
-        const data = { ...props.basicData, flight_plans: props.flightPlans };
-        setData(data);
     }
 
     const handleClose = () => {
@@ -170,7 +158,6 @@ export const ReportVisualization = React.memo((props) => {
     }
 
     return (
-
         <>
             <Button variant="contained" onClick={handleClickOpen} startIcon={<VisibilityIcon />}>Visualizar</Button>
 
@@ -187,7 +174,7 @@ export const ReportVisualization = React.memo((props) => {
                 <DialogContent>
 
                     <PDFViewer style={styles.viewer}>
-                        <ReportStructure data={data} />
+                        <ReportDocument data={{ ...props.basicData, flight_plans: props.flightPlans }} />
                     </PDFViewer>
 
                 </DialogContent>
@@ -196,6 +183,30 @@ export const ReportVisualization = React.memo((props) => {
                 </DialogActions>
             </Dialog>
         </>
-
     );
+});
+
+export const DownloadReport = React.memo((props) => {
+
+    const handleSaveReport = async () => {
+        const blob = await pdf(<ReportDocument data={{ ...props.data, flight_plans: props.flightPlans }} />).toBlob();
+        props.handleRequestServerToSaveReport(blob);
+        /*var fileURL = URL.createObjectURL(blob);
+        window.open(fileURL);*/
+    }
+
+    return (
+        <>
+            {props.canSave ?
+                <Button variant="contained" startIcon={<LockOpenIcon />} onClick={handleSaveReport}>
+                    Salvar
+                </Button >
+                :
+                <Button variant="contained" startIcon={<LockIcon />} disabled>
+                    Salvar
+                </Button >
+            }
+        </>
+
+    )
 });

@@ -225,7 +225,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                     name: flight_plan.name,
                     city: flight_plan.localization.city,
                     state: flight_plan.localization.state,
-                    date: moment(), // need to be date from log
+                    date: flight_plan.logs[0].timestamp, // need to be date from main log
                     area: '',
                     number: '',
                     dosage: '',
@@ -237,11 +237,8 @@ export const ServiceOrderForReport = React.memo((props) => {
                     completed: false
                 }
             });
-
             props.setFlightPlans(flight_plans_for_report);
-
         }
-
     }
 
     const handleClickOpen = () => {

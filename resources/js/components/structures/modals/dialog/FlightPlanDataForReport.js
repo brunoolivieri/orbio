@@ -47,7 +47,6 @@ export const FlightPlanDataForReport = React.memo((props) => {
 
     // ============================================================================== STATES  ============================================================================== //
 
-    const [loading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [controlledInput, setControlledInput] = React.useState(props.current.data);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -94,10 +93,8 @@ export const FlightPlanDataForReport = React.memo((props) => {
         }
 
         flight_plans_data_clone[props.current.array_index] = controlledInput;
-        console.log(flight_plans_data_clone);
         props.setFlightPlans(flight_plans_data_clone);
         handleClose();
-
     }
 
     const handleInputChange = (event) => {
