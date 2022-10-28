@@ -89,7 +89,7 @@ export const ReportStructure = React.memo((props) => {
                 </>
             </Page>
 
-            {data.flight_plans.map((flight_plan, index) => (
+            {data.flight_plans.map((flight_plan) => (
                 <>
                     <Page size="A4" style={styles.page}>
                         <View style={styles.section}>

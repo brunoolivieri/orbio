@@ -4,8 +4,6 @@ namespace App\Services\Modules\ServiceOrder;
 
 // Repository
 use App\Repositories\Modules\ServiceOrders\ServiceOrderRepository;
-// Resources
-use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
 // Contracts
 use App\Contracts\ServiceInterface;
 // Events
@@ -24,13 +22,7 @@ class ServiceOrderService implements ServiceInterface
 
     public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
-
-        if ($data->total() > 0) {
-            return response(new ServiceOrdersPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
-        }
+        return $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
     }
 
     public function createResource(array $data)

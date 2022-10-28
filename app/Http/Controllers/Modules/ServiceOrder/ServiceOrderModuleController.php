@@ -25,13 +25,19 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_read');
 
-        return $this->service->loadResourceWithPagination(
+        $data = $this->service->loadResourceWithPagination(
             request()->limit,
             request()->order_by,
             request()->page,
             is_null(request()->search) ? "0" : request()->search,
             request()->filter === "0" ? [] : request()->filter
         );
+
+        if ($data->total() > 0) {
+            return response(new ServiceOrdersPanelResource($data), 200);
+        } else {
+            return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
+        }
     }
 
     public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response

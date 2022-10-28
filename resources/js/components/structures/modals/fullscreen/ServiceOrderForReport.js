@@ -39,7 +39,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 // Libs
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
@@ -98,7 +98,7 @@ export const ServiceOrderForReport = React.memo((props) => {
         const order_by = paginationConfig.order_by;
         const filter = paginationConfig.filter;
 
-        AxiosApi.get(`/api/orders-module?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+        axios.get(`api/load-service-orders-for-report?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
             .then(function (response) {
 
                 setLoading(false);
@@ -339,7 +339,6 @@ export const ServiceOrderForReport = React.memo((props) => {
                                 </Stack>
                             </Grid>
                         }
-
                     </Grid>
 
                     <FormControl fullWidth>
@@ -369,7 +368,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                                         {(!loading && records.length > 0) &&
                                             records.map((service_order) => (
                                                 <TableRow key={service_order.id}>
-                                                    <TableCell><FormControlLabel value={service_order.id} control={<Radio onClick={() => { handleClickRadio(service_order) }} />} label={service_order.id} disabled={service_order.total_logs == 0} /></TableCell>
+                                                    <TableCell><FormControlLabel value={service_order.id} control={<Radio onClick={() => { handleClickRadio(service_order) }} />} label={service_order.id} disabled={!service_order.available} /></TableCell>
                                                     <TableCell align="center">{service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
                                                     <TableCell align="center">{service_order.number}</TableCell>
                                                     <TableCell align="center">
@@ -384,26 +383,26 @@ export const ServiceOrderForReport = React.memo((props) => {
                                                     <TableCell align="center">{service_order.observation}</TableCell>
                                                     <TableCell align="center">{moment(service_order.end_date).diff(moment(service_order.start_date), 'days')}</TableCell>
                                                     <TableCell align="center">
-                                                        {service_order.flight_plans.length === 0 ?
-                                                            <MapIcon color="disabled" />
-                                                            :
-                                                            <Badge badgeContent={service_order.flight_plans.length} color="success">
+                                                        {service_order.total_flight_plans > 0 ?
+                                                            <Badge badgeContent={service_order.total_flight_plans} color="success">
                                                                 <MapIcon color="action" />
                                                             </Badge>
+                                                            :
+                                                            <MapIcon color="disabled" />
                                                         }
                                                     </TableCell>
                                                     <TableCell align="center">
-                                                        {service_order.total_incidents === 0 ?
-                                                            <ErrorIcon color="disabled" />
-                                                            :
+                                                        {service_order.total_incidents > 0 ?
                                                             <Badge badgeContent={service_order.total_incidents} color="success">
                                                                 <ErrorIcon color="action" />
                                                             </Badge>
+                                                            :
+                                                            <ErrorIcon color="disabled" />
                                                         }
                                                     </TableCell>
                                                     <TableCell align="center">
                                                         {service_order.total_logs > 0 ?
-                                                            <Badge badgeContent={service_order.total_incidents} color="success">
+                                                            <Badge badgeContent={service_order.total_logs} color="success">
                                                                 <InsertDriveFileIcon color="action" />
                                                             </Badge>
                                                             :

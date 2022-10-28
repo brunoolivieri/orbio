@@ -28,7 +28,8 @@ use App\Http\Controllers\Actions\{
     LoadServiceOrderByFlightPlan,
     LoadDronesController,
     LoadBatteriesController,
-    LoadEquipmentsController
+    LoadEquipmentsController,
+    LoadServiceOrderForReport
 };
 // Internal Controller 
 use App\Http\Controllers\Internal\{
@@ -100,6 +101,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Actions
+    Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);
     Route::get('api/load-equipments', LoadEquipmentsController::class);
