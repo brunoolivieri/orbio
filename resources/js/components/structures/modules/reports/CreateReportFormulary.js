@@ -99,9 +99,11 @@ export const CreateReportFormulary = () => {
       blob: blob
     }
 
-    console.log(data)
+    const formData = new FormData();
+    formData.append('name', controlledInput.name);
+    formData.append('blob', blob);
 
-    /*axios.post("/api/reports-module", data)
+    axios.post("/api/reports-module", formData)
       .then((response) => {
 
         //
@@ -112,7 +114,7 @@ export const CreateReportFormulary = () => {
         console.log(error);
         errorResponse(error.response);
 
-      });*/
+      });
   }
 
   const errorResponse = (response) => {

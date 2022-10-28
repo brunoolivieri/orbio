@@ -32,15 +32,10 @@ class ReportRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $service_order = $this->serviceOrderModel->findOrFail($data->get("service_order_id"));
-
-            // Final path: [so uuid]/reports/[report_name.pdf]
-            $report_complete_path = $service_order->uuid . $data->get("last_path");
-
             $report = $this->reportModel->create([
                 "name" => $data->get("name"),
-                "path" => $report_complete_path,
-                "observation" => $data->get("observation")
+                "path" => $data->get("path"),
+                "observation" => null
             ]);
 
             // Relate the created report to the service order
@@ -49,7 +44,7 @@ class ReportRepository implements RepositoryInterface
             ]);
 
             // Save the report PDF in the storage
-            Storage::disk('public')->put($report_complete_path, $data->get('report_content'));
+            Storage::disk('public')->put($report->path, $data->get('file_content'));
 
             return $report;
         });

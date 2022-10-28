@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Modules\Report;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
-// Form Request
-use App\Http\Requests\PDF\ReportPDFRequest;
+use Symfony\Component\HttpFoundation\Request;
 // Custom
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
@@ -37,8 +36,7 @@ class ReportModuleController extends Controller
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-        dd('oook');
-        return $this->service->createResource($request);
+        return $this->service->createResource($request->only(['name', 'blob']));
     }
 
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response
