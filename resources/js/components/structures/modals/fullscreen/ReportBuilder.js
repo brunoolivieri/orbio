@@ -10,7 +10,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Assets
 import BirdviewLogo from "../../../assets/images/Logos/Birdview.png";
 // Libs
-import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, BlobProvider, pdf } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, pdf } from '@react-pdf/renderer';
 import moment from 'moment/moment';
 
 // Create styles
@@ -191,8 +191,6 @@ export const DownloadReport = React.memo((props) => {
     const handleSaveReport = async () => {
         const blob = await pdf(<ReportDocument data={{ ...props.data, flight_plans: props.flightPlans }} />).toBlob();
         props.handleRequestServerToSaveReport(blob);
-        /*var fileURL = URL.createObjectURL(blob);
-        window.open(fileURL);*/
     }
 
     return (

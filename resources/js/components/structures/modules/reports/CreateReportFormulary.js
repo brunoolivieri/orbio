@@ -83,22 +83,45 @@ export const CreateReportFormulary = (props) => {
     setDisplayAlert({ display: false, type: "", message: "" });
   }
 
-  function handleRequestServerToSaveReport(blob_from_report_builder) {
+  function handleRequestServerToSaveReport(report_blob) {
+
     if (formValidation()) {
       setLoading(true);
 
+      const report_file = new File([report_blob], `${controlledInput.name}.pdf`, { type: 'application/pdf' });
+
+      /*
+      Test blob 
+
+      var fileURL = URL.createObjectURL(report_file);
+      window.open(fileURL);
+
+      const url = window.URL.createObjectURL(new Blob([report_file]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `teste.pdf`); 
+      document.body.appendChild(link);
+      link.click();
+      */
+
       const formData = new FormData();
       formData.append('name', controlledInput.name);
-      formData.append('blob', blob_from_report_builder);
+      formData.append('file', report_file);
+      formData.append('blob', report_blob);
       formData.append('service_order_id', serviceOrder.id)
 
-      axios.post("/api/reports-module", formData)
+      axios.post("/api/reports-module", formData, {
+        headers: {
+          'Content-Type': 'application/pdf'
+        }
+      })
         .then((response) => {
           setLoading(false);
           successResponse(response);
         })
         .catch(function (error) {
           console.log(error);
+          setLoading(false);
           errorResponse(error.response);
         });
     }

@@ -26,7 +26,7 @@ class ReportStoreRequest extends FormRequest
     {
         return [
             'name' => ['required', 'unique:reports,name'],
-            'blob' => ['required']
+            'file' => ['required']
         ];
     }
 
@@ -40,7 +40,7 @@ class ReportStoreRequest extends FormRequest
         return [
             'name.required' => 'O nome do relatório precisa ser informado',
             'name.unique' => 'Já existe um relatório com esse nome',
-            'blob.required' => 'O relatório precisa ser enviado'
+            'file.required' => 'O arquivo do relatório precisa ser enviado'
 
         ];
     }

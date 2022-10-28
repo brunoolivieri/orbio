@@ -5,7 +5,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, Ico
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DroneConnectionConfig } from '../../../modals/dialog/DroneConnectionConfig';
 import { DroneLogsList } from '../../../modals/fullscreen/DroneLogsList';
-import AxiosApi from '../../../../../services/AxiosApi';
+import axios from '../../../../../services/AxiosApi';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +13,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 const initialConnection = { ssid: "EMBRAPA-BV", ip: "201.49.23.53", ssh_port: 22, http_port: 3000 };
 const initialDisplatAlert = { display: false, type: "", message: "" };
 
-export const CreateLogFormulary = React.memo(() => {
+export const CreateLogFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
@@ -27,7 +27,7 @@ export const CreateLogFormulary = React.memo(() => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleDownloadLogs = (e) => {
+    function handleDownloadLogs(e) {
         e.preventDefault();
 
         setDownloadLoading(true);
@@ -35,11 +35,12 @@ export const CreateLogFormulary = React.memo(() => {
         const ip = connection.ip;
         const http_port = connection.http_port;
 
-        AxiosApi.post(`/api/plans-module-logs?ip=${ip}&http_port=${http_port}`, {
+        axios.post(`/api/plans-module-logs?ip=${ip}&http_port=${http_port}`, {
             logs: selectedLogs
         })
             .then(function (response) {
                 setDownloadLoading(false);
+                props.reload_table();
                 setDisplayAlert({ display: true, type: "success", message: response.data.message });
                 setTimeout(() => {
                     handleClose();
@@ -52,11 +53,11 @@ export const CreateLogFormulary = React.memo(() => {
             });
     }
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
+    function handleClose() {
         setDisplayAlert({ display: false, type: "", message: "" });
         setOpen(false);
     }

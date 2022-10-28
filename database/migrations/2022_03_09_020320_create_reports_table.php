@@ -16,7 +16,8 @@ class CreateReportsTable extends Migration
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string("path");
+            $table->string("file");
+            $table->binary('blob');
             $table->text("observation")->nullable(true);
             $table->timestamps();
             $table->softDeletes();

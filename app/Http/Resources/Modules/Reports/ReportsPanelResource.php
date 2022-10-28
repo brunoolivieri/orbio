@@ -24,14 +24,19 @@ class ReportsPanelResource extends JsonResource
      */
     public function toArray($request)
     {
-
         foreach ($this->data as $row => $report) {
 
             $this->formatedData["records"][$row] = [
                 "id" => $report->id,
-                "path" => $report->path,
+                "name" => $report->name,
+                "file" => $report->file,
                 "observation" => empty($report->observation) ? "N/A" : $report->observation,
-                "service_order" => $report->service_order
+                "service_order" => [
+                    "id" => $report->service_order->id,
+                    "number" => $report->service_order->number,
+                    "flight_plans" => $report->service_order->flight_plans
+                ],
+                "created_at" => $report->created_at
             ];
         }
 

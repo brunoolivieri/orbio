@@ -34,17 +34,18 @@ class ReportRepository implements RepositoryInterface
 
             $report = $this->reportModel->create([
                 "name" => $data->get("name"),
-                "path" => $data->get("path"),
+                "file" => $data->get("filename"),
+                "blob" => $data->get("blob"),
                 "observation" => null
             ]);
 
             // Relate the created report to the service order
-            $service_order = $this->serviceOrderModel->where("id", $data->get("service_order_id"))->update([
+            $this->serviceOrderModel->where("id", $data->get("service_order_id"))->update([
                 "report_id" => $report->id
             ]);
 
             // Save the report PDF in the storage
-            Storage::disk('public')->put($report->path, $data->get('file_content'));
+            Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
 
             return $report;
         });
