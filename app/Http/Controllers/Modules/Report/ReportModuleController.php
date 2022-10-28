@@ -36,7 +36,7 @@ class ReportModuleController extends Controller
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-        return $this->service->createResource($request->only(['name', 'blob']));
+        return $this->service->createResource($request->only(['name', 'blob', 'service_order_id']));
     }
 
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response

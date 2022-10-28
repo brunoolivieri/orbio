@@ -35,8 +35,6 @@ class ReportService
             return response(["message" => "Falha na criação do relatório."], 500);
         }
 
-        dd('ok');
-
         // Filename is the hash of the content
         $file_content = file_get_contents($data["blob"]);
         $file_content_hash = md5($file_content);

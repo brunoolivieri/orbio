@@ -40,7 +40,6 @@ const initialControlledInput = {
 }
 
 const initialFieldError = {
-  service_order: false,
   name: false,
   client: false,
   state: false,
@@ -49,7 +48,6 @@ const initialFieldError = {
 }
 
 const initialFieldErrorMessage = {
-  service_order: '',
   name: '',
   client: '',
   state: '',
@@ -57,12 +55,12 @@ const initialFieldErrorMessage = {
   farm: ''
 }
 
-export const CreateReportFormulary = () => {
+export const CreateReportFormulary = (props) => {
 
   // ============================================================================== STATES  ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [loading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -74,84 +72,78 @@ export const CreateReportFormulary = () => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
+  }
+
+  function handleClose() {
+    setOpen(false);
     setServiceOrder(null);
     setFlightPlans(null);
-  }
-
-  const handleClose = () => {
     setDisplayAlert({ display: false, type: "", message: "" });
-    setOpen(false);
   }
 
-  const handleInputChange = (event) => {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+  function handleRequestServerToSaveReport(blob_from_report_builder) {
+    if (formValidation()) {
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append('name', controlledInput.name);
+      formData.append('blob', blob_from_report_builder);
+      formData.append('service_order_id', serviceOrder.id)
+
+      axios.post("/api/reports-module", formData)
+        .then((response) => {
+          setLoading(false);
+          successResponse(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+          errorResponse(error.response);
+        });
+    }
   }
 
-  const handleRequestServerToSaveReport = (blob) => {
+  function formValidation() {
 
-    const data = {
-      name: controlledInput.name,
-      service_order_id: serviceOrder.id,
-      flight_plans: flightPlans,
-      observation: null,
-      blob: blob
+    let inputs_validate = [];
+    let controlledInputErrors = {};
+    for (let field in controlledInput) {
+      let is_invalid = (controlledInput[field] == null || controlledInput[field].length == 0);
+      controlledInputErrors[field] = is_invalid;
+      inputs_validate.push(is_invalid ? 0 : 1);
     }
 
-    const formData = new FormData();
-    formData.append('name', controlledInput.name);
-    formData.append('blob', blob);
+    setFieldError(controlledInputErrors);
 
-    axios.post("/api/reports-module", formData)
-      .then((response) => {
-
-        //
-
-      })
-      .catch(function (error) {
-
-        console.log(error);
-        errorResponse(error.response);
-
-      });
+    // If includes 0, form is invalid, an the true result turns into false
+    return !inputs_validate.includes(0);
   }
 
-  const errorResponse = (response) => {
+  function successResponse(response) {
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setTimeout(() => {
+      props.reload_table();
+      setLoading(false);
+      handleClose();
+    }, 2000);
+  }
+
+  function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      name: { error: false, message: null },
-      client: { error: false, message: null },
-      state: { error: false, message: null },
-      city: { error: false, message: null },
-      farm: { error: false, message: null },
-      responsible: { error: false, message: null }
-    }
+    // {field: bool}
+    let request_errors = {};
+    // {field: string}
+    let request_messages = {};
 
     for (let prop in response.data.errors) {
-      request_errors[prop] = {
-        error: true,
-        message: response.data.errors[prop][0]
-      }
+      request_errors[prop] = true;
+      request_messages[prop] = response.data.errors[prop][0];
     }
 
-    setFieldError({
-      name: request_errors.name.error,
-      client: request_errors.client.error,
-      state: request_errors.state.error,
-      city: request_errors.city.error,
-      farm: request_errors.farm.error,
-      responsible: request_errors.responsible.error
-    });
-
-    setFieldErrorMessage({
-      name: request_errors.name.message,
-      client: request_errors.client.message,
-      city: request_errors.city.message,
-      farm: request_errors.farm.message,
-      responsible: request_errors.responsible.message
-    });
+    setFieldError(request_errors);
+    setFieldErrorMessage(request_messages);
   }
 
   React.useEffect(() => {
@@ -162,6 +154,10 @@ export const CreateReportFormulary = () => {
       setCanSave(is_data_completed);
     }
   }, [flightPlans]);
+
+  function handleInputChange(event) {
+    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+  }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
 

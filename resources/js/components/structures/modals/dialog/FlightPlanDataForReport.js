@@ -16,7 +16,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import { DatePicker } from "../../date_picker/DatePicker";
 // Lib
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 import moment from 'moment';
 
 const initialFieldError = {
@@ -66,66 +66,74 @@ export const FlightPlanDataForReport = React.memo((props) => {
     }
 
     const handleSave = () => {
+        if (formValidation()) {
+            // Must be 10
+            let cont_validated_inputs = 0;
 
-        // Must be 10
-        let cont_validated_inputs = 0;
-
-        for (let key in controlledInput) {
-            if (key != 'completed' && key != 'date') {
-                if (controlledInput[key].length > 0) {
-                    cont_validated_inputs++;
-                }
-            } else if (key != 'completed' && key === 'date') {
-                if (moment(controlledInput[key]).format('YYYY-MM-DD').length > 0) {
-                    cont_validated_inputs++;
+            for (let key in controlledInput) {
+                if (key != 'completed' && key != 'date') {
+                    if (controlledInput[key].length > 0) {
+                        cont_validated_inputs++;
+                    }
+                } else if (key != 'completed' && key === 'date') {
+                    if (moment(controlledInput[key]).format('YYYY-MM-DD').length > 0) {
+                        cont_validated_inputs++;
+                    }
                 }
             }
+
+            // Clone from original flightPlans array to modify it
+            let flight_plans_data_clone = [...props.flightPlans];
+
+            // If form was completed or not
+            controlledInput.completed = cont_validated_inputs == 10;
+
+            flight_plans_data_clone[props.current.array_index] = controlledInput;
+            props.setFlightPlans(flight_plans_data_clone);
+            handleClose();
         }
-
-        // Clone from original flightPlans array to modify it
-        let flight_plans_data_clone = [...props.flightPlans];
-
-        // If form was completed or not
-        if (cont_validated_inputs != 10) {
-            controlledInput.completed = false;
-        } else {
-            controlledInput.completed = true;
-        }
-
-        flight_plans_data_clone[props.current.array_index] = controlledInput;
-        props.setFlightPlans(flight_plans_data_clone);
-        handleClose();
     }
 
-    const handleInputChange = (event) => {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    function formValidation() {
+
+        let inputs_validate = [];
+        let controlledInputErrors = {};
+        let controlledInputErrorsMessage = {};
+        for (let field in controlledInput) {
+            let is_invalid = (controlledInput[field] == null || controlledInput[field].length == 0);
+            controlledInputErrors[field] = is_invalid;
+            controlledInputErrorsMessage[field] = is_invalid ? "O campo deve ser preenchido" : "";
+            inputs_validate.push(is_invalid ? 0 : 1);
+        }
+
+        setFieldError(controlledInputErrors);
+        setFieldErrorMessage(controlledInputErrorsMessage);
+
+        // If includes 0, form is invalid, an the true result turns into false
+        return !inputs_validate.includes(0);
+
     }
 
-    const handleLoadWeather = () => {
-
+    function handleLoadWeather() {
         setWeatherLoading(true);
-
         const state = controlledInput.state;
         const city = controlledInput.city;
-
-        AxiosApi.get(`api/get-weather-data?state=${state}&city=${city}`)
+        axios.get(`api/get-weather-data?state=${state}&city=${city}`)
             .then((response) => {
-
                 setWeatherLoading(false);
-
                 const temperature = response.data.temperature;
                 const humidity = response.data.humidity;
                 const wind = response.data.wind_speedy.split(" ")[0];
-
                 setControlledInput({ ...controlledInput, ['temperature']: temperature, ['humidity']: humidity, ['wind']: wind });
-
             })
             .catch(function (error) {
-
-                setWeatherLoading(false);
                 console.log(error);
-
+                setWeatherLoading(false);
             });
+    }
+
+    function handleInputChange(event) {
+        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
 
@@ -238,8 +246,8 @@ export const FlightPlanDataForReport = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.number}
-                                error={fieldError.number}
+                                helperText={fieldErrorMessage.responsible}
+                                error={fieldError.responsible}
                                 value={controlledInput.responsible}
                             />
                         </Grid>
