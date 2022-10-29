@@ -33,7 +33,7 @@ class ReportService implements ServiceInterface
         }
     }
 
-    function downloadResource(string $filename)
+    function downloadResource(string $filename, $identifier = null)
     {
         if (Storage::disk("public")->exists("reports/$filename")) {
 

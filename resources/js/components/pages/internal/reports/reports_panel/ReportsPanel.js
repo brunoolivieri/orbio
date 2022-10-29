@@ -77,23 +77,30 @@ export function ReportsPanel() {
       });
   }, [paginationConfig]);
 
-  function handleDownloadReport(filename) {
-    axios.get(`/api/reports-module-download/${filename}`, null, {
-      responseType: 'blob'
-    })
-      .then(function (response) {
-        handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, "success");
+  function handleDownloadReport(report) {
 
-        // Download forçado do arquivo com o conteúdo retornado do servidor
+    axios.get(`/api/reports-module-download/${report.file}?report_id=${report.id}`,
+      {
+        headers: {
+          'Content-type': 'application/json'
+        },
+        responseType: 'blob'
+      })
+      .then(function (response) {
+        handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${report.file}`, "success");
+
+        console.log(response.data)
+
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `${filename}`); //or any other extension
+        link.setAttribute('download', `${report.file}`); //or any other extension
         document.body.appendChild(link);
         link.click();
+
       })
       .catch(function () {
-        handleOpenSnackbar(`O download não foi realizado! Arquivo: ${filename}`, "error");
+        handleOpenSnackbar(`O download não foi realizado! Arquivo: ${report.file}`, "error");
       });
   }
 
@@ -345,7 +352,7 @@ export function ReportsPanel() {
                       <TableCell align="center">{moment(report.created_at).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">
                         <Tooltip title={"Exportar relatório"}>
-                          <IconButton onClick={() => handleDownloadReport(report.file)} disabled={!AuthData.data.user_powers["4"].profile_powers.read == 1}>
+                          <IconButton onClick={() => handleDownloadReport(report)} disabled={!AuthData.data.user_powers["4"].profile_powers.read == 1}>
                             <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
                           </IconButton>
                         </Tooltip>

@@ -33,10 +33,11 @@ class ReportModuleController extends Controller
         );
     }
 
-    public function downloadReport(string $filename): \Illuminate\Http\Response
+    public function downloadReport(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_read');
-        return $this->service->downloadResource($filename);
+        
+        return $this->service->downloadResource(request()->filename, request()->report_id);
     }
 
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response

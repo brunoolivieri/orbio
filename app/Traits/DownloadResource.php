@@ -11,5 +11,5 @@ trait DownloadResource
      * @param string $filename
      * @return \Illuminate\Http\Response
      */
-    abstract public function downloadResource(string $filename);
+    abstract public function downloadResource(string $filename, $identifier);
 }
