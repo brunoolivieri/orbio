@@ -93,7 +93,7 @@ class ServiceOrderReportResource extends JsonResource
                 }
 
                 // An available service order need to have logs for all flight plans
-                if (in_array(0, $check_if_all_plans_has_log)) {
+                if (in_array(0, $check_if_all_plans_has_log) || !is_null($service_order->report_id)) {
                     $this->formatedData["records"][$row]["available"] = false;
                 }
             }
