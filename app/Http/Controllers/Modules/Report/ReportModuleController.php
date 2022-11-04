@@ -24,7 +24,7 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_read');
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -37,26 +37,26 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_read');
         
-        return $this->service->downloadResource(request()->filename, request()->report_id);
+        return $this->service->download(request()->filename, request()->report_id);
     }
 
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-        return $this->service->createResource($request->only(['name', 'file', 'blob', 'service_order_id']));
+        return $this->service->createOne($request->only(['name', 'file', 'blob', 'service_order_id']));
     }
 
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
 
-        return $this->service->updateResource($request->validated(), $id);
+        return $this->service->updateOne($request->validated(), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

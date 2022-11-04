@@ -23,7 +23,7 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_read");
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -36,20 +36,20 @@ class EquipmentModuleBatteryPanelController extends Controller
     {
         Gate::authorize("equipments_write");
         
-        return $this->service->createResource($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
+        return $this->service->createOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
     }
 
     public function update(UpdateBatteryRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->updateResource($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]), $id);
+        return $this->service->updateOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

@@ -29,7 +29,7 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -48,7 +48,7 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createResource($request->only(["ip", "http_port", "logs"]));
+        return $this->service->createOne($request->only(["ip", "http_port", "logs"]));
     }
 
     /**
@@ -62,7 +62,7 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateResource($request->only(["name", "flight_plan_id", "service_order_id"]), $id);
+        return $this->service->updateOne($request->only(["name", "flight_plan_id", "service_order_id"]), $id);
     }
 
     /**
@@ -75,6 +75,6 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

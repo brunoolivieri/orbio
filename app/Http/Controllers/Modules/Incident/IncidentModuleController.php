@@ -24,7 +24,7 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_read');
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -37,20 +37,20 @@ class IncidentModuleController extends Controller
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->createResource($request->only("date", "type", "description", "flight_plan_id", "service_order_id"));
+        return $this->service->createOne($request->only("date", "type", "description", "flight_plan_id", "service_order_id"));
     }
 
     public function update(IncidentUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
         
-        return $this->service->updateResource($request->only(["type", "description", "date", "flight_plan_id", "service_order_id"]), $id);
+        return $this->service->updateOne($request->only(["type", "description", "date", "flight_plan_id", "service_order_id"]), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

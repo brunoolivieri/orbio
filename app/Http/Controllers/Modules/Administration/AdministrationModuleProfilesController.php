@@ -23,7 +23,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_read');
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -36,7 +36,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $this->service->createResource($request->validated());
+        $this->service->createOne($request->validated());
 
         return response(["message" => "Perfil criado com sucesso!"], 201);
     }
@@ -45,7 +45,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $this->service->updateResource($request->only(["name", "privileges"]), $id);
+        $this->service->updateOne($request->only(["name", "privileges"]), $id);
 
         return response(["message" => "Perfil atualizdo com sucesso!"], 200);
     }
@@ -54,6 +54,6 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

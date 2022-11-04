@@ -24,7 +24,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -37,27 +37,27 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->downloadResource($filename);
+        return $this->service->download($filename);
     }
 
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createResource($request->only(["name", "file", "description", "coordinates"]));
+        return $this->service->createOne($request->only(["name", "file", "description", "coordinates"]));
     }
 
     public function update(FlightPlanUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateResource($request->validated(), $id);
+        return $this->service->updateOne($request->validated(), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

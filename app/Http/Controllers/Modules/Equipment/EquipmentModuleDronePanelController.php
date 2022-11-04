@@ -22,7 +22,7 @@ class EquipmentModuleDronePanelController extends Controller
     {
         Gate::authorize("equipments_read");
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -35,20 +35,20 @@ class EquipmentModuleDronePanelController extends Controller
     {
         Gate::authorize("equipments_write");
         
-        return $this->service->createResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
+        return $this->service->createOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]));
     }
 
     public function update(UpdateDroneRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->updateResource($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]), $id);
+        return $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

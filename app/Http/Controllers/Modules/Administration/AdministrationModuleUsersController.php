@@ -22,7 +22,7 @@ class AdministrationModuleUsersController extends Controller
     {
         Gate::authorize('administration_read');
 
-        return $this->service->loadResourceWithPagination(
+        return $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
@@ -35,20 +35,20 @@ class AdministrationModuleUsersController extends Controller
     {
         Gate::authorize('administration_write');
 
-        return $this->service->createResource($request->validated());
+        return $this->service->createOne($request->validated());
     }
 
     public function update(UserPanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->updateResource($request->validated(), $id);
+        return $this->service->updateOne($request->validated(), $id);
     }
 
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->deleteResource($id);
+        return $this->service->deleteOne($id);
     }
 }

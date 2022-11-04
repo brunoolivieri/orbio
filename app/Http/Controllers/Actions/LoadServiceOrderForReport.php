@@ -27,7 +27,7 @@ class LoadServiceOrderForReport extends Controller
     {
         Gate::authorize('service_orders_read');
        
-        $data = $this->service->loadResourceWithPagination(
+        $data = $this->service->getPaginate(
             request()->limit,
             request()->order_by,
             request()->page,
