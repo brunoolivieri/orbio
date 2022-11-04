@@ -381,7 +381,7 @@ export const FlightPlansPanel = () => {
                         }
                       </TableCell>
                       <TableCell align="center">
-                        <Tooltip title="Rotas .txt">
+                        <Tooltip title="Download">
                           <IconButton onClick={() => handleDownloadFlightPlan(flight_plan.file)} disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
                             <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} />
                           </IconButton>

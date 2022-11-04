@@ -2,12 +2,12 @@
 
 namespace App\Services\Modules\Incident;
 
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\Incidents\IncidentRepository;
 // Resouce
 use App\Http\Resources\Modules\Incidents\IncidentsPanelResource;
-// Interface
-use App\Contracts\ServiceInterface;
 
 class IncidentService implements ServiceInterface
 {
@@ -16,7 +16,7 @@ class IncidentService implements ServiceInterface
         $this->repository = $incidentRepository;
     }
 
-    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -27,7 +27,7 @@ class IncidentService implements ServiceInterface
         }
     }
 
-    public function createResource(array $data)
+    public function createOne(array $data)
     {
         $data["date"] = date("Y-m-d", strtotime($data["date"]));
 
@@ -36,14 +36,14 @@ class IncidentService implements ServiceInterface
         return response(["message" => "Incidente criado com sucesso!"], 201);
     }
 
-    public function updateResource(array $data, string $identifier)
+    public function updateOne(array $data, string $identifier)
     {
         $incident = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Incidente atualizado com sucesso!"], 200);
     }
 
-    public function deleteResource(string $identifier)
+    public function deleteOne(string $identifier)
     {
         $incident = $this->repository->deleteOne($identifier);
 

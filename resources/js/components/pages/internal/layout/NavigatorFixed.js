@@ -11,7 +11,6 @@ import AssessmentIcon from '@mui/icons-material/Assessment';
 import MapIcon from '@mui/icons-material/Map';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import ReportIcon from '@mui/icons-material/Report';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
@@ -121,8 +120,7 @@ export const NavigatorFixed = () => {
         {
             id: 'Outros',
             children: [
-                { id: 'Conta', icon: <AccountCircleIcon />, access: AuthData.data.profile_id != 1 ? true : false, path: "conta" },
-                { id: 'Suporte', icon: <HelpIcon />, access: true, path: "suporte" },
+                { id: 'Conta', icon: <AccountCircleIcon />, access: AuthData.data.profile_id != 1 ? true : false, path: "conta" }
             ],
         },
     ]), []);

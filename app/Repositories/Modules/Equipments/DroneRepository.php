@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 // Interface
-use App\Contracts\RepositoryInterface;
+use App\Repositories\Contracts\RepositoryInterface;
 // Model
 use App\Models\Drones\Drone;
 

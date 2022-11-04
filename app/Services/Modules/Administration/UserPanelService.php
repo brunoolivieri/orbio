@@ -4,12 +4,12 @@ namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Str;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\Administration\UserRepository;
 // Resource
 use App\Http\Resources\Modules\Administration\UsersPanelResource;
-// Interface
-use App\Contracts\ServiceInterface;
 
 class UserPanelService implements ServiceInterface
 {
@@ -19,7 +19,7 @@ class UserPanelService implements ServiceInterface
         $this->repository = $userRepository;
     }
 
-    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -30,7 +30,7 @@ class UserPanelService implements ServiceInterface
         }
     }
 
-    public function createResource(array $data)
+    public function createOne(array $data)
     {
         $random_password = Str::random(10);
         $data["password"] = $random_password;
@@ -42,12 +42,12 @@ class UserPanelService implements ServiceInterface
         return response(["message" => "Usuário criado com sucesso!"], 201);
     }
 
-    public function updateResource(array $data, string $identifier)
+    public function updateOne(array $data, string $identifier)
     {
         return $this->repository->updateOne(collect($data), $identifier);
     }
 
-    public function deleteResource(string $identifier)
+    public function deleteOne(string $identifier)
     {
         return $this->repository->deleteOne($identifier);
     }

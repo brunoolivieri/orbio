@@ -2,10 +2,10 @@
 
 namespace App\Services\Modules\ServiceOrder;
 
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\ServiceOrders\ServiceOrderRepository;
-// Contracts
-use App\Contracts\ServiceInterface;
 // Events
 use App\Events\Modules\ServiceOrder\{
     ServiceOrderCreatedEvent,
@@ -20,12 +20,12 @@ class ServiceOrderService implements ServiceInterface
         $this->repository = $serviceOrderRepository;
     }
 
-    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         return $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
     }
 
-    public function createResource(array $data)
+    public function createOne(array $data)
     {
         $data["number"] = "os" . time();
         $data["status"] = boolval(intval($data["status"]));
@@ -46,7 +46,7 @@ class ServiceOrderService implements ServiceInterface
         return response(["message" => "Ordem de serviço criada com sucesso!"], 201);
     }
 
-    public function updateResource(array $data, string $identifier)
+    public function updateOne(array $data, string $identifier)
     {
 
         // Change, if its "0", each equipment value for null
@@ -65,7 +65,7 @@ class ServiceOrderService implements ServiceInterface
         return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
     }
 
-    public function deleteResource(string $identifier)
+    public function deleteOne(string $identifier)
     {
         $service_order = $this->repository->deleteOne($identifier);
 

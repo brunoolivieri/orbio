@@ -54,7 +54,7 @@ use App\Http\Controllers\Modules\Equipment\{
     EquipmentModuleEquipmentPanelController
 };
 
-// External Views
+// Views
 Route::middleware(['guest'])->group(function () {
     Route::get('/', function () {
         return redirect("/login");
@@ -64,7 +64,7 @@ Route::middleware(['guest'])->group(function () {
 });
 
 
-// External operations
+// Guest operations
 Route::post('/api/auth/login', LoginController::class);
 Route::post('/api/auth/password-token', PasswordTokenController::class);
 Route::post('/api/auth/change-password', PasswordResetController::class);

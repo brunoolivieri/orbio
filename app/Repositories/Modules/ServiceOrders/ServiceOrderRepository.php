@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Modules\ServiceOrders;
 
-use App\Contracts\RepositoryInterface;
+use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;

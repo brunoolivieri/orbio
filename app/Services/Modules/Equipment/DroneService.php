@@ -2,12 +2,12 @@
 
 namespace App\Services\Modules\Equipment;
 
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\Equipments\DroneRepository;
 // Resources
 use App\Http\Resources\Modules\Equipments\DronesPanelResource;
-// Contracts
-use App\Contracts\ServiceInterface;
 
 class DroneService implements ServiceInterface
 {
@@ -16,7 +16,7 @@ class DroneService implements ServiceInterface
         $this->repository = $droneRepository;
     }
 
-    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -27,7 +27,7 @@ class DroneService implements ServiceInterface
         }
     }
 
-    public function createResource(array $data)
+    public function createOne(array $data)
     {
         // Filename is the hash of the content
         $file_content = file_get_contents($data['image']);
@@ -43,7 +43,7 @@ class DroneService implements ServiceInterface
         return response(["message" => "Drone criado com sucesso!"], 201);
     }
 
-    public function updateResource(array $data, string $identifier)
+    public function updateOne(array $data, string $identifier)
     {
         if (isset($data['image'])) {
 
@@ -65,7 +65,7 @@ class DroneService implements ServiceInterface
         return response(["message" => "Drone atualizado com sucesso!"], 200);
     }
 
-    public function deleteResource(string $identifier): \Illuminate\Http\Response
+    public function deleteOne(string $identifier): \Illuminate\Http\Response
     {
         $drone = $this->repository->deleteOne($identifier);
 

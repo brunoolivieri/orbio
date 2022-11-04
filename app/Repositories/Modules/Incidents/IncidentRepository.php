@@ -2,11 +2,10 @@
 
 namespace App\Repositories\Modules\Incidents;
 
-use App\Contracts\RepositoryInterface;
+use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
 // Model
 use App\Models\Incidents\Incident;
-use App\Models\FlightPlans\FlightPlan;
 use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class IncidentRepository implements RepositoryInterface

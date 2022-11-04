@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Modules\Equipments;
 
-use App\Contracts\RepositoryInterface;
+use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
@@ -28,13 +28,13 @@ class BatteryRepository implements RepositoryInterface
     function createOne(Collection $data)
     {
         return DB::transaction(function () use ($data) {
-           
+
             $battery = $this->batteryModel->create($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"])->all());
-            
+
             $battery->image()->create([
                 "path" => $data->get('path')
             ]);
-           
+
             // Image is stored just if does not already exists
             if (!Storage::disk('public')->exists($data->get('path'))) {
                 Storage::disk('public')->put($data->get('path'), $data->get('file_content'));

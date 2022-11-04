@@ -2,12 +2,12 @@
 
 namespace App\Services\Modules\Administration;
 
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\Administration\ProfileRepository;
 // Resource
 use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
-// Interface
-use App\Contracts\ServiceInterface;
 
 class ProfilePanelService implements ServiceInterface
 {
@@ -17,7 +17,7 @@ class ProfilePanelService implements ServiceInterface
         $this->repository = $profileRepository;
     }
 
-    function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -28,21 +28,21 @@ class ProfilePanelService implements ServiceInterface
         }
     }
 
-    function createResource(array $data)
+    function createOne(array $data)
     {
         $profile = $this->repository->createOne(collect($data));
 
         return response(["message" => "Perfil criado com sucesso!"], 201);
     }
 
-    function updateResource(array $data, string $identifier)
+    function updateOne(array $data, string $identifier)
     {
         $profile = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Perfil atualizado com sucesso!"], 200);
     }
 
-    function deleteResource(string $identifier)
+    function deleteOne(string $identifier)
     {
         $profile = $this->repository->deleteOne($identifier);
 

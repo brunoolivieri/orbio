@@ -3,12 +3,12 @@
 namespace App\Services\Modules\Report;
 
 use Illuminate\Support\Facades\Storage;
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Models
 use App\Repositories\Modules\Reports\ReportRepository;
 // Resources
 use App\Http\Resources\Modules\Reports\ReportsPanelResource;
-// Contracts
-use App\Contracts\ServiceInterface;
 // Traits
 use App\Traits\DownloadResource;
 
@@ -22,7 +22,7 @@ class ReportService implements ServiceInterface
         $this->repository = $repository;
     }
 
-    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -33,7 +33,7 @@ class ReportService implements ServiceInterface
         }
     }
 
-    function downloadResource(string $filename, $identifier = null)
+    function download(string $filename, $identifier = null)
     {
         if (Storage::disk("public")->exists("reports/$filename")) {
 
@@ -48,7 +48,7 @@ class ReportService implements ServiceInterface
         }
     }
 
-    public function createResource(array $data)
+    public function createOne(array $data)
     {
 
         if (is_null($data["file"])) {
@@ -70,14 +70,14 @@ class ReportService implements ServiceInterface
         return response(["message" => "Relatório criado com sucesso!"], 200);
     }
 
-    public function updateResource(array $data, string $identifier)
+    public function updateOne(array $data, string $identifier)
     {
         $report = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Relatório atualizado com sucesso!"], 200);
     }
 
-    public function deleteResource(string $identifier)
+    public function deleteOne(string $identifier)
     {
         //
     }

@@ -5,12 +5,12 @@ namespace App\Services\Modules\FlightPlan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanLogRepository;
 // Resources
 use App\Http\Resources\Modules\FlightPlans\FlightPlansLogPanelResource;
-// Contracts
-use App\Contracts\ServiceInterface;
 
 class FlightPlanLogService implements ServiceInterface
 {
@@ -20,7 +20,7 @@ class FlightPlanLogService implements ServiceInterface
         $this->repository = $flightPlanLogRepository;
     }
 
-    function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -31,7 +31,7 @@ class FlightPlanLogService implements ServiceInterface
         }
     }
 
-    function createResource(array $data)
+    function createOne(array $data)
     {
         $ip = $data["ip"];
         $http_port = $data["http_port"];
@@ -61,7 +61,7 @@ class FlightPlanLogService implements ServiceInterface
         return response(["message" => "Logs salvos com sucesso!"], 201);
     }
 
-    function updateResource(array $data, string $identifier)
+    function updateOne(array $data, string $identifier)
     {
         foreach ($data as $key => $value) {
             if ($value === "0") {
@@ -74,7 +74,7 @@ class FlightPlanLogService implements ServiceInterface
         return response(["message" => "Log atualizado com sucesso!"], 200);
     }
 
-    function deleteResource(string $identifier)
+    function deleteOne(string $identifier)
     {
         $log = $this->repository->deleteOne($identifier);
 

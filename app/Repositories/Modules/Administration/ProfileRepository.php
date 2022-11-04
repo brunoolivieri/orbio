@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Modules\Administration;;
 
-use App\Contracts\RepositoryInterface;
+use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 // Model

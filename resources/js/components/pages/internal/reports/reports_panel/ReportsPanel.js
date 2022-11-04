@@ -351,7 +351,7 @@ export function ReportsPanel() {
                       </TableCell>
                       <TableCell align="center">{moment(report.created_at).format('DD-MM-YYYY hh:mm')}</TableCell>
                       <TableCell align="center">
-                        <Tooltip title={"Exportar relatório"}>
+                        <Tooltip title={"Download"}>
                           <IconButton onClick={() => handleDownloadReport(report)} disabled={!AuthData.data.user_powers["4"].profile_powers.read == 1}>
                             <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
                           </IconButton>

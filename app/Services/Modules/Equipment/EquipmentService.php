@@ -2,12 +2,12 @@
 
 namespace App\Services\Modules\Equipment;
 
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\Equipments\EquipmentRepository;
 // Resources
 use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
-// Contracts
-use App\Contracts\ServiceInterface;
 
 class EquipmentService implements ServiceInterface
 {
@@ -16,7 +16,7 @@ class EquipmentService implements ServiceInterface
         $this->repository = $equipmentRepository;
     }
 
-    public function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
       
@@ -27,7 +27,7 @@ class EquipmentService implements ServiceInterface
         }
     }
 
-    public function createResource(array $data)
+    public function createOne(array $data)
     {
         // Filename is the hash of the content
         $file_content = file_get_contents($data['image']);
@@ -43,7 +43,7 @@ class EquipmentService implements ServiceInterface
         return response(["message" => "Equipamento criado com sucesso!"], 201);
     }
 
-    public function updateResource(array $data, string $identifier)
+    public function updateOne(array $data, string $identifier)
     {
         if (isset($data['image'])) {
 
@@ -71,7 +71,7 @@ class EquipmentService implements ServiceInterface
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteResource(string $identifier)
+    public function deleteOne(string $identifier)
     {
         $equipment = $this->repository->deleteOne($identifier);
 

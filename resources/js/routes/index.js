@@ -12,7 +12,6 @@ import { FlightPlans } from "../components/pages/internal/flight_plans/FlightPla
 import { Reports } from "../components/pages/internal/reports/Reports";
 import { Account } from "../components/pages/internal/account/Account";
 import { Administration } from "../components/pages/internal/administration/Administration";
-import { Support } from "../components/pages/internal/support/Support";
 import { ServiceOrders } from "../components/pages/internal/service_orders/ServiceOrders";
 import { Incidents } from "../components/pages/internal/incidents/Incidents";
 import { Equipments } from "../components/pages/internal/equipments/Equipments";
@@ -38,7 +37,6 @@ export function InternalRoutes() {
             <Route exact path="relatorios" element={<Reports />} />
             <Route exact path="conta" element={<Account />} />
             <Route exact path="administracao" element={<Administration />} />
-            <Route exact path="suporte" element={<Support />} />
             <Route exact path="ordens" element={<ServiceOrders />} />
             <Route exact path="incidentes" element={<Incidents />} />
             <Route exact path="equipamentos" element={<Equipments />} />

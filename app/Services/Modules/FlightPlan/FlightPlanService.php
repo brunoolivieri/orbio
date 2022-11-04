@@ -4,12 +4,12 @@ namespace App\Services\Modules\FlightPlan;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+// Contracts
+use App\Services\Contracts\ServiceInterface;
 // Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
 // Resources
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
-// Contracts
-use App\Contracts\ServiceInterface;
 // Traits
 use App\Traits\DownloadResource;
 
@@ -23,7 +23,7 @@ class FlightPlanService implements ServiceInterface
         $this->repository = $flightPlanRepository;
     }
 
-    function loadResourceWithPagination(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
     {
         $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
 
@@ -34,7 +34,7 @@ class FlightPlanService implements ServiceInterface
         }
     }
 
-    function downloadResource(string $filename, $identifier = null)
+    function download(string $filename, $identifier = null)
     {
         if (Storage::disk("public")->exists("flight_plans/$filename")) {
 
@@ -50,7 +50,7 @@ class FlightPlanService implements ServiceInterface
         }
     }
 
-    function createResource(array $data)
+    function createOne(array $data)
     {
         if (is_null($data["file"])) {
             return response(["message" => "Falha na criação do plano de voo."], 500);
@@ -77,14 +77,14 @@ class FlightPlanService implements ServiceInterface
         return response(["message" => "Plano de voo criado com sucesso!"], 200);
     }
 
-    function updateResource(array $data, string $identifier)
+    function updateOne(array $data, string $identifier)
     {
         $flight_plan = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
     }
 
-    function deleteResource(string $identifier)
+    function deleteOne(string $identifier)
     {
         $flight_plan = $this->repository->deleteOne($identifier);
 
