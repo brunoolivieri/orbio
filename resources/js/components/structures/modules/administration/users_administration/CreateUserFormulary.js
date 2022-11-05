@@ -156,7 +156,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
               onChange={handleInputChange}
               helperText={fieldErrorMessage.name}
               error={fieldError.name}
-              sx={{ mb: 2 }}
+              sx={{ mb: 1 }}
             />
 
             <TextField

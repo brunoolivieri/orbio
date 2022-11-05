@@ -46,7 +46,6 @@ class UserCreatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
         return (new MailMessage)
             ->subject('ORBIO - Nova conta')
             ->greeting("Bem vindo " . $notifiable->first_name . "!")

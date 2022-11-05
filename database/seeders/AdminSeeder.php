@@ -20,7 +20,7 @@ class AdminSeeder extends Seeder
         $user = User::create([
             "name" => "Master",
             "email" => env("ADMIN_EMAIL"),
-            "password" => env("ADMIN_PASS"),
+            "password" => Hash::make(env("ADMIN_PASS")),
             "status" => true,
             "profile_id" => 1,
             "last_access" => date("Y-m-d H:i:s")

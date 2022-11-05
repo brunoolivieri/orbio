@@ -34,7 +34,7 @@ class AdministrationModuleUsersController extends Controller
     public function store(UserPanelStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
-
+    
         return $this->service->createOne($request->validated());
     }
 

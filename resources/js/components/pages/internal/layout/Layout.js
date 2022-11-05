@@ -82,7 +82,7 @@ export const Layout = () => {
       }
 
       {AuthData.status &&
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#EBEEF1' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#FCFCFC' }}>
           <NavigatorFixed />
           <Box
             component="nav"

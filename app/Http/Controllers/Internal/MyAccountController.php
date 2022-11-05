@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Internal;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\{
     Users\User,
@@ -132,7 +133,9 @@ class MyAccountController extends Controller
     {
         $user = $this->userModel->find(Auth::user()->id);
 
-        $user->update($request->safe()->only(['new_password']));
+        $user->update([
+            "password" => Hash::make($request->safe()->only(['new_password']))
+        ]);
 
         $user->notify(new ChangePasswordNotification($user));
 

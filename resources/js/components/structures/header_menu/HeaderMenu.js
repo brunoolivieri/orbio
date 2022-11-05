@@ -6,6 +6,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
+const menuIconStyle = {
+  color: '#fff'
+}
+
 export function HeaderMenu() {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -26,7 +30,7 @@ export function HeaderMenu() {
         aria-label="menu"
         onClick={handleClick}
       >
-        <AccountCircleIcon color="success" />
+        <AccountCircleIcon color="success" style={menuIconStyle} />
       </IconButton>
       <Menu
         id="basic-menu"

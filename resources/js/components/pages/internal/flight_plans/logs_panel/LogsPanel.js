@@ -327,11 +327,7 @@ export const LogsPanel = () => {
                                             </TableCell>
                                             <TableCell align="center">
                                                 {log.service_order ?
-                                                    <Tooltip title={log.service_order.number}>
-                                                        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                            <AssignmentIcon style={{ color: "#00713A" }} />
-                                                        </IconButton>
-                                                    </Tooltip>
+                                                    `${log.service_order.number}`
                                                     :
                                                     <Tooltip title={"Nenhuma ordem de serviço vinculada"}>
                                                         <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>

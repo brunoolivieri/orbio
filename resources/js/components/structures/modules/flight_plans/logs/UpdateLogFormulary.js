@@ -20,11 +20,7 @@ export const UpdateLogFormulary = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({
-        id: props.record.id, name: props.record.name,
-        flight_plan_id: props.record.flight_plan != null ? props.record.flight_plan.id : "0",
-        service_order_id: props.record.service_order != null ? props.record.service_order.id : "0"
-    });
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
@@ -33,8 +29,8 @@ export const UpdateLogFormulary = React.memo((props) => {
     // Select Inputs
     const [serviceOrdersByFlightPlan, setServiceOrdersByFlightPlan] = React.useState([]);
     const [flightPlans, setFlightPlans] = React.useState([]);
-    const [selectedFlightPlan, setSelectedFlightPlan] = React.useState("0");
-    const [selectedServiceOrder, setSelectedServiceOrder] = React.useState("0");
+    const [selectedFlightPlan, setSelectedFlightPlan] = React.useState("");
+    const [selectedServiceOrder, setSelectedServiceOrder] = React.useState("");
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -44,12 +40,13 @@ export const UpdateLogFormulary = React.memo((props) => {
         setFieldError(initialFieldError);
         setFieldErrorMessage(initialFieldErrorMessage);
         setDisplayAlert(initialDisplatAlert);
+
         axios.get("/api/load-flight-plans", {
         })
             .then(function (response) {
                 setFlightPlans(response.data);
-                setSelectedFlightPlan("0");
-                setSelectedServiceOrder("0");
+                setSelectedFlightPlan(props.record.flight_plan.id);
+                setSelectedServiceOrder(props.record.service_order.id);
             })
             .catch(function (error) {
                 setLoading(false);
@@ -172,7 +169,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>ATUALIZAÇÃO | RELATÓRIO (ID: {props.record.report_id})</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO DO LOG</DialogTitle>
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
                     <DialogContent>
 
@@ -234,6 +231,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                                 />
                                 <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
                             </Grid>
+
                         </Grid>
 
                     </DialogContent>

@@ -151,7 +151,7 @@ export const UpdateUserFormulary = React.memo((props) => {
               inputProps={{
                 readOnly: true
               }}
-              sx={{ mb: 2 }}
+              sx={{ mb: 1 }}
             />
 
             <TextField
@@ -164,7 +164,7 @@ export const UpdateUserFormulary = React.memo((props) => {
               value={controlledInput.name}
               helperText={fieldErrorMessage.name}
               error={fieldError.name}
-              sx={{ mb: 2 }}
+              sx={{ mb: 1 }}
             />
             <TextField
               margin="dense"

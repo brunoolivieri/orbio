@@ -4,6 +4,7 @@ namespace App\Repositories\Modules\Administration;;
 
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
 // Model
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
@@ -27,7 +28,12 @@ class UserRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        return $this->userModel->create($data->only(["name", "email", "profile_id", "password"])->all());
+        return $this->userModel->create([
+            "name" => $data->get("name"),
+            "email" => $data->get("email"),
+            "profile_id" => $data->get("profile_id"),
+            "password" => Hash::make($data->get("password"))
+        ]);
     }
 
     function updateOne(Collection $data, string $identifier)

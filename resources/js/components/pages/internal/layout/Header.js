@@ -16,6 +16,22 @@ import PropTypes from 'prop-types';
 import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";
 import { usePage } from '../../../context/PageContext';
 
+const headerStyle = {
+  boxShadow: 2,
+  zIndex: 1,
+  bgcolor: '#004795'
+}
+
+const subHeaderStyle = {
+  boxShadow: 1,
+  bgcolor: '#FCFCFC',
+  color: '#007937'
+}
+
+const menuOpenIconStyle = {
+  color: '#fff'
+}
+
 export const Header = React.memo((props) => {
 
   const { onDrawerToggle } = props;
@@ -35,24 +51,24 @@ export const Header = React.memo((props) => {
 
   return (
     <>
-      <AppBar position="static" sx={{ bgcolor: '#fff', boxShadow: 2, zIndex: 1 }}>
+      <AppBar position="static" sx={headerStyle}>
         <Toolbar>
           <IconButton
             size="large"
             aria-label="menu"
             onClick={onDrawerToggle}
           >
-            <MenuOpenIcon color="success" />
+            <MenuOpenIcon style={menuOpenIconStyle} />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           </Typography>
           <HeaderMenu />
         </Toolbar>
       </AppBar>
-      <AppBar position="static" sx={{ boxShadow: 1, bgcolor: '#16529B' }}>
+      <AppBar position="static" sx={subHeaderStyle}>
         <Toolbar>
           <Box>
-            <Typography variant="h7" fontWeight={600} color={"#fff"}>{pages[pageIndex].title}</Typography>
+            <Typography variant="h7" fontWeight={600}>{pages[pageIndex].title}</Typography>
           </Box>
         </Toolbar>
       </AppBar>

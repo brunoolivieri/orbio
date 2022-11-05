@@ -32,6 +32,7 @@ export const UpdateIncidentFormulary = React.memo((props) => {
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+
   // Select Inputs
   const [serviceOrdersByFlightPlan, setServiceOrdersByFlightPlan] = React.useState([]);
   const [flightPlans, setFlightPlans] = React.useState([]);
@@ -42,6 +43,11 @@ export const UpdateIncidentFormulary = React.memo((props) => {
 
   const handleClickOpen = () => {
     setOpen(true);
+    setLoading(false);
+    setFieldError(initialFieldError);
+    setFieldErrorMessage(initialFieldErrorMessage);
+    setDisplayAlert(initialDisplatAlert);
+
     axios.get("/api/load-flight-plans", {
     })
       .then(function (response) {
@@ -57,10 +63,6 @@ export const UpdateIncidentFormulary = React.memo((props) => {
 
   const handleClose = () => {
     setOpen(false);
-    setLoading(false);
-    setFieldError({ date: false, type: false, description: false });
-    setFieldErrorMessage({ date: "", type: "", description: "" });
-    setDisplayAlert({ display: false, type: "", message: "" });
   }
 
   React.useEffect(() => {
@@ -180,7 +182,7 @@ export const UpdateIncidentFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>ATUALIZAÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
+        <DialogTitle>ATUALIZAÇÃO DO INCIDENTE</DialogTitle>
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
           <DialogContent>
             <Grid item container spacing={1}>

@@ -22,6 +22,12 @@ import { useAuthentication } from '../../../context/InternalRoutesAuth/Authentic
 
 const drawerWidth = 210;
 
+const drawerStyle = {
+    "& .MuiDrawer-paper": { borderWidth: 0 },
+    boxShadow: 2,
+    zIndex: 1
+}
+
 const openedMixin = (theme) => ({
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -136,7 +142,7 @@ export const NavigatorFixed = () => {
     return (
         <Box sx={{ display: { xs: 'none', md: 'none', lg: 'flex', xl: 'flex' } }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open}>
+            <AppBar position="fixed" open={open} sx={{ bgcolor: '#004795' }}>
                 <Toolbar >
                     <IconButton
                         color="inherit"
@@ -155,10 +161,10 @@ export const NavigatorFixed = () => {
                     </Typography>
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={open}>
-                <DrawerHeader>
+            <Drawer variant="permanent" open={open} sx={drawerStyle}>
+                <DrawerHeader sx={{ bgcolor: '#004795' }}>
                     <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                        <ChevronLeftIcon style={{ color: '#fff' }} />
                     </IconButton>
                 </DrawerHeader>
                 <Divider />

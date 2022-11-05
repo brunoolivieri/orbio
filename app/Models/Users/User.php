@@ -147,15 +147,4 @@ class User extends Authenticatable
     {
         return explode(" ", $this->name)[0];
     }
-
-    /**
-     * Password mutator.
-     *
-     * @param $value
-     * @return string
-     */
-    public function setPasswordAttribute(string $password)
-    {
-        $this->attributes['password'] = Hash::make($password);
-    }
 }

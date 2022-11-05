@@ -1,37 +1,39 @@
 import React from 'react';
 // Material UI
-import Toolbar from '@mui/material/Toolbar';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'notistack';
 import { Box } from '@mui/system';
 import { useTheme } from '@mui/material/styles';
-import CardHeader from '@mui/material/CardHeader';
-import CardMedia from '@mui/material/CardMedia';
-import { Divider } from '@mui/material';
-import { CardActions } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import SkipNextIcon from '@mui/icons-material/SkipNext';
-// React Chart
-import { LinesChart } from '../../../structures/charts/LinesChart.js';
-import { PizzaChart } from '../../../structures/charts/PizzaChart.js';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
 
-const CardStyle = {
+const miniCardStyle = {
     bgcolor: '#fff',
-    minWidth: 200,
-    minHeight: 200,
+    minWidth: 150,
+    minHeight: 150,
     padding: 1,
     display: 'flex',
     flexDirection: 'column'
+}
+
+const biggerCardStyle = {
+    bgcolor: '#fff',
+    padding: 2,
+    minHeight: 280,
+    display: 'flex',
+    flexDirection: 'column'
+}
+
+const paperStyle = {
+    width: "100%",
+    mb: 1,
+    backgroundColor: 'transparent',
+    boxShadow: 0
 }
 
 export const Dashboard = React.memo(() => {
@@ -121,11 +123,11 @@ export const Dashboard = React.memo(() => {
 
     return (
         <>
-            <Paper sx={{ width: "100%", backgroundColor: 'transparent', boxShadow: 0 }}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={12}>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
+            <Paper sx={paperStyle}>
+                <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={{ xs: 10, sm: 10, md: 12, lg: 10, xl: 10 }}>
+                    <Grid item xs={10} sm={5} md={4} lg={2}>
+                        <Card sx={miniCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
                                 <Typography variant="h6">
                                     Usuários
                                 </Typography>
@@ -135,21 +137,21 @@ export const Dashboard = React.memo(() => {
                             </Box>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
+                    <Grid item xs={10} sm={5} md={4} lg={2}>
+                        <Card sx={miniCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
                                 <Typography variant="h6">
                                     Perfis
                                 </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 3 }}>
+                            <Box sx={{ flexGrow: 3 }} lg={2}>
                                 horizontal line chart
                             </Box>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
+                    <Grid item xs={10} sm={5} md={4} lg={2}>
+                        <Card sx={miniCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
                                 <Typography variant="h6">
                                     Planos de voo
                                 </Typography>
@@ -159,11 +161,23 @@ export const Dashboard = React.memo(() => {
                             </Box>
                         </Card>
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <Card sx={CardStyle}>
-                            <Box bgcolor={'red'} sx={{ flexBasis: '40px' }}>
+                    <Grid item xs={10} sm={5} md={4} lg={2}>
+                        <Card sx={miniCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
                                 <Typography variant="h6">
                                     Ordens de serviço
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 1 }}>
+                                horizontal line chart
+                            </Box>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={10} sm={5} md={4} lg={2}>
+                        <Card sx={miniCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
+                                <Typography variant="h6">
+                                    Relatórios
                                 </Typography>
                             </Box>
                             <Box sx={{ flexGrow: 1 }}>
@@ -174,15 +188,33 @@ export const Dashboard = React.memo(() => {
                 </Grid >
             </Paper >
 
-            <Paper sx={{ width: "100%", backgroundColor: '#fff', mt: 1 }}>
-                <Grid container>
-                    <Grid item xs={12} lg={6} bgcolor={"red"}>
-                        chart
+            <Paper sx={paperStyle}>
+                <Grid container rowSpacing={1} columnSpacing={1} columns={12}>
+                    <Grid item xs={12} md={6}>
+                        <Card sx={biggerCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
+                                <Typography variant="h6">
+                                    Tráfego anual
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 1 }}>
+                                horizontal line chart
+                            </Box>
+                        </Card>
                     </Grid>
-                    <Grid item xs={12} lg={6} bgcolor={"green"}>
-                        chart
+                    <Grid item xs={12} md={6}>
+                        <Card sx={biggerCardStyle}>
+                            <Box sx={{ flexBasis: '30px' }}>
+                                <Typography variant="h6">
+                                    Outro
+                                </Typography>
+                            </Box>
+                            <Box sx={{ flexGrow: 3 }} lg={2}>
+                                horizontal line chart
+                            </Box>
+                        </Card>
                     </Grid>
-                </Grid>
+                </Grid >
             </Paper>
         </>
 
