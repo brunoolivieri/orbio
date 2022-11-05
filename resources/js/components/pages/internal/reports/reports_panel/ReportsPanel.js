@@ -89,8 +89,6 @@ export function ReportsPanel() {
       .then(function (response) {
         handleOpenSnackbar(`Download realizado com sucesso! Arquivo: ${report.file}`, "success");
 
-        console.log(response.data)
-
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;

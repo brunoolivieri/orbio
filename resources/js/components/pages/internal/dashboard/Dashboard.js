@@ -7,7 +7,6 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'notistack';
 import { Box } from '@mui/system';
-import { useTheme } from '@mui/material/styles';
 // Custom
 import AxiosApi from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
@@ -37,8 +36,6 @@ const paperStyle = {
 }
 
 export const Dashboard = React.memo(() => {
-
-    const theme = useTheme();
 
     const [loading, setLoading] = React.useState(true);
     const [users, setUsers] = React.useState({ total: 0, chart: [{}] });
