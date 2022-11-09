@@ -303,7 +303,6 @@ export const UserInformation = React.memo((props) => {
                                     <Button variant="contained">Visualizar</Button>
                                 </Grid>
                             }
-
                         </>
                     }
 
