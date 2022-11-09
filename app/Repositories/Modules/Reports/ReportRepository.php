@@ -41,7 +41,8 @@ class ReportRepository implements RepositoryInterface
 
             // Relate the created report to the service order
             $this->serviceOrderModel->where("id", $data->get("service_order_id"))->update([
-                "report_id" => $report->id
+                "report_id" => $report->id,
+                "status" => false
             ]);
 
             // Save the report PDF in the storage

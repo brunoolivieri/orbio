@@ -1,27 +1,7 @@
 // React
 import * as React from 'react';
 // MaterialUI
-import { Table } from "@mui/material";
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Chip from '@mui/material/Chip';
-import { InputAdornment } from "@mui/material";
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormControl from '@mui/material/FormControl';
-import Badge from '@mui/material/Badge';
-import TablePagination from '@mui/material/TablePagination';
+import { Table, TableBody, TableCell, TableContainer, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, Chip, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, Badge, TablePagination, TableHead } from "@mui/material";
 import ErrorIcon from '@mui/icons-material/Error';
 import MapIcon from '@mui/icons-material/Map';
 import Button from '@mui/material/Button';
@@ -72,7 +52,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export const ServiceOrderForReport = React.memo((props) => {
 
-    // ============================================================================== DECLARAÇÃO DOS STATES E OUTROS VALORES ============================================================================== //
+    // ============================================================================== STATES ============================================================================== //
 
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
@@ -84,7 +64,7 @@ export const ServiceOrderForReport = React.memo((props) => {
 
     const { enqueueSnackbar } = useSnackbar();
 
-    // ============================================================================== FUNÇÕES/ROTINAS DA PÁGINA ============================================================================== //
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
         serverLoadRecords();
@@ -259,7 +239,7 @@ export const ServiceOrderForReport = React.memo((props) => {
         enqueueSnackbar(text, { variant });
     }
 
-    // ============================================================================== ESTRUTURAÇÃO DA PÁGINA - MATERIAL UI ============================================================================== //
+    // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
@@ -355,7 +335,6 @@ export const ServiceOrderForReport = React.memo((props) => {
                                             <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Duração (dias)</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
                                             <StyledHeadTableCell align="center">Logs</StyledHeadTableCell>
@@ -366,7 +345,9 @@ export const ServiceOrderForReport = React.memo((props) => {
                                             records.map((service_order) => (
                                                 <TableRow key={service_order.id}>
                                                     <TableCell><FormControlLabel value={service_order.id} control={<Radio onClick={() => { handleClickRadio(service_order) }} />} label={service_order.id} disabled={!service_order.available} /></TableCell>
-                                                    <TableCell align="center">{service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                                                    <TableCell align="center">{
+                                                        service_order.finished ? <Chip label={"Finalizado"} color={"error"} variant="outlined" /> : (service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />)
+                                                    }</TableCell>
                                                     <TableCell align="center">{service_order.number}</TableCell>
                                                     <TableCell align="center">
                                                         {service_order.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.creator.name} color={"success"} variant="outlined" />}
@@ -378,7 +359,6 @@ export const ServiceOrderForReport = React.memo((props) => {
                                                         {service_order.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.client.name} color={"success"} variant="outlined" />}
                                                     </TableCell>
                                                     <TableCell align="center">{service_order.observation}</TableCell>
-                                                    <TableCell align="center">{moment(service_order.end_date).diff(moment(service_order.start_date), 'days')}</TableCell>
                                                     <TableCell align="center">
                                                         {service_order.total_flight_plans > 0 ?
                                                             <Badge badgeContent={service_order.total_flight_plans} color="success">

@@ -257,7 +257,7 @@ export const ServiceOrdersPanel = () => {
         <Grid item xs>
           <TextField
             fullWidth
-            placeholder={"Pesquisar ordem por ID"}
+            placeholder={"Pesquisar ordem por ID, número ou nome dos envolvidos"}
             onChange={(e) => setSearchField(e.currentTarget.value)}
             InputProps={{
               startAdornment:
@@ -307,7 +307,6 @@ export const ServiceOrdersPanel = () => {
                   <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Duração (dias)</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
                   <StyledHeadTableCell align="center">Relatório</StyledHeadTableCell>
@@ -318,7 +317,9 @@ export const ServiceOrdersPanel = () => {
                   records.map((service_order, index) => (
                     <TableRow key={service_order.id}>
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={service_order.id} /></TableCell>
-                      <TableCell align="center">{service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />}</TableCell>
+                      <TableCell align="center">{
+                        service_order.finished ? <Chip label={"Finalizado"} color={"error"} variant="outlined" /> : (service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />)
+                      }</TableCell>
                       <TableCell align="center">{service_order.number}</TableCell>
                       <TableCell align="center">
                         {service_order.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.creator.name} color={"success"} variant="outlined" />}
@@ -330,7 +331,6 @@ export const ServiceOrdersPanel = () => {
                         {service_order.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.client.name} color={"success"} variant="outlined" />}
                       </TableCell>
                       <TableCell align="center">{service_order.observation}</TableCell>
-                      <TableCell align="center">{moment(service_order.end_date).diff(moment(service_order.start_date), 'days')}</TableCell>
                       <TableCell align="center">
                         {service_order.flight_plans.length === 0 ?
                           <MapIcon color="disabled" />
@@ -358,7 +358,7 @@ export const ServiceOrdersPanel = () => {
                           </Tooltip>
                           :
                           <IconButton disabled>
-                            <FontAwesomeIcon icon={faFilePdf} color="#E0E0E0" />
+                            <FontAwesomeIcon icon={faFilePdf} color={service_order.finished ? "#00713A" : "#E0E0E0"} />
                           </IconButton>
                         }
                       </TableCell>

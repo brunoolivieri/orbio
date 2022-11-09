@@ -34,6 +34,7 @@ class ServiceOrdersPanelResource extends JsonResource
                 "start_date" => $service_order->start_date,
                 "end_date" => $service_order->end_date,
                 "status" => $service_order->status,
+                "finished" => !is_null($service_order->report),
                 "flight_plans" => [],
                 "total_incidents" => 0,
                 "total_logs" => 0,

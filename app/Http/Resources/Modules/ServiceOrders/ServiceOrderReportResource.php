@@ -34,6 +34,7 @@ class ServiceOrderReportResource extends JsonResource
                 "number" => $service_order->number,
                 "start_date" => $service_order->start_date,
                 "end_date" => $service_order->end_date,
+                "finished" => !is_null($service_order->report),
                 "total_flight_plans" => $service_order->flight_plans->count(),
                 "total_incidents" => 0,
                 "total_logs" => 0,

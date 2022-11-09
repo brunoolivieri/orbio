@@ -333,11 +333,7 @@ export function ReportsPanel() {
                       <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={report.id} /></TableCell>
                       <TableCell align="center">{report.name}</TableCell>
                       <TableCell align="center">
-                        <Tooltip title={report.service_order.number}>
-                          <IconButton>
-                            <AssignmentIcon color="action" />
-                          </IconButton>
-                        </Tooltip>
+                        {report.service_order.number}
                       </TableCell>
                       <TableCell align="center">
                         <Badge badgeContent={report.service_order.flight_plans.length} color="success">
