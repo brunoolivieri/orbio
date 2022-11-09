@@ -23,8 +23,6 @@ import { CreateOrderFormulary } from "../../../../structures/modules/service_ord
 import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
 import LinearProgress from '@mui/material/LinearProgress';
-// Libs
-import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',

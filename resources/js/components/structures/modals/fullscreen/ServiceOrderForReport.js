@@ -21,7 +21,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from '../../../../services/AxiosApi';
 // Libs
-import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
 const resetParentControlledInput = {

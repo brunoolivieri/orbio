@@ -10,6 +10,7 @@ import axios from "../../../../../services/AxiosApi";
 import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
+import { ProfileInformation } from "../../../../structures/modules/administration/profiles_administration/ProfileInformation";
 import LinearProgress from '@mui/material/LinearProgress';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -191,9 +192,15 @@ export function ProfilesPanel() {
         </Grid>
 
         <Grid item>
-          <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-          </IconButton>
+          {selectedRecordIndex &&
+            <ProfileInformation record={records[selectedRecordIndex]} />
+          }
+
+          {!selectedRecordIndex &&
+            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+              <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
+            </IconButton>
+          }
         </Grid>
 
         <Grid item>

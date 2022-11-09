@@ -2,7 +2,6 @@ import * as React from 'react';
 // Material UI
 import { Table, TableBody, Badge, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, TablePagination, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, Menu, MenuItem, Checkbox } from "@mui/material";
 import { useSnackbar } from 'notistack';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import MapIcon from '@mui/icons-material/Map';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
