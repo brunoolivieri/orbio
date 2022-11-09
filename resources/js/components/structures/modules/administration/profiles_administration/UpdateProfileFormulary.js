@@ -18,7 +18,7 @@ export const UpdateProfileFormulary = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.profile_id, name: props.record.profile_name });
+    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -34,12 +34,12 @@ export const UpdateProfileFormulary = React.memo((props) => {
 
     // Reducer
     const [privileges, dispatch] = React.useReducer(privilegesReducer, {
-        "1": { read: props.record.profile_modules_relationship["0"].read == 1 ? true : false, write: props.record.profile_modules_relationship["0"].write == 1 ? true : false },
-        "2": { read: props.record.profile_modules_relationship["1"].read == 1 ? true : false, write: props.record.profile_modules_relationship["1"].write == 1 ? true : false },
-        "3": { read: props.record.profile_modules_relationship["2"].read == 1 ? true : false, write: props.record.profile_modules_relationship["2"].write == 1 ? true : false },
-        "4": { read: props.record.profile_modules_relationship["3"].read == 1 ? true : false, write: props.record.profile_modules_relationship["3"].write == 1 ? true : false },
-        "5": { read: props.record.profile_modules_relationship["4"].read == 1 ? true : false, write: props.record.profile_modules_relationship["4"].write == 1 ? true : false },
-        "6": { read: props.record.profile_modules_relationship["5"].read == 1 ? true : false, write: props.record.profile_modules_relationship["5"].write == 1 ? true : false }
+        "1": { read: props.record.modules["0"].read == 1 ? true : false, write: props.record.modules["0"].write == 1 ? true : false },
+        "2": { read: props.record.modules["1"].read == 1 ? true : false, write: props.record.modules["1"].write == 1 ? true : false },
+        "3": { read: props.record.modules["2"].read == 1 ? true : false, write: props.record.modules["2"].write == 1 ? true : false },
+        "4": { read: props.record.modules["3"].read == 1 ? true : false, write: props.record.modules["3"].write == 1 ? true : false },
+        "5": { read: props.record.modules["4"].read == 1 ? true : false, write: props.record.modules["4"].write == 1 ? true : false },
+        "6": { read: props.record.modules["5"].read == 1 ? true : false, write: props.record.modules["5"].write == 1 ? true : false }
     });
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -125,8 +125,8 @@ export const UpdateProfileFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+                <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -137,16 +137,16 @@ export const UpdateProfileFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>EDIÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
+                <DialogTitle>PERFIL (ID: {props.record.id}) | EDIÇÃO</DialogTitle>
 
                 <Box component="form" noValidate onSubmit={handleSubmit} >
                     <DialogContent>
 
                         <TextField
                             margin="dense"
-                            defaultValue={props.record.profile_id}
+                            value={controlledInput.id}
                             name="id"
-                            label="ID do perfil"
+                            label="ID"
                             fullWidth
                             variant="outlined"
                             sx={{ mb: 2 }}
@@ -157,9 +157,9 @@ export const UpdateProfileFormulary = React.memo((props) => {
 
                         <TextField
                             margin="dense"
-                            defaultValue={props.record.profile_name}
+                            value={controlledInput.name}
                             name="name"
-                            label="Nome do perfil"
+                            label="Nome"
                             fullWidth
                             variant="outlined"
                             onChange={handleInputChange}

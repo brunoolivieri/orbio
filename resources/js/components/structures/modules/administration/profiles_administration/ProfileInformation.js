@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts Awesome
@@ -35,32 +35,65 @@ export const ProfileInformation = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>PERFIL | INFORMAÇÕES</DialogTitle>
+                <DialogTitle>PERFIL ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 
                 <DialogContent>
 
-                    <TextField
-                        margin="dense"
-                        defaultValue={props.record.profile_id}
-                        label="ID do perfil"
-                        fullWidth
-                        variant="outlined"
-                        sx={{ mb: 2 }}
-                        InputProps={{
-                            readOnly: true
-                        }}
-                    />
+                    <Grid container columns={12} spacing={1}>
 
-                    <TextField
-                        margin="dense"
-                        defaultValue={props.record.profile_name}
-                        label="Nome do perfil"
-                        fullWidth
-                        variant="outlined"
-                        InputProps={{
-                            readOnly: true
-                        }}
-                    />
+                        <Grid item xs={6}>
+                            <TextField
+                                margin="dense"
+                                defaultValue={props.record.name}
+                                label="Nome do perfil"
+                                fullWidth
+                                variant="outlined"
+                                InputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <TextField
+                                margin="dense"
+                                defaultValue={props.record.created_at}
+                                label="Criado em"
+                                fullWidth
+                                variant="outlined"
+                                InputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <TextField
+                                margin="dense"
+                                defaultValue={props.record.created_at}
+                                label="Atualizado em"
+                                fullWidth
+                                variant="outlined"
+                                InputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <TextField
+                                margin="dense"
+                                defaultValue={props.record.total_users}
+                                label="Usuários vinculados"
+                                fullWidth
+                                variant="outlined"
+                                InputProps={{
+                                    readOnly: true
+                                }}
+                            />
+                        </Grid>
+
+                    </Grid>
 
                 </DialogContent>
 

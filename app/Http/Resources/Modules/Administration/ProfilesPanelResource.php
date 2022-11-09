@@ -40,7 +40,15 @@ class ProfilesPanelResource extends JsonResource
             }
 
             // Actual profile and its relationships with modules are stored in actual array key ($profile->id) of $this->formatedData 
-            $this->formatedData["records"][$profile->id] = ["profile_id" => $profile->id, "profile_name" =>  $profile->name, "profile_modules_relationship" => $modules_related];
+            $this->formatedData["records"][$profile->id] =
+                [
+                    "id" => $profile->id,
+                    "name" =>  $profile->name,
+                    "created_at" => date("d-m-Y", strtotime($profile->created_at)),
+                    "updated_at" => date("d-m-Y", strtotime($profile->updated_at)),
+                    "total_users" => $profile->users->count(),
+                    "modules" => $modules_related
+                ];
         }
 
         $this->formatedData["total_records"] = $this->data->total();

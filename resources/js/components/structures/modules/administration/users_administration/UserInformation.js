@@ -126,7 +126,7 @@ export const UserInformation = React.memo((props) => {
 
                     </Grid>
 
-                    {props.record.status && props.record.documents &&
+                    {(props.record.status && props.record.documents) &&
                         <>
                             <Typography component={'p'} mb={1}>Dados documentais.</Typography>
 
@@ -293,7 +293,6 @@ export const UserInformation = React.memo((props) => {
                                         }}
                                     />
                                 </Grid>
-
                             </Grid>
 
                             <Typography component={'p'} mb={1}>Ordens de serviço vinculadas: {props.record.service_order.length}</Typography>

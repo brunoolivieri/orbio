@@ -46,7 +46,7 @@ class Profile extends Model
     /*
     * Relationship with user table
     */
-    function user()
+    function users()
     {
         return $this->hasMany(User::class, "profile_id");
     }

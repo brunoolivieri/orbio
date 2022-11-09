@@ -308,44 +308,44 @@ export function ProfilesPanel() {
               </TableHead>
               <TableBody className="tbody">
                 {(!loading && records.length > 0) &&
-                  records.map((record, index) => (
-                    <TableRow key={record.profile_id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} disabled={[1, 2, 3, 4, 5].includes(record.profile_id)} />} label={record.profile_id} /></TableCell>
-                      <TableCell align="center">{record.profile_name}</TableCell>
+                  records.map((profile, index) => (
+                    <TableRow key={profile.id}>
+                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={profile.id} /></TableCell>
+                      <TableCell align="center">{profile.name}</TableCell>
                       <TableCell>
                         <FormGroup>
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["0"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["0"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["0"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["0"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                       <TableCell>
                         <FormGroup>
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["1"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["1"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["1"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["1"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                       <TableCell align="center">
                         <FormGroup>
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["2"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["2"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["2"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["2"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                       <TableCell align="center">
                         <FormGroup>
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["3"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["3"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["3"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["3"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                       <TableCell align="center">
                         <FormGroup>
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["5"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["5"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["5"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["5"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                       <TableCell align="center">
                         <FormGroup>
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["4"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
-                          <FormControlLabel control={<Checkbox defaultChecked={record.profile_modules_relationship["4"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["4"].read == 1 ? true : false} disabled size="small" />} label="Ler" />
+                          <FormControlLabel control={<Checkbox defaultChecked={profile.modules["4"].write == 1 ? true : false} disabled size="small" />} label="Escrever" />
                         </FormGroup>
                       </TableCell>
                     </TableRow>

@@ -10,12 +10,12 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const DeleteProfileFormulary = React.memo(({ ...props }) => {
+export const DeleteProfileFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput] = React.useState({ id: props.record.profile_id });
+  const [controlledInput] = React.useState({ id: props.record_id });
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -82,7 +82,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
         maxWidth="md"
       >
         <>
-          <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record.profile_id})</DialogTitle>
+          <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record_id})</DialogTitle>
 
           <Box component="form" noValidate onSubmit={handleSubmitOperation} >
 
@@ -90,7 +90,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                defaultValue={props.record.profile_id}
+                defaultValue={props.record.id}
                 id="id"
                 name="id"
                 label="ID do perfil"
@@ -104,7 +104,7 @@ export const DeleteProfileFormulary = React.memo(({ ...props }) => {
 
               <TextField
                 margin="dense"
-                defaultValue={props.record.profile_name}
+                defaultValue={props.record.name}
                 id="name"
                 name="name"
                 label="Nome do perfil"

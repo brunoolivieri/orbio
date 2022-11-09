@@ -21,6 +21,8 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Libs
+import moment from 'moment';
 
 const StyledHeadTableCell = styled(TableCell)({
   color: '#fff',
@@ -278,7 +280,6 @@ export function UsersPanel() {
           />
         </Grid>
 
-        {/* Geração da paginação */}
         {(!loading && records.length > 0) &&
           <Grid item>
             <Stack spacing={2}>
@@ -323,7 +324,7 @@ export function UsersPanel() {
                       <TableCell align="center">{row.email}</TableCell>
                       <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
                       <TableCell align="center">{row.profile.name}</TableCell>
-                      <TableCell align="center">{row.last_access}</TableCell>
+                      <TableCell align="center">{moment(row.last_access).format("DD/MM/YYYY")}</TableCell>
                     </TableRow>
                   ))}
               </TableBody>
