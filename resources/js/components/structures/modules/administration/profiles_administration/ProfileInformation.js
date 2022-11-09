@@ -6,6 +6,8 @@ import { useAuthentication } from '../../../../context/InternalRoutesAuth/Authen
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+// Lib
+import moment from 'moment/moment';
 
 export const ProfileInformation = React.memo((props) => {
 
@@ -41,7 +43,7 @@ export const ProfileInformation = React.memo((props) => {
 
                     <Grid container columns={12} spacing={1}>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.name}
@@ -54,10 +56,10 @@ export const ProfileInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={5}>
                             <TextField
                                 margin="dense"
-                                defaultValue={props.record.created_at}
+                                defaultValue={moment(props.record.created_at).format("DD/MM/YYYY")}
                                 label="Criado em"
                                 fullWidth
                                 variant="outlined"
@@ -67,10 +69,10 @@ export const ProfileInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={5}>
                             <TextField
                                 margin="dense"
-                                defaultValue={props.record.created_at}
+                                defaultValue={moment(props.record.updated_at).format("DD/MM/YYYY")}
                                 label="Atualizado em"
                                 fullWidth
                                 variant="outlined"
@@ -80,7 +82,7 @@ export const ProfileInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={2}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.total_users}
