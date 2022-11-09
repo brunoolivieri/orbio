@@ -241,7 +241,7 @@ export const FlightPlansPanel = () => {
               aria-expanded={open ? 'true' : undefined}
               onClick={handleClick}
             >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+              <FontAwesomeIcon icon={faFilter} color={"#007937"} size="sm" />
             </IconButton>
           </Tooltip>
         </Grid>

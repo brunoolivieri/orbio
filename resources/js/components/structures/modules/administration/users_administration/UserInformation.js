@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment/moment';
+import { ProfilesPanel } from '../../../../pages/internal/administration/profiles_panel/ProfilesPanel';
 
 export const UserInformation = React.memo((props) => {
 
@@ -35,7 +36,7 @@ export const UserInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="lg"
+                maxWidth="md"
             >
                 <DialogTitle>USUÁRIO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 
@@ -87,7 +88,7 @@ export const UserInformation = React.memo((props) => {
                         <Grid item xs={4}>
                             <TextField
                                 margin="dense"
-                                defaultValue={props.record.profile_name}
+                                defaultValue={props.record.profile.name}
                                 label="Perfil"
                                 fullWidth
                                 variant="outlined"
@@ -114,7 +115,7 @@ export const UserInformation = React.memo((props) => {
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.updated_at).format("DD/MM/YYYY")}
-                                label="Atualizado em"
+                                label="Criado em"
                                 fullWidth
                                 variant="outlined"
                                 InputProps={{
@@ -125,175 +126,186 @@ export const UserInformation = React.memo((props) => {
 
                     </Grid>
 
-                    <Typography component={'p'} mb={1}>Dados documentais.</Typography>
+                    {props.record.status && props.record.documents &&
+                        <>
+                            <Typography component={'p'} mb={1}>Dados documentais.</Typography>
 
-                    <Grid container columns={12} spacing={1} mb={1}>
+                            <Grid container columns={12} spacing={1} mb={1}>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="CPF"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={props.record.documents.cpf}
+                                        label="CPF"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="CNPJ"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={props.record.documents.cnpj}
+                                        label="CNPJ"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Telefone"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={props.record.documents.telephone}
+                                        label="Telefone"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Celular"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={props.record.documents.cellphone}
+                                        label="Celular"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Razão Social"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={props.record.documents.company_name}
+                                        label="Razão Social"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Nome fantasia"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={props.record.documents.trading_name}
+                                        label="Nome fantasia"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={12}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Licença ANAC"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={''}
+                                        label="Licença ANAC"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                    </Grid>
+                            </Grid>
 
-                    <Typography component={'p'} mb={1}>Dados de endereço.</Typography>
+                            <Typography component={'p'} mb={1}>Dados de endereço.</Typography>
 
-                    <Grid container columns={12} spacing={1} mb={1}>
+                            <Grid container columns={12} spacing={1} mb={1}>
 
-                        <Grid item xs={6}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Cidade"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={6}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={''}
+                                        label="Cidade"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={3}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Estado"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={3}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={''}
+                                        label="Estado"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={3}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Número"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={3}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={''}
+                                        label="Número"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={12}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Endereço"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={''}
+                                        label="Endereço"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                        <Grid item xs={12}>
-                            <TextField
-                                margin="dense"
-                                defaultValue={''}
-                                label="Complemento"
-                                fullWidth
-                                variant="outlined"
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        margin="dense"
+                                        defaultValue={''}
+                                        label="Complemento"
+                                        fullWidth
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: true
+                                        }}
+                                    />
+                                </Grid>
 
-                    </Grid>
+                            </Grid>
 
-                    <Typography component={'p'} mb={1}>Ordens de serviço vinculadas.</Typography>
+                            <Typography component={'p'} mb={1}>Ordens de serviço vinculadas: {props.record.service_order.length}</Typography>
+
+                            {props.record.service_order.length > 0 &&
+                                <Grid item xs={12} md={6}>
+                                    <Button variant="contained">Visualizar</Button>
+                                </Grid>
+                            }
+
+                        </>
+                    }
 
                 </DialogContent>
 
