@@ -18,7 +18,7 @@ const initialFieldError = { image: false, name: false, manufacturer: false, mode
 const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "" };
 const initialDisplatAlert = { display: false, type: "", message: "" };
 
-export const UpdateDroneFormulary = React.memo(({ ...props }) => {
+export const UpdateDroneFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Typography } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Typography, Box } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts Awesome
@@ -13,6 +13,7 @@ export const DroneInformation = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
+    const htmlImage = React.useRef();
 
     function handleClickOpen() {
         setOpen(true);
@@ -25,7 +26,7 @@ export const DroneInformation = React.memo((props) => {
     return (
         <>
             <Tooltip title="Info">
-                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+                <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
                     <FontAwesomeIcon icon={faCircleInfo} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
@@ -161,9 +162,21 @@ export const DroneInformation = React.memo((props) => {
                                 }}
                             />
                         </Grid>
+
+                        <Grid item xs={12}>
+                            <Box sx={{ mt: 1 }}>
+                                <img ref={htmlImage} style={{ borderRadius: 10, width: "190px" }} src={props.record.image_url}></img>
+                            </Box>
+                        </Grid>
                     </Grid>
 
-                    <Typography component={'p'} mb={1}>Ordens de serviço vinculadas: {}</Typography>
+                    <Typography component={'p'} mb={1}>Ordens de serviço vinculadas: {props.record.total_service_orders}</Typography>
+
+                    {props.record.total_service_orders > 0 &&
+                        <Grid item xs={12} md={6}>
+                            <Button variant="contained">Visualizar</Button>
+                        </Grid>
+                    }
 
                 </DialogContent>
 
