@@ -31,8 +31,8 @@ class ServiceOrdersPanelResource extends JsonResource
             $this->formatedData["records"][$row] = [
                 "id" => $service_order->id,
                 "number" => $service_order->number,
-                "start_date" => $service_order->start_date,
-                "end_date" => $service_order->end_date,
+                "start_date" => date("Y-m-d", strtotime($service_order->start_date)),
+                "end_date" => date("Y-m-d", strtotime($service_order->end_date)),
                 "status" => $service_order->status,
                 "finished" => !is_null($service_order->report),
                 "flight_plans" => [],
@@ -40,7 +40,7 @@ class ServiceOrdersPanelResource extends JsonResource
                 "total_logs" => 0,
                 "observation" => $service_order->observation,
                 "created_at" => date("Y-m-d", strtotime($service_order->created_at)),
-                "updated_at" => empty($service_order->updated_at) ? "N/A" : date("Y-m-d", strtotime($service_order->updated_at))
+                "updated_at" => date("Y-m-d", strtotime($service_order->updated_at))
             ];
 
             // ============================== RELATED FLIGHT PLANS WITH INCIDENTS ============================== //

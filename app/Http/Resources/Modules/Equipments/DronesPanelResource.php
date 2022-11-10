@@ -5,6 +5,7 @@ namespace App\Http\Resources\Modules\Equipments;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use App\Models\FlightPlans\FlightPlan;
 
 class DronesPanelResource extends JsonResource
 {
@@ -36,10 +37,14 @@ class DronesPanelResource extends JsonResource
                 "record_number" => $drone->record_number,
                 "serial_number" => $drone->serial_number,
                 "weight" => $drone->weight,
+                "service_orders" => [],
+                "total_incidents" => "",
                 "observation" => $drone->observation,
-                "created_at" => strtotime($drone->created_at),
-                "updated_at" => empty($drone->updated_at) ? "N/A" : strtotime($drone->updated_at)
+                "created_at" => date("d-m-Y", strtotime($drone->created_at)),
+                "updated_at" => date("d-m-Y", strtotime($drone->updated_at))
             ];
+
+            // Get related service orders
         }
 
         $this->formatedData["total_records"] = $this->data->total();

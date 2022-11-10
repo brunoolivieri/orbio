@@ -22,6 +22,7 @@ import AxiosApi from "../../../../../services/AxiosApi";
 import { CreateOrderFormulary } from "../../../../structures/modules/service_orders/CreateOrderFormulary";
 import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
+import { ServiceOrderInformation } from '../../../../structures/modules/service_orders/ServiceOrderInformation';
 import LinearProgress from '@mui/material/LinearProgress';
 
 const StyledHeadTableCell = styled(TableCell)({
@@ -201,9 +202,15 @@ export const ServiceOrdersPanel = () => {
         </Grid>
 
         <Grid item>
-          <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-          </IconButton>
+          {selectedRecordIndex &&
+            <ServiceOrderInformation record={records[selectedRecordIndex]} />
+          }
+
+          {!selectedRecordIndex &&
+            <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true} >
+              <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
+            </IconButton>
+          }
         </Grid>
 
         <Grid item>

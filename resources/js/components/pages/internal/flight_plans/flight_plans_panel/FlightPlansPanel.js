@@ -24,6 +24,7 @@ import axios from "../../../../../services/AxiosApi";
 import { UpdatePlanFormulary } from "../../../../structures/modules/flight_plans/UpdatePlanFormulary";
 import { DeletePlanFormulary } from "../../../../structures/modules/flight_plans/DeletePlanFormulary";
 import LinearProgress from '@mui/material/LinearProgress';
+import { FlightPlanInformation } from '../../../../structures/modules/flight_plans/FlightPlanInformation';
 // Outros
 import moment from 'moment';
 
@@ -226,9 +227,15 @@ export const FlightPlansPanel = () => {
         </Grid>
 
         <Grid item>
-          <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-          </IconButton>
+          {selectedRecordIndex &&
+            <FlightPlanInformation record={records[selectedRecordIndex]} />
+          }
+
+          {!selectedRecordIndex &&
+            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.write == 1} >
+              <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
+            </IconButton>
+          }
         </Grid>
 
         <Grid item>

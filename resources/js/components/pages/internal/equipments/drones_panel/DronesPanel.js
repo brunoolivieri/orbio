@@ -19,6 +19,7 @@ import axios from "../../../../../services/AxiosApi";
 import { CreateDroneFormulary } from '../../../../structures/modules/equipment/drones/CreateDroneFormulary';
 import { DeleteDroneFormulary } from '../../../../structures/modules/equipment/drones/DeleteDroneFormulary';
 import { UpdateDroneFormulary } from '../../../../structures/modules/equipment/drones/UpdateDroneFormulary';
+import { DroneInformation } from '../../../../structures/modules/equipment/drones/DroneInformation';
 import LinearProgress from '@mui/material/LinearProgress';
 
 const StyledHeadTableCell = styled(TableCell)({
@@ -156,7 +157,7 @@ export const DronesPanel = () => {
 
                 <Grid item>
                     {selectedRecordIndex &&
-                        <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                        <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
                             <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
                         </IconButton>
                     }
@@ -169,7 +170,7 @@ export const DronesPanel = () => {
                 <Grid item>
                     {selectedRecordIndex == null &&
                         <Tooltip title="Selecione um registro">
-                            <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+                            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
                                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
@@ -184,7 +185,7 @@ export const DronesPanel = () => {
                 <Grid item>
                     {selectedRecordIndex == null &&
                         <Tooltip title="Selecione um registro">
-                            <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
+                            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
                                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
@@ -197,15 +198,21 @@ export const DronesPanel = () => {
                 </Grid>
 
                 <Grid item>
-                    <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
-                        <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-                    </IconButton>
+                    {selectedRecordIndex &&
+                        <DroneInformation record={records[selectedRecordIndex]} />
+                    }
+
+                    {!selectedRecordIndex &&
+                        <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
+                            <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
+                        </IconButton>
+                    }
                 </Grid>
 
                 <Grid item>
                     <Tooltip title="Filtros">
                         <IconButton
-                            disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}
+                            disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}
                             id="basic-button"
                             aria-controls={open ? 'basic-menu' : undefined}
                             aria-haspopup="true"

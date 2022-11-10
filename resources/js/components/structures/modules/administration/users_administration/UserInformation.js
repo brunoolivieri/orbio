@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment/moment';
-import { ProfilesPanel } from '../../../../pages/internal/administration/profiles_panel/ProfilesPanel';
 
 export const UserInformation = React.memo((props) => {
 

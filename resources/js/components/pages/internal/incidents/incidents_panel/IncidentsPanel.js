@@ -14,7 +14,6 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -202,12 +201,6 @@ export const IncidentsPanel = () => {
           {(!loading && selectedRecordIndex != null) &&
             <DeleteIncidentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
-        </Grid>
-
-        <Grid item>
-          <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-          </IconButton>
         </Grid>
 
         <Grid item>

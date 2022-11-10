@@ -38,7 +38,7 @@ class FlightPlansPanelResource extends JsonResource
                 "name" => $flight_plan->name,
                 "service_orders" => [],
                 "logs" => [],
-                "total_incidents" => 0, 
+                "total_incidents" => 0,
                 "total_logs" => 0,
                 "file" => $flight_plan->file,
                 "localization" => [
@@ -48,7 +48,7 @@ class FlightPlansPanelResource extends JsonResource
                 ],
                 "description" => $flight_plan->description,
                 "created_at" => date("Y-m-d", strtotime($flight_plan->created_at)),
-                "updated_at" => empty($flight_plan->updated_at) ? "N/A" : date("Y-m-d", strtotime($flight_plan->updated_at))
+                "updated_at" => date("Y-m-d", strtotime($flight_plan->updated_at))
             ];
 
             // ==== SERVICE ORDERS AND INCIDENTS RELATED TO THIS FLIGHT PLAN ==== //
@@ -74,7 +74,6 @@ class FlightPlansPanelResource extends JsonResource
                     $this->formatedData["records"][$flight_plan_row]["total_incidents"] += $incidents->count();
                     $this->formatedData["records"][$flight_plan_row]["total_logs"] += $logs->count();
                 }
-
             }
         }
 

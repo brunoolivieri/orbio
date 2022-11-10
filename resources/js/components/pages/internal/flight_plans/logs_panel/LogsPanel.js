@@ -7,7 +7,6 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -193,12 +192,6 @@ export const LogsPanel = () => {
                     {(!loading && selectedRecordIndex != null) &&
                         <DeleteLogFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
                     }
-                </Grid>
-
-                <Grid item>
-                    <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
-                        <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-                    </IconButton>
                 </Grid>
 
                 <Grid item>
