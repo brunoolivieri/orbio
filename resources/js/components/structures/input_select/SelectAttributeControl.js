@@ -37,7 +37,7 @@ export const SelectAttributeControl = React.memo((props) => {
 
     return (
         <>
-            <FormControl sx={{ minWidth: '100%' }}>
+            <FormControl fullWidth>
                 <InputLabel>{props.label_text}</InputLabel>
 
                 <Select
