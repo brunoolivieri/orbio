@@ -61,4 +61,9 @@ class Battery extends Model
     {
         return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "battery_id")->withPivot(["id", "drone_id", "equipment_id"]);
     }
+
+    function service_orders()
+    {
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "battery_id")->withPivot(["id", "drone_id", "equipment_id"]);
+    }
 }

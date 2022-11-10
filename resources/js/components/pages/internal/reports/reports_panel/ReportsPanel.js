@@ -179,7 +179,7 @@ export function ReportsPanel() {
 
         <Grid item>
           {selectedRecordIndex &&
-            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
+            <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1}>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }

@@ -19,6 +19,7 @@ import axios from "../../../../../services/AxiosApi";
 import { DeleteBatteryFormulary } from '../../../../structures/modules/equipment/batteries/DeleteBatteryFormulary';
 import { UpdateBatteryFormulary } from '../../../../structures/modules/equipment/batteries/UpdateBatteryFormulary';
 import { CreateBatteryFormulary } from "../../../../structures/modules/equipment/batteries/CreateBatteryFormulary";
+import { BatteryInformation } from '../../../../structures/modules/equipment/batteries/BatteryInformation';
 import LinearProgress from '@mui/material/LinearProgress';
 // Libs
 import moment from 'moment';
@@ -201,9 +202,15 @@ export const BatteriesPanel = () => {
                 </Grid>
 
                 <Grid item>
-                    <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
-                        <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-                    </IconButton>
+                    {selectedRecordIndex &&
+                        <BatteryInformation record={records[selectedRecordIndex]} />
+                    }
+
+                    {!selectedRecordIndex &&
+                        <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
+                            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
+                        </IconButton>
+                    }
                 </Grid>
 
                 <Grid item>

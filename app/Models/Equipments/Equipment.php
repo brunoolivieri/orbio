@@ -63,4 +63,9 @@ class Equipment extends Model
     {
         return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "equipment_id")->withPivot(["id", "drone_id", "battery_id"]);
     }
+
+    function service_orders()
+    {
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "equipment_id")->withPivot(["id", "drone_id", "battery_id"]);
+    }
 }

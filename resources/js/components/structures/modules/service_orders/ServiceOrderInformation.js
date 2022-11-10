@@ -45,7 +45,7 @@ export const ServiceOrderInformation = React.memo((props) => {
 
                     <Grid container columns={12} spacing={1} mb={1}>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={12} md={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.number}
@@ -58,7 +58,7 @@ export const ServiceOrderInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={12} md={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.observation}
@@ -71,7 +71,7 @@ export const ServiceOrderInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={12} md={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.status ? "Ativo" : "Inativo"}
@@ -84,7 +84,7 @@ export const ServiceOrderInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} md={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.start_date).format("DD/MM/YYYY")}
@@ -97,7 +97,7 @@ export const ServiceOrderInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} md={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.end_date).format("DD/MM/YYYY")}

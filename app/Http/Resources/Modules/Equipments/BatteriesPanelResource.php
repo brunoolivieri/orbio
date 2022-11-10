@@ -33,6 +33,7 @@ class BatteriesPanelResource extends JsonResource
                 "name" => $battery->name,
                 "manufacturer" => $battery->manufacturer,
                 "model" => $battery->model,
+                "total_service_orders" => $battery->service_orders()->distinct('service_order_id')->count(),
                 "serial_number" => $battery->serial_number,
                 "last_charge" => empty($battery->last_charge) ? "N/A" : date("Y-m-d", strtotime($battery->last_charge)),
                 "created_at" => date("Y-m-d", strtotime($battery->created_at)),

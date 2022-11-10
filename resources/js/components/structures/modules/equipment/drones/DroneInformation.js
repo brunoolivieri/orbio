@@ -26,8 +26,8 @@ export const DroneInformation = React.memo((props) => {
     return (
         <>
             <Tooltip title="Info">
-                <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faCircleInfo} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faCircleInfo} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -46,7 +46,7 @@ export const DroneInformation = React.memo((props) => {
 
                     <Grid container columns={12} spacing={1} mb={1}>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.name}
@@ -59,7 +59,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.manufacturer}
@@ -72,7 +72,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.model}
@@ -85,7 +85,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.record_number}
@@ -98,7 +98,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.serial_number}
@@ -111,7 +111,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.observation}
@@ -124,7 +124,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.created_at).format("DD/MM/YYYY")}
@@ -137,7 +137,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.updated_at).format("DD/MM/YYYY")}
@@ -150,7 +150,7 @@ export const DroneInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.weight}

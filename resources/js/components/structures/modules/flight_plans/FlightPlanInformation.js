@@ -45,7 +45,7 @@ export const FlightPlanInformation = React.memo((props) => {
 
                     <Grid container columns={12} spacing={1} mb={1}>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.name}
@@ -58,7 +58,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.creator.name}
@@ -71,7 +71,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.created_at).format("DD/MM/YYYY")}
@@ -84,7 +84,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.updated_at).format("DD/MM/YYYY")}
@@ -97,7 +97,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.localization.state}
@@ -110,7 +110,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={6}>
+                        <Grid item xs={12} sm={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.localization.city}
@@ -123,7 +123,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={2}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.total_logs}
@@ -136,7 +136,7 @@ export const FlightPlanInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={2}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.total_incidents}

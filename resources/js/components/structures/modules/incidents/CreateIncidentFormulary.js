@@ -218,7 +218,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} md={6}>
                 <SelectExternalData
                   label_text={"Plano de voo"}
                   primary_key={"id"}
@@ -231,7 +231,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
                 <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid item xs={12} md={6}>
                 <SelectExternalData
                   label_text={"Ordem de serviço"}
                   primary_key={"id"}

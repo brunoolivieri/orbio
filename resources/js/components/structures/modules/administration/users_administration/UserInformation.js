@@ -45,7 +45,7 @@ export const UserInformation = React.memo((props) => {
 
                     <Grid container columns={12} spacing={1} mb={1}>
 
-                        <Grid item md={12} lg={6}>
+                        <Grid item xs={12} md={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.name}
@@ -58,7 +58,7 @@ export const UserInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item md={12} lg={6}>
+                        <Grid item xs={12} md={6}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.email}
@@ -71,7 +71,7 @@ export const UserInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={2}>
+                        <Grid item xs={12} sm={6} md={2}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.status ? "Ativo" : "Inativo"}
@@ -84,7 +84,7 @@ export const UserInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={4}>
+                        <Grid item xs={12} sm={6} md={4}>
                             <TextField
                                 margin="dense"
                                 defaultValue={props.record.profile.name}
@@ -97,7 +97,7 @@ export const UserInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.created_at).format("DD/MM/YYYY")}
@@ -110,7 +110,7 @@ export const UserInformation = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={3}>
+                        <Grid item xs={12} sm={3}>
                             <TextField
                                 margin="dense"
                                 defaultValue={moment(props.record.updated_at).format("DD/MM/YYYY")}
@@ -131,7 +131,7 @@ export const UserInformation = React.memo((props) => {
 
                             <Grid container columns={12} spacing={1} mb={1}>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={props.record.documents.cpf}
@@ -144,7 +144,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={props.record.documents.cnpj}
@@ -157,7 +157,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={props.record.documents.telephone}
@@ -170,7 +170,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={props.record.documents.cellphone}
@@ -183,7 +183,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={props.record.documents.company_name}
@@ -196,7 +196,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={props.record.documents.trading_name}
@@ -209,7 +209,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={''}
@@ -228,7 +228,7 @@ export const UserInformation = React.memo((props) => {
 
                             <Grid container columns={12} spacing={1} mb={1}>
 
-                                <Grid item xs={6}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={''}
@@ -241,7 +241,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={3}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={''}
@@ -254,7 +254,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={3}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={''}
@@ -267,7 +267,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={''}
@@ -280,7 +280,7 @@ export const UserInformation = React.memo((props) => {
                                     />
                                 </Grid>
 
-                                <Grid item xs={12}>
+                                <Grid item xs={12} sm={6}>
                                     <TextField
                                         margin="dense"
                                         defaultValue={''}

@@ -35,6 +35,7 @@ class EquipmentsPanelResource extends JsonResource
                 "model" => $equipment->model,
                 "record_number" => $equipment->record_number,
                 "serial_number" => $equipment->serial_number,
+                "total_service_orders" => $equipment->service_orders()->distinct('service_order_id')->count(),
                 "weight" => $equipment->weight,
                 "observation" => $equipment->observation,
                 "purchase_date" => empty($equipment->purchase_date) ? "N/A" : date("Y-m-d", strtotime($equipment->purchase_date)),

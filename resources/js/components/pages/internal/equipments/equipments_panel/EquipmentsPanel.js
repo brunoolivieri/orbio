@@ -20,6 +20,7 @@ import axios from "../../../../../services/AxiosApi";
 import { CreateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/CreateEquipmentFormulary';
 import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/DeleteEquipmentFormulary';
 import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
+import { EquipmentInformation } from '../../../../structures/modules/equipment/equipments/EquipmentInformation';
 // Libs
 import moment from 'moment';
 
@@ -177,7 +178,6 @@ export const EquipmentPanel = React.memo(() => {
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(!loading && selectedRecordIndex != null) &&
             <UpdateEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
@@ -192,16 +192,21 @@ export const EquipmentPanel = React.memo(() => {
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
           {(!loading && selectedRecordIndex != null) &&
             <DeleteEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
           }
         </Grid>
 
         <Grid item>
-          <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
-            <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
-          </IconButton>
+          {selectedRecordIndex &&
+            <EquipmentInformation record={records[selectedRecordIndex]} />
+          }
+
+          {!selectedRecordIndex &&
+            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
+              <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
+            </IconButton>
+          }
         </Grid>
 
         <Grid item>

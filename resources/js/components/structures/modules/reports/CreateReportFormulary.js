@@ -188,8 +188,8 @@ export const CreateReportFormulary = (props) => {
     <>
 
       <Tooltip title="Gerar relatório">
-        <IconButton disabled={AuthData.data.user_powers["4"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPlus} size="sm" color={AuthData.data.user_powers["4"].profile_powers.read == 1 ? "green" : "#808991"} />
+        <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPlus} size="sm" color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "green" : "#E0E0E0"} />
         </IconButton>
       </Tooltip>
 
