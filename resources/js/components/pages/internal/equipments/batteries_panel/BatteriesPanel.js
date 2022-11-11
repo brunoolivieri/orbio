@@ -20,6 +20,7 @@ import { DeleteBatteryFormulary } from '../../../../structures/modules/equipment
 import { UpdateBatteryFormulary } from '../../../../structures/modules/equipment/batteries/UpdateBatteryFormulary';
 import { CreateBatteryFormulary } from "../../../../structures/modules/equipment/batteries/CreateBatteryFormulary";
 import { BatteryInformation } from '../../../../structures/modules/equipment/batteries/BatteryInformation';
+import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import LinearProgress from '@mui/material/LinearProgress';
 // Libs
 import moment from 'moment';
@@ -242,12 +243,15 @@ export const BatteriesPanel = () => {
                 </Menu>
 
                 <Grid item>
-                    <Tooltip title="Exportar dados">
-                        <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}
-                        >
-                            <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                    {AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+                        <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
+                    }
+
+                    {!AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+                        <IconButton disabled>
+                            <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
-                    </Tooltip>
+                    }
                 </Grid>
 
                 <Grid item>

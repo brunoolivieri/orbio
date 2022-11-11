@@ -32,6 +32,11 @@ class AdministrationModuleProfilesController extends Controller
         );
     }
 
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function store(ProfilePanelStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');

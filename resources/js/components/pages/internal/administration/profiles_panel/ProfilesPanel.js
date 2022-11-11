@@ -11,6 +11,7 @@ import { CreateProfileFormulary } from "../../../../structures/modules/administr
 import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
 import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
 import { ProfileInformation } from "../../../../structures/modules/administration/profiles_administration/ProfileInformation";
+import { ExportTableData } from "../../../../structures/modals/dialog/ExportTableData";
 import LinearProgress from '@mui/material/LinearProgress';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -232,12 +233,15 @@ export function ProfilesPanel() {
         </Menu>
 
         <Grid item>
-          <Tooltip title="Exportar dados">
-            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
-            >
-              <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+          {AuthData.data.user_powers["1"].profile_powers.read == 1 &&
+            <ExportTableData type="PERFIS" source={"/api/profiles/export"} />
+          }
+
+          {!AuthData.data.user_powers["1"].profile_powers.read == 1 &&
+            <IconButton disabled>
+              <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
-          </Tooltip>
+          }
         </Grid>
 
         <Grid item>

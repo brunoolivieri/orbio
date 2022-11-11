@@ -65,9 +65,9 @@ Route::middleware(['guest'])->group(function () {
 
 
 // Guest operations
-Route::post('/api/auth/login', LoginController::class);
-Route::post('/api/auth/password-token', PasswordTokenController::class);
-Route::post('/api/auth/change-password', PasswordResetController::class);
+Route::post('api/auth/login', LoginController::class);
+Route::post('api/auth/password-token', PasswordTokenController::class);
+Route::post('api/auth/change-password', PasswordResetController::class);
 
 Route::middleware(["session.auth"])->group(function () {
     // Internal simple operations
@@ -75,32 +75,42 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get('/internal/{internalpage?}', function () {
         return redirect("/internal");
     })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard");
-    Route::get('/api/auth/logout', LogoutController::class);
+    Route::get('api/auth/logout', LogoutController::class);
     Route::view('/internal/map', "map");
     // Internal Dashboard 
     Route::get('/api/load-dashboard-metrics', DashboardController::class);
     // Internal "MyAccount" operations
-    Route::get('/api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
-    Route::get('/api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);
-    Route::get('/api/load-sessions-data', [MyAccountController::class, "loadActiveSessions"]);
-    Route::patch('/api/update-basic-data', [MyAccountController::class, "basicDataUpdate"]);
-    Route::patch('/api/update-documents-data', [MyAccountController::class, "documentsUpdate"]);
-    Route::patch('/api/update-address-data', [MyAccountController::class, "addressUpdate"]);
-    Route::post("/api/desactivate-account/{id}", [MyAccountController::class, "accountDesactivation"]);
-    Route::post("/api/update-password", [MyAccountController::class, "passwordUpdate"]);
+    Route::get('api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
+    Route::get('api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);
+    Route::get('api/load-sessions-data', [MyAccountController::class, "loadActiveSessions"]);
+    Route::patch('api/update-basic-data', [MyAccountController::class, "basicDataUpdate"]);
+    Route::patch('api/update-documents-data', [MyAccountController::class, "documentsUpdate"]);
+    Route::patch('api/update-address-data', [MyAccountController::class, "addressUpdate"]);
+    Route::post("api/desactivate-account/{id}", [MyAccountController::class, "accountDesactivation"]);
+    Route::post("api/update-password", [MyAccountController::class, "passwordUpdate"]);
     // Internal Modules operations
-    Route::ApiResource("/api/admin-module-user", AdministrationModuleUsersController::class);
-    Route::ApiResource("/api/admin-module-profile", AdministrationModuleProfilesController::class);
-    Route::ApiResource("/api/reports-module", ReportModuleController::class);
-    Route::get("/api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
-    Route::ApiResource("/api/plans-module", FlightPlanModuleController::class);
-    Route::ApiResource("/api/plans-module-logs", FlightPlanModuleLogController::class);
+    Route::ApiResource("api/admin-module-user", AdministrationModuleUsersController::class);
+    Route::ApiResource("api/admin-module-profile", AdministrationModuleProfilesController::class);
+    Route::ApiResource("api/reports-module", ReportModuleController::class);
+    Route::ApiResource("api/plans-module", FlightPlanModuleController::class);
+    Route::ApiResource("api/plans-module-logs", FlightPlanModuleLogController::class);
+    Route::ApiResource("api/orders-module", ServiceOrderModuleController::class);
+    Route::ApiResource("api/incidents-module", IncidentModuleController::class);
+    Route::ApiResource("api/equipments-module-drone", EquipmentModuleDronePanelController::class);
+    Route::ApiResource("api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
+    Route::ApiResource("api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
+    // Internal Modules extra operations
+    Route::get("api/users/export", [AdministrationModuleUsersController::class, "exportAsCsv"]);
+    Route::get("api/profiles/export", [AdministrationModuleProfilesController::class, "exportAsCsv"]);
+    Route::get("api/flight-plans/export", [FlightPlanModuleController::class, "exportAsCsv"]);
+    Route::get("api/logs/export", [FlightPlanModuleLogController::class, "exportAsCsv"]);
+    Route::get("api/service-orders/export", [ServiceOrderModuleController::class, "exportAsCsv"]);
+    Route::get("api/incidents/export", [IncidentModuleController::class, "exportAsCsv"]);
+    Route::get("api/drones/export", [EquipmentModuleDronePanelController::class, "exportAsCsv"]);
+    Route::get("api/batteries/export", [EquipmentModuleBatteryPanelController::class, "exportAsCsv"]);
+    Route::get("api/equipments/export", [EquipmentModuleEquipmentPanelController::class, "exportAsCsv"]);
     Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
-    Route::ApiResource("/api/orders-module", ServiceOrderModuleController::class);
-    Route::ApiResource("/api/incidents-module", IncidentModuleController::class);
-    Route::ApiResource("/api/equipments-module-drone", EquipmentModuleDronePanelController::class);
-    Route::ApiResource("/api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
-    Route::ApiResource("/api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
+    Route::get("/api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
     // Actions
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);

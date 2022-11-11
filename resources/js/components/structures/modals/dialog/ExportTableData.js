@@ -1,12 +1,14 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Alert, IconButton, Grid, FormControl, InputLabel, MenuItem, Select, Tooltip, Typography } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Alert, IconButton, Grid, FormControl, InputLabel, MenuItem, Select, Tooltip } from '@mui/material';
+import { useSnackbar } from 'notistack';
 // Custom
 //import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 // Lib
 //import axios from '../../../../services/AxiosApi';
 
@@ -23,6 +25,7 @@ export const ExportTableData = React.memo((props) => {
     const [source, setSource] = React.useState(props.source);
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -37,11 +40,27 @@ export const ExportTableData = React.memo((props) => {
     }
 
     function handleExport() {
-        console.log('EXPORT OPTION: ' + controlledInput.option)
+
+        const url = source + "?limit=" + controlledInput.option;
+
+        axios.get(url, null, {
+            responseType: 'blob'
+        })
+            .then((response) => {
+                handleOpenSnackbar(response.data.message, "success");
+                handleClose();
+            })
+            .catch((error) => {
+                setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
+            });
     }
 
     function handleChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.target.value });
+    }
+
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //

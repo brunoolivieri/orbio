@@ -21,6 +21,7 @@ import { CreateEquipmentFormulary } from '../../../../structures/modules/equipme
 import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/DeleteEquipmentFormulary';
 import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
 import { EquipmentInformation } from '../../../../structures/modules/equipment/equipments/EquipmentInformation';
+import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 // Libs
 import moment from 'moment';
 
@@ -238,12 +239,15 @@ export const EquipmentPanel = React.memo(() => {
         </Menu>
 
         <Grid item>
-          <Tooltip title="Exportar dados">
-            <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}
-            >
-              <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+          {AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+            <ExportTableData type="EQUIPAMENTOS" source={"/api/equipments/export"} />
+          }
+
+          {!AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+            <IconButton disabled>
+              <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
-          </Tooltip>
+          }
         </Grid>
 
         <Grid item>

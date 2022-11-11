@@ -20,6 +20,7 @@ import { CreateLogFormulary } from '../../../../structures/modules/flight_plans/
 import { UpdateLogFormulary } from '../../../../structures/modules/flight_plans/logs/UpdateLogFormulary';
 import { DeleteLogFormulary } from '../../../../structures/modules/flight_plans/logs/DeleteLogFormulary';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import LinearProgress from '@mui/material/LinearProgress';
 // Lib
 import moment from 'moment';
@@ -223,12 +224,15 @@ export const LogsPanel = () => {
                 </Menu>
 
                 <Grid item>
-                    <Tooltip title="Exportar dados">
-                        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}
-                        >
-                            <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                    {AuthData.data.user_powers["2"].profile_powers.read == 1 &&
+                        <ExportTableData type="LOGS" source={"/api/logs/export"} />
+                    }
+
+                    {!AuthData.data.user_powers["2"].profile_powers.read == 1 &&
+                        <IconButton disabled>
+                            <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
-                    </Tooltip>
+                    }
                 </Grid>
 
                 <Grid item>
