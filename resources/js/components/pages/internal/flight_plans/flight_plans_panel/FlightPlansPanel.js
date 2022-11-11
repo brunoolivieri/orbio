@@ -154,7 +154,7 @@ export const FlightPlansPanel = () => {
         link.setAttribute('download', `${filename}`); //or any other extension
         document.body.appendChild(link);
         link.click();
-        
+
       })
       .catch(function () {
         handleOpenSnackbar(`O download não foi realizado! Arquivo: ${filename}`, "error");

@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;
+use App\Models\Users\User;
+use App\Exports\GenericExport;
 
 class AdministrationModuleUsersController extends Controller
 {
@@ -33,7 +36,7 @@ class AdministrationModuleUsersController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        return Excel::download(new GenericExport(new User(), request()->limit), 'users.xlsx');
     }
 
     public function store(UserPanelStoreRequest $request): \Illuminate\Http\Response

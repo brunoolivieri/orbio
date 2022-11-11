@@ -32,6 +32,11 @@ class EquipmentModuleEquipmentPanelController extends Controller
         );
     }
 
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function store(StoreEquipmentRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");

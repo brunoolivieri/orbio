@@ -33,6 +33,11 @@ class IncidentModuleController extends Controller
         );
     }
 
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function store(IncidentStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
@@ -43,7 +48,7 @@ class IncidentModuleController extends Controller
     public function update(IncidentUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('incidents_write');
-        
+
         return $this->service->updateOne($request->only(["type", "description", "date", "flight_plan_id", "service_order_id"]), $id);
     }
 

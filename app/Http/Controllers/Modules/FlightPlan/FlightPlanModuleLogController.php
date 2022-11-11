@@ -20,11 +20,6 @@ class FlightPlanModuleLogController extends Controller
         $this->service = $service;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_read');
@@ -38,12 +33,11 @@ class FlightPlanModuleLogController extends Controller
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
@@ -51,13 +45,6 @@ class FlightPlanModuleLogController extends Controller
         return $this->service->createOne($request->only(["ip", "http_port", "logs"]));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
@@ -65,12 +52,6 @@ class FlightPlanModuleLogController extends Controller
         return $this->service->updateOne($request->only(["name", "flight_plan_id", "service_order_id"]), $id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');

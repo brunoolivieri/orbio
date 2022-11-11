@@ -47,7 +47,20 @@ export const ExportTableData = React.memo((props) => {
             responseType: 'blob'
         })
             .then((response) => {
-                handleOpenSnackbar(response.data.message, "success");
+
+                handleOpenSnackbar("Dados exportados com sucesso!", "success");
+
+                // Create file link in browser's memory
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+
+                // Create "a" HTML element with href to file & click
+                const link = document.createElement('a');
+                link.href = url;
+                const filename = props.type.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + ".xlsx";
+                link.setAttribute('download', filename); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+
                 handleClose();
             })
             .catch((error) => {

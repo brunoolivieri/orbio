@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Modules\Administration;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
-// Form Request
+use Maatwebsite\Excel\Facades\Excel;
+// Custom
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
-// Services
 use App\Services\Modules\Administration\ProfilePanelService;
+use App\Models\Profiles\Profile;
+use App\Exports\GenericExport;
 
 class AdministrationModuleProfilesController extends Controller
 {
@@ -34,7 +36,7 @@ class AdministrationModuleProfilesController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        return Excel::download(new GenericExport(new Profile(), request()->limit), 'profiles.xlsx');
     }
 
     public function store(ProfilePanelStoreRequest $request): \Illuminate\Http\Response

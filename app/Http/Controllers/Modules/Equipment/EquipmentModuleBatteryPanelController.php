@@ -32,10 +32,15 @@ class EquipmentModuleBatteryPanelController extends Controller
         );
     }
 
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function store(StoreBatteryRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
-        
+
         return $this->service->createOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
     }
 

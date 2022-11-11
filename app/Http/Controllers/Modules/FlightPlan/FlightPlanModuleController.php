@@ -33,6 +33,11 @@ class FlightPlanModuleController extends Controller
         );
     }
 
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function downloadFlightPlan(string $filename): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_read');

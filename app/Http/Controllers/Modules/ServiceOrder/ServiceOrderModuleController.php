@@ -40,6 +40,11 @@ class ServiceOrderModuleController extends Controller
         }
     }
 
+    public function exportAsCsv()
+    {
+        dd(request()->limit);
+    }
+
     public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
