@@ -19,6 +19,7 @@ import { CreateReportFormulary } from "../../../../structures/modules/reports/Cr
 import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
 import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import LinearProgress from '@mui/material/LinearProgress';
 // Lib
 import moment from 'moment';
@@ -247,12 +248,15 @@ export function ReportsPanel() {
         </Menu>
 
         <Grid item>
-          <Tooltip title="Exportar dados">
-            <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1}
-            >
-              <FontAwesomeIcon icon={faFileCsv} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+          {AuthData.data.user_powers["4"].profile_powers.read == 1 &&
+            <ExportTableData type="RELATÓRIOS" source={"/api/reports/export"} />
+          }
+
+          {!AuthData.data.user_powers["4"].profile_powers.read == 1 &&
+            <IconButton disabled>
+              <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
-          </Tooltip>
+          }
         </Grid>
 
         <Grid item>

@@ -105,6 +105,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::post("api/flight-plans/export", [FlightPlanModuleController::class, "exportAsCsv"]);
     Route::post("api/logs/export", [FlightPlanModuleLogController::class, "exportAsCsv"]);
     Route::post("api/service-orders/export", [ServiceOrderModuleController::class, "exportAsCsv"]);
+    Route::post("api/reports/export", [ReportModuleController::class, "exportAsCsv"]);
     Route::post("api/incidents/export", [IncidentModuleController::class, "exportAsCsv"]);
     Route::post("api/drones/export", [EquipmentModuleDronePanelController::class, "exportAsCsv"]);
     Route::post("api/batteries/export", [EquipmentModuleBatteryPanelController::class, "exportAsCsv"]);

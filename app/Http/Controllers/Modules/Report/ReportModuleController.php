@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Modules\Report;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Request;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 use App\Services\Modules\Report\ReportService;
+use App\Exports\GenericExport;
+use App\Models\Reports\Report;
 
 class ReportModuleController extends Controller
 {
@@ -33,10 +36,17 @@ class ReportModuleController extends Controller
         );
     }
 
+    public function exportAsCsv(Request $request)
+    {
+        ob_end_clean();
+        ob_start();
+        return Excel::download(new GenericExport(new Report(), $request->limit), 'reports.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+    }
+
     public function downloadReport(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_read');
-        
+
         return $this->service->download(request()->filename, request()->report_id);
     }
 
