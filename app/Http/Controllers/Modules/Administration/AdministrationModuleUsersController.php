@@ -37,8 +37,8 @@ class AdministrationModuleUsersController extends Controller
 
     public function exportAsCsv(Request $request)
     {
-        ob_end_clean(); // this
-        ob_start(); // and this
+        ob_end_clean(); 
+        ob_start(); 
         return Excel::download(new GenericExport(new User(), $request->limit), 'users.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 

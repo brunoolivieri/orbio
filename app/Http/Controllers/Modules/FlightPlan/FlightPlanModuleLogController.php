@@ -35,12 +35,11 @@ class FlightPlanModuleLogController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        $response = Excel::download(new GenericExport(new Log(), request()->limit), 'logs.csv', \Maatwebsite\Excel\Excel::CSV);
         ob_end_clean();
-
-        return $response;
+        ob_start();
+        return Excel::download(new GenericExport(new Log(), $request->limit), 'logs.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(Request $request): \Illuminate\Http\Response

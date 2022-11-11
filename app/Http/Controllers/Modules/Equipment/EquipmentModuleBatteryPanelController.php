@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Equipment;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\Request;
 // Custom
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
 use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
@@ -35,12 +36,11 @@ class EquipmentModuleBatteryPanelController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        //$response = Excel::download(new GenericExport(new Battery(), request()->limit), 'baterias.csv', \Maatwebsite\Excel\Excel::CSV);
-        //ob_end_clean();
-
-        //return $response;
+        ob_end_clean();
+        ob_start();
+        return Excel::download(new GenericExport(new Battery(), $request->limit), 'baterias.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(StoreBatteryRequest $request): \Illuminate\Http\Response

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\ServiceOrder;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Request;
 // Custom
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
@@ -42,12 +43,11 @@ class ServiceOrderModuleController extends Controller
         }
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        $response = Excel::download(new GenericExport(new ServiceOrder(), request()->limit), 'service_orders.csv', \Maatwebsite\Excel\Excel::CSV);
         ob_end_clean();
-
-        return $response;
+        ob_start();
+        return Excel::download(new GenericExport(new ServiceOrder(), $request->limit), 'ordens_de_servico.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response

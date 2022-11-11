@@ -35,12 +35,11 @@ class IncidentModuleController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        $response = Excel::download(new GenericExport(new Incident(), request()->limit), 'incidents.csv', \Maatwebsite\Excel\Excel::CSV);
         ob_end_clean();
-
-        return $response;
+        ob_start();
+        return Excel::download(new GenericExport(new Incident(), $request->limit), 'incidentes.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(IncidentStoreRequest $request): \Illuminate\Http\Response

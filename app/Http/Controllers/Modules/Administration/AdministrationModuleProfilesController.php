@@ -37,7 +37,9 @@ class AdministrationModuleProfilesController extends Controller
 
     public function exportAsCsv(Request $request)
     {
-        return new GenericExport(new Profile(), $request->limit);
+        ob_end_clean(); 
+        ob_start(); 
+        return Excel::download(new GenericExport(new Profile(), $request->limit), 'profiles.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(ProfilePanelStoreRequest $request): \Illuminate\Http\Response

@@ -35,12 +35,11 @@ class FlightPlanModuleController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        $response = Excel::download(new GenericExport(new FlightPlan(), request()->limit), 'planos.csv', \Maatwebsite\Excel\Excel::CSV);
         ob_end_clean();
-
-        return $response;
+        ob_start();
+        return Excel::download(new GenericExport(new FlightPlan(), $request->limit), 'planos_de_voo.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function downloadFlightPlan(string $filename): \Illuminate\Http\Response

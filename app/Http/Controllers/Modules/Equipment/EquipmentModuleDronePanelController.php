@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Equipment;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\Request;
 // Custom
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
@@ -34,12 +35,11 @@ class EquipmentModuleDronePanelController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        $response = Excel::download(new GenericExport(new Drone(), request()->limit), 'drones.csv', \Maatwebsite\Excel\Excel::CSV);
         ob_end_clean();
-
-        return $response;
+        ob_start();
+        return Excel::download(new GenericExport(new Drone(), $request->limit), 'baterias.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(StoreDroneRequest $request): \Illuminate\Http\Response
