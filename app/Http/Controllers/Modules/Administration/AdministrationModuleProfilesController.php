@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Administration;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\Request;
 // Custom
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
@@ -34,9 +35,9 @@ class AdministrationModuleProfilesController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        return Excel::download(new GenericExport(new Profile(), request()->limit), 'profiles.xlsx');
+        return new GenericExport(new Profile(), $request->limit);
     }
 
     public function store(ProfilePanelStoreRequest $request): \Illuminate\Http\Response

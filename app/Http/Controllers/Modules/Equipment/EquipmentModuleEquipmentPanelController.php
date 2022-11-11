@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Modules\Equipment;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
 use App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest;
 use App\Services\Modules\Equipment\EquipmentService;
+use App\Models\Equipments\Equipment;
+use App\Exports\GenericExport;
 
 class EquipmentModuleEquipmentPanelController extends Controller
 {
@@ -34,7 +37,10 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        $response = Excel::download(new GenericExport(new Equipment(), request()->limit), 'equipamentos.csv', \Maatwebsite\Excel\Excel::CSV);
+        ob_end_clean();
+
+        return $response;
     }
 
     public function store(StoreEquipmentRequest $request): \Illuminate\Http\Response

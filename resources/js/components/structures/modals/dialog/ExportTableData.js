@@ -43,23 +43,50 @@ export const ExportTableData = React.memo((props) => {
 
         const url = source + "?limit=" + controlledInput.option;
 
-        axios.get(url, null, {
+        const data = {
+            limit: controlledInput.option
+        }
+
+        axios.post(url, data, {
             responseType: 'blob'
         })
             .then((response) => {
 
                 handleOpenSnackbar("Dados exportados com sucesso!", "success");
 
-                // Create file link in browser's memory
-                const url = window.URL.createObjectURL(new Blob([response.data]));
+                console.log(response.data)
 
-                // Create "a" HTML element with href to file & click
+                // Create file link in browser's memory
+                const blob = new Blob([response.data], {
+                    type: 'application/octet-stream',
+                });
+
+                console.log(blob)
+
+                /*// Create "a" HTML element with href to file & click
+
+                const url = window.URL.createObjectURL(new Blob([response.data], {
+                    type: 'application/octet-stream',
+                }));
+
                 const link = document.createElement('a');
                 link.href = url;
                 const filename = props.type.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") + ".xlsx";
                 link.setAttribute('download', filename); //or any other extension
                 document.body.appendChild(link);
-                link.click();
+                link.click();*/
+
+                if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                    window.navigator.msSaveBlob(blob, 'users.xlsx');
+                } else {
+                    let blobURL = window.URL.createObjectURL(blob);
+                    let tempLink = document.createElement('a');
+                    tempLink.style.display = 'none';
+                    tempLink.href = blobURL;
+                    tempLink.download = 'users.xlsx';
+                    tempLink.click();
+                    window.URL.revokeObjectURL(blobURL);
+                }
 
                 handleClose();
             })

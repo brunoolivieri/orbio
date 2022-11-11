@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Modules\FlightPlan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-// Form Request
+use Maatwebsite\Excel\Facades\Excel;
+// Custom
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
-// Services
 use App\Services\Modules\FlightPlan\FlightPlanService;
+use App\Exports\GenericExport;
+use App\Models\FlightPlans\FlightPlan;
 
 class FlightPlanModuleController extends Controller
 {
@@ -35,7 +37,10 @@ class FlightPlanModuleController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        $response = Excel::download(new GenericExport(new FlightPlan(), request()->limit), 'planos.csv', \Maatwebsite\Excel\Excel::CSV);
+        ob_end_clean();
+
+        return $response;
     }
 
     public function downloadFlightPlan(string $filename): \Illuminate\Http\Response

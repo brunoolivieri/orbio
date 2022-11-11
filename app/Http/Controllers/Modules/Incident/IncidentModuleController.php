@@ -5,11 +5,13 @@ namespace App\Http\Controllers\Modules\Incident;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
-use App\Models\Incidents\Incident;
 use App\Http\Requests\Modules\Incidents\IncidentStoreRequest;
 use App\Http\Requests\Modules\Incidents\IncidentUpdateRequest;
 use App\Services\Modules\Incident\IncidentService;
+use App\Models\Incidents\Incident;
+use App\Exports\GenericExport;
 
 class IncidentModuleController extends Controller
 {
@@ -35,7 +37,10 @@ class IncidentModuleController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        $response = Excel::download(new GenericExport(new Incident(), request()->limit), 'incidents.csv', \Maatwebsite\Excel\Excel::CSV);
+        ob_end_clean();
+
+        return $response;
     }
 
     public function store(IncidentStoreRequest $request): \Illuminate\Http\Response

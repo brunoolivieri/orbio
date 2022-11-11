@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Modules\FlightPlan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-// Services
+use Maatwebsite\Excel\Facades\Excel;
+// Custom
 use App\Services\Modules\FlightPlan\FlightPlanLogService;
-// Request
 use App\Http\Requests\Modules\FlightPlans\Logs\UpdateLogRequest;
+use App\Exports\GenericExport;
+use App\Models\Logs\Log;
 
 class FlightPlanModuleLogController extends Controller
 {
@@ -35,7 +37,10 @@ class FlightPlanModuleLogController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        $response = Excel::download(new GenericExport(new Log(), request()->limit), 'logs.csv', \Maatwebsite\Excel\Excel::CSV);
+        ob_end_clean();
+
+        return $response;
     }
 
     public function store(Request $request): \Illuminate\Http\Response

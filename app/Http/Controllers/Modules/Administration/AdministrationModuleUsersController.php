@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\Administration;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\Request;
 // Custom
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
@@ -34,9 +35,11 @@ class AdministrationModuleUsersController extends Controller
         );
     }
 
-    public function exportAsCsv()
+    public function exportAsCsv(Request $request)
     {
-        return Excel::download(new GenericExport(new User(), request()->limit), 'users.xlsx');
+        ob_end_clean(); // this
+        ob_start(); // and this
+        return Excel::download(new GenericExport(new User(), $request->limit), 'users.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(UserPanelStoreRequest $request): \Illuminate\Http\Response

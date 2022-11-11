@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Modules\ServiceOrder;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 use App\Services\Modules\ServiceOrder\ServiceOrderService;
-// Resources
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
+use App\Exports\GenericExport;
+use App\Models\ServiceOrders\ServiceOrder;
 
 class ServiceOrderModuleController extends Controller
 {
@@ -42,7 +44,10 @@ class ServiceOrderModuleController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        $response = Excel::download(new GenericExport(new ServiceOrder(), request()->limit), 'service_orders.csv', \Maatwebsite\Excel\Excel::CSV);
+        ob_end_clean();
+
+        return $response;
     }
 
     public function store(ServiceOrderStoreRequest $request): \Illuminate\Http\Response

@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Modules\Equipment;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 use App\Services\Modules\Equipment\DroneService;
+use App\Models\Drones\Drone;
+use App\Exports\GenericExport;
 
 class EquipmentModuleDronePanelController extends Controller
 {
@@ -33,7 +36,10 @@ class EquipmentModuleDronePanelController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        $response = Excel::download(new GenericExport(new Drone(), request()->limit), 'drones.csv', \Maatwebsite\Excel\Excel::CSV);
+        ob_end_clean();
+
+        return $response;
     }
 
     public function store(StoreDroneRequest $request): \Illuminate\Http\Response

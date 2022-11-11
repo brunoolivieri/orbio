@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Modules\Equipment;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 // Custom
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
 use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
 use App\Services\Modules\Equipment\BatteryService;
+use App\Models\Batteries\Battery;
+use App\Exports\GenericExport;
 
 class EquipmentModuleBatteryPanelController extends Controller
 {
@@ -34,7 +37,10 @@ class EquipmentModuleBatteryPanelController extends Controller
 
     public function exportAsCsv()
     {
-        dd(request()->limit);
+        //$response = Excel::download(new GenericExport(new Battery(), request()->limit), 'baterias.csv', \Maatwebsite\Excel\Excel::CSV);
+        //ob_end_clean();
+
+        //return $response;
     }
 
     public function store(StoreBatteryRequest $request): \Illuminate\Http\Response

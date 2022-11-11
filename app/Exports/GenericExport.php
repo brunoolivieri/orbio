@@ -4,9 +4,23 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Illuminate\Database\Eloquent\Model;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Excel;
 
 class GenericExport implements FromCollection
 {
+    use Exportable;
+
+    /*
+    private $fileName = 'arquivo.xlsx';
+
+    private $writerType = Excel::XLSX;
+
+    private $headers = [
+        'Content-Type' => 'text/csv'
+    ];
+    */
+
     public function __construct(Model $model, string $limit)
     {
         $this->model = $model;
