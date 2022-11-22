@@ -3,6 +3,7 @@ import * as React from 'react';
 // Material UI
 import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, Chip, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
 import { useSnackbar } from 'notistack';
+import { DataGrid } from '@mui/x-data-grid';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import AxiosApi from "../../../../../services/AxiosApi";

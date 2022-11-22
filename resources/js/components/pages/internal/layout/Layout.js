@@ -32,7 +32,6 @@ export const Layout = () => {
       .then(function (response) {
 
         setOperationStatus({ type: null, title: null, message: null, image: null });
-
         setAuthData({ status: true, data: response.data });
 
       })
