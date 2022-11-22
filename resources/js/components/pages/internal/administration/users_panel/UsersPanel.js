@@ -1,7 +1,7 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, Chip, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
+import { TableCell, Tooltip, IconButton, Grid, TextField, styled, Chip, InputAdornment, Menu, MenuItem, Checkbox, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid } from '@mui/x-data-grid';
 // Custom
@@ -23,16 +23,61 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Libs
-import moment from 'moment';
-
-const StyledHeadTableCell = styled(TableCell)({
-  color: '#fff',
-  fontWeight: 700
-});
 
 const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
 const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
+
+const columns = [
+  { field: 'id', headerName: 'ID', width: 90, headerClassName: 'super-app-theme--header' },
+  {
+    field: 'name',
+    headerName: 'Nome',
+    flex: 1,
+    sortable: true,
+    editable: false,
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    flex: 1,
+    sortable: true,
+    editable: false,
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    type: 'number',
+    width: 150,
+    headerAlign: 'left',
+    sortable: true,
+    editable: false,
+    renderCell: (data) => {
+      const status = data.row.status;
+      if (status === 1) {
+        return <Chip label="Ativo" color="success" variant="outlined" />
+      } else {
+        return <Chip label="Inativo" color="error" variant="outlined" />
+      }
+    }
+  },
+  {
+    field: 'profile',
+    headerName: 'Perfil',
+    sortable: true,
+    editable: false,
+    flex: 1,
+    valueGetter: (data) => {
+      return data.row.profile.name;
+    },
+  },
+  {
+    field: 'last_access',
+    headerName: 'Último acesso',
+    sortable: true,
+    editable: false,
+    width: 150,
+  },
+];
 
 export function UsersPanel() {
 
@@ -94,10 +139,10 @@ export function UsersPanel() {
     });
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleChangeRowsPerPage = (newValue) => {
     setPaginationConfig({
       page: 1,
-      limit: event.target.value,
+      limit: newValue,
       order_by: "id",
       search: paginationConfig.search,
       total_records: 0,
@@ -285,58 +330,36 @@ export function UsersPanel() {
           />
         </Grid>
 
-        {(!loading && records.length > 0) &&
-          <Grid item>
-            <Stack spacing={2}>
-              <TablePagination
-                labelRowsPerPage="Linhas por página: "
-                component="div"
-                count={pagination.total_records}
-                page={paginationConfig.page - 1}
-                onPageChange={handleTablePageChange}
-                rowsPerPage={paginationConfig.limit}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </Stack>
-          </Grid>
-        }
-
       </Grid>
-      <FormControl fullWidth>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={selectedRecordIndex}
-        >
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className="tbody">
-                {(!loading && records.length > 0) &&
-                  records.map((row, index) => (
-                    <TableRow key={row.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.name}</TableCell>
-                      <TableCell align="center">{row.email}</TableCell>
-                      <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
-                      <TableCell align="center">{row.profile.name}</TableCell>
-                      <TableCell align="center">{moment(row.last_access).format("DD/MM/YYYY")}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </RadioGroup>
-      </FormControl>
+
+      <Box
+        sx={{ height: 500, width: '100%' }}
+      >
+        {
+          (!loading && records.length > 0) &&
+          <DataGrid
+            rows={records}
+            columns={columns}
+            pageSize={paginationConfig.limit}
+            onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+            rowsPerPageOptions={[10, 25, 50, 100]}
+            checkboxSelection
+            disableSelectionOnClick
+            experimentalFeatures={{ newEditingApi: true }}
+            sx={{
+              "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+                outline: "none !important",
+              },
+              '& .super-app-theme--header': {
+                color: '#222'
+              }
+            }}
+          />
+        }
+      </Box>
+
+
+
       {loading && <LinearProgress color="success" />}
     </>
   )
