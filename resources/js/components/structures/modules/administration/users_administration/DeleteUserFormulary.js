@@ -12,8 +12,6 @@ const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteUserFormulary = React.memo((props) => {
 
-  //console.log(props)
-
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();

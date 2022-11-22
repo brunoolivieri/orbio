@@ -100,7 +100,7 @@ export function UsersPanel() {
 
   React.useEffect(() => {
     serverLoadRecords();
-  }, [paginationConfig]);
+  }, []);
 
   function serverLoadRecords() {
 
@@ -165,10 +165,11 @@ export function UsersPanel() {
   }
 
   function reloadTable() {
-    setSelectedRecords(null);
 
     setLoading(true);
     setRecords([]);
+    setSelectedRecords([]);
+
     setPagination({
       total_records: 0,
       records_per_page: 0,
@@ -183,6 +184,8 @@ export function UsersPanel() {
       total_records: 0,
       filter: 0
     });
+
+    serverLoadRecords();
 
   }
 
@@ -218,7 +221,7 @@ export function UsersPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          {selectedRecords.length === 1 &&
+          {selectedRecords.length > 0 &&
             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
@@ -230,7 +233,7 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          {selectedRecords.length === 0 &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
@@ -244,7 +247,7 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          {selectedRecords.length === 0 &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
@@ -258,14 +261,14 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          {(selectedRecords === 1) &&
-            <UserInformation record={selectedRecords} />
-          }
-
-          {(selectedRecords === 0) &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
               <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
             </IconButton>
+          }
+
+          {(selectedRecords.length === 1) &&
+            <UserInformation record={selectedRecords[0]} />
           }
         </Grid>
 
