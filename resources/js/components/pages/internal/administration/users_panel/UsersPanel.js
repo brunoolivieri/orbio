@@ -1,7 +1,7 @@
 // React
 import * as React from 'react';
 // Material UI
-import { TableCell, Tooltip, IconButton, Grid, TextField, styled, Chip, InputAdornment, Menu, MenuItem, Checkbox, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Menu, MenuItem, Checkbox, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid } from '@mui/x-data-grid';
 // Custom
@@ -84,12 +84,14 @@ export function UsersPanel() {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+
   const [records, setRecords] = React.useState([]);
+  const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [pagination, setPagination] = React.useState(initialPagination);
   const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
   const [loading, setLoading] = React.useState(true);
-  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
   const [searchField, setSearchField] = React.useState("");
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const { enqueueSnackbar } = useSnackbar();
@@ -128,9 +130,9 @@ export function UsersPanel() {
 
   }
 
-  const handleTablePageChange = (event, value) => {
+  const handleChangePage = (newPage) => {
     setPaginationConfig({
-      page: value + 1,
+      page: newPage,
       limit: paginationConfig.limit,
       order_by: "id",
       search: paginationConfig.search,
@@ -163,7 +165,7 @@ export function UsersPanel() {
   }
 
   function reloadTable() {
-    setSelectedRecordIndex(null);
+    setSelectedRecords(null);
 
     setLoading(true);
     setRecords([]);
@@ -184,12 +186,18 @@ export function UsersPanel() {
 
   }
 
-  function handleClickRadio(e) {
-    if (e.target.value === selectedRecordIndex) {
-      setSelectedRecordIndex(null);
-    } else if (e.target.value != selectedRecordIndex) {
-      setSelectedRecordIndex(e.target.value);
-    }
+  function handleSelection(newSelectedIds) {
+
+    // newSelectedIds always bring all selections
+
+    const newSelectedRecords = records.filter((record) => {
+      if (newSelectedIds.includes(record.id)) {
+        return record;
+      }
+    })
+
+    setSelectedRecords(newSelectedRecords);
+
   }
 
   function handleClick(e) {
@@ -210,19 +218,19 @@ export function UsersPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          {selectedRecordIndex &&
+          {selectedRecords.length === 1 &&
             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
 
-          {selectedRecordIndex === null &&
+          {selectedRecords.length === 0 &&
             <CreateUserFormulary reload_table={reloadTable} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {selectedRecords.length === 0 &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
@@ -230,13 +238,13 @@ export function UsersPanel() {
             </Tooltip>
           }
 
-          {(!loading && selectedRecordIndex != null) &&
-            <UpdateUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && selectedRecords.length === 1) &&
+            <UpdateUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={reloadTable} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {selectedRecords.length === 0 &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
@@ -244,18 +252,17 @@ export function UsersPanel() {
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && selectedRecordIndex != null) &&
-            <DeleteUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && selectedRecords.length === 1) &&
+            <DeleteUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={reloadTable} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex &&
-            <UserInformation record={records[selectedRecordIndex]} />
+          {(selectedRecords === 1) &&
+            <UserInformation record={selectedRecords} />
           }
 
-          {!selectedRecordIndex &&
+          {(selectedRecords === 0) &&
             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
               <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -341,11 +348,13 @@ export function UsersPanel() {
             rows={records}
             columns={columns}
             pageSize={paginationConfig.limit}
-            onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
             rowsPerPageOptions={[10, 25, 50, 100]}
             checkboxSelection
             disableSelectionOnClick
             experimentalFeatures={{ newEditingApi: true }}
+            onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+            onSelectionModelChange={handleSelection}
+            onPageChange={(newPage) => handleChangePage(newPage)}
             sx={{
               "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
                 outline: "none !important",
@@ -357,8 +366,6 @@ export function UsersPanel() {
           />
         }
       </Box>
-
-
 
       {loading && <LinearProgress color="success" />}
     </>

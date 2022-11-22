@@ -10,7 +10,9 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const DeleteUserFormulary = React.memo(({ ...props }) => {
+export const DeleteUserFormulary = React.memo((props) => {
+
+  //console.log(props)
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -53,8 +55,8 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.selectionSetter(null);
+      props.reloadTable();
       handleClose();
     }, 2000);
   }

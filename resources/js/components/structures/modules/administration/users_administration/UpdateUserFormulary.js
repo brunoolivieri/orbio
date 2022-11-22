@@ -79,7 +79,7 @@ export const UpdateUserFormulary = React.memo((props) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
+      props.reloadTable();
       setLoading(false);
       handleClose();
     }, 2000);
