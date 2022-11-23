@@ -17,9 +17,9 @@ class ProfilePanelService implements ServiceInterface
         $this->repository = $profileRepository;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        $data = $this->repository->getPaginate($limit, $page, $search);
 
         if ($data->total() > 0) {
             return response(new ProfilesPanelResource($data), 200);
@@ -42,10 +42,10 @@ class ProfilePanelService implements ServiceInterface
         return response(["message" => "Perfil atualizado com sucesso!"], 200);
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $profile = $this->repository->deleteOne($identifier);
+        $profile = $this->repository->delete($ids);
 
-        return response(["message" => "Perfil deletado com sucesso!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

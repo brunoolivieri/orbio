@@ -15,13 +15,11 @@ class ProfileRepository implements RepositoryInterface
         $this->profileModel = $profileModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->profileModel->with("modules")
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page_number);
+            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
     function createOne(Collection $data)
@@ -84,16 +82,19 @@ class ProfileRepository implements RepositoryInterface
         });
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $profile = $this->profileModel->findOrFail($identifier);
+        foreach ($ids as $profile_id) {
 
-        // Turn all related users into visitants
-        if (!empty($profile->users)) {
-            $profile->users()->update(["profile_id" => 5]);
+            $profile = $this->profileModel->findOrFail($profile_id);
+
+            // Turn all related users into visitants
+            if (!empty($profile->users)) {
+                $profile->users()->update(["profile_id" => 5]);
+            }
+
+            $profile->delete();
         }
-
-        $profile->delete();
 
         return $profile;
     }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Grid, FormLabel, Checkbox, FormGroup, FormControlLabel } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Grid, FormLabel, Checkbox, FormGroup, FormControlLabel, Divider } from '@mui/material';
 // Custom
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -18,6 +18,7 @@ export const UpdateProfileFormulary = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
+
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -34,12 +35,12 @@ export const UpdateProfileFormulary = React.memo((props) => {
 
     // Reducer
     const [privileges, dispatch] = React.useReducer(privilegesReducer, {
-        "1": { read: props.record.modules["0"].read == 1 ? true : false, write: props.record.modules["0"].write == 1 ? true : false },
-        "2": { read: props.record.modules["1"].read == 1 ? true : false, write: props.record.modules["1"].write == 1 ? true : false },
-        "3": { read: props.record.modules["2"].read == 1 ? true : false, write: props.record.modules["2"].write == 1 ? true : false },
-        "4": { read: props.record.modules["3"].read == 1 ? true : false, write: props.record.modules["3"].write == 1 ? true : false },
-        "5": { read: props.record.modules["4"].read == 1 ? true : false, write: props.record.modules["4"].write == 1 ? true : false },
-        "6": { read: props.record.modules["5"].read == 1 ? true : false, write: props.record.modules["5"].write == 1 ? true : false }
+        "1": { read: props.record.modules[0].read == 1 ? true : false, write: props.record.modules[0].write == 1 ? true : false },
+        "2": { read: props.record.modules[1].read == 1 ? true : false, write: props.record.modules[1].write == 1 ? true : false },
+        "3": { read: props.record.modules[2].read == 1 ? true : false, write: props.record.modules[2].write == 1 ? true : false },
+        "4": { read: props.record.modules[3].read == 1 ? true : false, write: props.record.modules[3].write == 1 ? true : false },
+        "5": { read: props.record.modules[4].read == 1 ? true : false, write: props.record.modules[4].write == 1 ? true : false },
+        "6": { read: props.record.modules[5].read == 1 ? true : false, write: props.record.modules[5].write == 1 ? true : false }
     });
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -79,26 +80,26 @@ export const UpdateProfileFormulary = React.memo((props) => {
             privileges: privileges
         })
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
     function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.record_setter(null);
-            props.reload_table();
+            props.reloadTable((old) => !old);
             setLoading(false);
             handleClose();
         }, 2000);
     }
 
-    const errorResponse = (response) => {
+    function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
         let request_errors = {
@@ -116,7 +117,7 @@ export const UpdateProfileFormulary = React.memo((props) => {
         setFieldErrorMessage({ name: request_errors.name.message });
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
@@ -137,35 +138,44 @@ export const UpdateProfileFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>PERFIL (ID: {props.record.id}) | EDIÇÃO</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO DE PERFIL</DialogTitle>
+                <Divider />
 
                 <Box component="form" noValidate onSubmit={handleSubmit} >
                     <DialogContent>
 
-                        <TextField
-                            margin="dense"
-                            value={controlledInput.id}
-                            name="id"
-                            label="ID"
-                            fullWidth
-                            variant="outlined"
-                            sx={{ mb: 2 }}
-                            InputProps={{
-                                readOnly: true
-                            }}
-                        />
+                        <Grid container spacing={1}>
 
-                        <TextField
-                            margin="dense"
-                            value={controlledInput.name}
-                            name="name"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
-                        />
+                            <Grid item xs={2}>
+                                <TextField
+                                    margin="dense"
+                                    value={controlledInput.id}
+                                    name="id"
+                                    label="ID"
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={{ mb: 2 }}
+                                    InputProps={{
+                                        readOnly: true
+                                    }}
+                                />
+                            </Grid>
+
+                            <Grid item xs={10}>
+                                <TextField
+                                    margin="dense"
+                                    value={controlledInput.name}
+                                    name="name"
+                                    label="Nome"
+                                    fullWidth
+                                    variant="outlined"
+                                    onChange={handleInputChange}
+                                    helperText={fieldErrorMessage.name}
+                                    error={fieldError.name}
+                                />
+                            </Grid>
+
+                        </Grid>
 
                         <Grid container sx={{ mt: 2 }} spacing={1} alignItems="left">
                             <Grid item>
@@ -225,6 +235,7 @@ export const UpdateProfileFormulary = React.memo((props) => {
 
                     {loading && <LinearProgress />}
 
+                    <Divider />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>

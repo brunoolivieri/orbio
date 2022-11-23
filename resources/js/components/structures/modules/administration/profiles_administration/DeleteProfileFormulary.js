@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Box, Alert, IconButton, Tooltip, LinearProgress } from '@mui/material/';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Alert, IconButton, Tooltip, LinearProgress, Divider, DialogContentText } from '@mui/material/';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../services/AxiosApi';
@@ -15,15 +15,18 @@ export const DeleteProfileFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput] = React.useState({ id: props.record_id });
+
+  const [selectedIds, setSelectedIds] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   function handleClickOpen() {
     setOpen(true);
+    const ids = props.records.map((item) => item.id);
+    setSelectedIds(ids);
   }
 
   function handleClose() {
@@ -32,29 +35,33 @@ export const DeleteProfileFormulary = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleSubmitOperation(event) {
+  function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     requestServerOperation();
   }
 
   function requestServerOperation() {
-    axios.delete(`/api/admin-module-profile/${controlledInput.id}`)
+    axios.delete(`/api/admin-module-profile/delete`, {
+      data: {
+        ids: selectedIds
+      }
+    })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
@@ -64,13 +71,13 @@ export const DeleteProfileFormulary = React.memo((props) => {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -79,57 +86,31 @@ export const DeleteProfileFormulary = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
-        <>
-          <DialogTitle>DELEÇÃO | PERFIL (ID: {props.record_id})</DialogTitle>
+        <DialogTitle>DELEÇÃO DE PERFIL</DialogTitle>
+        <Divider />
 
-          <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <DialogContent>
 
-            <DialogContent>
+          <DialogContentText>
+            Os usuários vinculados a este perfil se tornarão visitantes. {selectedIds.length > 1 ? `A remoção dos ${selectedIds.length} perfis` : "A remoção do perfil"} não é permanente e pode ser desfeita.
+          </DialogContentText>
 
-              <TextField
-                margin="dense"
-                defaultValue={props.record.id}
-                id="id"
-                name="id"
-                label="ID do perfil"
-                fullWidth
-                variant="outlined"
-                sx={{ mb: 2 }}
-                InputProps={{
-                  readOnly: true
-                }}
-              />
+        </DialogContent>
 
-              <TextField
-                margin="dense"
-                defaultValue={props.record.name}
-                id="name"
-                name="name"
-                label="Nome do perfil"
-                fullWidth
-                variant="outlined"
-                InputProps={{
-                  readOnly: true
-                }}
-              />
+        {(!loading && displayAlert.display) &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-            </DialogContent>
+        {loading && <LinearProgress />}
 
-            {(!loading && displayAlert.display) &&
-              <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-            }
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
 
-            {loading && <LinearProgress />}
-
-            <DialogActions>
-              <Button onClick={handleClose}>Cancelar</Button>
-              <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-            </DialogActions>
-
-          </Box>
-        </>
       </Dialog>
     </>
   );

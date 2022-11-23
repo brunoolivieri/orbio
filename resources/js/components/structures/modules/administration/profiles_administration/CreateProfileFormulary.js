@@ -1,6 +1,6 @@
 import *  as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../services/AxiosApi';
@@ -19,6 +19,7 @@ export const CreateProfileFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fiedlErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -41,15 +42,15 @@ export const CreateProfileFormulary = React.memo((props) => {
     setOpen(false);
   }
 
-  const handleRegistrationProfile = (event) => {
-    event.preventDefault();
+  function handleRegistrationProfile(e) {
+    e.preventDefault();
     if (formValidation()) {
       setLoading(true);
       requestServerOperation();
     }
   }
 
-  const formValidation = () => {
+  function formValidation() {
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
 
     setFieldError({ name: nameValidate.error });
@@ -58,30 +59,31 @@ export const CreateProfileFormulary = React.memo((props) => {
     return !(nameValidate.error);
   }
 
-  const requestServerOperation = () => {
+  function requestServerOperation() {
     axios.post("/api/admin-module-profile", {
       name: controlledInput.name
     })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
   }
 
-  const errorResponse = (response) => {
+  function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
     let request_errors = {
@@ -99,7 +101,7 @@ export const CreateProfileFormulary = React.memo((props) => {
     setFieldErrorMessage({ name: request_errors.name.message });
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
@@ -108,8 +110,8 @@ export const CreateProfileFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo Perfil">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1}>
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -120,7 +122,8 @@ export const CreateProfileFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>CADASTRO DE PERFIL</DialogTitle>
+        <DialogTitle>CRIAÇÃO DE PERFIL</DialogTitle>
+        <Divider />
 
         <Box component="form" noValidate onSubmit={handleRegistrationProfile} >
           <DialogContent>
@@ -140,6 +143,7 @@ export const CreateProfileFormulary = React.memo((props) => {
               error={fieldError.name}
               sx={{ mt: 3 }}
             />
+
           </DialogContent>
 
           {(!loading && displayAlert.display) &&
@@ -148,6 +152,7 @@ export const CreateProfileFormulary = React.memo((props) => {
 
           {loading && <LinearProgress />}
 
+          <Divider />
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>

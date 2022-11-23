@@ -23,7 +23,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 90, headerClassName: 'super-app-theme--header' },
+  { field: 'id', headerName: 'ID', width: 90 },
   {
     field: 'name',
     headerName: 'Nome',
@@ -163,7 +163,7 @@ export function UsersPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateUserFormulary reload_table={fetchRecords} />
+            <CreateUserFormulary reloadTable={setReload} />
           }
         </Grid>
 

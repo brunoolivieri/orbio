@@ -28,10 +28,8 @@ class AdministrationModuleProfilesController extends Controller
 
         return $this->service->getPaginate(
             request()->limit,
-            request()->order_by,
             request()->page,
-            is_null(request()->search) ? "0" : request()->search,
-            request()->filter === "0" ? [] : request()->filter
+            is_null(request()->search) ? "0" : request()->search
         );
     }
 
@@ -60,10 +58,10 @@ class AdministrationModuleProfilesController extends Controller
         return response(["message" => "Perfil atualizdo com sucesso!"], 200);
     }
 
-    public function destroy($id): \Illuminate\Http\Response
+    public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->deleteOne($id);
+        return $this->service->delete($request->ids);
     }
 }
