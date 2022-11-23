@@ -28,10 +28,8 @@ class FlightPlanModuleController extends Controller
 
         return $this->service->getPaginate(
             request()->limit,
-            request()->order_by,
             request()->page,
-            is_null(request()->search) ? "0" : request()->search,
-            request()->filter === "0" ? [] : request()->filter
+            is_null(request()->search) ? "0" : request()->search
         );
     }
 
@@ -63,10 +61,10 @@ class FlightPlanModuleController extends Controller
         return $this->service->updateOne($request->validated(), $id);
     }
 
-    public function destroy($id): \Illuminate\Http\Response
+    public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->deleteOne($id);
+        return $this->service->delete($request->ids);;
     }
 }

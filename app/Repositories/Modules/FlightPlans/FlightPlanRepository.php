@@ -17,14 +17,12 @@ class FlightPlanRepository implements RepositoryInterface
         $this->flightPlanModel = $flightPlanModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->flightPlanModel
             ->with(["service_orders"])
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page);
     }
 
     function createOne(Collection $data)
@@ -60,20 +58,23 @@ class FlightPlanRepository implements RepositoryInterface
         return $flight_plan;
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        return DB::transaction(function () use ($identifier) {
+        return DB::transaction(function () use ($ids) {
 
-            $flight_plan =  $this->flightPlanModel->findOrFail($identifier);
+            foreach ($ids as $flight_plan_id) {
 
-            // Check if user is related to a active service order 
-            foreach ($flight_plan->service_orders as $service_order) {
-                if ($service_order->status) {
-                    return response(["message" => "Possui vínculo com uma ordem de serviço ativa!"], 500);
+                $flight_plan =  $this->flightPlanModel->findOrFail($flight_plan_id);
+
+                // Check if user is related to a active service order 
+                foreach ($flight_plan->service_orders as $service_order) {
+                    if ($service_order->status) {
+                        return response(["message" => "Possui vínculo com uma ordem de serviço ativa!"], 500);
+                    }
                 }
-            }
 
-            $flight_plan->delete();
+                $flight_plan->delete();
+            }
 
             return $flight_plan;
         });
