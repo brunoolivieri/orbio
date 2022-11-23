@@ -19,10 +19,10 @@ class UserPanelService implements ServiceInterface
         $this->repository = $userRepository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
-
+        $data = $this->repository->getPaginate($limit, $page, $search);
+        
         if ($data->total() > 0) {
             return response(new UsersPanelResource($data), 200);
         } else {

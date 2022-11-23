@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -79,7 +79,7 @@ export const UpdateUserFormulary = React.memo((props) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
+      props.reloadTable();
       setLoading(false);
       handleClose();
     }, 2000);
@@ -135,7 +135,8 @@ export const UpdateUserFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>ATUALIZAÇÃO | USUÁRIO (ID: {props.record.id})</DialogTitle>
+        <DialogTitle>ATUALIZAÇÃO DE USUÁRIO</DialogTitle>
+        <Divider />
 
         <Box component="form" noValidate onSubmit={handleSubmitOperation} >
           <DialogContent>
@@ -203,10 +204,12 @@ export const UpdateUserFormulary = React.memo((props) => {
 
           {loading && <LinearProgress />}
 
+          <Divider />
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
+
         </Box>
       </Dialog>
     </>

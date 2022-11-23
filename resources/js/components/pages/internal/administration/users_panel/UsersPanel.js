@@ -1,72 +1,111 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, Chip, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
+import { DataGrid } from '@mui/x-data-grid';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import AxiosApi from "../../../../../services/AxiosApi";
+import axios from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
 import { UserInformation } from '../../../../structures/modules/administration/users_administration/UserInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Libs
-import moment from 'moment';
 
-const StyledHeadTableCell = styled(TableCell)({
-  color: '#fff',
-  fontWeight: 700
-});
-
-const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
-const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
+const columns = [
+  { field: 'id', headerName: 'ID', width: 90, headerClassName: 'super-app-theme--header' },
+  {
+    field: 'name',
+    headerName: 'Nome',
+    flex: 1,
+    sortable: true,
+    editable: false,
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    flex: 1,
+    sortable: true,
+    editable: false,
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    type: 'number',
+    width: 150,
+    headerAlign: 'left',
+    sortable: true,
+    editable: false,
+    renderCell: (data) => {
+      const status = data.row.status;
+      if (status === 1) {
+        return <Chip label="Ativo" color="success" variant="outlined" />
+      } else {
+        return <Chip label="Inativo" color="error" variant="outlined" />
+      }
+    }
+  },
+  {
+    field: 'profile',
+    headerName: 'Perfil',
+    sortable: true,
+    editable: false,
+    flex: 1,
+    valueGetter: (data) => {
+      return data.row.profile.name;
+    },
+  },
+  {
+    field: 'last_access',
+    headerName: 'Último acesso',
+    sortable: true,
+    editable: false,
+    width: 150,
+  },
+];
 
 export function UsersPanel() {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+
   const [records, setRecords] = React.useState([]);
-  const [pagination, setPagination] = React.useState(initialPagination);
-  const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
+  const [perPage, setPerPage] = React.useState(10);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalRecords, setTotalRecords] = React.useState(0);
+  const [search, setSearch] = React.useState("0");
+  const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-  const [searchField, setSearchField] = React.useState("");
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const [reload, setReload] = React.useState(false);
+
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
+    setLoading(true);
+    setRecords([]);
+    setSelectedRecords([]);
     serverLoadRecords();
-  }, [paginationConfig]);
+  }, [reload]);
 
   function serverLoadRecords() {
 
-    const limit = paginationConfig.limit;
-    const search = paginationConfig.search;
-    const page = paginationConfig.page;
-    const order_by = paginationConfig.order_by;
-    const filter = paginationConfig.filter;
-
-    AxiosApi.get(`/api/admin-module-user?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+    axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
-        setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setTotalRecords(response.data.total_records);
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} usuários`, "success");
         } else {
@@ -75,82 +114,35 @@ export function UsersPanel() {
       })
       .catch(function (error) {
         handleOpenSnackbar(error.response.data.message, "error");
+      })
+      .finally(() => {
         setLoading(false);
-        setRecords([]);
-        setPagination(initialPagination);
-      });
-
+      })
   }
 
-  const handleTablePageChange = (event, value) => {
-    setPaginationConfig({
-      page: value + 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: paginationConfig.search,
-      total_records: 0,
-      filter: 0
+  const handleChangePage = (newPage) => {
+    // If actual page is bigger than the new one, is a reduction of actual
+    // If actual is smaller, the page is increasing
+    setCurrentPage((current) => {
+      return current > newPage ? (current - 1) : newPage;
     });
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setPaginationConfig({
-      page: 1,
-      limit: event.target.value,
-      order_by: "id",
-      search: paginationConfig.search,
-      total_records: 0,
-      filter: 0
-    });
-  };
-
-  function handleSearchSubmit(e) {
-    e.preventDefault();
-    setPaginationConfig({
-      page: 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: searchField,
-      total_records: 0,
-      filter: 0
-    });
+    setReload((old) => !old);
   }
 
-  function reloadTable() {
-    setSelectedRecordIndex(null);
-
-    setLoading(true);
-    setRecords([]);
-    setPagination({
-      total_records: 0,
-      records_per_page: 0,
-      total_pages: 0
-    });
-
-    setPaginationConfig({
-      page: 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: 0,
-      total_records: 0,
-      filter: 0
-    });
-
+  const handleChangeRowsPerPage = (newValue) => {
+    setPerPage(newValue);
+    setCurrentPage(1);
+    setReload((old) => !old);
   }
 
-  function handleClickRadio(e) {
-    if (e.target.value === selectedRecordIndex) {
-      setSelectedRecordIndex(null);
-    } else if (e.target.value != selectedRecordIndex) {
-      setSelectedRecordIndex(e.target.value);
-    }
-  }
-
-  function handleClick(e) {
-    setAnchorEl(e.currentTarget);
-  }
-  function handleClose() {
-    setAnchorEl(null);
+  function handleSelection(newSelectedIds) {
+    // newSelectedIds always bring all selections
+    const newSelectedRecords = records.filter((record) => {
+      if (newSelectedIds.includes(record.id)) {
+        return record;
+      }
+    })
+    setSelectedRecords(newSelectedRecords);
   }
 
   function handleOpenSnackbar(text, variant) {
@@ -164,19 +156,19 @@ export function UsersPanel() {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          {selectedRecordIndex &&
+          {selectedRecords.length > 0 &&
             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
 
-          {selectedRecordIndex === null &&
-            <CreateUserFormulary reload_table={reloadTable} />
+          {selectedRecords.length === 0 &&
+            <CreateUserFormulary reload_table={serverLoadRecords} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
@@ -184,13 +176,13 @@ export function UsersPanel() {
             </Tooltip>
           }
 
-          {(!loading && selectedRecordIndex != null) &&
-            <UpdateUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && selectedRecords.length === 1) &&
+            <UpdateUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={serverLoadRecords} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {(selectedRecords.length === 0) &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
@@ -198,52 +190,22 @@ export function UsersPanel() {
             </Tooltip>
           }
 
-          {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-          {(!loading && selectedRecordIndex != null) &&
-            <DeleteUserFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && selectedRecords.length > 0) &&
+            <DeleteUserFormulary records={selectedRecords} selectionSetter={setSelectedRecords} reloadTable={serverLoadRecords} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex &&
-            <UserInformation record={records[selectedRecordIndex]} />
-          }
-
-          {!selectedRecordIndex &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
               <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
             </IconButton>
           }
-        </Grid>
 
-        <Grid item>
-          <Tooltip title="Filtros">
-            <IconButton
-              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
-              id="basic-button"
-              aria-controls={open ? 'basic-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
-            >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
-            </IconButton>
-          </Tooltip>
+          {(selectedRecords.length === 1) &&
+            <UserInformation record={selectedRecords[0]} />
+          }
         </Grid>
-
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem ><Checkbox /> Ativos </MenuItem>
-          <MenuItem ><Checkbox /> Inativos </MenuItem>
-          <MenuItem ><Checkbox /> Desabilitados </MenuItem>
-        </Menu>
 
         <Grid item>
           {AuthData.data.user_powers["1"].profile_powers.read == 1 &&
@@ -259,7 +221,7 @@ export function UsersPanel() {
 
         <Grid item>
           <Tooltip title="Carregar">
-            <IconButton onClick={reloadTable}>
+            <IconButton onClick={() => setReload((old) => !old)}>
               <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
@@ -269,11 +231,11 @@ export function UsersPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
-            onChange={(e) => setSearchField(e.currentTarget.value)}
+            onChange={(e) => setSearch(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
-                  <IconButton onClick={handleSearchSubmit}>
+                  <IconButton onClick={() => setReload((old) => !old)}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                   </IconButton>
                 </InputAdornment>,
@@ -284,59 +246,36 @@ export function UsersPanel() {
           />
         </Grid>
 
-        {(!loading && records.length > 0) &&
-          <Grid item>
-            <Stack spacing={2}>
-              <TablePagination
-                labelRowsPerPage="Linhas por página: "
-                component="div"
-                count={pagination.total_records}
-                page={paginationConfig.page - 1}
-                onPageChange={handleTablePageChange}
-                rowsPerPage={paginationConfig.limit}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </Stack>
-          </Grid>
-        }
-
       </Grid>
-      <FormControl fullWidth>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={selectedRecordIndex}
-        >
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Email</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Perfil</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Último acesso</StyledHeadTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className="tbody">
-                {(!loading && records.length > 0) &&
-                  records.map((row, index) => (
-                    <TableRow key={row.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center">{row.name}</TableCell>
-                      <TableCell align="center">{row.email}</TableCell>
-                      <TableCell align="center">{<Chip label={row.status_badge[0]} color={row.status_badge[1]} variant="outlined" />}</TableCell>
-                      <TableCell align="center">{row.profile.name}</TableCell>
-                      <TableCell align="center">{moment(row.last_access).format("DD/MM/YYYY")}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </RadioGroup>
-      </FormControl>
-      {loading && <LinearProgress color="success" />}
+
+      <Box
+        sx={{ height: 500, width: '100%' }}
+      >
+        <DataGrid
+          rows={records}
+          columns={columns}
+          pageSize={perPage}
+          loading={loading}
+          page={currentPage - 1}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          checkboxSelection
+          disableSelectionOnClick
+          paginationMode='server'
+          experimentalFeatures={{ newEditingApi: true }}
+          onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+          onSelectionModelChange={handleSelection}
+          onPageChange={(newPage) => handleChangePage(newPage + 1)}
+          rowCount={totalRecords}
+          sx={{
+            "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+              outline: "none !important",
+            },
+            '& .super-app-theme--header': {
+              color: '#222'
+            }
+          }}
+        />
+      </Box>
     </>
   )
 }

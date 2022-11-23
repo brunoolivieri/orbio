@@ -17,13 +17,11 @@ class UserRepository implements RepositoryInterface
         $this->profileModel = $profileModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->userModel->with(["profile:id,name"])
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page_number);
+            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
     function createOne(Collection $data)

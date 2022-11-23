@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../services/AxiosApi';
@@ -10,12 +10,12 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const DeleteUserFormulary = React.memo(({ ...props }) => {
+export const DeleteUserFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput] = React.useState({ id: props.record.id });
+  const [selectedIds, setSelectedIds] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
@@ -24,6 +24,8 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
   function handleClickOpen() {
     setOpen(true);
+    const ids = props.records.map((item) => item.id);
+    setSelectedIds(ids);
   }
 
   function handleClose() {
@@ -32,14 +34,16 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
     setOpen(false);
   }
 
-  function handleSubmitOperation(event) {
+  function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
     requestServerOperation();
   }
 
   function requestServerOperation() {
-    axios.delete(`/api/admin-module-user/${controlledInput.id}`)
+    axios.delete(`/api/admin-module-user/delete`, {
+      ids: selectedIds
+    })
       .then(function (response) {
         setLoading(false);
         successResponse(response);
@@ -53,8 +57,8 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.selectionSetter(null);
+      props.reloadTable();
       handleClose();
     }, 2000);
   }
@@ -68,7 +72,7 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
   return (
     <>
       <Tooltip title="Desativar">
-        <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+        <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
@@ -78,45 +82,17 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
-        <DialogTitle>DESATIVAÇÃO | USUÁRIO (ID: {props.record.user_id})</DialogTitle>
+        <DialogTitle>DELEÇÃO DE USUÁRIOS</DialogTitle>
+        <Divider />
 
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <Box component="form" >
           <DialogContent>
 
             <DialogContentText mb={2}>
-              O usuário será desvinculado das ordens de serviço e tornado um visitante.
+              {selectedIds.length > 1 ? `Os ${selectedIds.length} usuários selecionados perderão o acesso a suas contas` : "O usuário selecionado perderá o acesso a sua conta"}. A remoção, no entanto, não é permanente e pode ser desfeita.
             </DialogContentText>
-
-            <TextField
-              margin="dense"
-              id="id"
-              name="id"
-              label="ID do usuário"
-              type="text"
-              fullWidth
-              variant="outlined"
-              inputProps={{
-                readOnly: true
-              }}
-              defaultValue={props.record.id}
-              sx={{ mb: 2 }}
-            />
-
-            <TextField
-              margin="dense"
-              id="name"
-              name="name"
-              label="Nome"
-              type="text"
-              fullWidth
-              variant="outlined"
-              inputProps={{
-                readOnly: true
-              }}
-              defaultValue={props.record.name}
-            />
 
           </DialogContent>
 
@@ -126,10 +102,12 @@ export const DeleteUserFormulary = React.memo(({ ...props }) => {
 
           {loading && <LinearProgress />}
 
+          <Divider />
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+            <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
           </DialogActions>
+
         </Box>
       </Dialog>
     </>
