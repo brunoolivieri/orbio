@@ -25,13 +25,11 @@ class AdministrationModuleUsersController extends Controller
     public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('administration_read');
-
+    
         return $this->service->getPaginate(
             request()->limit,
-            request()->order_by,
             request()->page,
-            is_null(request()->search) ? "0" : request()->search,
-            request()->filter === "0" ? [] : request()->filter
+            is_null(request()->search) ? "0" : request()->search
         );
     }
 
@@ -56,10 +54,12 @@ class AdministrationModuleUsersController extends Controller
         return $this->service->updateOne($request->validated(), $id);
     }
 
-    public function destroy($id): \Illuminate\Http\Response
+    public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->deleteOne($id);
+        dd("delete");
+
+        return $this->service->deleteOne('dd');
     }
 }

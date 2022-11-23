@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -15,7 +15,7 @@ const initialFieldError = { name: false, email: false, profile: false };
 const initialFieldErrorMessage = { name: "", email: "", profile: "" };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const CreateUserFormulary = React.memo(({ ...props }) => {
+export const CreateUserFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -137,6 +137,7 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
         maxWidth="md"
       >
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
+        <Divider />
 
         <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
 
@@ -193,10 +194,12 @@ export const CreateUserFormulary = React.memo(({ ...props }) => {
 
           {loading && <LinearProgress />}
 
+          <Divider />
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
           </DialogActions>
+
         </Box>
       </Dialog>
     </>

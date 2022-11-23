@@ -1,12 +1,12 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Menu, MenuItem, Checkbox, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid } from '@mui/x-data-grid';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import AxiosApi from "../../../../../services/AxiosApi";
+import axios from "../../../../../services/AxiosApi";
 import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
 import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
@@ -17,15 +17,11 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-
-const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
-const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90, headerClassName: 'super-app-theme--header' },
@@ -86,35 +82,31 @@ export function UsersPanel() {
   const { AuthData } = useAuthentication();
 
   const [records, setRecords] = React.useState([]);
+  const [perPage, setPerPage] = React.useState(10);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [search, setSearch] = React.useState("0");
   const [selectedRecords, setSelectedRecords] = React.useState([]);
-  const [pagination, setPagination] = React.useState(initialPagination);
-  const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
   const [loading, setLoading] = React.useState(true);
-  const [searchField, setSearchField] = React.useState("");
+  const [reload, setReload] = React.useState(false);
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
     serverLoadRecords();
-  }, []);
+  }, [perPage, reload]);
 
   function serverLoadRecords() {
 
-    const limit = paginationConfig.limit;
-    const search = paginationConfig.search;
-    const page = paginationConfig.page;
-    const order_by = paginationConfig.order_by;
-    const filter = paginationConfig.filter;
+    setLoading(true);
+    setRecords([]);
+    setSelectedRecords([]);
 
-    AxiosApi.get(`/api/admin-module-user?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+    axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
-        setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setCurrentPage(1);
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} usuários`, "success");
         } else {
@@ -123,91 +115,28 @@ export function UsersPanel() {
       })
       .catch(function (error) {
         handleOpenSnackbar(error.response.data.message, "error");
+      })
+      .finally(() => {
         setLoading(false);
-        setRecords([]);
-        setPagination(initialPagination);
-      });
-
+      })
   }
 
   const handleChangePage = (newPage) => {
-    setPaginationConfig({
-      page: newPage,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: paginationConfig.search,
-      total_records: 0,
-      filter: 0
-    });
-  };
-
-  const handleChangeRowsPerPage = (newValue) => {
-    setPaginationConfig({
-      page: 1,
-      limit: newValue,
-      order_by: "id",
-      search: paginationConfig.search,
-      total_records: 0,
-      filter: 0
-    });
-  };
-
-  function handleSearchSubmit(e) {
-    e.preventDefault();
-    setPaginationConfig({
-      page: 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: searchField,
-      total_records: 0,
-      filter: 0
-    });
+    setCurrentPage(newPage);
   }
 
-  function reloadTable() {
-
-    setLoading(true);
-    setRecords([]);
-    setSelectedRecords([]);
-
-    setPagination({
-      total_records: 0,
-      records_per_page: 0,
-      total_pages: 0
-    });
-
-    setPaginationConfig({
-      page: 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: 0,
-      total_records: 0,
-      filter: 0
-    });
-
-    serverLoadRecords();
-
+  const handleChangeRowsPerPage = (newValue) => {
+    setPerPage(newValue);
   }
 
   function handleSelection(newSelectedIds) {
-
     // newSelectedIds always bring all selections
-
     const newSelectedRecords = records.filter((record) => {
       if (newSelectedIds.includes(record.id)) {
         return record;
       }
     })
-
     setSelectedRecords(newSelectedRecords);
-
-  }
-
-  function handleClick(e) {
-    setAnchorEl(e.currentTarget);
-  }
-  function handleClose() {
-    setAnchorEl(null);
   }
 
   function handleOpenSnackbar(text, variant) {
@@ -228,7 +157,7 @@ export function UsersPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateUserFormulary reload_table={reloadTable} />
+            <CreateUserFormulary reload_table={serverLoadRecords} />
           }
         </Grid>
 
@@ -242,12 +171,12 @@ export function UsersPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={reloadTable} />
+            <UpdateUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={serverLoadRecords} />
           }
         </Grid>
 
         <Grid item>
-          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+          {(selectedRecords.length === 0) &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
@@ -255,8 +184,8 @@ export function UsersPanel() {
             </Tooltip>
           }
 
-          {(!loading && selectedRecords.length === 1) &&
-            <DeleteUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={reloadTable} />
+          {(!loading && selectedRecords.length > 0) &&
+            <DeleteUserFormulary records={selectedRecords} selectionSetter={setSelectedRecords} reloadTable={serverLoadRecords} />
           }
         </Grid>
 
@@ -273,35 +202,6 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          <Tooltip title="Filtros">
-            <IconButton
-              disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}
-              id="basic-button"
-              aria-controls={open ? 'basic-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
-            >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
-            </IconButton>
-          </Tooltip>
-        </Grid>
-
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem ><Checkbox /> Ativos </MenuItem>
-          <MenuItem ><Checkbox /> Inativos </MenuItem>
-          <MenuItem ><Checkbox /> Desabilitados </MenuItem>
-        </Menu>
-
-        <Grid item>
           {AuthData.data.user_powers["1"].profile_powers.read == 1 &&
             <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
           }
@@ -315,7 +215,7 @@ export function UsersPanel() {
 
         <Grid item>
           <Tooltip title="Carregar">
-            <IconButton onClick={reloadTable}>
+            <IconButton onClick={() => setReload((old) => !old)}>
               <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
@@ -325,11 +225,11 @@ export function UsersPanel() {
           <TextField
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
-            onChange={(e) => setSearchField(e.currentTarget.value)}
+            onChange={(e) => setSearch(e.currentTarget.value)}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
-                  <IconButton onClick={handleSearchSubmit}>
+                  <IconButton onClick={() => setReload((old) => !old)}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                   </IconButton>
                 </InputAdornment>,
@@ -350,7 +250,7 @@ export function UsersPanel() {
           <DataGrid
             rows={records}
             columns={columns}
-            pageSize={paginationConfig.limit}
+            pageSize={perPage}
             rowsPerPageOptions={[10, 25, 50, 100]}
             checkboxSelection
             disableSelectionOnClick
