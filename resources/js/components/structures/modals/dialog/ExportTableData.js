@@ -1,7 +1,7 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Alert, IconButton, Grid, FormControl, InputLabel, MenuItem, Select, Tooltip } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Alert, IconButton, Grid, FormControl, InputLabel, MenuItem, Select, Tooltip, Divider } from '@mui/material';
 import { useSnackbar } from 'notistack';
 // Custom
 //import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -106,9 +106,10 @@ export const ExportTableData = React.memo((props) => {
                 maxWidth="sm"
             >
                 <DialogTitle>{props.type} | EXPORTAÇÃO</DialogTitle>
-                <DialogContent>
+                <Divider />
 
-                    <Grid container spacing={2} sx={{ mt: 2, mb: 2 }}>
+                <DialogContent>
+                    <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <FormControl fullWidth>
                                 <InputLabel>Quantidade de registros</InputLabel>
@@ -135,6 +136,7 @@ export const ExportTableData = React.memo((props) => {
                     <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
                 }
 
+                <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
                     <Button variant='contained' onClick={handleExport}>EXPORTAR</Button>

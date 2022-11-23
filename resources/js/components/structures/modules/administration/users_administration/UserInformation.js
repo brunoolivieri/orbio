@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Typography } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Typography, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts Awesome
@@ -38,6 +38,7 @@ export const UserInformation = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>USUÁRIO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
+                <Divider />
 
                 <DialogContent>
 
@@ -306,6 +307,7 @@ export const UserInformation = React.memo((props) => {
 
                 </DialogContent>
 
+                <Divider />
                 <DialogActions>
                     <Button onClick={handleClose} variant="contained">Fechar</Button>
                 </DialogActions>

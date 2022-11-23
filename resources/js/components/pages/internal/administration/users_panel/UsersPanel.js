@@ -120,7 +120,7 @@ export function UsersPanel() {
       })
   }
 
-  const handleChangePage = (newPage) => {
+  function handleChangePage(newPage) {
     // If actual page is bigger than the new one, is a reduction of actual
     // If actual is smaller, the page is increasing
     setCurrentPage((current) => {
@@ -129,7 +129,7 @@ export function UsersPanel() {
     setReload((old) => !old);
   }
 
-  const handleChangeRowsPerPage = (newValue) => {
+  function handleChangeRowsPerPage(newValue) {
     setPerPage(newValue);
     setCurrentPage(1);
     setReload((old) => !old);
@@ -232,6 +232,7 @@ export function UsersPanel() {
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
             onChange={(e) => setSearch(e.currentTarget.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
@@ -245,7 +246,6 @@ export function UsersPanel() {
             variant="outlined"
           />
         </Grid>
-
       </Grid>
 
       <Box
