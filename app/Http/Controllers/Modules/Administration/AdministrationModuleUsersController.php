@@ -25,7 +25,7 @@ class AdministrationModuleUsersController extends Controller
     public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('administration_read');
-    
+        
         return $this->service->getPaginate(
             request()->limit,
             request()->page,

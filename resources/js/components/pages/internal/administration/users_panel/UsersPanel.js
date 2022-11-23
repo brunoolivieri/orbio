@@ -12,7 +12,6 @@ import { UpdateUserFormulary } from "../../../../structures/modules/administrati
 import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
 import { UserInformation } from '../../../../structures/modules/administration/users_administration/UserInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import LinearProgress from '@mui/material/LinearProgress';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -84,6 +83,7 @@ export function UsersPanel() {
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalRecords, setTotalRecords] = React.useState(0);
   const [search, setSearch] = React.useState("0");
   const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -94,19 +94,18 @@ export function UsersPanel() {
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
-    serverLoadRecords();
-  }, [perPage, reload]);
-
-  function serverLoadRecords() {
-
     setLoading(true);
     setRecords([]);
     setSelectedRecords([]);
+    serverLoadRecords();
+  }, [reload]);
+
+  function serverLoadRecords() {
 
     axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
-        setCurrentPage(1);
+        setTotalRecords(response.data.total_records);
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} usuários`, "success");
         } else {
@@ -122,11 +121,18 @@ export function UsersPanel() {
   }
 
   const handleChangePage = (newPage) => {
-    setCurrentPage(newPage);
+    // If actual page is bigger than the new one, is a reduction of actual
+    // If actual is smaller, the page is increasing
+    setCurrentPage((current) => {
+      return current > newPage ? (current - 1) : newPage;
+    });
+    setReload((old) => !old);
   }
 
   const handleChangeRowsPerPage = (newValue) => {
     setPerPage(newValue);
+    setCurrentPage(1);
+    setReload((old) => !old);
   }
 
   function handleSelection(newSelectedIds) {
@@ -245,32 +251,31 @@ export function UsersPanel() {
       <Box
         sx={{ height: 500, width: '100%' }}
       >
-        {
-          (!loading && records.length > 0) &&
-          <DataGrid
-            rows={records}
-            columns={columns}
-            pageSize={perPage}
-            rowsPerPageOptions={[10, 25, 50, 100]}
-            checkboxSelection
-            disableSelectionOnClick
-            experimentalFeatures={{ newEditingApi: true }}
-            onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
-            onSelectionModelChange={handleSelection}
-            onPageChange={(newPage) => handleChangePage(newPage)}
-            sx={{
-              "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
-                outline: "none !important",
-              },
-              '& .super-app-theme--header': {
-                color: '#222'
-              }
-            }}
-          />
-        }
+        <DataGrid
+          rows={records}
+          columns={columns}
+          pageSize={perPage}
+          loading={loading}
+          page={currentPage - 1}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          checkboxSelection
+          disableSelectionOnClick
+          paginationMode='server'
+          experimentalFeatures={{ newEditingApi: true }}
+          onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+          onSelectionModelChange={handleSelection}
+          onPageChange={(newPage) => handleChangePage(newPage + 1)}
+          rowCount={totalRecords}
+          sx={{
+            "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+              outline: "none !important",
+            },
+            '& .super-app-theme--header': {
+              color: '#222'
+            }
+          }}
+        />
       </Box>
-
-      {loading && <LinearProgress color="success" />}
     </>
   )
 }
