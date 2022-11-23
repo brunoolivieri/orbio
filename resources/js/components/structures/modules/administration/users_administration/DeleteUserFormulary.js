@@ -42,7 +42,9 @@ export const DeleteUserFormulary = React.memo((props) => {
 
   function requestServerOperation() {
     axios.delete(`/api/admin-module-user/delete`, {
-      ids: selectedIds
+      data: {
+        ids: selectedIds
+      }
     })
       .then(function (response) {
         setLoading(false);
@@ -57,8 +59,7 @@ export const DeleteUserFormulary = React.memo((props) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.selectionSetter(null);
-      props.reloadTable();
+      props.reloadTable((old) => !old);
       handleClose();
     }, 2000);
   }

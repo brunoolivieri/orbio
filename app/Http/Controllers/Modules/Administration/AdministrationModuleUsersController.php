@@ -25,7 +25,7 @@ class AdministrationModuleUsersController extends Controller
     public function index(): \Illuminate\Http\Response
     {
         Gate::authorize('administration_read');
-        
+
         return $this->service->getPaginate(
             request()->limit,
             request()->page,
@@ -35,8 +35,8 @@ class AdministrationModuleUsersController extends Controller
 
     public function exportAsCsv(Request $request)
     {
-        ob_end_clean(); 
-        ob_start(); 
+        ob_end_clean();
+        ob_start();
         return Excel::download(new GenericExport(new User(), $request->limit), 'users.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
@@ -58,8 +58,6 @@ class AdministrationModuleUsersController extends Controller
     {
         Gate::authorize('administration_write');
 
-        dd("delete");
-
-        return $this->service->deleteOne('dd');
+        return $this->service->delete($request->ids);
     }
 }

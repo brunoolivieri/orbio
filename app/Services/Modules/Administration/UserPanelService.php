@@ -22,7 +22,7 @@ class UserPanelService implements ServiceInterface
     public function getPaginate(string $limit, string $page, string $search)
     {
         $data = $this->repository->getPaginate($limit, $page, $search);
-        
+
         if ($data->total() > 0) {
             return response(new UsersPanelResource($data), 200);
         } else {
@@ -47,8 +47,8 @@ class UserPanelService implements ServiceInterface
         return $this->repository->updateOne(collect($data), $identifier);
     }
 
-    public function deleteOne(string $identifier)
+    public function delete(array $ids)
     {
-        return $this->repository->deleteOne($identifier);
+        return $this->repository->delete($ids);
     }
 }

@@ -56,19 +56,22 @@ class UserRepository implements RepositoryInterface
         return response(["message" => "Usuário atualizado com sucesso!"], 200);
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $user = $this->userModel->findOrFail($identifier);
+        foreach ($ids as $user_id) {
 
-        // Check if user is related to a active service order 
-        foreach ($user->service_orders as $service_order) {
-            if ($service_order->status) {
-                return response(["message" => "Possui vínculo com uma ordem de serviço ativa!"], 500);
+            $user = $this->userModel->findOrFail($user_id);
+
+            // Check if user is related to a active service order 
+            foreach ($user->service_orders as $service_order) {
+                if ($service_order->status) {
+                    return response(["message" => "O usuário de ID $user_id está vinculado a uma ordem de serviço ativa."], 500);
+                }
             }
+
+            $user->delete();
         }
 
-        $user->delete();
-
-        return response(["message" => "O usuário possui vínculo com uma ordem de serviço ativa!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

@@ -97,10 +97,10 @@ export function UsersPanel() {
     setLoading(true);
     setRecords([]);
     setSelectedRecords([]);
-    serverLoadRecords();
+    fetchRecords();
   }, [reload]);
 
-  function serverLoadRecords() {
+  function fetchRecords() {
 
     axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
@@ -157,47 +157,47 @@ export function UsersPanel() {
 
         <Grid item>
           {selectedRecords.length > 0 &&
-            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
+            <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1}>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
 
           {selectedRecords.length === 0 &&
-            <CreateUserFormulary reload_table={serverLoadRecords} />
+            <CreateUserFormulary reload_table={fetchRecords} />
           }
         </Grid>
 
         <Grid item>
           {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true}>
+              <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1}>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateUserFormulary record={selectedRecords[0]} selectionSetter={setSelectedRecords} reloadTable={serverLoadRecords} />
+            <UpdateUserFormulary record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
         <Grid item>
           {(selectedRecords.length === 0) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+              <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} >
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteUserFormulary records={selectedRecords} selectionSetter={setSelectedRecords} reloadTable={serverLoadRecords} />
+            <DeleteUserFormulary records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 
         <Grid item>
           {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
-            <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+            <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} >
               <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
             </IconButton>
           }
