@@ -19,6 +19,7 @@ export const UpdateUserFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile.id });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -67,13 +68,14 @@ export const UpdateUserFormulary = React.memo((props) => {
       profile_id: controlledInput.profile
     })
       .then((response) => {
-        setLoading(false);
         successResponse(response);
       })
       .catch((error) => {
-        setLoading(false);
         errorResponse(error.response);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
   function successResponse(response) {

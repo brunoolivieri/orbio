@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, DialogContentText } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../services/AxiosApi';
@@ -15,15 +15,17 @@ export const DeletePlanFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput] = React.useState({ id: props.record.id });
+  const [selectedIds, setSelectedIds] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   const handleClickOpen = () => {
     setOpen(true);
+    const ids = props.records.map((item) => item.id);
+    setSelectedIds(ids);
   }
 
   const handleClose = () => {
@@ -32,14 +34,18 @@ export const DeletePlanFormulary = React.memo((props) => {
     setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
-    event.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setLoading(true);
     requestServerOperation();
   }
 
   const requestServerOperation = () => {
-    axios.delete(`/api/plans-module/${controlledInput.id}`)
+    axios.delete(`/api/plans-module/delete`, {
+      data: {
+        ids: selectedIds
+      }
+    })
       .then(function (response) {
         setLoading(false);
         successResponse(response);
@@ -53,8 +59,7 @@ export const DeletePlanFormulary = React.memo((props) => {
   const successResponse = (response) => {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
@@ -79,52 +84,30 @@ export const DeletePlanFormulary = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
-        <DialogTitle>DELEÇÃO | PLANO DE VÔO (ID: {props.record.id})</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-          <DialogContent>
+        <DialogTitle>DELEÇÃO DE PLANO DE VOO</DialogTitle>
+        <Divider />
 
-            <TextField
-              margin="dense"
-              id="id"
-              name="id"
-              label="ID do plano"
-              type="text"
-              fullWidth
-              variant="outlined"
-              inputProps={{
-                readOnly: true
-              }}
-              value={props.record.id}
-              sx={{ mb: 2 }}
-            />
+        <DialogContent>
 
-            <TextField
-              margin="dense"
-              label="Arquivo"
-              type="text"
-              fullWidth
-              variant="outlined"
-              inputProps={{
-                readOnly: true
-              }}
-              defaultValue={props.record.file}
-            />
+          <DialogContentText mb={2}>
+            {selectedIds.length > 1 ? `Os ${selectedIds.length} planos de voo selecionados serão deletados` : `O plano de voo selecionado será deletado`}. A remoção, no entanto, não é permanente e pode ser desfeita.
+          </DialogContentText>
 
-          </DialogContent>
+        </DialogContent>
 
-          {(!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {loading && <LinearProgress />}
+        {loading && <LinearProgress />}
 
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-        </Box>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

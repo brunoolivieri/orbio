@@ -1,9 +1,8 @@
-// React
 import * as React from 'react';
 // Material UI
 import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
@@ -266,6 +265,7 @@ export function UsersPanel() {
           onSelectionModelChange={handleSelection}
           onPageChange={(newPage) => handleChangePage(newPage + 1)}
           rowCount={totalRecords}
+          localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",

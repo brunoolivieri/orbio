@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, Divider, Grid } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
@@ -18,6 +18,7 @@ export const UpdatePlanFormulary = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -27,27 +28,27 @@ export const UpdatePlanFormulary = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setFieldError({ description: false });
     setFieldErrorMessage({ description: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setLoading(false);
     setOpen(false);
-  };
+  }
 
-  const handleSubmitOperation = (event) => {
-    event.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
     if (formValidation()) {
       setLoading(true);
       requestServerOperation();
     }
   }
 
-  const formValidation = () => {
+  function formValidation() {
     const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
 
@@ -57,32 +58,32 @@ export const UpdatePlanFormulary = React.memo((props) => {
     return !(nameValidate.error || descriptionValidate.error);
   }
 
-  const requestServerOperation = () => {
+  function requestServerOperation() {
     axios.patch(`/api/plans-module/${controlledInput.id}`, {
       name: controlledInput.name,
       description: controlledInput.description
     })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response.data);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
   }
 
-  const errorResponse = (response_data) => {
+  function errorResponse(response_data) {
     setDisplayAlert({ display: true, type: "error", message: response_data.message });
 
     let request_errors = {
@@ -108,11 +109,11 @@ export const UpdatePlanFormulary = React.memo((props) => {
     });
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
@@ -129,53 +130,63 @@ export const UpdatePlanFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>EDIÇÃO | PLANO DE VOO (ID: {props.record.id})</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <DialogTitle>ATUALIZAÇÃO DE PLANO DE VOO</DialogTitle>
+        <Divider />
+
+        <Box component="form" noValidate onSubmit={handleSubmit} >
+
           <DialogContent>
+            <Grid container spacing={1}>
 
-            <TextField
-              margin="dense"
-              id="id"
-              name="id"
-              label="ID do plano"
-              type="text"
-              fullWidth
-              variant="outlined"
-              onChange={handleInputChange}
-              defaultValue={props.record.id}
-              inputProps={{
-                readOnly: true
-              }}
-              sx={{ mb: 2 }}
-            />
+              <Grid item xs={2}>
+                <TextField
+                  margin="dense"
+                  id="id"
+                  name="id"
+                  label="ID do plano"
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  onChange={handleInputChange}
+                  defaultValue={props.record.id}
+                  inputProps={{
+                    readOnly: true
+                  }}
+                />
+              </Grid>
 
-            <TextField
-              margin="dense"
-              id="name"
-              name="name"
-              label="Nome do plano"
-              type="text"
-              fullWidth
-              variant="outlined"
-              onChange={handleInputChange}
-              defaultValue={props.record.name}
-              helperText={fieldErrorMessage.name}
-              error={fieldError.name}
-              sx={{ mb: 2 }}
-            />
+              <Grid item xs={10}>
+                <TextField
+                  margin="dense"
+                  id="name"
+                  name="name"
+                  label="Nome do plano"
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  onChange={handleInputChange}
+                  defaultValue={props.record.name}
+                  helperText={fieldErrorMessage.name}
+                  error={fieldError.name}
+                />
+              </Grid>
 
-            <TextField
-              margin="dense"
-              name="description"
-              label="Descrição"
-              type="text"
-              fullWidth
-              variant="outlined"
-              onChange={handleInputChange}
-              defaultValue={props.record.description}
-              helperText={fieldErrorMessage.description}
-              error={fieldError.description}
-            />
+              <Grid item xs={12}>
+                <TextField
+                  margin="dense"
+                  name="description"
+                  label="Descrição"
+                  type="text"
+                  fullWidth
+                  variant="outlined"
+                  onChange={handleInputChange}
+                  defaultValue={props.record.description}
+                  helperText={fieldErrorMessage.description}
+                  error={fieldError.description}
+                />
+              </Grid>
+
+            </Grid>
           </DialogContent>
 
           {(!loading && displayAlert.display) &&
@@ -184,6 +195,7 @@ export const UpdatePlanFormulary = React.memo((props) => {
 
           {loading && <LinearProgress />}
 
+          <Divider />
           <DialogActions>
             <Button onClick={handleClose}>Cancelar</Button>
             <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>

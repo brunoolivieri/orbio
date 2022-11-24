@@ -1,7 +1,7 @@
 import * as React from "react";
 // Material UI
 import { Tooltip, IconButton, Grid, TextField, Box, InputAdornment, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
@@ -320,6 +320,7 @@ export function ProfilesPanel() {
           onSelectionModelChange={handleSelection}
           onPageChange={(newPage) => handleChangePage(newPage + 1)}
           rowCount={totalRecords}
+          localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",

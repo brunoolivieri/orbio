@@ -2,7 +2,7 @@
 import * as React from 'react';
 // Material UI
 import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +22,7 @@ import { UpdatePlanFormulary } from "../../../../structures/modules/flight_plans
 import { DeletePlanFormulary } from "../../../../structures/modules/flight_plans/DeletePlanFormulary";
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { FlightPlanInformation } from '../../../../structures/modules/flight_plans/FlightPlanInformation';
+
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -339,6 +340,7 @@ export function FlightPlansPanel() {
           onSelectionModelChange={handleSelection}
           onPageChange={(newPage) => handleChangePage(newPage + 1)}
           rowCount={totalRecords}
+          localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",

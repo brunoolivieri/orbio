@@ -34,8 +34,8 @@ export const DeleteUserFormulary = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit(e) {
+    e.preventDefault();
     setLoading(true);
     requestServerOperation();
   }
