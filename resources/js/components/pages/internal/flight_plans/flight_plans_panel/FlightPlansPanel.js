@@ -23,7 +23,6 @@ import { DeletePlanFormulary } from "../../../../structures/modules/flight_plans
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { FlightPlanInformation } from '../../../../structures/modules/flight_plans/FlightPlanInformation';
 
-
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {

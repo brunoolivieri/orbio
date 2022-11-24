@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, FormHelperText, Grid, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, FormHelperText, Grid, TextField, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -34,7 +34,7 @@ export const UpdateLogFormulary = React.memo((props) => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
         setLoading(false);
         setFieldError(initialFieldError);
@@ -49,12 +49,14 @@ export const UpdateLogFormulary = React.memo((props) => {
                 setSelectedServiceOrder(props.record.service_order.id);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
-    const handleClose = () => {
+    function handleClose() {
         setOpen(false);
     }
 
@@ -71,15 +73,15 @@ export const UpdateLogFormulary = React.memo((props) => {
             });
     }, [selectedFlightPlan]);
 
-    const handleSubmitOperation = (event) => {
-        event.preventDefault();
+    function handleSubmitOperation(e) {
+        e.preventDefault();
         if (formValidation()) {
             setLoading(true);
             requestServerOperation();
         }
     }
 
-    const formValidation = () => {
+    function formValidation() {
         const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
         const flight_plan_validate = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um plano de voo" };
         const service_order_validate = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: true, message: "Selecione uma ordem de serviço" };
@@ -90,7 +92,7 @@ export const UpdateLogFormulary = React.memo((props) => {
         return !(nameValidate.error || flight_plan_validate.error || service_order_validate.error);
     }
 
-    const requestServerOperation = () => {
+    function requestServerOperation() {
         const data = {
             id: controlledInput.id,
             name: controlledInput.name,
@@ -108,17 +110,16 @@ export const UpdateLogFormulary = React.memo((props) => {
             });
     }
 
-    const successResponse = (response) => {
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.record_setter(null);
-            props.reload_table();
+            props.reloadTable((old) => !old);
             setLoading(false);
             handleClose();
         }, 2000);
     }
 
-    const errorResponse = (response) => {
+    function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
         let input_errors = {
@@ -147,8 +148,8 @@ export const UpdateLogFormulary = React.memo((props) => {
         });
     }
 
-    const handleInputChange = (event) => {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    function handleInputChange(e) {
+        setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
     }
 
     // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -169,7 +170,9 @@ export const UpdateLogFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>ATUALIZAÇÃO DO LOG</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO DE LOG</DialogTitle>
+                <Divider />
+
                 <Box component="form" noValidate onSubmit={handleSubmitOperation} >
                     <DialogContent>
 
@@ -191,7 +194,7 @@ export const UpdateLogFormulary = React.memo((props) => {
                                 />
                             </Grid>
 
-                            <Grid item xs={12} mb={1}>
+                            <Grid item xs={12}>
                                 <TextField
                                     margin="dense"
                                     label="Nome customizado"
@@ -242,6 +245,7 @@ export const UpdateLogFormulary = React.memo((props) => {
 
                     {loading && <LinearProgress />}
 
+                    <Divider />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>

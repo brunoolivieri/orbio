@@ -47,13 +47,14 @@ export const DeletePlanFormulary = React.memo((props) => {
       }
     })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
   const successResponse = (response) => {

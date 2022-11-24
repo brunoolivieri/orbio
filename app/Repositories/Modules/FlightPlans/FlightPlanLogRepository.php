@@ -6,7 +6,6 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 // Model
 use App\Models\Logs\Log;
 use App\Models\Pivot\ServiceOrderFlightPlan;
@@ -19,14 +18,12 @@ class FlightPlanLogRepository implements RepositoryInterface
         $this->serviceOrderFlightPlanModel = $serviceOrderFlightPlanModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->logModel
             ->with("service_order_flight_plan")
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page_number);
+            ->paginate($limit, $columns = ['*'], $pageName = 'page', $page);
     }
 
     function createOne(Collection $data)
@@ -60,11 +57,14 @@ class FlightPlanLogRepository implements RepositoryInterface
         return $log;
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $log = $this->logModel->findOrFail($identifier);
+        foreach ($ids as $log_id) {
 
-        $log->delete();
+            $log = $this->logModel->findOrFail($log_id);
+
+            $log->delete();
+        }
 
         return $log;
     }

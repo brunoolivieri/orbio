@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, DialogContentText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -15,50 +15,55 @@ export const DeleteLogFormulary = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-    const [controlledInput] = React.useState({ id: props.record.id, name: props.record.name });
+    const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
+        const ids = props.records.map((item) => item.id);
+        setSelectedIds(ids);
     }
 
-    const handleClose = () => {
-        props.record_setter(null);
+    function handleClose() {
         setDisplayAlert({ display: false, type: "", message: "" });
         setOpen(false);
-    };
+    }
 
-    const handleSubmitOperation = (event) => {
-        event.preventDefault();
+    function handleSubmit(e) {
+        e.preventDefault();
         requestServerOperation();
     }
 
     function requestServerOperation() {
-        axios.delete(`/api/plans-module-logs/${controlledInput.id}`)
+        axios.delete(`/api/plans-module-logs/delete`, {
+            data: {
+                ids: selectedIds
+            }
+        })
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response.data);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
-    const successResponse = (response) => {
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.record_setter(null);
-            props.reload_table();
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
 
-    const errorResponse = (response) => {
+    function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
 
@@ -77,52 +82,30 @@ export const DeleteLogFormulary = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="sm"
             >
-                <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.record.id})</DialogTitle>
-                <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-                    <DialogContent>
+                <DialogTitle>DELEÇÃO DE LOG</DialogTitle>
+                <Divider />
 
-                        <TextField
-                            margin="dense"
-                            id="id"
-                            name="id"
-                            label="ID"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            value={controlledInput.id}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                <DialogContent>
 
-                        <TextField
-                            margin="dense"
-                            label="Log do vôo"
-                            type="text"
-                            fullWidth
-                            variant="outlined"
-                            value={controlledInput.name}
-                            InputProps={{
-                                inputProps: { min: 0, max: 1 },
-                                readOnly: true
-                            }}
-                        />
+                    <DialogContentText mb={2}>
+                        {selectedIds.length > 1 ? `Os ${selectedIds.length} logs selecionados serão deletados` : `O log selecionado será deletado`}. A remoção, no entanto, não é permanente e pode ser desfeita.
+                    </DialogContentText>
 
-                    </DialogContent>
+                </DialogContent>
 
-                    {displayAlert.display &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                {displayAlert.display &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                    {loading && <LinearProgress />}
+                {loading && <LinearProgress />}
 
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading}>Confirmar deleção</Button>
-                    </DialogActions>
-                </Box>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
             </Dialog>
         </>
     );

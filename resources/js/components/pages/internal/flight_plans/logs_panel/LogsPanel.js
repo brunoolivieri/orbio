@@ -1,67 +1,133 @@
-// React
 import * as React from 'react';
 // Material UI
-import { Table, Link, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Link } from "@mui/material";
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faMap } from '@fortawesome/free-solid-svg-icons';
+import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import AxiosApi from "../../../../../services/AxiosApi";
+import axios from "../../../../../services/AxiosApi";
 import { CreateLogFormulary } from '../../../../structures/modules/flight_plans/logs/CreateLogFormulary';
 import { UpdateLogFormulary } from '../../../../structures/modules/flight_plans/logs/UpdateLogFormulary';
 import { DeleteLogFormulary } from '../../../../structures/modules/flight_plans/logs/DeleteLogFormulary';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import LinearProgress from '@mui/material/LinearProgress';
-// Lib
-import moment from 'moment';
 
-const StyledHeadTableCell = styled(TableCell)({
-    color: '#fff',
-    fontWeight: 700
-});
+const columns = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    {
+        field: 'name',
+        headerName: 'Nome',
+        flex: 1,
+        sortable: true,
+        editable: false,
+        width: 200,
+    },
+    {
+        field: 'filename',
+        headerName: 'Arquivo',
+        sortable: true,
+        editable: false,
+        width: 200
+    },
+    {
+        field: 'flight_plan',
+        headerName: 'Plano de voo',
+        sortable: true,
+        editable: false,
+        width: 200,
+        renderCell: (data) => {
 
-const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
-const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
+            if (data.row.flight_plan != null) {
+                return (
+                    <Tooltip title="Visualizar plano de voo">
+                        <Link href={`/internal/map?file=${data.row.flight_plan.path}`} target="_blank">
+                            <IconButton>
+                                <FontAwesomeIcon icon={faMap} color={"#00713A"} size="sm" />
+                            </IconButton>
+                        </Link>
+                    </Tooltip>
+                )
+            } else {
+                return (
+                    <Tooltip title="Vincule um plano de voo">
+                        <IconButton>
+                            <FontAwesomeIcon icon={faMap} color={"#E0E0E0"} size="sm" />
+                        </IconButton>
+                    </Tooltip>
+                )
+            }
+
+        }
+    },
+    {
+        field: 'service_order',
+        headerName: 'Ordem de serviço',
+        sortable: true,
+        editable: false,
+        width: 200,
+        renderCell: (data) => {
+            if (data.row.service_order != null) {
+                return (
+                    <Tooltip title={`Número: ${data.row.service_order.number}`}>
+                        <IconButton>
+                            <FontAwesomeIcon icon={faClipboard} color={"#00713A"} size="sm" />
+                        </IconButton>
+                    </Tooltip>
+                )
+            } else {
+                return (
+                    <Tooltip title={"Vincule uma ordem de serviço"}>
+                        <IconButton>
+                            <FontAwesomeIcon icon={faClipboard} color={"#E0E0E0"} size="sm" />
+                        </IconButton>
+                    </Tooltip>
+                )
+            }
+        },
+    },
+]
 
 export const LogsPanel = () => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
+
     const [records, setRecords] = React.useState([]);
-    const [pagination, setPagination] = React.useState(initialPagination);
-    const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
+    const [perPage, setPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [totalRecords, setTotalRecords] = React.useState(0);
+    const [search, setSearch] = React.useState("0");
+    const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
-    const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-    const [searchField, setSearchField] = React.useState("");
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
+    const [reload, setReload] = React.useState(false);
+
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        const limit = paginationConfig.limit;
-        const search = paginationConfig.search;
-        const page = paginationConfig.page;
-        const order_by = paginationConfig.order_by;
-        const filter = paginationConfig.filter;
+        setLoading(true);
+        setRecords([]);
+        setSelectedRecords([]);
+        fetchRecords();
+    }, [reload]);
 
-        AxiosApi.get(`/api/plans-module-logs?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+    function fetchRecords() {
+
+        axios.get(`/api/plans-module-logs?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then((response) => {
-                setLoading(false);
                 setRecords(response.data.records);
-                setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+                setTotalRecords(response.data.total_records);
 
                 if (response.data.total_records > 1) {
                     handleOpenSnackbar(`Foram encontrados ${response.data.total_records} logs`, "success");
@@ -71,78 +137,36 @@ export const LogsPanel = () => {
             })
             .catch((error) => {
                 handleOpenSnackbar(error.response.data.message, "error");
+            })
+            .finally(() => {
                 setLoading(false);
-                setRecords([]);
-                setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-            });
-    }, [paginationConfig]);
+            })
 
-    function handleTablePageChange(event, value) {
-        setPaginationConfig({
-            page: value + 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: paginationConfig.search,
-            total_records: 0,
-            filter: 0
+    }
+
+    function handleChangePage(newPage) {
+        // If actual page is bigger than the new one, is a reduction of actual
+        // If actual is smaller, the page is increasing
+        setCurrentPage((current) => {
+            return current > newPage ? (current - 1) : newPage;
         });
+        setReload((old) => !old);
     }
 
-    function handleChangeRowsPerPage(event) {
-        setPaginationConfig({
-            page: 1,
-            limit: event.target.value,
-            order_by: "id",
-            search: paginationConfig.search,
-            total_records: 0,
-            filter: 0
-        });
+    function handleChangeRowsPerPage(newValue) {
+        setPerPage(newValue);
+        setCurrentPage(1);
+        setReload((old) => !old);
     }
 
-    function handleSearchSubmit(event) {
-        event.preventDefault();
-        setPaginationConfig({
-            page: 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: searchField,
-            total_records: 0,
-            filter: 0
-        });
-    }
-
-    function reloadTable() {
-        setSelectedRecordIndex(null);
-
-        setLoading(true);
-        setRecords([]);
-        setPagination(initialPagination);
-
-        setPaginationConfig({
-            page: 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: 0,
-            total_records: 0,
-            filter: 0
-        });
-    }
-
-    function handleClickRadio(event) {
-        const value = event.target.value;
-        if (value === selectedRecordIndex) {
-            setSelectedRecordIndex(null);
-        } else if (value != selectedRecordIndex) {
-            setSelectedRecordIndex(event.target.value);
-        }
-    }
-
-    function handleClick(event) {
-        setAnchorEl(event.currentTarget);
-    }
-
-    function handleClose() {
-        setAnchorEl(null);
+    function handleSelection(newSelectedIds) {
+        // newSelectedIds always bring all selections
+        const newSelectedRecords = records.filter((record) => {
+            if (newSelectedIds.includes(record.id)) {
+                return record;
+            }
+        })
+        setSelectedRecords(newSelectedRecords);
     }
 
     function handleOpenSnackbar(text, variant) {
@@ -155,73 +179,44 @@ export const LogsPanel = () => {
         <>
             <Grid container spacing={1} alignItems="center" mb={1}>
                 <Grid item>
-                    {selectedRecordIndex &&
-                        <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                    {selectedRecords.length > 0 &&
+                        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.write == 1}>
                             <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
                         </IconButton>
                     }
 
-                    {selectedRecordIndex === null &&
-                        <CreateLogFormulary reload_table={reloadTable} />
+                    {selectedRecords.length === 0 &&
+                        <CreateLogFormulary reloadTable={setReload} />
                     }
                 </Grid>
 
                 <Grid item>
-                    {selectedRecordIndex === null &&
+                    {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
                         <Tooltip title="Selecione um registro">
-                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}>
+                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.write == 1}>
                                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
                     }
 
-                    {(!loading && selectedRecordIndex != null) &&
-                        <UpdateLogFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+                    {(!loading && selectedRecords.length === 1) &&
+                        <UpdateLogFormulary record={selectedRecords[0]} reloadTable={setReload} />
                     }
                 </Grid>
 
                 <Grid item>
-                    {selectedRecordIndex === null &&
+                    {(selectedRecords.length === 0) &&
                         <Tooltip title="Selecione um registro">
-                            <IconButton disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true} >
+                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.write == 1} >
                                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
                     }
 
-                    {/* O modal é renderizado apenas quando um registro já foi selecionado */}
-                    {(!loading && selectedRecordIndex != null) &&
-                        <DeleteLogFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+                    {(!loading && selectedRecords.length > 0) &&
+                        <DeleteLogFormulary records={selectedRecords} reloadTable={setReload} />
                     }
                 </Grid>
-
-                <Grid item>
-                    <Tooltip title="Filtros">
-                        <IconButton
-                            disabled={AuthData.data.user_powers["2"].profile_powers.write == 1 ? false : true}
-                            id="basic-button"
-                            aria-controls={open ? 'basic-menu' : undefined}
-                            aria-haspopup="true"
-                            aria-expanded={open ? 'true' : undefined}
-                            onClick={handleClick}
-                        >
-                            <FontAwesomeIcon icon={faFilter} color={"#007937"} size="sm" />
-                        </IconButton>
-                    </Tooltip>
-                </Grid>
-
-                <Menu
-                    id="basic-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                        'aria-labelledby': 'basic-button',
-                    }}
-                >
-                    <MenuItem ><Checkbox /> Ativos </MenuItem>
-                    <MenuItem ><Checkbox /> Desabilitados </MenuItem>
-                </Menu>
 
                 <Grid item>
                     {AuthData.data.user_powers["2"].profile_powers.read == 1 &&
@@ -237,7 +232,7 @@ export const LogsPanel = () => {
 
                 <Grid item>
                     <Tooltip title="Carregar">
-                        <IconButton onClick={reloadTable}>
+                        <IconButton onClick={() => setReload((old) => !old)}>
                             <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
                         </IconButton>
                     </Tooltip>
@@ -246,12 +241,13 @@ export const LogsPanel = () => {
                 <Grid item xs>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar plano por id e nome"}
-                        onChange={(e) => setSearchField(e.currentTarget.value)}
+                        placeholder={"Pesquisar plano por ID ou nome"}
+                        onChange={(e) => setSearch(e.currentTarget.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                         InputProps={{
                             startAdornment:
                                 <InputAdornment position="start">
-                                    <IconButton onClick={handleSearchSubmit}>
+                                    <IconButton onClick={() => setReload((old) => !old)}>
                                         <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                                     </IconButton>
                                 </InputAdornment>,
@@ -262,87 +258,37 @@ export const LogsPanel = () => {
                     />
                 </Grid>
 
-                {(!loading && records.length > 0) &&
-                    <Grid item>
-                        <Stack spacing={2}>
-                            <TablePagination
-                                labelRowsPerPage="Linhas por página: "
-                                component="div"
-                                count={pagination.total_records}
-                                page={paginationConfig.page - 1}
-                                onPageChange={handleTablePageChange}
-                                rowsPerPage={paginationConfig.limit}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
-                        </Stack>
-                    </Grid>
-                }
             </Grid>
 
-            <FormControl fullWidth>
-                <RadioGroup
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    name="radio-buttons-group"
-                    value={selectedRecordIndex}
-                >
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                            <TableHead>
-                                <TableRow>
-                                    <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Nome do arquivo</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Data</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Plano de voo</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Ordem de serviço</StyledHeadTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody className="tbody">
-                                {(!loading && records.length > 0) &&
-                                    records.map((log, index) => (
-                                        <TableRow key={log.id}>
-                                            <TableCell><FormControlLabel value={index} control={<Radio onClick={(e) => { handleClickRadio(e) }} />} label={log.id} /></TableCell>
-                                            <TableCell align="center">{log.name}</TableCell>
-                                            <TableCell align="center">{log.filename}</TableCell>
-                                            <TableCell align="center">{moment(log.timestamp).format('DD/MM/YYYY')}</TableCell>
-                                            <TableCell align="center">
-                                                {log.flight_plan ?
-                                                    <Link href={`/internal/map?file=${log.flight_plan.path}`} target="_blank">
-                                                        <Tooltip title="Ver plano">
-                                                            <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                                <FontAwesomeIcon icon={faEye} color={AuthData.data.user_powers["2"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
-                                                            </IconButton>
-                                                        </Tooltip>
-                                                    </Link>
-                                                    :
-                                                    <Tooltip title={"Nenhum plano de voo vinculado"}>
-                                                        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                            <FontAwesomeIcon icon={faEye} color={"#E0E0E0"} size="sm" />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                }
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                {log.service_order ?
-                                                    `${log.service_order.number}`
-                                                    :
-                                                    <Tooltip title={"Nenhuma ordem de serviço vinculada"}>
-                                                        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.read == 1}>
-                                                            <AssignmentIcon color="disabled" />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                }
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                            </TableBody>
-                        </Table>
-
-                    </TableContainer>
-
-                </RadioGroup>
-            </FormControl>
-            {loading && <LinearProgress color="success" />}
+            <Box
+                sx={{ height: 500, width: '100%' }}
+            >
+                <DataGrid
+                    rows={records}
+                    columns={columns}
+                    pageSize={perPage}
+                    loading={loading}
+                    page={currentPage - 1}
+                    rowsPerPageOptions={[10, 25, 50, 100]}
+                    checkboxSelection
+                    disableSelectionOnClick
+                    paginationMode='server'
+                    experimentalFeatures={{ newEditingApi: true }}
+                    onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+                    onSelectionModelChange={handleSelection}
+                    onPageChange={(newPage) => handleChangePage(newPage + 1)}
+                    rowCount={totalRecords}
+                    localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+                    sx={{
+                        "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+                            outline: "none !important",
+                        },
+                        '& .super-app-theme--header': {
+                            color: '#222'
+                        }
+                    }}
+                />
+            </Box>
         </>
     );
 }

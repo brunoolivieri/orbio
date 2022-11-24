@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { DroneConnectionConfig } from '../../../modals/dialog/DroneConnectionConfig';
@@ -39,18 +39,18 @@ export const CreateLogFormulary = React.memo((props) => {
             logs: selectedLogs
         })
             .then(function (response) {
-                setDownloadLoading(false);
-                props.reload_table();
+                props.reloadTable((old) => !old);
                 setDisplayAlert({ display: true, type: "success", message: response.data.message });
                 setTimeout(() => {
                     handleClose();
                 }, 2000);
             })
             .catch(function (error) {
-                console.log(error)
-                setDownloadLoading(false);
                 setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
-            });
+            })
+            .finally(() => {
+                setDownloadLoading(false);
+            })
     }
 
     function handleClickOpen() {
@@ -67,7 +67,7 @@ export const CreateLogFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Novo Log">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["4"].profile_powers.write == 1 ? false : true}>
+                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1}>
                     <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
@@ -80,6 +80,8 @@ export const CreateLogFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>DOWNLOAD DE LOG</DialogTitle>
+                <Divider />
+
                 <Box component="form" noValidate onSubmit={handleDownloadLogs} >
                     <DialogContent>
 
@@ -139,6 +141,7 @@ export const CreateLogFormulary = React.memo((props) => {
 
                     {downloadLoading && <LinearProgress />}
 
+                    <Divider />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={selectedLogs.length === 0 || downloadLoading} variant="contained">Salvar</Button>

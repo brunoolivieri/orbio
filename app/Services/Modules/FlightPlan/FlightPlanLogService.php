@@ -20,14 +20,14 @@ class FlightPlanLogService implements ServiceInterface
         $this->repository = $flightPlanLogRepository;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        $data = $this->repository->getPaginate($limit, $page, $search);
 
         if ($data->total() > 0) {
             return response(new FlightPlansLogPanelResource($data), 200);
         } else {
-            return response(["message" => "Nenhum plano de voo encontrado."], 404);
+            return response(["message" => "Nenhum log encontrado."], 404);
         }
     }
 
@@ -74,10 +74,10 @@ class FlightPlanLogService implements ServiceInterface
         return response(["message" => "Log atualizado com sucesso!"], 200);
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $log = $this->repository->deleteOne($identifier);
+        $log = $this->repository->delete($ids);
 
-        return response(["message" => "Log deletado com sucesso!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }
