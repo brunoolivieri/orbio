@@ -181,7 +181,7 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          {(selectedRecords.length === 0) &&
+          {(!loading && selectedRecords.length === 1) &&
             <Tooltip title="Selecione um registro">
               <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} >
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />

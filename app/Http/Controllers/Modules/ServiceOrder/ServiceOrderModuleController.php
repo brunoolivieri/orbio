@@ -30,10 +30,8 @@ class ServiceOrderModuleController extends Controller
 
         $data = $this->service->getPaginate(
             request()->limit,
-            request()->order_by,
             request()->page,
-            is_null(request()->search) ? "0" : request()->search,
-            request()->filter === "0" ? [] : request()->filter
+            is_null(request()->search) ? "0" : request()->search
         );
 
         if ($data->total() > 0) {
@@ -64,10 +62,10 @@ class ServiceOrderModuleController extends Controller
         return $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "creator_id", "client_id", "observation", "status", "number", "flight_plans"]), $id);
     }
 
-    public function destroy($id): \Illuminate\Http\Response
+    public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->deleteOne($id);
+        return $this->service->delete($request->ids);
     }
 }

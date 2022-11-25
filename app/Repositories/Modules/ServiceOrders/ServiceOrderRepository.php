@@ -23,13 +23,11 @@ class ServiceOrderRepository implements RepositoryInterface
         $this->logModel = $logModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->serviceOrderModel::with("flight_plans", "users")
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page_number);
+            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
     function createOne(Collection $data)
@@ -139,11 +137,15 @@ class ServiceOrderRepository implements RepositoryInterface
         });
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $service_order = $this->serviceOrderModel->findOrFail($identifier);
 
-        $service_order->delete();
+        foreach ($ids as $service_order_id) {
+
+            $service_order = $this->serviceOrderModel->findOrFail($service_order_id);
+
+            $service_order->delete();
+        }
 
         return $service_order;
     }

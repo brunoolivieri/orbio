@@ -20,9 +20,9 @@ class ServiceOrderService implements ServiceInterface
         $this->repository = $serviceOrderRepository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        return $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     public function createOne(array $data)
@@ -65,12 +65,12 @@ class ServiceOrderService implements ServiceInterface
         return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
     }
 
-    public function deleteOne(string $identifier)
+    public function delete(array $ids)
     {
-        $service_order = $this->repository->deleteOne($identifier);
+        $service_order = $this->repository->delete($ids);
 
-        ServiceOrderDeletedEvent::dispatch($service_order);
+        //ServiceOrderDeletedEvent::dispatch($service_order);
 
-        return response(["message" => "Ordem de serviço deletada com sucesso!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

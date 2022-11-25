@@ -1,31 +1,8 @@
 import * as React from 'react';
-import { Table } from "@mui/material";
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import InputAdornment from '@mui/material/InputAdornment';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import TablePagination from '@mui/material/TablePagination';
-import Checkbox from '@mui/material/Checkbox';
+// Material UI
+import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Typography, Slide } from "@mui/material";
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@mui/material/Slide';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Dialog from '@mui/material/Dialog';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import DialogContent from '@mui/material/DialogContent';
-import ReportIcon from '@mui/icons-material/Report';
-import { Link } from "@mui/material";
 // Axios
 import AxiosApi from '../../../../services/AxiosApi';
 // Fonts Awesome
@@ -33,159 +10,164 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
-// Auth
-//import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import moment from 'moment';
-
-const StyledHeadTableCell = styled(TableCell)({
-    color: '#fff',
-    fontWeight: 700
-});
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
+const columns = [
+    { field: 'id', headerName: 'ID', width: 90 },
+    {
+        field: 'name',
+        headerName: 'Nome',
+        flex: 1,
+        sortable: true,
+        editable: false
+    },
+    {
+        field: 'creator',
+        headerName: 'Criador',
+        sortable: true,
+        editable: false,
+        flex: 1,
+        valueGetter: (data) => {
+            return data.row.creator.name;
+        },
+    },
+    {
+        field: 'created_at',
+        headerName: 'Criado em',
+        type: 'number',
+        headerAlign: 'left',
+        sortable: true,
+        editable: false,
+        width: 150
+    },
+    {
+        field: 'visualization',
+        headerName: 'Visualizar',
+        width: 150,
+        sortable: false,
+        editable: false,
+        renderCell: (data) => {
+            return (
+                <Link href={`/internal/map?file=${data.row.file}`} target="_blank">
+                    <IconButton>
+                        <FontAwesomeIcon icon={faEye} color={"#00713A"} size="sm" />
+                    </IconButton>
+                </Link>
+            )
+        }
+    },
+    {
+        field: 'service_orders',
+        headerName: 'Ordens de serviço',
+        width: 150,
+        sortable: true,
+        editable: false,
+        renderCell: (data) => {
+            return 0;
+        }
+    },
+    {
+        field: 'incidents',
+        headerName: 'Incidentes',
+        sortable: true,
+        editable: false,
+        width: 150,
+        renderCell: (data) => {
+            return 0;
+        }
+    },
+]
+
 export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
-    const [open, setOpen] = React.useState(false);
+    // ============================================================================== STATES ============================================================================== //
+
     const [records, setRecords] = React.useState([]);
-    const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-    const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
+    const [perPage, setPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [totalRecords, setTotalRecords] = React.useState(0);
+    const [search, setSearch] = React.useState("0");
+    const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
-    const [selectedFlightPlans, setSelectedFlightPlans] = React.useState(props.flightPlans);
-    const [searchField, setSearchField] = React.useState("");
+    const [reload, setReload] = React.useState(false);
+    const [open, setOpen] = React.useState();
+
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        serverLoadRecords();
-    }, [paginationConfig]);
+        setLoading(true);
+        setRecords([]);
+        setSelectedRecords([]);
+        fetchRecords();
+    }, [reload]);
 
-    const serverLoadRecords = () => {
+    function fetchRecords() {
 
-        const limit = paginationConfig.limit;
-        const search = paginationConfig.search;
-        const page = paginationConfig.page;
-        const order_by = paginationConfig.order_by;
-        const filter = paginationConfig.filter;
 
         let http_request = "api/load-flight-plans-service-order?";
         if (props.serviceOrderId != null) {
             http_request += `service_order=${props.serviceOrderId}&`;
         }
-        http_request += `limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`;
+        http_request += `limit=${perPage}&search=${search}&page=${currentPage}`;
 
         AxiosApi.get(http_request)
             .then(function (response) {
-
-                setLoading(false);
-
-                if (response.data.total_records > 0) {
-                    setRecords(response.data.records);
-                    setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
-                }
-
+                setRecords(response.data.records);
+                setTotalRecords(response.data.total_records);
             })
             .catch(function (error) {
-
                 console.log(error)
-
+            })
+            .finally(() => {
                 setLoading(false);
-                setRecords([]);
-                setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-            });
+            })
     }
 
-    const handleTablePageChange = (event, value) => {
-
-        setPaginationConfig({
-            page: value + 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: paginationConfig.search,
-            total_records: 0,
-            filter: 0
+    function handleChangePage(newPage) {
+        // If actual page is bigger than the new one, is a reduction of actual
+        // If actual is smaller, the page is increasing
+        setCurrentPage((current) => {
+            return current > newPage ? (current - 1) : newPage;
         });
-
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-
-        setPaginationConfig({
-            page: 1,
-            limit: event.target.value,
-            order_by: "id",
-            search: paginationConfig.search,
-            total_records: 0,
-            filter: 0
-        });
-
-    };
-
-    const handleSearchSubmit = (event) => {
-        event.preventDefault();
-
-        setPaginationConfig({
-            page: 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: searchField,
-            total_records: 0,
-            filter: 0
-        });
-
+        setReload((old) => !old);
     }
 
-    const reloadTable = () => {
-
-        setSelectedFlightPlans([]);
-
-        setLoading(true);
-        setRecords([]);
-        setPagination({
-            total_records: 0,
-            records_per_page: 0,
-            total_pages: 0
-        });
-
-        setPaginationConfig({
-            page: 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: 0,
-            total_records: 0,
-            filter: 0
-        });
-
+    function handleChangeRowsPerPage(newValue) {
+        setPerPage(newValue);
+        setCurrentPage(1);
+        setReload((old) => !old);
     }
 
-    const handleClickRecord = (flight_plan) => {
+    const handleSelection = (record) => {
 
         // Percorrer os selecionados
-        // Verificar o que é igual ao clicado  e retirar
+        // Verificar o que é igual ao clicad e retirar
         // Se nenhum for, adicionar
 
-        let selected_flight_plans_clone = [...selectedFlightPlans];
+        console.log(record)
+
+        /*
+        let selected_flight_plans_clone = [...selectedRecords];
 
         // Filtered array wouldnt have the item with id equal to the selected
         let filtered_selections = selected_flight_plans_clone.filter((item) => item.id != flight_plan.id);
 
         // If no items were removed
         if (filtered_selections.length === selected_flight_plans_clone.length) {
-
             // So the item is not selected and needs to be saved
             selected_flight_plans_clone.push({ id: flight_plan.id, name: flight_plan.name, drone_id: "0", battery_id: "0", equipment_id: "0" });
-
         } else {
-
             // So the item already exists and needs to be unsaved
             const index_to_remove = selected_flight_plans_clone.filter((item, index) => { if (item.id === flight_plan.id) return index; });
             selected_flight_plans_clone.splice(index_to_remove, 1);
-
         }
 
-        setSelectedFlightPlans(selected_flight_plans_clone);
+        setSelectedRecords(selected_flight_plans_clone);
         props.setFlightPlans(selected_flight_plans_clone);
+        */
 
     }
 
@@ -195,7 +177,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const handleClose = () => {
         setOpen(false);
-        setSelectedFlightPlans([]);
+        setSelectedRecords([]);
         props.setFlightPlans([]);
     }
 
@@ -206,7 +188,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
-                {"Planos de voo disponíveis: " + (records.length - selectedFlightPlans.length)}
+                {"Planos de voo disponíveis: " + (records.length - selectedRecords.length)}
             </Button>
             <Dialog
                 fullScreen
@@ -215,7 +197,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                 TransitionComponent={Transition}
             >
                 <AppBar sx={{ position: 'relative', bgcolor: '#fff' }}>
-                    <Toolbar>
+                    <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <IconButton
                             edge="start"
                             color="primary"
@@ -224,9 +206,6 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                         >
                             <CloseIcon />
                         </IconButton>
-                        <Typography sx={{ ml: 2, flex: 1, color: '#1976D2' }} variant="h7" component="div">
-                            {""}
-                        </Typography>
                         <Button autoFocus color="primary" onClick={handleCommit} variant="contained">
                             Salvar
                         </Button>
@@ -239,7 +218,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
                         <Grid item>
                             <Tooltip title="Carregar">
-                                <IconButton onClick={reloadTable}>
+                                <IconButton onClick={() => setReload((old) => !old)}>
                                     <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
                                 </IconButton>
                             </Tooltip>
@@ -249,81 +228,52 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             <TextField
                                 fullWidth
                                 placeholder={"Pesquisar plano por id e nome"}
-                                onChange={(e) => setSearchField(e.currentTarget.value)}
+                                onChange={(e) => setSearch(e.currentTarget.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                                 InputProps={{
                                     startAdornment:
                                         <InputAdornment position="start">
-                                            <IconButton onClick={handleSearchSubmit}>
+                                            <IconButton onClick={() => setReload((old) => !old)}>
                                                 <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                                             </IconButton>
                                         </InputAdornment>,
                                     disableunderline: 1,
-                                    sx: { fontSize: 'default' },
+                                    sx: { fontSize: 'default' }
                                 }}
                                 variant="outlined"
-                                id="search_input"
                             />
                         </Grid>
-
-                        {(!loading && records.length > 0) &&
-                            <Grid item>
-                                <Stack spacing={2}>
-                                    <TablePagination
-                                        labelRowsPerPage="Linhas por página: "
-                                        component="div"
-                                        count={pagination.total_records}
-                                        page={paginationConfig.page - 1}
-                                        onPageChange={handleTablePageChange}
-                                        rowsPerPage={paginationConfig.limit}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                    />
-                                </Stack>
-                            </Grid>
-                        }
                     </Grid>
 
-                    <TableContainer component={Paper} sx={{ mt: 2 }}>
-                        <Table sx={{ minWidth: 650 }} size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Criação</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Arquivo</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Ver</StyledHeadTableCell>
-                                    <StyledHeadTableCell align="center">Incidente</StyledHeadTableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {(!loading && records.length > 0) &&
-                                    records.map((flight_plan) => (
-                                        <TableRow key={flight_plan.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                                            <TableCell><FormControlLabel label={flight_plan.id} control={<Checkbox value={flight_plan.id} onChange={() => { handleClickRecord(flight_plan) }} checked={selectedFlightPlans.find((item) => item.id === flight_plan.id)} />} /></TableCell>
-                                            <TableCell align="center">{flight_plan.creator.name}</TableCell>
-                                            <TableCell align="center">{moment(flight_plan.created_at).format("DD/MM/YYYY")}</TableCell>
-                                            <TableCell align="center">{flight_plan.name}</TableCell>
-                                            <TableCell align="center">{flight_plan.file}</TableCell>
-                                            <TableCell align="center">
-                                                <Link href={`/internal/map?file=${flight_plan.file}`} target="_blank">
-                                                    <Tooltip title="Ver plano">
-                                                        <IconButton>
-                                                            <FontAwesomeIcon icon={faEye} color="#00713A" size="sm" />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </Link>
-                                            </TableCell>
-                                            <TableCell align="center" sx={{ color: flight_plan.incident === 1 ? '#00713A' : '#808991' }}>{<ReportIcon />}</TableCell>
-                                        </TableRow>
-                                    ))
+                    <Box
+                        sx={{ height: 500, width: '100%', mt: 1 }}
+                    >
+                        <DataGrid
+                            rows={records}
+                            columns={columns}
+                            pageSize={perPage}
+                            loading={loading}
+                            page={currentPage - 1}
+                            rowsPerPageOptions={[10, 25, 50, 100]}
+                            checkboxSelection
+                            disableSelectionOnClick
+                            paginationMode='server'
+                            experimentalFeatures={{ newEditingApi: true }}
+                            onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+                            onSelectionModelChange={handleSelection}
+                            onPageChange={(newPage) => handleChangePage(newPage + 1)}
+                            rowCount={totalRecords}
+                            localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+                            sx={{
+                                "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+                                    outline: "none !important",
+                                },
+                                '& .super-app-theme--header': {
+                                    color: '#222'
                                 }
-
-                                {(!loading && records.length == 0) &&
-                                    <p>Nenhum plano de voo encontrado.</p>
-                                }
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                            }}
+                        />
+                    </Box>
 
                 </DialogContent>
 

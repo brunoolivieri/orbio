@@ -30,12 +30,11 @@ class LoadFlightPlansForServiceOrderController extends Controller
         Gate::authorize('flight_plans_read');
 
         $search = is_null(request()->search) ? "0" : request()->search;
-        $page_number = request()->page;
+        $page = request()->page;
         $limit = request()->limit;
-        $order_by = request()->order_by;
         $service_order_id = isset(request()->service_order) ? request()->service_order : null;
 
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, []);
+        $data = $this->repository->getPaginate($limit, $page, $search, []);
 
         if ($data->total() > 0) {
             return response(new ServiceOrdersFlightPlansResource($data, $service_order_id), 200);

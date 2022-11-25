@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 // Custom
 import axios from '../../../../services/AxiosApi';
@@ -189,11 +189,13 @@ export const CreateOrderFormulary = React.memo((props) => {
         maxWidth="md"
       >
         <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
-          <DialogContent>
+        <Divider />
 
-            <Box sx={{ display: "flex", mb: 2 }}>
-              <Box sx={{ mr: 1 }}>
+        <DialogContent>
+          <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
+            <Grid container spacing={1}>
+
+              <Grid item sx={6}>
                 <DatePicker
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
@@ -204,8 +206,9 @@ export const CreateOrderFormulary = React.memo((props) => {
                   read_only={false}
                 />
                 <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
-              </Box>
-              <Box>
+              </Grid>
+
+              <Grid item xs={6}>
                 <DatePicker
                   setControlledInput={setControlledInput}
                   controlledInput={controlledInput}
@@ -216,126 +219,132 @@ export const CreateOrderFormulary = React.memo((props) => {
                   operation={"create"}
                   read_only={false}
                 />
-              </Box>
-            </Box>
+              </Grid>
 
-            <Box sx={{ mb: 2 }}>
-              <SelectAttributeControl
-                label_text="Piloto"
-                data_source={"/api/load-users?where=profile_id.3"}
-                primary_key={"id"}
-                key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                error={fieldError.pilot_id}
-                value={controlledInput.pilot_id}
-                name={"pilot_id"}
-              />
-              <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
-            </Box>
-
-            <Box sx={{ mb: 1 }}>
-              <SelectAttributeControl
-                label_text="Cliente"
-                data_source={"/api/load-users?where=profile_id.4"}
-                primary_key={"id"}
-                key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                error={fieldError.client_id}
-                value={controlledInput.client_id}
-                name={"client_id"}
-              />
-              <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
-            </Box>
-
-            <Box sx={{ mb: 2 }}>
-              <Box>
-                <FlightPlansForServiceOrderModal
-                  setFlightPlans={setFlightPlans}
-                  flightPlans={flightPlans}
-                  serviceOrderId={null}
+              <Grid item xs={6}>
+                <SelectAttributeControl
+                  label_text="Piloto"
+                  data_source={"/api/load-users?where=profile_id.3"}
+                  primary_key={"id"}
+                  key_content={"name"}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  error={fieldError.pilot_id}
+                  value={controlledInput.pilot_id}
+                  name={"pilot_id"}
                 />
-              </Box>
-              {flightPlans.length > 0 &&
-                <List
-                  dense={true}
-                  sx={{
-                    maxWidth: '100%',
-                    minWidth: '100%',
-                    bgcolor: '#F5F5F5',
-                    position: 'relative',
-                    overflow: 'auto',
-                    maxHeight: 200,
-                    '& ul': { padding: 0 },
-                    mt: 2
-                  }}
-                  subheader={<li />}
-                >
-                  <ul>
-                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + flightPlans.length}</ListSubheader>
-                    {flightPlans.map((flight_plan, index) => (
-                      <ListItem
-                        key={index}
-                        secondaryAction={
-                          <FlightPlanEquipmentSelection
-                            flightPlans={flightPlans}
-                            setFlightPlans={setFlightPlans}
-                            current={{ array_index: index, data: flight_plan }}
+                <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
+              </Grid>
+
+              <Grid item xs={6}>
+                <SelectAttributeControl
+                  label_text="Cliente"
+                  data_source={"/api/load-users?where=profile_id.4"}
+                  primary_key={"id"}
+                  key_content={"name"}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                  error={fieldError.client_id}
+                  value={controlledInput.client_id}
+                  name={"client_id"}
+                />
+                <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  type="text"
+                  margin="dense"
+                  label="Observação"
+                  fullWidth
+                  variant="outlined"
+                  id="observation"
+                  name="observation"
+                  onChange={handleInputChange}
+                  helperText={fieldErrorMessage.observation}
+                  error={fieldError.observation}
+                  sx={{ mb: 2 }}
+                />
+              </Grid>
+
+              <Grid item xs={6}>
+                <Box>
+                  <FlightPlansForServiceOrderModal
+                    setFlightPlans={setFlightPlans}
+                    flightPlans={flightPlans}
+                    serviceOrderId={null}
+                  />
+                </Box>
+              </Grid>
+
+              <Grid item xs={12}>
+                {flightPlans.length > 0 &&
+                  <List
+                    dense={true}
+                    sx={{
+                      maxWidth: '100%',
+                      minWidth: '100%',
+                      bgcolor: '#F5F5F5',
+                      position: 'relative',
+                      overflow: 'auto',
+                      maxHeight: 200,
+                      '& ul': { padding: 0 },
+                      mt: 2
+                    }}
+                    subheader={<li />}
+                  >
+                    <ul>
+                      <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + flightPlans.length}</ListSubheader>
+                      {flightPlans.map((flight_plan, index) => (
+                        <ListItem
+                          key={index}
+                          secondaryAction={
+                            <FlightPlanEquipmentSelection
+                              flightPlans={flightPlans}
+                              setFlightPlans={setFlightPlans}
+                              current={{ array_index: index, data: flight_plan }}
+                            />
+                          }
+                        >
+                          <ListItemAvatar>
+                            <Avatar>
+                              <MapIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={`ID: ${flight_plan.id}`}
+                            secondary={`Nome: ${flight_plan.name}`}
                           />
-                        }
-                      >
-                        <ListItemAvatar>
-                          <Avatar>
-                            <MapIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={`ID: ${flight_plan.id}`}
-                          secondary={`Nome: ${flight_plan.name}`}
-                        />
-                      </ListItem>
-                    ))}
-                  </ul>
-                </List>
-              }
-            </Box>
+                        </ListItem>
+                      ))}
+                    </ul>
+                  </List>
+                }
+              </Grid>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Observação"
-              fullWidth
-              variant="outlined"
-              id="observation"
-              name="observation"
-              onChange={handleInputChange}
-              helperText={fieldErrorMessage.observation}
-              error={fieldError.observation}
-              sx={{ mb: 2 }}
-            />
+              <Grid item xs={6}>
+                <StatusRadio
+                  default={1}
+                  setControlledInput={setControlledInput}
+                  controlledInput={controlledInput}
+                />
+              </Grid>
 
-            <Box>
-              <StatusRadio
-                default={1}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-              />
-            </Box>
+            </Grid>
+          </Box>
+        </DialogContent>
 
-          </DialogContent>
+        {(!loading && displayAlert.display) &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {(!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {loading && <LinearProgress />}
 
-          {loading && <LinearProgress />}
-
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-        </Box>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+        </DialogActions>
       </Dialog>
     </>
   );
