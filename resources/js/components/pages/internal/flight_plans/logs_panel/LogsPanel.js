@@ -28,22 +28,21 @@ const columns = [
         headerName: 'Nome',
         flex: 1,
         sortable: true,
-        editable: false,
-        width: 200,
+        editable: false
     },
     {
         field: 'filename',
         headerName: 'Arquivo',
         sortable: true,
         editable: false,
-        width: 200
+        width: 210
     },
     {
         field: 'flight_plan',
         headerName: 'Plano de voo',
         sortable: true,
         editable: false,
-        width: 200,
+        width: 150,
         renderCell: (data) => {
 
             if (data.row.flight_plan != null) {
@@ -73,7 +72,7 @@ const columns = [
         headerName: 'Ordem de serviço',
         sortable: true,
         editable: false,
-        width: 200,
+        width: 150,
         renderCell: (data) => {
             if (data.row.service_order != null) {
                 return (

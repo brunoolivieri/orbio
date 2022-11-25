@@ -30,15 +30,14 @@ const columns = [
     headerName: 'Nome',
     flex: 1,
     sortable: true,
-    editable: false,
-    width: 200,
+    editable: false
   },
   {
     field: 'creator',
     headerName: 'Criador',
     sortable: true,
     editable: false,
-    width: 200,
+    flex: 1,
     valueGetter: (data) => {
       return data.row.creator.name;
     },
@@ -55,9 +54,9 @@ const columns = [
   {
     field: 'visualization',
     headerName: 'Visualizar',
+    width: 150,
     sortable: false,
     editable: false,
-    flex: 1,
     renderCell: (data) => {
       return (
         <Link href={`/internal/map?file=${data.row.file}`} target="_blank">
@@ -71,9 +70,9 @@ const columns = [
   {
     field: 'service_orders',
     headerName: 'Ordens de serviço',
+    width: 150,
     sortable: true,
     editable: false,
-    flex: 1,
     renderCell: (data) => {
       return data.row.service_orders.length;
     }
@@ -83,7 +82,7 @@ const columns = [
     headerName: 'Logs',
     sortable: true,
     editable: false,
-    flex: 1,
+    width: 150,
     renderCell: (data) => {
       return data.row.logs.length;
     }
@@ -93,7 +92,7 @@ const columns = [
     headerName: 'Incidentes',
     sortable: true,
     editable: false,
-    flex: 1,
+    width: 150,
     renderCell: (data) => {
       return data.row.total_incidents;
     }
@@ -103,7 +102,7 @@ const columns = [
     headerName: 'Exportar',
     sortable: false,
     editable: false,
-    flex: 1,
+    width: 150,
     renderCell: (data) => {
 
       const { enqueueSnackbar } = useSnackbar();
