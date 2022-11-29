@@ -235,16 +235,16 @@ export const ServiceOrdersPanel = () => {
         </Grid>
 
         <Grid item>
-          {(!loading && selectedRecords.length === 1) &&
+          {(selectedRecords.length === 0) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={!AuthData.data.user_powers["3"].profile_powers.write == 1} >
+              <IconButton>
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteOrderFormulary record={selectedRecords} reloadTable={setReload} />
+            <DeleteOrderFormulary records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

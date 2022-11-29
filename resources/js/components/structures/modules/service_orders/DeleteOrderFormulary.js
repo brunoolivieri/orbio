@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../services/AxiosApi';
@@ -8,57 +8,57 @@ import axios from '../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteOrderFormulary = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+  const [selectedIds, setSelectedIds] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [controlledInput] = React.useState({ id: props.record.id, number: props.record.number, creator: props.record.users.creator.name });
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
-  const [disabledButton, setDisabledButton] = React.useState(false);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
+    const ids = props.records.map((item) => item.id);
+    setSelectedIds(ids);
   }
 
-  const handleClose = () => {
-    setDisplayAlert(initialDisplatAlert);
-    setDisabledButton(false);
+  function handleClose() {
+    setDisplayAlert(initialDisplayAlert);
+    setLoading(false);
     setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
-    event.preventDefault();
-    setDisabledButton(true);
+  function handleSubmit() {
     setLoading(true);
     requestServerOperation();
   }
 
-  const requestServerOperation = () => {
-    axios.delete(`/api/orders-module/${controlledInput.id}`)
+  function requestServerOperation() {
+    axios.delete(`/api/admin-module-user/delete`, {
+      data: {
+        ids: selectedIds
+      }
+    })
       .then(function (response) {
         setLoading(false);
-        setDisabledButton(false);
         successResponse(response);
       })
       .catch(function (error) {
         setLoading(false);
-        setDisabledButton(false);
         errorResponse(error.response);
       });
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.reloadTable((old) => !old);
       handleClose();
     }, 2000);
   }
@@ -82,71 +82,30 @@ export const DeleteOrderFormulary = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
-        <DialogTitle>DELEÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-          <DialogContent>
+        <DialogTitle>DELEÇÃO DE ORDEM DE SERVIÇO</DialogTitle>
+        <Divider />
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="ID da ordem de serviço"
-              fullWidth
-              variant="outlined"
-              required
-              id="id"
-              name="id"
-              value={controlledInput.id}
-              inputProps={{
-                readOnly: true
-              }}
-              sx={{ mb: 2 }}
-            />
+        <DialogContent>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Número da ordem de serviço"
-              fullWidth
-              variant="outlined"
-              required
-              id="numos"
-              name="numos"
-              defaultValue={props.record.number}
-              inputProps={{
-                readOnly: true
-              }}
-              sx={{ mb: 2 }}
-            />
+          <DialogContentText mb={2}>
+            {selectedIds.length > 1 ? `As ${selectedIds.length} ordens de serviço selecionadas serão deletadas` : "A ordem de serviço selecionada será deletada"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+          </DialogContentText>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Nome do criador"
-              fullWidth
-              variant="outlined"
-              required
-              id="creator_name"
-              name="creator_name"
-              defaultValue={props.record.users.creator.name}
-              inputProps={{
-                readOnly: true
-              }}
-            />
-          </DialogContent>
+        </DialogContent>
 
-          {displayAlert.display &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {loading && <LinearProgress />}
+        {loading && <LinearProgress />}
 
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={disabledButton} variant="contained">Confirmar</Button>
-          </DialogActions>
-        </Box>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

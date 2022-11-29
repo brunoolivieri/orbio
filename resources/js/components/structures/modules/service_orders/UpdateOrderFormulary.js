@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -17,28 +17,40 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-const initialFieldError = { start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, flight_plan: false, status: false };
+const initialFieldError = { start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, status: false };
 const initialFieldErrorMessage = { start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateOrderFormulary = React.memo((props) => {
+
+  console.log(props.record)
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, pilot_id: props.record.users.pilot.id, client_id: props.record.users.client.id, observation: props.record.observation, status: props.record.status, start_date: props.record.start_date, end_date: props.record.end_date });
+
+  const [controlledInput, setControlledInput] = React.useState({
+    start_date: props.record.start_date,
+    end_date: props.record.end_date,
+    creator_name: props.record.users.creator.name,
+    pilot_id: props.record.users.pilot.id,
+    client_id: props.record.users.client.id,
+    observation: props.record.observation,
+    status: props.record.status
+  });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [flightPlans, setFlightPlans] = React.useState([]);
+  const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
-    setFlightPlans(props.record.flight_plans.map((flight_plan) => {
+
+    setSelectedFlightPlans(props.record.flight_plans.map((flight_plan) => {
       return {
         id: flight_plan.id,
         name: flight_plan.name,
@@ -49,39 +61,33 @@ export const UpdateOrderFormulary = React.memo((props) => {
     }));
   }
 
-  const handleClose = () => {
-    setOpen(false);
-    setLoading(false);
+  function handleClose() {
     setFieldError(initialFieldError);
     setFieldErrorMessage(initialFieldErrorMessage);
-    setDisplayAlert(initialDisplatAlert);
+    setDisplayAlert(initialDisplayAlert);
+    setLoading(false);
+    setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
     if (formValidation()) {
-      if (verifyDateInterval()) {
-        setLoading(true);
-        requestServerOperation();
-      } else {
-        setLoading(false);
-        setDisplayAlert({ display: false, type: "", message: "Erro! A data inicial não pode anteceder a final." });
-      }
+      setLoading(true);
+      requestServerOperation();
     }
   }
 
   const formValidation = () => {
-    const startDateValidate = controlledInput.start_date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const endDateValidate = controlledInput.end_date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
+
+    const dateValidate = verifyDateInterval();
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, "observação");
-    const fligthPlansValidate = flightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
+    const fligthPlansValidate = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setFieldError({
-      start_date: startDateValidate.error,
-      end_date: endDateValidate.error,
+      date_interval: dateValidate.error,
       pilot_id: pilotNameValidate.error,
       client_id: clientNameValidate.error,
       observation: observationValidate.error,
@@ -90,8 +96,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
     });
 
     setFieldErrorMessage({
-      start_date: startDateValidate.message,
-      end_date: endDateValidate.message,
+      date_interval: dateValidate.error,
       pilot_id: pilotNameValidate.message,
       client_id: clientNameValidate.message,
       observation: observationValidate.message,
@@ -99,7 +104,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
       status: statusValidate.message
     });
 
-    return !(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
+    return !(dateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
   }
 
   function verifyDateInterval() {
@@ -115,7 +120,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
       creator_id: props.record.users.creator.id,
       observation: controlledInput.observation,
       status: controlledInput.status,
-      flight_plans: flightPlans
+      flight_plans: selectedFlightPlans
     })
       .then(function (response) {
         setLoading(false);
@@ -130,8 +135,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
   const successResponse = (response) => {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.record_setter(null);
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
@@ -190,8 +194,8 @@ export const UpdateOrderFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={!AuthData.data.user_powers["3"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -202,55 +206,38 @@ export const UpdateOrderFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>ATUALIZAÇÃO | ORDEM DE SERVIÇO (ID: {props.record.id})</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-          <DialogContent>
+        <DialogTitle>ATUALIZAÇÃO DE ORDEM DE SERVIÇO</DialogTitle>
+        <DialogContent>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="ID da ordem de serviço"
-              fullWidth
-              variant="outlined"
-              required
-              id="id"
-              name="id"
-              defaultValue={props.record.id}
-              sx={{ mb: 2 }}
-              InputProps={{
-                readOnly: true
-              }}
-            />
+          <Grid container spacing={1}>
 
-            <Box sx={{ display: "flex", mb: 2 }}>
-              <Box sx={{ mr: 1 }}>
-                <DatePicker
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  name={"start_date"}
-                  label={"Data inicial"}
-                  error={fieldError.start_date}
-                  value={controlledInput.start_date}
-                  operation={"create"}
-                  read_only={false}
-                />
-                <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
-              </Box>
-              <Box>
-                <DatePicker
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  name={"end_date"}
-                  label={"Data final"}
-                  error={fieldError.end_date}
-                  value={controlledInput.end_date}
-                  operation={"create"}
-                  read_only={false}
-                />
-              </Box>
-            </Box>
+            <Grid item sx={6}>
+              <DatePicker
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                name={"start_date"}
+                label={"Data inicial"}
+                error={fieldError.date_interval}
+                value={controlledInput.start_date}
+                read_only={false}
+              />
+              <FormHelperText error>{fieldErrorMessage.date_interval}</FormHelperText>
+            </Grid>
 
-            <Box sx={{ mb: 2 }}>
+            <Grid item xs={6}>
+              <DatePicker
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                name={"end_date"}
+                label={"Data final"}
+                error={fieldError.end_date}
+                value={controlledInput.end_date}
+                operation={"create"}
+                read_only={false}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
               <SelectAttributeControl
                 label_text="Piloto"
                 data_source={"/api/load-users?where=profile_id.3"}
@@ -258,14 +245,14 @@ export const UpdateOrderFormulary = React.memo((props) => {
                 key_content={"name"}
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
-                helperText={fieldErrorMessage.pilot_id}
                 error={fieldError.pilot_id}
-                name={"pilot_id"}
                 value={controlledInput.pilot_id}
+                name={"pilot_id"}
               />
-            </Box>
+              <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
+            </Grid>
 
-            <Box sx={{ mb: 2 }}>
+            <Grid item xs={6}>
               <SelectAttributeControl
                 label_text="Cliente"
                 data_source={"/api/load-users?where=profile_id.4"}
@@ -274,21 +261,41 @@ export const UpdateOrderFormulary = React.memo((props) => {
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
                 error={fieldError.client_id}
-                name={"client_id"}
                 value={controlledInput.client_id}
+                name={"client_id"}
               />
-              <FormHelperText>{fieldErrorMessage.client_id}</FormHelperText>
-            </Box>
+              <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
+            </Grid>
 
-            <Box sx={{ mb: 1 }}>
+            <Grid item xs={12}>
+              <TextField
+                type="text"
+                margin="dense"
+                label="Observação"
+                fullWidth
+                variant="outlined"
+                id="observation"
+                name="observation"
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.observation}
+                error={fieldError.observation}
+                value={controlledInput.observation}
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
               <Box>
                 <FlightPlansForServiceOrderModal
-                  setFlightPlans={setFlightPlans}
-                  flightPlans={flightPlans}
-                  serviceOrderId={controlledInput.id}
+                  setSelectedFlightPlans={setSelectedFlightPlans}
+                  selectedFlightPlans={selectedFlightPlans}
+                  serviceOrderId={null}
                 />
               </Box>
-              {flightPlans.length > 0 &&
+            </Grid>
+
+            <Grid item xs={12}>
+              {selectedFlightPlans.length > 0 &&
                 <List
                   dense={true}
                   sx={{
@@ -304,14 +311,14 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   subheader={<li />}
                 >
                   <ul>
-                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + flightPlans.length}</ListSubheader>
-                    {flightPlans.map((flight_plan, index) => (
+                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + selectedFlightPlans.length}</ListSubheader>
+                    {selectedFlightPlans.map((flight_plan, index) => (
                       <ListItem
                         key={index}
                         secondaryAction={
                           <FlightPlanEquipmentSelection
-                            flightPlans={flightPlans}
-                            setFlightPlans={setFlightPlans}
+                            flightPlans={selectedFlightPlans}
+                            setFlightPlans={selectedFlightPlans}
                             current={{ array_index: index, data: flight_plan }}
                           />
                         }
@@ -330,44 +337,29 @@ export const UpdateOrderFormulary = React.memo((props) => {
                   </ul>
                 </List>
               }
-            </Box>
+            </Grid>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Observação"
-              fullWidth
-              variant="outlined"
-              required
-              name="observation"
-              onChange={handleInputChange}
-              helperText={fieldErrorMessage.observation}
-              error={fieldError.observation}
-              defaultValue={props.record.observation}
-              sx={{ mb: 2 }}
-            />
-
-            <Box>
+            <Grid item xs={6}>
               <StatusRadio
-                default={props.record.status == 1 ? 1 : 0}
+                default={1}
                 setControlledInput={setControlledInput}
                 controlledInput={controlledInput}
               />
-            </Box>
+            </Grid>
 
-          </DialogContent>
+          </Grid>
+        </DialogContent>
 
-          {(!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {(!loading && displayAlert.display) &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {loading && <LinearProgress />}
+        {loading && <LinearProgress />}
 
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" variant='contained' disabled={loading}>Confirmar</Button>
-          </DialogActions>
-        </Box>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" variant='contained' disabled={loading} onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
       </Dialog>
     </>
   );
