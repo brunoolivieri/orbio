@@ -16,9 +16,9 @@ class IncidentService implements ServiceInterface
         $this->repository = $incidentRepository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        $data = $this->repository->getPaginate($limit, $page, $search);
 
         if ($data->total() > 0) {
             return response(new IncidentsPanelResource($data), 200);
@@ -43,9 +43,9 @@ class IncidentService implements ServiceInterface
         return response(["message" => "Incidente atualizado com sucesso!"], 200);
     }
 
-    public function deleteOne(string $identifier)
+    public function delete(array $ids)
     {
-        $incident = $this->repository->deleteOne($identifier);
+        $incident = $this->repository->delete($ids);
 
         return response(["message" => "Incidente deletado com sucesso!"], 200);
     }

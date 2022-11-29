@@ -16,13 +16,11 @@ class IncidentRepository implements RepositoryInterface
         $this->flightPlanServiceOrderModel = $flightPlanServiceOrderModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->incidentModel
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page_number));
+            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
     function createOne(Collection $data)
@@ -57,11 +55,14 @@ class IncidentRepository implements RepositoryInterface
         return $incident;
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $incident = $this->incidentModel->findOrFail($identifier);
+        foreach ($ids as $incident_id) {
 
-        $incident->delete();
+            $incident = $this->incidentModel->findOrFail($incident_id);
+
+            $incident->delete();
+        }
 
         return $incident;
     }
