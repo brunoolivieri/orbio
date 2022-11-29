@@ -54,7 +54,7 @@ export const NavigatorToggle = React.memo((props) => {
     {
       id: 'Outros',
       children: [
-        { id: 'Conta', icon: <AccountCircleIcon />, access: AuthData.data.profile_id != 1 ? true : false, path: "conta" }
+        { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "conta" }
       ],
     },
   ]), []);

@@ -22,8 +22,7 @@ class AdminSeeder extends Seeder
             "email" => env("ADMIN_EMAIL"),
             "password" => Hash::make(env("ADMIN_PASS")),
             "status" => true,
-            "profile_id" => 1,
-            "last_access" => date("Y-m-d H:i:s")
+            "profile_id" => 1
         ]);
 
         AnnualTraffic::create([
