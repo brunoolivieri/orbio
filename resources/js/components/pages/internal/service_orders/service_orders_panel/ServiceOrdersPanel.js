@@ -1,7 +1,7 @@
 // React
 import * as React from 'react';
 // MaterialUI
-import { Tooltip, IconButton, Grid, Chip, TextField, InputAdornment, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Fontsawesome
@@ -16,7 +16,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import AxiosApi from "../../../../../services/AxiosApi";
+import axios from "../../../../../services/AxiosApi";
 import { CreateOrderFormulary } from "../../../../structures/modules/service_orders/CreateOrderFormulary";
 import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
 import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
@@ -28,9 +28,13 @@ const columns = [
   {
     field: 'status',
     headerName: 'Status',
-    width: 150,
+    width: 100,
     sortable: true,
     editable: false,
+    renderCell: (data) => {
+      const status = data.row.status;
+      return <Chip label={status ? "Ativo" : "Inativo"} color={status ? "success" : "error"} variant="outlined" />
+    }
   },
   {
     field: 'number',
@@ -46,28 +50,40 @@ const columns = [
     width: 150,
     headerAlign: 'left',
     sortable: true,
-    editable: false
+    editable: false,
+    renderCell: (data) => {
+      const status = data.row.users.creator.status;
+      return <Chip label={data.row.users.creator.name} color={status ? "success" : "error"} variant="outlined" />
+    }
   },
   {
     field: 'pilot',
     headerName: 'Piloto',
     sortable: true,
     editable: false,
-    flex: 1
+    flex: 1,
+    renderCell: (data) => {
+      const status = data.row.users.pilot.status;
+      return <Chip label={data.row.users.pilot.name} color={status ? "success" : "error"} variant="outlined" />
+    }
   },
   {
     field: 'client',
     headerName: 'Cliente',
     sortable: true,
     editable: false,
-    flex: 1
+    flex: 1,
+    renderCell: (data) => {
+      const status = data.row.users.client.status;
+      return <Chip label={data.row.users.client.name} color={status ? "success" : "error"} variant="outlined" />
+    }
   },
   {
-    field: 'description',
+    field: 'observation',
     headerName: 'Descrição',
     sortable: true,
     editable: false,
-    width: 150,
+    width: 150
   },
   {
     field: 'flight_plans',
@@ -75,20 +91,38 @@ const columns = [
     sortable: true,
     editable: false,
     width: 150,
+    valueGetter: (data) => {
+      return data.row.flight_plans.length;
+    }
   },
   {
-    field: 'incidents',
+    field: 'total_incidents',
     headerName: 'Incidentes',
     sortable: true,
     editable: false,
-    width: 150,
+    width: 100,
   },
   {
     field: 'report',
     headerName: 'Relatório',
     sortable: true,
     editable: false,
-    width: 150,
+    width: 100,
+    renderCell: (data) => {
+      if (data.row.finished) {
+        return (
+          <IconButton>
+            <FontAwesomeIcon icon={faFilePdf} color={"#007937"} size="sm" />
+          </IconButton>
+        )
+      } else {
+        return (
+          <IconButton>
+            <FontAwesomeIcon icon={faFilePdf} color={"#E0E0E0"} size="sm" />
+          </IconButton>
+        )
+      }
+    }
   },
 ];
 
@@ -120,7 +154,7 @@ export const ServiceOrdersPanel = () => {
 
   function fetchRecords() {
 
-    AxiosApi.get(`/api/orders-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+    axios.get(`/api/orders-module?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);
@@ -155,7 +189,7 @@ export const ServiceOrdersPanel = () => {
   }
 
   function handleSelection(newSelectedIds) {
-    // newSelectedIds always bring all selections
+    // To save entire record by its ID
     const newSelectedRecords = records.filter((record) => {
       if (newSelectedIds.includes(record.id)) {
         return record;

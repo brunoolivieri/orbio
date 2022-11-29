@@ -33,48 +33,41 @@ export const CreateOrderFormulary = React.memo((props) => {
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [flightPlans, setFlightPlans] = React.useState([]);
+  const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setControlledInput(initialControlledInput);
     setFieldError(initialFieldError);
     setFieldErrorMessage(initialFieldErrorMessage);
     setDisplayAlert(initialDisplatAlert);
     setLoading(false);
     setOpen(false);
-  };
-
-  const handleRegistrationSubmit = (event) => {
-    event.preventDefault();
-    if (formValidation()) {
-      if (verifyDateInterval()) {
-        setLoading(true);
-        requestServerOperation();
-      } else {
-        setLoading(false);
-        setDisplayAlert({ display: true, type: "error", message: "A data inicial deve anteceder a final." });
-      }
-    }
   }
 
-  const formValidation = () => {
-    const startDateValidate = moment(controlledInput.startDate).format("YYYY-MM_DD") != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const endDateValidate = moment(controlledInput.endDate).format("YYYY-MM_DD") != null ? { error: false, message: "" } : { error: true, message: "Selecione a data final" };
+  function handleSubmit() {
+    if (!formValidation()) {
+      return ''
+    }
+    requestServerOperation();
+  }
+
+  function formValidation() {
+
+    const dateValidate = verifyDateInterval();
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
-    const fligthPlansValidate = flightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
+    const fligthPlansValidate = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
     const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setFieldError({
-      start_date: startDateValidate.error,
-      end_date: endDateValidate.error,
+      date_interval: dateValidate.error,
       pilot_id: pilotNameValidate.error,
       client_id: clientNameValidate.error,
       observation: observationValidate.error,
@@ -82,22 +75,23 @@ export const CreateOrderFormulary = React.memo((props) => {
       status: statusValidate.error
     });
     setFieldErrorMessage({
-      start_date: startDateValidate.message,
-      end_date: endDateValidate.message,
+      date_interval: dateValidate.message,
       pilot_id: pilotNameValidate.message,
       client_id: clientNameValidate.message,
       observation: observationValidate.message,
       flight_plans: fligthPlansValidate.message,
       status: statusValidate.message
     });
-    return !(startDateValidate.error || endDateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
+
+    return !(dateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
+
   }
 
   function verifyDateInterval() {
-    return moment(controlledInput.start_date).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD');
+    return moment(controlledInput.start_date).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD') ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
   }
 
-  const requestServerOperation = () => {
+  function requestServerOperation() {
     axios.post(`/api/orders-module`, {
       start_date: controlledInput.start_date,
       end_date: controlledInput.end_date,
@@ -105,7 +99,7 @@ export const CreateOrderFormulary = React.memo((props) => {
       client_id: controlledInput.client_id,
       observation: controlledInput.observation,
       status: controlledInput.status,
-      flight_plans: flightPlans
+      flight_plans: selectedFlightPlans
     })
       .then(function (response) {
         setLoading(false);
@@ -117,16 +111,16 @@ export const CreateOrderFormulary = React.memo((props) => {
       });
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
   }
 
-  const errorResponse = (response) => {
+  function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
     let request_errors = {
@@ -167,7 +161,7 @@ export const CreateOrderFormulary = React.memo((props) => {
     });
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
@@ -176,8 +170,8 @@ export const CreateOrderFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Nova ordem de serviço">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["3"].profile_powers.write == 1 ? false : true}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["3"].profile_powers.write == 1}>
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["3"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -192,146 +186,144 @@ export const CreateOrderFormulary = React.memo((props) => {
         <Divider />
 
         <DialogContent>
-          <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
-            <Grid container spacing={1}>
+          <Grid container spacing={1}>
 
-              <Grid item sx={6}>
-                <DatePicker
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  name={"start_date"}
-                  label={"Data inicial"}
-                  error={fieldError.start_date}
-                  value={controlledInput.start_date}
-                  read_only={false}
-                />
-                <FormHelperText error>{fieldErrorMessage.start_date}</FormHelperText>
-              </Grid>
-
-              <Grid item xs={6}>
-                <DatePicker
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  name={"end_date"}
-                  label={"Data final"}
-                  error={fieldError.end_date}
-                  value={controlledInput.end_date}
-                  operation={"create"}
-                  read_only={false}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <SelectAttributeControl
-                  label_text="Piloto"
-                  data_source={"/api/load-users?where=profile_id.3"}
-                  primary_key={"id"}
-                  key_content={"name"}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  error={fieldError.pilot_id}
-                  value={controlledInput.pilot_id}
-                  name={"pilot_id"}
-                />
-                <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
-              </Grid>
-
-              <Grid item xs={6}>
-                <SelectAttributeControl
-                  label_text="Cliente"
-                  data_source={"/api/load-users?where=profile_id.4"}
-                  primary_key={"id"}
-                  key_content={"name"}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  error={fieldError.client_id}
-                  value={controlledInput.client_id}
-                  name={"client_id"}
-                />
-                <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  type="text"
-                  margin="dense"
-                  label="Observação"
-                  fullWidth
-                  variant="outlined"
-                  id="observation"
-                  name="observation"
-                  onChange={handleInputChange}
-                  helperText={fieldErrorMessage.observation}
-                  error={fieldError.observation}
-                  sx={{ mb: 2 }}
-                />
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box>
-                  <FlightPlansForServiceOrderModal
-                    setFlightPlans={setFlightPlans}
-                    flightPlans={flightPlans}
-                    serviceOrderId={null}
-                  />
-                </Box>
-              </Grid>
-
-              <Grid item xs={12}>
-                {flightPlans.length > 0 &&
-                  <List
-                    dense={true}
-                    sx={{
-                      maxWidth: '100%',
-                      minWidth: '100%',
-                      bgcolor: '#F5F5F5',
-                      position: 'relative',
-                      overflow: 'auto',
-                      maxHeight: 200,
-                      '& ul': { padding: 0 },
-                      mt: 2
-                    }}
-                    subheader={<li />}
-                  >
-                    <ul>
-                      <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + flightPlans.length}</ListSubheader>
-                      {flightPlans.map((flight_plan, index) => (
-                        <ListItem
-                          key={index}
-                          secondaryAction={
-                            <FlightPlanEquipmentSelection
-                              flightPlans={flightPlans}
-                              setFlightPlans={setFlightPlans}
-                              current={{ array_index: index, data: flight_plan }}
-                            />
-                          }
-                        >
-                          <ListItemAvatar>
-                            <Avatar>
-                              <MapIcon />
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={`ID: ${flight_plan.id}`}
-                            secondary={`Nome: ${flight_plan.name}`}
-                          />
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </List>
-                }
-              </Grid>
-
-              <Grid item xs={6}>
-                <StatusRadio
-                  default={1}
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                />
-              </Grid>
-
+            <Grid item sx={6}>
+              <DatePicker
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                name={"start_date"}
+                label={"Data inicial"}
+                error={fieldError.date_interval}
+                value={controlledInput.start_date}
+                read_only={false}
+              />
+              <FormHelperText error>{fieldErrorMessage.date_interval}</FormHelperText>
             </Grid>
-          </Box>
+
+            <Grid item xs={6}>
+              <DatePicker
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                name={"end_date"}
+                label={"Data final"}
+                error={fieldError.end_date}
+                value={controlledInput.end_date}
+                operation={"create"}
+                read_only={false}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <SelectAttributeControl
+                label_text="Piloto"
+                data_source={"/api/load-users?where=profile_id.3"}
+                primary_key={"id"}
+                key_content={"name"}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                error={fieldError.pilot_id}
+                value={controlledInput.pilot_id}
+                name={"pilot_id"}
+              />
+              <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
+            </Grid>
+
+            <Grid item xs={6}>
+              <SelectAttributeControl
+                label_text="Cliente"
+                data_source={"/api/load-users?where=profile_id.4"}
+                primary_key={"id"}
+                key_content={"name"}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                error={fieldError.client_id}
+                value={controlledInput.client_id}
+                name={"client_id"}
+              />
+              <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
+            </Grid>
+
+            <Grid item xs={12}>
+              <TextField
+                type="text"
+                margin="dense"
+                label="Observação"
+                fullWidth
+                variant="outlined"
+                id="observation"
+                name="observation"
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.observation}
+                error={fieldError.observation}
+                sx={{ mb: 2 }}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <Box>
+                <FlightPlansForServiceOrderModal
+                  setSelectedFlightPlans={setSelectedFlightPlans}
+                  selectedFlightPlans={selectedFlightPlans}
+                  serviceOrderId={null}
+                />
+              </Box>
+            </Grid>
+
+            <Grid item xs={12}>
+              {selectedFlightPlans.length > 0 &&
+                <List
+                  dense={true}
+                  sx={{
+                    maxWidth: '100%',
+                    minWidth: '100%',
+                    bgcolor: '#F5F5F5',
+                    position: 'relative',
+                    overflow: 'auto',
+                    maxHeight: 200,
+                    '& ul': { padding: 0 },
+                    mt: 2
+                  }}
+                  subheader={<li />}
+                >
+                  <ul>
+                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Selecionados: " + selectedFlightPlans.length}</ListSubheader>
+                    {selectedFlightPlans.map((flight_plan, index) => (
+                      <ListItem
+                        key={index}
+                        secondaryAction={
+                          <FlightPlanEquipmentSelection
+                            flightPlans={selectedFlightPlans}
+                            setFlightPlans={selectedFlightPlans}
+                            current={{ array_index: index, data: flight_plan }}
+                          />
+                        }
+                      >
+                        <ListItemAvatar>
+                          <Avatar>
+                            <MapIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`ID: ${flight_plan.id}`}
+                          secondary={`Nome: ${flight_plan.name}`}
+                        />
+                      </ListItem>
+                    ))}
+                  </ul>
+                </List>
+              }
+            </Grid>
+
+            <Grid item xs={6}>
+              <StatusRadio
+                default={1}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+              />
+            </Grid>
+
+          </Grid>
         </DialogContent>
 
         {(!loading && displayAlert.display) &&
@@ -343,7 +335,7 @@ export const CreateOrderFormulary = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
+          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
         </DialogActions>
       </Dialog>
     </>

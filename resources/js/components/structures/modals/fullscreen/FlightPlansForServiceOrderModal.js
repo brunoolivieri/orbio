@@ -1,10 +1,10 @@
 import * as React from 'react';
 // Material UI
-import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Typography, Slide } from "@mui/material";
+import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 // Axios
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -65,8 +65,8 @@ const columns = [
         width: 150,
         sortable: true,
         editable: false,
-        renderCell: (data) => {
-            return 0;
+        valueGetter: (data) => {
+            return data.row.total_service_orders
         }
     },
     {
@@ -75,8 +75,8 @@ const columns = [
         sortable: true,
         editable: false,
         width: 150,
-        renderCell: (data) => {
-            return 0;
+        valueGetter: (data) => {
+            return data.row.total_incidents
         }
     },
 ]
@@ -90,7 +90,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [totalRecords, setTotalRecords] = React.useState(0);
     const [search, setSearch] = React.useState("0");
-    const [selectedRecords, setSelectedRecords] = React.useState([]);
+    const [controlledSelection, setControlledSelection] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState();
@@ -100,7 +100,6 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     React.useEffect(() => {
         setLoading(true);
         setRecords([]);
-        setSelectedRecords([]);
         fetchRecords();
     }, [reload]);
 
@@ -113,10 +112,16 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         }
         http_request += `limit=${perPage}&search=${search}&page=${currentPage}`;
 
-        AxiosApi.get(http_request)
+        axios.get(http_request)
             .then(function (response) {
+
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
+                // Set default selections if exists
+                setControlledSelection(() => {
+                    return response.data.records.filter((item) => item.selected).map((item) => item.id)
+                });
+
             })
             .catch(function (error) {
                 console.log(error)
@@ -141,33 +146,23 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         setReload((old) => !old);
     }
 
-    const handleSelection = (record) => {
+    const handleSelection = (newSelectedIds) => {
 
-        // Percorrer os selecionados
-        // Verificar o que é igual ao clicad e retirar
-        // Se nenhum for, adicionar
+        // Save only ids for controll
+        setControlledSelection(newSelectedIds);
 
-        console.log(record)
+        // Get entire flight plan data record by ID
+        const newSelectedFlightPlans = records.filter((record) => {
+            if (newSelectedIds.includes(record.id)) {
+                return record;
+            }
+        })
 
-        /*
-        let selected_flight_plans_clone = [...selectedRecords];
+        const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
+            return { ...item, drone_id: "0", battery_id: "0", equipment_id: "0" };
+        })
 
-        // Filtered array wouldnt have the item with id equal to the selected
-        let filtered_selections = selected_flight_plans_clone.filter((item) => item.id != flight_plan.id);
-
-        // If no items were removed
-        if (filtered_selections.length === selected_flight_plans_clone.length) {
-            // So the item is not selected and needs to be saved
-            selected_flight_plans_clone.push({ id: flight_plan.id, name: flight_plan.name, drone_id: "0", battery_id: "0", equipment_id: "0" });
-        } else {
-            // So the item already exists and needs to be unsaved
-            const index_to_remove = selected_flight_plans_clone.filter((item, index) => { if (item.id === flight_plan.id) return index; });
-            selected_flight_plans_clone.splice(index_to_remove, 1);
-        }
-
-        setSelectedRecords(selected_flight_plans_clone);
-        props.setFlightPlans(selected_flight_plans_clone);
-        */
+        props.setSelectedFlightPlans(newSelectedFlightPlansWithEquipments);
 
     }
 
@@ -177,18 +172,18 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const handleClose = () => {
         setOpen(false);
-        setSelectedRecords([]);
-        props.setFlightPlans([]);
+        setControlledSelection([]);
+        props.setSelectedFlightPlans([]);
     }
 
-    const handleCommit = () => {
+    const handleSave = () => {
         setOpen(false);
     }
 
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
-                {"Planos de voo disponíveis: " + (records.length - selectedRecords.length)}
+                {"Planos de voo disponíveis: " + (records.length - props.selectedFlightPlans.length)}
             </Button>
             <Dialog
                 fullScreen
@@ -206,7 +201,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                         >
                             <CloseIcon />
                         </IconButton>
-                        <Button autoFocus color="primary" onClick={handleCommit} variant="contained">
+                        <Button autoFocus color="primary" onClick={handleSave} variant="contained">
                             Salvar
                         </Button>
                     </Toolbar>
@@ -254,6 +249,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             pageSize={perPage}
                             loading={loading}
                             page={currentPage - 1}
+                            selectionModel={controlledSelection}
                             rowsPerPageOptions={[10, 25, 50, 100]}
                             checkboxSelection
                             disableSelectionOnClick
@@ -276,7 +272,6 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                     </Box>
 
                 </DialogContent>
-
             </Dialog>
         </div>
     );

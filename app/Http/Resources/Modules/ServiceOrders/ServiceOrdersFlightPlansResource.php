@@ -4,6 +4,8 @@ namespace App\Http\Resources\Modules\ServiceOrders;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Incidents\Incident;
+use App\Models\Logs\Log;
 
 class ServiceOrdersFlightPlansResource extends JsonResource
 {
@@ -25,6 +27,9 @@ class ServiceOrdersFlightPlansResource extends JsonResource
     {
         foreach ($this->data as $flight_plan_row => $flight_plan) {
 
+            $total_incidents = 0;
+            $total_service_orders = $flight_plan->service_orders->count();
+
             $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
                 "creator" => [
@@ -34,11 +39,12 @@ class ServiceOrdersFlightPlansResource extends JsonResource
                 ],
                 "created_at" => date("Y-m-d", strtotime($flight_plan->created_at)),
                 "name" => $flight_plan->name,
-                "file" => $flight_plan->file
+                "file" => $flight_plan->file,
+                "total_incidents" => $total_incidents,
+                "total_service_orders" => $total_service_orders
             ];
 
             if (!empty($flight_plan->logs)) {
-
                 foreach ($flight_plan->logs as $log_row => $log) {
 
                     $this->formatedData["records"][$flight_plan_row]["logs"][$log_row] = [
@@ -54,8 +60,7 @@ class ServiceOrdersFlightPlansResource extends JsonResource
 
             // Related service orders
             foreach ($flight_plan->service_orders as $service_order) {
-
-                $this->formatedData["records"][$flight_plan_row]["selected"] = intval($service_order->id) === intval($this->service_order_id) ? 1 : 0;
+                $this->formatedData["records"][$flight_plan_row]["selected"] = intval($service_order->id) == intval($this->service_order_id) ? 1 : 0;
             }
         }
 
