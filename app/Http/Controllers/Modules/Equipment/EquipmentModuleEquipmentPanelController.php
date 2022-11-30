@@ -29,10 +29,8 @@ class EquipmentModuleEquipmentPanelController extends Controller
 
         return $this->service->getPaginate(
             request()->limit,
-            request()->order_by,
             request()->page,
-            is_null(request()->search) ? "0" : request()->search,
-            request()->filter === "0" ? [] : request()->filter
+            is_null(request()->search) ? "0" : request()->search
         );
     }
 
@@ -57,10 +55,10 @@ class EquipmentModuleEquipmentPanelController extends Controller
         return $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]), $id);
     }
 
-    public function destroy($id): \Illuminate\Http\Response
+    public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->deleteOne($id);
+        return $this->service->delete($request->ids);
     }
 }

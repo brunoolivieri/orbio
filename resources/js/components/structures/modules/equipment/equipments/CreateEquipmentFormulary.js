@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Grid, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -38,23 +38,23 @@ export const CreateEquipmentFormulary = React.memo((props) => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
+    function handleClose() {
         setOpen(false);
+        setLoading(false);
     }
 
-    const handleEquipmentRegistrationSubmit = (event) => {
-        event.preventDefault();
-        if (formularyDataValidate()) {
+    function handleSubmit() {
+        if (formValidation()) {
             setLoading(true);
             requestServerOperation();
         }
     }
 
-    const formularyDataValidate = () => {
+    function formValidation() {
 
         let nameValidation = FormValidation(controlledInput.name, 3);
         let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
@@ -94,7 +94,7 @@ export const CreateEquipmentFormulary = React.memo((props) => {
 
     }
 
-    const requestServerOperation = () => {
+    function requestServerOperation() {
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);
@@ -108,29 +108,25 @@ export const CreateEquipmentFormulary = React.memo((props) => {
 
         axios.post(`/api/equipments-module-equipment`, formData)
             .then(function (response) {
-
-                setLoading(false);
-                successServerResponseTreatment(response);
-
+                successResponse(response);
             })
             .catch(function (error) {
-
+                errorResponse(error.response);
+            })
+            .finally(() => {
                 setLoading(false);
-                errorServerResponseTreatment(error.response);
-
-            });
+            })
     }
 
-    const successServerResponseTreatment = (response) => {
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
 
-    const errorServerResponseTreatment = (response) => {
+    function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
         let request_errors = {
@@ -177,7 +173,7 @@ export const CreateEquipmentFormulary = React.memo((props) => {
         });
     }
 
-    const handleUploadedImage = (event) => {
+    function handleUploadedImage(event) {
         const file = event.currentTarget.files[0];
         if (file && file.type.startsWith('image/')) {
             htmlImage.current.src = URL.createObjectURL(file);
@@ -185,7 +181,7 @@ export const CreateEquipmentFormulary = React.memo((props) => {
         }
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
@@ -194,8 +190,8 @@ export const CreateEquipmentFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Nova bateria">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -207,101 +203,125 @@ export const CreateEquipmentFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>CADASTRO DE EQUIPAMENTO</DialogTitle>
-                <Box component="form" noValidate onSubmit={handleEquipmentRegistrationSubmit} >
-                    <DialogContent>
+                <Divider />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="name"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
-                        />
+                <DialogContent>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Fabricante"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="manufacturer"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.manufacturer}
-                            error={fieldError.manufacturer}
-                        />
+                    <Grid container spacing={1}>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Modelo"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="model"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.model}
-                            error={fieldError.model}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Nome"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="name"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                                value={controlledInput.name}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número do registro"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="record_number"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.record_number}
-                            error={fieldError.record_number}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Fabricante"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="manufacturer"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.manufacturer}
+                                error={fieldError.manufacturer}
+                                value={controlledInput.manufacturer}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número Serial"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="serial_number"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.serial_number}
-                            error={fieldError.serial_number}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Modelo"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="model"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.model}
+                                error={fieldError.model}
+                                value={controlledInput.model}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Peso (KG)"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="weight"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.weight}
-                            error={fieldError.weight}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número do registro"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="record_number"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.record_number}
+                                error={fieldError.record_number}
+                                value={controlledInput.record_number}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Observação"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="observation"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.observation}
-                            error={fieldError.observation}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número Serial"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="serial_number"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.serial_number}
+                                error={fieldError.serial_number}
+                                value={controlledInput.serial_number}
+                            />
+                        </Grid>
 
-                        <Box sx={{ display: "flex", mt: 2 }}>
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Peso (KG)"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="weight"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.weight}
+                                error={fieldError.weight}
+                                value={controlledInput.weight}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Observação"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="observation"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.observation}
+                                error={fieldError.observation}
+                                value={controlledInput.observation}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
                             <DatePicker
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}
@@ -311,34 +331,36 @@ export const CreateEquipmentFormulary = React.memo((props) => {
                                 value={controlledInput.purchase_date}
                             />
                             <FormHelperText error>{fieldErrorMessage.purchase_date}</FormHelperText>
-                        </Box>
+                        </Grid>
+                    </Grid>
 
-                        <Box sx={{ mt: 2, display: 'flex' }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
+                    <Box sx={{ mt: 2, display: 'flex' }}>
+                        <label htmlFor="contained-button-file">
+                            <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                            </Button>
+                        </label>
+                    </Box>
 
-                        <Box sx={{ mt: 2 }}>
-                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }}></img>
-                        </Box>
+                    <Box sx={{ mt: 2 }}>
+                        <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }}></img>
+                    </Box>
 
-                    </DialogContent>
+                </DialogContent>
 
-                    {(!loading && displayAlert.display) &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                {(!loading && displayAlert.display) &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                    {loading && <LinearProgress />}
+                {loading && <LinearProgress />}
 
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Criar equipamento</Button>
-                    </DialogActions>
-                </Box>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
+
             </Dialog>
         </>
     )

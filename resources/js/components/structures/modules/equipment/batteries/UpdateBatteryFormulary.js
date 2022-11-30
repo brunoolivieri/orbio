@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Divider, Grid } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -39,15 +39,17 @@ export const UpdateBatteryFormulary = React.memo((props) => {
 
     function handleClickOpen() {
         setOpen(true);
-        setLoading(false);
     }
 
     function handleClose() {
+        setFieldError(initialFieldError);
+        setFieldErrorMessage(initialFieldErrorMessage);
+        setDisplayAlert(initialDisplatAlert);
+        setLoading(false);
         setOpen(false);
     }
 
-    function handleBatteryUpdateSubmit(event) {
-        event.preventDefault();
+    function handleSubmit() {
         if (formValidation()) {
             setLoading(true);
             requestServerOperation();
@@ -99,20 +101,20 @@ export const UpdateBatteryFormulary = React.memo((props) => {
 
         axios.post(`/api/equipments-module-battery/${controlledInput.id}`, formData)
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
     function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
@@ -173,7 +175,7 @@ export const UpdateBatteryFormulary = React.memo((props) => {
         <>
             <Tooltip title="Editar">
                 <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -184,88 +186,77 @@ export const UpdateBatteryFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO DE BATERIA</DialogTitle>
+                <Divider />
 
-                <Box component="form" noValidate onSubmit={handleBatteryUpdateSubmit} >
+                <DialogContent>
+                    <Grid container spacing={1}>
 
-                    <DialogContent>
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Nome"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="name"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                                value={controlledInput.id}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="ID da bateria"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="id"
-                            name="id"
-                            defaultValue={props.record.id}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Fabricante"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="manufacturer"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.manufacturer}
+                                error={fieldError.manufacturer}
+                                value={controlledInput.manufacturer}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="name"
-                            name="name"
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
-                            defaultValue={props.record.name}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Modelo"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="model"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.model}
+                                error={fieldError.model}
+                                value={controlledInput.model}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Fabricante"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="manufacturer"
-                            name="manufacturer"
-                            helperText={fieldErrorMessage.manufacturer}
-                            error={fieldError.manufacturer}
-                            defaultValue={props.record.manufacturer}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número Serial"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="serial_number"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.serial_number}
+                                error={fieldError.serial_number}
+                                value={controlledInput.serial_number}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Modelo"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="model"
-                            name="model"
-                            helperText={fieldErrorMessage.model}
-                            error={fieldError.model}
-                            defaultValue={props.record.model}
-                            onChange={handleInputChange}
-                        />
-
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número Serial"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="serial_number"
-                            name="serial_number"
-                            helperText={fieldErrorMessage.serial_number}
-                            error={fieldError.serial_number}
-                            defaultValue={props.record.serial_number}
-                            onChange={handleInputChange}
-                        />
-
-                        <Box sx={{ display: "flex", mt: 2 }}>
+                        <Grid item xs={12} mt={1}>
                             <DatePicker
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}
@@ -275,35 +266,36 @@ export const UpdateBatteryFormulary = React.memo((props) => {
                                 value={controlledInput.last_charge}
                             />
                             <FormHelperText error>{fieldErrorMessage.last_charge}</FormHelperText>
-                        </Box>
+                        </Grid>
 
-                        <Box sx={{ mt: 2, display: 'flex' }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
+                    </Grid>
 
-                        <Box sx={{ mt: 2 }}>
-                            <img ref={htmlImage} style={{ borderRadius: 10, width: "190px" }} src={props.record.image_url}></img>
-                        </Box>
+                    <Box sx={{ mt: 2, display: 'flex' }}>
+                        <label htmlFor="contained-button-file">
+                            <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                            </Button>
+                        </label>
+                    </Box>
 
-                    </DialogContent>
+                    <Box sx={{ mt: 2 }}>
+                        <img ref={htmlImage} style={{ borderRadius: 10, width: "190px" }} src={props.record.image_url}></img>
+                    </Box>
+                </DialogContent>
 
-                    {(!loading && displayAlert.display) &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                {(!loading && displayAlert.display) &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                    {loading && <LinearProgress />}
+                {loading && <LinearProgress />}
 
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
-                    </DialogActions>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
 
-                </Box>
             </Dialog>
         </>
     )

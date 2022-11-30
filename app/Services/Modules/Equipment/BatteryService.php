@@ -16,9 +16,9 @@ class BatteryService implements ServiceInterface
         $this->repository = $batteryRepository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        $data = $this->repository->getPaginate($limit, $page, $search);
 
         if ($data->total() > 0) {
             return response(new BatteriesPanelResource($data), 200);
@@ -71,10 +71,10 @@ class BatteryService implements ServiceInterface
      * @param $battery_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteOne(string $identifier)
+    public function delete(array $ids)
     {
-        $battery = $this->repository->deleteOne($identifier);
+        $battery = $this->repository->delete($ids);
 
-        return response(["message" => "Bateria deletada com sucesso!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

@@ -16,13 +16,11 @@ class BatteryRepository implements RepositoryInterface
         $this->batteryModel = $batteryModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->batteryModel->with('image')
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page_number));
+            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
     function createOne(Collection $data)
@@ -68,15 +66,15 @@ class BatteryRepository implements RepositoryInterface
         });
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        return DB::transaction(function () use ($identifier) {
+        foreach ($ids as $battery_id) {
 
-            $battery = $this->batteryModel->findOrFail($identifier);
+            $battery = $this->batteryModel->findOrFail($battery_id);
 
             $battery->delete();
+        }
 
-            return $battery;
-        });
+        return $battery;
     }
 }

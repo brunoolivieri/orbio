@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Grid, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -47,23 +47,26 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
     }
 
-    const handleClose = () => {
+    function handleClose() {
+        setFieldError(initialFieldError);
+        setFieldErrorMessage(initialFieldErrorMessage);
+        setDisplayAlert(initialDisplatAlert);
+        setLoading(false);
         setOpen(false);
     }
 
-    const handleEquipmentUpdateSubmit = (event) => {
-        event.preventDefault();
+    function handleSubmit() {
         if (formValidation()) {
             setLoading(true);
             requestServerOperation();
         }
     }
 
-    const formValidation = () => {
+    function formValidation() {
 
         let nameValidation = FormValidation(controlledInput.name, 3);
         let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
@@ -101,7 +104,7 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
         return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error);
     }
 
-    const requestServerOperation = () => {
+    function requestServerOperation() {
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);
@@ -119,25 +122,25 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
 
         axios.post(`/api/equipments-module-equipment/${controlledInput.id}`, formData)
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
-    const successResponse = (response) => {
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
 
-    const errorResponse = (response) => {
+    function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
         let request_errors = {
@@ -184,7 +187,7 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
         });
     }
 
-    const handleUploadedImage = (event) => {
+    function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
             htmlImage.current.src = "";
@@ -193,7 +196,7 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
         }
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
@@ -202,8 +205,8 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.read == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.read == 1}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -214,130 +217,150 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
-                <Box component="form" noValidate onSubmit={handleEquipmentUpdateSubmit} >
-                    <DialogContent>
+                <DialogTitle>ATUALIZAÇÃO DE EQUIPAMENTO</DialogTitle>
+                <Divider />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="ID do equipamento"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="id"
-                            name="id"
-                            defaultValue={props.record.id}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                <DialogContent>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="name"
-                            name="name"
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
-                            defaultValue={props.record.name}
-                            onChange={handleInputChange}
-                        />
+                    <Grid container spacing={1}>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Fabricante"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="manufacturer"
-                            name="manufacturer"
-                            helperText={fieldErrorMessage.manufacturer}
-                            error={fieldError.manufacturer}
-                            defaultValue={props.record.manufacturer}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="ID do equipamento"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="id"
+                                name="id"
+                                value={controlledInput.id}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Modelo"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="model"
-                            name="model"
-                            helperText={fieldErrorMessage.model}
-                            error={fieldError.model}
-                            defaultValue={props.record.model}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Nome"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="name"
+                                name="name"
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                                value={controlledInput.name}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número do registro"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="record_number"
-                            name="record_number"
-                            helperText={fieldErrorMessage.record_number}
-                            error={fieldError.record_number}
-                            defaultValue={props.record.record_number}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Fabricante"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="manufacturer"
+                                name="manufacturer"
+                                helperText={fieldErrorMessage.manufacturer}
+                                error={fieldError.manufacturer}
+                                value={controlledInput.manufacturer}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número Serial"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="serial_number"
-                            name="serial_number"
-                            helperText={fieldErrorMessage.serial_number}
-                            error={fieldError.serial_number}
-                            defaultValue={props.record.serial_number}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Modelo"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="model"
+                                name="model"
+                                helperText={fieldErrorMessage.model}
+                                error={fieldError.model}
+                                value={controlledInput.model}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Peso (KG)"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="weight"
-                            name="weight"
-                            helperText={fieldErrorMessage.weight}
-                            error={fieldError.weight}
-                            defaultValue={props.record.weight}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número do registro"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="record_number"
+                                name="record_number"
+                                helperText={fieldErrorMessage.record_number}
+                                error={fieldError.record_number}
+                                value={controlledInput.record_number}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Observação"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="observation"
-                            name="observation"
-                            helperText={fieldErrorMessage.observation}
-                            error={fieldError.observation}
-                            defaultValue={props.record.observation}
-                            onChange={handleInputChange}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número Serial"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="serial_number"
+                                name="serial_number"
+                                helperText={fieldErrorMessage.serial_number}
+                                error={fieldError.serial_number}
+                                value={controlledInput.serial_number}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
 
-                        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Peso (KG)"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="weight"
+                                name="weight"
+                                helperText={fieldErrorMessage.weight}
+                                error={fieldError.weight}
+                                value={controlledInput.weight}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Observação"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="observation"
+                                name="observation"
+                                helperText={fieldErrorMessage.observation}
+                                error={fieldError.observation}
+                                value={controlledInput.observation}
+                                onChange={handleInputChange}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
                             <DatePicker
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}
@@ -347,34 +370,35 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
                                 value={controlledInput.purchase_date}
                             />
                             <FormHelperText error>{fieldErrorMessage.purchase_date}</FormHelperText>
-                        </Box>
+                        </Grid>
+                    </Grid>
 
-                        <Box sx={{ mt: 2, display: 'flex' }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
+                    <Box sx={{ mt: 2, display: 'flex' }}>
+                        <label htmlFor="contained-button-file">
+                            <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                            </Button>
+                        </label>
+                    </Box>
 
-                        <Box sx={{ mt: 2 }}>
-                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} src={props.record.image_url}></img>
-                        </Box>
+                    <Box sx={{ mt: 2 }}>
+                        <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} src={props.record.image_url}></img>
+                    </Box>
 
-                    </DialogContent>
+                </DialogContent>
 
-                    {(!loading && displayAlert.display) &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                {(!loading && displayAlert.display) &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                    {loading && <LinearProgress />}
+                {loading && <LinearProgress />}
 
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>
-                    </DialogActions>
-                </Box>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar atualização</Button>
+                </DialogActions>
             </Dialog>
         </>
     )

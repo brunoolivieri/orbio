@@ -16,10 +16,10 @@ class EquipmentService implements ServiceInterface
         $this->repository = $equipmentRepository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
-      
+        $data = $this->repository->getPaginate($limit, $page, $search);
+
         if ($data->total() > 0) {
             return response(new EquipmentsPanelResource($data), 200);
         } else {
@@ -71,10 +71,10 @@ class EquipmentService implements ServiceInterface
      * @param $equipment_id
      * @return \Illuminate\Http\Response
      */
-    public function deleteOne(string $identifier)
+    public function delete(array $ids)
     {
-        $equipment = $this->repository->deleteOne($identifier);
+        $equipment = $this->repository->delete($ids);
 
-        return response(["message" => "Equipamento deletado com sucesso!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

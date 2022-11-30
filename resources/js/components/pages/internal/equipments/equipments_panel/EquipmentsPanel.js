@@ -1,14 +1,12 @@
-// React
 import * as React from 'react';
 // Material UI
-import { Table, TableBody, TableCell, TableContainer, TableHead, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, TablePagination, Menu, MenuItem, Checkbox } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
-import LinearProgress from '@mui/material/LinearProgress';
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faFilter } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -22,46 +20,111 @@ import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipme
 import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
 import { EquipmentInformation } from '../../../../structures/modules/equipment/equipments/EquipmentInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-// Libs
-import moment from 'moment';
 
-const StyledHeadTableCell = styled(TableCell)({
-  color: '#fff',
-  fontWeight: 700
-});
-
-const initialPagination = { total_records: 0, records_per_page: 0, total_pages: 0 };
-const initialPaginationConfig = { page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 };
+const columns = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  {
+    field: 'image',
+    headerName: 'Image',
+    width: 100,
+    sortable: false,
+    editable: false,
+    renderCell: (data) => {
+      return <img src={data.row.image_url} style={{ borderRadius: 5, width: '60px', height: '60px' }} />
+    }
+  },
+  {
+    field: 'name',
+    headerName: 'Nome',
+    flex: 1,
+    sortable: true,
+    editable: false,
+  },
+  {
+    field: 'manufacturer',
+    headerName: 'Fabricante',
+    type: 'number',
+    width: 150,
+    headerAlign: 'left',
+    sortable: true,
+    editable: false
+  },
+  {
+    field: 'model',
+    headerName: 'Modelo',
+    sortable: true,
+    editable: false,
+    flex: 1
+  },
+  {
+    field: 'record_number',
+    headerName: 'Nº registro',
+    sortable: true,
+    editable: false,
+    width: 120,
+  },
+  {
+    field: 'serial_number',
+    headerName: 'Nº serial',
+    sortable: true,
+    editable: false,
+    width: 120,
+  },
+  {
+    field: 'weight',
+    headerName: 'Peso',
+    sortable: true,
+    editable: false,
+    width: 120,
+  },
+  {
+    field: 'purchase_date',
+    headerName: 'Compra',
+    sortable: true,
+    editable: false,
+    width: 120,
+  },
+  {
+    field: 'observation',
+    headerName: 'Observação',
+    sortable: true,
+    editable: false,
+    width: 120,
+  },
+];
 
 export const EquipmentPanel = React.memo(() => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+
   const [records, setRecords] = React.useState([]);
-  const [pagination, setPagination] = React.useState(initialPagination);
-  const [paginationConfig, setPaginationConfig] = React.useState(initialPaginationConfig);
+  const [perPage, setPerPage] = React.useState(10);
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [totalRecords, setTotalRecords] = React.useState(0);
+  const [search, setSearch] = React.useState("0");
+  const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [searchField, setSearchField] = React.useState("");
-  const [selectedRecordIndex, setSelectedRecordIndex] = React.useState(null);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
+  const [reload, setReload] = React.useState(false);
+
   const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
-    const limit = paginationConfig.limit;
-    const search = paginationConfig.search;
-    const page = paginationConfig.page;
-    const order_by = paginationConfig.order_by;
-    const filter = paginationConfig.filter;
+    setLoading(true);
+    setRecords([]);
+    setSelectedRecords([]);
+    fetchRecords();
+  }, [reload]);
 
-    axios.get(`/api/equipments-module-equipment?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+  function fetchRecords() {
+
+    axios.get(`/api/equipments-module-equipment?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
-        setLoading(false);
         setRecords(response.data.records);
-        setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+        setTotalRecords(response.data.total_records);
 
         if (response.data.total_records > 1) {
           handleOpenSnackbar(`Foram encontrados ${response.data.total_records} equipamentos`, "success");
@@ -71,81 +134,35 @@ export const EquipmentPanel = React.memo(() => {
       })
       .catch(function (error) {
         handleOpenSnackbar(error.response.data.message, "error");
+      })
+      .finally(() => {
         setLoading(false);
-        setRecords([]);
-        setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-      });
-  }, [paginationConfig]);
+      })
+  }
 
-  function handleTablePageChange(event, value) {
-    setPaginationConfig({
-      page: value + 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: paginationConfig.search,
-      total_records: 0,
-      filter: 0
+  function handleChangePage(newPage) {
+    // If actual page is bigger than the new one, is a reduction of actual
+    // If actual is smaller, the page is increasing
+    setCurrentPage((current) => {
+      return current > newPage ? (current - 1) : newPage;
     });
+    setReload((old) => !old);
   }
 
-  function handleChangeRowsPerPage(event) {
-    setPaginationConfig({
-      page: 1,
-      limit: event.target.value,
-      order_by: "id",
-      search: paginationConfig.search,
-      total_records: 0,
-      filter: 0
-    });
+  function handleChangeRowsPerPage(newValue) {
+    setPerPage(newValue);
+    setCurrentPage(1);
+    setReload((old) => !old);
   }
 
-  function handleSearchSubmit(event) {
-    event.preventDefault();
-    setPaginationConfig({
-      page: 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: searchField,
-      total_records: 0,
-      filter: 0
-    });
-  }
-
-  function reloadTable() {
-    setSelectedRecordIndex(null);
-
-    setLoading(true);
-    setRecords([]);
-    setPagination({
-      total_records: 0,
-      records_per_page: 0,
-      total_pages: 0
-    });
-
-    setPaginationConfig({
-      page: 1,
-      limit: paginationConfig.limit,
-      order_by: "id",
-      search: 0,
-      total_records: 0,
-      filter: 0
-    });
-  }
-
-  function handleClickRadio(event) {
-    if (event.target.value === selectedRecordIndex) {
-      setSelectedRecordIndex(null);
-    } else if (event.target.value != selectedRecordIndex) {
-      setSelectedRecordIndex(event.target.value);
-    }
-  }
-
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget);
-  }
-
-  function handleClose() {
-    setAnchorEl(null);
+  function handleSelection(newSelectedIds) {
+    // newSelectedIds always bring all selections
+    const newSelectedRecords = records.filter((record) => {
+      if (newSelectedIds.includes(record.id)) {
+        return record;
+      }
+    })
+    setSelectedRecords(newSelectedRecords);
   }
 
   function handleOpenSnackbar(text, variant) {
@@ -159,84 +176,56 @@ export const EquipmentPanel = React.memo(() => {
       <Grid container spacing={1} alignItems="center" mb={1}>
 
         <Grid item>
-          {selectedRecordIndex &&
-            <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+          {selectedRecords.length > 0 &&
+            <IconButton>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
 
-          {selectedRecordIndex === null &&
-            <CreateEquipmentFormulary reload_table={reloadTable} />
+          {selectedRecords.length === 0 &&
+            <CreateEquipmentFormulary reloadTable={setReload} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
+              <IconButton>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
-          {(!loading && selectedRecordIndex != null) &&
-            <UpdateEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && selectedRecords.length === 1) &&
+            <UpdateEquipmentFormulary record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex == null &&
+          {(selectedRecords.length === 0) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true} >
+              <IconButton>
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
           }
 
-          {(!loading && selectedRecordIndex != null) &&
-            <DeleteEquipmentFormulary record={records[selectedRecordIndex]} record_setter={setSelectedRecordIndex} reload_table={reloadTable} />
+          {(!loading && selectedRecords.length > 0) &&
+            <DeleteEquipmentFormulary records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 
         <Grid item>
-          {selectedRecordIndex &&
-            <EquipmentInformation record={records[selectedRecordIndex]} />
-          }
-
-          {!selectedRecordIndex &&
-            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
-              <FontAwesomeIcon icon={faCircleInfo} color={selectedRecordIndex ? "#007937" : "#E0E0E0"} size="sm" />
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+            <IconButton>
+              <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
             </IconButton>
           }
-        </Grid>
 
-        <Grid item>
-          <Tooltip title="Filtros">
-            <IconButton
-              disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}
-              id="basic-button"
-              aria-controls={open ? 'basic-menu' : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClick}
-            >
-              <FontAwesomeIcon icon={faFilter} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
-            </IconButton>
-          </Tooltip>
+          {(selectedRecords.length === 1) &&
+            <EquipmentInformation record={selectedRecords[0]} />
+          }
         </Grid>
-
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            'aria-labelledby': 'basic-button',
-          }}
-        >
-          <MenuItem ><Checkbox /> Ativos </MenuItem>
-          <MenuItem ><Checkbox /> Deletados </MenuItem>
-        </Menu>
 
         <Grid item>
           {AuthData.data.user_powers["6"].profile_powers.read == 1 &&
@@ -252,7 +241,7 @@ export const EquipmentPanel = React.memo(() => {
 
         <Grid item>
           <Tooltip title="Carregar">
-            <IconButton onClick={reloadTable}>
+            <IconButton onClick={() => setReload((old) => !old)}>
               <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
             </IconButton>
           </Tooltip>
@@ -262,11 +251,12 @@ export const EquipmentPanel = React.memo(() => {
           <TextField
             fullWidth
             placeholder={"Pesquisar equipamento por ID e nome"}
-            onChange={(e) => setSearchField(e.currentTarget.value)}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{
               startAdornment:
                 <InputAdornment position="start">
-                  <IconButton onClick={handleSearchSubmit}>
+                  <IconButton onClick={() => setReload((old) => !old)}>
                     <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                   </IconButton>
                 </InputAdornment>,
@@ -277,69 +267,38 @@ export const EquipmentPanel = React.memo(() => {
           />
         </Grid>
 
-        {/* Geração da paginação */}
-        {(!loading && records.length > 0) &&
-          <Grid item>
-            <Stack spacing={2}>
-              <TablePagination
-                labelRowsPerPage="Linhas por página: "
-                component="div"
-                count={pagination.total_records}
-                page={paginationConfig.page - 1}
-                onPageChange={handleTablePageChange}
-                rowsPerPage={paginationConfig.limit}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
-            </Stack>
-          </Grid>
-        }
-
       </Grid>
 
-      <FormControl fullWidth>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={selectedRecordIndex}
-        >
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 500 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledHeadTableCell>ID</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Imagem</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Nome</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Fabricante</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Modelo</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Nº do Registro</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Nº Serial</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Peso (kg)</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                  <StyledHeadTableCell align="center">Compra</StyledHeadTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody className="tbody">
-                {(!loading && records.length > 0) &&
-                  records.map((row, index) => (
-                    <TableRow key={row.id}>
-                      <TableCell><FormControlLabel value={index} control={<Radio onClick={(event) => { handleClickRadio(event) }} />} label={row.id} /></TableCell>
-                      <TableCell align="center"><img src={row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} /></TableCell>
-                      <TableCell align="center">{row.name}</TableCell>
-                      <TableCell align="center">{row.manufacturer}</TableCell>
-                      <TableCell align="center">{row.model}</TableCell>
-                      <TableCell align="center">{row.record_number}</TableCell>
-                      <TableCell align="center">{row.serial_number}</TableCell>
-                      <TableCell align="center">{row.weight}</TableCell>
-                      <TableCell align="center">{row.observation}</TableCell>
-                      <TableCell align="center">{moment(row.purchase_date).format("DD/MM/YYYY")}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </RadioGroup>
-      </FormControl>
-      {loading && <LinearProgress color="success" />}
+      <Box
+        sx={{ height: 500, width: '100%' }}
+      >
+        <DataGrid
+          rows={records}
+          columns={columns}
+          pageSize={perPage}
+          loading={loading}
+          page={currentPage - 1}
+          rowsPerPageOptions={[10, 25, 50, 100]}
+          rowHeight={70}
+          checkboxSelection
+          disableSelectionOnClick
+          paginationMode='server'
+          experimentalFeatures={{ newEditingApi: true }}
+          onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+          onSelectionModelChange={handleSelection}
+          onPageChange={(newPage) => handleChangePage(newPage + 1)}
+          rowCount={totalRecords}
+          localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+          sx={{
+            "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+              outline: "none !important",
+            },
+            '& .super-app-theme--header': {
+              color: '#222'
+            }
+          }}
+        />
+      </Box>
     </>
   )
 });

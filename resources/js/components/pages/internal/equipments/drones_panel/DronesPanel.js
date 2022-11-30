@@ -30,7 +30,7 @@ const columns = [
         sortable: false,
         editable: false,
         renderCell: (data) => {
-            return <img src={data.row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} />
+            return <img src={data.row.image_url} style={{ borderRadius: 5, width: '60px', height: '60px' }} />
         }
     },
     {
@@ -170,7 +170,7 @@ export const DronesPanel = () => {
 
                 <Grid item>
                     {selectedRecords.length > 0 &&
-                        <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
+                        <IconButton>
                             <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
                         </IconButton>
                     }
@@ -183,7 +183,7 @@ export const DronesPanel = () => {
                 <Grid item>
                     {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
                         <Tooltip title="Selecione um registro">
-                            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
+                            <IconButton>
                                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
@@ -197,7 +197,7 @@ export const DronesPanel = () => {
                 <Grid item>
                     {(selectedRecords.length === 0) &&
                         <Tooltip title="Selecione um registro">
-                            <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
+                            <IconButton>
                                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
                             </IconButton>
                         </Tooltip>
@@ -210,7 +210,7 @@ export const DronesPanel = () => {
 
                 <Grid item>
                     {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
-                        <IconButton disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1} >
+                        <IconButton>
                             <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
                         </IconButton>
                     }

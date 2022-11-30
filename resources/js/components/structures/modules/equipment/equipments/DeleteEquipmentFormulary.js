@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -8,58 +8,63 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import axios from '../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteEquipmentFormulary = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-    const [controlledInput] = React.useState({ id: props.record.id });
-    const [loading, setLoading] = React.useState(false);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+    const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+    const [loading, setLoading] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
+        const ids = props.records.map((item) => item.id);
+        setSelectedIds(ids);
     }
 
-    const handleClose = () => {
-        setDisplayAlert(initialDisplatAlert);
+    function handleClose() {
+        setDisplayAlert(initialDisplayAlert);
         setLoading(false);
         setOpen(false);
     }
 
-    const handleEquipmentDeleteSubmit = (event) => {
-        event.preventDefault();
+    function handleSubmit() {
         setLoading(true);
         requestServerOperation();
     }
 
     const requestServerOperation = () => {
-        axios.delete(`/api/equipments-module-equipment/${controlledInput.id}}`)
+        axios.delete(`/api/equipments-module-equipment/delete`, {
+            data: {
+                ids: selectedIds
+            }
+        })
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response.data);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
-    const successResponse = (response) => {
+    function successResponse(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
 
-    const errorResponse = (response) => {
+    function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
 
@@ -68,8 +73,8 @@ export const DeleteEquipmentFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.read == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.read == 1}>
+                    <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -80,128 +85,28 @@ export const DeleteEquipmentFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>DELEÇÃO | ID: {props.record.id}</DialogTitle>
-                <Box component="form" noValidate onSubmit={handleEquipmentDeleteSubmit} >
-                    <DialogContent>
+                <DialogTitle>DELEÇÃO DE EQUIPAMENTOS</DialogTitle>
+                <Divider />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="ID do equipamento"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="id"
-                            name="id"
-                            defaultValue={props.record.id}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                <DialogContent>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="name"
-                            name="name"
-                            defaultValue={props.record.name}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                    <DialogContentText mb={2}>
+                        {selectedIds.length > 1 ? `As ${selectedIds.length} baterias selecionadas serão deletadas` : "A bateria selecionada será deletada"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+                    </DialogContentText>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Fabricante"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="manufacturer"
-                            name="manufacturer"
-                            defaultValue={props.record.manufacturer}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                </DialogContent>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Modelo"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="model"
-                            name="model"
-                            defaultValue={props.record.model}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                {displayAlert.display &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número do registro"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="record_number"
-                            name="record_number"
-                            defaultValue={props.record.record_number}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
+                {loading && <LinearProgress />}
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número Serial"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="serial_number"
-                            name="serial_number"
-                            defaultValue={props.record.serial_number}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
-
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Peso (KG)"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            id="weight"
-                            name="weight"
-                            defaultValue={props.record.weight}
-                            InputProps={{
-                                readOnly: true,
-                            }}
-                        />
-
-                    </DialogContent>
-
-                    {(!loading && displayAlert.display) &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
-
-                    {loading && <LinearProgress />}
-
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Confirmar deleção</Button>
-                    </DialogActions>
-                </Box>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
             </Dialog>
         </>
     )

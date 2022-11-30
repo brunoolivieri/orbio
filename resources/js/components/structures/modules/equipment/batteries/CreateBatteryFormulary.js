@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Divider, Grid } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -47,8 +47,7 @@ export const CreateBatteryFormulary = React.memo((props) => {
         setLoading(false);
     }
 
-    function handleBatteryRegistrationSubmit(event) {
-        event.preventDefault();
+    function handleSubmit() {
         if (formValidation()) {
             setLoading(true);
             requestServerOperation();
@@ -96,20 +95,20 @@ export const CreateBatteryFormulary = React.memo((props) => {
 
         axios.post("/api/equipments-module-battery", formData)
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
-    function successResponse(response) {
+    const successResponse = (response) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
@@ -169,8 +168,8 @@ export const CreateBatteryFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Nova bateria">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -182,63 +181,73 @@ export const CreateBatteryFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>CADASTRO DE BATERIA</DialogTitle>
+                <Divider />
 
-                <Box component="form" noValidate onSubmit={handleBatteryRegistrationSubmit} >
-                    <DialogContent>
+                <DialogContent>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="name"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
-                        />
+                    <Grid container spacing={1}>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Fabricante"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="manufacturer"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.manufacturer}
-                            error={fieldError.manufacturer}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Nome"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="name"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Modelo"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="model"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.model}
-                            error={fieldError.model}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Fabricante"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="manufacturer"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.manufacturer}
+                                error={fieldError.manufacturer}
+                            />
+                        </Grid>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número Serial"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="serial_number"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.serial_number}
-                            error={fieldError.serial_number}
-                        />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Modelo"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="model"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.model}
+                                error={fieldError.model}
+                            />
+                        </Grid>
 
-                        <Box sx={{ display: "flex", mt: 2 }}>
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número Serial"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                name="serial_number"
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.serial_number}
+                                error={fieldError.serial_number}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
                             <DatePicker
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}
@@ -248,35 +257,36 @@ export const CreateBatteryFormulary = React.memo((props) => {
                                 value={controlledInput.last_charge}
                             />
                             <FormHelperText error>{fieldErrorMessage.last_charge}</FormHelperText>
-                        </Box>
+                        </Grid>
 
-                        <Box sx={{ mt: 2, display: 'flex' }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
+                    </Grid>
 
-                        <Box sx={{ mt: 2 }}>
-                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />
-                        </Box>
+                    <Box sx={{ mt: 2, display: 'flex' }}>
+                        <label htmlFor="contained-button-file">
+                            <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                            </Button>
+                        </label>
+                    </Box>
 
-                    </DialogContent>
+                    <Box sx={{ mt: 2 }}>
+                        <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />
+                    </Box>
 
-                    {(!loading && displayAlert.display) &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                </DialogContent>
 
-                    {loading && <LinearProgress />}
+                {(!loading && displayAlert.display) &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Criar bateria</Button>
-                    </DialogActions>
+                {loading && <LinearProgress />}
 
-                </Box>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
 
             </Dialog>
         </>
