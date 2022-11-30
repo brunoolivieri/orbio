@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, Grid, FormHelperText } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, FormHelperText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -74,8 +74,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
       });
   }, [selectedFlightPlan]);
 
-  const handleRegistrationSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     if (formValidation()) {
       setLoading(true);
       requestServerOperation();
@@ -104,25 +103,25 @@ export const CreateIncidentFormulary = React.memo((props) => {
       service_order_id: selectedServiceOrder
     })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
-      setLoading(false);
+      props.reloadTable((old) => !old);
       handleClose();
     }, 2000);
   }
 
-  const errorResponse = (response) => {
+  function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
     let request_errors = {
@@ -151,7 +150,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
     });
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
@@ -160,8 +159,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo incidente">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["5"].profile_powers.write == 1 ? false : true}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["5"].profile_powers.write == 1}>
+          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -173,91 +172,89 @@ export const CreateIncidentFormulary = React.memo((props) => {
         maxWidth="md"
       >
         <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleRegistrationSubmit} >
-          <DialogContent>
-            <Grid item container spacing={1}>
+        <DialogContent>
+          <Grid item container spacing={1} mt={1}>
 
-              <Grid item xs={12}>
-                <DatePicker
-                  setControlledInput={setControlledInput}
-                  controlledInput={controlledInput}
-                  name={"date"}
-                  label={"Data do incidente"}
-                  error={fieldError.date}
-                  value={controlledInput.date}
-                  operation={"create"}
-                  read_only={false}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  type="text"
-                  margin="dense"
-                  label="Tipo do incidente"
-                  fullWidth
-                  variant="outlined"
-                  name="type"
-                  onChange={handleInputChange}
-                  helperText={fieldErrorMessage.type}
-                  error={fieldError.type}
-                />
-              </Grid>
-
-              <Grid item xs={12} mb={1}>
-                <TextField
-                  type="text"
-                  margin="dense"
-                  label="Descrição"
-                  fullWidth
-                  variant="outlined"
-                  name="description"
-                  onChange={handleInputChange}
-                  helperText={fieldErrorMessage.description}
-                  error={fieldError.description}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <SelectExternalData
-                  label_text={"Plano de voo"}
-                  primary_key={"id"}
-                  key_content={"name"}
-                  setter={setSelectedFlightPlan}
-                  options={flightPlans}
-                  error={fieldError.flight_plan_id}
-                  value={selectedFlightPlan}
-                />
-                <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <SelectExternalData
-                  label_text={"Ordem de serviço"}
-                  primary_key={"id"}
-                  key_content={"number"}
-                  setter={setSelectedServiceOrder}
-                  options={serviceOrdersByFlightPlan}
-                  error={fieldError.service_order_id}
-                  value={selectedServiceOrder}
-                />
-                <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
-              </Grid>
+            <Grid item xs={12}>
+              <DatePicker
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+                name={"date"}
+                label={"Data do incidente"}
+                error={fieldError.date}
+                value={controlledInput.date}
+                operation={"create"}
+                read_only={false}
+              />
             </Grid>
-          </DialogContent>
 
-          {
-            (!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+            <Grid item xs={12}>
+              <TextField
+                type="text"
+                margin="dense"
+                label="Tipo do incidente"
+                fullWidth
+                variant="outlined"
+                name="type"
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.type}
+                error={fieldError.type}
+              />
+            </Grid>
 
-          {loading && <LinearProgress />}
+            <Grid item xs={12} mb={1}>
+              <TextField
+                type="text"
+                margin="dense"
+                label="Descrição"
+                fullWidth
+                variant="outlined"
+                name="description"
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.description}
+                error={fieldError.description}
+              />
+            </Grid>
 
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-        </Box >
+            <Grid item xs={12} md={6}>
+              <SelectExternalData
+                label_text={"Plano de voo"}
+                primary_key={"id"}
+                key_content={"name"}
+                setter={setSelectedFlightPlan}
+                options={flightPlans}
+                error={fieldError.flight_plan_id}
+                value={selectedFlightPlan}
+              />
+              <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <SelectExternalData
+                label_text={"Ordem de serviço"}
+                primary_key={"id"}
+                key_content={"number"}
+                setter={setSelectedServiceOrder}
+                options={serviceOrdersByFlightPlan}
+                error={fieldError.service_order_id}
+                value={selectedServiceOrder}
+              />
+              <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
+            </Grid>
+          </Grid>
+        </DialogContent>
+
+        {
+          (!loading && displayAlert.display) &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
+
+        {loading && <LinearProgress />}
+
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
       </Dialog >
     </>
   )

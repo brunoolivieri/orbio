@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
@@ -8,38 +8,43 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../services/AxiosApi';
 
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteIncidentFormulary = React.memo((props) => {
 
-  // ============================================================================== STATES ============================================================================== //
+  /// ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-  const [controlledInput] = React.useState({ id: props.record.id });
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
-  const [loading, setLoading] = React.useState(false);
+  const [selectedIds, setSelectedIds] = React.useState([]);
   const [open, setOpen] = React.useState(false);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
+    const ids = props.records.map((item) => item.id);
+    setSelectedIds(ids);
   }
 
-  const handleClose = () => {
-    setDisplayAlert({ display: false, type: "", message: "" });
+  function handleClose() {
+    setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
-  const handleSubmitOperation = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     setLoading(false);
     requestServerOperation();
   }
 
   const requestServerOperation = () => {
-    axios.delete(`/api/incidents-module/${controlledInput.id}`)
+    axios.delete(`/api/incidents-module/delete`, {
+      data: {
+        ids: selectedIds
+      }
+    })
       .then(function (response) {
         setLoading(false);
         successResponse(response);
@@ -53,7 +58,7 @@ export const DeleteIncidentFormulary = React.memo((props) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
+      props.reloadTable((old) => !old);
       setLoading(false);
       handleClose();
     }, 2000);
@@ -68,8 +73,8 @@ export const DeleteIncidentFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={AuthData.data.user_powers["5"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={!AuthData.data.user_powers["5"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -80,54 +85,29 @@ export const DeleteIncidentFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>DELEÇÃO | INCIDENTE (ID: {props.record.id})</DialogTitle>
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-          <DialogContent>
+        <DialogTitle>DELEÇÃO DE INCIDENTES</DialogTitle>
+        <Divider />
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="ID do incidente"
-              fullWidth
-              variant="outlined"
-              required
-              id="id"
-              name="id"
-              InputProps={{
-                readOnly: true
-              }}
-              defaultValue={props.record.id}
-              sx={{ mb: 2 }}
-            />
+        <DialogContent>
 
-            <TextField
-              type="text"
-              margin="dense"
-              label="Tipo do incidente"
-              fullWidth
-              variant="outlined"
-              required
-              id="type"
-              name="type"
-              defaultValue={props.record.type}
-              InputProps={{
-                readOnly: true
-              }}
-            />
+          <DialogContentText mb={2}>
+            {selectedIds.length > 1 ? `Os ${selectedIds.length} incidentes selecionados serão deletados` : "O incidente selecionado será deletado"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+          </DialogContentText>
 
-          </DialogContent>
+        </DialogContent>
 
-          {(!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {loading && <LinearProgress />}
+        {loading && <LinearProgress />}
 
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-        </Box>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
+
       </Dialog>
     </>
   )

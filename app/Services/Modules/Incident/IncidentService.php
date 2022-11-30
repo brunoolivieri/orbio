@@ -47,6 +47,6 @@ class IncidentService implements ServiceInterface
     {
         $incident = $this->repository->delete($ids);
 
-        return response(["message" => "Incidente deletado com sucesso!"], 200);
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

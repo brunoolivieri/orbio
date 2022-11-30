@@ -105,7 +105,7 @@ export const DeleteUserFormulary = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+          <Button disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
         </DialogActions>
 
       </Dialog>

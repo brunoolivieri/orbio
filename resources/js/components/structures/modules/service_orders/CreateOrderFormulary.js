@@ -41,18 +41,18 @@ export const CreateOrderFormulary = React.memo((props) => {
     setOpen(true);
   }
 
-  function handleClose() {
-    setControlledInput(initialControlledInput);
+  const handleClose = () => {
+    setOpen(false);
+    setLoading(false);
     setFieldError(initialFieldError);
     setFieldErrorMessage(initialFieldErrorMessage);
     setDisplayAlert(initialDisplatAlert);
-    setLoading(false);
-    setOpen(false);
+    setControlledInput(initialControlledInput);
   }
 
   function handleSubmit() {
     if (!formValidation()) {
-      return ''
+      return '';
     }
     requestServerOperation();
   }
@@ -74,6 +74,7 @@ export const CreateOrderFormulary = React.memo((props) => {
       flight_plans: fligthPlansValidate.error,
       status: statusValidate.error
     });
+
     setFieldErrorMessage({
       date_interval: dateValidate.message,
       pilot_id: pilotNameValidate.message,
@@ -102,20 +103,20 @@ export const CreateOrderFormulary = React.memo((props) => {
       flight_plans: selectedFlightPlans
     })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
-      });
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
-      setLoading(false);
       handleClose();
     }, 2000);
   }
@@ -326,7 +327,8 @@ export const CreateOrderFormulary = React.memo((props) => {
           </Grid>
         </DialogContent>
 
-        {(!loading && displayAlert.display) &&
+        {
+          (!loading && displayAlert.display) &&
           <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
         }
 
