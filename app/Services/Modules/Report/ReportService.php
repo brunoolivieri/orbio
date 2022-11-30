@@ -22,9 +22,9 @@ class ReportService implements ServiceInterface
         $this->repository = $repository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        $data = $this->repository->getPaginate($limit, $page, $search);
 
         if ($data->total() > 0) {
             return response(new ReportsPanelResource($data), 200);
@@ -77,8 +77,10 @@ class ReportService implements ServiceInterface
         return response(["message" => "Relatório atualizado com sucesso!"], 200);
     }
 
-    public function deleteOne(string $identifier)
+    public function delete(array $ids)
     {
-        //
+        $report = $this->repository->delete($ids);
+
+        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

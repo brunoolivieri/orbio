@@ -90,20 +90,6 @@ export const CreateReportFormulary = (props) => {
 
       const report_file = new File([report_blob], `${controlledInput.name}.pdf`, { type: 'application/pdf' });
 
-      /*
-      Test blob 
-
-      var fileURL = URL.createObjectURL(report_file);
-      window.open(fileURL);
-
-      const url = window.URL.createObjectURL(new Blob([report_file]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `teste.pdf`); 
-      document.body.appendChild(link);
-      link.click();
-      */
-
       const formData = new FormData();
       formData.append('name', controlledInput.name);
       formData.append('file', report_file);
@@ -189,7 +175,7 @@ export const CreateReportFormulary = (props) => {
 
       <Tooltip title="Gerar relatório">
         <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPlus} size="sm" color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "green" : "#E0E0E0"} />
+          <FontAwesomeIcon icon={faPlus} size="sm" color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} />
         </IconButton>
       </Tooltip>
 

@@ -397,7 +397,7 @@ export const UpdateEquipmentFormulary = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar atualização</Button>
+                    <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
                 </DialogActions>
             </Dialog>
         </>

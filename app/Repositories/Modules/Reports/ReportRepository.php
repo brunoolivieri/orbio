@@ -18,14 +18,12 @@ class ReportRepository implements RepositoryInterface
         $this->serviceOrderModel = $serviceOrderModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->reportModel
             ->with("service_order")
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page_number);
+            ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
     function createOne(Collection $data)
@@ -63,11 +61,13 @@ class ReportRepository implements RepositoryInterface
         return $report;
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        $report = $this->reportModel->findOrFail($identifier);
+        foreach ($ids as $report_id) {
+            $report = $this->reportModel->findOrFail($report_id);
 
-        $report->delete();
+            $report->delete();
+        }
 
         return $report;
     }
