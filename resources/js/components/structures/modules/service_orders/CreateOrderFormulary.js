@@ -93,6 +93,8 @@ export const CreateOrderFormulary = React.memo((props) => {
   }
 
   function requestServerOperation() {
+    setLoading(true);
+
     axios.post(`/api/orders-module`, {
       start_date: controlledInput.start_date,
       end_date: controlledInput.end_date,

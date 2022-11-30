@@ -10,6 +10,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
@@ -50,7 +51,7 @@ const columns = [
                     <Tooltip title="Visualizar plano de voo">
                         <Link href={`/internal/map?file=${data.row.flight_plan.path}`} target="_blank">
                             <IconButton>
-                                <FontAwesomeIcon icon={faMap} color={"#00713A"} size="sm" />
+                                <FontAwesomeIcon icon={faEye} color={"#00713A"} size="sm" />
                             </IconButton>
                         </Link>
                     </Tooltip>

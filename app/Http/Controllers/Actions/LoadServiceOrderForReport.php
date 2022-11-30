@@ -29,10 +29,8 @@ class LoadServiceOrderForReport extends Controller
        
         $data = $this->service->getPaginate(
             request()->limit,
-            request()->order_by,
             request()->page,
-            is_null(request()->search) ? "0" : request()->search,
-            request()->filter === "0" ? [] : request()->filter
+            is_null(request()->search) ? "0" : request()->search
         );
 
         if ($data->total() > 0) {

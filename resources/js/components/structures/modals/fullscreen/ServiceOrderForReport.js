@@ -1,9 +1,9 @@
 // React
 import * as React from 'react';
 // MaterialUI
-import { Table, TableBody, TableCell, TableContainer, Tooltip, IconButton, Grid, TextField, styled, TableRow, Paper, Stack, Chip, InputAdornment, Radio, RadioGroup, FormControlLabel, FormControl, Badge, TablePagination, TableHead } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
+import { DataGrid, ptBR } from '@mui/x-data-grid';
 import ErrorIcon from '@mui/icons-material/Error';
-import MapIcon from '@mui/icons-material/Map';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';
@@ -12,8 +12,6 @@ import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
-import LinearProgress from '@mui/material/LinearProgress';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -22,6 +20,91 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import axios from '../../../../services/AxiosApi';
 // Libs
 import { useSnackbar } from 'notistack';
+
+const columns = [
+    {
+        field: 'id',
+        headerName: 'ID',
+        width: 90
+    },
+    {
+        field: 'status',
+        headerName: 'Status',
+        width: 100,
+        sortable: true,
+        editable: false,
+        renderCell: (data) => {
+            const status = data.row.status;
+            return <Chip label={status ? "Ativo" : "Inativo"} color={status ? "success" : "error"} variant="outlined" />
+        }
+    },
+    {
+        field: 'number',
+        headerName: 'Número',
+        flex: 1,
+        sortable: true,
+        editable: false,
+    },
+    {
+        field: 'creator',
+        headerName: 'Criador',
+        type: 'number',
+        width: 150,
+        headerAlign: 'left',
+        sortable: true,
+        editable: false,
+        renderCell: (data) => {
+            const status = data.row.users.creator.status;
+            return <Chip label={data.row.users.creator.name} color={status ? "success" : "error"} variant="outlined" />
+        }
+    },
+    {
+        field: 'pilot',
+        headerName: 'Piloto',
+        sortable: true,
+        editable: false,
+        flex: 1,
+        renderCell: (data) => {
+            const status = data.row.users.pilot.status;
+            return <Chip label={data.row.users.pilot.name} color={status ? "success" : "error"} variant="outlined" />
+        }
+    },
+    {
+        field: 'client',
+        headerName: 'Cliente',
+        sortable: true,
+        editable: false,
+        flex: 1,
+        renderCell: (data) => {
+            const status = data.row.users.client.status;
+            return <Chip label={data.row.users.client.name} color={status ? "success" : "error"} variant="outlined" />
+        }
+    },
+    {
+        field: 'observation',
+        headerName: 'Descrição',
+        sortable: true,
+        editable: false,
+        width: 150
+    },
+    {
+        field: 'flight_plans',
+        headerName: 'Planos de voo',
+        sortable: true,
+        editable: false,
+        width: 150,
+        valueGetter: (data) => {
+            return data.row.flight_plans.length;
+        }
+    },
+    {
+        field: 'total_logs',
+        headerName: 'Logs',
+        sortable: true,
+        editable: false,
+        width: 150
+    }
+];
 
 const resetParentControlledInput = {
     name: '',
@@ -38,12 +121,7 @@ const resetParentControlledInput = {
     temperature: '',
     humidity: '',
     wind: ''
-};
-
-const StyledHeadTableCell = styled(TableCell)({
-    color: '#fff',
-    fontWeight: 700
-});
+}
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -53,36 +131,48 @@ export const ServiceOrderForReport = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const [open, setOpen] = React.useState(false);
-    const [loading, setLoading] = React.useState(true);
     const [records, setRecords] = React.useState([]);
-    const [pagination, setPagination] = React.useState({ total_records: 0, records_per_page: 0, total_pages: 0 });
-    const [paginationConfig, setPaginationConfig] = React.useState({ page: 1, limit: 10, order_by: "id", search: 0, total_records: 0, filter: 0 });
-    const [selectedRecordID, setSelectedRecordID] = React.useState(null);
-    const [searchField, setSearchField] = React.useState("");
+    const [perPage, setPerPage] = React.useState(10);
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [totalRecords, setTotalRecords] = React.useState(0);
+    const [search, setSearch] = React.useState("0");
+    const [selectedRecordID, setSelectedRecordID] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+    const [reload, setReload] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
 
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
+    const handleOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedRecordID([]);
+        props.setServiceOrder(null);
+    }
+
+    const handleSave = () => {
+        setOpen(false);
+    }
+
     React.useEffect(() => {
-        serverLoadRecords();
-    }, [paginationConfig]);
+        setLoading(true);
+        setRecords([]);
+        setSelectedRecordID([]);
+        fetchRecords();
+    }, [reload]);
 
-    function serverLoadRecords() {
+    function fetchRecords() {
 
-        const limit = paginationConfig.limit;
-        const search = paginationConfig.search;
-        const page = paginationConfig.page;
-        const order_by = paginationConfig.order_by;
-        const filter = paginationConfig.filter;
-
-        axios.get(`api/load-service-orders-for-report?limit=${limit}&search=${search}&page=${page}&order_by=${order_by}&filter=${filter}`)
+        axios.get(`api/load-service-orders-for-report?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
 
-                setLoading(false);
                 setRecords(response.data.records);
-                setPagination({ total_records: response.data.total_records, records_per_page: response.data.records_per_page, total_pages: response.data.total_pages });
+                setTotalRecords(response.data.total_records);
 
                 if (response.data.total_records > 1) {
                     handleOpenSnackbar(`Foram encontrados ${response.data.total_records} ordem de serviço`, "success");
@@ -92,113 +182,69 @@ export const ServiceOrderForReport = React.memo((props) => {
 
             })
             .catch(function (error) {
-
-                const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-                handleOpenSnackbar(error_message, "error");
-
+                handleOpenSnackbar(error.response.data.message, "error");
+            })
+            .finally(() => {
                 setLoading(false);
-                setRecords([]);
-                setPagination({ total_records: 0, records_per_page: 0, total_pages: 0 });
-
-            });
-
-
+            })
     }
 
-    const handleTablePageChange = (event, value) => {
-
-        setPaginationConfig({
-            page: value + 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: paginationConfig.search,
-            total_records: 0,
-            filter: 0
+    function handleChangePage(newPage) {
+        // If actual page is bigger than the new one, is a reduction of actual
+        // If actual is smaller, the page is increasing
+        setCurrentPage((current) => {
+            return current > newPage ? (current - 1) : newPage;
         });
-
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-
-        setPaginationConfig({
-            page: 1,
-            limit: event.target.value,
-            order_by: "id",
-            search: paginationConfig.search,
-            total_records: 0,
-            filter: 0
-        });
-
-    };
-
-    function handleSearchSubmit(event) {
-        event.preventDefault();
-
-        setPaginationConfig({
-            page: 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: searchField,
-            total_records: 0,
-            filter: 0
-        });
-
+        setReload((old) => !old);
     }
 
-    const reloadTable = () => {
-
-        setSelectedRecordID(null);
-
-        setLoading(true);
-        setRecords([]);
-        setPagination({
-            total_records: 0,
-            records_per_page: 0,
-            total_pages: 0
-        });
-
-        setPaginationConfig({
-            page: 1,
-            limit: paginationConfig.limit,
-            order_by: "id",
-            search: 0,
-            total_records: 0,
-            filter: 0
-        });
-
+    function handleChangeRowsPerPage(newValue) {
+        setPerPage(newValue);
+        setCurrentPage(1);
+        setReload((old) => !old);
     }
 
-    const handleClickRadio = (service_order) => {
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
+    }
 
-        const service_order_id = service_order.id;
+    function handleSelection(newSelection) {
 
-        if (service_order_id === selectedRecordID) {
+        let new_selection_id = [];
 
-            setSelectedRecordID(null);
-            props.setServiceOrder(null);
-            props.setControlledInput(resetParentControlledInput);
-            props.setFlightPlansData(null);
+        // In reality, the === 1 case is correct by default
+        // But, in two cases the props updates are necessary, so this was made just for respect the DRY principle
+        if (newSelection.length == 1 || newSelection.length > 1) {
 
-        } else if (service_order_id != selectedRecordID) {
+            const new_selection_id = newSelection[newSelection.length - 1];
+
+            // Get correspondent entire record by ID
+            const new_service_order_record = records.filter((record) => {
+                if (new_selection_id == record.id) {
+                    return record;
+                }
+            })
+
+            // ==== PROPS UPDATES ==== //
 
             // Get state and city based in one of the flight plans
-            const service_order_state = service_order.flight_plans[0].localization.state;
-            const service_order_city = service_order.flight_plans[0].localization.city;
+            const service_order_state = new_service_order_record[0].flight_plans[0].localization.state;
+            const service_order_city = new_service_order_record[0].flight_plans[0].localization.city;
 
-            setSelectedRecordID(service_order_id);
-            props.setServiceOrder(service_order);
+            // Pass new service order record to parent 
+            props.setServiceOrder(new_service_order_record[0]);
             props.setControlledInput({
                 name: '',
-                client: service_order.users.client.name,
+                client: new_service_order_record[0].users.client.name,
                 state: service_order_state,
                 city: service_order_city,
                 farm: '',
-                responsible: service_order.users.pilot.name
+                responsible: new_service_order_record[0].users.pilot.name
             });
 
             // Get necessary data from each flight plan to use in report
             let flight_plans_for_report = [];
-            flight_plans_for_report = service_order.flight_plans.map(flight_plan => {
+            flight_plans_for_report = new_service_order_record[0].flight_plans.map(flight_plan => {
                 return {
                     id: flight_plan.id,
                     name: flight_plan.name,
@@ -208,7 +254,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                     area: '',
                     number: '',
                     dosage: '',
-                    responsible: service_order.users.pilot.name,
+                    responsible: new_service_order_record[0].users.pilot.name,
                     provider: '',
                     temperature: '',
                     humidity: '',
@@ -217,32 +263,28 @@ export const ServiceOrderForReport = React.memo((props) => {
                 }
             });
             props.setFlightPlans(flight_plans_for_report);
+
+            // Can be [] or [X] being X the last value selected
+            setSelectedRecordID([new_selection_id]);
+
+        } else if (newSelection.length === 0) {
+
+            props.setServiceOrder(null);
+            props.setControlledInput(resetParentControlledInput);
+            props.setFlightPlansData(null);
+
+            // Can be [] or [X] being X the last value selected
+            setSelectedRecordID([new_selection_id]);
+
         }
-    }
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    }
-
-    const handleClose = () => {
-        setOpen(false);
-        setSelectedRecordID(null);
-        props.setServiceOrder(null);
-    }
-
-    const handleCommit = () => {
-        setOpen(false);
-    }
-
-    const handleOpenSnackbar = (text, variant) => {
-        enqueueSnackbar(text, { variant });
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
-            <Button variant="contained" onClick={handleClickOpen} color={selectedRecordID ? "success" : "primary"}>
+            <Button variant="contained" onClick={handleOpen} color={selectedRecordID.length > 0 ? "success" : "primary"}>
                 {selectedRecordID ? "Ordem de serviço selecionada" : "Selecionar ordem de serviço"}
             </Button>
             <Dialog
@@ -264,7 +306,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                         <Typography sx={{ ml: 2, flex: 1, color: '#1976D2' }} variant="h7" component="div">
                             {""}
                         </Typography>
-                        <Button autoFocus color="primary" onClick={handleCommit} variant="contained">
+                        <Button autoFocus color="primary" onClick={handleSave} variant="contained">
                             Salvar
                         </Button>
                     </Toolbar>
@@ -276,7 +318,7 @@ export const ServiceOrderForReport = React.memo((props) => {
 
                         <Grid item>
                             <Tooltip title="Carregar">
-                                <IconButton onClick={reloadTable}>
+                                <IconButton onClick={() => setReload((old) => !old)}>
                                     <FontAwesomeIcon icon={faArrowsRotate} size="sm" id="reload_icon" color='#007937' />
                                 </IconButton>
                             </Tooltip>
@@ -285,114 +327,58 @@ export const ServiceOrderForReport = React.memo((props) => {
                         <Grid item xs>
                             <TextField
                                 fullWidth
-                                placeholder={"Pesquisar ordem por ID"}
-                                onChange={(e) => setSearchField(e.currentTarget.value)}
+                                placeholder={"Pesquisar um ordem por ID"}
+                                onChange={(e) => setSearch(e.currentTarget.value)}
+                                onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                                 InputProps={{
                                     startAdornment:
                                         <InputAdornment position="start">
-                                            <IconButton onClick={handleSearchSubmit}>
+                                            <IconButton onClick={() => setReload((old) => !old)}>
                                                 <FontAwesomeIcon icon={faMagnifyingGlass} size="sm" />
                                             </IconButton>
                                         </InputAdornment>,
+                                    disableunderline: 1,
                                     sx: { fontSize: 'default' }
                                 }}
                                 variant="outlined"
                             />
                         </Grid>
-
-                        {(!loading && records.length > 0) &&
-                            <Grid item>
-                                <Stack spacing={2}>
-                                    <TablePagination
-                                        labelRowsPerPage="Linhas por página: "
-                                        component="div"
-                                        count={pagination.total_records}
-                                        page={paginationConfig.page - 1}
-                                        onPageChange={handleTablePageChange}
-                                        rowsPerPage={paginationConfig.limit}
-                                        onRowsPerPageChange={handleChangeRowsPerPage}
-                                    />
-                                </Stack>
-                            </Grid>
-                        }
                     </Grid>
 
-                    <FormControl fullWidth>
-                        <RadioGroup
-                            aria-labelledby="demo-radio-buttons-group-label"
-                            name="radio-buttons-group"
-                            value={selectedRecordID}
-                        >
-                            <TableContainer component={Paper}>
-                                <Table sx={{ minWidth: 500 }} aria-label="customized table">
-                                    <TableHead>
-                                        <TableRow>
-                                            <StyledHeadTableCell>ID</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Status</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Número</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Criador</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Piloto</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Cliente</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Descrição</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Planos de Voo</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Incidentes</StyledHeadTableCell>
-                                            <StyledHeadTableCell align="center">Logs</StyledHeadTableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody className="tbody">
-                                        {(!loading && records.length > 0) &&
-                                            records.map((service_order) => (
-                                                <TableRow key={service_order.id}>
-                                                    <TableCell><FormControlLabel value={service_order.id} control={<Radio onClick={() => { handleClickRadio(service_order) }} />} label={service_order.id} disabled={!service_order.available} /></TableCell>
-                                                    <TableCell align="center">{
-                                                        service_order.finished ? <Chip label={"Finalizado"} color={"error"} variant="outlined" /> : (service_order.status == 1 ? <Chip label={"Ativo"} color={"success"} variant="outlined" /> : <Chip label={"Inativo"} color={"error"} variant="outlined" />)
-                                                    }</TableCell>
-                                                    <TableCell align="center">{service_order.number}</TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.users.creator.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.creator.name} color={"success"} variant="outlined" />}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.users.pilot.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.pilot.name} color={"success"} variant="outlined" />}
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.users.client.deleted === 1 ? <Chip label={"Desabilitado"} color={"error"} variant="outlined" /> : <Chip label={service_order.users.client.name} color={"success"} variant="outlined" />}
-                                                    </TableCell>
-                                                    <TableCell align="center">{service_order.observation}</TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.total_flight_plans > 0 ?
-                                                            <Badge badgeContent={service_order.total_flight_plans} color="success">
-                                                                <MapIcon color="action" />
-                                                            </Badge>
-                                                            :
-                                                            <MapIcon color="disabled" />
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.total_incidents > 0 ?
-                                                            <Badge badgeContent={service_order.total_incidents} color="success">
-                                                                <ErrorIcon color="action" />
-                                                            </Badge>
-                                                            :
-                                                            <ErrorIcon color="disabled" />
-                                                        }
-                                                    </TableCell>
-                                                    <TableCell align="center">
-                                                        {service_order.total_logs > 0 ?
-                                                            <Badge badgeContent={service_order.total_logs} color="success">
-                                                                <InsertDriveFileIcon color="action" />
-                                                            </Badge>
-                                                            :
-                                                            <InsertDriveFileIcon style={{ color: "#E0E0E0" }} />
-                                                        }
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </RadioGroup>
-                    </FormControl>
-                    {loading && <LinearProgress color="success" />}
+                    <Box
+                        sx={{ height: 500, width: '100%' }}
+                    >
+                        <DataGrid
+                            rows={records}
+                            columns={columns}
+                            pageSize={perPage}
+                            loading={loading}
+                            page={currentPage - 1}
+                            rowsPerPageOptions={[10, 25, 50, 100]}
+                            rowHeight={70}
+                            checkboxSelection
+                            disableSelectionOnClick
+                            paginationMode='server'
+                            experimentalFeatures={{ newEditingApi: true }}
+                            isRowSelectable={(data) => data.row.available}
+                            onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
+                            onSelectionModelChange={handleSelection}
+                            selectionModel={selectedRecordID}
+                            disableMultipleSelection={true}
+                            onPageChange={(newPage) => handleChangePage(newPage + 1)}
+                            rowCount={totalRecords}
+                            localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+
+                            sx={{
+                                "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
+                                    outline: "none !important",
+                                },
+                                '& .super-app-theme--header': {
+                                    color: '#222'
+                                }
+                            }}
+                        />
+                    </Box>
                 </DialogContent>
             </Dialog>
         </>

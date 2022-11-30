@@ -34,7 +34,6 @@ class ServiceOrderReportResource extends JsonResource
                 "number" => $service_order->number,
                 "start_date" => $service_order->start_date,
                 "end_date" => $service_order->end_date,
-                "finished" => !is_null($service_order->report),
                 "total_flight_plans" => $service_order->flight_plans->count(),
                 "total_incidents" => 0,
                 "total_logs" => 0,
@@ -87,23 +86,24 @@ class ServiceOrderReportResource extends JsonResource
                 $this->formatedData["records"][$row]["total_incidents"] += $total_incidents;
                 $this->formatedData["records"][$row]["total_logs"] += $total_logs;
 
+                // Each position corresponds to each flight plan and receives 1 or 0 if has a log or not
                 if ($total_logs > 0) {
                     $check_if_all_plans_has_log[$index] = 1;
                 } else {
                     $check_if_all_plans_has_log[$index] = 0;
                 }
-
-                // An available service order need to have logs for all flight plans
-                if (in_array(0, $check_if_all_plans_has_log) || !is_null($service_order->report_id)) {
-                    $this->formatedData["records"][$row]["available"] = false;
-                }
             }
 
-            $this->formatedData["total_records"] = $this->data->total();
-            $this->formatedData["records_per_page"] = $this->data->perPage();
-            $this->formatedData["total_pages"] = $this->data->lastPage();
-
-            return $this->formatedData;
+            // An available service order need to have logs for all flight plans and no report
+            if (in_array(0, $check_if_all_plans_has_log) || !is_null($service_order->report_id)) {
+                $this->formatedData["records"][$row]["available"] = false;
+            }
         }
+
+        $this->formatedData["total_records"] = $this->data->total();
+        $this->formatedData["records_per_page"] = $this->data->perPage();
+        $this->formatedData["total_pages"] = $this->data->lastPage();
+
+        return $this->formatedData;
     }
 }
