@@ -132,8 +132,7 @@ export const CreateReportFormulary = (props) => {
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-      props.reload_table();
-      setLoading(false);
+      props.reloadTable((old) => !old);
       handleClose();
     }, 2000);
   }

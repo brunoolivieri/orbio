@@ -25,7 +25,7 @@ const columns = [
   {
     field: 'name',
     headerName: 'Nome',
-    width: 100,
+    flex: 1,
     sortable: true,
     editable: false
   },
@@ -36,17 +36,8 @@ const columns = [
     sortable: true,
     editable: false,
     valueGetter: (data) => {
-      console.log(data)
+      return data.row.service_order.number
     }
-  },
-  {
-    field: 'flight_plans',
-    headerName: 'Planos de voo',
-    type: 'number',
-    width: 150,
-    headerAlign: 'left',
-    sortable: true,
-    editable: false
   },
   {
     field: 'observation',

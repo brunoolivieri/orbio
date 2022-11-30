@@ -36,7 +36,7 @@ class ReportsPanelResource extends JsonResource
                     "number" => $report->service_order->number,
                     "flight_plans" => $report->service_order->flight_plans
                 ],
-                "created_at" => $report->created_at
+                "created_at" => date("Y-m-d", strtotime($report->created_at))
             ];
         }
 
