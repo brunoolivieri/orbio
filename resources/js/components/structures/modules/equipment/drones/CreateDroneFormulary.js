@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -196,6 +196,7 @@ export const CreateDroneFormulary = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>CADASTRO DE DRONE</DialogTitle>
+                <Divider />
 
                 <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
                     <DialogContent>
@@ -313,6 +314,7 @@ export const CreateDroneFormulary = React.memo((props) => {
 
                     {loading && <LinearProgress />}
 
+                    <Divider />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Criar drone</Button>

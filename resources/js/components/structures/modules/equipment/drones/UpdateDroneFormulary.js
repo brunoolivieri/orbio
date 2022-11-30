@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -116,21 +116,20 @@ export const UpdateDroneFormulary = React.memo((props) => {
 
         axios.post(`/api/equipments-module-drone/${controlledInput.id}`, formData)
             .then(function (response) {
-                setLoading(false);
                 successServerResponseTreatment(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorServerResponseTreatment(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
     function successServerResponseTreatment(response) {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.record_setter(null);
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
@@ -207,8 +206,8 @@ export const UpdateDroneFormulary = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["6"].profile_powers.write == 1 ? false : true}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#808991"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -219,7 +218,8 @@ export const UpdateDroneFormulary = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>ATUALIZAÇÃO | ID: {props.record.id}</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO DE DRONE</DialogTitle>
+                <Divider />
 
                 <Box component="form" noValidate onSubmit={handleDroneUpdateSubmit} >
                     <DialogContent>
@@ -365,6 +365,7 @@ export const UpdateDroneFormulary = React.memo((props) => {
 
                     {loading && <LinearProgress />}
 
+                    <Divider />
                     <DialogActions>
                         <Button onClick={handleClose}>Cancelar</Button>
                         <Button type="submit" disabled={loading} variant="contained">Confirmar atualização</Button>

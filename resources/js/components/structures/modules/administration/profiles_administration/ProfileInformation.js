@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts Awesome
@@ -37,7 +37,8 @@ export const ProfileInformation = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>PERFIL ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
+                <DialogTitle>ATUALIZAÇÃO DE PERFIL</DialogTitle>
+                <Divider />
 
                 <DialogContent>
 
@@ -99,6 +100,7 @@ export const ProfileInformation = React.memo((props) => {
 
                 </DialogContent>
 
+                <Divider />
                 <DialogActions>
                     <Button onClick={handleClose} variant="contained">Fechar</Button>
                 </DialogActions>

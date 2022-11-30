@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -22,8 +22,6 @@ const initialFieldErrorMessage = { start_date: "", end_date: "", creator_name: "
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateOrderFormulary = React.memo((props) => {
-
-  console.log(props.record)
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -207,9 +205,11 @@ export const UpdateOrderFormulary = React.memo((props) => {
         maxWidth="md"
       >
         <DialogTitle>ATUALIZAÇÃO DE ORDEM DE SERVIÇO</DialogTitle>
+        <Divider />
+
         <DialogContent>
 
-          <Grid container spacing={1}>
+          <Grid container spacing={1} mt={1}>
 
             <Grid item sx={6}>
               <DatePicker
@@ -356,6 +356,7 @@ export const UpdateOrderFormulary = React.memo((props) => {
 
         {loading && <LinearProgress />}
 
+        <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button type="submit" variant='contained' disabled={loading} onClick={handleSubmit}>Confirmar</Button>

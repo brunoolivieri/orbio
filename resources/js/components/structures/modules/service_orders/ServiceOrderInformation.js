@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Typography } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Typography, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts Awesome
@@ -38,6 +38,7 @@ export const ServiceOrderInformation = React.memo((props) => {
                 maxWidth="md"
             >
                 <DialogTitle>ORDEM DE SERVIÇO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
+                <Divider />
 
                 <DialogContent>
 
@@ -121,6 +122,7 @@ export const ServiceOrderInformation = React.memo((props) => {
 
                 </DialogContent>
 
+                <Divider />
                 <DialogActions>
                     <Button onClick={handleClose} variant="contained">Fechar</Button>
                 </DialogActions>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, FormHelperText } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, FormHelperText, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -172,6 +172,8 @@ export const CreateIncidentFormulary = React.memo((props) => {
         maxWidth="md"
       >
         <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
+        <Divider />
+
         <DialogContent>
           <Grid item container spacing={1} mt={1}>
 
@@ -251,6 +253,7 @@ export const CreateIncidentFormulary = React.memo((props) => {
 
         {loading && <LinearProgress />}
 
+        <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>

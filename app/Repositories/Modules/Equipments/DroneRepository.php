@@ -17,21 +17,19 @@ class DroneRepository implements RepositoryInterface
         $this->droneModel = $droneModel;
     }
 
-    function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    function getPaginate(string $limit, string $page, string $search)
     {
         return $this->droneModel->with('image')
             ->search($search) // scope
-            ->filter($filters) // scope
-            ->orderBy($order_by)
-            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page_number));
+            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
     function createOne(Collection $data)
     {
         return DB::transaction(function () use ($data) {
-            
+
             $drone = $this->droneModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
-            
+
             $drone->image()->create([
                 "path" => $data->get('path')
             ]);
@@ -69,15 +67,15 @@ class DroneRepository implements RepositoryInterface
         });
     }
 
-    function deleteOne(string $identifier)
+    function delete(array $ids)
     {
-        return DB::transaction(function () use ($identifier) {
+        foreach ($ids as $drone_id) {
 
-            $drone = $this->droneModel->findOrFail($identifier);
+            $drone = $this->droneModel->findOrFail($drone_id);
 
             $drone->delete();
+        }
 
-            return $drone;
-        });
+        return $drone;
     }
 }

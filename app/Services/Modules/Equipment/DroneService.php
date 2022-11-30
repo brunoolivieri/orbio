@@ -16,9 +16,9 @@ class DroneService implements ServiceInterface
         $this->repository = $droneRepository;
     }
 
-    public function getPaginate(string $limit, string $order_by, string $page_number, string $search, array $filters)
+    public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $order_by, $page_number, $search, $filters);
+        $data = $this->repository->getPaginate($limit, $page, $search);
 
         if ($data->total() > 0) {
             return response(new DronesPanelResource($data), 200);
@@ -65,9 +65,9 @@ class DroneService implements ServiceInterface
         return response(["message" => "Drone atualizado com sucesso!"], 200);
     }
 
-    public function deleteOne(string $identifier): \Illuminate\Http\Response
+    public function delete(array $ids): \Illuminate\Http\Response
     {
-        $drone = $this->repository->deleteOne($identifier);
+        $drone = $this->repository->delete($ids);
 
         return response(["message" => "Drone deletado com sucesso!"], 200);
     }
