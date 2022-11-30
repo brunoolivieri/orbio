@@ -29,6 +29,9 @@ const columns = [
         width: 100,
         sortable: false,
         editable: false,
+        renderCell: (data) => {
+            return <img src={data.row.image_url} style={{ borderRadius: 10, width: '60px', height: '60px' }} />
+        }
     },
     {
         field: 'name',
@@ -75,8 +78,8 @@ const columns = [
         width: 120,
     },
     {
-        field: 'description',
-        headerName: 'Descrição',
+        field: 'observation',
+        headerName: 'Observação',
         sortable: true,
         editable: false,
         width: 120,
@@ -269,6 +272,7 @@ export const DronesPanel = () => {
                     loading={loading}
                     page={currentPage - 1}
                     rowsPerPageOptions={[10, 25, 50, 100]}
+                    rowHeight={70}
                     checkboxSelection
                     disableSelectionOnClick
                     paginationMode='server'

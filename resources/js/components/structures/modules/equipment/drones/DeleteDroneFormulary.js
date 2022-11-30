@@ -92,7 +92,7 @@ export const DeleteDroneFormulary = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText mb={2}>
-                        {selectedIds.length > 1 ? `Os ${selectedIds.length} usuários selecionados perderão o acesso a suas contas` : "O usuário selecionado perderá o acesso a sua conta"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+                        {selectedIds.length > 1 ? `Os ${selectedIds.length} drones selecionados serão deletados` : "O drone selecionado será deletado"}. A remoção, no entanto, não é permanente e pode ser desfeita.
                     </DialogContentText>
 
                 </DialogContent>

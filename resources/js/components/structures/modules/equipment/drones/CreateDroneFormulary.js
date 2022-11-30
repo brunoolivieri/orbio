@@ -112,20 +112,20 @@ export const CreateDroneFormulary = React.memo((props) => {
 
         axios.post(`/api/equipments-module-drone`, formData)
             .then(function (response) {
-                setLoading(false);
                 successResponse(response);
             })
             .catch(function (error) {
-                setLoading(false);
                 errorResponse(error.response);
-            });
+            })
+            .finally(() => {
+                setLoading(false);
+            })
     }
 
     const successResponse = (response) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
-            props.reload_table();
-            setLoading(false);
+            props.reloadTable((old) => !old);
             handleClose();
         }, 2000);
     }
