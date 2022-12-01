@@ -1,25 +1,14 @@
 // React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { IconButton } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../utils/FormValidation';
-import AxiosApi from '../../../../services/AxiosApi';
-import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
+import axios from '../../../../services/AxiosApi';
 
 export const UpdateReportFormulary = React.memo((props) => {
 
@@ -27,83 +16,69 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
   const [open, setOpen] = React.useState(false);
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, observation: props.record.observation, flight_plan_id: props.record.flight_plan_id != null ? props.record.flight_plan_id : "0" });
-  const [fieldError, setFieldError] = React.useState({ observation: false, flight_plan_id: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ observation: "" });
+  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation });
+  const [fieldError, setFieldError] = React.useState({ name: false, observation: false });
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", observation: "" });
   const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setFieldError({ observation: false });
     setFieldErrorMessage({ observation: "" });
     setDisplayAlert({ display: false, type: "", message: "" });
     setOpen(false);
     setLoading(false);
-  };
+  }
 
-  const handleSubmitOperation = (event) => {
-    event.preventDefault();
-
-    if (submitedDataValidate()) {
-
+  function handleSubmit() {
+    if (formValidation()) {
       setLoading(true);
       requestServerOperation();
-
     }
-
   }
 
-  const submitedDataValidate = () => {
+  function formValidation() {
 
+    const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
 
-    setFieldError({ observation: observationValidate.error, flight_plan_id: false });
-    setFieldErrorMessage({ observation: observationValidate.message });
+    setFieldError({ name: nameValidate.error, observation: observationValidate.error });
+    setFieldErrorMessage({ name: nameValidate.message, observation: observationValidate.message });
 
-    return !observationValidate.error;
+    return !(observationValidate.error || nameValidate.error);
 
   }
 
-  const requestServerOperation = () => {
+  function requestServerOperation() {
 
-    AxiosApi.patch(`/api/reports-module/${controlledInput.id}`, controlledInput)
-      .then(function () {
-
-        setLoading(false);
-        successServerResponseTreatment();
-
+    axios.patch(`/api/reports-module/${controlledInput.id}`, controlledInput)
+      .then(function (response) {
+        successResponse(response);
       })
       .catch(function (error) {
-
+        errorServerResponseTreatment(error.response);
+      })
+      .finally(() => {
         setLoading(false);
-        errorServerResponseTreatment(error.response.data);
-
-      });
+      })
 
   }
 
-  const successServerResponseTreatment = () => {
-
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
-
+  function successResponse(response) {
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-
-      props.record_setter(null);
-      props.reload_table();
-      setLoading(false);
+      props.reloadTable((old) => !old);
       handleClose();
-
     }, 2000);
-
   }
 
-  const errorServerResponseTreatment = (data) => {
+  function errorServerResponseTreatment(data) {
 
     let error_message = (data.message != "" && data.message != undefined) ? data.message : "Erro do servidor!";
     setDisplayAlert({ display: true, type: "error", message: error_message });
@@ -133,7 +108,7 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
@@ -141,7 +116,6 @@ export const UpdateReportFormulary = React.memo((props) => {
 
   return (
     <>
-
       <Tooltip title="Editar">
         <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
@@ -155,12 +129,14 @@ export const UpdateReportFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>ATUALIZAÇÃO | RELATÓRIO (ID: {props.record.report_id})</DialogTitle>
+        <DialogTitle>ATUALIZAÇÃO DE RELATÓRIO</DialogTitle>
+        <Divider />
 
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-          <DialogContent>
+        <DialogContent>
 
-            <Box sx={{ mb: 2 }}>
+          <Grid container spacing={1}>
+
+            <Grid item xs={12}>
               <TextField
                 margin="dense"
                 id="id"
@@ -169,29 +145,26 @@ export const UpdateReportFormulary = React.memo((props) => {
                 type="text"
                 fullWidth
                 variant="outlined"
-                defaultValue={props.record.id}
+                value={controlledInput.id}
                 InputProps={{
                   readOnly: true,
                 }}
               />
-            </Box>
+            </Grid>
 
-            <Box sx={{ mb: 2 }}>
+            <Grid item xs={12}>
               <TextField
                 margin="dense"
-                label="Log do vôo"
+                label="Nome"
                 type="text"
                 fullWidth
+                name="name"
                 variant="outlined"
-                defaultValue={props.record.log.name}
-                InputProps={{
-                  inputProps: { min: 0, max: 1 },
-                  readOnly: true
-                }}
+                value={controlledInput.name}
               />
-            </Box>
+            </Grid>
 
-            <Box sx={{ mb: 2 }}>
+            <Grid item xs={12}>
               <TextField
                 margin="dense"
                 id="observation"
@@ -205,42 +178,24 @@ export const UpdateReportFormulary = React.memo((props) => {
                 error={fieldError.observation}
                 onChange={handleInputChange}
               />
-            </Box>
+            </Grid>
+          </Grid>
 
-            <Box sx={{ mb: 2 }}>
-              <SelectAttributeControl
-                label_text="Planos de voo"
-                data_source={"/api/load-flight_plans"}
-                primary_key={"id"}
-                key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                helperText={fieldErrorMessage.flight_plan_id}
-                error={fieldError.client_id}
-                name={"flight_plan_id"}
-                value={controlledInput.flight_plan_id}
-              />
-            </Box>
+        </DialogContent>
 
-          </DialogContent>
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {displayAlert.display &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {loading && <LinearProgress />}
 
-          {loading && <LinearProgress />}
-
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-
-        </Box>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
 
       </Dialog>
-
     </>
-
   );
-
 });

@@ -3,7 +3,6 @@ import * as React from 'react';
 // MaterialUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-import ErrorIcon from '@mui/icons-material/Error';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import Slide from '@mui/material/Slide';

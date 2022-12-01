@@ -1,89 +1,74 @@
-// React
 import * as React from 'react';
 // Material UI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import Box from '@mui/material/Box';
-import { Alert } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import { IconButton } from '@mui/material';
-import LinearProgress from '@mui/material/LinearProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
+
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const DeleteReportFormulary = React.memo((props) => {
 
-  // ============================================================================== STATES ============================================================================== //
+  /// ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
+  const [selectedIds, setSelectedIds] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
+    const ids = props.records.map((item) => item.id);
+    setSelectedIds(ids);
   }
 
-  const handleClose = () => {
-    props.record_setter(null);
-    setDisplayAlert({ display: false, type: "", message: "" });
+  function handleClose() {
+    setDisplayAlert(initialDisplayAlert);
+    setLoading(false);
     setOpen(false);
-  };
-
-  const handleSubmitOperation = (event) => {
-    event.preventDefault();
-
-    const data = new FormData(event.currentTarget);
-
-    requestServerOperation(data);
-
   }
 
-  function requestServerOperation(data) {
+  const handleSubmit = () => {
+    setLoading(false);
+    requestServerOperation();
+  }
 
-    AxiosApi.delete(`/api/reports-module/${data.get("id")}`)
-      .then(function () {
+  function requestServerOperation() {
 
-        setLoading(false);
-        successServerResponseTreatment();
-
+    axios.delete(`/api/reports-module/delete`, {
+      data: {
+        ids: selectedIds
+      }
+    })
+      .then(function (response) {
+        successResponse(response);
       })
       .catch(function (error) {
-
+        errorResponse(error.response);
+      })
+      .finally(() => {
         setLoading(false);
-        errorServerResponseTreatment(error.response.data);
-
-      });
+      })
 
   }
 
-  function successServerResponseTreatment() {
-
-    setDisplayAlert({ display: true, type: "success", message: "Operação realizada com sucesso!" });
-
+  function successResponse(response) {
+    setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
-
-      props.record_setter(null);
-      props.reload_table();
+      props.reloadTable((old) => !old);
+      setLoading(false);
       handleClose();
-
     }, 2000);
-
   }
 
-  function errorServerResponseTreatment(response_data) {
-    let error_message = (response_data.message != "" && response_data.message != undefined) ? response_data.message : "Erro do servidor!";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
+  function errorResponse(response) {
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -91,7 +76,6 @@ export const DeleteReportFormulary = React.memo((props) => {
 
   return (
     <>
-
       <Tooltip title="Deletar">
         <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
           <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
@@ -105,58 +89,30 @@ export const DeleteReportFormulary = React.memo((props) => {
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>DELEÇÃO | RELATÓRIO (ID: {props.record.id})</DialogTitle>
+        <DialogTitle>DELEÇÃO DE RELATÓRIOS</DialogTitle>
+        <Divider />
 
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
+        <DialogContent>
 
-          <DialogContent>
+          <DialogContentText mb={2}>
+            {selectedIds.length > 1 ? `Os ${selectedIds.length} relatórios selecionados serão deletados` : "O relatório selecionado será deletado"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+          </DialogContentText>
 
-            <TextField
-              margin="dense"
-              id="id"
-              name="id"
-              label="ID"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.record.id}
-              InputProps={{
-                readOnly: true,
-              }}
-            />
+        </DialogContent>
 
-            <TextField
-              margin="dense"
-              label="Log do vôo"
-              type="text"
-              fullWidth
-              variant="outlined"
-              defaultValue={props.record.log.name}
-              InputProps={{
-                inputProps: { min: 0, max: 1 },
-                readOnly: true
-              }}
-            />
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          </DialogContent>
+        {loading && <LinearProgress />}
 
-          {displayAlert.display &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
-
-          {loading && <LinearProgress />}
-
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading}>Confirmar deleção</Button>
-          </DialogActions>
-
-        </Box>
-
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
 
       </Dialog>
     </>
-
   );
-
 });

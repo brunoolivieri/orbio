@@ -102,14 +102,14 @@ export const CreateReportFormulary = (props) => {
         }
       })
         .then((response) => {
-          setLoading(false);
           successResponse(response);
         })
         .catch(function (error) {
-          console.log(error);
-          setLoading(false);
           errorResponse(error.response);
-        });
+        })
+        .finally(() => {
+          setLoading(false);
+        })
     }
   }
 
