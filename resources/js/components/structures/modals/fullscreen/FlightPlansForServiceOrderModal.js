@@ -148,21 +148,8 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const handleSelection = (newSelectedIds) => {
 
-        // Save only ids for controll
+        // Save only ids for grid controll
         setControlledSelection(newSelectedIds);
-
-        // Get entire flight plan data record by ID
-        const newSelectedFlightPlans = records.filter((record) => {
-            if (newSelectedIds.includes(record.id)) {
-                return record;
-            }
-        })
-
-        const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
-            return { ...item, drone_id: "0", battery_id: "0", equipment_id: "0" };
-        })
-
-        props.setSelectedFlightPlans(newSelectedFlightPlansWithEquipments);
 
     }
 
@@ -178,6 +165,33 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     const handleSave = () => {
         setOpen(false);
+
+        const newSelectedIds = controlledSelection;
+
+        // Find unchanged selections to preserve data - get entire record
+        let preserved_selections = [];
+        if (props.selectedFlightPlans.length > 0) {
+            preserved_selections = props.selectedFlightPlans.filter((props_record) => {
+                if (newSelectedIds.includes(props_record.id)) {
+                    return props_record;
+                }
+            });
+        }
+
+        // Get entire flight plan data record by ID - just for new selections
+        const newSelectedFlightPlans = records.filter((record) => {
+            // Record ID must exists in newSelectedIds and not in preserved_selections ids array
+            if (newSelectedIds.includes(record.id) && !preserved_selections.map((item) => item.id).includes(record.id)) {
+                return record;
+            }
+        })
+
+        const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
+            return { ...item, drone_id: "0", battery_id: "0", equipment_id: "0" };
+        })
+
+
+        props.setSelectedFlightPlans([...newSelectedFlightPlansWithEquipments, ...preserved_selections]);
     }
 
     return (

@@ -14,33 +14,36 @@ import { SelectAttributeControl } from '../../input_select/SelectAttributeContro
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({
-        id: props.current.data.id,
-        array_index: props.current.array_index,
-        drone_id: props.current.data.drone_id,
-        battery_id: props.current.data.battery_id,
-        equipment_id: props.current.data.equipment_id
-    });
+    const [controlledInput, setControlledInput] = React.useState({});
 
     const handleClickOpen = () => {
         setOpen(true);
-    };
+        setControlledInput({
+            id: props.current.data.id,
+            array_index: props.current.array_index,
+            drone_id: props.current.data.drone_id,
+            battery_id: props.current.data.battery_id,
+            equipment_id: props.current.data.equipment_id
+        });
+    }
 
     const handleClose = () => {
         setOpen(false);
-    };
+    }
 
     const handleSave = () => {
 
         // Create clone of selected flight plans array
-        let flightPlansClone = [...props.flightPlans];
+        let selectedFlightPlansClone = [...props.selectedFlightPlans];
 
         // Set equipments value into clone first
-        flightPlansClone[controlledInput.array_index].drone_id = controlledInput.drone_id;
-        flightPlansClone[controlledInput.array_index].battery_id = controlledInput.battery_id;
-        flightPlansClone[controlledInput.array_index].equipment_id = controlledInput.equipment_id;
+        // The array_index is the index of actual flight plan in structure of selected flight plans
+        selectedFlightPlansClone[controlledInput.array_index].drone_id = controlledInput.drone_id;
+        selectedFlightPlansClone[controlledInput.array_index].battery_id = controlledInput.battery_id;
+        selectedFlightPlansClone[controlledInput.array_index].equipment_id = controlledInput.equipment_id;
+
         // Sync clone and original array
-        props.setFlightPlans(flightPlansClone);
+        props.setSelectedFlightPlans(selectedFlightPlansClone);
 
         handleClose();
 

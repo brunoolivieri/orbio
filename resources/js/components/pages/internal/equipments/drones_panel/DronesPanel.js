@@ -21,6 +21,14 @@ import { UpdateDroneFormulary } from '../../../../structures/modules/equipment/d
 import { DroneInformation } from '../../../../structures/modules/equipment/drones/DroneInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 
+const imageStyle = {
+    borderRadius: 5,
+    width: '60px',
+    height: '60px'
+}
+
+const root = window.document.getElementById('root');
+
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
@@ -30,7 +38,9 @@ const columns = [
         sortable: false,
         editable: false,
         renderCell: (data) => {
-            return <img src={data.row.image_url} style={{ borderRadius: 5, width: '60px', height: '60px' }} />
+            return (
+                <img src={data.row.image_url} style={imageStyle} />
+            )
         }
     },
     {

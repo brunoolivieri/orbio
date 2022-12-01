@@ -296,8 +296,8 @@ export const CreateOrderFormulary = React.memo((props) => {
                         key={index}
                         secondaryAction={
                           <FlightPlanEquipmentSelection
-                            flightPlans={selectedFlightPlans}
-                            setFlightPlans={selectedFlightPlans}
+                            selectedFlightPlans={selectedFlightPlans}
+                            setSelectedFlightPlans={setSelectedFlightPlans}
                             current={{ array_index: index, data: flight_plan }}
                           />
                         }
