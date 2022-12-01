@@ -20,14 +20,13 @@ import { DeleteDroneFormulary } from '../../../../structures/modules/equipment/d
 import { UpdateDroneFormulary } from '../../../../structures/modules/equipment/drones/UpdateDroneFormulary';
 import { DroneInformation } from '../../../../structures/modules/equipment/drones/DroneInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
 
 const imageStyle = {
     borderRadius: 5,
     width: '60px',
     height: '60px'
 }
-
-const root = window.document.getElementById('root');
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -292,12 +291,18 @@ export const DronesPanel = () => {
                     onPageChange={(newPage) => handleChangePage(newPage + 1)}
                     rowCount={totalRecords}
                     localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+                    components={{
+                        Toolbar: TableToolbar,
+                      }}
                     sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
                             outline: "none !important",
                         },
                         '& .super-app-theme--header': {
                             color: '#222'
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                          boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
                         }
                     }}
                 />

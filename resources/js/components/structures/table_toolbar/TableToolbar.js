@@ -1,0 +1,17 @@
+import * as React from 'react';
+import {
+    GridToolbarContainer,
+    GridToolbarColumnsButton,
+    GridToolbarFilterButton,
+    GridToolbarDensitySelector,
+} from '@mui/x-data-grid';
+
+export function TableToolbar() {
+    return (
+        <GridToolbarContainer sx={{ boxShadow: 1, padding: 1, backgroundColor: '#007937' }}>
+            <GridToolbarColumnsButton sx={{ color: '#fff' }} />
+            <GridToolbarFilterButton sx={{ color: '#fff' }} />
+            <GridToolbarDensitySelector sx={{ color: '#fff' }} />
+        </GridToolbarContainer>
+    );
+}

@@ -20,6 +20,7 @@ import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipme
 import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
 import { EquipmentInformation } from '../../../../structures/modules/equipment/equipments/EquipmentInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -289,12 +290,18 @@ export const EquipmentPanel = React.memo(() => {
           onPageChange={(newPage) => handleChangePage(newPage + 1)}
           rowCount={totalRecords}
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+          components={{
+            Toolbar: TableToolbar,
+          }}
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",
             },
             '& .super-app-theme--header': {
               color: '#222'
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
             }
           }}
         />

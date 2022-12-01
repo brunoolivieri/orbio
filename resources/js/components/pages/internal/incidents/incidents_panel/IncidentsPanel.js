@@ -10,6 +10,7 @@ import { CreateIncidentFormulary } from "../../../../structures/modules/incident
 import { UpdateIncidentFormulary } from "../../../../structures/modules/incidents/UpdateIncidentFormulary";
 import { DeleteIncidentFormulary } from "../../../../structures/modules/incidents/DeleteIncidentFormulary";
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -253,12 +254,18 @@ export function IncidentsPanel() {
           onPageChange={(newPage) => handleChangePage(newPage + 1)}
           rowCount={totalRecords}
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+          components={{
+            Toolbar: TableToolbar,
+          }}
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",
             },
             '& .super-app-theme--header': {
               color: '#222'
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
             }
           }}
         />

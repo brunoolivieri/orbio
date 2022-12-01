@@ -21,6 +21,7 @@ import { UpdateLogFormulary } from '../../../../structures/modules/flight_plans/
 import { DeleteLogFormulary } from '../../../../structures/modules/flight_plans/logs/DeleteLogFormulary';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -279,12 +280,18 @@ export const LogsPanel = () => {
                     onPageChange={(newPage) => handleChangePage(newPage + 1)}
                     rowCount={totalRecords}
                     localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+                    components={{
+                        Toolbar: TableToolbar,
+                    }}
                     sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
                             outline: "none !important",
                         },
                         '& .super-app-theme--header': {
                             color: '#222'
+                        },
+                        '& .MuiDataGrid-columnHeaders': {
+                            boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
                         }
                     }}
                 />
