@@ -157,7 +157,7 @@ export function UsersPanel() {
 
         <Grid item>
           {selectedRecords.length > 0 &&
-            <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1}>
+            <IconButton>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
@@ -197,7 +197,7 @@ export function UsersPanel() {
 
         <Grid item>
           {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
-            <IconButton disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} >
+            <IconButton>
               <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
             </IconButton>
           }

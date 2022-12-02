@@ -156,7 +156,7 @@ export function IncidentsPanel() {
 
         <Grid item>
           {selectedRecords.length > 0 &&
-            <IconButton disabled={!AuthData.data.user_powers["5"].profile_powers.write == 1}>
+            <IconButton>
               <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
@@ -169,7 +169,7 @@ export function IncidentsPanel() {
         <Grid item>
           {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={!AuthData.data.user_powers["5"].profile_powers.write == 1}>
+              <IconButton>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
@@ -183,7 +183,7 @@ export function IncidentsPanel() {
         <Grid item>
           {(selectedRecords.length === 0) &&
             <Tooltip title="Selecione um registro">
-              <IconButton disabled={!AuthData.data.user_powers["5"].profile_powers.write == 1} >
+              <IconButton>
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
               </IconButton>
             </Tooltip>
