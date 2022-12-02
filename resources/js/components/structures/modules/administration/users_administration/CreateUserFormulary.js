@@ -124,7 +124,7 @@ export const CreateUserFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo Usuário">
-        <IconButton onClick={handleClickOpen} disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} >
+        <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1} >
           <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>

@@ -72,8 +72,8 @@ export const DeleteOrderFormulary = React.memo((props) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={AuthData.data.user_powers["3"].profile_powers.read == 1 ? false : true} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#808991"} size="sm" />
+        <IconButton disabled={!AuthData.data.user_powers["3"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
