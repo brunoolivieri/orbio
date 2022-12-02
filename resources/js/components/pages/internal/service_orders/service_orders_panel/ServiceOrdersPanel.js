@@ -40,7 +40,7 @@ const columns = [
   {
     field: 'number',
     headerName: 'Número',
-    flex: 1,
+    width: 150,
     sortable: true,
     editable: false,
   },
