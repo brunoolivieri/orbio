@@ -8,7 +8,7 @@
 	 <link rel="preconnect" href="https://fonts.googleapis.com">
 
  	<!-- FAVICON -->
- 	<link rel='shortcut icon' type='image/x-icon' href="{{ asset('images/map/favicon/favicon.ico') }}">
+	 <link rel='shortcut icon' type='image/x-icon' href="{{ asset('images/map/favicon/favicon.ico') }}">
  	<link rel="android-chrome" sizes="192x192" href="{{ asset('images/map/favicon/android-chrome-192x192.png') }}">
  	<link rel="android-chrome" sizes="512x512" href="{{ asset('images/map/favicon/android-chrome-512x512.png') }}">
  	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/map/favicon/apple-touch-icon.png') }}">
@@ -44,10 +44,13 @@
 	<script src="{{ asset('js/map/bootstrap.bundle.min.js') }}" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 	<!-- FOLHA DE ESTILO PADRÃO -->
-	<link href="{{ asset('css/map/estilo.css') }}" type="text/css" rel="stylesheet">
+	<link href="{{ asset('css/map/styles.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- FILESAVER -->
 	<script src="{{ asset('js/map/file_saver/src/FileSaver.js') }}"></script> 
+
+	<!-- HTML2CANVAS -->
+	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 
  	<title>{{ env('APP_NAME'); }}</title>
  </head>
@@ -69,7 +72,7 @@
 	</div>
 
 	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu">
-		<button class="mapbox-gl-draw_ctrl-draw-btn marker" id="marker" style="background-image: url('img/mapmarker.png');"></button>
+		<button class="mapbox-gl-draw_ctrl-draw-btn marker" id="marker" style="background-image: url({{ asset('images/map/mapmarker.png')}});"></button>
 		<button type="button" class="mapbox-gl-draw_ctrl-draw-btn" id="question-mark" data-bs-toggle="modal" data-bs-target="#myModal">?</button>
 	</div>
 
