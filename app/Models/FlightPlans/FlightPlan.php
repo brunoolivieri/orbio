@@ -6,12 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Model
-use App\Models\Incidents\Incident;
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
-use App\Models\Logs\Log;
-use App\Models\Pivot\ServiceOrderFlightPlan;
-use App\Models\Pivot\ServiceOrderReport;
+use App\Models\Images\Image;
 
 class FlightPlan extends Model
 {
@@ -62,5 +59,13 @@ class FlightPlan extends Model
     function service_orders()
     {
         return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan")->withPivot(["id", "drone_id", "battery_id", "equipment_id"]);
+    }
+
+    /*
+    * Polymorphic relationship with table "images"
+    */
+    function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
