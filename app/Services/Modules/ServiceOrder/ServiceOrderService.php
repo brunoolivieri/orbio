@@ -41,7 +41,7 @@ class ServiceOrderService implements ServiceInterface
 
         $service_order = $this->repository->createOne(collect($data));
 
-        ServiceOrderCreatedEvent::dispatch($service_order);
+        // ServiceOrderCreatedEvent::dispatch($service_order);
 
         return response(["message" => "Ordem de serviço criada com sucesso!"], 201);
     }
@@ -60,7 +60,7 @@ class ServiceOrderService implements ServiceInterface
 
         $service_order = $this->repository->updateOne(collect($data), $identifier);
 
-        ServiceOrderUpdatedEvent::dispatch($service_order);
+        // ServiceOrderUpdatedEvent::dispatch($service_order);
 
         return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
     }
