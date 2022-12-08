@@ -43,12 +43,14 @@ class FlightPlanRepository implements RepositoryInterface
             "description" => $data->get("description")
         ]);
 
+        $image_path = "images/flight_plans/" . $data->get("image_filename");
+
         $flight_plan->image()->create([
-            "path" => $data->get("image")["path"]
+            "path" => $image_path
         ]);
 
         Storage::disk('public')->put($data->get("routes")["path"], $data->get("routes")["content"]);
-        Storage::disk('public')->put($data->get("image")["path"], $data->get("image")["content"]);
+        Storage::disk('public')->put($image_path, $data->get("image_file"));
 
         return $flight_plan;
     }

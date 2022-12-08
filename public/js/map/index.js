@@ -1626,26 +1626,27 @@ function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRou
 
     html2canvas(document.body).then(canvas => {
 
-        var blobImg = new Blob([canvas], { type: "image/png" });
+        var blobImg = new Blob([canvas], { type: "image/jpeg" });
+        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
 
-        filenameImg = new Date().getTime() + ".png";
+        filenameImg = new Date().getTime() + ".jpeg";
 
         canvas.toBlob(function (blobImg) {
             saveAs(blobImg, filenameImg);
         });
 
-        return { blobImg, filenameImg };
+        return { blobImg, filenameImg, dataURL };
 
     }).then((image) => {
 
         const flight_plan = new File([blobRoutes], filenameRoutes);
-        const flight_plan_image = new File([image.blobImg], image.filenameImg, { type: "image/png" });
 
         let formData = new FormData();
         formData.append("name", filenameRoutes.replace(".txt", ""));
         formData.append("description", "none");
         formData.append("routes_file", flight_plan);
-        formData.append("image_file", flight_plan_image);
+        formData.append("image_file", image.dataURL);
+        formData.append("image_filename", image.filenameImg);
         formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
 
         axios.post("/api/plans-module", formData, {

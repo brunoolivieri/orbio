@@ -65,14 +65,9 @@ class FlightPlanService implements ServiceInterface
             "path" => "flight_plans/" . $routes_filename
         ];
 
-        // Image file data
-        $image_file_content = file_get_contents($data["image_file"]);
-        $image_filename = md5($image_file_content) . "txt";
-        $data["image"] = [
-            "content" => $image_file_content,
-            "filename" => $image_filename,
-            "path" => "images/flight_plans/" . $image_filename
-        ];
+        $img = str_replace('data:image/jpeg;base64,', '', $data["image_file"]);
+        $img = str_replace(' ', '+', $img);
+        $data["image_file"] = base64_decode($img);
 
         $data["description"] = $data["description"] === "none" ? "nenhuma" : $data["description"];
 
