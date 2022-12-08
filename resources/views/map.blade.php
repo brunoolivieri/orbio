@@ -3,12 +3,8 @@
  <head>
  	<meta charset="UTF-8">
  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-	 <!-- FONT -->
-	 <link rel="preconnect" href="https://fonts.googleapis.com">
-
- 	<!-- FAVICON -->
-	 <link rel='shortcut icon' type='image/x-icon' href="{{ asset('images/map/favicon/favicon.ico') }}">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel='shortcut icon' type='image/x-icon' href="{{ asset('images/map/favicon/favicon.ico') }}">
  	<link rel="android-chrome" sizes="192x192" href="{{ asset('images/map/favicon/android-chrome-192x192.png') }}">
  	<link rel="android-chrome" sizes="512x512" href="{{ asset('images/map/favicon/android-chrome-512x512.png') }}">
  	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/map/favicon/apple-touch-icon.png') }}">
@@ -16,38 +12,38 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/map/favicon/favicon-16x16.png') }}">
 	<link rel="manifest" href="/site.webmanifest">
 
+	<!--- STYLES --->
+	<link href="{{ asset('css/map/styles.css') }}" type="text/css" rel="stylesheet">
+
 	<!-- MAPBOX-GL --> 
-	<script src="{{ asset('js/map/mapbox-gl.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl.js') }}"></script>
 	<link href="{{ asset('css/map/mapbox-gl.css') }}" type="text/css" rel='stylesheet' />
 
 	<!-- TURF E MAPBOX-GL-DRAW -->
-	<script src="{{ asset('js/map/turf.min.js') }}"></script>
-	<script src="{{ asset('js/map/mapbox-gl-draw.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/turf.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl-draw.js') }}"></script>
 	<link href="{{ asset('css/map/mapbox-gl-draw.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- MAPBOX-GL-GEOCODER -->
-	<script src="{{ asset('js/map/mapbox-gl-geocoder.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl-geocoder.min.js') }}"></script>
 	<link href="{{ asset('css/map/mapbox-gl-geocoder.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
-	<script src="{{ asset('js/map/es6-promise.min.js') }}"></script>
-	<script src="{{ asset('js/map/es6-promise.auto.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/es6-promise.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/es6-promise.auto.min.js') }}"></script>
 
 	<!-- AXIOS -->
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 	<!-- BOOTSTRAP -->
 	<link href="{{ asset('css/map/bootstrap.min.css') }}" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-	<script src="{{ asset('js/map/jquery-3.3.1.slim.min.js') }}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="{{ asset('js/map/popper.min.js') }}" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="{{ asset('js/map/bootstrap.min.js') }}" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-	<script src="{{ asset('js/map/bootstrap.bundle.min.js') }}" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
-	<!-- FOLHA DE ESTILO PADRÃO -->
-	<link href="{{ asset('css/map/styles.css') }}" type="text/css" rel="stylesheet">
+	<script src="{{ asset('js/map/libs/bootstrap/jquery-3.3.1.slim.min.js') }}" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/map/libs/bootstrap/popper.min.js') }}" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/map/libs/bootstrap/bootstrap.min.js') }}" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="{{ asset('js/map/libs/bootstrap/bootstrap.bundle.min.js') }}" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 	<!-- FILESAVER -->
-	<script src="{{ asset('js/map/file_saver/src/FileSaver.js') }}"></script> 
+	<script src="{{ asset('js/map/libs/file_saver/src/FileSaver.js') }}"></script>
 
 	<!-- HTML2CANVAS -->
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>

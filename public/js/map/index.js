@@ -1,10 +1,8 @@
-//import axios from "axios";
-
 // Token gerado para uso no MAPBOX-GL
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
 
 // === POSIÇÃO INICIAL NO MAPA === //
-home = [-47.926063, -15.841060];
+let home = [-47.926063, -15.841060];
 
 var coordinatesLongLat;
 var initialPosition = [];
@@ -17,15 +15,17 @@ var initialFinalPath = [];
 var initialPath = [];
 
 // Criando um objeto mapa
-var map = new mapboxgl.Map({
+const map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-v9',
     zoom: 15,
-    center: home // Longitude e latitude
+    center: home, // Longitude e latitude
+    preserveDrawingBuffer: true
 });
 
+
 // Adicionando um marcador no ponto KML importados
-marcador = new mapboxgl.Marker({ color: 'black' })
+let marcador = new mapboxgl.Marker({ color: 'black' })
     .setLngLat(home)
     .addTo(map);
 
@@ -1121,6 +1121,7 @@ btnClean.addEventListener("click", cleanPolygon);
 document.getElementById('file-input').addEventListener('change', openTxtFileFromComputer, false);
 
 // ==== ABRIR PLANO POR QUERY STRING ==== //
+
 window.onload = () => {
 
     const params = new Proxy(new URLSearchParams(window.location.search), {
@@ -1133,7 +1134,7 @@ window.onload = () => {
 
     axios.get(`/api/plans-module-download/${params.file}`)
         .then((response) => {
-            openTxtFileFromStorage(response.data);
+            openTxtFileFromStorage(response.data, 'storage');
         })
         .catch((error) => {
             console.log(error.response);
@@ -1161,9 +1162,7 @@ btnFullSave.addEventListener("click", saveFullPath);
 // Salva as coordenadas de latitude, longitude e altitude em um arquivo no formato .csv.
 
 // Acessando botão que dispara a função para criar um arquivo .csv
-var btnSaveCSV = document.getElementById("btn-save-csv");
-// Atrelando a função ao evento onclick do botão
-btnSaveCSV.addEventListener("click", savePathCSV);
+var btnSaveCSV = document.getElementById("btn-save-csv").addEventListener("click", savePathCSV);
 
 // ==== MENU: IMPORTAR PONTO KML ==== //
 var btnImport = document.getElementById("file-import");
@@ -1208,7 +1207,7 @@ btnMarker.onclick = function () {
     }
 }
 
-// ========= AÇÕES DO MENU LATERAL ESQUERDO ========= //
+// ========= OPÇÕES DE AJUDA ========= //
 
 var video = document.getElementById('video').addEventListener('click', helpOptions);
 var novo = document.getElementById('novo').addEventListener('click', helpOptions);
@@ -1307,9 +1306,170 @@ function helpOptions() {
                 "</li>" +
                 "</ul>";
             break;
-
     }
+}
 
+// ========= TIRAR UM PRINTSCREEN PARA USAR NO RELATÓRIO ======= //
+function savePrintScreen() {
+
+    html2canvas(document.body).then(canvas => {
+        //document.body.appendChild(canvas);
+        var blobImg = new Blob([canvas], { type: "image/png" });
+
+        // Nome do arquivo com data em milissegundos decorridos
+        fileNameImg = new Date().getTime() + ".png";
+
+        canvas.toBlob(function (blobImg) {
+            saveAs(blobImg, fileNameImg);
+        });
+    });
+
+}
+
+// ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
+function savePath() {
+
+    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
+    if (typeof initialPath === 'undefined') { return false; }
+
+    // Definição da altitude de voo a partir da entrada do usuário no modal
+    // Se a altitude não for preenchida, define-se um valor padrão
+    inputAltitude = document.getElementById("altitude").value;
+    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
+
+    // Definição da velocidade de voo a partir da entrada do usuário no modal
+    // Se a velocidade não for preenchida, define-se um valor padrão
+    inputSpeed = document.getElementById("speed").value;
+    var speed = (inputSpeed == '') ? 8 : inputSpeed;
+
+    //console.log("quantos breakpoints: " + breakpoints.length);
+
+    // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
+    for (k = 0; k <= breakpoints.length; k++) {
+
+        // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
+        var content = "QGC WPL 110\n";
+
+        // HOME
+        content += "0\t1\t0\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+
+        // TAKEOFF: 22
+        content += "1\t0\t0\t22\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+
+        // CHANGE SPEED: 178
+        content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+
+        // Identificação do waypoint
+        var id = 3;
+
+        // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
+        // É gerada apenas no primeiro arquivo de rota
+        if (k == 0) {
+            //console.log(initialPath.length);
+            if (document.getElementById('wp-grid').checked) {
+                for (j = 0; j < initialPath.length - 1; j++) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[j][1].toFixed(6) + "\t" + initialPath[j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+
+                    // Comando MAV_CMD_DO_SET_SERVO
+                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+                    id++;
+                }
+            } else {
+                for (j = 0; j < initialPath.length - 1; j++) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[j][1].toFixed(6) + "\t" + initialPath[j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+                }
+            }
+
+            var inicioBP = 0;
+        } // Fim do 'if(k == 0)'
+
+
+        // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
+        if (document.getElementById('wp-grid').checked) {
+            for (i = inicioBP; i < finalDestination.length - 1; i++) {
+
+                if (k == breakpoints.length) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+
+                    // Comando MAV_CMD_DO_SET_SERVO
+                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+                    id++;
+
+                } else if (finalDestination[i][1] != breakpoints[k][1] && finalDestination[i][0] != breakpoints[k][0]) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+
+                    // Comando MAV_CMD_DO_SET_SERVO
+                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+                    id++;
+
+                } else {
+                    inicioBP = i;
+                    break;
+                }
+            }
+        } else {
+            for (i = inicioBP; i < finalDestination.length - 1; i++) {
+
+                if (k == breakpoints.length) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+
+                } else if (finalDestination[i][1] != breakpoints[k][1] && finalDestination[i][0] != breakpoints[k][0]) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+
+                } else {
+                    inicioBP = i;
+                    break;
+                }
+            }
+        }
+
+        // WAYPOINT: 16 - ROTA FINAL DA FASE 03
+        // Faz parte do último arquivo de rota gerado
+        if (k == breakpoints.length) {
+            if (document.getElementById('wp-grid').checked) {
+                for (j = 0; j < initialFinalPath[1].length; j++) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][j][1].toFixed(6) + "\t" + initialFinalPath[1][j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+
+                    // Comando MAV_CMD_DO_SET_SERVO
+                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+                    id++;
+                }
+            } else {
+                for (j = 0; j < initialFinalPath[1].length; j++) {
+                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][j][1].toFixed(6) + "\t" + initialFinalPath[1][j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+                    id++;
+                }
+            }
+        }
+
+        // RETURN-T0-LAUNCH: 20
+        content += id + "\t0\t3\t20\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1";
+
+        // Armazenando as coordenadas da área na última linha do arquivo através de um comentário
+        content += "\n<!--\t";
+        for (i = 0; i < coordinatesLongLat.length; i++) {
+            content += coordinatesLongLat[i] + "\t";
+        }
+        content += "-->";
+
+        var blob = new Blob([content],
+            { type: "text/plain;charset=utf-8" });
+
+        // Nome do arquivo com data em milissegundos decorridos
+        fileName = "0" + k + "_" + new Date().getTime() + ".txt";
+        saveAs(blob, fileName);
+
+        // Salvando um printscreen para o relatório
+        savePrintScreen();
+
+    } // Fim do 'for'	
 }
 
 // ========= SALVANDO A ROTA GERADA EM ARQUIVO .CSV ========= //
@@ -1453,187 +1613,57 @@ function saveFullPath() {
     var blob = new Blob([content],
         { type: "text/plain;charset=utf-8" });
 
-    const typed_name = prompt('Digite um nome para o plano de voo');
+    // Nome do arquivo com data em milissegundos decorridos
     const timestamp = new Date().getTime();
+    const filename = timestamp + ".txt";
     const coordinates = coordinatesLongLat[0];
 
-    // Criação de um novo registro na tabela de planos de vôo
-    storeFlightPlan(typed_name, timestamp, coordinates, blob);
-}
-
-// ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
-function savePath() {
-
-    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (typeof initialPath === 'undefined') { return false; }
-
-    // Definição da altitude de voo a partir da entrada do usuário no modal
-    // Se a altitude não for preenchida, define-se um valor padrão
-    inputAltitude = document.getElementById("altitude").value;
-    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
-
-    // Definição da velocidade de voo a partir da entrada do usuário no modal
-    // Se a velocidade não for preenchida, define-se um valor padrão
-    inputSpeed = document.getElementById("speed").value;
-    var speed = (inputSpeed == '') ? 8 : inputSpeed;
-
-    //console.log("quantos breakpoints: " + breakpoints.length);
-
-    // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
-    for (k = 0; k <= breakpoints.length; k++) {
-
-        // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-        var content = "QGC WPL 110\n";
-
-        // HOME
-        content += "0\t1\t0\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-
-        // TAKEOFF: 22
-        content += "1\t0\t0\t22\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-
-        // CHANGE SPEED: 178
-        content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-
-        // Identificação do waypoint
-        var id = 3;
-
-        // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
-        // É gerada apenas no primeiro arquivo de rota
-        if (k == 0) {
-            //console.log(initialPath.length);
-            if (document.getElementById('wp-grid').checked) {
-                for (j = 0; j < initialPath.length - 1; j++) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[j][1].toFixed(6) + "\t" + initialPath[j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-
-                    // Comando MAV_CMD_DO_SET_SERVO
-                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-                    id++;
-                }
-            } else {
-                for (j = 0; j < initialPath.length - 1; j++) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[j][1].toFixed(6) + "\t" + initialPath[j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-                }
-            }
-
-            var inicioBP = 0;
-        } // Fim do 'if(k == 0)'
-
-
-        // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
-        if (document.getElementById('wp-grid').checked) {
-            for (i = inicioBP; i < finalDestination.length - 1; i++) {
-
-                if (k == breakpoints.length) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-
-                    // Comando MAV_CMD_DO_SET_SERVO
-                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-                    id++;
-
-                } else if (finalDestination[i][1] != breakpoints[k][1] && finalDestination[i][0] != breakpoints[k][0]) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-
-                    // Comando MAV_CMD_DO_SET_SERVO
-                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-                    id++;
-
-                } else {
-                    inicioBP = i;
-                    break;
-                }
-            }
-        } else {
-            for (i = inicioBP; i < finalDestination.length - 1; i++) {
-
-                if (k == breakpoints.length) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-
-                } else if (finalDestination[i][1] != breakpoints[k][1] && finalDestination[i][0] != breakpoints[k][0]) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[i][1].toFixed(6) + "\t" + finalDestination[i][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-
-                } else {
-                    inicioBP = i;
-                    break;
-                }
-            }
-        }
-
-        // WAYPOINT: 16 - ROTA FINAL DA FASE 03
-        // Faz parte do último arquivo de rota gerado
-        if (k == breakpoints.length) {
-            if (document.getElementById('wp-grid').checked) {
-                for (j = 0; j < initialFinalPath[1].length; j++) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][j][1].toFixed(6) + "\t" + initialFinalPath[1][j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-
-                    // Comando MAV_CMD_DO_SET_SERVO
-                    content += id + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-                    id++;
-                }
-            } else {
-                for (j = 0; j < initialFinalPath[1].length; j++) {
-                    content += id + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][j][1].toFixed(6) + "\t" + initialFinalPath[1][j][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-                    id++;
-                }
-            }
-        }
-
-        // RETURN-T0-LAUNCH: 20
-        content += id + "\t0\t3\t20\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1";
-
-        // Armazenando as coordenadas da área na última linha do arquivo através de um comentário
-        content += "\n<!--\t";
-        for (i = 0; i < coordinatesLongLat.length; i++) {
-            content += coordinatesLongLat[i] + "\t";
-        }
-        content += "-->";
-
-        var blob = new Blob([content],
-            { type: "text/plain;charset=utf-8" });
-
-        // Nome do arquivo com data em milissegundos decorridos
-        fileName = "0" + k + "_" + new Date().getTime() + ".txt";
-        saveAs(blob, fileName);
-
-    } // Fim do 'for'	
+    saveFlightPlanToStorage(filename, timestamp, coordinates, blob);
 }
 
 // == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
-function storeFlightPlan(typed_name, timestamp, coordinates, blob) {
+function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRoutes) {
 
-    const filename = timestamp + ".txt";
-    const file = new File([blob], filename);
+    html2canvas(document.body).then(canvas => {
 
-    let formData = new FormData();
-    formData.append("name", typed_name);
-    formData.append("description", "none");
-    formData.append("file", file);
-    formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
+        var blobImg = new Blob([canvas], { type: "image/png" });
 
-    axios.post("/api/plans-module", formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    }).then((response) => {
+        filenameImg = new Date().getTime() + ".png";
 
-        alert("O plano foi salvo no sistema e está disponível para download.");
+        canvas.toBlob(function (blobImg) {
+            saveAs(blobImg, filenameImg);
+        });
 
-        setTimeout(() => {
-            window.close();
-        }, 1000)
+        return { blobImg, filenameImg };
 
-    }).catch((error) => {
+    }).then((image) => {
 
-        console.log(error.response);
-        alert("Erro! Tente novamente.");
+        const flight_plan = new File([blobRoutes], filenameRoutes);
+        const flight_plan_image = new File([image.blobImg], image.filenameImg, { type: "image/png" });
 
-    })
+        let formData = new FormData();
+        formData.append("name", filenameRoutes.replace(".txt", ""));
+        formData.append("description", "none");
+        formData.append("routes_file", flight_plan);
+        formData.append("image_file", flight_plan_image);
+        formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
+
+        axios.post("/api/plans-module", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then((response) => {
+
+            alert("O plano foi salvo no sistema e está disponível para download.");
+
+        }).catch((error) => {
+
+            console.log(error.response);
+            alert("Erro! Tente novamente.");
+
+        });
+
+    });
 
 }
 
@@ -1817,18 +1847,15 @@ function importMPPolygon(e) {
     reader.readAsText(file);
 }
 
-// ==== CARREGAMENTO DAS ROTAS DO ARQUIVO TXT EXISTENTE NO STORAGE ==== //
-function openTxtFileFromStorage(file_content) {
+function openTxtFileFromStorage(contents) {
 
     // Limpando layers, campos e polígono
     cleanLayers();
     cleanPolygon();
 
-    proccessFileContentsToOpenIt(file_content);
-
+    openTxtFile(contents);
 }
 
-// === CARREGAMENTO DAS ROTAS DO ARQUIVO TXT EXISTENTE NO COMPUTADOR DO USUÁRIO === //
 function openTxtFileFromComputer(e) {
 
     // Limpando layers, campos e polígono
@@ -1842,19 +1869,18 @@ function openTxtFileFromComputer(e) {
     var reader = new FileReader();
 
     reader.onload = function (e) {
-
         // Conteúdo completo do arquivo
-        const file_content = e.target.result;
+        var contents = e.target.result;
 
-        proccessFileContentsToOpenIt(file_content);
+        openTxtFile(contents);
 
     };
 
     reader.readAsText(file);
+
 }
 
-// ==== ROTINA PARA PROCESSAMENTO DO CONTEÚDO DE UM ARQUIVO EXISTENTE === //
-function proccessFileContentsToOpenIt(contents) {
+function openTxtFile(contents) {
 
     // Quebrando as linhas do arquivo em um array
     var lines = contents.split("\n");

@@ -52,21 +52,31 @@ class FlightPlanService implements ServiceInterface
 
     function createOne(array $data)
     {
-        if (is_null($data["file"])) {
-            return response(["message" => "Falha na criação do plano de voo."], 500);
+        if (is_null($data["routes_file"]) || is_null($data["image_file"])) {
+            return response(["message" => "Erro! O plano de voo não pode ser criado."], 500);
         }
 
-        // Filename is the hash of the content
-        $file_content = file_get_contents($data["file"]);
-        $file_content_hash = md5($file_content);
-        $filename = $file_content_hash . ".txt";
-        $path = "flight_plans/" . $filename;
+        // Routes file data
+        $routes_file_content = file_get_contents($data["routes_file"]);
+        $routes_filename = md5($routes_file_content) . "txt";
+        $data["routes"] = [
+            "content" => $routes_file_content,
+            "filename" => $routes_filename,
+            "path" => "flight_plans/" . $routes_filename
+        ];
 
-        $data["description"] = $data["description"] === "none" ? "N/A" : $data["description"];
-        $data["file_content"] = $file_content;
-        $data["filename"] = $filename;
-        $data["path"] = $path;
+        // Image file data
+        $image_file_content = file_get_contents($data["image_file"]);
+        $image_filename = md5($image_file_content) . "txt";
+        $data["image"] = [
+            "content" => $image_file_content,
+            "filename" => $image_filename,
+            "path" => "images/flight_plans/" . $image_filename
+        ];
 
+        $data["description"] = $data["description"] === "none" ? "nenhuma" : $data["description"];
+
+        // Fetch google API to get city and state of flight plan location
         $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["coordinates"] . "&key=" . env("GOOGLE_API_KEY"))["results"][0]["address_components"];
 
         $data["city"] = $address_components[2]["long_name"];

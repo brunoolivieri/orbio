@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 // Token gerado para uso no MAPBOX-GL
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
 
@@ -788,7 +790,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
 
             // Verificando o tempo de voo baseado na distância parcial atual percorrida
             calculateFlightTime(partialDistance);
-            console.log(time);
+            //console.log(time);
 
             // Acessando o limite máximo de tempo definido pelo usuário
             maxFlightTime = Number.parseInt(document.getElementById('max-flight-time').value) * 60;
@@ -806,7 +808,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
         }
     }
 
-    console.log(breakpoints);
+    //console.log(breakpoints);
 
     // Distância percorrida na fase 03 da rota
     for (j = 0; j < initialFinalPath[1].length - 1; j++) {
@@ -1108,11 +1110,6 @@ btnMenu.onclick = function () {
     menuOptions.style.display = (menuOptions.style.display == "block") ? "none" : "block";
 }
 
-// Exibindo e ocultando o menu de acordo com o evento do mouse
-//btnMenu.addEventListener("mouseover", function(){ menu.style.display = "block"; });
-//menu.addEventListener("mouseover", function(){ this.style.display = "block"; });
-//menu.addEventListener("mouseout", function(){ this.style.display = "none"; });
-
 // ==== MENU: NOVO ==== //
 var btnClean = document.getElementById("btn-clean");
 btnClean.addEventListener("click", cleanLayers);
@@ -1121,7 +1118,27 @@ btnClean.addEventListener("click", cleanPolygon);
 
 // ==== MENU: ABRIR ==== //
 // A função de leitura do arquivo é chamada sempre que o input file é modificado
-document.getElementById('file-input').addEventListener('change', openTxtFile, false);
+document.getElementById('file-input').addEventListener('change', openTxtFileFromComputer, false);
+
+// ==== ABRIR PLANO POR QUERY STRING ==== //
+window.onload = () => {
+
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    if (!params.file) {
+        return '';
+    }
+
+    axios.get(`/api/plans-module-download/${params.file}`)
+        .then((response) => {
+            openTxtFileFromStorage(response.data);
+        })
+        .catch((error) => {
+            console.log(error.response);
+        })
+}
 
 // ==== MENU: SALVAR ==== //
 // Esta opção permite salvar vários arquivos de waypoints para múltiplos voos
@@ -1191,7 +1208,7 @@ btnMarker.onclick = function () {
     }
 }
 
-// ========= OPÇÕES DE AJUDA ========= //
+// ========= AÇÕES DO MENU LATERAL ESQUERDO ========= //
 
 var video = document.getElementById('video').addEventListener('click', helpOptions);
 var novo = document.getElementById('novo').addEventListener('click', helpOptions);
@@ -1292,6 +1309,30 @@ function helpOptions() {
             break;
 
     }
+
+}
+
+// ========= TIRAR UM PRINTSCREEN PARA USAR NO RELATÓRIO ======= //
+function savePrintScreen() {
+
+    html2canvas(document.body).then(canvas => {
+        //document.body.appendChild(canvas);
+        var blobImg = new Blob([canvas], { type: "image/png" });
+
+        // Nome do arquivo com data em milissegundos decorridos
+        fileNameImg = new Date().getTime() + ".png";
+
+        canvas.toBlob(function (blobImg) {
+            saveAs(blobImg, fileNameImg);
+        });
+
+        /*
+        setTimeout(() => {
+            window.close();
+        }, 1000)
+        */
+
+    });
 
 }
 
@@ -1398,7 +1439,7 @@ function saveFullPath() {
         }
     } else {
         index = 0;
-        console.log(finalDestination);
+        //console.log(finalDestination);
         for (i = j; i < (finalDestination.length) + j - 1; i++) {
             content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
             index++;
@@ -1436,9 +1477,15 @@ function saveFullPath() {
     var blob = new Blob([content],
         { type: "text/plain;charset=utf-8" });
 
-    // Nome do arquivo com data em milissegundos decorridos
-    fileName = new Date().getTime() + ".txt";
-    saveAs(blob, fileName);
+    const typed_name = prompt('Digite um nome para o plano de voo');
+    const timestamp = new Date().getTime();
+    const coordinates = coordinatesLongLat[0];
+
+    // Criação de um novo registro na tabela de planos de vôo
+    storeFlightPlan(typed_name, timestamp, coordinates, blob);
+
+    // Salvando um printscreen para o relatório
+    savePrintScreen();
 }
 
 // ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
@@ -1457,7 +1504,7 @@ function savePath() {
     inputSpeed = document.getElementById("speed").value;
     var speed = (inputSpeed == '') ? 8 : inputSpeed;
 
-    console.log("quantos breakpoints: " + breakpoints.length);
+    //console.log("quantos breakpoints: " + breakpoints.length);
 
     // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
     for (k = 0; k <= breakpoints.length; k++) {
@@ -1581,7 +1628,39 @@ function savePath() {
         fileName = "0" + k + "_" + new Date().getTime() + ".txt";
         saveAs(blob, fileName);
 
+        // Salvando um printscreen para o relatório
+        savePrintScreen();
+
     } // Fim do 'for'	
+}
+
+// == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
+function storeFlightPlan(typed_name, timestamp, coordinates, blob) {
+
+    const filename = timestamp + ".txt";
+    const file = new File([blob], filename);
+
+    let formData = new FormData();
+    formData.append("name", typed_name);
+    formData.append("description", "none");
+    formData.append("file", file);
+    formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
+
+    axios.post("/api/plans-module", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    }).then((response) => {
+
+        alert("O plano foi salvo no sistema e está disponível para download.");
+
+    }).catch((error) => {
+
+        console.log(error.response);
+        alert("Erro! Tente novamente.");
+
+    })
+
 }
 
 // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR A POSIÇÃO INICIAL NO MAPA === //
@@ -1591,7 +1670,7 @@ function importKMLPoint(e) {
     cleanLayers();
     cleanPolygon();
 
-    console.log(marcador);
+    //console.log(marcador);
     // Apagando o marcador anterior
     marcador.remove();
 
@@ -1664,7 +1743,7 @@ function importKMLPolygon(e) {
 
         // Percorrendo todas as coordenadas e quebrando as informações de lat e long
         for (i = 0; i < coordinates.length - 1; i++) {
-            console.log(coordinates[i]);
+            //console.log(coordinates[i]);
 
             latLong = coordinates[i].split(",");
             kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -1739,7 +1818,7 @@ function importMPPolygon(e) {
         coordinatesLongLat = kmlArea;
         home = kmlArea[0];
 
-        console.log(coordinatesLongLat);
+        //console.log(coordinatesLongLat);
 
         // Acessando o centroide da área para posicionar no mapa
         var polygon = turf.polygon([kmlArea]);
@@ -1764,8 +1843,19 @@ function importMPPolygon(e) {
     reader.readAsText(file);
 }
 
-// === OPÇÃO DE "ABRIR" UM ARQUIVO .TXT E CARREGAR A ROTA === //
-function openTxtFile(e) {
+// ==== CARREGAMENTO DAS ROTAS DO ARQUIVO TXT EXISTENTE NO STORAGE ==== //
+function openTxtFileFromStorage(file_content) {
+
+    // Limpando layers, campos e polígono
+    cleanLayers();
+    cleanPolygon();
+
+    proccessFileContentsToOpenIt(file_content);
+
+}
+
+// === CARREGAMENTO DAS ROTAS DO ARQUIVO TXT EXISTENTE NO COMPUTADOR DO USUÁRIO === //
+function openTxtFileFromComputer(e) {
 
     // Limpando layers, campos e polígono
     cleanLayers();
@@ -1778,82 +1868,90 @@ function openTxtFile(e) {
     var reader = new FileReader();
 
     reader.onload = function (e) {
+
         // Conteúdo completo do arquivo
-        var contents = e.target.result;
+        const file_content = e.target.result;
 
-        // Quebrando as linhas do arquivo em um array
-        var lines = contents.split("\n");
-
-        // Acessando a posição inicial (home) contida no arquivo
-        var txtHome = lines[1].split("\t");
-        home = [Number(txtHome[9]), Number(txtHome[8])];
-
-        // Acessando a velocidade contida no arquivo e preenchendo o campo no form
-        var txtSpeed = lines[3].split("\t");
-        document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
-        document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
-
-        // Acessando a altitude contida no arquivo e preenchendo o campo no form
-        var txtAltitude = lines[2].split("\t");
-        document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
-        document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
-
-        // Array que armazenará todos os waypoints da rota do arquivo
-        var txtPath = [];
-        index = 0;
-
-        // Quebrando todas as linhas nos espaços \t
-        for (i = 4; i < lines.length - 2; i++) {
-            line = lines[i].split("\t");
-
-            // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
-            // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
-            // adicionados ao desenho da rota
-            if (Number(line[3]) == 16) {
-                // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
-                txtPath[index] = [Number(line[9]), Number(line[8])];
-                index++
-            }
-            console.log(Number(line[3]));
-
-        }
-
-        // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
-        txtArea = [];
-        index = 0;
-
-        // Quebrando a última linha para acessar as coordenadas do polígono
-        txtPolygon = lines[lines.length - 1].split("\t");
-
-        // Acessando todas as coordenadas
-        for (i = 1; i < txtPolygon.length - 1; i++) {
-            txtLatLong = txtPolygon[i].split(",");
-            txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
-            index++;
-        }
-
-        // Acessando o centroide da área para posicionar no mapa
-        var polygon = turf.polygon([txtArea]);
-        var centroid = turf.coordAll(turf.centroid(polygon));
-
-        // Direcionando o mapa
-        map.flyTo({
-            center: [
-                centroid[0][0], centroid[0][1]
-            ],
-            essential: true
-        });
-
-        // Desenhando a rota e calculando sua distância
-        drawTxtPath(txtPath);
-        calculateTxtDistance(txtPath);
-
-        // Desenhando o polígono e calculando sua área
-        drawTxtArea(txtArea);
-        calculateTxtArea();
+        proccessFileContentsToOpenIt(file_content);
 
     };
+
     reader.readAsText(file);
+}
+
+// ==== ROTINA PARA PROCESSAMENTO DO CONTEÚDO DE UM ARQUIVO EXISTENTE === //
+function proccessFileContentsToOpenIt(contents) {
+
+    // Quebrando as linhas do arquivo em um array
+    var lines = contents.split("\n");
+
+    // Acessando a posição inicial (home) contida no arquivo
+    var txtHome = lines[1].split("\t");
+    home = [Number(txtHome[9]), Number(txtHome[8])];
+
+    // Acessando a velocidade contida no arquivo e preenchendo o campo no form
+    var txtSpeed = lines[3].split("\t");
+    document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
+    document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
+
+    // Acessando a altitude contida no arquivo e preenchendo o campo no form
+    var txtAltitude = lines[2].split("\t");
+    document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
+    document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
+
+    // Array que armazenará todos os waypoints da rota do arquivo
+    var txtPath = [];
+    index = 0;
+
+    // Quebrando todas as linhas nos espaços \t
+    for (i = 4; i < lines.length - 2; i++) {
+        line = lines[i].split("\t");
+
+        // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
+        // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
+        // adicionados ao desenho da rota
+        if (Number(line[3]) == 16) {
+            // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+            txtPath[index] = [Number(line[9]), Number(line[8])];
+            index++
+        }
+        //console.log(Number(line[3]));
+
+    }
+
+    // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
+    txtArea = [];
+    index = 0;
+
+    // Quebrando a última linha para acessar as coordenadas do polígono
+    txtPolygon = lines[lines.length - 1].split("\t");
+
+    // Acessando todas as coordenadas
+    for (i = 1; i < txtPolygon.length - 1; i++) {
+        txtLatLong = txtPolygon[i].split(",");
+        txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
+        index++;
+    }
+
+    // Acessando o centroide da área para posicionar no mapa
+    var polygon = turf.polygon([txtArea]);
+    var centroid = turf.coordAll(turf.centroid(polygon));
+
+    // Direcionando o mapa
+    map.flyTo({
+        center: [
+            centroid[0][0], centroid[0][1]
+        ],
+        essential: true
+    });
+
+    // Desenhando a rota e calculando sua distância
+    drawTxtPath(txtPath);
+    calculateTxtDistance(txtPath);
+
+    // Desenhando o polígono e calculando sua área
+    drawTxtArea(txtArea);
+    calculateTxtArea();
 }
 
 // == CALCULANDO A DISTÂNCIA TOTAL DA ROTA IMPORTADA A PARTIR DO ARQUIVO == //

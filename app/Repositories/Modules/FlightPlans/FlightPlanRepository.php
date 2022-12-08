@@ -27,6 +27,7 @@ class FlightPlanRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
+
         // Flight plan is stored just if does not already exists
         if (Storage::disk('public')->exists($data->get("path"))) {
             return response(["message" => "O plano de voo já existe!"], 500);
@@ -35,14 +36,19 @@ class FlightPlanRepository implements RepositoryInterface
         $flight_plan = $this->flightPlanModel->create([
             "creator_id" => Auth::user()->id,
             "name" => $data->get("name"),
-            "file" => $data->get("filename"),
+            "file" => $data->get("routes")["filename"],
             "coordinates" => $data->get("coordinates"),
             "state" => $data->get("state"),
             "city" => $data->get("city"),
             "description" => $data->get("description")
         ]);
 
-        Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+        $flight_plan->image()->create([
+            "path" => $data->get("image")["path"]
+        ]);
+
+        Storage::disk('public')->put($data->get("routes")["path"], $data->get("routes")["content"]);
+        Storage::disk('public')->put($data->get("image")["path"], $data->get("image")["content"]);
 
         return $flight_plan;
     }
