@@ -13,9 +13,9 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { ModalImage } from '../../../../structures/modals/dialog/ModalImage';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
 import { UpdatePlanFormulary } from "../../../../structures/modules/flight_plans/UpdatePlanFormulary";
@@ -26,6 +26,18 @@ import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar'
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
+  {
+    field: 'image',
+    headerName: 'Imagem',
+    width: 100,
+    sortable: false,
+    editable: false,
+    renderCell: (data) => {
+      return (
+        <ModalImage image_url={data.row.image_url} />
+      )
+    }
+  },
   {
     field: 'name',
     headerName: 'Nome',
@@ -51,22 +63,6 @@ const columns = [
     sortable: true,
     editable: false,
     width: 150
-  },
-  {
-    field: 'visualization',
-    headerName: 'Visualizar',
-    width: 150,
-    sortable: false,
-    editable: false,
-    renderCell: (data) => {
-      return (
-        <Link href={`/internal/map?file=${data.row.file}`} target="_blank">
-          <IconButton>
-            <FontAwesomeIcon icon={faEye} color={"#00713A"} size="sm" />
-          </IconButton>
-        </Link>
-      )
-    }
   },
   {
     field: 'service_orders',
@@ -331,6 +327,7 @@ export function FlightPlansPanel() {
           loading={loading}
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
+          rowHeight={70}
           checkboxSelection
           disableSelectionOnClick
           paginationMode='server'

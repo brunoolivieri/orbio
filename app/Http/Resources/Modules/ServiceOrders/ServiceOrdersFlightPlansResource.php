@@ -4,8 +4,7 @@ namespace App\Http\Resources\Modules\ServiceOrders;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
-use App\Models\Incidents\Incident;
-use App\Models\Logs\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceOrdersFlightPlansResource extends JsonResource
 {
@@ -32,6 +31,7 @@ class ServiceOrdersFlightPlansResource extends JsonResource
 
             $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
+                "image_url" => Storage::url($flight_plan->image->path),
                 "creator" => [
                     "name" => $flight_plan->user->name,
                     "email" => $flight_plan->user->email,

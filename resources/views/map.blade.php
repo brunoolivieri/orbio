@@ -54,20 +54,20 @@
 
  	<div id='map'></div>
 
-	 <div class="calculation-box">
+	 <div class="calculation-box" id = "calculation-box">
 		<p>Desenhe um polígono</p>
 		<span id="calculated-area">0 ha</span> | 
 		<span id="calculated-distance">0 Km</span> | 
 		<span id="calculated-time">0 s</span>
 	</div>
 
-	<div class="logo-box">
+	<div class="logo-box" id="logo-box">
 		<img src="{{ asset('images/map/embrapa.png') }}" alt="Embrapa Instrumentação"/>
 		<img src="{{ asset('images/map/bv.png') }}" alt="BirdView"/>
 		<div id = "output"></div>
 	</div>
 
-	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu">
+	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu" id = "mapbox-controll-group">
 		<button class="mapbox-gl-draw_ctrl-draw-btn marker" id="marker" style="background-image: url({{ asset('images/map/mapmarker.png')}});"></button>
 		<button type="button" class="mapbox-gl-draw_ctrl-draw-btn" id="question-mark" data-bs-toggle="modal" data-bs-target="#myModal">?</button>
 	</div>

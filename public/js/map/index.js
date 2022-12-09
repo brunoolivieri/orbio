@@ -2,7 +2,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
 
 // === POSIÇÃO INICIAL NO MAPA === //
-let home = [-47.926063, -15.841060];
+home = [-47.926063, -15.841060];
 
 var coordinatesLongLat;
 var initialPosition = [];
@@ -15,7 +15,7 @@ var initialFinalPath = [];
 var initialPath = [];
 
 // Criando um objeto mapa
-const map = new mapboxgl.Map({
+var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/satellite-v9',
     zoom: 15,
@@ -25,7 +25,7 @@ const map = new mapboxgl.Map({
 
 
 // Adicionando um marcador no ponto KML importados
-let marcador = new mapboxgl.Marker({ color: 'black' })
+marcador = new mapboxgl.Marker({ color: 'black' })
     .setLngLat(home)
     .addTo(map);
 
@@ -790,7 +790,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
 
             // Verificando o tempo de voo baseado na distância parcial atual percorrida
             calculateFlightTime(partialDistance);
-            //console.log(time);
+            // console.log(time);
 
             // Acessando o limite máximo de tempo definido pelo usuário
             maxFlightTime = Number.parseInt(document.getElementById('max-flight-time').value) * 60;
@@ -1102,6 +1102,12 @@ function recomputeDistanceBetweenLines() {
 // Acessando o botão de menu
 var btnMenu = document.getElementById("btn-mission");
 
+// Acessando box de logos
+var boxLogos = document.getElementById("logo-box");
+
+// Acessando a caixa dos cálculos de área
+var calculationBox = document.getElementById("calculation-box");
+
 // Acessando o elemento <nav> com o menu de opções
 var menuOptions = document.getElementById("menu-options");
 
@@ -1162,7 +1168,9 @@ btnFullSave.addEventListener("click", saveFullPath);
 // Salva as coordenadas de latitude, longitude e altitude em um arquivo no formato .csv.
 
 // Acessando botão que dispara a função para criar um arquivo .csv
-var btnSaveCSV = document.getElementById("btn-save-csv").addEventListener("click", savePathCSV);
+var btnSaveCSV = document.getElementById("btn-save-csv");
+// Atrelando a função ao evento onclick do botão
+btnSaveCSV.addEventListener("click", savePathCSV);
 
 // ==== MENU: IMPORTAR PONTO KML ==== //
 var btnImport = document.getElementById("file-import");
@@ -1326,6 +1334,224 @@ function savePrintScreen() {
 
 }
 
+// ========= SALVANDO A ROTA GERADA EM ARQUIVO .CSV ========= //
+function savePathCSV() {
+
+    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
+    if (typeof initialPath === 'undefined') { return false; }
+
+    // Definição da altitude de voo a partir da entrada do usuário no modal
+    // Se a altitude não for preenchida, define-se um valor padrão
+    inputAltitude = document.getElementById("altitude").value;
+    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
+
+    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
+    var content = "latitude;longitude;altitude(m)\n";
+
+    // Quando o usuário carrega um arquivo TXT de rota do PC e tentar salvá-lo em CSV, 
+    // as informações da rota não estão armazenadas em variáveis como 'inicialFinalPath', 
+    // mas na variável txtPath	
+    if (initialFinalPath.length === 0) {
+        for (i = 0; i < txtPath.length; i++) {
+            content += txtPath[i][1] + ";" + txtPath[i][0] + ";" + altitude + "\n";
+        }
+
+    } else {
+        // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
+        index = 0;
+        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
+            content += initialPath[index][1].toFixed(6) + ";" + initialPath[index][0].toFixed(6) + ";" + altitude + "\n";
+            index++;
+        }
+
+        // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
+        index = 0;
+        for (i = j; i < (finalDestination.length) + j - 1; i++) {
+            content += finalDestination[index][1].toFixed(6) + ";" + finalDestination[index][0].toFixed(6) + ";" + altitude + "\n";
+            index++;
+        }
+
+        // WAYPOINT: 16 - ROTA FINAL DA FASE 03
+        index = 0;
+        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
+            content += initialFinalPath[1][index][1].toFixed(6) + ";" + initialFinalPath[1][index][0].toFixed(6) + ";" + altitude + "\n";
+            index++;
+        }
+    }
+
+
+
+    var blob = new Blob([content],
+        { type: "text/plain;charset=utf-8" });
+
+    // Nome do arquivo com data em milissegundos decorridos
+    fileName = new Date().getTime() + ".csv";
+    saveAs(blob, fileName);
+}
+// ======================================================== ATT ORBIO 2: SALVAR UM ARQUIVO ======================================== //
+// ========= SALVANDO A ROTA GERADA EM ARQUIVO .TXT ========= //
+function saveFullPath() {
+
+    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
+    if (typeof initialPath === 'undefined') { return false; }
+
+    // Definição da altitude de voo a partir da entrada do usuário no modal
+    // Se a altitude não for preenchida, define-se um valor padrão
+    inputAltitude = document.getElementById("altitude").value;
+    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
+
+    // Definição da velocidade de voo a partir da entrada do usuário no modal
+    // Se a velocidade não for preenchida, define-se um valor padrão
+    inputSpeed = document.getElementById("speed").value;
+    var speed = (inputSpeed == '') ? 8 : inputSpeed;
+
+    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
+    var content = "QGC WPL 110\n";
+
+    // HOME
+    content += "0\t1\t0\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+
+    // TAKEOFF: 22
+    content += "1\t0\t0\t22\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+
+    // CHANGE SPEED: 178
+    content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+
+    // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
+    //console.log(initialPath.length);
+    if (document.getElementById('wp-grid').checked) {
+        index = 0;
+        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
+            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+            index++;
+
+            // Comando MAV_CMD_DO_SET_SERVO
+            content += j + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        }
+    } else {
+        index = 0;
+        for (j = 3; j < (initialPath.length) + 2; j++) {
+            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+            index++;
+        }
+    }
+
+    // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
+    //console.log(finalDestination.length);
+    if (document.getElementById('wp-grid').checked) {
+        index = 0;
+        for (i = j; i < (finalDestination.length * 2) + j - 1; i += 2) {
+            content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+            index++;
+
+            // Comando MAV_CMD_DO_SET_SERVO
+            content += i + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        }
+    } else {
+        index = 0;
+        //console.log(finalDestination);
+        for (i = j; i < (finalDestination.length) + j - 1; i++) {
+            content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+            index++;
+        }
+    }
+
+    // WAYPOINT: 16 - ROTA FINAL DA FASE 03
+    if (document.getElementById('wp-grid').checked) {
+        index = 0;
+        for (j = i; j < (initialFinalPath[1].length * 2) + i; j += 2) {
+            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+            index++;
+
+            // Comando MAV_CMD_DO_SET_SERVO
+            content += j + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+        }
+    } else {
+        index = 0;
+        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
+            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+            index++;
+        }
+    }
+
+    // RETURN-T0-LAUNCH: 20
+    content += j + "\t0\t3\t20\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1";
+
+    // Armazenando as coordenadas da área na última linha do arquivo através de um comentário
+    content += "\n<!--\t";
+    for (i = 0; i < coordinatesLongLat.length; i++) {
+        content += coordinatesLongLat[i] + "\t";
+    }
+    content += "-->";
+
+    var blob = new Blob([content],
+        { type: "text/plain;charset=utf-8" });
+
+    // Nome do arquivo com data em milissegundos decorridos
+    const timestamp = new Date().getTime();
+    const filename = timestamp + ".txt";
+    const coordinates = coordinatesLongLat[0];
+
+    saveFlightPlanToStorage(filename, timestamp, coordinates, blob);
+}
+
+// == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
+function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRoutes) {
+
+    displayOrHiddenElementsForPrintScreen('none');
+
+    html2canvas(document.body).then(canvas => {
+
+        var blobImg = new Blob([canvas], { type: "image/jpeg" });
+        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+
+        filenameImg = new Date().getTime() + ".jpeg";
+
+        return { blobImg, filenameImg, dataURL };
+
+    }).then((image) => {
+
+        displayOrHiddenElementsForPrintScreen('block');
+
+        const flight_plan = new File([blobRoutes], filenameRoutes);
+
+        let formData = new FormData();
+        formData.append("name", filenameRoutes.replace(".txt", ""));
+        formData.append("description", "none");
+        formData.append("routes_file", flight_plan);
+        formData.append("image_file", image.dataURL);
+        formData.append("image_filename", image.filenameImg);
+        formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
+
+        axios.post("/api/plans-module", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then((response) => {
+
+            alert("O plano foi salvo no sistema e está disponível para download.");
+            window.close();
+
+        }).catch((error) => {
+
+            console.log(error.response);
+            alert("Erro! Tente novamente.");
+
+        });
+
+    });
+
+}
+
+// ==== CLEAN MAP BEFORE PRINT SCREEN OR DISPLAY AGAIN AFTER ==== //
+function displayOrHiddenElementsForPrintScreen(value) {
+    btnMenu.style.display = value;
+    btn.style.display = value;
+    menuOptions.style.display = value;
+    boxLogos.style.display = value;
+    calculationBox.style.display = value;
+}
+
 // ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
 function savePath() {
 
@@ -1470,202 +1696,6 @@ function savePath() {
         savePrintScreen();
 
     } // Fim do 'for'	
-}
-
-// ========= SALVANDO A ROTA GERADA EM ARQUIVO .CSV ========= //
-function savePathCSV() {
-
-    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (typeof initialPath === 'undefined') { return false; }
-
-    // Definição da altitude de voo a partir da entrada do usuário no modal
-    // Se a altitude não for preenchida, define-se um valor padrão
-    inputAltitude = document.getElementById("altitude").value;
-    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
-
-    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-    var content = "latitude;longitude;altitude(m)\n";
-
-    // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
-    index = 0;
-    for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
-        content += initialPath[index][1].toFixed(6) + ";" + initialPath[index][0].toFixed(6) + ";" + altitude + "\n";
-        index++;
-    }
-
-    // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
-    index = 0;
-    for (i = j; i < (finalDestination.length) + j - 1; i++) {
-        content += finalDestination[index][1].toFixed(6) + ";" + finalDestination[index][0].toFixed(6) + ";" + altitude + "\n";
-        index++;
-    }
-
-    // WAYPOINT: 16 - ROTA FINAL DA FASE 03
-    index = 0;
-    for (j = i; j < (initialFinalPath[1].length) + i; j++) {
-        content += initialFinalPath[1][index][1].toFixed(6) + ";" + initialFinalPath[1][index][0].toFixed(6) + ";" + altitude + "\n";
-        index++;
-    }
-
-    var blob = new Blob([content],
-        { type: "text/plain;charset=utf-8" });
-
-    // Nome do arquivo com data em milissegundos decorridos
-    fileName = new Date().getTime() + ".csv";
-    saveAs(blob, fileName);
-}
-
-// ========= SALVANDO A ROTA GERADA EM ARQUIVO .TXT ========= //
-function saveFullPath() {
-
-    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (typeof initialPath === 'undefined') { return false; }
-
-    // Definição da altitude de voo a partir da entrada do usuário no modal
-    // Se a altitude não for preenchida, define-se um valor padrão
-    inputAltitude = document.getElementById("altitude").value;
-    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
-
-    // Definição da velocidade de voo a partir da entrada do usuário no modal
-    // Se a velocidade não for preenchida, define-se um valor padrão
-    inputSpeed = document.getElementById("speed").value;
-    var speed = (inputSpeed == '') ? 8 : inputSpeed;
-
-    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-    var content = "QGC WPL 110\n";
-
-    // HOME
-    content += "0\t1\t0\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-
-    // TAKEOFF: 22
-    content += "1\t0\t0\t22\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-
-    // CHANGE SPEED: 178
-    content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-
-    // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
-    //console.log(initialPath.length);
-    if (document.getElementById('wp-grid').checked) {
-        index = 0;
-        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-
-            // Comando MAV_CMD_DO_SET_SERVO
-            content += j + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-        }
-    } else {
-        index = 0;
-        for (j = 3; j < (initialPath.length) + 2; j++) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-        }
-    }
-
-    // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
-    //console.log(finalDestination.length);
-    if (document.getElementById('wp-grid').checked) {
-        index = 0;
-        for (i = j; i < (finalDestination.length * 2) + j - 1; i += 2) {
-            content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-
-            // Comando MAV_CMD_DO_SET_SERVO
-            content += i + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-        }
-    } else {
-        index = 0;
-        //console.log(finalDestination);
-        for (i = j; i < (finalDestination.length) + j - 1; i++) {
-            content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-        }
-    }
-
-    // WAYPOINT: 16 - ROTA FINAL DA FASE 03
-    if (document.getElementById('wp-grid').checked) {
-        index = 0;
-        for (j = i; j < (initialFinalPath[1].length * 2) + i; j += 2) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-
-            // Comando MAV_CMD_DO_SET_SERVO
-            content += j + 1 + "\t0\t3\t183\t17.00000\t1234.000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
-        }
-    } else {
-        index = 0;
-        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
-            content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialFinalPath[1][index][1].toFixed(6) + "\t" + initialFinalPath[1][index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
-            index++;
-        }
-    }
-
-    // RETURN-T0-LAUNCH: 20
-    content += j + "\t0\t3\t20\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1";
-
-    // Armazenando as coordenadas da área na última linha do arquivo através de um comentário
-    content += "\n<!--\t";
-    for (i = 0; i < coordinatesLongLat.length; i++) {
-        content += coordinatesLongLat[i] + "\t";
-    }
-    content += "-->";
-
-    var blob = new Blob([content],
-        { type: "text/plain;charset=utf-8" });
-
-    // Nome do arquivo com data em milissegundos decorridos
-    const timestamp = new Date().getTime();
-    const filename = timestamp + ".txt";
-    const coordinates = coordinatesLongLat[0];
-
-    saveFlightPlanToStorage(filename, timestamp, coordinates, blob);
-}
-
-// == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
-function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRoutes) {
-
-    html2canvas(document.body).then(canvas => {
-
-        var blobImg = new Blob([canvas], { type: "image/jpeg" });
-        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
-
-        filenameImg = new Date().getTime() + ".jpeg";
-
-        canvas.toBlob(function (blobImg) {
-            saveAs(blobImg, filenameImg);
-        });
-
-        return { blobImg, filenameImg, dataURL };
-
-    }).then((image) => {
-
-        const flight_plan = new File([blobRoutes], filenameRoutes);
-
-        let formData = new FormData();
-        formData.append("name", filenameRoutes.replace(".txt", ""));
-        formData.append("description", "none");
-        formData.append("routes_file", flight_plan);
-        formData.append("image_file", image.dataURL);
-        formData.append("image_filename", image.filenameImg);
-        formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
-
-        axios.post("/api/plans-module", formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then((response) => {
-
-            alert("O plano foi salvo no sistema e está disponível para download.");
-
-        }).catch((error) => {
-
-            console.log(error.response);
-            alert("Erro! Tente novamente.");
-
-        });
-
-    });
-
 }
 
 // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR A POSIÇÃO INICIAL NO MAPA === //
@@ -1847,6 +1877,8 @@ function importMPPolygon(e) {
     };
     reader.readAsText(file);
 }
+
+// ======================================================== ATT ORBIO 1: FORMAS DE ABRIR UM ARQUIVO ======================================== //
 
 function openTxtFileFromStorage(contents) {
 
@@ -2052,7 +2084,7 @@ function drawTxtPath(txtPath) {
 // === LIMPANDO AS ROTAS DESENHADAS NO MAPA === //
 function cleanLayers() {
 
-    var layers = ['routePhase01', 'routePhase02', 'routePhase03', 'routePoints01', 'bfPhase02', 'txtPath', 'intermediatePoints', 'wp01', 'wp02', 'wp03'];
+    var layers = ['routePhase01', 'routePhase02', 'routePhase03', 'routePoints01', 'bfPhase02', 'txtPath', 'intermediatePoints', 'wp01', 'wp02', 'wp03', 'bp01'];
 
     // Limpando todos os layers contidos no mapa
     for (i = 0; i < layers.length; i++) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 // Axios
@@ -9,7 +9,7 @@ import axios from '../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+import { ModalImage } from '../dialog/ModalImage';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -17,6 +17,18 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
+    {
+        field: 'image',
+        headerName: 'Imagem',
+        width: 100,
+        sortable: false,
+        editable: false,
+        renderCell: (data) => {
+            return (
+                <ModalImage image_url={data.row.image_url} />
+            )
+        }
+    },
     {
         field: 'name',
         headerName: 'Nome',
@@ -42,22 +54,6 @@ const columns = [
         sortable: true,
         editable: false,
         width: 150
-    },
-    {
-        field: 'visualization',
-        headerName: 'Visualizar',
-        width: 150,
-        sortable: false,
-        editable: false,
-        renderCell: (data) => {
-            return (
-                <Link href={`/internal/map?file=${data.row.file}`} target="_blank">
-                    <IconButton>
-                        <FontAwesomeIcon icon={faEye} color={"#00713A"} size="sm" />
-                    </IconButton>
-                </Link>
-            )
-        }
     },
     {
         field: 'service_orders',
@@ -265,6 +261,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             page={currentPage - 1}
                             selectionModel={controlledSelection}
                             rowsPerPageOptions={[10, 25, 50, 100]}
+                            rowHeight={70}
                             checkboxSelection
                             disableSelectionOnClick
                             paginationMode='server'

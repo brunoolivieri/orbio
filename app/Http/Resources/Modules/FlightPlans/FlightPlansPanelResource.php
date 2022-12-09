@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Incidents\Incident;
 use App\Models\Logs\Log;
+use Illuminate\Support\Facades\Storage;
 
 class FlightPlansPanelResource extends JsonResource
 {
@@ -30,6 +31,7 @@ class FlightPlansPanelResource extends JsonResource
 
             $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
+                "image_url" => Storage::url($flight_plan->image->path),
                 "creator" => [
                     "name" => $flight_plan->user->name,
                     "email" => $flight_plan->user->email,
