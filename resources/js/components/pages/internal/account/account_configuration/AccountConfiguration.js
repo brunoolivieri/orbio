@@ -1,12 +1,11 @@
 // React
 import * as React from 'react';
 // Material UI
-import { Tooltip, Typography, IconButton, Grid, TextField, Button, Paper, Stack, Divider, Card, CardContent, Box } from '@mui/material';
+import { Tooltip, Typography, IconButton, Grid, TextField, Button, Paper, Stack, Divider, Box } from '@mui/material';
 import styled from '@emotion/styled';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { faComputer } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from "../../../../../services/AxiosApi";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -38,7 +37,6 @@ export const AccountConfiguration = () => {
 
     const { AuthData } = useAuthentication();
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [sessions, setSessions] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [updateLoading, setUpdateLoading] = React.useState(false);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -51,12 +49,10 @@ export const AccountConfiguration = () => {
     React.useEffect(() => {
         setControlledInput(initialControlledInput);
         axios.get("/api/load-sessions-data")
-            .then(function (response) {
-                setSessions(response.data);
+            .then(function () {
                 setLoading(false);
             })
             .catch(function (error) {
-                setSessions([]);
                 setLoading(false);
                 handleOpenSnackbar(error.response.data.message, "error");
             });
@@ -251,33 +247,6 @@ export const AccountConfiguration = () => {
                             <Button type="submit" variant="contained" color="primary" disabled={updateLoading}>
                                 {updateLoading ? "Processando..." : "Atualizar"}
                             </Button>
-                        </PaperStyled>
-
-                        <PaperStyled>
-                            <Typography variant="h5" marginBottom={2}>Sessões ativas</Typography>
-                            <Stack spacing={2}>
-                                {!loading && sessions.length > 0 &&
-                                    sessions.map((session, index) => (
-                                        <Paper key={index} sx={{ boxShadow: 'none' }}>
-                                            <Card sx={{ display: 'flex', alignItems: 'center', boxShadow: 'none' }}>
-                                                <Box sx={{ padding: 2 }}>
-                                                    <FontAwesomeIcon icon={faComputer} size="2x" color={'#4caf50'} />
-                                                </Box>
-                                                <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                                                    <CardContent sx={{ flex: '1 0 auto' }}>
-                                                        <Typography component="div" variant="h5">
-                                                            Sessão ativa
-                                                        </Typography>
-                                                        <Typography variant="subtitle1" color="text.secondary" component="div">
-                                                            Navegador: {session.user_agent} | IP: {session.ip}
-                                                        </Typography>
-                                                    </CardContent>
-                                                </Box>
-                                            </Card>
-                                        </Paper>
-                                    ))
-                                }
-                            </Stack>
                         </PaperStyled>
 
                         <PaperStyled>

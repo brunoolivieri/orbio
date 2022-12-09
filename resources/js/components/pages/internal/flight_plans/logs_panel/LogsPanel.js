@@ -12,9 +12,10 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faMap } from '@fortawesome/free-solid-svg-icons';
+import { faImage } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { ModalImage } from '../../../../structures/modals/dialog/ModalImage';
 import axios from "../../../../../services/AxiosApi";
 import { CreateLogFormulary } from '../../../../structures/modules/flight_plans/logs/CreateLogFormulary';
 import { UpdateLogFormulary } from '../../../../structures/modules/flight_plans/logs/UpdateLogFormulary';
@@ -37,31 +38,25 @@ const columns = [
         headerName: 'Arquivo',
         sortable: true,
         editable: false,
-        width: 210
+        flex: 1
     },
     {
-        field: 'flight_plan',
-        headerName: 'Plano de voo',
+        field: 'flight_plan_image',
+        headerName: 'Ver plano',
         sortable: true,
         editable: false,
-        width: 150,
+        width: 130,
         renderCell: (data) => {
 
             if (data.row.flight_plan != null) {
                 return (
-                    <Tooltip title="Visualizar plano de voo">
-                        <Link href={`/internal/map?file=${data.row.flight_plan.path}`} target="_blank">
-                            <IconButton>
-                                <FontAwesomeIcon icon={faEye} color={"#00713A"} size="sm" />
-                            </IconButton>
-                        </Link>
-                    </Tooltip>
+                    <ModalImage image_url={data.row.flight_plan.image_url} />
                 )
             } else {
                 return (
                     <Tooltip title="Vincule um plano de voo">
                         <IconButton>
-                            <FontAwesomeIcon icon={faMap} color={"#E0E0E0"} size="sm" />
+                            <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
                         </IconButton>
                     </Tooltip>
                 )
@@ -271,6 +266,7 @@ export const LogsPanel = () => {
                     loading={loading}
                     page={currentPage - 1}
                     rowsPerPageOptions={[10, 25, 50, 100]}
+                    rowHeight={70}
                     checkboxSelection
                     disableSelectionOnClick
                     paginationMode='server'

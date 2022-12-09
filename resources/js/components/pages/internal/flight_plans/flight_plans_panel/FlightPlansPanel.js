@@ -28,8 +28,8 @@ const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
     field: 'image',
-    headerName: 'Imagem',
-    width: 100,
+    headerName: 'Ver plano',
+    width: 130,
     sortable: false,
     editable: false,
     renderCell: (data) => {
@@ -62,12 +62,12 @@ const columns = [
     headerAlign: 'left',
     sortable: true,
     editable: false,
-    width: 150
+    width: 130
   },
   {
     field: 'service_orders',
     headerName: 'Ordens de serviço',
-    width: 150,
+    width: 160,
     sortable: true,
     editable: false,
     renderCell: (data) => {
@@ -79,7 +79,7 @@ const columns = [
     headerName: 'Logs',
     sortable: true,
     editable: false,
-    width: 150,
+    width: 120,
     renderCell: (data) => {
       return data.row.logs.length;
     }

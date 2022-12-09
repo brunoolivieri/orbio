@@ -250,6 +250,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                     city: flight_plan.localization.city,
                     state: flight_plan.localization.state,
                     date: flight_plan.logs[0].timestamp, // need to be date from main log
+                    image_url: flight_plan.image_url,
                     area: '',
                     number: '',
                     dosage: '',

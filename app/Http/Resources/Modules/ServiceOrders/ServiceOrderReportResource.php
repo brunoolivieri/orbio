@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Incidents\Incident;
 use App\Models\Logs\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceOrderReportResource extends JsonResource
 {
@@ -65,6 +66,7 @@ class ServiceOrderReportResource extends JsonResource
 
                 $this->formatedData["records"][$row]["flight_plans"][$index] = [
                     "id" => $flight_plan->id,
+                    "image_url" => Storage::url($flight_plan->image->path),
                     "file" => $flight_plan->file,
                     "name" => $flight_plan->name,
                     "logs" => $logs,

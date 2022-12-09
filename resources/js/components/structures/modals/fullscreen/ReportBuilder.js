@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         width: '90px',
         height: '40px',
         marginBottom: '20px'
-    },
+    }
 });
 
 export const ReportDocument = React.memo((props) => {
@@ -138,6 +138,13 @@ export const ReportDocument = React.memo((props) => {
                                 <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.responsible}</Text>
                             </View>
                         </View>
+
+                        <View style={styles.section}>
+                            <Image
+                                src={flight_plan.image_url}
+                            ></Image>
+                        </View>
+
                     </Page>
                 </>
             ))}
