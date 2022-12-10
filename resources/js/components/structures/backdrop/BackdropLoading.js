@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Material UI
 import Backdrop from '@mui/material/Backdrop';

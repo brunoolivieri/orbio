@@ -7,11 +7,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { FlightPlanDataForReport } from '../../../../../structures/modals/dialog/FlightPlanDataForReport';
-import { ServiceOrderForReport } from '../../../../../structures/modals/fullscreen/ServiceOrderForReport';
+import { FlightPlanDataForReport } from '../modal/FlightPlanDataForReport';
+import { ServiceOrderForReport } from '../modal/ServiceOrderForReport';
 import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
-import { ReportVisualization, DownloadReport } from '../../../../../structures/modals/fullscreen/ReportBuilder';
+import { ReportVisualization, DownloadReport } from '../modal/ReportBuilder';
 // Lib
 import axios from '../../../../../../services/AxiosApi';
 

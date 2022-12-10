@@ -1,9 +1,9 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import AxiosApi from '../../../services/AxiosApi';
+import AxiosApi from '../../../../../../services/AxiosApi';
 
-export function AutoCompleteCity(props) {
+export function AutoCompleteState(props) {
 
     const [source] = React.useState(props.source);
     const [options, setOptions] = React.useState([]);
@@ -33,7 +33,7 @@ export function AutoCompleteCity(props) {
     }, [open]);
 
     const handleChange = (event, value) => {
-        props.setSelectedCity(value.label);
+        props.setSelectedState(value.label);
     }
 
     return (

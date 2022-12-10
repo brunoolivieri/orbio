@@ -16,8 +16,8 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import axios from "../../../../../services/AxiosApi";
 import { InputMask } from '../../../../../utils/InputMask';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { AutoCompleteCity } from '../../../../structures/input_select/AutoCompleteCity';
-import { AutoCompleteState } from '../../../../structures/input_select/AutoCompleteState';
+import { AutoCompleteCity } from './input/AutoCompleteCity';
+import { AutoCompleteState } from './input/AutoCompleteState';
 // Libs
 import { useSnackbar } from 'notistack';
 

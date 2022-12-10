@@ -3,8 +3,8 @@ import * as React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
-import { DroneConnectionConfig } from '../../../../../structures/modals/dialog/DroneConnectionConfig';
-import { DroneLogsList } from '../../../../../structures/modals/fullscreen/DroneLogsList';
+import { DroneConnectionConfig } from '../modal/DroneConnectionConfig';
+import { DroneLogsList } from '../modal/DroneLogsList';
 import axios from '../../../../../../services/AxiosApi';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

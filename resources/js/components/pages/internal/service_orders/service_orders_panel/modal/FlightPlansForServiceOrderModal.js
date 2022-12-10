@@ -4,12 +4,12 @@ import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, Dial
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 // Axios
-import axios from '../../../../services/AxiosApi';
+import axios from '../../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { ModalImage } from '../dialog/ModalImage';
+import { ModalImage } from '../../../../../structures/modals/dialog/ModalImage';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

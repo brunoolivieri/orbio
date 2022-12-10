@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import { IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
-import { SelectAttributeControl } from '../../input_select/SelectAttributeControl';
+import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
 
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 

@@ -9,8 +9,8 @@ import { FormValidation } from '../../../../../../utils/FormValidation';
 import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
 import { DatePicker } from '../../../../../structures/date_picker/DatePicker';
 import { StatusRadio } from '../../../../../structures/radio_group/StatusRadio';
-import { FlightPlansForServiceOrderModal } from '../../../../../structures/modals/fullscreen/FlightPlansForServiceOrderModal';
-import { FlightPlanEquipmentSelection } from '../../../../../structures/modals/dialog/FlightPlanEquipmentSelection';
+import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
+import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';

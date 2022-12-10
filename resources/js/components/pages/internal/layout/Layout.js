@@ -4,12 +4,12 @@ import Box from '@mui/material/Box';
 // Custom
 import { InternalRoutes } from "../../../../routes/index";
 import { useAuthentication } from "../../../context/InternalRoutesAuth/AuthenticationContext"; // State global de autenticação
-import AxiosApi from "../../../../services/AxiosApi"; // Axios para comunicação com o backend via AJAX
 import { NavigatorToggle } from './NavigatorToggle';
 import { NavigatorFixed } from './NavigatorFixed';
 import { Header } from './Header';
-import { BackdropLoading } from "../../../structures/backdrop_loading/BackdropLoading";
+import { BackdropLoading } from "../../../structures/backdrop/BackdropLoading";
 import { GenericModalDialog } from "../../../structures/modals/dialog/GenericModalDialog";
+import axios from "../../../../services/AxiosApi"; 
 // Assets
 import ErrorImage from "../../../assets/images/Error/Error_md.png";
 
@@ -28,7 +28,7 @@ export const Layout = () => {
   React.useEffect(() => {
     setOperationStatus({ type: "loading", title: "Processando....", message: null });
 
-    AxiosApi.post("/api/get-auth-data")
+    axios.post("/api/get-auth-data")
       .then(function (response) {
 
         setOperationStatus({ type: null, title: null, message: null, image: null });

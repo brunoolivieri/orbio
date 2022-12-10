@@ -8,7 +8,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Assets
-import BirdviewLogo from "../../../assets/images/Logos/Birdview.png";
+import BirdviewLogo from "../../../../../assets/images/Logos/Birdview.png";
 // Libs
 import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, pdf } from '@react-pdf/renderer';
 import moment from 'moment/moment';
