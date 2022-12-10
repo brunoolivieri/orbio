@@ -15,14 +15,14 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { CreateOrderFormulary } from "../../../../structures/modules/service_orders/CreateOrderFormulary";
-import { UpdateOrderFormulary } from "../../../../structures/modules/service_orders/UpdateOrderFormulary";
-import { DeleteOrderFormulary } from "../../../../structures/modules/service_orders/DeleteOrderFormulary";
-import { ServiceOrderInformation } from '../../../../structures/modules/service_orders/ServiceOrderInformation';
+import { CreateOrder } from './formulary/CreateOrder';
+import { UpdateOrder } from './formulary/UpdateOrder';
+import { DeleteOrder } from './formulary/DeleteOrder';
+import { ServiceOrderInformation } from './formulary/ServiceOrderInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -217,7 +217,7 @@ export const ServiceOrdersPanel = () => {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateOrderFormulary reloadTable={setReload} />
+            <CreateOrder reloadTable={setReload} />
           }
         </Grid>
 
@@ -231,7 +231,7 @@ export const ServiceOrdersPanel = () => {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateOrderFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateOrder record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -245,7 +245,7 @@ export const ServiceOrdersPanel = () => {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteOrderFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteOrder records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

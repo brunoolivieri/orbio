@@ -13,13 +13,13 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import axios from "../../../../../services/AxiosApi";
-import { CreateReportFormulary } from "../../../../structures/modules/reports/CreateReportFormulary";
-import { UpdateReportFormulary } from "../../../../structures/modules/reports/UpdateReportFormulary";
-import { DeleteReportFormulary } from "../../../../structures/modules/reports/DeleteReportFormulary";
+import { CreateReport } from './formulary/CreateReport';
+import { UpdateReport } from './formulary/UpdateReport';
+import { DeleteReport } from './formulary/DeleteReport';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import axios from "../../../../../services/AxiosApi";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -190,7 +190,7 @@ export function ReportsPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateReportFormulary reloadTable={setReload} />
+            <CreateReport reloadTable={setReload} />
           }
         </Grid>
 
@@ -204,7 +204,7 @@ export function ReportsPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateReportFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateReport record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -218,7 +218,7 @@ export function ReportsPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteReportFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteReport records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

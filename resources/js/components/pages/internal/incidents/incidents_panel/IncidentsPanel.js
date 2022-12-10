@@ -6,9 +6,9 @@ import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
-import { CreateIncidentFormulary } from "../../../../structures/modules/incidents/CreateIncidentFormulary";
-import { UpdateIncidentFormulary } from "../../../../structures/modules/incidents/UpdateIncidentFormulary";
-import { DeleteIncidentFormulary } from "../../../../structures/modules/incidents/DeleteIncidentFormulary";
+import { CreateIncident } from './formulary/CreateIncident';
+import { UpdateIncident } from './formulary/UpdateIncident';
+import { DeleteIncident } from './formulary/DeleteIncident';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
 // Fonts Awesome
@@ -162,7 +162,7 @@ export function IncidentsPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateIncidentFormulary reloadTable={setReload} />
+            <CreateIncident reloadTable={setReload} />
           }
         </Grid>
 
@@ -176,7 +176,7 @@ export function IncidentsPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateIncidentFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateIncident record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -190,7 +190,7 @@ export function IncidentsPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteIncidentFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteIncident records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

@@ -13,14 +13,14 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { DeleteBatteryFormulary } from '../../../../structures/modules/equipment/batteries/DeleteBatteryFormulary';
-import { UpdateBatteryFormulary } from '../../../../structures/modules/equipment/batteries/UpdateBatteryFormulary';
-import { CreateBatteryFormulary } from "../../../../structures/modules/equipment/batteries/CreateBatteryFormulary";
-import { BatteryInformation } from '../../../../structures/modules/equipment/batteries/BatteryInformation';
+import { CreateBattery } from './formulary/CreateBattery';
+import { UpdateBattery } from './formulary/UpdateBattery';
+import { DeleteBattery } from './formulary/DeleteBattery';
+import { BatteryInformation } from './formulary/BatteryInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -175,7 +175,7 @@ export function BatteriesPanel() {
                     }
 
                     {selectedRecords.length === 0 &&
-                        <CreateBatteryFormulary reloadTable={setReload} />
+                        <CreateBattery reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -189,7 +189,7 @@ export function BatteriesPanel() {
                     }
 
                     {(!loading && selectedRecords.length === 1) &&
-                        <UpdateBatteryFormulary record={selectedRecords[0]} reloadTable={setReload} />
+                        <UpdateBattery record={selectedRecords[0]} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -203,7 +203,7 @@ export function BatteriesPanel() {
                     }
 
                     {(!loading && selectedRecords.length > 0) &&
-                        <DeleteBatteryFormulary records={selectedRecords} reloadTable={setReload} />
+                        <DeleteBattery records={selectedRecords} reloadTable={setReload} />
                     }
                 </Grid>
 

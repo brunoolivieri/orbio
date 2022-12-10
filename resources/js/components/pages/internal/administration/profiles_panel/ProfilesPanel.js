@@ -6,10 +6,10 @@ import { useSnackbar } from 'notistack';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
-import { CreateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/CreateProfileFormulary";
-import { UpdateProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/UpdateProfileFormulary";
-import { DeleteProfileFormulary } from "../../../../structures/modules/administration/profiles_administration/DeleteProfileFormulary";
-import { ProfileInformation } from "../../../../structures/modules/administration/profiles_administration/ProfileInformation";
+import { CreateProfile } from "./formulary/CreateProfile";
+import { UpdateProfile } from "./formulary/UpdateProfile";
+import { DeleteProfile } from "./formulary/DeleteProfile";
+import { ProfileInformation } from "./formulary/ProfileInformation";
 import { ExportTableData } from "../../../../structures/modals/dialog/ExportTableData";
 import { TableToolbar } from "../../../../structures/table_toolbar/TableToolbar";
 // Fontsawesome
@@ -216,7 +216,7 @@ export function ProfilesPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateProfileFormulary reloadTable={setReload} />
+            <CreateProfile reloadTable={setReload} />
           }
         </Grid>
 
@@ -230,7 +230,7 @@ export function ProfilesPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateProfileFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateProfile record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -244,7 +244,7 @@ export function ProfilesPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteProfileFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteProfile records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

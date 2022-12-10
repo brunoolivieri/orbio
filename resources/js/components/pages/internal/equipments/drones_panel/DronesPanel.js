@@ -13,14 +13,14 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { CreateDroneFormulary } from '../../../../structures/modules/equipment/drones/CreateDroneFormulary';
-import { DeleteDroneFormulary } from '../../../../structures/modules/equipment/drones/DeleteDroneFormulary';
-import { UpdateDroneFormulary } from '../../../../structures/modules/equipment/drones/UpdateDroneFormulary';
-import { DroneInformation } from '../../../../structures/modules/equipment/drones/DroneInformation';
+import { CreateDrone } from './formulary/CreateDrone';
+import { UpdateDrone } from './formulary/UpdateDrone';
+import { DeleteDrone } from './formulary/DeleteDrone';
+import { DroneInformation } from './formulary/DroneInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
 
 const imageStyle = {
     borderRadius: 5,
@@ -185,7 +185,7 @@ export const DronesPanel = () => {
                     }
 
                     {selectedRecords.length === 0 &&
-                        <CreateDroneFormulary reloadTable={setReload} />
+                        <CreateDrone reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -199,7 +199,7 @@ export const DronesPanel = () => {
                     }
 
                     {(!loading && selectedRecords.length === 1) &&
-                        <UpdateDroneFormulary record={selectedRecords[0]} reloadTable={setReload} />
+                        <UpdateDrone record={selectedRecords[0]} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -213,7 +213,7 @@ export const DronesPanel = () => {
                     }
 
                     {(!loading && selectedRecords.length > 0) &&
-                        <DeleteDroneFormulary records={selectedRecords} reloadTable={setReload} />
+                        <DeleteDrone records={selectedRecords} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -293,7 +293,7 @@ export const DronesPanel = () => {
                     localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
                     components={{
                         Toolbar: TableToolbar,
-                      }}
+                    }}
                     sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
                             outline: "none !important",
@@ -302,7 +302,7 @@ export const DronesPanel = () => {
                             color: '#222'
                         },
                         '& .MuiDataGrid-columnHeaders': {
-                          boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
+                            boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
                         }
                     }}
                 />

@@ -1,9 +1,9 @@
 // React
 import * as React from 'react';
 // Custom
-import { BasicDataPanel } from "./basic_data_panel/BasicDataPanel";
-import { ComplementaryDataPanel } from "./complementary_data_panel/ComplementaryDataPanel";
-import { AccountConfiguration } from './account_configuration/AccountConfiguration';
+import { BasicInformation } from './sections/BasicInformation';
+import { ComplementaryInformation } from './sections/ComplementaryInformation';
+import { AdditionalConfiguration } from './sections/AdditionalConfiguration';
 import { Switcher } from "../../../structures/switcher/Switcher";
 import { usePage } from '../../../context/PageContext';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -20,9 +20,9 @@ export const Account = () => {
   const [actualPanel, setActualPanel] = React.useState("basic");
   const { setPageIndex } = usePage();
 
-  const options = AuthData.data.profile_id != 1 ? 
-  [{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }] 
-  : [{ page: "basic", title: "básico", icon: "" }, { page: "account_configuration", title: "configurações" }];
+  const options = AuthData.data.profile_id != 1 ?
+    [{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }]
+    : [{ page: "basic", title: "básico", icon: "" }, { page: "account_configuration", title: "configurações" }];
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -43,9 +43,9 @@ export const Account = () => {
 
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {(actualPanel === "basic") && <BasicDataPanel />}
-          {(actualPanel === "complementary" && AuthData.data.profile_id != 1) && <ComplementaryDataPanel />}
-          {(actualPanel === "account_configuration") && <AccountConfiguration />}
+          {(actualPanel === "basic") && <BasicInformation />}
+          {(actualPanel === "complementary" && AuthData.data.profile_id != 1) && <ComplementaryInformation />}
+          {(actualPanel === "account_configuration") && <AdditionalConfiguration />}
 
         </Box>
 

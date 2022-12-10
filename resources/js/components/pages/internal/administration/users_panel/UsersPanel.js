@@ -6,10 +6,10 @@ import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Custom
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
-import { CreateUserFormulary } from "../../../../structures/modules/administration/users_administration/CreateUserFormulary";
-import { UpdateUserFormulary } from "../../../../structures/modules/administration/users_administration/UpdateUserFormulary";
-import { DeleteUserFormulary } from "../../../../structures/modules/administration/users_administration/DeleteUserFormulary";
-import { UserInformation } from '../../../../structures/modules/administration/users_administration/UserInformation';
+import { CreateUser } from './formulary/CreateUser';
+import { UpdateUser } from './formulary/UpdateUser';
+import { DeleteUser } from './formulary/DeleteUser';
+import { UserInformation } from './formulary/UserInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
 // Fonts Awesome
@@ -163,7 +163,7 @@ export function UsersPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateUserFormulary reloadTable={setReload} />
+            <CreateUser reloadTable={setReload} />
           }
         </Grid>
 
@@ -177,7 +177,7 @@ export function UsersPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateUserFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateUser record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -191,7 +191,7 @@ export function UsersPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteUserFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteUser records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

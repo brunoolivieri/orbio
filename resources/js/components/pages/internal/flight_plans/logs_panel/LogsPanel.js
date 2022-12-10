@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Link } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
@@ -10,16 +10,15 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faImage } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../structures/modals/dialog/ModalImage';
 import axios from "../../../../../services/AxiosApi";
-import { CreateLogFormulary } from '../../../../structures/modules/flight_plans/logs/CreateLogFormulary';
-import { UpdateLogFormulary } from '../../../../structures/modules/flight_plans/logs/UpdateLogFormulary';
-import { DeleteLogFormulary } from '../../../../structures/modules/flight_plans/logs/DeleteLogFormulary';
+import { CreateLog } from './formulary/CreateLog';
+import { UpdateLog } from './formulary/UpdateLog';
+import { DeleteLog } from './formulary/DeleteLog';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
@@ -182,7 +181,7 @@ export const LogsPanel = () => {
                     }
 
                     {selectedRecords.length === 0 &&
-                        <CreateLogFormulary reloadTable={setReload} />
+                        <CreateLog reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -196,7 +195,7 @@ export const LogsPanel = () => {
                     }
 
                     {(!loading && selectedRecords.length === 1) &&
-                        <UpdateLogFormulary record={selectedRecords[0]} reloadTable={setReload} />
+                        <UpdateLog record={selectedRecords[0]} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -210,7 +209,7 @@ export const LogsPanel = () => {
                     }
 
                     {(!loading && selectedRecords.length > 0) &&
-                        <DeleteLogFormulary records={selectedRecords} reloadTable={setReload} />
+                        <DeleteLog records={selectedRecords} reloadTable={setReload} />
                     }
                 </Grid>
 

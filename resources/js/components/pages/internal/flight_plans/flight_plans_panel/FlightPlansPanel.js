@@ -15,14 +15,14 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
+import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
+import { FlightPlanInformation } from './formulary/FlightPlanInformation';
 import { ModalImage } from '../../../../structures/modals/dialog/ModalImage';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { UpdatePlanFormulary } from "../../../../structures/modules/flight_plans/UpdatePlanFormulary";
-import { DeletePlanFormulary } from "../../../../structures/modules/flight_plans/DeletePlanFormulary";
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { FlightPlanInformation } from '../../../../structures/modules/flight_plans/FlightPlanInformation';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import axios from "../../../../../services/AxiosApi";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -245,7 +245,7 @@ export function FlightPlansPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdatePlanFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateFlightPlan record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -259,7 +259,7 @@ export function FlightPlansPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeletePlanFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteFlightPlan records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

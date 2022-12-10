@@ -13,14 +13,14 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { CreateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/CreateEquipmentFormulary';
-import { DeleteEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/DeleteEquipmentFormulary';
-import { UpdateEquipmentFormulary } from '../../../../structures/modules/equipment/equipments/UpdateEquipmentFormulary';
-import { EquipmentInformation } from '../../../../structures/modules/equipment/equipments/EquipmentInformation';
+import { CreateEquipment } from './formulary/CreateEquipmentFormulary';
+import { DeleteEquipment } from './formulary/DeleteEquipmentFormulary';
+import { UpdateEquipment } from './formulary/UpdateEquipmentFormulary';
+import { EquipmentInformation } from './formulary/EquipmentInformation';
 import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -184,7 +184,7 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateEquipmentFormulary reloadTable={setReload} />
+            <CreateEquipment reloadTable={setReload} />
           }
         </Grid>
 
@@ -198,7 +198,7 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateEquipmentFormulary record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateEquipment record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -212,7 +212,7 @@ export const EquipmentPanel = React.memo(() => {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteEquipmentFormulary records={selectedRecords} reloadTable={setReload} />
+            <DeleteEquipment records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 

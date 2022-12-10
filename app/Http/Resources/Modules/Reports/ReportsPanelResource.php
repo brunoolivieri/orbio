@@ -30,7 +30,7 @@ class ReportsPanelResource extends JsonResource
                 "id" => $report->id,
                 "name" => $report->name,
                 "file" => $report->file,
-                "observation" => empty($report->observation) ? "N/A" : $report->observation,
+                "observation" => empty($report->observation) ? "nenhuma" : $report->observation,
                 "service_order" => [
                     "id" => $report->service_order->id,
                     "number" => $report->service_order->number,
