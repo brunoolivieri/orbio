@@ -17,8 +17,8 @@ import { CreateDrone } from './formulary/CreateDrone';
 import { UpdateDrone } from './formulary/UpdateDrone';
 import { DeleteDrone } from './formulary/DeleteDrone';
 import { DroneInformation } from './formulary/DroneInformation';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
 

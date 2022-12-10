@@ -9,7 +9,7 @@ import axios from '../../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { ModalImage } from '../../../../../structures/modals/dialog/ModalImage';
+import { ModalImage } from '../../../../../shared/modals/dialog/ModalImage';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;

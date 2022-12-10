@@ -18,10 +18,10 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
-import { ModalImage } from '../../../../structures/modals/dialog/ModalImage';
+import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import axios from "../../../../../services/AxiosApi";
 
 const columns = [

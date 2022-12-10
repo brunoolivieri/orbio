@@ -1,15 +1,9 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import TextField from '@mui/material/TextField';
-import { IconButton } from '@mui/material';
+// Material UI
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
-import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
+import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
 
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 

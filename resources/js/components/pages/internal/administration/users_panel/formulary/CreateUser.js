@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
-import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
+import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 

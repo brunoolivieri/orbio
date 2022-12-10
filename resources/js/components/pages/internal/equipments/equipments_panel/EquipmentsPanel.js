@@ -17,8 +17,8 @@ import { CreateEquipment } from './formulary/CreateEquipmentFormulary';
 import { DeleteEquipment } from './formulary/DeleteEquipmentFormulary';
 import { UpdateEquipment } from './formulary/UpdateEquipmentFormulary';
 import { EquipmentInformation } from './formulary/EquipmentInformation';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
 

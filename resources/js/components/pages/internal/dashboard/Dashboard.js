@@ -8,7 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useSnackbar } from 'notistack';
 import { Box } from '@mui/system';
 // Custom
-import AxiosApi from '../../../../services/AxiosApi';
+import axios from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
 
 const miniCardStyle = {

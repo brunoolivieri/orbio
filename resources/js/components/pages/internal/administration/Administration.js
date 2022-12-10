@@ -7,7 +7,7 @@ import { usePage } from '../../../context/PageContext';
 // Material UI
 import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
-import { Switcher } from "../../../structures/switcher/Switcher";
+import { Switcher } from "../../../shared/switcher/Switcher";
 
 export const Administration = () => {
 

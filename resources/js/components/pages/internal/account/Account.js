@@ -4,7 +4,7 @@ import * as React from 'react';
 import { BasicInformation } from './sections/BasicInformation';
 import { ComplementaryInformation } from './sections/ComplementaryInformation';
 import { AdditionalConfiguration } from './sections/AdditionalConfiguration';
-import { Switcher } from "../../../structures/switcher/Switcher";
+import { Switcher } from "../../../shared/switcher/Switcher";
 import { usePage } from '../../../context/PageContext';
 import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Material UI

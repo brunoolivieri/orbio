@@ -13,7 +13,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import PropTypes from 'prop-types';
 // Custom
-import { HeaderMenu } from "../../../structures/header_menu/HeaderMenu";
+import { HeaderMenu } from "../../../shared/header_menu/HeaderMenu";
 import { usePage } from '../../../context/PageContext';
 
 const headerStyle = {

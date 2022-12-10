@@ -8,7 +8,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
-import { SelectExternalData } from '../../../../../structures/input_select/SelectExternalData';
+import { SelectExternalData } from '../../../../../shared/input_select/SelectExternalData';
 
 const initialFieldError = { name: false, flight_plan_id: false };
 const initialFieldErrorMessage = { name: "", flight_plan_id: "" };

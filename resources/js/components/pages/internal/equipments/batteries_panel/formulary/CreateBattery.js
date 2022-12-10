@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { DatePicker } from '../../../../../structures/date_picker/DatePicker';
+import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';

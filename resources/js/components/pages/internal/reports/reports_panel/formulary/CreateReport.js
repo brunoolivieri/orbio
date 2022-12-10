@@ -9,7 +9,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { FlightPlanDataForReport } from '../modal/FlightPlanDataForReport';
 import { ServiceOrderForReport } from '../modal/ServiceOrderForReport';
-import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
+import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ReportVisualization, DownloadReport } from '../modal/ReportBuilder';
 // Lib

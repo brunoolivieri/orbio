@@ -8,7 +8,7 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Moment
 import moment from 'moment';
 // Custom
-import { DatePicker } from '../../../../../structures/date_picker/DatePicker';
+import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';

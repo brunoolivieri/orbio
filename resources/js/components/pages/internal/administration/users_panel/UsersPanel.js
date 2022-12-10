@@ -10,8 +10,8 @@ import { CreateUser } from './formulary/CreateUser';
 import { UpdateUser } from './formulary/UpdateUser';
 import { DeleteUser } from './formulary/DeleteUser';
 import { UserInformation } from './formulary/UserInformation';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';

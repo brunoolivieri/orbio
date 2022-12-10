@@ -6,9 +6,9 @@ import MapIcon from '@mui/icons-material/Map';
 import axios from '../../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
-import { SelectAttributeControl } from '../../../../../structures/input_select/SelectAttributeControl';
-import { DatePicker } from '../../../../../structures/date_picker/DatePicker';
-import { StatusRadio } from '../../../../../structures/radio_group/StatusRadio';
+import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
+import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
+import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
 import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
 // Fontsawesome

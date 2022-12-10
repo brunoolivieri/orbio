@@ -2,7 +2,7 @@
 import * as React from 'react';
 // Material UI
 import { Paper, Box } from '@mui/material';
-import { Switcher } from "../../../structures/switcher/Switcher";
+import { Switcher } from "../../../shared/switcher/Switcher";
 // Panels
 import { DronesPanel } from './drones_panel/DronesPanel';
 import { BatteriesPanel } from './batteries_panel/BatteriesPanel';

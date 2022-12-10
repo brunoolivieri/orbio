@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, Divider, Grid } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Link } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
@@ -40,8 +40,7 @@ export const UpdateFlightPlan = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit() {
     if (formValidation()) {
       setLoading(true);
       requestServerOperation();
@@ -133,74 +132,79 @@ export const UpdateFlightPlan = React.memo((props) => {
         <DialogTitle>ATUALIZAÇÃO DE PLANO DE VOO</DialogTitle>
         <Divider />
 
-        <Box component="form" noValidate onSubmit={handleSubmit} >
+        <DialogContent>
+          <Grid container spacing={1}>
 
-          <DialogContent>
-            <Grid container spacing={1}>
-
-              <Grid item xs={2}>
-                <TextField
-                  margin="dense"
-                  id="id"
-                  name="id"
-                  label="ID do plano"
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  onChange={handleInputChange}
-                  defaultValue={props.record.id}
-                  inputProps={{
-                    readOnly: true
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={10}>
-                <TextField
-                  margin="dense"
-                  id="name"
-                  name="name"
-                  label="Nome do plano"
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  onChange={handleInputChange}
-                  defaultValue={props.record.name}
-                  helperText={fieldErrorMessage.name}
-                  error={fieldError.name}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                <TextField
-                  margin="dense"
-                  name="description"
-                  label="Descrição"
-                  type="text"
-                  fullWidth
-                  variant="outlined"
-                  onChange={handleInputChange}
-                  defaultValue={props.record.description}
-                  helperText={fieldErrorMessage.description}
-                  error={fieldError.description}
-                />
-              </Grid>
-
+            <Grid item xs={2}>
+              <TextField
+                margin="dense"
+                id="id"
+                name="id"
+                label="ID do plano"
+                type="text"
+                fullWidth
+                variant="outlined"
+                onChange={handleInputChange}
+                defaultValue={props.record.id}
+                inputProps={{
+                  readOnly: true
+                }}
+              />
             </Grid>
-          </DialogContent>
 
-          {(!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+            <Grid item xs={10}>
+              <TextField
+                margin="dense"
+                id="name"
+                name="name"
+                label="Nome do plano"
+                type="text"
+                fullWidth
+                variant="outlined"
+                onChange={handleInputChange}
+                defaultValue={props.record.name}
+                helperText={fieldErrorMessage.name}
+                error={fieldError.name}
+              />
+            </Grid>
 
-          {loading && <LinearProgress />}
+            <Grid item xs={12}>
+              <TextField
+                margin="dense"
+                name="description"
+                label="Descrição"
+                type="text"
+                fullWidth
+                variant="outlined"
+                onChange={handleInputChange}
+                defaultValue={props.record.description}
+                helperText={fieldErrorMessage.description}
+                error={fieldError.description}
+              />
+            </Grid>
 
-          <Divider />
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-        </Box>
+            <Grid item xs={6}>
+              <Button variant="contained">
+                <Link href={`/internal/map?file=${props.record.file}`}>
+                  Editar plano
+                </Link>
+              </Button>
+            </Grid>
+
+          </Grid>
+        </DialogContent>
+
+        {(!loading && displayAlert.display) &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
+
+        {loading && <LinearProgress />}
+
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

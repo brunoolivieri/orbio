@@ -10,8 +10,8 @@ import moment from 'moment';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
-import { DatePicker } from '../../../../../structures/date_picker/DatePicker';
-import { SelectExternalData } from '../../../../../structures/input_select/SelectExternalData';
+import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
+import { SelectExternalData } from '../../../../../shared/input_select/SelectExternalData';
 
 const initialFieldError = { date: false, type: false, description: false };
 const initialFieldErrorMessage = { date: "", type: "", description: "" };

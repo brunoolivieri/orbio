@@ -17,8 +17,8 @@ import { CreateReport } from './formulary/CreateReport';
 import { UpdateReport } from './formulary/UpdateReport';
 import { DeleteReport } from './formulary/DeleteReport';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import axios from "../../../../../services/AxiosApi";
 
 const columns = [

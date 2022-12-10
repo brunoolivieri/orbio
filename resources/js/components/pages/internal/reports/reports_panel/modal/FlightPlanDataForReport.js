@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
 import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
-import { DatePicker } from "../../../../../structures/date_picker/DatePicker";
+import { DatePicker } from "../../../../../shared/date_picker/DatePicker";
 // Lib
 import axios from '../../../../../../services/AxiosApi';
 import moment from 'moment';

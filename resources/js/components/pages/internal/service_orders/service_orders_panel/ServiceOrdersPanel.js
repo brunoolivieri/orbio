@@ -19,8 +19,8 @@ import { CreateOrder } from './formulary/CreateOrder';
 import { UpdateOrder } from './formulary/UpdateOrder';
 import { DeleteOrder } from './formulary/DeleteOrder';
 import { ServiceOrderInformation } from './formulary/ServiceOrderInformation';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
 

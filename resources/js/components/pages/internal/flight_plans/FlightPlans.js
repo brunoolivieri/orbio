@@ -6,7 +6,7 @@ import { Paper, Box } from '@mui/material';
 import { FlightPlansPanel } from "./flight_plans_panel/FlightPlansPanel";
 import { LogsPanel } from "./logs_panel/LogsPanel";
 import { usePage } from '../../../context/PageContext';
-import { Switcher } from '../../../structures/switcher/Switcher';
+import { Switcher } from '../../../shared/switcher/Switcher';
 
 export const FlightPlans = React.memo(() => {
 

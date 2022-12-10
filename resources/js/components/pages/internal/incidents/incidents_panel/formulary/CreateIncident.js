@@ -5,11 +5,11 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, Ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { DatePicker } from '../../../../../structures/date_picker/DatePicker';
+import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
-import { SelectExternalData } from '../../../../../structures/input_select/SelectExternalData';
+import { SelectExternalData } from '../../../../../shared/input_select/SelectExternalData';
 // Libs
 import moment from 'moment';
 

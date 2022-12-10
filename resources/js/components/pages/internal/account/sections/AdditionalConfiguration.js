@@ -9,7 +9,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import axios from "../../../../../services/AxiosApi";
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { GenericModalDialog } from '../../../../structures/modals/dialog/GenericModalDialog';
+import { GenericModalDialog } from '../../../../shared/modals/dialog/GenericModalDialog';
 // Assets
 import AlertImage from "../../../../assets/images/Alert/Alert_md.png";
 // Libs

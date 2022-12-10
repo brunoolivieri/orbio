@@ -17,8 +17,8 @@ import { CreateBattery } from './formulary/CreateBattery';
 import { UpdateBattery } from './formulary/UpdateBattery';
 import { DeleteBattery } from './formulary/DeleteBattery';
 import { BatteryInformation } from './formulary/BatteryInformation';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
 

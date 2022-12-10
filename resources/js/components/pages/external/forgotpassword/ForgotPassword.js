@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Material UI
 import { Button, TextField, Grid, Box, Container, Typography } from '@mui/material';

@@ -7,8 +7,8 @@ import { useAuthentication } from "../../../context/InternalRoutesAuth/Authentic
 import { NavigatorToggle } from './NavigatorToggle';
 import { NavigatorFixed } from './NavigatorFixed';
 import { Header } from './Header';
-import { BackdropLoading } from "../../../structures/backdrop/BackdropLoading";
-import { GenericModalDialog } from "../../../structures/modals/dialog/GenericModalDialog";
+import { BackdropLoading } from "../../../shared/backdrop/BackdropLoading";
+import { GenericModalDialog } from "../../../shared/modals/dialog/GenericModalDialog";
 import axios from "../../../../services/AxiosApi"; 
 // Assets
 import ErrorImage from "../../../assets/images/Error/Error_md.png";

@@ -9,8 +9,8 @@ import axios from "../../../../../services/AxiosApi";
 import { CreateIncident } from './formulary/CreateIncident';
 import { UpdateIncident } from './formulary/UpdateIncident';
 import { DeleteIncident } from './formulary/DeleteIncident';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';

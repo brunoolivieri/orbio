@@ -58,7 +58,7 @@ class FlightPlanService implements ServiceInterface
 
         // Routes file data
         $routes_file_content = file_get_contents($data["routes_file"]);
-        $routes_filename = md5($routes_file_content) . "txt";
+        $routes_filename = md5($routes_file_content) . ".txt";
         $data["routes"] = [
             "content" => $routes_file_content,
             "filename" => $routes_filename,

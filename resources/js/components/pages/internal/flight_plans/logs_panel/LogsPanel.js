@@ -14,14 +14,14 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faImage } from '@fortawesome/free-solid-svg-icons';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { ModalImage } from '../../../../structures/modals/dialog/ModalImage';
+import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import axios from "../../../../../services/AxiosApi";
 import { CreateLog } from './formulary/CreateLog';
 import { UpdateLog } from './formulary/UpdateLog';
 import { DeleteLog } from './formulary/DeleteLog';
 import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
-import { ExportTableData } from '../../../../structures/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../structures/table_toolbar/TableToolbar';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
