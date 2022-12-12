@@ -4,6 +4,7 @@ namespace App\Http\Resources\Modules\Administration;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
 
 class UsersPanelResource extends JsonResource
 {
@@ -40,10 +41,12 @@ class UsersPanelResource extends JsonResource
                 "documents" => null,
                 "address" => null,
                 "service_order" => null,
-                "last_access" => is_null($user->last_access) ? "N/A" : date("d-m-Y", strtotime($user->last_access)),
-                "created_at" => date("d-m-Y", strtotime($user->created_at)),
-                "updated_at" => date("d-m-Y", strtotime($user->updated_at))
+                "last_access" => is_null($user->last_access) ? "nunca" : $user->last_access,
+                "created_at" => $user->created_at,
+                "updated_at" => $user->updated_at
             ];
+
+            //dd($user->created_at);
 
             if ($user->status && $user->personal_document) {
 

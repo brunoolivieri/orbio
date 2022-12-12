@@ -21,6 +21,8 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Moment
+import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -71,6 +73,9 @@ const columns = [
     sortable: true,
     editable: false,
     width: 150,
+    valueGetter: (data) => {
+      return data.row.last_access != "nunca" ? moment(data.row.last_access).format("DD/MM/YYYY") : data.row.last_access
+    }
   },
 ];
 

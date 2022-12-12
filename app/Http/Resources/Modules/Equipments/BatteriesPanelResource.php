@@ -5,6 +5,7 @@ namespace App\Http\Resources\Modules\Equipments;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class BatteriesPanelResource extends JsonResource
 {
@@ -35,9 +36,9 @@ class BatteriesPanelResource extends JsonResource
                 "model" => $battery->model,
                 "total_service_orders" => $battery->service_orders()->distinct('service_order_id')->count(),
                 "serial_number" => $battery->serial_number,
-                "last_charge" => empty($battery->last_charge) ? "N/A" : date("Y-m-d", strtotime($battery->last_charge)),
-                "created_at" => date("Y-m-d", strtotime($battery->created_at)),
-                "updated_at" => date("Y-m-d", strtotime($battery->updated_at))
+                "last_charge" => empty($battery->last_charge) ? "nunca" : $battery->last_charge,
+                "created_at" => $battery->created_at,
+                "updated_at" => $battery->updated_at
             ];
         }
 

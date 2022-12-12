@@ -4,6 +4,7 @@ namespace App\Http\Resources\Modules\Administration;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Carbon\Carbon;
 use App\Models\Modules\Module;
 
 class ProfilesPanelResource extends JsonResource
@@ -44,8 +45,8 @@ class ProfilesPanelResource extends JsonResource
                 [
                     "id" => $profile->id,
                     "name" =>  $profile->name,
-                    "created_at" => date("d-m-Y", strtotime($profile->created_at)),
-                    "updated_at" => date("d-m-Y", strtotime($profile->updated_at)),
+                    "created_at" => $profile->created_at,
+                    "updated_at" => $profile->updated_at,
                     "total_users" => $profile->users->count(),
                     "modules" => $modules_related
                 ];

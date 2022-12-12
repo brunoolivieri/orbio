@@ -5,6 +5,7 @@ namespace App\Http\Resources\Modules\Equipments;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 use App\Models\FlightPlans\FlightPlan;
 
 class DronesPanelResource extends JsonResource
@@ -40,8 +41,8 @@ class DronesPanelResource extends JsonResource
                 "total_service_orders" => $drone->service_orders()->distinct('service_order_id')->count(),
                 "total_incidents" => "",
                 "observation" => $drone->observation,
-                "created_at" => date("d-m-Y", strtotime($drone->created_at)),
-                "updated_at" => date("d-m-Y", strtotime($drone->updated_at))
+                "created_at" => $drone->created_at,
+                "updated_at" => $drone->updated_at
             ];
 
         }

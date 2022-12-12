@@ -68,4 +68,15 @@ class Equipment extends Model
     {
         return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "equipment_id")->withPivot(["id", "drone_id", "battery_id"]);
     }
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'date:Y-m-d',
+        'updated_at' => 'date:Y-m-d',
+        'purchase_date' => 'date:Y-m-d'
+    ];
 }

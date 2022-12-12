@@ -5,6 +5,7 @@ namespace App\Http\Resources\Modules\Equipments;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use Carbon\Carbon;
 
 class EquipmentsPanelResource extends JsonResource
 {
@@ -38,9 +39,9 @@ class EquipmentsPanelResource extends JsonResource
                 "total_service_orders" => $equipment->service_orders()->distinct('service_order_id')->count(),
                 "weight" => $equipment->weight,
                 "observation" => $equipment->observation,
-                "purchase_date" => empty($equipment->purchase_date) ? "N/A" : date("Y-m-d", strtotime($equipment->purchase_date)),
-                "created_at" => date("Y-m-d", strtotime($equipment->created_at)),
-                "updated_at" => empty($equipment->updated_at) ? "N/A" : date("Y-m-d", strtotime($equipment->updated_at))
+                "purchase_date" => empty($equipment->purchase_date) ? "nunca" : $equipment->purchase_date,
+                "created_at" => $equipment->created_at,
+                "updated_at" => $equipment->updated_at
             ];
         }
 

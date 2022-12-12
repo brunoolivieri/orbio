@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -145,44 +145,52 @@ export const CreateUser = React.memo((props) => {
             O usuário criado receberá um e-mail com os dados de acesso padrão.
           </DialogContentText>
 
-          <TextField
-            margin="dense"
-            label="Nome completo"
-            fullWidth
-            variant="outlined"
-            required
-            name="name"
-            onChange={handleInputChange}
-            helperText={fieldErrorMessage.name}
-            error={fieldError.name}
-            sx={{ mb: 1 }}
-          />
+          <Grid container columns={12} spacing={1}>
 
-          <TextField
-            type="email"
-            margin="dense"
-            label="Endereço de email"
-            fullWidth
-            variant="outlined"
-            required
-            name="email"
-            onChange={handleInputChange}
-            helperText={fieldErrorMessage.email}
-            error={fieldError.email}
-            sx={{ mb: 2 }}
-          />
+            <Grid item xs={12}>
+              <TextField
+                margin="dense"
+                label="Nome completo"
+                fullWidth
+                variant="outlined"
+                required
+                name="name"
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.name}
+                error={fieldError.name}
+              />
+            </Grid>
 
-          <SelectAttributeControl
-            label_text={"Perfil"}
-            data_source={"/api/load-profiles"}
-            primary_key={"id"}
-            key_content={"name"}
-            error={fieldError.profile}
-            name={"profile"}
-            value={controlledInput.profile}
-            setControlledInput={setControlledInput}
-            controlledInput={controlledInput}
-          />
+            <Grid item xs={12}>
+              <TextField
+                type="email"
+                margin="dense"
+                label="Endereço de email"
+                fullWidth
+                variant="outlined"
+                required
+                name="email"
+                onChange={handleInputChange}
+                helperText={fieldErrorMessage.email}
+                error={fieldError.email}
+              />
+            </Grid>
+
+            <Grid item xs={6}>
+              <SelectAttributeControl
+                label_text={"Perfil"}
+                data_source={"/api/load-profiles"}
+                primary_key={"id"}
+                key_content={"name"}
+                error={fieldError.profile}
+                name={"profile"}
+                value={controlledInput.profile}
+                setControlledInput={setControlledInput}
+                controlledInput={controlledInput}
+              />
+            </Grid>
+
+          </Grid>
 
         </DialogContent>
 
