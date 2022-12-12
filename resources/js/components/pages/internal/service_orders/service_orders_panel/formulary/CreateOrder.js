@@ -41,7 +41,7 @@ export const CreateOrder = React.memo((props) => {
     setOpen(true);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setOpen(false);
     setLoading(false);
     setFieldError(initialFieldError);
@@ -54,7 +54,7 @@ export const CreateOrder = React.memo((props) => {
     if (!formValidation()) {
       return '';
     }
-    requestServerOperation();
+    requestServer();
   }
 
   function formValidation() {
@@ -92,7 +92,7 @@ export const CreateOrder = React.memo((props) => {
     return moment(controlledInput.start_date).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD') ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
   }
 
-  function requestServerOperation() {
+  function requestServer() {
     setLoading(true);
 
     axios.post(`/api/orders-module`, {

@@ -1,6 +1,6 @@
 import *  as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../../services/AxiosApi';
@@ -42,8 +42,7 @@ export const CreateProfile = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleRegistrationProfile(e) {
-    e.preventDefault();
+  function handleSubmit() {
     if (formValidation()) {
       setLoading(true);
       requestServerOperation();
@@ -125,40 +124,38 @@ export const CreateProfile = React.memo((props) => {
         <DialogTitle>CRIAÇÃO DE PERFIL</DialogTitle>
         <Divider />
 
-        <Box component="form" noValidate onSubmit={handleRegistrationProfile} >
-          <DialogContent>
+        <DialogContent>
 
-            <DialogContentText>
-              Um novo perfil deve ser criado apenas sob demanda, e, com a mesma condição, editado e excluído.
-            </DialogContentText>
+          <DialogContentText>
+            Um novo perfil deve ser criado apenas sob demanda, e, com a mesma condição, editado e excluído.
+          </DialogContentText>
 
-            <TextField
-              margin="dense"
-              name="name"
-              label="Nome do perfil"
-              fullWidth
-              variant="outlined"
-              onChange={handleInputChange}
-              helperText={fiedlErrorMessage.name}
-              error={fieldError.name}
-              sx={{ mt: 3 }}
-            />
+          <TextField
+            margin="dense"
+            name="name"
+            label="Nome do perfil"
+            fullWidth
+            variant="outlined"
+            onChange={handleInputChange}
+            helperText={fiedlErrorMessage.name}
+            error={fieldError.name}
+            sx={{ mt: 3 }}
+          />
 
-          </DialogContent>
+        </DialogContent>
 
-          {(!loading && displayAlert.display) &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {(!loading && displayAlert.display) &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {loading && <LinearProgress />}
+        {loading && <LinearProgress />}
 
-          <Divider />
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
 
-        </Box>
       </Dialog>
     </>
   );

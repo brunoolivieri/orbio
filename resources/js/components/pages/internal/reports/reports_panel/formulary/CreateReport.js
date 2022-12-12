@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Alert, IconButton, Tooltip, Grid, TextField, LinearProgress, List, ListItem, ListItemText, ListSubheader, ListItemAvatar, Avatar } from '@mui/material';
@@ -39,6 +38,8 @@ const initialFieldErrorMessage = {
   farm: ''
 }
 
+const initialDisplayAlert = { display: false, type: "", message: "" };
+
 export const CreateReport = (props) => {
 
   // ============================================================================== STATES  ============================================================================== //
@@ -46,7 +47,7 @@ export const CreateReport = (props) => {
   const { AuthData } = useAuthentication();
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
@@ -64,10 +65,10 @@ export const CreateReport = (props) => {
     setOpen(false);
     setServiceOrder(null);
     setFlightPlans(null);
-    setDisplayAlert({ display: false, type: "", message: "" });
+    setDisplayAlert(initialDisplayAlert);
   }
 
-  function handleRequestServerToSaveReport(report_blob) {
+  function handleSubmit(report_blob) {
 
     if (formValidation()) {
       setLoading(true);
@@ -124,9 +125,7 @@ export const CreateReport = (props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    // {field: bool}
     let request_errors = {};
-    // {field: string}
     let request_messages = {};
 
     for (let prop in response.data.errors) {
@@ -170,158 +169,157 @@ export const CreateReport = (props) => {
         maxWidth="md"
       >
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
-        <Box component="form" noValidate>
-          <DialogContent>
+        <DialogContent>
 
-            <Box mb={3}>
-              <ServiceOrderForReport
-                serviceOrder={serviceOrder}
-                setControlledInput={setControlledInput}
-                setServiceOrder={setServiceOrder}
-                serviceOrderId={null}
-                setFlightPlans={setFlightPlans}
-              />
-            </Box>
+          <Box mb={3}>
+            <ServiceOrderForReport
+              serviceOrder={serviceOrder}
+              setControlledInput={setControlledInput}
+              setServiceOrder={setServiceOrder}
+              serviceOrderId={null}
+              setFlightPlans={setFlightPlans}
+            />
+          </Box>
 
-            {serviceOrder &&
-              <>
-                <Grid container spacing={2} mb={2}>
+          {serviceOrder &&
+            <>
+              <Grid container spacing={2} mb={2}>
 
-                  <Grid item xs={6}>
-                    <SelectAttributeControl
-                      label_text={"Responsável (piloto)"}
-                      data_source={"/api/load-users?where=profile_id.3"}
-                      primary_key={"name"}
-                      key_content={"name"}
-                      error={fieldError.responsible}
-                      name={"responsible"}
-                      value={controlledInput.responsible}
-                      setControlledInput={setControlledInput}
-                      controlledInput={controlledInput}
-                    />
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <TextField
-                      id="name"
-                      name="name"
-                      label="Nome do relatório"
-                      fullWidth
-                      variant="outlined"
-                      onChange={handleInputChange}
-                      value={controlledInput.name}
-                      error={fieldError.name}
-                      helperText={fieldErrorMessage.name}
-                    />
-                  </Grid>
-
-                  {/* State and city are updated on ServiceOrderForReport modal */}
-                  <Grid item xs={6}>
-                    <TextField
-                      id="name"
-                      name="state"
-                      label="Estado"
-                      fullWidth
-                      variant="outlined"
-                      onChange={handleInputChange}
-                      value={controlledInput.state}
-                      error={fieldError.state}
-                      helperText={fieldErrorMessage.state}
-                      inputProps={{
-                        readOnly: true
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={6}>
-                    <TextField
-                      id="name"
-                      name="city"
-                      label="Cidade"
-                      fullWidth
-                      variant="outlined"
-                      onChange={handleInputChange}
-                      value={controlledInput.city}
-                      error={fieldError.city}
-                      helperText={fieldErrorMessage.city}
-                      inputProps={{
-                        readOnly: true
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={12} sm={12}>
-                    <TextField
-                      name="farm"
-                      label="Fazenda"
-                      fullWidth
-                      variant="outlined"
-                      onChange={handleInputChange}
-                      helperText={fieldErrorMessage.farm}
-                      error={fieldError.farm}
-                      value={controlledInput.farm}
-                    />
-                  </Grid>
+                <Grid item xs={6}>
+                  <SelectAttributeControl
+                    label_text={"Responsável (piloto)"}
+                    data_source={"/api/load-users?where=profile_id.3"}
+                    primary_key={"name"}
+                    key_content={"name"}
+                    error={fieldError.responsible}
+                    name={"responsible"}
+                    value={controlledInput.responsible}
+                    setControlledInput={setControlledInput}
+                    controlledInput={controlledInput}
+                  />
                 </Grid>
 
-                {flightPlans.length > 0 &&
-                  <List
-                    dense={true}
-                    sx={{
-                      maxWidth: '100%',
-                      minWidth: '100%',
-                      bgcolor: '#F5F5F5',
-                      position: 'relative',
-                      overflow: 'auto',
-                      maxHeight: 200,
-                      '& ul': { padding: 0 },
-                      mt: 2
+                <Grid item xs={6}>
+                  <TextField
+                    id="name"
+                    name="name"
+                    label="Nome do relatório"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    value={controlledInput.name}
+                    error={fieldError.name}
+                    helperText={fieldErrorMessage.name}
+                  />
+                </Grid>
+
+                {/* State and city are updated on ServiceOrderForReport modal */}
+                <Grid item xs={6}>
+                  <TextField
+                    id="name"
+                    name="state"
+                    label="Estado"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    value={controlledInput.state}
+                    error={fieldError.state}
+                    helperText={fieldErrorMessage.state}
+                    inputProps={{
+                      readOnly: true
                     }}
-                    subheader={<li />}
-                  >
-                    <ul>
-                      <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{`PLANOS DE VOO: ${serviceOrder.flight_plans.length}`}</ListSubheader>
-                      {flightPlans.map((flight_plan, index) => (
-                        <ListItem
-                          key={index}
-                          secondaryAction={
-                            <FlightPlanDataForReport
-                              flightPlans={flightPlans}
-                              setFlightPlans={setFlightPlans}
-                              current={{ array_index: index, data: flight_plan }}
-                            />
-                          }
-                        >
-                          <ListItemAvatar>
-                            <Avatar sx={{ bgcolor: flight_plan.completed ? '#4CAF50' : '' }}>
-                              <CheckCircleIcon />
-                            </Avatar>
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={`ID: ${flight_plan.id}`}
-                            secondary={`Nome: ${flight_plan.name}`}
+                  />
+                </Grid>
+
+                <Grid item xs={6}>
+                  <TextField
+                    id="name"
+                    name="city"
+                    label="Cidade"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    value={controlledInput.city}
+                    error={fieldError.city}
+                    helperText={fieldErrorMessage.city}
+                    inputProps={{
+                      readOnly: true
+                    }}
+                  />
+                </Grid>
+
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    name="farm"
+                    label="Fazenda"
+                    fullWidth
+                    variant="outlined"
+                    onChange={handleInputChange}
+                    helperText={fieldErrorMessage.farm}
+                    error={fieldError.farm}
+                    value={controlledInput.farm}
+                  />
+                </Grid>
+              </Grid>
+
+              {flightPlans.length > 0 &&
+                <List
+                  dense={true}
+                  sx={{
+                    maxWidth: '100%',
+                    minWidth: '100%',
+                    bgcolor: '#F5F5F5',
+                    position: 'relative',
+                    overflow: 'auto',
+                    maxHeight: 200,
+                    '& ul': { padding: 0 },
+                    mt: 2
+                  }}
+                  subheader={<li />}
+                >
+                  <ul>
+                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{`PLANOS DE VOO: ${serviceOrder.flight_plans.length}`}</ListSubheader>
+                    {flightPlans.map((flight_plan, index) => (
+                      <ListItem
+                        key={index}
+                        secondaryAction={
+                          <FlightPlanDataForReport
+                            flightPlans={flightPlans}
+                            setFlightPlans={setFlightPlans}
+                            current={{ array_index: index, data: flight_plan }}
                           />
-                        </ListItem>
-                      ))}
-                    </ul>
-                  </List>
-                }
-              </>
-            }
-          </DialogContent>
-
-          {displayAlert.display &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                        }
+                      >
+                        <ListItemAvatar>
+                          <Avatar sx={{ bgcolor: flight_plan.completed ? '#4CAF50' : '' }}>
+                            <CheckCircleIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary={`ID: ${flight_plan.id}`}
+                          secondary={`Nome: ${flight_plan.name}`}
+                        />
+                      </ListItem>
+                    ))}
+                  </ul>
+                </List>
+              }
+            </>
           }
+        </DialogContent>
 
-          {loading && <LinearProgress />}
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            {serviceOrder && <ReportVisualization basicData={controlledInput} flightPlans={flightPlans} />}
-            {flightPlans && <DownloadReport data={controlledInput} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleRequestServerToSaveReport} />}
-          </DialogActions>
-        </Box>
+        {loading && <LinearProgress />}
+
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          {serviceOrder && <ReportVisualization basicData={controlledInput} flightPlans={flightPlans} />}
+          {flightPlans && <DownloadReport data={controlledInput} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleSubmit} />}
+        </DialogActions>
+
       </Dialog >
     </>
   );

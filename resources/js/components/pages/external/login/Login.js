@@ -20,26 +20,30 @@ const useStyles = makeStyles((theme) => ({
     hiperlink: {
         color: theme.palette.mode == 'light' ? "#222" : "#fff",
     },
-}))
+}));
+
+const initialControlledInput = { email: "", password: "" };
+const initialFieldError = { email: false, password: false };
+const initialFieldErrorMessage = { email: "", password: "" };
+const initialAlert = { show: false, type: "error", message: "" };
 
 export function Login() {
 
     // ============================================================================== VARIABLES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState({ email: "", password: "" });
-    const [fieldError, setFieldError] = React.useState({ email: false, password: false });
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ email: "", password: "" });
-    const [alert, setAlert] = React.useState({ show: false, type: "error", message: "" });
+    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [alert, setAlert] = React.useState(initialAlert);
     const [loading, setLoading] = React.useState(false);
     const classes = useStyles();
 
     // ============================================================================== ROUTINES ============================================================================== //
 
-    function handleLoginSubmit(e) {
-        e.preventDefault();
+    function handleLoginSubmit() {
         if (formValidation()) {
             setLoading(true);
-            requestServerOperation();
+            requestServer();
         }
     }
 
@@ -55,7 +59,7 @@ export function Login() {
 
     }
 
-    function requestServerOperation() {
+    function requestServer() {
         axios.post("/api/auth/login", {
             email: controlledInput.email,
             password: controlledInput.password
@@ -136,72 +140,73 @@ export function Login() {
                         <Typography component="h1" variant="h5">
                             Acessar a conta
                         </Typography>
-                        <Box component="form" noValidate onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
-                            <TextField
-                                margin="normal"
-                                required
+
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            label="Digite o seu email"
+                            name="email"
+                            autoFocus
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.email}
+                            error={fieldError.email}
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Digite a sua senha"
+                            type="password"
+                            onChange={handleInputChange}
+                            helperText={fieldErrorMessage.password}
+                            error={fieldError.password}
+                        />
+                        <FormControlLabel
+                            control={<Checkbox value="remember" color="primary" />}
+                            label="Lembrar"
+                        />
+
+                        {!loading &&
+                            <Button
+                                type="submit"
                                 fullWidth
-                                label="Digite o seu email"
-                                name="email"
-                                autoFocus
-                                onChange={handleInputChange}
-                                helperText={fieldErrorMessage.email}
-                                error={fieldError.email}
-                            />
-                            <TextField
-                                margin="normal"
-                                required
+                                variant="contained"
+                                sx={{ mt: 1, mb: 2, borderRadius: 2 }}
+                                color="primary"
+                                onClick={handleLoginSubmit}
+                            >
+                                Acessar
+                            </Button>
+                        }
+
+                        {loading &&
+                            <LoadingButton
+                                loading
+                                loadingPosition="start"
+                                startIcon={<SaveIcon />}
+                                variant="outlined"
                                 fullWidth
-                                name="password"
-                                label="Digite a sua senha"
-                                type="password"
-                                onChange={handleInputChange}
-                                helperText={fieldErrorMessage.password}
-                                error={fieldError.password}
-                            />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Lembrar"
-                            />
+                                sx={{ mt: 1, mb: 2, borderRadius: 5 }}
+                            >
+                                Acessando
+                            </LoadingButton>
+                        }
 
-                            {!loading &&
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    sx={{ mt: 1, mb: 2, borderRadius: 2 }}
-                                    color="primary"
-                                >
-                                    Acessar
-                                </Button>
-                            }
-
-                            {loading &&
-                                <LoadingButton
-                                    loading
-                                    loadingPosition="start"
-                                    startIcon={<SaveIcon />}
-                                    variant="outlined"
-                                    fullWidth
-                                    sx={{ mt: 1, mb: 2, borderRadius: 5 }}
-                                >
-                                    Acessando
-                                </LoadingButton>
-                            }
-
-                            <Grid container sx={{ mb: 2 }}>
-                                <Grid item xs >
-                                    <Link to="/forgot-password" className={classes.hiperlink}>
-                                        Esqueceu a senha?
-                                    </Link>
-                                </Grid>
+                        <Grid container sx={{ mb: 2 }}>
+                            <Grid item xs >
+                                <Link to="/forgot-password" className={classes.hiperlink}>
+                                    Esqueceu a senha?
+                                </Link>
                             </Grid>
+                        </Grid>
 
-                            {alert.show &&
-                                <Alert severity={alert.type} fullWidth>{alert.message}</Alert>
-                            }
-                        </Box>
+                        {alert.show &&
+                            <Alert severity={alert.type} fullWidth>{alert.message}</Alert>
+                        }
                     </Box>
+
                 </Grid>
             </Grid>
         </>

@@ -182,11 +182,11 @@ export const UpdateDrone = React.memo((props) => {
 
     }
 
-    const handleInputChange = (event) => {
+    function handleInputChange(event) {
         setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
     }
 
-    const handleUploadedImage = (event) => {
+    function handleUploadedImage(event) {
 
         const uploaded_file = event.currentTarget.files[0];
 

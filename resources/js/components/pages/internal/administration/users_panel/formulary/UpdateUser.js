@@ -41,11 +41,10 @@ export const UpdateUser = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleSubmitOperation(event) {
-    event.preventDefault();
+  function handleSubmit() {
     if (formValidation()) {
       setLoading(true);
-      requestServerOperation();
+      requestServer();
     }
   }
 
@@ -60,7 +59,7 @@ export const UpdateUser = React.memo((props) => {
     return !(emailValidate.error === true || nameValidate.error === true || profileValidate.error);
   }
 
-  function requestServerOperation() {
+  function requestServer() {
     axios.patch(`/api/admin-module-user/${controlledInput.id}`, {
       name: controlledInput.name,
       email: controlledInput.email,
@@ -140,79 +139,77 @@ export const UpdateUser = React.memo((props) => {
         <DialogTitle>ATUALIZAÇÃO DE USUÁRIO</DialogTitle>
         <Divider />
 
-        <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-          <DialogContent>
+        <DialogContent>
 
-            <TextField
-              margin="dense"
-              name="id"
-              label="ID"
-              type="email"
-              fullWidth
-              variant="outlined"
-              value={controlledInput.id}
-              inputProps={{
-                readOnly: true
-              }}
-              sx={{ mb: 1 }}
-            />
+          <TextField
+            margin="dense"
+            name="id"
+            label="ID"
+            type="email"
+            fullWidth
+            variant="outlined"
+            value={controlledInput.id}
+            inputProps={{
+              readOnly: true
+            }}
+            sx={{ mb: 1 }}
+          />
 
-            <TextField
-              margin="dense"
-              name="name"
-              label="Nome completo"
-              fullWidth
-              variant="outlined"
+          <TextField
+            margin="dense"
+            name="name"
+            label="Nome completo"
+            fullWidth
+            variant="outlined"
+            onChange={handleInputChange}
+            value={controlledInput.name}
+            helperText={fieldErrorMessage.name}
+            error={fieldError.name}
+            sx={{ mb: 1 }}
+          />
+          <TextField
+            margin="dense"
+            name="email"
+            label="Endereço de email"
+            type="email"
+            fullWidth
+            variant="outlined"
+            onChange={handleInputChange}
+            defaultValue={props.record.email}
+            helperText={fieldErrorMessage.email}
+            error={fieldError.email}
+            sx={{ mb: 2 }}
+          />
+
+          <Box sx={{ width: "auto", mb: 2 }}>
+            <SelectAttributeControl
+              label_text={"Perfil"}
+              data_source={"/api/load-profiles"}
+              primary_key={"id"}
+              key_content={"name"}
+              name={"profile"}
               onChange={handleInputChange}
-              value={controlledInput.name}
-              helperText={fieldErrorMessage.name}
-              error={fieldError.name}
-              sx={{ mb: 1 }}
+              error={fieldError.profile}
+              value={controlledInput.profile}
+              setControlledInput={setControlledInput}
+              controlledInput={controlledInput}
             />
-            <TextField
-              margin="dense"
-              name="email"
-              label="Endereço de email"
-              type="email"
-              fullWidth
-              variant="outlined"
-              onChange={handleInputChange}
-              defaultValue={props.record.email}
-              helperText={fieldErrorMessage.email}
-              error={fieldError.email}
-              sx={{ mb: 2 }}
-            />
+          </Box>
 
-            <Box sx={{ width: "auto", mb: 2 }}>
-              <SelectAttributeControl
-                label_text={"Perfil"}
-                data_source={"/api/load-profiles"}
-                primary_key={"id"}
-                key_content={"name"}
-                name={"profile"}
-                onChange={handleInputChange}
-                error={fieldError.profile}
-                value={controlledInput.profile}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-              />
-            </Box>
+        </DialogContent>
 
-          </DialogContent>
+        {displayAlert.display &&
+          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        }
 
-          {displayAlert.display &&
-            <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-          }
+        {loading && <LinearProgress />}
 
-          {loading && <LinearProgress />}
+        <Divider />
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+        </DialogActions>
 
-          <Divider />
-          <DialogActions>
-            <Button onClick={handleClose}>Cancelar</Button>
-            <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-          </DialogActions>
-
-        </Box>
       </Dialog>
     </>
   );

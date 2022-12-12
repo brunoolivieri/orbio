@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider } from '@mui/material';
@@ -10,6 +9,18 @@ import { useAuthentication } from '../../../../../context/InternalRoutesAuth/Aut
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 
+const initialFieldError = {
+  name: false,
+  observation: false
+}
+
+const initialFieldErrorMessage = {
+  name: '',
+  observation: ''
+}
+
+const initialDisplayAlert = { display: false, type: "", message: "" };
+
 export const UpdateReport = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
@@ -17,9 +28,9 @@ export const UpdateReport = React.memo((props) => {
   const { AuthData } = useAuthentication();
   const [open, setOpen] = React.useState(false);
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation });
-  const [fieldError, setFieldError] = React.useState({ name: false, observation: false });
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState({ name: "", observation: "" });
-  const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+  const [fieldError, setFieldError] = React.useState(initialFieldError);
+  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
@@ -39,7 +50,7 @@ export const UpdateReport = React.memo((props) => {
   function handleSubmit() {
     if (formValidation()) {
       setLoading(true);
-      requestServerOperation();
+      requestServer();
     }
   }
 
@@ -55,8 +66,7 @@ export const UpdateReport = React.memo((props) => {
 
   }
 
-  function requestServerOperation() {
-
+  function requestServer() {
     axios.patch(`/api/reports-module/${controlledInput.id}`, controlledInput)
       .then(function (response) {
         successResponse(response);
@@ -66,8 +76,7 @@ export const UpdateReport = React.memo((props) => {
       })
       .finally(() => {
         setLoading(false);
-      })
-
+      });
   }
 
   function successResponse(response) {

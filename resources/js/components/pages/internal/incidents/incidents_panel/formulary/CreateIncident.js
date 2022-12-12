@@ -37,8 +37,9 @@ export const CreateIncident = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
+
     axios.get("/api/load-flight-plans", {
     })
       .then(function (response) {
@@ -52,7 +53,7 @@ export const CreateIncident = React.memo((props) => {
       });
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setOpen(false);
     setLoading(false);
     setFieldError(initialFieldError);
@@ -81,7 +82,7 @@ export const CreateIncident = React.memo((props) => {
     }
   }
 
-  const formValidation = () => {
+  function formValidation() {
     const incidentDateValidate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
     const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
@@ -94,7 +95,7 @@ export const CreateIncident = React.memo((props) => {
     return !(incidentFlightPlanValidate.error || incidentDateFlightPlanServiceOrderValidate.error || incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error);
   }
 
-  const requestServerOperation = () => {
+  function requestServerOperation() {
     axios.post(`/api/incidents-module`, {
       date: moment(controlledInput.date).format('YYYY-MM-DD'),
       type: controlledInput.type,

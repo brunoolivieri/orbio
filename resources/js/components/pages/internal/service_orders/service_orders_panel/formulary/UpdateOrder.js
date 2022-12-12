@@ -26,7 +26,6 @@ export const UpdateOrder = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { AuthData } = useAuthentication();
-
   const [controlledInput, setControlledInput] = React.useState({
     start_date: props.record.start_date,
     end_date: props.record.end_date,
@@ -67,15 +66,14 @@ export const UpdateOrder = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
+  function handleSubmit() {
     if (formValidation()) {
       setLoading(true);
-      requestServerOperation();
+      requestServer();
     }
   }
 
-  const formValidation = () => {
+  function formValidation() {
 
     const dateValidate = verifyDateInterval();
     const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
@@ -109,7 +107,7 @@ export const UpdateOrder = React.memo((props) => {
     return moment(controlledInput.start_date).format('YYYY-MM-DD hh:mm:ss') < moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss');
   }
 
-  const requestServerOperation = () => {
+  function requestServer() {
     axios.patch(`/api/orders-module/${controlledInput.id}`, {
       start_date: moment(controlledInput.start_date).format('YYYY-MM-DD hh:mm:ss'),
       end_date: moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss'),
@@ -121,16 +119,17 @@ export const UpdateOrder = React.memo((props) => {
       flight_plans: selectedFlightPlans
     })
       .then(function (response) {
-        setLoading(false);
         successResponse(response);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
@@ -183,7 +182,7 @@ export const UpdateOrder = React.memo((props) => {
     });
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 

@@ -42,7 +42,7 @@ export const UpdateIncident = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
     setLoading(false);
     setFieldError(initialFieldError);
@@ -62,7 +62,7 @@ export const UpdateIncident = React.memo((props) => {
       });
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setOpen(false);
   }
 
@@ -79,14 +79,14 @@ export const UpdateIncident = React.memo((props) => {
       });
   }, [selectedFlightPlan]);
 
-  const handleSubmit = () => {
+  function handleSubmit() {
     if (formValidation()) {
       setLoading(true);
       requestServerOperation();
     }
   }
 
-  const formValidation = () => {
+  function formValidation() {
     const date_validate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     const type_validate = FormValidation(controlledInput.type, 2, null, null, null);
     const observation_validate = FormValidation(controlledInput.description, 3, null, null, null);
@@ -99,7 +99,7 @@ export const UpdateIncident = React.memo((props) => {
     return !(date_validate.error || type_validate.error || observation_validate.error || flight_plan_validate.error || service_order_validate.error);
   }
 
-  const requestServerOperation = () => {
+  function requestServerOperation() {
     axios.patch(`/api/incidents-module/${controlledInput.id}`, {
       date: moment(controlledInput.date).format('YYYY-MM-DD'),
       type: controlledInput.type,
@@ -117,7 +117,7 @@ export const UpdateIncident = React.memo((props) => {
       });
   }
 
-  const successResponse = (response) => {
+  function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
@@ -125,7 +125,7 @@ export const UpdateIncident = React.memo((props) => {
     }, 2000);
   }
 
-  const errorResponse = (response) => {
+  function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
     let request_errors = {
@@ -160,7 +160,7 @@ export const UpdateIncident = React.memo((props) => {
     });
   }
 
-  const handleInputChange = (event) => {
+  function handleInputChange(event) {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 

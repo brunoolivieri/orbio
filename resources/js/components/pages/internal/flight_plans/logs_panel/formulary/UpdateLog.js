@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, FormHelperText, Grid, TextField, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, FormHelperText, Grid, TextField, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -73,8 +73,7 @@ export const UpdateLog = React.memo((props) => {
             });
     }, [selectedFlightPlan]);
 
-    function handleSubmitOperation(e) {
-        e.preventDefault();
+    function handleSubmit() {
         if (formValidation()) {
             setLoading(true);
             requestServerOperation();
@@ -173,84 +172,83 @@ export const UpdateLog = React.memo((props) => {
                 <DialogTitle>ATUALIZAÇÃO DE LOG</DialogTitle>
                 <Divider />
 
-                <Box component="form" noValidate onSubmit={handleSubmitOperation} >
-                    <DialogContent>
+                <DialogContent>
 
-                        <Grid item container spacing={1}>
+                    <Grid item container spacing={1}>
 
-                            <Grid item xs={12}>
-                                <TextField
-                                    margin="dense"
-                                    id="id"
-                                    name="id"
-                                    label="ID"
-                                    type="text"
-                                    fullWidth
-                                    variant="outlined"
-                                    defaultValue={props.record.id}
-                                    InputProps={{
-                                        readOnly: true,
-                                    }}
-                                />
-                            </Grid>
-
-                            <Grid item xs={12}>
-                                <TextField
-                                    margin="dense"
-                                    label="Nome customizado"
-                                    type="text"
-                                    fullWidth
-                                    name="name"
-                                    variant="outlined"
-                                    value={controlledInput.name}
-                                    onChange={handleInputChange}
-                                    helperText={fieldErrorMessage.name}
-                                    error={fieldError.name}
-                                />
-                            </Grid>
-
-                            <Grid item xs={6}>
-                                <SelectExternalData
-                                    label_text={"Plano de voo"}
-                                    primary_key={"id"}
-                                    key_content={"name"}
-                                    setter={setSelectedFlightPlan}
-                                    options={flightPlans}
-                                    error={fieldError.flight_plan_id}
-                                    value={selectedFlightPlan}
-                                />
-                                <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
-                            </Grid>
-
-                            <Grid item xs={6}>
-                                <SelectExternalData
-                                    label_text={"Ordem de serviço"}
-                                    primary_key={"id"}
-                                    key_content={"number"}
-                                    setter={setSelectedServiceOrder}
-                                    options={serviceOrdersByFlightPlan}
-                                    error={fieldError.service_order_id}
-                                    value={selectedServiceOrder}
-                                />
-                                <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
-                            </Grid>
-
+                        <Grid item xs={12}>
+                            <TextField
+                                margin="dense"
+                                id="id"
+                                name="id"
+                                label="ID"
+                                type="text"
+                                fullWidth
+                                variant="outlined"
+                                defaultValue={props.record.id}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                            />
                         </Grid>
 
-                    </DialogContent>
+                        <Grid item xs={12}>
+                            <TextField
+                                margin="dense"
+                                label="Nome customizado"
+                                type="text"
+                                fullWidth
+                                name="name"
+                                variant="outlined"
+                                value={controlledInput.name}
+                                onChange={handleInputChange}
+                                helperText={fieldErrorMessage.name}
+                                error={fieldError.name}
+                            />
+                        </Grid>
 
-                    {displayAlert.display &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                        <Grid item xs={6}>
+                            <SelectExternalData
+                                label_text={"Plano de voo"}
+                                primary_key={"id"}
+                                key_content={"name"}
+                                setter={setSelectedFlightPlan}
+                                options={flightPlans}
+                                error={fieldError.flight_plan_id}
+                                value={selectedFlightPlan}
+                            />
+                            <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
+                        </Grid>
 
-                    {loading && <LinearProgress />}
+                        <Grid item xs={6}>
+                            <SelectExternalData
+                                label_text={"Ordem de serviço"}
+                                primary_key={"id"}
+                                key_content={"number"}
+                                setter={setSelectedServiceOrder}
+                                options={serviceOrdersByFlightPlan}
+                                error={fieldError.service_order_id}
+                                value={selectedServiceOrder}
+                            />
+                            <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
+                        </Grid>
 
-                    <Divider />
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Confirmar</Button>
-                    </DialogActions>
-                </Box>
+                    </Grid>
+
+                </DialogContent>
+
+                {displayAlert.display &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
+
+                {loading && <LinearProgress />}
+
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
+
             </Dialog>
         </>
     );

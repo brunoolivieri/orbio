@@ -21,19 +21,24 @@ const useStyles = makeStyles((theme) => ({
     hiperlink: {
         color: theme.palette.mode == 'light' ? "#222" : "#fff",
     }
-}))
+}));
+
+const initialControlledInput = { email: "", code: "", new_password: "", new_password_confirmation: "" };
+const initialFieldError = { email: false, code: false, new_password: false, new_password_confirmation: false };
+const initialFieldErrorMessage = { email: "", code: "", new_password: "", new_password_confirmation: "" };
 
 export const ForgotPassword = () => {
 
     // ============================================================================== VARIABLES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" });
-    const [fieldError, setFieldError] = React.useState({ email: false, code: false, new_password: false, new_password_confirmation: false });
-    const [fieldErrorMessage, setFiedlErrorMessage] = React.useState({ email: "", code: "", new_password: "", new_password_confirmation: "" });
+    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+    const [fieldError, setFieldError] = React.useState(initialFieldError);
+    const [fieldErrorMessage, setFiedlErrorMessage] = React.useState(initialFieldErrorMessage);
     const [codeSent, setCodeSent] = React.useState(false);
     const [timer, setTimer] = React.useState(0);
     const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
     const classes = useStyles();
+    
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== ROUTINES ============================================================================== //
@@ -220,7 +225,7 @@ export const ForgotPassword = () => {
                             </LoadingButton>
                         }
                     </Box>
-                    
+
                     <Box component="form" onSubmit={handleChangePasswordSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"

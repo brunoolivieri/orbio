@@ -47,8 +47,7 @@ export const CreateDrone = React.memo((props) => {
         setOpen(false);
     }
 
-    function handleDroneRegistrationSubmit(event) {
-        event.preventDefault();
+    function handleSubmit() {
         if (formValidation()) {
             setLoading(false);
             requestServerOperation();
@@ -198,128 +197,127 @@ export const CreateDrone = React.memo((props) => {
                 <DialogTitle>CADASTRO DE DRONE</DialogTitle>
                 <Divider />
 
-                <Box component="form" noValidate onSubmit={handleDroneRegistrationSubmit} >
-                    <DialogContent>
+                <DialogContent>
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Nome"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="name"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.name}
-                            error={fieldError.name}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Nome"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="name"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.name}
+                        error={fieldError.name}
+                    />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Fabricante"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="manufacturer"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.manufacturer}
-                            error={fieldError.manufacturer}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Fabricante"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="manufacturer"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.manufacturer}
+                        error={fieldError.manufacturer}
+                    />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Modelo"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="model"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.model}
-                            error={fieldError.model}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Modelo"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="model"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.model}
+                        error={fieldError.model}
+                    />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número do registro"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="record_number"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.record_number}
-                            error={fieldError.record_number}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Número do registro"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="record_number"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.record_number}
+                        error={fieldError.record_number}
+                    />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Número Serial"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="serial_number"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.serial_number}
-                            error={fieldError.serial_number}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Número Serial"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="serial_number"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.serial_number}
+                        error={fieldError.serial_number}
+                    />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Peso (KG)"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="weight"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.weight}
-                            error={fieldError.weight}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Peso (KG)"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="weight"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.weight}
+                        error={fieldError.weight}
+                    />
 
-                        <TextField
-                            type="text"
-                            margin="dense"
-                            label="Observação"
-                            fullWidth
-                            variant="outlined"
-                            required
-                            name="observation"
-                            onChange={handleInputChange}
-                            helperText={fieldErrorMessage.observation}
-                            error={fieldError.observation}
-                            sx={{ mb: 2 }}
-                        />
+                    <TextField
+                        type="text"
+                        margin="dense"
+                        label="Observação"
+                        fullWidth
+                        variant="outlined"
+                        required
+                        name="observation"
+                        onChange={handleInputChange}
+                        helperText={fieldErrorMessage.observation}
+                        error={fieldError.observation}
+                        sx={{ mb: 2 }}
+                    />
 
-                        <Box sx={{ mt: 2, mb: 2, display: 'flex' }}>
-                            <label htmlFor="contained-button-file">
-                                <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
-                                <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                    {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
-                                </Button>
-                            </label>
-                        </Box>
+                    <Box sx={{ mt: 2, mb: 2, display: 'flex' }}>
+                        <label htmlFor="contained-button-file">
+                            <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
+                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                            </Button>
+                        </label>
+                    </Box>
 
-                        <Box sx={{ mt: 2 }}>
-                            <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />
-                        </Box>
+                    <Box sx={{ mt: 2 }}>
+                        <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />
+                    </Box>
 
-                    </DialogContent>
+                </DialogContent>
 
-                    {(!loading && displayAlert.display) &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
-                    }
+                {(!loading && displayAlert.display) &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
 
-                    {loading && <LinearProgress />}
+                {loading && <LinearProgress />}
 
-                    <Divider />
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={loading} variant="contained">Criar drone</Button>
-                    </DialogActions>
-                </Box>
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                </DialogActions>
+
             </Dialog>
         </>
     )
