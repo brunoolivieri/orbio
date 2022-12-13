@@ -1,15 +1,11 @@
 import React from 'react';
 // Material UI
-import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Paper, Grid, Card, Typography, CircularProgress, Box, Divider } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { Box } from '@mui/system';
 // Custom
 import axios from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
+import { HorizontalContainedLineChart } from '../../../shared/charts/HorizontalContainedLineChart';
 
 const miniCardStyle = {
     bgcolor: '#fff',
@@ -124,61 +120,76 @@ export const Dashboard = React.memo(() => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={{ xs: 10, sm: 10, md: 12, lg: 10, xl: 10 }}>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
+                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                 <Typography variant="h6">
                                     Usuários
                                 </Typography>
+                                <Typography variant="p" color="green">
+                                    5%
+                                </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 1 }}>
-                                horizontal line chart
+                            <Box sx={{ height: 100, width: '100%' }}>
+                                <HorizontalContainedLineChart />
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
+                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                 <Typography variant="h6">
                                     Perfis
                                 </Typography>
+                                <Typography variant="p" color="green">
+                                    5%
+                                </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 3 }} lg={2}>
-                                horizontal line chart
+                            <Box sx={{ height: 100, width: '100%' }}>
+                                <HorizontalContainedLineChart />
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
+                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                 <Typography variant="h6">
                                     Planos de voo
                                 </Typography>
+                                <Typography variant="p" color="green">
+                                    5%
+                                </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 1 }}>
-                                horizontal line chart
+                            <Box sx={{ height: 100, width: '100%' }}>
+                                <HorizontalContainedLineChart />
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
+                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                 <Typography variant="h6">
                                     Ordens de serviço
                                 </Typography>
+                                <Typography variant="p" color="green">
+                                    5%
+                                </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 1 }}>
-                                horizontal line chart
+                            <Box sx={{ height: 100, width: '100%' }}>
+                                <HorizontalContainedLineChart />
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
+                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                 <Typography variant="h6">
                                     Relatórios
                                 </Typography>
+                                <Typography variant="p" color="green">
+                                    5%
+                                </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 1 }}>
-                                horizontal line chart
+                            <Box sx={{ height: 100, width: '100%' }}>
+                                <HorizontalContainedLineChart />
                             </Box>
                         </Card>
                     </Grid>
@@ -187,34 +198,20 @@ export const Dashboard = React.memo(() => {
 
             <Paper sx={paperStyle}>
                 <Grid container rowSpacing={1} columnSpacing={1} columns={12}>
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12}>
                         <Card sx={biggerCardStyle}>
                             <Box sx={{ flexBasis: '30px' }}>
                                 <Typography variant="h6">
                                     Tráfego anual
                                 </Typography>
                             </Box>
-                            <Box sx={{ flexGrow: 1 }}>
-                                horizontal line chart
-                            </Box>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={12} md={6}>
-                        <Card sx={biggerCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
-                                <Typography variant="h6">
-                                    Outro
-                                </Typography>
-                            </Box>
-                            <Box sx={{ flexGrow: 3 }} lg={2}>
-                                horizontal line chart
+                            <Box sx={{ height: 250, width: '100%', mt: 2 }}>
+
                             </Box>
                         </Card>
                     </Grid>
                 </Grid >
             </Paper>
         </>
-
     )
-
 });
