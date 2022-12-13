@@ -1,15 +1,14 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, FormControlLabel, Checkbox, Paper, Box, Grid, Typography, Alert } from '@mui/material';
+import { Button, TextField, Box, Grid, Typography, Container, Avatar, FormControlLabel, Checkbox } from '@mui/material';
 import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
+import { useSnackbar } from 'notistack';
+import LockIcon from '@mui/icons-material/Lock';
 // Custom
 import axios from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
-// Fonts awesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
 // React router dom
 import { Link } from 'react-router-dom';
 
@@ -22,10 +21,22 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+function Copyright(props) {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center" {...props}>
+            {'Copyright © '}
+            <Link color="inherit" href="https://mui.com/">
+                ORBIO
+            </Link>{' '}
+            {new Date().getFullYear()}
+            {'.'}
+        </Typography>
+    );
+}
+
 const initialControlledInput = { email: "", password: "" };
 const initialFieldError = { email: false, password: false };
 const initialFieldErrorMessage = { email: "", password: "" };
-const initialAlert = { show: false, type: "error", message: "" };
 
 export function Login() {
 
@@ -34,13 +45,15 @@ export function Login() {
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-    const [alert, setAlert] = React.useState(initialAlert);
     const [loading, setLoading] = React.useState(false);
+
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== ROUTINES ============================================================================== //
 
-    function handleLoginSubmit() {
+    function handleSubmit(e) {
+        e.preventDefault();
         if (formValidation()) {
             setLoading(true);
             requestServer();
@@ -73,7 +86,7 @@ export function Login() {
     }
 
     function successResponse(response) {
-        setAlert({ show: true, type: "success", message: response.data.message });
+        handleOpenSnackbar(response.data.message, "success");
         setTimeout(() => {
             window.location.href = "/internal";
         }, [1000])
@@ -81,7 +94,7 @@ export function Login() {
 
     function errorResponse(response) {
         setLoading(false);
-        setAlert({ show: true, type: "error", message: response.data.message });
+        handleOpenSnackbar(response.data.message, "error");
 
         let request_errors = {
             email: { error: false, message: null },
@@ -104,65 +117,58 @@ export function Login() {
         setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
     }
 
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
+    }
+
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
-            <Grid container component="main" sx={{ height: '100vh' }}>
-                <Grid
-                    item
-                    xs={false}
-                    sm={4}
-                    md={7}
+            <Container component="main" maxWidth="xs">
+                <Box
                     sx={{
-                        backgroundColor: "#111",
-                        backgroundImage: 'url()',
-                        backgroundRepeat: 'no-repeat',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center',
+                        marginTop: 8,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
                     }}
-                />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-                    <Box
-                        sx={{
-                            my: 8,
-                            mx: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                        }}
-
-                    >
-                        <Box sx={{ mb: 1 }}>
-                            <FontAwesomeIcon icon={faRightToBracket} color={'#00713A'} size={"2x"} />
-                        </Box>
-
-                        <Typography component="h1" variant="h5">
-                            Acessar a conta
-                        </Typography>
+                >
+                    <Avatar sx={{ m: 1, bgcolor: 'success.main' }}>
+                        <LockIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        Acessar
+                    </Typography>
+                    <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
 
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            label="Digite o seu email"
+                            id="email"
+                            label="Email Address"
                             name="email"
+                            autoComplete="email"
                             autoFocus
                             onChange={handleInputChange}
                             helperText={fieldErrorMessage.email}
                             error={fieldError.email}
                         />
+
                         <TextField
                             margin="normal"
                             required
                             fullWidth
                             name="password"
-                            label="Digite a sua senha"
+                            label="Password"
                             type="password"
+                            id="password"
                             onChange={handleInputChange}
                             helperText={fieldErrorMessage.password}
                             error={fieldError.password}
                         />
+
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Lembrar"
@@ -173,11 +179,10 @@ export function Login() {
                                 type="submit"
                                 fullWidth
                                 variant="contained"
-                                sx={{ mt: 1, mb: 2, borderRadius: 2 }}
+                                sx={{ mt: 3, mb: 2, borderRadius: 1 }}
                                 color="primary"
-                                onClick={handleLoginSubmit}
                             >
-                                Acessar
+                                Login
                             </Button>
                         }
 
@@ -188,27 +193,24 @@ export function Login() {
                                 startIcon={<SaveIcon />}
                                 variant="outlined"
                                 fullWidth
-                                sx={{ mt: 1, mb: 2, borderRadius: 5 }}
+                                sx={{ mt: 3, mb: 2, borderRadius: 1 }}
                             >
-                                Acessando
+                                Carregando
                             </LoadingButton>
                         }
 
-                        <Grid container sx={{ mb: 2 }}>
-                            <Grid item xs >
-                                <Link to="/forgot-password" className={classes.hiperlink}>
+                        <Grid container>
+                            <Grid item>
+                                <Link to="/forgot-password" variant="body2" className={classes.hiperlink}>
                                     Esqueceu a senha?
                                 </Link>
                             </Grid>
                         </Grid>
 
-                        {alert.show &&
-                            <Alert severity={alert.type} fullWidth>{alert.message}</Alert>
-                        }
                     </Box>
-
-                </Grid>
-            </Grid>
+                </Box>
+                <Copyright sx={{ mt: 8, mb: 4 }} />
+            </Container>
         </>
     )
 }
