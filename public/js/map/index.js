@@ -1148,6 +1148,7 @@ window.onload = () => {
 }
 
 // ==== MENU: SALVAR ==== //
+
 // Esta opção permite salvar vários arquivos de waypoints para múltiplos voos
 // Acessando botão que dispara a função para criar um arquivo .txt
 var btnSave = document.getElementById("btn-save");
@@ -1886,7 +1887,7 @@ function openTxtFileFromStorage(contents) {
     cleanLayers();
     cleanPolygon();
 
-    openTxtFile(contents);
+    openTxtFileFromComputerOrStorage(contents);
 }
 
 function openTxtFileFromComputer(e) {
@@ -1905,7 +1906,7 @@ function openTxtFileFromComputer(e) {
         // Conteúdo completo do arquivo
         var contents = e.target.result;
 
-        openTxtFile(contents);
+        openTxtFileFromComputerOrStorage(contents);
 
     };
 
@@ -1913,8 +1914,7 @@ function openTxtFileFromComputer(e) {
 
 }
 
-function openTxtFile(contents) {
-
+function openTxtFileFromComputerOrStorage(contents) {
     // Quebrando as linhas do arquivo em um array
     var lines = contents.split("\n");
 
@@ -1933,7 +1933,7 @@ function openTxtFile(contents) {
     document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
 
     // Array que armazenará todos os waypoints da rota do arquivo
-    var txtPath = [];
+    txtPath = [];
     index = 0;
 
     // Quebrando todas as linhas nos espaços \t
@@ -1948,7 +1948,7 @@ function openTxtFile(contents) {
             txtPath[index] = [Number(line[9]), Number(line[8])];
             index++
         }
-        //console.log(Number(line[3]));
+        console.log(Number(line[3]));
 
     }
 
@@ -1986,6 +1986,8 @@ function openTxtFile(contents) {
     drawTxtArea(txtArea);
     calculateTxtArea();
 }
+
+// =============================================================================================================//
 
 // == CALCULANDO A DISTÂNCIA TOTAL DA ROTA IMPORTADA A PARTIR DO ARQUIVO == //
 function calculateTxtDistance(txtPath) {
