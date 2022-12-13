@@ -79,6 +79,8 @@ const columns = [
 
 export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
+    console.log(props.selectedFlightPlans)
+
     // ============================================================================== STATES ============================================================================== //
 
     const [records, setRecords] = React.useState([]);
@@ -89,7 +91,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     const [controlledSelection, setControlledSelection] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
-    const [open, setOpen] = React.useState();
+    const [open, setOpen] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -143,14 +145,15 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     }
 
     const handleSelection = (newSelectedIds) => {
-
         // Save only ids for grid controll
         setControlledSelection(newSelectedIds);
-
     }
 
     const handleClickOpen = () => {
         setOpen(true);
+        setControlledSelection(() => {
+            return props.selectedFlightPlans.map((item) => item.id);
+        });
     }
 
     const handleClose = () => {
