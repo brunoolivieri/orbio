@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Actions\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 // Custom
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
@@ -28,19 +29,42 @@ class DashboardController extends Controller
         $this->annualTrafficModel = $annualTrafficModel;
     }
 
-    public function __invoke() : \Illuminate\Http\Response
+    public function __invoke(): \Illuminate\Http\Response
     {
 
-        // ==== COLLECTIONS ===== //
+        //$accessed_devices_collection = $this->accessedDevicesModel->get();
+        //$annual_traffic_collection = $this->annualTrafficModel->get();
 
-        $users_collection = $this->userModel->withTrashed()->get();
-        $profiles_collection = $this->profileModel->withTrashed()->get();
-        $flight_plans_collection = $this->flightPlanModel->withTrashed()->get();
-        $service_order_collection = $this->serviceOrderModel->withTrashed()->get();
-        $reports_collection = $this->reportModel->withTrashed()->get();
-        $accessed_devices_collection = $this->accessedDevicesModel->get();
-        $annual_traffic_collection = $this->annualTrafficModel->get();
+        $collections = [
+            "users" => $this->userModel->withTrashed()->get(),
+            "profiles" => $this->profileModel->withTrashed()->get(),
+            "flight_plans" => $this->flightPlanModel->withTrashed()->get(),
+            "service_orders" => $this->serviceOrderModel->withTrashed()->get(),
+            "reports" => $this->reportModel->withTrashed()->get()
+        ];
 
-        return response([''], 200);
+        $data = [];
+
+        foreach ($collections as $key => $collection) {
+
+            $trashed = 0;
+            $active = 0;
+
+            foreach ($collection as $item) {
+
+                if ($item->trashed()) {
+                    $trashed++;
+                } else {
+                    $active++;
+                }
+            }
+
+            $data[$key]["trashed"] = $trashed;
+            $data[$key]["active"] = $active;
+
+            $data[$key]["total"] = $trashed + $active;
+        }
+
+        return response($data, 200);
     }
 }

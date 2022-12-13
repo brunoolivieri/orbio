@@ -1,20 +1,32 @@
 import React from 'react';
 // Material UI
-import { Paper, Grid, Card, Typography, CircularProgress, Box, Divider } from '@mui/material';
+import { Paper, Grid, Card, Typography, LinearProgress, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import GroupIcon from '@mui/icons-material/Group';
+import MapIcon from '@mui/icons-material/Map';
+import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 // Custom
 import axios from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
-import { HorizontalContainedLineChart } from '../../../shared/charts/HorizontalContainedLineChart';
 
 const miniCardStyle = {
     bgcolor: '#fff',
     minWidth: 150,
-    minHeight: 150,
-    padding: 1,
+    minHeight: 125,
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    borderRadius: 0
 }
+
+const miniCardTopStyle = {
+    flexBasis: '30px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: 1
+};
 
 const biggerCardStyle = {
     bgcolor: '#fff',
@@ -34,14 +46,11 @@ const paperStyle = {
 export const Dashboard = React.memo(() => {
 
     const [loading, setLoading] = React.useState(true);
-    const [users, setUsers] = React.useState({ total: 0, chart: [{}] });
-    const [profiles, setProfiles] = React.useState({ total: 0, chart: [{}] });
-    const [flightPlans, setFlightPlans] = React.useState({ total: 0, chart: [{}] });
-    const [serviceOrders, setServiceOrders] = React.useState({ total: 0, chart: [{}] });
-    const [reports, setReports] = React.useState({ total: 0, chart: [{}] });
-    const [registrations, setRegistrations] = React.useState([{}]);
-    const [devices, setDevices] = React.useState([{}]);
-    const [traffic, setTraffic] = React.useState([{}]);
+    const [users, setUsers] = React.useState([]);
+    const [profiles, setProfiles] = React.useState([]);
+    const [flightPlans, setFlightPlans] = React.useState([]);
+    const [serviceOrders, setServiceOrders] = React.useState([]);
+    const [reports, setReports] = React.useState([]);
 
     // Context do snackbar
     const { enqueueSnackbar } = useSnackbar();
@@ -53,45 +62,20 @@ export const Dashboard = React.memo(() => {
 
         setPageIndex(0);
 
-        /*AxiosApi.get("/api/load-dashboard-metrics")
+        axios.get("/api/load-dashboard-metrics")
             .then(function (response) {
 
                 setLoading(false);
 
-                setUsers({
-                    total: response.data.users.total,
-                    chart: response.data.users.chart
-                });
+                setUsers(response.data.users);
 
-                setProfiles({
-                    total: response.data.profiles.total,
-                    chart: response.data.profiles.chart
-                });
+                setProfiles(response.data.profiles);
 
-                setFlightPlans({
-                    total: response.data.flight_plans.total,
-                    chart: response.data.flight_plans.chart
-                });
+                setFlightPlans(response.data.flight_plans);
 
-                setServiceOrders({
-                    total: response.data.service_orders.total,
-                    chart: response.data.service_orders.chart
-                });
+                setServiceOrders(response.data.service_orders);
 
-                setReports({
-                    total: response.data.reports.total,
-                    chart: response.data.reports.chart
-                });
-
-                setDevices({
-                    total: response.data.devices.total,
-                    chart: response.data.devices.chart
-                });
-
-                setTraffic(response.data.traffic);
-
-
-                setRegistrations(response.data.registrations);
+                setReports(response.data.reports);
 
                 handleOpenSnackbar("Métricas carregadas", "success");
 
@@ -106,7 +90,6 @@ export const Dashboard = React.memo(() => {
                 setLoading(false);
 
             });
-            */
 
     }, []); 275
 
@@ -120,76 +103,81 @@ export const Dashboard = React.memo(() => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={{ xs: 10, sm: 10, md: 12, lg: 10, xl: 10 }}>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <Box sx={miniCardTopStyle}>
                                 <Typography variant="h6">
                                     Usuários
                                 </Typography>
                                 <Typography variant="p" color="green">
-                                    5%
+                                    <GroupIcon />
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: 100, width: '100%' }}>
-                                <HorizontalContainedLineChart />
+                            <Box sx={{ height: '100%', width: '100%' }}>
+                                {loading && <LinearProgress />}
+                                {!loading && 'Chart'}
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <Box sx={miniCardTopStyle}>
                                 <Typography variant="h6">
                                     Perfis
                                 </Typography>
                                 <Typography variant="p" color="green">
-                                    5%
+                                    <AssignmentIndIcon />
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: 100, width: '100%' }}>
-                                <HorizontalContainedLineChart />
+                            <Box sx={{ height: '100%', width: '100%' }}>
+                                {loading && <LinearProgress />}
+                                {!loading && 'Chart'}
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <Box sx={miniCardTopStyle}>
                                 <Typography variant="h6">
                                     Planos de voo
                                 </Typography>
                                 <Typography variant="p" color="green">
-                                    5%
+                                    <MapIcon />
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: 100, width: '100%' }}>
-                                <HorizontalContainedLineChart />
+                            <Box sx={{ height: '100%', width: '100%' }}>
+                                {loading && <LinearProgress />}
+                                {!loading && 'Chart'}
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <Box sx={miniCardTopStyle}>
                                 <Typography variant="h6">
                                     Ordens de serviço
                                 </Typography>
                                 <Typography variant="p" color="green">
-                                    5%
+                                    <AssignmentIcon />
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: 100, width: '100%' }}>
-                                <HorizontalContainedLineChart />
+                            <Box sx={{ height: '100%', width: '100%' }}>
+                                {loading && <LinearProgress />}
+                                {!loading && 'Chart'}
                             </Box>
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
                         <Card sx={miniCardStyle}>
-                            <Box sx={{ flexBasis: '50px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                            <Box sx={miniCardTopStyle}>
                                 <Typography variant="h6">
                                     Relatórios
                                 </Typography>
                                 <Typography variant="p" color="green">
-                                    5%
+                                    <AssessmentIcon />
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: 100, width: '100%' }}>
-                                <HorizontalContainedLineChart />
+                            <Box sx={{ height: '100%', width: '100%' }}>
+                                {loading && <LinearProgress />}
+                                {!loading && 'Chart'}
                             </Box>
                         </Card>
                     </Grid>
