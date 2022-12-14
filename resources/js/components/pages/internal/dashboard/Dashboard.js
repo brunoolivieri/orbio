@@ -195,6 +195,7 @@ export const Dashboard = React.memo(() => {
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 250, width: '100%', mt: 2 }}>
+                                Chart
                             </Box>
                         </Card>
                     </Grid>

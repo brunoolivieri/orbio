@@ -32,15 +32,15 @@ marcador = new mapboxgl.Marker({ color: 'black' })
 // ========= FERRAMENTA DE BUSCA POR LOCALIDADES =========== //
 
 // Adicionando o controle de busca ao mapa.
-map.addControl(
-    new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl
-    })
-);
+var mapBoxGeocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl
+});
+map.addControl(mapBoxGeocoder);
 
+var mapBoxNavigationControl = new mapboxgl.NavigationControl();
 // Adicionando controles de zoom e rotação no mapa
-map.addControl(new mapboxgl.NavigationControl());
+map.addControl(mapBoxNavigationControl);
 
 // ========== DESENHANDO POLÍGONO ============= //
 
@@ -1102,6 +1102,9 @@ function recomputeDistanceBetweenLines() {
 // Acessando o botão de menu
 var btnMenu = document.getElementById("btn-mission");
 
+// Acessando o menu lateral do marcador
+var markerSideMenu = document.getElementById('side_menu');
+
 // Acessando box de logos
 var boxLogos = document.getElementById("logo-box");
 
@@ -1499,8 +1502,7 @@ function saveFullPath() {
 // == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
 function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRoutes) {
 
-    displayOrHiddenElementsForPrintScreen('none');
-    return;
+    removeElementsForPrintScreen();
 
     html2canvas(document.body).then(canvas => {
 
@@ -1512,8 +1514,6 @@ function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRou
         return { blobImg, filenameImg, dataURL };
 
     }).then((image) => {
-
-        displayOrHiddenElementsForPrintScreen('block');
 
         const flight_plan = new File([blobRoutes], filenameRoutes);
 
@@ -1546,12 +1546,17 @@ function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRou
 }
 
 // ==== CLEAN MAP BEFORE PRINT SCREEN OR DISPLAY AGAIN AFTER ==== //
-function displayOrHiddenElementsForPrintScreen(value) {
-    btnMenu.style.display = value;
-    btn.style.display = value;
-    menuOptions.style.display = value;
-    boxLogos.style.display = value;
-    calculationBox.style.display = value;
+function removeElementsForPrintScreen() {
+    btnMenu.style.display = 'none';
+    btn.style.display = 'none';
+    menuOptions.style.display = 'none';
+    boxLogos.style.display = 'none';
+    calculationBox.style.display = 'none';
+    markerSideMenu.style.display = 'none'
+    map.removeControl(mapBoxGeocoder);
+    map.removeControl(draw);
+    map.removeControl(mapBoxNavigationControl);
+    marcador.remove();
 }
 
 // ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
@@ -1707,8 +1712,6 @@ function importKMLPoint(e) {
     cleanLayers();
     cleanPolygon();
 
-    //console.log(marcador);
-    // Apagando o marcador anterior
     marcador.remove();
 
     var file = e.target.files[0];

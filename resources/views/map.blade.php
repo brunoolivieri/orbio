@@ -67,7 +67,7 @@
 		<div id = "output"></div>
 	</div>
 
-	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu" id = "mapbox-controll-group">
+	<div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu" id = "side_menu">
 		<button class="mapbox-gl-draw_ctrl-draw-btn marker" id="marker" style="background-image: url({{ asset('images/map/mapmarker.png')}});"></button>
 		<button type="button" class="mapbox-gl-draw_ctrl-draw-btn" id="question-mark" data-bs-toggle="modal" data-bs-target="#myModal">?</button>
 	</div>
