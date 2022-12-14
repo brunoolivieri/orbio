@@ -47,22 +47,24 @@ class DashboardController extends Controller
 
         foreach ($collections as $key => $collection) {
 
-            $trashed = 0;
-            $active = 0;
+            $trashed_by_month = 0;
+            $active_by_month = 0;
 
-            foreach ($collection as $item) {
+            $data[$key]["total"] = $collection->count();
+
+            foreach ($collection as $index => $item) {
 
                 if ($item->trashed()) {
-                    $trashed++;
+                    $trashed_by_month++;
                 } else {
-                    $active++;
+                    $active_by_month++;
                 }
             }
 
-            $data[$key]["trashed"] = $trashed;
-            $data[$key]["active"] = $active;
+            $data[$key][$item->created_at->format('F')]["trashed"][$index] = $trashed_by_month;
+            $data[$key][$item->created_at->format('F')]["active"][$index] = $active_by_month;
 
-            $data[$key]["total"] = $trashed + $active;
+            $data[$key][$item->created_at->format('F')]["total"] = $trashed_by_month + $active_by_month;
         }
 
         return response($data, 200);

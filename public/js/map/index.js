@@ -1500,6 +1500,7 @@ function saveFullPath() {
 function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRoutes) {
 
     displayOrHiddenElementsForPrintScreen('none');
+    return;
 
     html2canvas(document.body).then(canvas => {
 

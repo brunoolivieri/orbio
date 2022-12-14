@@ -10,11 +10,12 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 // Custom
 import axios from '../../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext.js';
+import { VerticalLinesChart } from '../../../shared/charts/VerticalLinesChart';
 
 const miniCardStyle = {
     bgcolor: '#fff',
     minWidth: 150,
-    minHeight: 125,
+    minHeight: 110,
     display: 'flex',
     flexDirection: 'column',
     borderRadius: 0
@@ -107,13 +108,13 @@ export const Dashboard = React.memo(() => {
                                 <Typography variant="h6">
                                     Usuários
                                 </Typography>
-                                <Typography variant="p" color="green">
-                                    <GroupIcon />
+                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                                    <GroupIcon sx={{ mr: 1 }} /> {users.total}
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: '100%', width: '100%' }}>
+                            <Box sx={{ height: 110, width: '100%' }}>
                                 {loading && <LinearProgress />}
-                                {!loading && 'Chart'}
+                                {!loading && <VerticalLinesChart data={users} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -123,13 +124,13 @@ export const Dashboard = React.memo(() => {
                                 <Typography variant="h6">
                                     Perfis
                                 </Typography>
-                                <Typography variant="p" color="green">
-                                    <AssignmentIndIcon />
+                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                                    <AssignmentIndIcon sx={{ mr: 1 }} /> {profiles.total}
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: '100%', width: '100%' }}>
+                            <Box sx={{ height: 110, width: '100%' }}>
                                 {loading && <LinearProgress />}
-                                {!loading && 'Chart'}
+                                {!loading && <VerticalLinesChart data={profiles} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -139,13 +140,13 @@ export const Dashboard = React.memo(() => {
                                 <Typography variant="h6">
                                     Planos de voo
                                 </Typography>
-                                <Typography variant="p" color="green">
-                                    <MapIcon />
+                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                                    <MapIcon sx={{ mr: 1 }} /> {flightPlans.total}
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: '100%', width: '100%' }}>
+                            <Box sx={{ height: 110, width: '100%' }}>
                                 {loading && <LinearProgress />}
-                                {!loading && 'Chart'}
+                                {!loading && <VerticalLinesChart data={flightPlans} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -155,13 +156,13 @@ export const Dashboard = React.memo(() => {
                                 <Typography variant="h6">
                                     Ordens de serviço
                                 </Typography>
-                                <Typography variant="p" color="green">
-                                    <AssignmentIcon />
+                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                                    <AssignmentIcon sx={{ mr: 1 }} /> {serviceOrders.total}
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: '100%', width: '100%' }}>
+                            <Box sx={{ height: 110, width: '100%' }}>
                                 {loading && <LinearProgress />}
-                                {!loading && 'Chart'}
+                                {!loading && <VerticalLinesChart data={serviceOrders} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -171,13 +172,13 @@ export const Dashboard = React.memo(() => {
                                 <Typography variant="h6">
                                     Relatórios
                                 </Typography>
-                                <Typography variant="p" color="green">
-                                    <AssessmentIcon />
+                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                                    <AssessmentIcon sx={{ mr: 1 }} /> {reports.total}
                                 </Typography>
                             </Box>
-                            <Box sx={{ height: '100%', width: '100%' }}>
+                            <Box sx={{ height: 110, width: '100%' }}>
                                 {loading && <LinearProgress />}
-                                {!loading && 'Chart'}
+                                {!loading && <VerticalLinesChart data={reports} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -194,7 +195,6 @@ export const Dashboard = React.memo(() => {
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 250, width: '100%', mt: 2 }}>
-
                             </Box>
                         </Card>
                     </Grid>
