@@ -150,7 +150,7 @@ export const FlightPlanInformation = React.memo((props) => {
                         </Grid>
                     </Grid>
 
-                    <Typography component={'p'} mb={1}>Ordens de serviço vinculadas: {props.record.service_orders.length}</Typography>
+                    <Typography component={'p'} mb={1}>Ordens de serviço vinculadas: {props.record.service_orders.data.length} (Ativas: {props.record.service_orders.active} | Inativas: {props.record.service_orders.inactive})</Typography>
 
                     {props.record.service_orders.length > 0 &&
                         <Grid item xs={12} md={6}>

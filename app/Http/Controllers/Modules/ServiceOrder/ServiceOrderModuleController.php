@@ -65,7 +65,7 @@ class ServiceOrderModuleController extends Controller
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
-
+      
         return $this->service->delete($request->ids);
     }
 }

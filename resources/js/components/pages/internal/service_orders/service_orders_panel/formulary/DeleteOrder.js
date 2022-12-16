@@ -40,7 +40,7 @@ export const DeleteOrder = React.memo((props) => {
   }
 
   function requestServerOperation() {
-    axios.delete(`/api/admin-module-user/delete`, {
+    axios.delete("/api/orders-module/delete", {
       data: {
         ids: selectedIds
       }

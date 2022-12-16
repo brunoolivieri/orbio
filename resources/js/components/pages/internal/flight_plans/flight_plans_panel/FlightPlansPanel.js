@@ -4,7 +4,6 @@ import * as React from 'react';
 import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-import InfoIcon from '@mui/icons-material/Info';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -79,27 +78,8 @@ const columns = [
     align: 'center',
     sortable: true,
     editable: false,
-    renderCell: (data) => {
-
-      const total_service_orders = data.row.service_orders.data.length;
-
-      return (
-        <>
-          {total_service_orders > 0 ?
-            <>
-              {total_service_orders}
-              <Tooltip title={`Ativas: ${data.row.service_orders.active} | Inativas: ${data.row.service_orders.inactive} `}>
-                <IconButton>
-                  <InfoIcon sx={{ color: '#00713A' }} />
-                </IconButton>
-              </Tooltip>
-            </>
-            :
-            total_service_orders
-          }
-        </>
-
-      );
+    valueGetter: (data) => {
+      return data.row.service_orders.data.length;
     }
   },
   {

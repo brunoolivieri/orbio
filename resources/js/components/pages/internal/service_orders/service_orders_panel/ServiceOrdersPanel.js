@@ -34,7 +34,11 @@ const columns = [
     editable: false,
     renderCell: (data) => {
       const status = data.row.status;
-      return <Chip label={status ? "Ativo" : "Inativo"} color={status ? "success" : "error"} variant="outlined" />
+      return (
+        <>
+          <Chip label={status ? "Ativo" : "Inativo"} color={status ? "success" : "error"} variant="outlined" />
+        </>
+      )
     }
   },
   {
