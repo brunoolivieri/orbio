@@ -196,6 +196,23 @@ export const UpdateBattery = React.memo((props) => {
                             <TextField
                                 type="text"
                                 margin="dense"
+                                label="ID da bateria"
+                                fullWidth
+                                variant="outlined"
+                                required
+                                id="id"
+                                name="id"
+                                value={controlledInput.id}
+                                InputProps={{
+                                    readOnly: true,
+                                }}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
@@ -204,7 +221,7 @@ export const UpdateBattery = React.memo((props) => {
                                 onChange={handleInputChange}
                                 helperText={fieldErrorMessage.name}
                                 error={fieldError.name}
-                                value={controlledInput.id}
+                                value={controlledInput.name}
                             />
                         </Grid>
 
