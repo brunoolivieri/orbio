@@ -244,7 +244,7 @@ export const DronesPanel = () => {
                     </Tooltip>
                 </Grid>
 
-                <Grid item xs>
+                <Grid item xs={12}>
                     <TextField
                         fullWidth
                         placeholder={"Pesquisar um incidente por ID"}

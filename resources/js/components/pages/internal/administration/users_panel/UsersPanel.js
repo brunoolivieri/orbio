@@ -30,6 +30,7 @@ const columns = [
     field: 'name',
     headerName: 'Nome',
     flex: 1,
+    minWidth: 200,
     sortable: true,
     editable: false,
   },
@@ -37,6 +38,7 @@ const columns = [
     field: 'email',
     headerName: 'Email',
     flex: 1,
+    minWidth: 200,
     sortable: true,
     editable: false,
   },
@@ -45,6 +47,7 @@ const columns = [
     headerName: 'Status',
     type: 'number',
     width: 150,
+    align: 'center',
     headerAlign: 'left',
     sortable: true,
     editable: false,
@@ -62,7 +65,7 @@ const columns = [
     headerName: 'Perfil',
     sortable: true,
     editable: false,
-    flex: 1,
+    width: 180,
     valueGetter: (data) => {
       return data.row.profile.name;
     },
@@ -232,7 +235,7 @@ export function UsersPanel() {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar um usuário por ID, nome, email e perfil"}
@@ -251,6 +254,7 @@ export function UsersPanel() {
             variant="outlined"
           />
         </Grid>
+
       </Grid>
 
       <Box

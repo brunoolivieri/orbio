@@ -58,6 +58,8 @@ class UserRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
+
+        $undeleteable_ids = [];
         foreach ($ids as $user_id) {
 
             $user = $this->userModel->findOrFail($user_id);
@@ -65,13 +67,16 @@ class UserRepository implements RepositoryInterface
             // Check if user is related to a active service order 
             foreach ($user->service_orders as $service_order) {
                 if ($service_order->status) {
-                    return response(["message" => "O usuário de ID $user_id está vinculado a uma ordem de serviço ativa."], 500);
+                    array_push($undeleteable_ids, $user_id);
                 }
             }
-
-            $user->delete();
         }
 
-        return response(["message" => "Deleção realizada com sucesso!"], 200);
+        // Deletion will occur only if all flight plans can be deleted
+        if (count($undeleteable_ids) === 0) {
+            $user->whereIn("id", $ids)->delete();
+        }
+
+        return $undeleteable_ids;
     }
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Typography } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../../services/AxiosApi';
@@ -93,6 +93,10 @@ export const DeleteUser = React.memo((props) => {
 
           <DialogContentText mb={2}>
             {selectedIds.length > 1 ? `Os ${selectedIds.length} usuários selecionados perderão o acesso a suas contas` : "O usuário selecionado perderá o acesso a sua conta"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+          </DialogContentText>
+
+          <DialogContentText mb={2}>
+            <Typography>Certifique-se de que os usuários selecionados não possuem vínculos com ordens de serviço ativas.</Typography>
           </DialogContentText>
 
         </DialogContent>

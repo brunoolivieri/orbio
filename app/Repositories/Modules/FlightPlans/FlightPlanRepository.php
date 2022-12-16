@@ -73,15 +73,12 @@ class FlightPlanRepository implements RepositoryInterface
             $undeleteable_ids = [];
             foreach ($ids as $flight_plan_id) {
 
-                $can_delete = true;
-
                 $flight_plan =  $this->flightPlanModel->findOrFail($flight_plan_id);
 
                 // Check if user is related to a active service order 
                 foreach ($flight_plan->service_orders as $service_order) {
                     if ($service_order->status) {
                         array_push($undeleteable_ids, $flight_plan_id);
-                        $can_delete = false;
                     }
                 }
             }

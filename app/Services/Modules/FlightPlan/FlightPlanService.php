@@ -103,7 +103,7 @@ class FlightPlanService implements ServiceInterface
             if ($total_selected_ids === 1) {
                 return response(["message" => "O plano não pode ser deletado porque possui vínculo com ordem de serviço ativa!"], 500);
             } else if ($total_selected_ids > 1) {
-                return response(["message" => "Nenhum plano pode ser deletado porque possuem vínculo com ordem de serviço ativa!"], 500);
+                return response(["message" => "Nenhum plano pode ser deletado porque todos possuem vínculo com ordem de serviço ativa!"], 500);
             }
         } else if ($total_undeleteable_ids > 0 && $total_undeleteable_ids < $total_selected_ids) {
 

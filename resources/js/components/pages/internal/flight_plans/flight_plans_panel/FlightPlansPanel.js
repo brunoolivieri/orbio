@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
+import InfoIcon from '@mui/icons-material/Info';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -24,6 +25,8 @@ import { useAuthentication } from "../../../../context/InternalRoutesAuth/Authen
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import axios from "../../../../../services/AxiosApi";
+// Moment
+import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -61,18 +64,42 @@ const columns = [
     headerName: 'Criado em',
     type: 'number',
     headerAlign: 'left',
+    align: 'center',
     sortable: true,
     editable: false,
-    width: 130
+    width: 130,
+    valueGetter: (data) => {
+      return moment(data.row.created_at).format("DD/MM/YYYY")
+    }
   },
   {
     field: 'service_orders',
     headerName: 'Ordens de serviço',
     width: 160,
+    align: 'center',
     sortable: true,
     editable: false,
     renderCell: (data) => {
-      return data.row.service_orders.length;
+
+      const total_service_orders = data.row.service_orders.data.length;
+
+      return (
+        <>
+          {total_service_orders > 0 ?
+            <>
+              {total_service_orders}
+              <Tooltip title={`Ativas: ${data.row.service_orders.active} | Inativas: ${data.row.service_orders.inactive} `}>
+                <IconButton>
+                  <InfoIcon sx={{ color: '#00713A' }} />
+                </IconButton>
+              </Tooltip>
+            </>
+            :
+            total_service_orders
+          }
+        </>
+
+      );
     }
   },
   {
@@ -81,6 +108,7 @@ const columns = [
     sortable: true,
     editable: false,
     width: 120,
+    align: 'center',
     valueGetter: (data) => {
       return data.row.logs.length;
     }
@@ -91,6 +119,7 @@ const columns = [
     sortable: true,
     editable: false,
     width: 150,
+    align: 'center',
     valueGetter: (data) => {
       return data.row.total_incidents;
     }
@@ -99,6 +128,8 @@ const columns = [
     field: 'open',
     headerName: 'Abrir',
     width: 150,
+    sortable: false,
+    align: 'center',
     renderCell: (data) => {
       return (
         <IconButton>
@@ -115,6 +146,7 @@ const columns = [
     sortable: false,
     editable: false,
     width: 150,
+    align: 'center',
     renderCell: (data) => {
 
       const { enqueueSnackbar } = useSnackbar();
@@ -310,7 +342,7 @@ export function FlightPlansPanel() {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar plano por id e nome"}

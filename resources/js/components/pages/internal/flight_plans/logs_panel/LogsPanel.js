@@ -29,6 +29,7 @@ const columns = [
         field: 'name',
         headerName: 'Nome',
         flex: 1,
+        minWidth: 200,
         sortable: true,
         editable: false
     },
@@ -37,14 +38,15 @@ const columns = [
         headerName: 'Arquivo',
         sortable: true,
         editable: false,
-        flex: 1
+        flex: 1,
+        minWidth: 150
     },
     {
         field: 'flight_plan_image',
         headerName: 'Ver plano',
         sortable: true,
         editable: false,
-        width: 130,
+        minWidth: 150,
         renderCell: (data) => {
 
             if (data.row.flight_plan != null) {
@@ -68,7 +70,7 @@ const columns = [
         headerName: 'Ordem de serviço',
         sortable: true,
         editable: false,
-        width: 150,
+        minWidth: 200,
         renderCell: (data) => {
             if (data.row.service_order != null) {
                 return (
@@ -233,7 +235,7 @@ export const LogsPanel = () => {
                     </Tooltip>
                 </Grid>
 
-                <Grid item xs>
+                <Grid item xs={12}>
                     <TextField
                         fullWidth
                         placeholder={"Pesquisar plano por ID ou nome"}

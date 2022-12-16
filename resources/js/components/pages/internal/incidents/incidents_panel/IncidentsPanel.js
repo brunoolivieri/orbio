@@ -26,7 +26,7 @@ const columns = [
   {
     field: 'type',
     headerName: 'Tipo',
-    width: 100,
+    minWidth: 100,
     sortable: true,
     editable: false,
   },
@@ -34,13 +34,14 @@ const columns = [
     field: 'description',
     headerName: 'Descrição',
     flex: 1,
+    minWidth: 200,
     sortable: true,
     editable: false,
   },
   {
     field: 'date',
     headerName: 'Data',
-    width: 150,
+    minWidth: 130,
     headerAlign: 'left',
     sortable: true,
     editable: false
@@ -50,7 +51,7 @@ const columns = [
     headerName: 'Plano de voo',
     sortable: true,
     editable: false,
-    width: 100,
+    minWidth: 150,
     renderCell: (data) => {
       return (
         <Link href={`/internal/map?file=${data.row.service_order.flight_plan.file}`} target="_blank">
@@ -66,7 +67,7 @@ const columns = [
     headerName: 'Ordem de serviço',
     sortable: true,
     editable: false,
-    flex: 1,
+    minWidth: 150,
     valueGetter: (data) => {
       return data.row.service_order.number
     }
@@ -214,7 +215,7 @@ export function IncidentsPanel() {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar incidente por ID"}
@@ -233,7 +234,9 @@ export function IncidentsPanel() {
             variant="outlined"
           />
         </Grid>
+
       </Grid>
+
 
       <Box
         sx={{ height: 500, width: '100%' }}

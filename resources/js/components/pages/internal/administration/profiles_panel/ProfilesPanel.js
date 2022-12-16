@@ -28,6 +28,7 @@ const columns = [
     field: 'name',
     headerName: 'Nome',
     flex: 1,
+    minWidth: 200,
     sortable: true,
     editable: false,
   },
@@ -37,6 +38,7 @@ const columns = [
     sortable: false,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       return (
         <FormGroup>
@@ -54,6 +56,7 @@ const columns = [
     sortable: false,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       return (
         <FormGroup>
@@ -69,6 +72,7 @@ const columns = [
     sortable: false,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       return (
         <FormGroup>
@@ -84,6 +88,7 @@ const columns = [
     sortable: false,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       return (
         <FormGroup>
@@ -99,6 +104,7 @@ const columns = [
     sortable: false,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       return (
         <FormGroup>
@@ -114,6 +120,7 @@ const columns = [
     sortable: false,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       return (
         <FormGroup>
@@ -280,7 +287,7 @@ export function ProfilesPanel() {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar perfil por ID"}

@@ -38,7 +38,11 @@ class FlightPlansPanelResource extends JsonResource
                     "deleted_at" => $flight_plan->user->deleted_at
                 ],
                 "name" => $flight_plan->name,
-                "service_orders" => [],
+                "service_orders" => [
+                    "active" => 0,
+                    "inactive" => 0,
+                    "data" => []
+                ],
                 "logs" => [],
                 "total_incidents" => 0,
                 "total_logs" => 0,
@@ -64,7 +68,7 @@ class FlightPlansPanelResource extends JsonResource
                     $incidents = Incident::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
                     $logs = Log::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
 
-                    $this->formatedData["records"][$flight_plan_row]["service_orders"][$service_order_row] = [
+                    $this->formatedData["records"][$flight_plan_row]["service_orders"]["data"][$service_order_row] = [
                         "id" => $service_order->id,
                         "number" => $service_order->number,
                         "status" => $service_order->status,
@@ -72,6 +76,12 @@ class FlightPlansPanelResource extends JsonResource
                         "incidents" => $incidents, // incidents of flight plan in this service order
                         "logs" => $logs // logs of flight plan in this service order
                     ];
+
+                    if ($service_order->status) {
+                        $this->formatedData["records"][$flight_plan_row]["service_orders"]["active"]++;
+                    } else {
+                        $this->formatedData["records"][$flight_plan_row]["service_orders"]["inactive"]++;
+                    }
 
                     $this->formatedData["records"][$flight_plan_row]["total_incidents"] += $incidents->count();
                     $this->formatedData["records"][$flight_plan_row]["total_logs"] += $logs->count();

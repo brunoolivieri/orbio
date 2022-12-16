@@ -27,6 +27,7 @@ const columns = [
     field: 'name',
     headerName: 'Nome',
     flex: 1,
+    minWidth: 200,
     sortable: true,
     editable: false
   },
@@ -34,6 +35,7 @@ const columns = [
     field: 'service_order',
     headerName: 'Ordem de serviço',
     flex: 1,
+    minWidth: 150,
     sortable: true,
     editable: false,
     valueGetter: (data) => {
@@ -45,21 +47,22 @@ const columns = [
     headerName: 'Observação',
     sortable: true,
     editable: false,
-    flex: 1
+    flex: 1,
+    minWidth: 200
   },
   {
     field: 'created_at',
     headerName: 'Criado em',
     sortable: true,
     editable: false,
-    width: 120,
+    minWidth: 130
   },
   {
     field: 'export',
     headerName: 'Exportar',
     sortable: true,
     editable: false,
-    width: 120,
+    minWidth: 150,
     renderCell: (data) => {
 
       const { enqueueSnackbar } = useSnackbar();
@@ -242,7 +245,7 @@ export function ReportsPanel() {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar um incidente por ID"}
@@ -261,6 +264,7 @@ export function ReportsPanel() {
             variant="outlined"
           />
         </Grid>
+
       </Grid>
 
       <Box

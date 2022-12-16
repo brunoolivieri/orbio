@@ -254,7 +254,7 @@ export const EquipmentPanel = React.memo(() => {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar equipamento por ID e nome"}

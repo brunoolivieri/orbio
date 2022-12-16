@@ -29,7 +29,7 @@ const columns = [
   {
     field: 'status',
     headerName: 'Status',
-    width: 100,
+    width: 150,
     sortable: true,
     editable: false,
     renderCell: (data) => {
@@ -48,7 +48,8 @@ const columns = [
     field: 'creator',
     headerName: 'Criador',
     type: 'number',
-    width: 150,
+    flex: 1,
+    minWidth: 200,
     headerAlign: 'left',
     sortable: true,
     editable: false,
@@ -63,6 +64,7 @@ const columns = [
     sortable: true,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       const status = data.row.users.pilot.status;
       return <Chip label={data.row.users.pilot.name} color={status ? "success" : "error"} variant="outlined" />
@@ -74,6 +76,7 @@ const columns = [
     sortable: true,
     editable: false,
     flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
       const status = data.row.users.client.status;
       return <Chip label={data.row.users.client.name} color={status ? "success" : "error"} variant="outlined" />
@@ -84,7 +87,8 @@ const columns = [
     headerName: 'Descrição',
     sortable: true,
     editable: false,
-    width: 150
+    flex: 1,
+    minWidth: 200
   },
   {
     field: 'flight_plans',
@@ -92,6 +96,7 @@ const columns = [
     sortable: true,
     editable: false,
     width: 150,
+    align: 'center',
     valueGetter: (data) => {
       return data.row.flight_plans.length;
     }
@@ -101,14 +106,16 @@ const columns = [
     headerName: 'Incidentes',
     sortable: true,
     editable: false,
-    width: 100,
+    width: 150,
+    align: 'center'
   },
   {
     field: 'report',
     headerName: 'Relatório',
     sortable: true,
     editable: false,
-    width: 100,
+    width: 150,
+    align: 'center',
     renderCell: (data) => {
       if (data.row.finished) {
         return (
@@ -281,7 +288,7 @@ export function ServiceOrdersPanel() {
           </Tooltip>
         </Grid>
 
-        <Grid item xs>
+        <Grid item xs={12}>
           <TextField
             fullWidth
             placeholder={"Pesquisar ordem por ID, número ou nome dos usuários envolvidos"}
