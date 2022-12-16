@@ -184,8 +184,8 @@ export const UpdateFlightPlan = React.memo((props) => {
             </Grid>
 
             <Grid item xs={6}>
-              <Button variant="contained">
-                <Link href={`/internal/map?file=${props.record.file}`} target="_blank">
+              <Button variant="contained" disabled>
+                <Link href={`/internal/map?file=${props.record.file}`} target="_blank" sx={{ color: '#fff', textDecoration: 'none' }}>
                   Editar plano
                 </Link>
               </Button>

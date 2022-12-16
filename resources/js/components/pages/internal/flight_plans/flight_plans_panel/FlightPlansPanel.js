@@ -81,7 +81,7 @@ const columns = [
     sortable: true,
     editable: false,
     width: 120,
-    renderCell: (data) => {
+    valueGetter: (data) => {
       return data.row.logs.length;
     }
   },
@@ -91,7 +91,7 @@ const columns = [
     sortable: true,
     editable: false,
     width: 150,
-    renderCell: (data) => {
+    valueGetter: (data) => {
       return data.row.total_incidents;
     }
   },

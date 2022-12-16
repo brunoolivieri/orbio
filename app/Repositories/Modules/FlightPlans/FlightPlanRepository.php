@@ -70,21 +70,28 @@ class FlightPlanRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($ids) {
 
+            $undeleteable_ids = [];
             foreach ($ids as $flight_plan_id) {
+
+                $can_delete = true;
 
                 $flight_plan =  $this->flightPlanModel->findOrFail($flight_plan_id);
 
                 // Check if user is related to a active service order 
                 foreach ($flight_plan->service_orders as $service_order) {
                     if ($service_order->status) {
-                        return response(["message" => "Possui vínculo com uma ordem de serviço ativa!"], 500);
+                        array_push($undeleteable_ids, $flight_plan_id);
+                        $can_delete = false;
                     }
                 }
-
-                $flight_plan->delete();
             }
 
-            return $flight_plan;
+            // Deletion will occur only if all flight plans can be deleted
+            if (count($undeleteable_ids) === 0) {
+                $flight_plan->whereIn("id", $ids)->delete();
+            }
+
+            return $undeleteable_ids;
         });
     }
 }

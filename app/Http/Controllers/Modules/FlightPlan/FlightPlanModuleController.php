@@ -64,7 +64,7 @@ class FlightPlanModuleController extends Controller
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-
+        
         return $this->service->delete($request->ids);;
     }
 }

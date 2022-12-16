@@ -91,8 +91,47 @@ class FlightPlanService implements ServiceInterface
 
     function delete(array $ids)
     {
-        $flight_plan = $this->repository->delete($ids);
+        $undeleteable_ids = $this->repository->delete($ids);
 
-        return response(["message" => "Deleção realizada com sucesso!"], 200);
+        $total_selected_ids = count($ids);
+        $total_undeleteable_ids = count($undeleteable_ids);
+
+        if ($total_undeleteable_ids === 0) {
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } else if ($total_undeleteable_ids === $total_selected_ids) {
+
+            if ($total_selected_ids === 1) {
+                return response(["message" => "O plano não pode ser deletado porque possui vínculo com ordem de serviço ativa!"], 500);
+            } else if ($total_selected_ids > 1) {
+                return response(["message" => "Nenhum plano pode ser deletado porque possuem vínculo com ordem de serviço ativa!"], 500);
+            }
+        } else if ($total_undeleteable_ids > 0 && $total_undeleteable_ids < $total_selected_ids) {
+
+            if ($total_undeleteable_ids === 1) {
+                $response = "A deleção falhou porque o plano de id ";
+            } else if ($total_undeleteable_ids > 1) {
+                $response = "A deleção falhou porque os planos de id ";
+            }
+
+            foreach ($undeleteable_ids as $index => $undeleted_id) {
+
+                // If is not the last item
+                if ($total_undeleteable_ids > ($index + 1)) {
+
+                    $response .= $undeleted_id .  ", ";
+
+                    // if is the last item
+                } else if ($total_undeleteable_ids === ($index + 1)) {
+
+                    if ($total_undeleteable_ids === 1) {
+                        $response .= $undeleted_id . " possui vínculo com ordem de serviço ativa!";
+                    } else if ($total_undeleteable_ids > 1) {
+                        $response .= $undeleted_id . " possuem vínculo com ordem de serviço ativa!";
+                    }
+                }
+            }
+
+            return response(["message" => $response], 500);
+        }
     }
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, DialogContentText } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, DialogContentText, Typography } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../../services/AxiosApi';
@@ -93,7 +93,11 @@ export const DeleteFlightPlan = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            {selectedIds.length > 1 ? `Os ${selectedIds.length} planos de voo selecionados serão deletados` : `O plano de voo selecionado será deletado`}. A remoção, no entanto, não é permanente e pode ser desfeita.
+            <Typography>{selectedIds.length > 1 ? `Os ${selectedIds.length} planos de voo selecionados serão deletados` : `O plano de voo selecionado será deletado`}. A remoção, no entanto, não é permanente e pode ser desfeita. </Typography>
+          </DialogContentText>
+
+          <DialogContentText mb={2}>
+            <Typography>Certifique-se de que os planos de voo selecionados não possuem vínculos com ordens de serviço ativas.</Typography>
           </DialogContentText>
 
         </DialogContent>
