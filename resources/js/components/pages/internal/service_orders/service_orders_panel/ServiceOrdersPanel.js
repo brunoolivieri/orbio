@@ -1,9 +1,9 @@
-// React
 import * as React from 'react';
 // MaterialUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import InfoIcon from '@mui/icons-material/Info';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -14,6 +14,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { CreateOrder } from './formulary/CreateOrder';
 import { UpdateOrder } from './formulary/UpdateOrder';
@@ -23,6 +24,10 @@ import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableDat
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
 import axios from "../../../../../services/AxiosApi";
+import { CircularStaticWithLabel } from '../../../../shared/progress/CircularStaticWithLabel';
+import { WhiteTooltip } from '../../../../shared/tooltip/WhiteTooltip';
+// Moment
+import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -33,12 +38,17 @@ const columns = [
     sortable: true,
     editable: false,
     renderCell: (data) => {
-      const status = data.row.status;
+
+      function chipStyle(status) {
+        return status ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
+      }
+
+      const chip_style = chipStyle(data.row.status);
+
       return (
-        <>
-          <Chip label={status ? "Ativo" : "Inativo"} color={status ? "success" : "error"} variant="outlined" />
-        </>
+        <Chip {...chip_style} />
       )
+
     }
   },
   {
@@ -58,8 +68,22 @@ const columns = [
     sortable: true,
     editable: false,
     renderCell: (data) => {
-      const status = data.row.users.creator.status;
-      return <Chip label={data.row.users.creator.name} color={status ? "success" : "error"} variant="outlined" />
+
+      function chipStyle(is_deleted, status) {
+        const label = data.row.users.creator.name;
+        if (is_deleted === 1) {
+          return { label: label, color: "error", variant: "contained" };
+        } else if (is_deleted === 0) {
+          return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" }
+        }
+      }
+
+      const chip_style = chipStyle(data.row.users.creator.deleted, data.row.users.creator.status);
+
+      return (
+        <Chip {...chip_style} />
+      )
+
     }
   },
   {
@@ -70,8 +94,18 @@ const columns = [
     flex: 1,
     minWidth: 200,
     renderCell: (data) => {
-      const status = data.row.users.pilot.status;
-      return <Chip label={data.row.users.pilot.name} color={status ? "success" : "error"} variant="outlined" />
+
+      function chipStyle(status) {
+        const label = data.row.users.pilot.name;
+        return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" };
+      }
+
+      const chip_style = chipStyle(data.row.users.pilot.status);
+
+      return (
+        <Chip {...chip_style} />
+      )
+
     }
   },
   {
@@ -82,17 +116,50 @@ const columns = [
     flex: 1,
     minWidth: 200,
     renderCell: (data) => {
-      const status = data.row.users.client.status;
-      return <Chip label={data.row.users.client.name} color={status ? "success" : "error"} variant="outlined" />
+
+      function chipStyle(status) {
+        const label = data.row.users.client.name;
+        return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" };
+      }
+
+      const chip_style = chipStyle(data.row.users.client.status);
+
+      return (
+        <Chip {...chip_style} />
+      )
+
     }
   },
   {
-    field: 'observation',
-    headerName: 'Descrição',
+    field: 'progress',
+    headerName: 'Progresso',
     sortable: true,
     editable: false,
-    flex: 1,
-    minWidth: 200
+    minWidth: 150,
+    renderCell: (data) => {
+
+      const start_date = moment(data.row.start_date).format("DD/MM/YYYY");
+      const final_date = moment(data.row.end_date).format("DD/MM/YYYY");
+      const days = moment(data.row.start_date).diff(moment(data.row.end_date), 'days') * -1;
+
+      const title = `
+      Início: ${start_date}
+      Fim: ${final_date}
+      Total (dias): ${days}
+      `;
+
+      return (
+        <>
+          <CircularStaticWithLabel />
+          <WhiteTooltip title={title}>
+            <IconButton sx={{ ml: 1 }}>
+              <InfoIcon sx={{ color: "#007937" }} />
+            </IconButton>
+          </WhiteTooltip>
+        </>
+      )
+
+    }
   },
   {
     field: 'flight_plans',
@@ -121,19 +188,18 @@ const columns = [
     width: 150,
     align: 'center',
     renderCell: (data) => {
-      if (data.row.finished) {
-        return (
-          <IconButton>
-            <FontAwesomeIcon icon={faFilePdf} color={"#007937"} size="sm" />
-          </IconButton>
-        )
-      } else {
-        return (
-          <IconButton>
-            <FontAwesomeIcon icon={faFilePdf} color={"#E0E0E0"} size="sm" />
-          </IconButton>
-        )
+
+      function iconStyle(is_finished) {
+        return is_finished ? { icon: faFilePdf, color: "#007937", size: "sm" } : { icon: faFilePdf, color: "#E0E0E0", size: "sm" }
       }
+
+      const icon_style = iconStyle(data.row.finished);
+
+      return (
+        <IconButton>
+          <FontAwesomeIcon {...icon_style} />
+        </IconButton>
+      )
     }
   },
 ];
@@ -282,6 +348,14 @@ export function ServiceOrdersPanel() {
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
           }
+        </Grid>
+
+        <Grid item>
+          <Tooltip title="Ajuda">
+            <IconButton>
+              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color='#007937' />
+            </IconButton>
+          </Tooltip>
         </Grid>
 
         <Grid item>

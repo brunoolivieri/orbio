@@ -3,15 +3,6 @@ import * as React from 'react';
 import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-// Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { CreateUser } from './formulary/CreateUser';
-import { UpdateUser } from './formulary/UpdateUser';
-import { DeleteUser } from './formulary/DeleteUser';
-import { UserInformation } from './formulary/UserInformation';
-import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +12,16 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+// Custom
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
+import { CreateUser } from './formulary/CreateUser';
+import { UpdateUser } from './formulary/UpdateUser';
+import { DeleteUser } from './formulary/DeleteUser';
+import { UserInformation } from './formulary/UserInformation';
+import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 // Moment
 import moment from 'moment';
 
@@ -52,12 +53,16 @@ const columns = [
     sortable: true,
     editable: false,
     renderCell: (data) => {
-      const status = data.row.status;
-      if (status === 1) {
-        return <Chip label="Ativo" color="success" variant="outlined" />
-      } else {
-        return <Chip label="Inativo" color="error" variant="outlined" />
+
+      function chipStyle(status) {
+        return status === 1 ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
       }
+
+      const chip_style = chipStyle(data.row.status);
+
+      return (
+        <Chip {...chip_style} />
+      )
     }
   },
   {
@@ -225,6 +230,14 @@ export function UsersPanel() {
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
           }
+        </Grid>
+
+        <Grid item>
+          <Tooltip title="Ajuda">
+            <IconButton>
+              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color='#007937' />
+            </IconButton>
+          </Tooltip>
         </Grid>
 
         <Grid item>

@@ -41,7 +41,7 @@ class FlightPlansLogPanelResource extends JsonResource
                 "deleted_at" => $log->deleted_at
             ];
 
-            if (!empty($log->service_order_flight_plan)) {
+            if (!is_null($log->service_order_flight_plan)) {
 
                 // Get related service order // Table "service_order_flight_plan"
                 $service_order = $log->service_order_flight_plan->service_order;
@@ -52,13 +52,15 @@ class FlightPlansLogPanelResource extends JsonResource
                     "id" => $service_order->id,
                     "number" => $service_order->number,
                     "status" => $service_order->status,
-                    "created_at" => strtotime($service_order->created_at)
+                    "created_at" => strtotime($service_order->created_at),
+                    "deleted" => is_null($service_order->deleted_at) ? 0 : 1
                 ];
 
                 $this->formatedData["records"][$row]["flight_plan"] = [
                     "id" =>  $flight_plan->id,
                     "path" => $flight_plan->file,
                     "image_url" => Storage::url($flight_plan->image->path),
+                    "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];
             }
         }

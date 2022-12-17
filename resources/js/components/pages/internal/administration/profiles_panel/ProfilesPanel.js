@@ -3,15 +3,6 @@ import * as React from "react";
 import { Tooltip, IconButton, Grid, TextField, Box, InputAdornment, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-// Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
-import axios from "../../../../../services/AxiosApi";
-import { CreateProfile } from "./formulary/CreateProfile";
-import { UpdateProfile } from "./formulary/UpdateProfile";
-import { DeleteProfile } from "./formulary/DeleteProfile";
-import { ProfileInformation } from "./formulary/ProfileInformation";
-import { ExportTableData } from "../../../../shared/modals/dialog/ExportTableData";
-import { TableToolbar } from "../../../../shared/table_toolbar/TableToolbar";
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +12,16 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
+// Custom
+import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import axios from "../../../../../services/AxiosApi";
+import { CreateProfile } from "./formulary/CreateProfile";
+import { UpdateProfile } from "./formulary/UpdateProfile";
+import { DeleteProfile } from "./formulary/DeleteProfile";
+import { ProfileInformation } from "./formulary/ProfileInformation";
+import { ExportTableData } from "../../../../shared/modals/dialog/ExportTableData";
+import { TableToolbar } from "../../../../shared/table_toolbar/TableToolbar";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -277,6 +278,14 @@ export function ProfilesPanel() {
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
           }
+        </Grid>
+
+        <Grid item>
+          <Tooltip title="Ajuda">
+            <IconButton>
+              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color='#007937' />
+            </IconButton>
+          </Tooltip>
         </Grid>
 
         <Grid item>

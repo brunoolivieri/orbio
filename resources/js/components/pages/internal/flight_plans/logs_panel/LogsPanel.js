@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
@@ -12,7 +12,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faImage } from '@fortawesome/free-solid-svg-icons';
-import { faClipboard } from '@fortawesome/free-solid-svg-icons';
+import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import axios from "../../../../../services/AxiosApi";
@@ -42,6 +42,29 @@ const columns = [
         minWidth: 150
     },
     {
+        field: 'service_order',
+        headerName: 'Ordem de serviço',
+        sortable: true,
+        editable: false,
+        minWidth: 250,
+        renderCell: (data) => {
+
+            function chipStyle(related_service_order) {
+                if (related_service_order === null) {
+                    return { label: "Nenhuma", disabled: true, variant: "outlined" };
+                } else if (related_service_order != null) {
+                    return { label: related_service_order.number, color: related_service_order.service_order.deleted == 1 ? "error" : "success", variant: related_service_order.service_order.deleted == 1 ? "contained" : "outlined" };
+                }
+            }
+
+            const chip_style = chipStyle(data.row.service_order);
+
+            return (
+                <Chip {...chip_style} />
+            )
+        },
+    },
+    {
         field: 'flight_plan_image',
         headerName: 'Ver plano',
         sortable: true,
@@ -49,47 +72,25 @@ const columns = [
         minWidth: 150,
         renderCell: (data) => {
 
-            if (data.row.flight_plan != null) {
-                return (
-                    <ModalImage image_url={data.row.flight_plan.image_url} />
-                )
-            } else {
-                return (
-                    <Tooltip title="Vincule um plano de voo">
-                        <IconButton>
-                            <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
-                        </IconButton>
-                    </Tooltip>
-                )
+            function cellStyle(related_flight_plan) {
+                if (related_flight_plan === null) {
+                    return (
+                        <Tooltip title="Vincule um plano de voo">
+                            <IconButton>
+                                <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
+                            </IconButton>
+                        </Tooltip>
+                    )
+                } else {
+                    return (
+                        <ModalImage image_url={data.row.flight_plan.image_url} />
+                    )
+                }
             }
 
+            return cellStyle();
+
         }
-    },
-    {
-        field: 'service_order',
-        headerName: 'Ordem de serviço',
-        sortable: true,
-        editable: false,
-        minWidth: 200,
-        renderCell: (data) => {
-            if (data.row.service_order != null) {
-                return (
-                    <Tooltip title={`Número: ${data.row.service_order.number}`}>
-                        <IconButton>
-                            <FontAwesomeIcon icon={faClipboard} color={"#00713A"} size="sm" />
-                        </IconButton>
-                    </Tooltip>
-                )
-            } else {
-                return (
-                    <Tooltip title={"Vincule uma ordem de serviço"}>
-                        <IconButton>
-                            <FontAwesomeIcon icon={faClipboard} color={"#E0E0E0"} size="sm" />
-                        </IconButton>
-                    </Tooltip>
-                )
-            }
-        },
     },
 ]
 
@@ -225,6 +226,14 @@ export const LogsPanel = () => {
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
                     }
+                </Grid>
+
+                <Grid item>
+                    <Tooltip title="Ajuda">
+                        <IconButton>
+                            <FontAwesomeIcon icon={faCircleQuestion} size="sm" color='#007937' />
+                        </IconButton>
+                    </Tooltip>
                 </Grid>
 
                 <Grid item>
