@@ -36,7 +36,7 @@ export function BasicInformation() {
             .then(function (response) {
                 setLoadingFields(false);
                 setUpdateLoading(false);
-                setControlledInput({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD-MM-YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD-MM-YYYY hh:mm') });
+                setControlledInput({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
             })
             .catch(function (error) {
                 setLoadingFields(false);

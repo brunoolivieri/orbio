@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Divider } from '@mui/material';
 
 const imageStyle = {
-    width: '100%',
-    height: '100%',
+    width: '90%',
+    height: '90%',
     cursor: 'pointer'
 }
 

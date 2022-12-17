@@ -53,7 +53,7 @@ const columns = [
                 if (related_service_order === null) {
                     return { label: "Nenhuma", disabled: true, variant: "outlined" };
                 } else if (related_service_order != null) {
-                    return { label: related_service_order.number, color: related_service_order.service_order.deleted == 1 ? "error" : "success", variant: related_service_order.service_order.deleted == 1 ? "contained" : "outlined" };
+                    return { label: related_service_order.number, color: related_service_order.deleted == 1 ? "error" : "success", variant: related_service_order.deleted == 1 ? "contained" : "outlined" };
                 }
             }
 
@@ -67,9 +67,9 @@ const columns = [
     {
         field: 'flight_plan_image',
         headerName: 'Ver plano',
-        sortable: true,
+        sortable: false,
         editable: false,
-        minWidth: 150,
+        minWidth: 130,
         renderCell: (data) => {
 
             function cellStyle(related_flight_plan) {
@@ -83,12 +83,12 @@ const columns = [
                     )
                 } else {
                     return (
-                        <ModalImage image_url={data.row.flight_plan.image_url} />
+                        <ModalImage image_url={related_flight_plan.image_url} />
                     )
                 }
             }
 
-            return cellStyle();
+            return cellStyle(data.row.flight_plan);
 
         }
     },

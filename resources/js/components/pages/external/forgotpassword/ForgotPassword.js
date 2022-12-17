@@ -147,13 +147,16 @@ export const ForgotPassword = () => {
     }
 
     React.useEffect(() => {
+
         if (timer === 0) {
             return ''
         }
+
         setTimeout(() => {
             setTimer((previously) => previously - 1);
         }, 1000);
-    }, [timer])
+
+    }, [timer]);
 
     function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
