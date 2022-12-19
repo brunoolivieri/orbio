@@ -103,7 +103,6 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     function fetchRecords() {
 
-
         let http_request = "api/load-flight-plans-service-order?";
         if (props.serviceOrderId != null) {
             http_request += `service_order=${props.serviceOrderId}&`;
@@ -168,9 +167,12 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         const newSelectedIds = controlledSelection;
 
         // Find unchanged selections to preserve data - get entire record
-        let preserved_selections = [];
+        let preservedFlightPlansWithEquipments = [];
         if (props.selectedFlightPlans.length > 0) {
-            preserved_selections = props.selectedFlightPlans.filter((props_record) => {
+
+            // The preserveds array receives the already selected preserving the formatting
+            // Preserve the formatting is necesary to not unselect the equipments if already selected
+            preservedFlightPlansWithEquipments = props.selectedFlightPlans.filter((props_record) => {
                 if (newSelectedIds.includes(props_record.id)) {
                     return props_record;
                 }
@@ -179,18 +181,32 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
         // Get entire flight plan data record by ID - just for new selections
         const newSelectedFlightPlans = records.filter((record) => {
+
+            let preservedSelectionsIds = preservedFlightPlansWithEquipments.map((item) => item.id);
+
             // Record ID must exists in newSelectedIds and not in preserved_selections ids array
-            if (newSelectedIds.includes(record.id) && !preserved_selections.map((item) => item.id).includes(record.id)) {
+            if (newSelectedIds.includes(record.id) && !preservedSelectionsIds.includes(record.id)) {
                 return record;
             }
         })
 
         const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
-            return { ...item, drone_id: "0", battery_id: "0", equipment_id: "0" };
-        })
+            return { id: item.id, name: item.name, drone_id: "0", battery_id: "0", equipment_id: "0" };
+        });
 
+        /*
+        console.log('----------------------------------------------')
+        console.log(newSelectedFlightPlansWithEquipments)
+        console.log(preservedFlightPlansWithEquipments)
 
-        props.setSelectedFlightPlans([...newSelectedFlightPlansWithEquipments, ...preserved_selections]);
+        console.log('----------------------------------------------')
+        console.log([...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id));
+        */
+
+        props.setSelectedFlightPlans(() => {
+            return [...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id);
+        });
+
     }
 
     return (

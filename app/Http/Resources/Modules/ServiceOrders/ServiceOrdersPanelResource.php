@@ -61,9 +61,9 @@ class ServiceOrdersPanelResource extends JsonResource
                         "city" => $flight_plan->city,
                         "state" =>  $flight_plan->state
                     ],
-                    "drone_id" => $flight_plan->pivot->drone_id,
-                    "battery_id" => $flight_plan->pivot->battery_id,
-                    "equipment_id" => $flight_plan->pivot->equipment_id,
+                    "drone_id" => is_null($flight_plan->pivot->drone_id) ? "0" : $flight_plan->pivot->drone_id,
+                    "battery_id" => is_null($flight_plan->pivot->battery_id) ? "0" : $flight_plan->pivot->battery_id,
+                    "equipment_id" => is_null($flight_plan->pivot->equipment_id) ? "0" : $flight_plan->pivot->equipment_id,
                     "incidents" => $incidents,
                     "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];

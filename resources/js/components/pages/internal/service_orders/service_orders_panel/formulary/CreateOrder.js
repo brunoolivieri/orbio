@@ -2,6 +2,8 @@ import * as React from 'react';
 // Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -34,8 +36,15 @@ export const CreateOrder = React.memo((props) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
+  const [canSave, setCanSave] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
+
+  React.useEffect(() => {
+
+    // verify if data is completed
+
+  }, [selectedFlightPlans])
 
   function handleClickOpen() {
     setOpen(true);
@@ -298,7 +307,7 @@ export const CreateOrder = React.memo((props) => {
                           <FlightPlanEquipmentSelection
                             selectedFlightPlans={selectedFlightPlans}
                             setSelectedFlightPlans={setSelectedFlightPlans}
-                            current={{ array_index: index, data: flight_plan }}
+                            current={flight_plan}
                           />
                         }
                       >
@@ -339,7 +348,17 @@ export const CreateOrder = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+          {canSave &&
+            <Button variant="contained" startIcon={<LockOpenIcon />} onClick={handleSubmit} disabled={loading}>
+              Confirmar
+            </Button >
+          }
+
+          {!canSave &&
+            <Button variant="contained" startIcon={<LockIcon />} disabled>
+              Salvar
+            </Button >
+          }
         </DialogActions>
       </Dialog>
     </>

@@ -5,19 +5,21 @@ import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
 
+const initialControlledInput = { id: "", array_index: "", drone_id: "", battery_id: "", equipment_id: "" }
+
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({});
+    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
 
     const handleClickOpen = () => {
         setOpen(true);
         setControlledInput({
-            id: props.current.data.id,
-            array_index: props.current.array_index,
-            drone_id: props.current.data.drone_id,
-            battery_id: props.current.data.battery_id,
-            equipment_id: props.current.data.equipment_id
+            id: props.current.id,
+            name: props.current.name,
+            drone_id: props.current.drone_id,
+            battery_id: props.current.battery_id,
+            equipment_id: props.current.equipment_id
         });
     }
 
@@ -27,17 +29,19 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const handleSave = () => {
 
-        // Create clone of selected flight plans array
-        let selectedFlightPlansClone = [...props.selectedFlightPlans];
+        let updatedSelectedFlightPlans = props.selectedFlightPlans.map((selected_flight_plan) => {
 
-        // Set equipments value into clone first
-        // The array_index is the index of actual flight plan in structure of selected flight plans
-        selectedFlightPlansClone[controlledInput.array_index].drone_id = controlledInput.drone_id;
-        selectedFlightPlansClone[controlledInput.array_index].battery_id = controlledInput.battery_id;
-        selectedFlightPlansClone[controlledInput.array_index].equipment_id = controlledInput.equipment_id;
+            if (selected_flight_plan.id === controlledInput.id) {
+                return controlledInput;
+            } else {
+                return selected_flight_plan;
+            }
 
-        // Sync clone and original array
-        props.setSelectedFlightPlans(selectedFlightPlansClone);
+        });
+
+        //console.log(updatedSelectedFlightPlans.sort((a, b) => a.id - b.id))
+
+        props.setSelectedFlightPlans(updatedSelectedFlightPlans.sort((a, b) => a.id - b.id));
 
         handleClose();
 
@@ -66,7 +70,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                         variant="outlined"
                         required
                         name="flight_plan_id"
-                        value={props.current.data.id}
+                        value={controlledInput.id}
                         sx={{ mb: 2 }}
                         InputProps={{
                             readOnly: true
@@ -80,7 +84,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                         fullWidth
                         variant="outlined"
                         required
-                        value={props.current.data.name}
+                        value={controlledInput.name}
                         sx={{ mb: 2 }}
                         InputProps={{
                             readOnly: true
