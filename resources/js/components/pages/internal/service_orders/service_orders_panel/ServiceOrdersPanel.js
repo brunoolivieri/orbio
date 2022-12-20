@@ -147,8 +147,6 @@ const columns = [
       // > 0 = ended and < 0 = to end
       const days_from_end = moment().diff(moment(data.row.end_date), 'days');
 
-      console.log(days_from_start)
-
       let progress_percentage = 0;
       let progress_days = 0;
 
