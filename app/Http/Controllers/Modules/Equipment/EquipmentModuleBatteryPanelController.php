@@ -34,7 +34,7 @@ class EquipmentModuleBatteryPanelController extends Controller
         );
     }
 
-    public function exportAsCsv(Request $request)
+    public function exportTableAsCsv(Request $request)
     {
         ob_end_clean();
         ob_start();

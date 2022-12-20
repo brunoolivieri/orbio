@@ -48,7 +48,7 @@ class Profile extends Model
     */
     function users()
     {
-        return $this->hasMany(User::class, "profile_id");
+        return $this->hasMany(User::class, "profile_id")->withTrashed();
     }
 
     /*

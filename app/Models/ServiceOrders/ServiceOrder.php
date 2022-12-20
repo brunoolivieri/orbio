@@ -49,7 +49,7 @@ class ServiceOrder extends Model
     */
     function users()
     {
-        return $this->belongsToMany(User::class, "service_order_user")->withPivot('role')->withTrashed();
+        return $this->belongsToMany(User::class, "service_order_user")->withPivot('role');
     }
 
     /*
@@ -57,7 +57,7 @@ class ServiceOrder extends Model
     */
     function flight_plans()
     {
-        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withPivot(["id", "drone_id", "battery_id", "equipment_id"])->withTrashed();
+        return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan")->withPivot(["id", "drone_id", "battery_id", "equipment_id"]);
     }
 
     /*

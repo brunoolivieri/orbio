@@ -28,11 +28,11 @@ class ServiceOrderFlightPlan extends Model
 
     function incidents()
     {
-        return $this->hasMany(Incident::class, "service_order_flight_plan_id");
+        return $this->hasMany(Incident::class, "service_order_flight_plan_id")->withTrashed();
     }
 
     function logs()
     {
-        return $this->hasMany(Log::class, "service_order_flight_plan_id");
+        return $this->hasMany(Log::class, "service_order_flight_plan_id")->withTrashed();
     }
 }

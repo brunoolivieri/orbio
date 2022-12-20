@@ -49,6 +49,6 @@ class Report extends Model
     */
     function service_order()
     {
-        return $this->hasOne(ServiceOrder::class, 'report_id');
+        return $this->hasOne(ServiceOrder::class, 'report_id')->withTrashed();
     }
 }

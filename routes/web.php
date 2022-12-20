@@ -100,16 +100,16 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
     Route::ApiResource("api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
     // Internal Modules extra operations
-    Route::post("api/users/export", [AdministrationModuleUsersController::class, "exportAsCsv"]);
-    Route::post("api/profiles/export", [AdministrationModuleProfilesController::class, "exportAsCsv"]);
-    Route::post("api/flight-plans/export", [FlightPlanModuleController::class, "exportAsCsv"]);
-    Route::post("api/logs/export", [FlightPlanModuleLogController::class, "exportAsCsv"]);
-    Route::post("api/service-orders/export", [ServiceOrderModuleController::class, "exportAsCsv"]);
-    Route::post("api/reports/export", [ReportModuleController::class, "exportAsCsv"]);
-    Route::post("api/incidents/export", [IncidentModuleController::class, "exportAsCsv"]);
-    Route::post("api/drones/export", [EquipmentModuleDronePanelController::class, "exportAsCsv"]);
-    Route::post("api/batteries/export", [EquipmentModuleBatteryPanelController::class, "exportAsCsv"]);
-    Route::post("api/equipments/export", [EquipmentModuleEquipmentPanelController::class, "exportAsCsv"]);
+    Route::post("api/users/export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
+    Route::post("api/profiles/export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
+    Route::post("api/flight-plans/export", [FlightPlanModuleController::class, "exportTableAsCsv"]);
+    Route::post("api/logs/export", [FlightPlanModuleLogController::class, "exportTableAsCsv"]);
+    Route::post("api/service-orders/export", [ServiceOrderModuleController::class, "exportTableAsCsv"]);
+    Route::post("api/reports/export", [ReportModuleController::class, "exportTableAsCsv"]);
+    Route::post("api/incidents/export", [IncidentModuleController::class, "exportTableAsCsv"]);
+    Route::post("api/drones/export", [EquipmentModuleDronePanelController::class, "exportTableAsCsv"]);
+    Route::post("api/batteries/export", [EquipmentModuleBatteryPanelController::class, "exportTableAsCsv"]);
+    Route::post("api/equipments/export", [EquipmentModuleEquipmentPanelController::class, "exportTableAsCsv"]);
     Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
     Route::get("/api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
     // Actions

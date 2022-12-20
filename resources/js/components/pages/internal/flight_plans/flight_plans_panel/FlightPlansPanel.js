@@ -167,10 +167,58 @@ const columns = [
     align: 'center',
     renderCell: (data) => {
 
-      //const { enqueueSnackbar } = useSnackbar();
+      const { enqueueSnackbar } = useSnackbar();
+
+      function handleDownloadFlightPlanAsCSV(filename) {
+        axios.get(`/api/plans-module-download/${filename}`, null, {
+          responseType: 'blob'
+        })
+          .then(function (response) {
+            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+
+            // ========= Routine that already exists in the map algorithm ========= //
+            let content = "latitude;longitude;altitude(m)\n";
+
+            // Create array from file lines
+            var lines = response.data.split("\n");
+
+            // Breaking lines where exists spaces (\t)
+            for (let i = 4; i < lines.length - 2; i++) {
+              let line = lines[i].split("\t");
+
+              // Only waypoints with latitude and longitude are considered - code 16
+              // Code 183 waypoints (dispenser trigger) have lat/long reset and cannot be added to route drawing
+              if (Number(line[3]) == 16) {
+
+                // Latitude, longitude, and altitude positions are at indices 8, 9, and 10 of each row
+                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
+              }
+            }
+            
+            //console.log(content);
+
+            let blob = new Blob([content],
+              { type: "text/plain;charset=utf-8" });
+
+            // Nome do arquivo com data em milissegundos decorridos
+            let filename = new Date().getTime() + ".csv";
+
+            // Download forçado
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${filename}`); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+
+          })
+          .catch(() => {
+            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+          })
+      }
 
       return (
-        <IconButton>
+        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.file)}>
           <FontAwesomeIcon icon={faFileCsv} color={"#00713A"} size="sm" />
         </IconButton>
       )

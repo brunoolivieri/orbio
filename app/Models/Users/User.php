@@ -81,7 +81,7 @@ class User extends Authenticatable
     */
     function service_orders()
     {
-        return $this->belongsToMany(ServiceOrder::class, "service_order_user", "user_id")->withPivot("role");
+        return $this->belongsToMany(ServiceOrder::class, "service_order_user", "user_id")->withPivot("role")->withTrashed();
     }
 
     /*
