@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Divider, DialogContentText } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
 import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
@@ -58,24 +58,14 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                 open={open}
                 onClose={handleClose}
             >
-                <DialogTitle>Seleção de Equipamentos</DialogTitle>
+                <DialogTitle>SELEÇÃO DE EQUIPAMENTOS</DialogTitle>
+                <Divider />
 
                 <DialogContent>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="ID do plano de voo"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="flight_plan_id"
-                        value={controlledInput.id}
-                        sx={{ mb: 2 }}
-                        InputProps={{
-                            readOnly: true
-                        }}
-                    />
+                    <DialogContentText mb={2}>
+                        Selecione os equipamentos que serão utilizados na realização deste plano de voo nesta ordem de serviço.
+                    </DialogContentText>
 
                     <TextField
                         type="text"
@@ -135,6 +125,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
 
                 </DialogContent>
 
+                <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Fechar</Button>
                     <Button onClick={handleSave} variant="contained">Salvar</Button>

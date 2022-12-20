@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide, Divider } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 // Axios
@@ -78,8 +78,6 @@ const columns = [
 ]
 
 export const FlightPlansForServiceOrderModal = React.memo((props) => {
-
-    console.log(props.selectedFlightPlans)
 
     // ============================================================================== STATES ============================================================================== //
 

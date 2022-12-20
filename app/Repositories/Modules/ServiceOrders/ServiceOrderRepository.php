@@ -77,6 +77,7 @@ class ServiceOrderRepository implements RepositoryInterface
             // ==== First step: Update service order ==== //
 
             $service_order = $this->serviceOrderModel->findOrFail($identifier);
+           
             $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
 
             // ==== Second step: Update service order users relationship ==== //

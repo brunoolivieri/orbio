@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -40,11 +40,32 @@ export const CreateOrder = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
+  // Verify if data is completed
   React.useEffect(() => {
 
-    // verify if data is completed
+    setCanSave(() => {
 
-  }, [selectedFlightPlans])
+      if (selectedFlightPlans.length === 0) {
+        return false;
+      }
+
+      let selections_check = selectedFlightPlans.map((selected_flight_plan) => {
+
+        let current_check = 1;
+        for (let key in selected_flight_plan) {
+          if (selected_flight_plan[key] === "0" || selected_flight_plan[key] === null || selected_flight_plan[key].lenght === 0) {
+            current_check = 0;
+          }
+        }
+
+        return current_check;
+      });
+
+      return !selections_check.includes(0);
+
+    });
+
+  }, [selectedFlightPlans]);
 
   function handleClickOpen() {
     setOpen(true);
@@ -57,6 +78,7 @@ export const CreateOrder = React.memo((props) => {
     setFieldErrorMessage(initialFieldErrorMessage);
     setDisplayAlert(initialDisplatAlert);
     setControlledInput(initialControlledInput);
+    setSelectedFlightPlans([]);
   }
 
   function handleSubmit() {
@@ -177,6 +199,20 @@ export const CreateOrder = React.memo((props) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
+  function avatarSelectionStyle(selected_flight_plan) {
+
+    let is_completed = true;
+
+    for (let key in selected_flight_plan) {
+      if (selected_flight_plan[key] === null || selected_flight_plan[key] === "0" || selected_flight_plan[key].length === 0) {
+        is_completed = false;
+      }
+    }
+
+    return is_completed ? { bgcolor: "#4CAF50" } : { bgcolor: "#E0E0E0" };
+
+  }
+
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
@@ -198,6 +234,11 @@ export const CreateOrder = React.memo((props) => {
         <Divider />
 
         <DialogContent>
+
+          <DialogContentText mb={3}>
+            Preencha todos os dados requisitados no formulário para a criação da ordem de serviço.
+          </DialogContentText>
+
           <Grid container spacing={1}>
 
             <Grid item sx={6}>
@@ -312,7 +353,7 @@ export const CreateOrder = React.memo((props) => {
                         }
                       >
                         <ListItemAvatar>
-                          <Avatar>
+                          <Avatar sx={avatarSelectionStyle(flight_plan)}>
                             <MapIcon />
                           </Avatar>
                         </ListItemAvatar>
@@ -356,7 +397,7 @@ export const CreateOrder = React.memo((props) => {
 
           {!canSave &&
             <Button variant="contained" startIcon={<LockIcon />} disabled>
-              Salvar
+              Confirmar
             </Button >
           }
         </DialogActions>

@@ -14,7 +14,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { CreateOrder } from './formulary/CreateOrder';
 import { UpdateOrder } from './formulary/UpdateOrder';
@@ -140,17 +139,39 @@ const columns = [
 
       const start_date = moment(data.row.start_date).format("DD/MM/YYYY");
       const final_date = moment(data.row.end_date).format("DD/MM/YYYY");
-      const days = moment(data.row.start_date).diff(moment(data.row.end_date), 'days') * -1;
+      const total_days = moment(data.row.end_date).diff(moment(data.row.start_date), 'days');
+
+      // > 0 = started and < 0 = to start
+      const days_from_start = moment().diff(moment(data.row.start_date), 'days');
+
+      // > 0 = ended and < 0 = to end
+      const days_from_end = moment().diff(moment(data.row.end_date), 'days');
+
+      console.log(days_from_start)
+
+      let progress_percentage = 0;
+      let progress_days = 0;
+
+      if ((days_from_start > 0 || days_from_start === 0) && days_from_end < 0) { // In progress
+        progress_percentage = 100 * days_from_start / total_days;
+        progress_days = days_from_start;
+      } else if (days_from_start < 0) { // To start
+        progress_percentage = 0;
+      } else if (days_from_end > 0) { // Ended
+        progress_percentage = 100;
+        progress_days = total_days;
+      }
 
       const title = `
       Início: ${start_date}
       Fim: ${final_date}
-      Total (dias): ${days}
+      Total (dias): ${total_days}
+      Progresso (dias): ${progress_days}
       `;
 
       return (
         <>
-          <CircularStaticWithLabel />
+          <CircularStaticWithLabel value={progress_percentage} />
           <WhiteTooltip title={title}>
             <IconButton sx={{ ml: 1 }}>
               <InfoIcon sx={{ color: "#007937" }} />
@@ -348,14 +369,6 @@ export function ServiceOrdersPanel() {
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
           }
-        </Grid>
-
-        <Grid item>
-          <Tooltip title="Ajuda">
-            <IconButton>
-              <FontAwesomeIcon icon={faCircleQuestion} size="sm" color='#007937' />
-            </IconButton>
-          </Tooltip>
         </Grid>
 
         <Grid item>

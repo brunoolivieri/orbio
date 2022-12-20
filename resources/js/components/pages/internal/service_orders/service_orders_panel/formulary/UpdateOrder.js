@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -29,6 +29,7 @@ export const UpdateOrder = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
   const [controlledInput, setControlledInput] = React.useState({
+    id: props.record.id,
     start_date: props.record.start_date,
     end_date: props.record.end_date,
     creator_name: props.record.users.creator.name,
@@ -49,7 +50,27 @@ export const UpdateOrder = React.memo((props) => {
 
   React.useEffect(() => {
 
-    // verify if data is completed
+    setCanSave(() => {
+
+      if (selectedFlightPlans.length === 0) {
+        return false;
+      }
+
+      let selections_check = selectedFlightPlans.map((selected_flight_plan) => {
+
+        let current_check = 1;
+        for (let key in selected_flight_plan) {
+          if (selected_flight_plan[key] === "0" || selected_flight_plan[key] === null || selected_flight_plan[key].lenght === 0) {
+            current_check = 0;
+          }
+        }
+
+        return current_check;
+      });
+
+      return !selections_check.includes(0);
+
+    });
 
   }, [selectedFlightPlans])
 
@@ -216,6 +237,10 @@ export const UpdateOrder = React.memo((props) => {
         <Divider />
 
         <DialogContent>
+
+          <DialogContentText mb={3}>
+            Preencha todos os dados requisitados no formulário para a criação da ordem de serviço.
+          </DialogContentText>
 
           <Grid container spacing={1} mt={1}>
 

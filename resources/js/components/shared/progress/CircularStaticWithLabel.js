@@ -39,7 +39,7 @@ CircularProgressWithLabel.propTypes = {
 
 export function CircularStaticWithLabel(props) {
 
-    const [progress, setProgress] = React.useState(10);
+    const [progress, setProgress] = React.useState(props.value);
 
     /*
     React.useEffect(() => {

@@ -12,7 +12,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faCircleQuestion } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { CreateBattery } from './formulary/CreateBattery';
@@ -236,14 +235,6 @@ export function BatteriesPanel() {
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
                     }
-                </Grid>
-
-                <Grid item>
-                    <Tooltip title="Ajuda">
-                        <IconButton>
-                            <FontAwesomeIcon icon={faCircleQuestion} size="sm" color='#007937' />
-                        </IconButton>
-                    </Tooltip>
                 </Grid>
 
                 <Grid item>
