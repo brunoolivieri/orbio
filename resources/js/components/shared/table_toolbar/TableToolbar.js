@@ -4,7 +4,15 @@ import {
     GridToolbarColumnsButton,
     GridToolbarFilterButton,
     GridToolbarDensitySelector,
+    GridToolbarExport
 } from '@mui/x-data-grid';
+
+const csvOptions = {
+    fileName: 'table-data',
+    delimiter: ';',
+    utf8WithBom: true,
+    includeHeaders: true
+}
 
 export function TableToolbar() {
     return (
@@ -12,6 +20,7 @@ export function TableToolbar() {
             <GridToolbarColumnsButton sx={{ color: '#fff' }} />
             <GridToolbarFilterButton sx={{ color: '#fff' }} />
             <GridToolbarDensitySelector sx={{ color: '#fff' }} />
+            {/* <GridToolbarExport sx={{ color: '#fff' }} GridCsvExportOptions={csvOptions} /> */}
         </GridToolbarContainer>
     );
 }

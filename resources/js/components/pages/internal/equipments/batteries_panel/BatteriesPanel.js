@@ -41,6 +41,7 @@ const columns = [
         field: 'name',
         headerName: 'Nome',
         flex: 1,
+        minWidth: 200,
         sortable: true,
         editable: false,
     },
@@ -48,7 +49,8 @@ const columns = [
         field: 'manufacturer',
         headerName: 'Fabricante',
         type: 'number',
-        width: 150,
+        flex: 1,
+        minWidth: 200,
         headerAlign: 'left',
         sortable: true,
         editable: false
@@ -58,14 +60,16 @@ const columns = [
         headerName: 'Modelo',
         sortable: true,
         editable: false,
-        flex: 1
+        flex: 1,
+        minWidth: 150
     },
     {
         field: 'serial_number',
         headerName: 'Nº serial',
         sortable: true,
         editable: false,
-        width: 120,
+        flex: 1,
+        minWidth: 150
     },
     {
         field: 'last_charge',
@@ -82,7 +86,8 @@ const columns = [
         headerName: 'Observação',
         sortable: true,
         editable: false,
-        width: 120,
+        flex: 1,
+        minWidth: 200,
         valueGetter: () => {
             return 'Nenhuma'
         }

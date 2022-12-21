@@ -19,7 +19,7 @@ export const CreateLog = React.memo((props) => {
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
-    const [downloadLoading, setDownloadLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [connection, setConnection] = React.useState(initialConnection);
     const [setLogs] = React.useState([]);
     const [selectedLogs, setSelectedLogs] = React.useState([]);
@@ -27,10 +27,9 @@ export const CreateLog = React.memo((props) => {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-    function handleDownloadLogs(e) {
-        e.preventDefault();
+    function handleSubmit() {
 
-        setDownloadLoading(true);
+        setLoading(true);
 
         const ip = connection.ip;
         const http_port = connection.http_port;
@@ -49,7 +48,7 @@ export const CreateLog = React.memo((props) => {
                 setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
             })
             .finally(() => {
-                setDownloadLoading(false);
+                setLoading(false);
             })
     }
 
@@ -59,6 +58,8 @@ export const CreateLog = React.memo((props) => {
 
     function handleClose() {
         setDisplayAlert({ display: false, type: "", message: "" });
+        setLogs([]);
+        setSelectedLogs([]);
         setOpen(false);
     }
 
@@ -82,71 +83,70 @@ export const CreateLog = React.memo((props) => {
                 <DialogTitle>DOWNLOAD DE LOG</DialogTitle>
                 <Divider />
 
-                <Box component="form" noValidate onSubmit={handleDownloadLogs} >
-                    <DialogContent>
+                <DialogContent>
 
-                        <DialogContentText sx={{ mb: 2 }}>
-                            A conexão deve ser realizada com o drone, e em seguida os logs disponíveis poderão ser selecionados de acordo com os seus critérios.
-                        </DialogContentText>
+                    <DialogContentText sx={{ mb: 2 }}>
+                        A conexão deve ser realizada com o drone, e em seguida os logs disponíveis poderão ser selecionados de acordo com os seus critérios.
+                    </DialogContentText>
 
-                        {/* Modals */}
-                        <Box sx={{ display: 'flex' }}>
-                            <Box>
-                                <DroneLogsList
-                                    source={connection}
-                                    setLogs={setLogs}
-                                    selectedLogs={selectedLogs}
-                                    setSelectedLogs={setSelectedLogs}
-                                />
-                            </Box>
-                            <Box sx={{ ml: 1 }}>
-                                <DroneConnectionConfig
-                                    data={connection}
-                                    setConnection={setConnection}
-                                />
-                            </Box>
+                    {/* Modals */}
+                    <Box sx={{ display: 'flex' }}>
+                        <Box>
+                            <DroneLogsList
+                                source={connection}
+                                setLogs={setLogs}
+                                selectedLogs={selectedLogs}
+                                setSelectedLogs={setSelectedLogs}
+                            />
                         </Box>
+                        <Box sx={{ ml: 1 }}>
+                            <DroneConnectionConfig
+                                data={connection}
+                                setConnection={setConnection}
+                            />
+                        </Box>
+                    </Box>
 
-                        {selectedLogs.length > 0 &&
-                            <List
-                                sx={{
-                                    maxWidth: '100%',
-                                    minWidth: '100%',
-                                    bgcolor: '#F5F5F5',
-                                    position: 'relative',
-                                    overflow: 'auto',
-                                    maxHeight: 200,
-                                    '& ul': { padding: 0 },
-                                    mt: 2
-                                }}
-                                subheader={<li />}
-                            >
-                                <ul>
-                                    <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + selectedLogs.length}</ListSubheader>
-                                    {selectedLogs.map((log_name, index) => (
-                                        <ListItem key={index}>
-                                            <ListItemText primary={log_name} />
-                                        </ListItem>
-                                    ))}
-                                </ul>
+                    {selectedLogs.length > 0 &&
+                        <List
+                            sx={{
+                                maxWidth: '100%',
+                                minWidth: '100%',
+                                bgcolor: '#F5F5F5',
+                                position: 'relative',
+                                overflow: 'auto',
+                                maxHeight: 200,
+                                '& ul': { padding: 0 },
+                                mt: 2
+                            }}
+                            subheader={<li />}
+                        >
+                            <ul>
+                                <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + selectedLogs.length}</ListSubheader>
+                                {selectedLogs.map((log_name, index) => (
+                                    <ListItem key={index}>
+                                        <ListItemText primary={log_name} />
+                                    </ListItem>
+                                ))}
+                            </ul>
 
-                            </List>
-                        }
-
-                    </DialogContent>
-
-                    {displayAlert.display &&
-                        <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                        </List>
                     }
 
-                    {downloadLoading && <LinearProgress />}
+                </DialogContent>
 
-                    <Divider />
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button type="submit" disabled={selectedLogs.length === 0 || downloadLoading} variant="contained">Salvar</Button>
-                    </DialogActions>
-                </Box>
+                {displayAlert.display &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
+
+                {loading && <LinearProgress />}
+
+                <Divider />
+                <DialogActions>
+                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button type="submit" disabled={selectedLogs.length === 0 || loading} variant="contained" onClick={handleSubmit}>Salvar</Button>
+                </DialogActions>
+
             </Dialog >
         </>
     );

@@ -12,6 +12,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faImage } from '@fortawesome/free-solid-svg-icons';
+import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import axios from "../../../../../services/AxiosApi";
@@ -89,6 +90,45 @@ const columns = [
 
             return cellStyle(data.row.flight_plan);
 
+        }
+    },
+    {
+        field: 'export_txt',
+        headerName: 'Exportar KMZ',
+        sortable: false,
+        editable: false,
+        width: 150,
+        align: 'center',
+        renderCell: (data) => {
+
+            const { enqueueSnackbar } = useSnackbar();
+
+            function handleDownloadLog(filename) {
+                axios.get(`api/logs-module-download/${filename}`, null, {
+                    responseType: 'blob'
+                })
+                    .then(function (response) {
+                        enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+
+                        // Download forçado do arquivo com o conteúdo retornado do servidor
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', `${filename}`); //or any other extension
+                        document.body.appendChild(link);
+                        link.click();
+
+                    })
+                    .catch(() => {
+                        enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+                    })
+            }
+
+            return (
+                <IconButton onClick={() => handleDownloadLog(data.row.filename)}>
+                    <FontAwesomeIcon icon={faFile} color={"#00713A"} size="sm" />
+                </IconButton>
+            )
         }
     },
 ]

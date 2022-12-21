@@ -70,7 +70,7 @@ export const UpdateLog = React.memo((props) => {
             .catch(function (error) {
                 setLoading(false);
                 errorResponse(error.response);
-            });
+            })
     }, [selectedFlightPlan]);
 
     function handleSubmit() {

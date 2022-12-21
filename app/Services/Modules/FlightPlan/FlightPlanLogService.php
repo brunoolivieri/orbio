@@ -31,6 +31,22 @@ class FlightPlanLogService implements ServiceInterface
         }
     }
 
+    function download(string $filename, $identifier = null)
+    {
+        if (Storage::disk("public")->exists("flight_plans/logs/kmz/$filename")) {
+
+            $path = Storage::disk("public")->path("flight_plans/logs/kmz/$filename");
+            $contents = file_get_contents($path);
+
+            return response($contents)->withHeaders([
+                "Content-type" => mime_content_type($path)
+            ]);
+        } else {
+
+            return response(["message" => "Nenhum arquivo encontrado."], 404);
+        }
+    }
+
     function createOne(array $data)
     {
         $ip = $data["ip"];

@@ -110,8 +110,9 @@ Route::middleware(["session.auth"])->group(function () {
     Route::post("api/drones/export", [EquipmentModuleDronePanelController::class, "exportTableAsCsv"]);
     Route::post("api/batteries/export", [EquipmentModuleBatteryPanelController::class, "exportTableAsCsv"]);
     Route::post("api/equipments/export", [EquipmentModuleEquipmentPanelController::class, "exportTableAsCsv"]);
-    Route::get("/api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
-    Route::get("/api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
+    Route::get("api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
+    Route::get("api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
+    Route::get("api/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
     // Actions
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);
