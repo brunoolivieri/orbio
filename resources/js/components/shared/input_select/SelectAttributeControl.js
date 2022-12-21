@@ -30,7 +30,7 @@ export const SelectAttributeControl = React.memo((props) => {
 
     return (
         <>
-            {!loading && options.length > 0 &&
+            {!loading &&
                 <FormControl fullWidth sx={{ mt: 1 }}>
                     <InputLabel>{props.label_text}</InputLabel>
 
@@ -40,15 +40,17 @@ export const SelectAttributeControl = React.memo((props) => {
                         label={props.label_text}
                         onChange={handleChange}
                         name={props.name}
-                        error={(!loading && options.length == 0) || props.error}
+                        error={(options.length == 0) || props.error}
                         disabled={loading}
                     >
 
                         <MenuItem value="0" disabled>{loading ? "Carregando" : "Escolha"}</MenuItem>
 
-                        {options.map((item) =>
-                            <MenuItem value={item[props.primary_key]} key={item[props.primary_key]}>{item[props.key_content]}</MenuItem>
-                        )}
+                        {options.length > 0 &&
+                            options.map((item) =>
+                                <MenuItem value={item[props.primary_key]} key={item[props.primary_key]}>{item[props.key_content]}</MenuItem>
+                            )
+                        }
 
                     </Select>
                 </FormControl>

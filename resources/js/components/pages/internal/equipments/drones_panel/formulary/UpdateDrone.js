@@ -58,7 +58,7 @@ export const UpdateDrone = React.memo((props) => {
 
     function handleSubmit() {
         if (formValidation()) {
-            setLoading(false);
+            setLoading(true);
             requestServerOperation();
         }
     }

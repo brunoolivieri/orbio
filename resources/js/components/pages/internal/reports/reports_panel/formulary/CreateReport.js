@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Alert, IconButton, Tooltip, Grid, TextField, LinearProgress, List, ListItem, ListItemText, ListSubheader, ListItemAvatar, Avatar } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Alert, IconButton, Tooltip, Grid, TextField, LinearProgress, List, ListItem, ListItemText, ListSubheader, ListItemAvatar, Avatar, Divider, DialogContentText } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,7 +8,6 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { FlightPlanDataForReport } from '../modal/FlightPlanDataForReport';
 import { ServiceOrderForReport } from '../modal/ServiceOrderForReport';
-import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { ReportVisualization, DownloadReport } from '../modal/ReportBuilder';
 // Lib
@@ -169,7 +168,13 @@ export const CreateReport = (props) => {
         maxWidth="md"
       >
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
+        <Divider />
+
         <DialogContent>
+
+          <DialogContentText sx={{ mb: 2 }}>
+            Preencha todos os dados requisitados no formulário para a criação do relatório.
+          </DialogContentText>
 
           <Box mb={3}>
             <ServiceOrderForReport
@@ -186,16 +191,16 @@ export const CreateReport = (props) => {
               <Grid container spacing={2} mb={2}>
 
                 <Grid item xs={6}>
-                  <SelectAttributeControl
-                    label_text={"Responsável (piloto)"}
-                    data_source={"/api/load-users?where=profile_id.3"}
-                    primary_key={"name"}
-                    key_content={"name"}
-                    error={fieldError.responsible}
-                    name={"responsible"}
-                    value={controlledInput.responsible}
-                    setControlledInput={setControlledInput}
-                    controlledInput={controlledInput}
+                  <TextField
+                    id="responsible"
+                    name="responsible"
+                    label="Responsável (piloto)"
+                    fullWidth
+                    variant="outlined"
+                    value={serviceOrder.users.pilot.name}
+                    InputProps={{
+                      readOnly: true,
+                    }}
                   />
                 </Grid>
 
@@ -314,6 +319,7 @@ export const CreateReport = (props) => {
 
         {loading && <LinearProgress />}
 
+        <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           {serviceOrder && <ReportVisualization basicData={controlledInput} flightPlans={flightPlans} />}

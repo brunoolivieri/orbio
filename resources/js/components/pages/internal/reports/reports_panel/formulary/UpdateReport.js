@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider, DialogContentText } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -142,6 +142,10 @@ export const UpdateReport = React.memo((props) => {
         <Divider />
 
         <DialogContent>
+
+          <DialogContentText sx={{ mb: 2 }}>
+            Preencha todos os dados requisitados no formulário para a atualização do relatório.
+          </DialogContentText>
 
           <Grid container spacing={1}>
 

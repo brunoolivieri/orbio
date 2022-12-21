@@ -155,7 +155,7 @@
 					<input type="file" id="file-input" hidden/>
 				</label>	
 			</li>
-			<!-- <li id="btn-save" disabled>Salvar Rota Multi</li> -->
+			<li id="btn-save" disabled>Salvar Rota Multi</li>
 			<li id="btn-full-save">Salvar Rota Única</li>
 			<li id="btn-save-csv">Salvar Rota CSV</li>
 			<li>

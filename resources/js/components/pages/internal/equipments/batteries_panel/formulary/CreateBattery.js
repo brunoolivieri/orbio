@@ -247,7 +247,7 @@ export const CreateBattery = React.memo((props) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12}>
+                        <Grid item xs={12} mt={1}>
                             <DatePicker
                                 setControlledInput={setControlledInput}
                                 controlledInput={controlledInput}

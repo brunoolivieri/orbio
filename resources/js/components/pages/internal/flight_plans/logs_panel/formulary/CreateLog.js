@@ -38,11 +38,7 @@ export const CreateLog = React.memo((props) => {
             logs: selectedLogs
         })
             .then(function (response) {
-                props.reloadTable((old) => !old);
-                setDisplayAlert({ display: true, type: "success", message: response.data.message });
-                setTimeout(() => {
-                    handleClose();
-                }, 2000);
+                successResponse(response);
             })
             .catch(function (error) {
                 setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
@@ -52,15 +48,23 @@ export const CreateLog = React.memo((props) => {
             })
     }
 
+    function successResponse(response) {
+        setDisplayAlert({ display: true, type: "success", message: response.data.message });
+        setTimeout(() => {
+            props.reloadTable((old) => !old);
+            handleClose();
+        }, 2000);
+    }
+
     function handleClickOpen() {
         setOpen(true);
     }
 
     function handleClose() {
+        setOpen(false);
         setDisplayAlert({ display: false, type: "", message: "" });
         setLogs([]);
         setSelectedLogs([]);
-        setOpen(false);
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -89,7 +93,6 @@ export const CreateLog = React.memo((props) => {
                         A conexão deve ser realizada com o drone, e em seguida os logs disponíveis poderão ser selecionados de acordo com os seus critérios.
                     </DialogContentText>
 
-                    {/* Modals */}
                     <Box sx={{ display: 'flex' }}>
                         <Box>
                             <DroneLogsList
