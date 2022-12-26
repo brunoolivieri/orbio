@@ -108,7 +108,7 @@ export const ForgotPassword = () => {
     }
 
     function successSendCodeResponse() {
-        setTimer(10);
+        setTimer(30);
         setCodeSent(true);
         setLoading({ send_code: false, change_password: false });
     }

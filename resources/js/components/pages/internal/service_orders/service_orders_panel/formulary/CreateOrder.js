@@ -10,7 +10,6 @@ import { useAuthentication } from '../../../../../context/InternalRoutesAuth/Aut
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
-import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
 import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
 // Fontsawesome
@@ -20,9 +19,10 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
 
 const initialControlledInput = { pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() };
-const initialFieldError = { start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false, status: false };
-const initialFieldErrorMessage = { start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: "", status: "" };
+const initialFieldError = { start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false};
+const initialFieldErrorMessage = { start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: ""};
 const initialDisplatAlert = { display: false, type: "", message: "" };
+const regexForSelectedFlightPlan = /^[1-9]\d*$/;
 
 export const CreateOrder = React.memo((props) => {
 
@@ -49,11 +49,12 @@ export const CreateOrder = React.memo((props) => {
         return false;
       }
 
+      // Will be an array with one and/or zeros
       let selections_check = selectedFlightPlans.map((selected_flight_plan) => {
 
         let current_check = 1;
         for (let key in selected_flight_plan) {
-          if (selected_flight_plan[key] === "0" || selected_flight_plan[key] === null || selected_flight_plan[key].lenght === 0) {
+          if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
             current_check = 0;
           }
         }
@@ -61,6 +62,7 @@ export const CreateOrder = React.memo((props) => {
         return current_check;
       });
 
+      // If the array has 0, exists invalid data
       return !selections_check.includes(0);
 
     });
@@ -95,15 +97,13 @@ export const CreateOrder = React.memo((props) => {
     const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
     const fligthPlansValidate = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
-    const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
 
     setFieldError({
       date_interval: dateValidate.error,
       pilot_id: pilotNameValidate.error,
       client_id: clientNameValidate.error,
       observation: observationValidate.error,
-      flight_plans: fligthPlansValidate.error,
-      status: statusValidate.error
+      flight_plans: fligthPlansValidate.error
     });
 
     setFieldErrorMessage({
@@ -111,11 +111,10 @@ export const CreateOrder = React.memo((props) => {
       pilot_id: pilotNameValidate.message,
       client_id: clientNameValidate.message,
       observation: observationValidate.message,
-      flight_plans: fligthPlansValidate.message,
-      status: statusValidate.message
+      flight_plans: fligthPlansValidate.message
     });
 
-    return !(dateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
+    return !(dateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error);
 
   }
 
@@ -132,7 +131,7 @@ export const CreateOrder = React.memo((props) => {
       pilot_id: controlledInput.pilot_id,
       client_id: controlledInput.client_id,
       observation: controlledInput.observation,
-      status: controlledInput.status,
+      status: true,
       flight_plans: selectedFlightPlans
     })
       .then(function (response) {
@@ -204,7 +203,7 @@ export const CreateOrder = React.memo((props) => {
     let is_completed = true;
 
     for (let key in selected_flight_plan) {
-      if (selected_flight_plan[key] === null || selected_flight_plan[key] === "0" || selected_flight_plan[key].length === 0) {
+      if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
         is_completed = false;
       }
     }
@@ -366,14 +365,6 @@ export const CreateOrder = React.memo((props) => {
                   </ul>
                 </List>
               }
-            </Grid>
-
-            <Grid item xs={6}>
-              <StatusRadio
-                default={1}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-              />
             </Grid>
 
           </Grid>

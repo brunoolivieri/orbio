@@ -137,6 +137,10 @@ const columns = [
     minWidth: 150,
     renderCell: (data) => {
 
+      if (data.row.finished) {
+        return <Chip label="Finalizado" color="success" variant="outlined" />;
+      }
+
       const start_date = moment(data.row.start_date).format("DD/MM/YYYY");
       const final_date = moment(data.row.end_date).format("DD/MM/YYYY");
       const total_days = moment(data.row.end_date).diff(moment(data.row.start_date), 'days');

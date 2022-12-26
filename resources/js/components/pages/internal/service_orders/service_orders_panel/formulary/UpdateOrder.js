@@ -22,6 +22,7 @@ import moment from 'moment';
 const initialFieldError = { start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, status: false };
 const initialFieldErrorMessage = { start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" };
 const initialDisplayAlert = { display: false, type: "", message: "" };
+const regexForSelectedFlightPlan = /^[1-9]\d*$/;
 
 export const UpdateOrder = React.memo((props) => {
 
@@ -60,7 +61,7 @@ export const UpdateOrder = React.memo((props) => {
 
         let current_check = 1;
         for (let key in selected_flight_plan) {
-          if (selected_flight_plan[key] === "0" || selected_flight_plan[key] === null || selected_flight_plan[key].lenght === 0) {
+          if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
             current_check = 0;
           }
         }
@@ -216,6 +217,20 @@ export const UpdateOrder = React.memo((props) => {
     setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
   }
 
+  function avatarSelectionStyle(selected_flight_plan) {
+
+    let is_completed = true;
+
+    for (let key in selected_flight_plan) {
+      if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
+        is_completed = false;
+      }
+    }
+
+    return is_completed ? { bgcolor: "#4CAF50" } : { bgcolor: "#E0E0E0" };
+
+  }
+
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
 
   return (
@@ -357,7 +372,7 @@ export const UpdateOrder = React.memo((props) => {
                         }
                       >
                         <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: '#4CAF50' }}>
+                          <Avatar sx={avatarSelectionStyle(flight_plan)}>
                             <MapIcon />
                           </Avatar>
                         </ListItemAvatar>
