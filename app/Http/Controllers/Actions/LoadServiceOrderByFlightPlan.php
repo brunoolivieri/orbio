@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\FlightPlans\FlightPlan;
+use App\Models\Logs\Log;
 
 class LoadServiceOrderByFlightPlan extends Controller
 {
 
-    function __construct(FlightPlan $flightPlanModel)
+    function __construct(FlightPlan $flightPlanModel, Log $logModel)
     {
-        $this->model = $flightPlanModel;
+        $this->flightPlanModel = $flightPlanModel;
+        $this->logModel = $logModel;
     }
     /**
      * Handle the incoming request.
@@ -21,10 +23,10 @@ class LoadServiceOrderByFlightPlan extends Controller
      */
     public function __invoke(Request $request)
     {
-        $flight_plan = $this->model->findOrFail(request()->flight_plan_id);
+        $flight_plan = $this->flightPlanModel->findOrFail(request()->flight_plan_id);
 
-        $service_orders = $flight_plan->service_orders;
+        //$valid_service_orders = [];
 
-        return response($service_orders, 200);
+        return response($flight_plan->service_orders, 200);
     }
 }

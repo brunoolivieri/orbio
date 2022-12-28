@@ -176,6 +176,34 @@
 		</ul>
 	</nav>
 
+	<!-- Modal de confirmação da criação do plano --->
+	<div class="modal" tabindex="-1" id="confirmation-modal" style="display: none;">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title">Deseja manter essas configurações e salvar?</h5>
+			</div>
+			<div class="modal-body">
+				<div>
+					<p>O enquadramento e posicionamento do desenho na sua tela definirá o resultado final da imagem.</p>
+				</div>
+				<label for="name" class="form-label">Nome</label>
+				<input type="text" id="name" class="form-control flight_plan_name" value="" readonly>
+				<div class="modal-body flight_plan_image">
+					<!-- <img src="" width="100%" height="100%" class="img-fluid">  -->
+				</div>
+			</div>
+			<div class="alert alert-message d-none" role="alert">
+				<!-- alert --> ok
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn-cancel-creation">Cancelar</button>
+			  <button type="button" class="btn btn-primary" id="btn-confirm-creation">Confirmar</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+
 	<button id="btn-mission" class="btn btn-success">Missão</button>
 	<button id="btn" class="btn btn-primary">Configuração</button>
 	

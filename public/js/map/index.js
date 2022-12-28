@@ -13,6 +13,7 @@ var selectedPosition;
 var finalDestination = [];
 var initialFinalPath = [];
 var initialPath = [];
+var flightPlanData = {}
 
 // Criando um objeto mapa
 var map = new mapboxgl.Map({
@@ -1152,6 +1153,21 @@ window.onload = () => {
 
 // ==== MENU: SALVAR ==== //
 
+// Botão para cancelar a criação do plano no modal
+var btnCancelCreation = document.getElementById("btn-cancel-creation");
+btnCancelCreation.addEventListener("click", () => {
+
+    displayElementsAfterPrintScreen();
+    confirmationModal.style.display = "none";
+});
+
+// Botão para confirmar a criação do plano no modal
+var btnConfirmCreation = document.getElementById("btn-confirm-creation");
+btnConfirmCreation.addEventListener("click", saveFullPath);
+
+// Alerta
+var alertMessage = document.getElementsByClassName("alert-message")[0];
+
 // Esta opção permite salvar vários arquivos de waypoints para múltiplos voos
 // Acessando botão que dispara a função para criar um arquivo .txt
 var btnSave = document.getElementById("btn-save");
@@ -1166,7 +1182,10 @@ btnSave.addEventListener("click", savePath);
 // Acessando botão que dispara a função para criar um arquivo .txt
 var btnFullSave = document.getElementById("btn-full-save");
 // Atrelando a função ao evento onclick do botão
-btnFullSave.addEventListener("click", saveFullPath);
+
+btnFullSave.addEventListener("click", openModalToCheckFlightPlanBeforeCreation);
+// Modal confirmar salvamento 
+var confirmationModal = document.getElementById("confirmation-modal");
 
 // ==== MENU: SALVAR ROTA CSV ==== //
 // Salva as coordenadas de latitude, longitude e altitude em um arquivo no formato .csv.
@@ -1383,8 +1402,6 @@ function savePathCSV() {
         }
     }
 
-
-
     var blob = new Blob([content],
         { type: "text/plain;charset=utf-8" });
 
@@ -1392,6 +1409,50 @@ function savePathCSV() {
     fileName = new Date().getTime() + ".csv";
     saveAs(blob, fileName);
 }
+
+function openModalToCheckFlightPlanBeforeCreation() {
+
+    removeElementsForPrintScreen();
+
+    html2canvas(document.body).then(canvas => {
+
+        var blobImg = new Blob([canvas], { type: "image/jpeg" });
+        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+
+        filenameImg = new Date().getTime() + ".jpeg";
+
+        return { blobImg, filenameImg, dataURL, canvas };
+
+    }).then(({ blobImg, filenameImg, dataURL, canvas }) => {
+
+        // Nome do arquivo com data em milissegundos decorridos
+        const timestamp = new Date().getTime();
+        const filename = timestamp + ".txt";
+
+        confirmationModal.style.display = "flex";
+        document.getElementsByClassName("flight_plan_name")[0].value = filename;
+
+        canvas.toBlob(function (blobImg) {
+            var elem = document.createElement("img");
+            const blobUrl = URL.createObjectURL(blobImg)
+            elem.setAttribute("src", blobUrl);
+            elem.setAttribute("width", "100%");
+            elem.setAttribute("height", "100%");
+            let div = document.getElementsByClassName("flight_plan_image")[0];
+            div.replaceChildren([]);
+            div.appendChild(elem);
+        });
+
+        flightPlanData = {
+            timestamp: timestamp,
+            filename: filename,
+            canvas: { blobImg, filenameImg, dataURL }
+        }
+
+    })
+
+}
+
 // ======================================================== ATT ORBIO 2: SALVAR UM ARQUIVO ======================================== //
 // ========= SALVANDO A ROTA GERADA EM ARQUIVO .TXT ========= //
 function saveFullPath() {
@@ -1491,57 +1552,55 @@ function saveFullPath() {
     var blob = new Blob([content],
         { type: "text/plain;charset=utf-8" });
 
-    // Nome do arquivo com data em milissegundos decorridos
-    const timestamp = new Date().getTime();
-    const filename = timestamp + ".txt";
     const coordinates = coordinatesLongLat[0];
 
-    saveFlightPlanToStorage(filename, timestamp, coordinates, blob);
+    saveFlightPlanToStorage(coordinates, blob);
 }
 
 // == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
-function saveFlightPlanToStorage(filenameRoutes, timestamp, coordinates, blobRoutes) {
+function saveFlightPlanToStorage(coordinates, blobRoutes) {
 
-    removeElementsForPrintScreen();
+    btnConfirmCreation.setAttribute("disabled", true);
 
-    html2canvas(document.body).then(canvas => {
+    let filename_routes = flightPlanData.filename;
+    let image = flightPlanData.canvas;
 
-        var blobImg = new Blob([canvas], { type: "image/jpeg" });
-        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+    const flight_plan = new File([blobRoutes], filename_routes);
 
-        filenameImg = new Date().getTime() + ".jpeg";
+    let formData = new FormData();
+    formData.append("name", filename_routes.replace(".txt", ""));
+    formData.append("description", "none");
+    formData.append("routes_file", flight_plan);
+    formData.append("image_file", image.dataURL);
+    formData.append("image_filename", image.filenameImg);
+    formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
 
-        return { blobImg, filenameImg, dataURL };
+    axios.post("/api/plans-module", formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    }).then((response) => {
 
-    }).then((image) => {
+        alertMessage.classList.add("alert-success");
+        alertMessage.innerText = "O plano foi salvo no sistema e está disponível para download.";
+        alertMessage.classList.remove("d-none");
 
-        const flight_plan = new File([blobRoutes], filenameRoutes);
-
-        let formData = new FormData();
-        formData.append("name", filenameRoutes.replace(".txt", ""));
-        formData.append("description", "none");
-        formData.append("routes_file", flight_plan);
-        formData.append("image_file", image.dataURL);
-        formData.append("image_filename", image.filenameImg);
-        formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
-
-        axios.post("/api/plans-module", formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then((response) => {
-
-            alert("O plano foi salvo no sistema e está disponível para download.");
+        setTimeout(() => {
             window.close();
+        }, 3000);
 
-        }).catch((error) => {
+    }).catch((error) => {
 
-            console.log(error.response);
-            alert("Erro! Tente novamente.");
+        console.log(error.response);
 
-        });
+        alertMessage.classList.add("alert-danger");
+        alertMessage.innerText = "Erro! Tente novamente.";
+        alertMessage.classList.remove("d-none");
 
+    }).finally(() => {
+        btnConfirmCreation.setAttribute("disabled", true);
     });
+
 
 }
 
@@ -1557,6 +1616,21 @@ function removeElementsForPrintScreen() {
     map.removeControl(draw);
     map.removeControl(mapBoxNavigationControl);
     marcador.remove();
+}
+
+function displayElementsAfterPrintScreen() {
+    btnMenu.style.display = 'block';
+    btn.style.display = 'block';
+    menuOptions.style.display = 'block';
+    boxLogos.style.display = 'block';
+    calculationBox.style.display = 'block';
+    markerSideMenu.style.display = 'block'
+    map.addControl(mapBoxGeocoder);
+    map.addControl(draw);
+    map.addControl(mapBoxNavigationControl);
+    marcador = new mapboxgl.Marker({ color: 'black' })
+        .setLngLat(home)
+        .addTo(map);
 }
 
 // ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
@@ -1700,7 +1774,7 @@ function savePath() {
         saveAs(blob, fileName);
 
         // Salvando um printscreen para o relatório
-        savePrintScreen();
+        //savePrintScreen();
 
     } // Fim do 'for'	
 }
