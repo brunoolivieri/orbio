@@ -137,19 +137,23 @@ const columns = [
     minWidth: 150,
     renderCell: (data) => {
 
-      if (data.row.finished) {
+      const actual_moment = moment();
+      const start_moment = moment(data.row.start_date);
+      const end_moment = moment(data.row.end_date);
+
+      if (data.row.finished || actual_moment.diff(end_moment, 'days') > 0) {
         return <Chip label="Finalizado" color="success" variant="outlined" />;
       }
 
-      const start_date = moment(data.row.start_date).format("DD/MM/YYYY");
-      const final_date = moment(data.row.end_date).format("DD/MM/YYYY");
-      const total_days = moment(data.row.end_date).diff(moment(data.row.start_date), 'days');
+      const start_date = start_moment.format("DD/MM/YYYY");
+      const final_date = end_moment.format("DD/MM/YYYY");
+      const total_days = end_moment.diff(start_moment, 'days');
 
       // > 0 = started and < 0 = to start
-      const days_from_start = moment().diff(moment(data.row.start_date), 'days');
+      const days_from_start = actual_moment.diff(start_moment, 'days');
 
       // > 0 = ended and < 0 = to end
-      const days_from_end = moment().diff(moment(data.row.end_date), 'days');
+      const days_from_end = actual_moment.diff(end_moment, 'days');
 
       let progress_percentage = 0;
       let progress_days = 0;

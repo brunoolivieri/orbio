@@ -5,6 +5,7 @@ namespace App\Services\Modules\FlightPlan;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use ZipArchive;
 // Contracts
 use App\Services\Contracts\ServiceInterface;
 // Repository
@@ -35,7 +36,7 @@ class FlightPlanLogService implements ServiceInterface
     {
         if (Storage::disk("public")->exists("flight_plans/logs/kmz/$filename")) {
 
-            $path = Storage::disk("public")->path("flight_plans/logs/kmz/$filename");
+            $path = Storage::disk("public")->path("flight_plans/logs/kml/$filename");
             $contents = file_get_contents($path);
 
             return response($contents)->withHeaders([
@@ -57,9 +58,24 @@ class FlightPlanLogService implements ServiceInterface
 
             $timestamp = Str::remove('-', Str::remove('.tlog.kmz', $logname));
 
+            // This file will be a KMZ that have zip properties
             $file = Http::get("http://$ip:$http_port/logdownload/kmzlogs/" . $logname);
 
-            $path = "flight_plans/logs/kmz/" . $logname;
+            dd(file_get_contents($file));
+
+            $zip = new ZipArchive();
+            $zip_filename = str_replace(".tlog.kmz", ".zip", $logname);
+            $zip->open($zip_filename, ZipArchive::CREATE);
+            //$zip->addFile();
+
+            
+
+            $zip = new ZipArchive;
+            $res = $zip->open($file);
+
+            dd($res);
+
+            $path = "flight_plans/logs/kml/" . $logname;
 
             Storage::disk('public')->put($path, $file);
 
