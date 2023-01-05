@@ -99,6 +99,7 @@ export const CreateDrone = React.memo((props) => {
     }
 
     function requestServerOperation() {
+        
         const formData = new FormData();
         formData.append("name", controlledInput.name);
         formData.append("manufacturer", controlledInput.manufacturer);

@@ -51,7 +51,7 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createOne($request->only(["ip", "http_port", "logs"]));
+        return $this->service->createOne($request->file('files'));
     }
 
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response

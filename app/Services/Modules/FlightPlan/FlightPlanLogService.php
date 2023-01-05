@@ -48,42 +48,33 @@ class FlightPlanLogService implements ServiceInterface
         }
     }
 
-    function createOne(array $data)
+    function createOne(array $log_files)
     {
-        $ip = $data["ip"];
-        $http_port = $data["http_port"];
-        $selected_logs = $data["logs"];
 
-        foreach ($selected_logs as $logname) {
+        foreach ($log_files as $log_file) {
 
-            $timestamp = Str::remove('-', Str::remove('.tlog.kmz', $logname));
+            // Config to save KMZ as KML
 
-            // This file will be a KMZ that have zip properties
-            $file = Http::get("http://$ip:$http_port/logdownload/kmzlogs/" . $logname);
+            $kml_filename = str_replace(".kmz", ".kml", $log_file->getClientOriginalName());
 
-            dd(file_get_contents($file));
+            $kml_file_path = "flight_plans/logs/kml/" . $kml_filename;
 
-            $zip = new ZipArchive();
-            $zip_filename = str_replace(".tlog.kmz", ".zip", $logname);
-            $zip->open($zip_filename, ZipArchive::CREATE);
-            //$zip->addFile();
+            // Get KMZ file content
 
-            
+            $contents = file_get_contents($log_file);
 
-            $zip = new ZipArchive;
-            $res = $zip->open($file);
+            // Save contents as KML file
 
-            dd($res);
+            Storage::disk('public')->put($kml_file_path, $contents);
 
-            $path = "flight_plans/logs/kml/" . $logname;
-
-            Storage::disk('public')->put($path, $file);
+            // Remove non-numeric
+            $timestamp = preg_replace('/\D/', "", $log_file->getClientOriginalName());
 
             $data = [
                 "flight_plan_id" => null,
                 "name" => Str::random(10),
-                "filename" => $logname,
-                "path" => $path,
+                "filename" => $kml_filename,
+                "path" => $kml_file_path,
                 "timestamp" => $timestamp
             ];
 

@@ -3,14 +3,11 @@ import * as React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
-import { DroneConnectionConfig } from '../modal/DroneConnectionConfig';
-import { DroneLogsList } from '../modal/DroneLogsList';
 import axios from '../../../../../../services/AxiosApi';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const initialConnection = { ssid: "EMBRAPA-BV", ip: "201.49.23.53", ssh_port: 22, http_port: 3000 };
 const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const CreateLog = React.memo((props) => {
@@ -20,7 +17,6 @@ export const CreateLog = React.memo((props) => {
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const [connection, setConnection] = React.useState(initialConnection);
     const [setLogs] = React.useState([]);
     const [selectedLogs, setSelectedLogs] = React.useState([]);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
@@ -31,12 +27,13 @@ export const CreateLog = React.memo((props) => {
 
         setLoading(true);
 
-        const ip = connection.ip;
-        const http_port = connection.http_port;
+        const formData = new FormData();
 
-        axios.post(`/api/plans-module-logs?ip=${ip}&http_port=${http_port}`, {
-            logs: selectedLogs
+        selectedLogs.forEach((file) => {
+            formData.append("files[]", file);
         })
+
+        axios.post(`/api/plans-module-logs`, formData)
             .then(function (response) {
                 successResponse(response);
             })
@@ -61,10 +58,17 @@ export const CreateLog = React.memo((props) => {
     }
 
     function handleClose() {
-        setOpen(false);
         setDisplayAlert({ display: false, type: "", message: "" });
         setLogs([]);
         setSelectedLogs([]);
+        setOpen(false);
+    }
+
+    function handleUploadLog(event) {
+
+        const selected_logs = Array.from(event.currentTarget.files);
+        setSelectedLogs(selected_logs);
+
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -84,30 +88,20 @@ export const CreateLog = React.memo((props) => {
                 fullWidth
                 maxWidth="md"
             >
-                <DialogTitle>DOWNLOAD DE LOG</DialogTitle>
+                <DialogTitle>UPLOAD DE LOG</DialogTitle>
                 <Divider />
 
                 <DialogContent>
 
                     <DialogContentText sx={{ mb: 2 }}>
-                        A conexão deve ser realizada com o drone, e em seguida os logs disponíveis poderão ser selecionados de acordo com os seus critérios.
+                        Os logs são salvos no orbio por meio de um upload de arquivos realizados a partir da sua máquina.
                     </DialogContentText>
 
-                    <Box sx={{ display: 'flex' }}>
-                        <Box>
-                            <DroneLogsList
-                                source={connection}
-                                setLogs={setLogs}
-                                selectedLogs={selectedLogs}
-                                setSelectedLogs={setSelectedLogs}
-                            />
-                        </Box>
-                        <Box sx={{ ml: 1 }}>
-                            <DroneConnectionConfig
-                                data={connection}
-                                setConnection={setConnection}
-                            />
-                        </Box>
+                    <Box mt={1}>
+                        <Button variant="contained" component="label">
+                            Upload de log
+                            <input hidden accept="image/*" multiple type="file" onChange={handleUploadLog} />
+                        </Button>
                     </Box>
 
                     {selectedLogs.length > 0 &&
@@ -126,9 +120,9 @@ export const CreateLog = React.memo((props) => {
                         >
                             <ul>
                                 <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + selectedLogs.length}</ListSubheader>
-                                {selectedLogs.map((log_name, index) => (
+                                {selectedLogs.map((logfile, index) => (
                                     <ListItem key={index}>
-                                        <ListItemText primary={log_name} />
+                                        <ListItemText primary={logfile.name} secondary={'Tamanho: ' + logfile.size} />
                                     </ListItem>
                                 ))}
                             </ul>

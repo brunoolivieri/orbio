@@ -30,34 +30,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export const DroneLogsList = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [loading, setLoading] = React.useState(true);
-    const [refresh, setRefresh] = React.useState(false);
-    const [logsList, setLogsList] = React.useState([]);
-    const [selectedLogs, setSelectedLogs] = React.useState(props.selectedLogs);
-
-    React.useEffect(() => {
-
-        setLogsList([]);
-
-        const ip = props.source.ip;
-        const http_port = props.source.http_port;
-
-        AxiosApi.get(`api/get-drone-logs?ip=${ip}&http_port=${http_port}`)
-            .then(function (response) {
-
-                setLoading(false);
-                setLogsList(response.data.kmz);
-
-            })
-            .catch(function (error) {
-
-                console.log(error)
-                setLoading(false);
-                setLogsList([]);
-
-            });
-
-    }, [refresh]);
 
     const handleClickRecord = (event) => {
 
