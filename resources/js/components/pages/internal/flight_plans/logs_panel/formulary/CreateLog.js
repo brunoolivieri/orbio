@@ -49,7 +49,7 @@ export const CreateLog = React.memo((props) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
-            handleClose();
+            setOpen(false);
         }, 2000);
     }
 
@@ -59,7 +59,6 @@ export const CreateLog = React.memo((props) => {
 
     function handleClose() {
         setDisplayAlert({ display: false, type: "", message: "" });
-        setLogs([]);
         setSelectedLogs([]);
         setOpen(false);
     }
@@ -94,7 +93,7 @@ export const CreateLog = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText sx={{ mb: 2 }}>
-                        Os logs são salvos no orbio por meio de um upload de arquivos realizados a partir da sua máquina.
+                        Os arquivos que você está prestes a fazer upload devem estar no formato KMZ. Eles serão extraídos e salvos como KML. Certifique-se de não selecionar arquivos que já foram salvos no sistema.
                     </DialogContentText>
 
                     <Box mt={1}>

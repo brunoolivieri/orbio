@@ -30,14 +30,18 @@ class FlightPlanLogRepository implements RepositoryInterface
     {
         DB::transaction(function () use ($data) {
 
+            if (Storage::disk('public')->exists($data->get("storage_path"))) {
+                throw new \ErrorException("Erro! O log {$data->get('filename')} já existe no sistema.");
+            }
+
             $log = $this->logModel->create([
                 "name" => $data->get("name"),
                 "filename" => $data->get("filename"),
-                "path" => $data->get("path"),
+                "path" => $data->get("storage_path"),
                 "timestamp" => $data->get("timestamp")
             ]);
 
-            Storage::disk('public')->put($data->get("path"), $data->get('file_content'));
+            Storage::disk('public')->put($data->get("storage_path"), $data->get('file_content'));
         });
     }
 

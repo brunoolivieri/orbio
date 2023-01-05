@@ -94,7 +94,7 @@ const columns = [
     },
     {
         field: 'export_txt',
-        headerName: 'Exportar KMZ',
+        headerName: 'Exportar KML',
         sortable: false,
         editable: false,
         width: 150,

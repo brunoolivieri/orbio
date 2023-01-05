@@ -34,9 +34,9 @@ class FlightPlanLogService implements ServiceInterface
 
     function download(string $filename, $identifier = null)
     {
-        if (Storage::disk("public")->exists("flight_plans/logs/kmz/$filename")) {
+        if (Storage::disk("public")->exists("flight_plans/flightlogs/tlogs/$filename")) {
 
-            $path = Storage::disk("public")->path("flight_plans/logs/kml/$filename");
+            $path = Storage::disk("public")->path("flight_plans/flightlogs/tlogs/$filename");
             $contents = file_get_contents($path);
 
             return response($contents)->withHeaders([
@@ -51,34 +51,52 @@ class FlightPlanLogService implements ServiceInterface
     function createOne(array $log_files)
     {
 
-        foreach ($log_files as $log_file) {
+        try {
 
-            // Config to save KMZ as KML
+            foreach ($log_files as $log_file) {
 
-            $kml_filename = str_replace(".kmz", ".kml", $log_file->getClientOriginalName());
+                // Extraction 
 
-            $kml_file_path = "flight_plans/logs/kml/" . $kml_filename;
+                $zip = new ZipArchive;
 
-            // Get KMZ file content
+                if ($zip->open($log_file)) {
 
-            $contents = file_get_contents($log_file);
+                    // Loop folder and files 
+                    for ($i = 0; $i < $zip->numFiles; $i++) {
 
-            // Save contents as KML file
+                        // Get actual filename
+                        $filename = $zip->getNameIndex($i);
 
-            Storage::disk('public')->put($kml_file_path, $contents);
+                        // Check if filename has extension kml
+                        if (preg_match('/\.kml$/i', $filename)) {
 
-            // Remove non-numeric
-            $timestamp = preg_replace('/\D/', "", $log_file->getClientOriginalName());
+                            // KML path and contents
+                            $kml_path = $filename;
+                            $kml_content = $zip->getFromIndex($i);
+                        }
+                    }
+                } else {
 
-            $data = [
-                "flight_plan_id" => null,
-                "name" => Str::random(10),
-                "filename" => $kml_filename,
-                "path" => $kml_file_path,
-                "timestamp" => $timestamp
-            ];
+                    return response(["message" => "Erro na extração dos logs!"], 500);
+                }
 
-            $this->repository->createOne(collect($data));
+                // Remove non-numeric from timestamp
+                $timestamp = preg_replace('/\D/', "", $log_file->getClientOriginalName());
+
+                $data = [
+                    "flight_plan_id" => null,
+                    "name" => Str::random(10),
+                    "filename" => str_replace("flightlogs/tlogs/", "", $kml_path),
+                    "storage_path" => "flight_plans/" . $kml_path,
+                    "timestamp" => $timestamp,
+                    "file_content" => $kml_content
+                ];
+
+                $this->repository->createOne(collect($data));
+            }
+
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 403);
         }
 
         return response(["message" => "Logs salvos com sucesso!"], 201);
