@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 // Models
+use App\Models\Images\Image;
 use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class Log extends Model
@@ -40,6 +41,14 @@ class Log extends Model
                 $query->where($filter["column"], $filter["value"]);
             }
         });
+    }
+
+    /*
+    * Polymorphic relationship with table "images"
+    */
+    function image()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 
     /*

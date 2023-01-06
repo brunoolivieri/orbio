@@ -63,10 +63,38 @@ const columns = [
                 <Chip {...chip_style} />
             )
         },
-    },
+    },/*
     {
         field: 'flight_plan_image',
         headerName: 'Ver plano',
+        sortable: false,
+        editable: false,
+        minWidth: 130,
+        renderCell: (data) => {
+
+            function cellStyle(related_flight_plan) {
+                if (related_flight_plan === null) {
+                    return (
+                        <Tooltip title="Vincule um plano de voo">
+                            <IconButton>
+                                <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
+                            </IconButton>
+                        </Tooltip>
+                    )
+                } else {
+                    return (
+                        <ModalImage image_url={related_flight_plan.image_url} />
+                    )
+                }
+            }
+
+            return cellStyle(data.row.flight_plan);
+
+        }
+    },*/
+    {
+        field: 'log_image',
+        headerName: 'Ver imagem',
         sortable: false,
         editable: false,
         minWidth: 130,

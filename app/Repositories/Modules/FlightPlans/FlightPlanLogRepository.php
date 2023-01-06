@@ -36,12 +36,19 @@ class FlightPlanLogRepository implements RepositoryInterface
 
             $log = $this->logModel->create([
                 "name" => $data->get("name"),
-                "filename" => $data->get("filename"),
-                "path" => $data->get("storage_path"),
+                "filename" => $data->get("files")['kml']['filename'],
+                "path" => $data->get("files")['kml']['storage_path'],
                 "timestamp" => $data->get("timestamp")
             ]);
 
-            Storage::disk('public')->put($data->get("storage_path"), $data->get('file_content'));
+            Storage::disk('public')->put($data->get('files')['tlog.kml']['storage_path'], $data->get('files')['tlog.kml']['contents']);
+            Storage::disk('public')->put($data->get('files')['kml']['storage_path'], $data->get('files')['kml']['contents']);
+
+            /*
+            $log->image()->create([
+                "path" => $data->get('path')
+            ]);
+            */
         });
     }
 

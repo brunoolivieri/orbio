@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use ZipArchive;
+use SimpleXMLElement;
 // Contracts
 use App\Services\Contracts\ServiceInterface;
 // Repository
@@ -65,14 +66,15 @@ class FlightPlanLogService implements ServiceInterface
                     for ($i = 0; $i < $zip->numFiles; $i++) {
 
                         // Get actual filename
-                        $filename = $zip->getNameIndex($i);
+                        $file_fullpath = $zip->getNameIndex($i);
 
                         // Check if filename has extension kml
-                        if (preg_match('/\.kml$/i', $filename)) {
+                        if (preg_match('/\.kml$/i', $file_fullpath)) {
 
-                            // KML path and contents
-                            $kml_path = $filename;
-                            $kml_content = $zip->getFromIndex($i);
+                            // Tlog KML data
+                            $tlog_kml_path = $file_fullpath;
+                            $tlog_kml_content = $zip->getFromIndex($i);
+                            $tlog_kml_filename = str_replace("flightlogs/tlogs/", "", $tlog_kml_path);
                         }
                     }
                 } else {
@@ -80,21 +82,44 @@ class FlightPlanLogService implements ServiceInterface
                     return response(["message" => "Erro na extração dos logs!"], 500);
                 }
 
-                // Remove non-numeric from timestamp
-                $timestamp = preg_replace('/\D/', "", $log_file->getClientOriginalName());
+                // Acessing .tlog.kml content object
+                $tlog_kml_structure = simplexml_load_string($tlog_kml_content);
+                $tlog_kml_placemark = $tlog_kml_structure->Document->Folder->Folder->Placemark;
+                $tlog_kml_coordinates = (string) $tlog_kml_placemark->LineString->coordinates;
+
+                // Creating .KML from .tlog.kml content 
+                $kml = new SimpleXMLElement("<kml />");
+                $document = $kml->addChild('Document');
+                $placemark = $document->addChild('Placemark');
+                $placemark->addChild('name', $tlog_kml_placemark->name);
+                $line = $placemark->addChild('LineString');
+                $line->addChild('coordinates', substr($tlog_kml_coordinates, strpos($tlog_kml_coordinates, "\n") + 1)); // string coordinates without the first "\n"
+
+                // KML content as string and filename
+                $kml_string_content = $kml->asXML();
+
+                $kml_filename = str_replace(".tlog", "", str_replace("flightlogs/tlogs/", "", $tlog_kml_path));
 
                 $data = [
                     "flight_plan_id" => null,
                     "name" => Str::random(10),
-                    "filename" => str_replace("flightlogs/tlogs/", "", $kml_path),
-                    "storage_path" => "flight_plans/" . $kml_path,
-                    "timestamp" => $timestamp,
-                    "file_content" => $kml_content
+                    "files" => [
+                        "tlog.kml" => [
+                            "filename" => $tlog_kml_filename,
+                            "storage_path" => "flight_plans/" . $tlog_kml_path,
+                            "contents" => $tlog_kml_content
+                        ],
+                        "kml" => [
+                            "filename" => $kml_filename,
+                            "storage_path" => "flight_plans/flightlogs/kml/" . $kml_filename,
+                            "contents" => $kml_string_content
+                        ]
+                    ],
+                    "timestamp" => preg_replace('/\D/', "", $log_file->getClientOriginalName()) // Remove non-numeric from timestamp
                 ];
 
                 $this->repository->createOne(collect($data));
             }
-
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 403);
         }
