@@ -3,7 +3,6 @@
 namespace App\Services\Modules\FlightPlan;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use ZipArchive;
 use SimpleXMLElement;
@@ -35,9 +34,9 @@ class FlightPlanLogService implements ServiceInterface
 
     function download(string $filename, $identifier = null)
     {
-        if (Storage::disk("public")->exists("flight_plans/flightlogs/tlogs/$filename")) {
+        if (Storage::disk("public")->exists("flight_plans/flightlogs/kml/$filename")) {
 
-            $path = Storage::disk("public")->path("flight_plans/flightlogs/tlogs/$filename");
+            $path = Storage::disk("public")->path("flight_plans/flightlogs/kml/$filename");
             $contents = file_get_contents($path);
 
             return response($contents)->withHeaders([
@@ -93,6 +92,7 @@ class FlightPlanLogService implements ServiceInterface
                 $placemark = $document->addChild('Placemark');
                 $placemark->addChild('name', $tlog_kml_placemark->name);
                 $line = $placemark->addChild('LineString');
+                $line->addChild('altitudeMode', 'absolute');
                 $line->addChild('coordinates', substr($tlog_kml_coordinates, strpos($tlog_kml_coordinates, "\n") + 1)); // string coordinates without the first "\n"
 
                 // KML content as string and filename

@@ -47,11 +47,11 @@ const paperStyle = {
 export const Dashboard = React.memo(() => {
 
     const [loading, setLoading] = React.useState(true);
-    const [users, setUsers] = React.useState([]);
-    const [profiles, setProfiles] = React.useState([]);
-    const [flightPlans, setFlightPlans] = React.useState([]);
-    const [serviceOrders, setServiceOrders] = React.useState([]);
-    const [reports, setReports] = React.useState([]);
+    const [users, setUsers] = React.useState(null);
+    const [profiles, setProfiles] = React.useState(null);
+    const [flightPlans, setFlightPlans] = React.useState(null);
+    const [serviceOrders, setServiceOrders] = React.useState(null);
+    const [reports, setReports] = React.useState(null);
 
     // Context do snackbar
     const { enqueueSnackbar } = useSnackbar();
@@ -61,23 +61,22 @@ export const Dashboard = React.memo(() => {
 
     React.useEffect(() => {
 
+        let is_mounted = true;
+
+        if (!is_mounted) {
+            return '';
+        }
+
         setPageIndex(0);
 
         axios.get("/api/load-dashboard-metrics")
             .then(function (response) {
 
-                setLoading(false);
-
                 setUsers(response.data.users);
-
                 setProfiles(response.data.profiles);
-
                 setFlightPlans(response.data.flight_plans);
-
                 setServiceOrders(response.data.service_orders);
-
                 setReports(response.data.reports);
-
                 handleOpenSnackbar("Métricas carregadas", "success");
 
             })
@@ -88,9 +87,14 @@ export const Dashboard = React.memo(() => {
                 const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
                 handleOpenSnackbar(error_message, "error");
 
+            })
+            .finally(() => {
                 setLoading(false);
-
             });
+
+        return () => {
+            return is_mounted = false;
+        }
 
     }, []); 275
 
@@ -109,12 +113,12 @@ export const Dashboard = React.memo(() => {
                                     Usuários
                                 </Typography>
                                 <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <GroupIcon sx={{ mr: 1 }} /> {users.total}
+                                    <GroupIcon sx={{ mr: 1 }} /> {users ? users.total : 0}
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && <LinearProgress />}
-                                {!loading && <VerticalLinesChart data={users} />}
+                                {loading && !users && <LinearProgress />}
+                                {!loading && users && <VerticalLinesChart data={users} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -125,12 +129,12 @@ export const Dashboard = React.memo(() => {
                                     Perfis
                                 </Typography>
                                 <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <AssignmentIndIcon sx={{ mr: 1 }} /> {profiles.total}
+                                    <AssignmentIndIcon sx={{ mr: 1 }} /> {profiles ? profiles.total : 0}
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && <LinearProgress />}
-                                {!loading && <VerticalLinesChart data={profiles} />}
+                                {loading && !profiles && <LinearProgress />}
+                                {!loading && profiles && <VerticalLinesChart data={profiles} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -141,12 +145,12 @@ export const Dashboard = React.memo(() => {
                                     Planos de voo
                                 </Typography>
                                 <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <MapIcon sx={{ mr: 1 }} /> {flightPlans.total}
+                                    <MapIcon sx={{ mr: 1 }} /> {flightPlans ? flightPlans.total : 0}
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && <LinearProgress />}
-                                {!loading && <VerticalLinesChart data={flightPlans} />}
+                                {loading && !flightPlans && <LinearProgress />}
+                                {!loading && flightPlans && <VerticalLinesChart data={flightPlans} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -157,12 +161,12 @@ export const Dashboard = React.memo(() => {
                                     Ordens de serviço
                                 </Typography>
                                 <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <AssignmentIcon sx={{ mr: 1 }} /> {serviceOrders.total}
+                                    <AssignmentIcon sx={{ mr: 1 }} /> {serviceOrders ? serviceOrders.total : 0}
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && <LinearProgress />}
-                                {!loading && <VerticalLinesChart data={serviceOrders} />}
+                                {loading && !serviceOrders && <LinearProgress />}
+                                {!loading && serviceOrders && <VerticalLinesChart data={serviceOrders} />}
                             </Box>
                         </Card>
                     </Grid>
@@ -173,12 +177,12 @@ export const Dashboard = React.memo(() => {
                                     Relatórios
                                 </Typography>
                                 <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <AssessmentIcon sx={{ mr: 1 }} /> {reports.total}
+                                    <AssessmentIcon sx={{ mr: 1 }} /> {reports ? reports.total : 0}
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && <LinearProgress />}
-                                {!loading && <VerticalLinesChart data={reports} />}
+                                {loading && !reports && <LinearProgress />}
+                                {!loading && reports && <VerticalLinesChart data={reports} />}
                             </Box>
                         </Card>
                     </Grid>

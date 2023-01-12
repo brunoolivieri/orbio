@@ -148,13 +148,19 @@ export const ForgotPassword = () => {
 
     React.useEffect(() => {
 
-        if (timer === 0) {
-            return ''
+        let is_mounted = true;
+
+        if (!is_mounted || timer === 0) {
+            return '';
         }
 
         setTimeout(() => {
             setTimer((previously) => previously - 1);
         }, 1000);
+
+        return () => {
+            is_mounted = false;
+        }
 
     }, [timer]);
 
@@ -312,9 +318,6 @@ export const ForgotPassword = () => {
                         </Link>
                     </Grid>
                 </Grid>
-
-
-
 
             </Container>
         </>

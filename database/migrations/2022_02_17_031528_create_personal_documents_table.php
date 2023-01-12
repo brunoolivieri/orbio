@@ -17,13 +17,13 @@ class CreatePersonalDocumentsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->nullable(true);
             $table->foreignId('address_id')->constrained('address')->nullable(true);
-            $table->string("anac_license")->nullable(true);
-            $table->string("cpf")->nullable(true);
+            $table->string("anac_license")->nullable(true); //
+            $table->string("cpf")->nullable(true); //
             $table->string("cnpj")->nullable(true);
             $table->string("telephone")->nullable(true);
             $table->string("cellphone")->nullable(true);
-            $table->string("company_name")->nullable(true);
-            $table->string("trading_name")->nullable(true);
+            $table->string("company_name")->nullable(true); //
+            $table->string("trading_name")->nullable(true); //
             $table->softDeletes();
         });
     }

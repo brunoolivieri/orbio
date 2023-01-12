@@ -26,15 +26,16 @@ class ProfilePanelStoreRequest extends FormRequest
     {
 
         return [
-            'name' => 'bail|required|string|unique:profiles,name'
+            'name' => 'bail|required|string|unique:profiles,name',
+            'access_data' => 'required'
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
@@ -43,5 +44,4 @@ class ProfilePanelStoreRequest extends FormRequest
             'name.unique' => 'Já existe um perfil com esse nome'
         ];
     }
-
 }

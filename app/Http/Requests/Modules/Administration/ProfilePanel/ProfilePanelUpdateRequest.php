@@ -29,15 +29,16 @@ class ProfilePanelUpdateRequest extends FormRequest
         $profile_id_parameter = $this->route("admin_module_profile");
 
         return [
-            'name' => 'bail|required|string|unique:profiles,name,'.$profile_id_parameter
+            'name' => 'bail|required|string|unique:profiles,name,' . $profile_id_parameter,
+            'access_data' => 'required'
         ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
@@ -46,5 +47,4 @@ class ProfilePanelUpdateRequest extends FormRequest
             'name.unique' => 'Já existe um perfil com esse nome'
         ];
     }
-
 }

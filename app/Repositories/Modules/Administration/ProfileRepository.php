@@ -26,7 +26,12 @@ class ProfileRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $profile = $this->profileModel->create($data->only(["name"])->all());
+            dd($data->get("access_data"));
+
+            $profile = $this->profileModel->create([
+                "name" => $data->get(["name"]),
+                "access_data" => json_encode($data->get("access_data"))
+            ]);
 
             // *Turn into loop*
             $profile->modules()->attach(1, ["read" => false, "write" => false]);

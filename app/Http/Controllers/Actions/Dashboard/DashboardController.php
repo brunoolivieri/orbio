@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Actions\Dashboard;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 // Custom
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
@@ -32,9 +30,6 @@ class DashboardController extends Controller
     public function __invoke(): \Illuminate\Http\Response
     {
 
-        //$accessed_devices_collection = $this->accessedDevicesModel->get();
-        //$annual_traffic_collection = $this->annualTrafficModel->get();
-
         $collections = [
             "users" => $this->userModel->withTrashed()->get(),
             "profiles" => $this->profileModel->withTrashed()->get(),
@@ -43,28 +38,53 @@ class DashboardController extends Controller
             "reports" => $this->reportModel->withTrashed()->get()
         ];
 
+        $counter = [
+            "trashed" => 0,
+            "active" => 0
+        ];
+
+        $initial_months_data = [
+            'january' => $counter,
+            'february' => $counter,
+            'march' => $counter,
+            'april' => $counter,
+            'may' => $counter,
+            'june' => $counter,
+            'july' => $counter,
+            'august' => $counter,
+            'september' => $counter,
+            'october' => $counter,
+            'november' => $counter,
+            'december' => $counter,
+        ];
+
         $data = [];
 
         foreach ($collections as $key => $collection) {
 
-            $trashed_by_month = 0;
-            $active_by_month = 0;
-
+            // Initial values for actual collection
             $data[$key]["total"] = $collection->count();
+            $data[$key]["months"] = $initial_months_data;
 
-            foreach ($collection as $index => $item) {
+            // Loop each item of actual collection
+            foreach ($collection as $item) {
 
-                if ($item->trashed()) {
-                    $trashed_by_month++;
-                } else {
-                    $active_by_month++;
+                $month = strtolower(Carbon::parse($item->created_at)->format('F'));
+                $year = Carbon::parse($item->created_at)->format('y');
+                $actual_year = Carbon::now()->format('y');
+
+                if ($actual_year === $year) {
+
+                    // Actual item was created in $month of actual year
+                    // Add 1 to $month in "trashed" or "active" based in "deleted_at" column
+
+                    if ($item->trashed()) {
+                        $data[$key]["months"][$month]["trashed"]++;
+                    } else {
+                        $data[$key]["months"][$month]["active"]++;
+                    }
                 }
             }
-
-            $data[$key][$item->created_at->format('F')]["trashed"][$index] = $trashed_by_month;
-            $data[$key][$item->created_at->format('F')]["active"][$index] = $active_by_month;
-
-            $data[$key][$item->created_at->format('F')]["total"] = $trashed_by_month + $active_by_month;
         }
 
         return response($data, 200);

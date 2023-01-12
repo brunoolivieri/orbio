@@ -52,12 +52,12 @@ export function Login() {
 
     // ============================================================================== ROUTINES ============================================================================== //
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        if (formValidation()) {
-            setLoading(true);
-            requestServer();
+    function handleSubmit() {
+        if (!formValidation()) {
+            return '';
         }
+        setLoading(true);
+        requestServer();
     }
 
     function formValidation() {
@@ -140,7 +140,7 @@ export function Login() {
                     <Typography component="h1" variant="h5">
                         Acessar
                     </Typography>
-                    <Box component="form" noValidate sx={{ mt: 1 }} onSubmit={handleSubmit}>
+                    <Box sx={{ mt: 1 }}>
 
                         <TextField
                             margin="normal"
@@ -181,6 +181,7 @@ export function Login() {
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2, borderRadius: 1 }}
                                 color="primary"
+                                onClick={handleSubmit}
                             >
                                 Login
                             </Button>

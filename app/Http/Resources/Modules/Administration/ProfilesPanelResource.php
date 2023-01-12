@@ -48,7 +48,8 @@ class ProfilesPanelResource extends JsonResource
                     "created_at" => $profile->created_at,
                     "updated_at" => $profile->updated_at,
                     "total_users" => $profile->users->count(),
-                    "modules" => $modules_related
+                    "modules" => $modules_related,
+                    "access_data" => json_decode($profile->access_data)
                 ];
         }
 

@@ -1,6 +1,6 @@
 import *  as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, FormLabel, FormGroup, FormControlLabel, Checkbox, Typography } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../../services/AxiosApi';
@@ -26,6 +26,25 @@ export const CreateProfile = React.memo((props) => {
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
+
+  // Reducer Dispatch
+  function accessDataReducer(actual_state, action) {
+    let cloneState = Object.assign({}, actual_state);
+    cloneState[action.field] = action.new_value ? 1 : 0;
+    return cloneState;
+  }
+
+  // Reducer
+  const [accessData, dispatch] = React.useReducer(accessDataReducer, {
+    address: 0,
+    anac_license: 0,
+    cpf: 0,
+    cnpj: 0,
+    telephone: 0,
+    cellphone: 0,
+    company_name: 0,
+    trading_name: 0
+  });
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -60,7 +79,8 @@ export const CreateProfile = React.memo((props) => {
 
   function requestServerOperation() {
     axios.post("/api/admin-module-profile", {
-      name: controlledInput.name
+      name: controlledInput.name,
+      access_data: accessData
     })
       .then(function (response) {
         successResponse(response);
@@ -119,28 +139,84 @@ export const CreateProfile = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="sm"
       >
         <DialogTitle>CRIAÇÃO DE PERFIL</DialogTitle>
         <Divider />
 
         <DialogContent>
 
+          <Grid container mb={2}>
+
+            <Grid item xs={12}>
+              <TextField
+                margin="dense"
+                name="name"
+                label="Nome do perfil"
+                fullWidth
+                variant="outlined"
+                onChange={handleInputChange}
+                helperText={fiedlErrorMessage.name}
+                error={fieldError.name}
+              />
+            </Grid>
+
+          </Grid>
+
           <DialogContentText>
-            Um novo perfil deve ser criado apenas sob demanda, e, com a mesma condição, editado e excluído.
+            Selecione abaixo os dados que serão requisitados aos usuários vinculados a esse perfil.
           </DialogContentText>
 
-          <TextField
-            margin="dense"
-            name="name"
-            label="Nome do perfil"
-            fullWidth
-            variant="outlined"
-            onChange={handleInputChange}
-            helperText={fiedlErrorMessage.name}
-            error={fieldError.name}
-            sx={{ mt: 3 }}
-          />
+          <Grid container sx={{ mt: 2 }} spacing={1} alignItems="left">
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["address"]} onChange={(event) => { dispatch({ field: "address", new_value: event.currentTarget.checked }) }} />} label="Endereço" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["anac_license"]} onChange={(event) => { dispatch({ field: "anac_license", new_value: event.currentTarget.checked }) }} />} label="Licença Anac" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["cpf"]} onChange={(event) => { dispatch({ field: "cpf", new_value: event.currentTarget.checked }) }} />} label="CPF" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["cnpj"]} onChange={(event) => { dispatch({ field: "cnpj", new_value: event.currentTarget.checked }) }} />} label="CNPJ" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["telephone"]} onChange={(event) => { dispatch({ field: "telephone", new_value: event.currentTarget.checked }) }} />} label="Telefone" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["cellphone"]} onChange={(event) => { dispatch({ field: "cellphone", new_value: event.currentTarget.checked }) }} />} label="Celular" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["company_name"]} onChange={(event) => { dispatch({ field: "company_name", new_value: event.currentTarget.checked }) }} />} label="Razão Social" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item xs={4}>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={accessData["trading_name"]} onChange={(event) => { dispatch({ field: "trading_name", new_value: event.currentTarget.checked }) }} />} label="Nome fantasia" />
+              </FormGroup>
+            </Grid>
+          </Grid>
 
         </DialogContent>
 

@@ -6,74 +6,63 @@ export function VerticalLinesChart(props) {
     const data = [
         {
             name: 'Janeiro',
-            ativos: 4000,
-            deletados: 2400
+            ativos: props.data.months.january.active,
+            deletados: props.data.months.january.trashed
         },
         {
             name: 'Fevereiro',
-            ativos: 3000,
-            deletados: 1398,
-            amt: 2210,
+            ativos: props.data.months.february.active,
+            deletados: props.data.months.february.trashed
         },
         {
             name: 'Março',
-            ativos: 9000,
-            deletados: 2800,
-            amt: 2290,
+            ativos: props.data.months.march.active,
+            deletados: props.data.months.march.trashed
         },
         {
             name: 'Abril',
-            ativos: 5780,
-            deletados: 1908,
-            amt: 2000,
+            ativos: props.data.months.april.active,
+            deletados: props.data.months.april.trashed
         },
         {
             name: 'Maio',
-            ativos: 1890,
-            deletados: 4800,
-            amt: 2181,
+            ativos: props.data.months.may.active,
+            deletados: props.data.months.may.trashed
         },
         {
             name: 'Junho',
-            ativos: 2390,
-            deletados: 3800,
-            amt: 2500,
+            ativos: props.data.months.june.active,
+            deletados: props.data.months.june.trashed
         },
         {
             name: 'Julho',
-            ativos: 3490,
-            deletados: 4300,
-            amt: 2100,
+            ativos: props.data.months.july.active,
+            deletados: props.data.months.july.trashed
         },
         {
             name: 'Agosto',
-            ativos: 3490,
-            deletados: 4300,
-            amt: 2100,
+            ativos: props.data.months.august.active,
+            deletados: props.data.months.august.trashed
         },
         {
             name: 'Setembro',
-            ativos: 3490,
-            deletados: 4300,
-            amt: 2100,
+            ativos: props.data.months.september.active,
+            deletados: props.data.months.september.trashed
         },
         {
             name: 'Outubro',
-            ativos: 3490,
-            deletados: 4300,
-            amt: 2100,
+            ativos: props.data.months.october.active,
+            deletados: props.data.months.october.trashed
         },
         {
             name: 'Novembro',
-            ativos: 3490,
-            deletados: 4300,
-            amt: 2100,
+            ativos: props.data.months.november.active,
+            deletados: props.data.months.november.trashed
         },
         {
             name: 'Dezembro',
-            ativos: 3490,
-            deletados: 4300,
-            amt: 2100,
+            ativos: props.data.months.december.active,
+            deletados: props.data.months.december.trashed
         },
     ];
 

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Internal;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
 use App\Models\{
     Users\User,
     PersonalDocuments\PersonalDocument,
@@ -73,27 +72,6 @@ class MyAccountController extends Controller
                 'complement' => $user->personal_document->address->complement
             ]
         ], 200);
-    }
-
-    function loadActiveSessions(Request $request): \Illuminate\Http\Response
-    {
-
-        $active_sessions = [];
-
-        foreach (Auth::user()->sessions as $row => $session) {
-
-            $user_agent_array = explode("/", $session->user_agent);
-            $browser = $user_agent_array[count($user_agent_array) - 1];
-
-            $active_sessions[$row] = [
-                "id" => Auth::user()->sessions[$row]->id,
-                "user_agent" => $browser,
-                "ip" => Auth::user()->sessions[$row]->ip_address,
-                "last_activity" => date('d-m-Y H:i:s', strtotime(Auth::user()->sessions[$row]->last_activity))
-            ];
-        }
-
-        return response($active_sessions, 200);
     }
 
     function basicDataUpdate(UpdateBasicDataRequest $request): \Illuminate\Http\Response
