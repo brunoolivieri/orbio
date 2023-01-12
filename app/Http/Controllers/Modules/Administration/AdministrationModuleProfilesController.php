@@ -35,8 +35,8 @@ class AdministrationModuleProfilesController extends Controller
 
     public function exportTableAsCsv(Request $request)
     {
-        ob_end_clean(); 
-        ob_start(); 
+        ob_end_clean();
+        ob_start();
         return Excel::download(new GenericExport(new Profile(), $request->limit), 'profiles.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
@@ -53,7 +53,7 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $this->service->updateOne($request->only(["name", "privileges"]), $id);
+        $this->service->updateOne($request->validated(), $id);
 
         return response(["message" => "Perfil atualizdo com sucesso!"], 200);
     }

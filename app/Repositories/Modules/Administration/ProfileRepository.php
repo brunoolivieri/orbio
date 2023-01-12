@@ -26,10 +26,8 @@ class ProfileRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            dd($data->get("access_data"));
-
             $profile = $this->profileModel->create([
-                "name" => $data->get(["name"]),
+                "name" => $data->get("name"),
                 "access_data" => json_encode($data->get("access_data"))
             ]);
 
@@ -51,7 +49,10 @@ class ProfileRepository implements RepositoryInterface
 
             $profile = $this->profileModel->findOrFail($identifier);
 
-            $profile->update($data->only(["name"])->all());
+            $profile->update([
+                "name" => $data->get("name"),
+                "access_data" => json_encode($data->get("access_data"))
+            ]);
 
             // *Turn into loop*
             $profile->modules()->sync([

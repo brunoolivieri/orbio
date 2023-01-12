@@ -47,14 +47,6 @@ export function AdditionalConfiguration() {
 
     React.useEffect(() => {
         setControlledInput(initialControlledInput);
-        axios.get("/api/load-sessions-data")
-            .then(function () {
-                setLoading(false);
-            })
-            .catch(function (error) {
-                setLoading(false);
-                handleOpenSnackbar(error.response.data.message, "error");
-            });
     }, [loading]);
 
     function handleChangePasswordSubmit(e) {

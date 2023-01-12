@@ -30,6 +30,7 @@ class ProfilePanelUpdateRequest extends FormRequest
 
         return [
             'name' => 'bail|required|string|unique:profiles,name,' . $profile_id_parameter,
+            'privileges' => 'required',
             'access_data' => 'required'
         ];
     }

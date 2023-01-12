@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, FormLabel, Checkbox, FormGroup, FormControlLabel, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, FormLabel, Checkbox, FormGroup, FormControlLabel, Divider, DialogContentText } from '@mui/material';
 // Custom
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -18,7 +18,6 @@ export const UpdateProfile = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { AuthData } = useAuthentication();
-
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -26,21 +25,40 @@ export const UpdateProfile = React.memo((props) => {
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
 
-    // Reducer Dispatch
+    // Privileges selection function reducer
     function privilegesReducer(actual_state, action) {
         let cloneState = Object.assign({}, actual_state);
         cloneState[action.module][action.privilege] = action.new_value;
         return cloneState;
     }
 
-    // Reducer
-    const [privileges, dispatch] = React.useReducer(privilegesReducer, {
+    // Privileges reducer
+    const [privileges, dispatchPrivileges] = React.useReducer(privilegesReducer, {
         "1": { read: props.record.modules[0].read == 1 ? true : false, write: props.record.modules[0].write == 1 ? true : false },
         "2": { read: props.record.modules[1].read == 1 ? true : false, write: props.record.modules[1].write == 1 ? true : false },
         "3": { read: props.record.modules[2].read == 1 ? true : false, write: props.record.modules[2].write == 1 ? true : false },
         "4": { read: props.record.modules[3].read == 1 ? true : false, write: props.record.modules[3].write == 1 ? true : false },
         "5": { read: props.record.modules[4].read == 1 ? true : false, write: props.record.modules[4].write == 1 ? true : false },
         "6": { read: props.record.modules[5].read == 1 ? true : false, write: props.record.modules[5].write == 1 ? true : false }
+    });
+
+    // Access data function reducer
+    function accessDataReducer(actual_state, action) {
+        let cloneState = Object.assign({}, actual_state);
+        cloneState[action.field] = action.new_value ? 1 : 0;
+        return cloneState;
+    }
+
+    // Access data reducer
+    const [accessData, dispatchAccessData] = React.useReducer(accessDataReducer, {
+        address: props.record.access_data.address,
+        anac_license: props.record.access_data.anac_license,
+        cpf: props.record.access_data.cpf,
+        cnpj: props.record.access_data.cnpj,
+        telephone: props.record.access_data.telephone,
+        cellphone: props.record.access_data.cellphone,
+        company_name: props.record.access_data.company_name,
+        trading_name: props.record.access_data.trading_name
     });
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -58,10 +76,11 @@ export const UpdateProfile = React.memo((props) => {
     }
 
     function handleSubmit() {
-        if (formValidation()) {
-            setLoading(true);
-            requestServer();
+        if (!formValidation()) {
+            return '';
         }
+        setLoading(true);
+        requestServer();
     }
 
     function formValidation() {
@@ -76,7 +95,8 @@ export const UpdateProfile = React.memo((props) => {
     function requestServer() {
         axios.patch(`/api/admin-module-profile/${controlledInput.id}`, {
             name: controlledInput.name,
-            privileges: privileges
+            privileges: privileges,
+            access_data: accessData
         })
             .then(function (response) {
                 successResponse(response);
@@ -142,22 +162,7 @@ export const UpdateProfile = React.memo((props) => {
 
                 <DialogContent>
 
-                    <Grid container spacing={1}>
-
-                        <Grid item xs={2}>
-                            <TextField
-                                margin="dense"
-                                value={controlledInput.id}
-                                name="id"
-                                label="ID"
-                                fullWidth
-                                variant="outlined"
-                                sx={{ mb: 2 }}
-                                InputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                    <Grid container spacing={1} mb={2}>
 
                         <Grid item xs={10}>
                             <TextField
@@ -175,52 +180,111 @@ export const UpdateProfile = React.memo((props) => {
 
                     </Grid>
 
-                    <Grid container sx={{ mt: 2 }} spacing={1} alignItems="left">
+                    <DialogContentText>
+                        Selecione abaixo o poder de acesso do perfil aos módulos existentes.
+                    </DialogContentText>
+
+                    <Grid container sx={{ mt: 2, mb: 2 }} spacing={1} alignItems="left">
                         <Grid item>
                             <FormLabel component="legend">Admin</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["1"].read} onChange={(event) => { dispatch({ module: "1", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["1"].write} onChange={(event) => { dispatch({ module: "1", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox checked={privileges["1"].read} onChange={(event) => { dispatchPrivileges({ module: "1", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox checked={privileges["1"].write} onChange={(event) => { dispatchPrivileges({ module: "1", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
                             </FormGroup>
                         </Grid>
 
                         <Grid item>
                             <FormLabel component="legend">Planos</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["2"].read} onChange={(event) => { dispatch({ module: "2", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["2"].write} onChange={(event) => { dispatch({ module: "2", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox checked={privileges["2"].read} onChange={(event) => { dispatchPrivileges({ module: "2", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox checked={privileges["2"].write} onChange={(event) => { dispatchPrivileges({ module: "2", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
                             </FormGroup>
                         </Grid>
 
                         <Grid item>
                             <FormLabel component="legend">Ordens</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["3"].read} onChange={(event) => { dispatch({ module: "3", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["3"].write} onChange={(event) => { dispatch({ module: "3", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox checked={privileges["3"].read} onChange={(event) => { dispatchPrivileges({ module: "3", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox checked={privileges["3"].write} onChange={(event) => { dispatchPrivileges({ module: "3", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
                             </FormGroup>
                         </Grid>
 
                         <Grid item>
                             <FormLabel component="legend">Relatórios</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["4"].read} onChange={(event) => { dispatch({ module: "4", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["4"].write} onChange={(event) => { dispatch({ module: "4", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox checked={privileges["4"].read} onChange={(event) => { dispatchPrivileges({ module: "4", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox checked={privileges["4"].write} onChange={(event) => { dispatchPrivileges({ module: "4", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
                             </FormGroup>
                         </Grid>
 
                         <Grid item>
                             <FormLabel component="legend">Incidentes</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["5"].read} onChange={(event) => { dispatch({ module: "5", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["5"].write} onChange={(event) => { dispatch({ module: "5", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox checked={privileges["5"].read} onChange={(event) => { dispatchPrivileges({ module: "5", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox checked={privileges["5"].write} onChange={(event) => { dispatchPrivileges({ module: "5", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
                             </FormGroup>
                         </Grid>
 
                         <Grid item>
                             <FormLabel component="legend">Equipamentos</FormLabel>
                             <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["6"].read} onChange={(event) => { dispatch({ module: "6", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["6"].write} onChange={(event) => { dispatch({ module: "6", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                                <FormControlLabel control={<Checkbox checked={privileges["6"].read} onChange={(event) => { dispatchPrivileges({ module: "6", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                                <FormControlLabel control={<Checkbox checked={privileges["6"].write} onChange={(event) => { dispatchPrivileges({ module: "6", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+                            </FormGroup>
+                        </Grid>
+                    </Grid>
+
+                    <DialogContentText>
+                        Selecione abaixo os dados que serão requisitados aos usuários vinculados a esse perfil.
+                    </DialogContentText>
+
+                    <Grid container sx={{ mt: 2 }} spacing={1} alignItems="left">
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["address"]} onChange={(event) => { dispatchAccessData({ field: "address", new_value: event.currentTarget.checked }) }} />} label="Endereço" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["anac_license"]} onChange={(event) => { dispatchAccessData({ field: "anac_license", new_value: event.currentTarget.checked }) }} />} label="Licença Anac" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["cpf"]} onChange={(event) => { dispatchAccessData({ field: "cpf", new_value: event.currentTarget.checked }) }} />} label="CPF" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["cnpj"]} onChange={(event) => { dispatchAccessData({ field: "cnpj", new_value: event.currentTarget.checked }) }} />} label="CNPJ" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["telephone"]} onChange={(event) => { dispatchAccessData({ field: "telephone", new_value: event.currentTarget.checked }) }} />} label="Telefone" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["cellphone"]} onChange={(event) => { dispatchAccessData({ field: "cellphone", new_value: event.currentTarget.checked }) }} />} label="Celular" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["company_name"]} onChange={(event) => { dispatchAccessData({ field: "company_name", new_value: event.currentTarget.checked }) }} />} label="Razão Social" />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={3}>
+                            <FormGroup>
+                                <FormControlLabel control={<Checkbox checked={accessData["trading_name"]} onChange={(event) => { dispatchAccessData({ field: "trading_name", new_value: event.currentTarget.checked }) }} />} label="Nome fantasia" />
                             </FormGroup>
                         </Grid>
                     </Grid>
