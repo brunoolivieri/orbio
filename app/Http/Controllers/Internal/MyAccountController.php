@@ -57,8 +57,6 @@ class MyAccountController extends Controller
 
         $data = [];
 
-        // dd($available_data->address);
-
         foreach ($available_data as $key => $item) {
 
             if ($key === "address") {
@@ -101,6 +99,8 @@ class MyAccountController extends Controller
 
     function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
     {
+        dd($request->all());
+
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->personalDocumentModel->where("id", $user->personal_document->id)->update($request->validated());
@@ -112,6 +112,8 @@ class MyAccountController extends Controller
 
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
+        dd($request->all());
+
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());

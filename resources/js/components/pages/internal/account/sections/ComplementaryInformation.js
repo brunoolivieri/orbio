@@ -1,6 +1,7 @@
 // React
 import * as React from 'react';
 // Material UI
+import InputAdornment from '@mui/material/InputAdornment';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
 import Grid from '@mui/material/Grid';
@@ -9,6 +10,7 @@ import { Box } from '@mui/system';
 import { Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
+import HelpIcon from '@mui/icons-material/Help';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -44,13 +46,13 @@ const initialAddressFormError = {
 const initialFormLoading = { documents: false, address: false };
 
 const documentsFormConfig = {
-    cpf: { label: "CPF", validation: { regex: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/, message: 'CPF inválido.' } },
-    cnpj: { label: "CNPJ", validation: { regex: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/, message: 'CNPJ inválido.' } },
-    cellphone: { label: "Celular", validation: { regex: /^\d{11}$/, message: 'Número de celular inválido. Digite apenas os números incluindo o DDD.' } },
-    telephone: { label: "Telefone", validation: { regex: /^\d{11}$/, message: 'Número de telefone inválido. Digite apenas os números incluindo o DDD.' } },
-    anac_license: { label: "Licença Anac", validation: { regex: /^[A-Z]{2}\d{3}[A-Z]{1}\d{2}[A-Z0-9]{1}$/, message: 'Licença Anac inválida.' } },
-    company_name: { label: "Razão Social", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' } },
-    trading_name: { label: "Nome Fantasia", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' } }
+    cpf: { label: "CPF", validation: { regex: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/, message: 'CPF inválido.' }, help: "XX.XXX.XXX-XX" },
+    cnpj: { label: "CNPJ", validation: { regex: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/, message: 'CNPJ inválido.' }, help: "XX.XXX.XXX/XXXX-XX" },
+    cellphone: { label: "Celular", validation: { regex: /^\(\d{2}\)\d{4,5}-\d{4}$/, message: 'Número de celular inválido. Digite apenas números e incluindo o DDD.' }, help: "(XX)XXXXX-XXXX. O dígito adicional é opcional." },
+    telephone: { label: "Telefone", validation: { regex: /^\(\d{2}\)\d{4,5}-\d{4}$/, message: 'Número de telefone inválido. Digite apenas números e incluindo o DDD.' }, help: "(XX)XXXXX-XXXX. O dígito adicional é opcional." },
+    anac_license: { label: "Licença Anac", validation: { regex: /^[A-Z]{2}\d{3}[A-Z]{1}\d{2}[A-Z0-9]{1}$/, message: 'Licença Anac inválida.' }, help: null },
+    company_name: { label: "Razão Social", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' }, help: null },
+    trading_name: { label: "Nome Fantasia", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' }, help: null }
 }
 
 const addressFormConfig = {
@@ -319,6 +321,16 @@ export function ComplementaryInformation() {
                                             error={documentsFormError[key].error}
                                             helperText={documentsFormError[key].message}
                                             onChange={(event) => handleDocumentsFormChange(event)}
+                                            InputProps={documentsFormConfig[key].help && {
+                                                endAdornment:
+                                                    <InputAdornment position="end">
+                                                        <Tooltip title={documentsFormConfig[key].help}>
+                                                            <IconButton>
+                                                                <HelpIcon />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                    </InputAdornment>,
+                                            }}
                                         />
                                     </Grid>
                                 </>
@@ -391,7 +403,14 @@ export function ComplementaryInformation() {
                                 helperText={addressFormError.cep.message}
                                 onChange={(event) => handleAddressFormChange(event)}
                                 InputProps={{
-                                    maxLength: 9
+                                    endAdornment:
+                                        <InputAdornment position="end">
+                                            <Tooltip title={"XXXXX-XXX"}>
+                                                <IconButton>
+                                                    <HelpIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </InputAdornment>,
                                 }}
                             />
                         </Grid>
