@@ -169,6 +169,11 @@
 				</label>
 			</li>
 			<li>
+				<label>Importar Rota
+					<input type="file" id="file-import-path" hidden/>
+				</label>
+			</li>
+			<li>
 				<label>Importar MP
 					<input type="file" id="file-import-mp" hidden/>
 				</label>

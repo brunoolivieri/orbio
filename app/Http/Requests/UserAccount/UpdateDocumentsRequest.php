@@ -28,13 +28,13 @@ class UpdateDocumentsRequest extends FormRequest
         $unique_id = Auth::user()->personal_document->id;
 
         return [
-            "anac_license" => ["required", "unique:user_complementary_data,anac_license," . $unique_id],
-            "cpf" => ["required", "unique:user_complementary_data,cpf," . $unique_id],
-            "cnpj" => ["required", "unique:user_complementary_data,cnpj," . $unique_id],
-            "telephone" => ["required", "unique:user_complementary_data,telephone," . $unique_id],
-            "cellphone" => ["required", "unique:user_complementary_data,cellphone," . $unique_id],
-            "company_name" => ["required", "unique:user_complementary_data,company_name," . $unique_id],
-            "trading_name" => ["required", "unique:user_complementary_data,trading_name," . $unique_id]
+            "anac_license" => ["sometimes", "unique:personal_documents,anac_license," . $unique_id],
+            "cpf" => ["sometimes", "unique:personal_documents,cpf," . $unique_id],
+            "cnpj" => ["sometimes", "unique:personal_documents,cnpj," . $unique_id],
+            "telephone" => ["sometimes", "unique:personal_documents,telephone," . $unique_id],
+            "cellphone" => ["sometimes", "unique:personal_documents,cellphone," . $unique_id],
+            "company_name" => ["sometimes", "unique:personal_documents,company_name," . $unique_id],
+            "trading_name" => ["sometimes", "unique:personal_documents,trading_name," . $unique_id]
         ];
     }
 

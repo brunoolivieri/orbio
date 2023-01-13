@@ -99,7 +99,6 @@ class MyAccountController extends Controller
 
     function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
     {
-        dd($request->all());
 
         $user = $this->userModel->find(Auth::user()->id);
 
@@ -112,7 +111,6 @@ class MyAccountController extends Controller
 
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
-        dd($request->all());
 
         $user = $this->userModel->find(Auth::user()->id);
 

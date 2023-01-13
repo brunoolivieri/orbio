@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Material UI
 import InputAdornment from '@mui/material/InputAdornment';
@@ -48,9 +47,9 @@ const initialFormLoading = { documents: false, address: false };
 const documentsFormConfig = {
     cpf: { label: "CPF", validation: { regex: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/, message: 'CPF inválido.' }, help: "XX.XXX.XXX-XX" },
     cnpj: { label: "CNPJ", validation: { regex: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/, message: 'CNPJ inválido.' }, help: "XX.XXX.XXX/XXXX-XX" },
-    cellphone: { label: "Celular", validation: { regex: /^\(\d{2}\)\d{4,5}-\d{4}$/, message: 'Número de celular inválido. Digite apenas números e incluindo o DDD.' }, help: "(XX)XXXXX-XXXX. O dígito adicional é opcional." },
-    telephone: { label: "Telefone", validation: { regex: /^\(\d{2}\)\d{4,5}-\d{4}$/, message: 'Número de telefone inválido. Digite apenas números e incluindo o DDD.' }, help: "(XX)XXXXX-XXXX. O dígito adicional é opcional." },
-    anac_license: { label: "Licença Anac", validation: { regex: /^[A-Z]{2}\d{3}[A-Z]{1}\d{2}[A-Z0-9]{1}$/, message: 'Licença Anac inválida.' }, help: null },
+    cellphone: { label: "Celular", validation: { regex: /^\(\d{2}\)\d{4,5}-\d{4}$/, message: 'Número de celular inválido.' }, help: "(XX)XXXXX-XXXX. O dígito adicional é opcional." },
+    telephone: { label: "Telefone", validation: { regex: /^\(\d{2}\)\d{4,5}-\d{4}$/, message: 'Número de telefone inválido.' }, help: "(XX)XXXXX-XXXX. O dígito adicional é opcional." },
+    anac_license: { label: "Licença Anac", validation: { regex: /^[0-9]{9}$/, message: 'Licença Anac inválida.' }, help: "XXXXXXXXX" },
     company_name: { label: "Razão Social", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' }, help: null },
     trading_name: { label: "Nome Fantasia", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' }, help: null }
 }
@@ -281,7 +280,7 @@ export function ComplementaryInformation() {
     }
 
     function checkIfCanRenderDocuments() {
-        return !formLoading.documents && Object.keys(documentsFormError).length != 0 && Object.keys(documentsForm).length != 0;
+        return Object.keys(documentsFormError).length != 0 && Object.keys(documentsForm).length != 0;
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
