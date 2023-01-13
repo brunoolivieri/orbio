@@ -31,6 +31,12 @@ export function BasicInformation() {
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
+
+        let is_mounted = true;
+        if (!is_mounted) {
+            return '';
+        }
+
         setControlledInput(initialControlledInput);
         axios.get("/api/load-basic-account-data")
             .then(function (response) {
@@ -44,6 +50,10 @@ export function BasicInformation() {
                 setControlledInput(errorControlledInput);
                 handleOpenSnackbar(error.response.data.message, "error");
             });
+        
+        return () => {
+            is_mounted = false;
+        }
 
     }, [loadingFields]);
 

@@ -53,25 +53,39 @@ class MyAccountController extends Controller
 
         $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        return response([
-            "complementary" => [
-                'anac_license' => $user->personal_document->anac_license,
-                'cpf' => $user->personal_document->cpf,
-                'cnpj' => $user->personal_document->cnpj,
-                'telephone' => $user->personal_document->telephone,
-                'cellphone' => $user->personal_document->cellphone,
-                'company_name' => $user->personal_document->company_name,
-                'trading_name' => $user->personal_document->trading_name
-            ],
-            "address" => [
-                'address' => $user->personal_document->address->address,
-                'number' => $user->personal_document->address->number,
-                'cep' => $user->personal_document->address->cep,
-                'city' => isset($user->personal_document->address->city) ? $user->personal_document->address->city : "0",
-                'state' => isset($user->personal_document->address->state) ? $user->personal_document->address->state : "0",
-                'complement' => $user->personal_document->address->complement
-            ]
-        ], 200);
+        $available_data = json_decode($user->profile->access_data);
+
+        $data = [];
+
+        // dd($available_data->address);
+
+        foreach ($available_data as $key => $item) {
+
+            if ($key === "address") {
+
+                if (boolval($item)) {
+
+                    $data["address"] = [
+                        'address' => $user->personal_document->address->address,
+                        'number' => $user->personal_document->address->number,
+                        'cep' => $user->personal_document->address->cep,
+                        'city' => isset($user->personal_document->address->city) ? $user->personal_document->address->city : "0",
+                        'state' => isset($user->personal_document->address->state) ? $user->personal_document->address->state : "0",
+                        'complement' => $user->personal_document->address->complement
+                    ];
+                } else {
+
+                    $data["address"] = [];
+                }
+            } else {
+
+                if (boolval($item)) {
+                    $data["documents"][$key] = is_null($user->personal_document->$key) ? "" : $user->personal_document->$key;
+                }
+            }
+        }
+
+        return response($data, 200);
     }
 
     function basicDataUpdate(UpdateBasicDataRequest $request): \Illuminate\Http\Response

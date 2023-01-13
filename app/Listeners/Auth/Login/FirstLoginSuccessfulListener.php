@@ -8,18 +8,16 @@ use App\Models\Users\User;
 use App\Models\Addresses\Address;
 use App\Models\PersonalDocuments\PersonalDocument;
 use App\Models\Accesses\AnnualTraffic;
-use App\Models\Accesses\AccessedDevice;
 
 class FirstLoginSuccessfulListener
 {
 
-    function __construct(User $userModel, Address $addressModel, PersonalDocument $personalDocumentModel, AnnualTraffic $annualTrafficModel, AccessedDevice $accessedDevicesModel)
+    function __construct(User $userModel, Address $addressModel, PersonalDocument $personalDocumentModel, AnnualTraffic $annualTrafficModel)
     {
         $this->userModel = $userModel;
         $this->userAddressModel = $addressModel;
         $this->personalDocumentModel = $personalDocumentModel;
         $this->annualTrafficModel = $annualTrafficModel;
-        $this->accessedDevicesModel = $accessedDevicesModel;
     }
 
     function handle($event)
@@ -43,11 +41,6 @@ class FirstLoginSuccessfulListener
 
             // New annual access record - to count user montly accesses
             $this->annualTrafficModel->create([
-                "user_id" => $user->id
-            ]);
-
-            // New device access record - to count each device access
-            $this->accessedDevicesModel->create([
                 "user_id" => $user->id
             ]);
         });

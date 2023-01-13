@@ -20,9 +20,7 @@ export const Account = () => {
   const [actualPanel, setActualPanel] = React.useState("basic");
   const { setPageIndex } = usePage();
 
-  const options = AuthData.data.profile_id != 1 ?
-    [{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }]
-    : [{ page: "basic", title: "básico", icon: "" }, { page: "account_configuration", title: "configurações" }];
+  const options = [{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }];
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -44,7 +42,7 @@ export const Account = () => {
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
           {(actualPanel === "basic") && <BasicInformation />}
-          {(actualPanel === "complementary" && AuthData.data.profile_id != 1) && <ComplementaryInformation />}
+          {(actualPanel === "complementary") && <ComplementaryInformation />}
           {(actualPanel === "account_configuration") && <AdditionalConfiguration />}
 
         </Box>

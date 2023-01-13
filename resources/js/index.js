@@ -17,18 +17,16 @@ export default function Index() {
 
   return (
     <>
-      <React.StrictMode>
-        <PageProvider>
-          <AuthProvider>
-            <ThemeProvider theme={theme}>
-              <CssBaseline />
-              <SnackbarProvider maxSnack={3}>
-                <MainRoutes />
-              </SnackbarProvider>
-            </ThemeProvider>
-          </AuthProvider>
-        </PageProvider>
-      </React.StrictMode>
+      <PageProvider>
+        <AuthProvider>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <SnackbarProvider maxSnack={3}>
+              <MainRoutes />
+            </SnackbarProvider>
+          </ThemeProvider>
+        </AuthProvider>
+      </PageProvider>
     </>
   );
 }

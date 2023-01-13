@@ -14,41 +14,65 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from "../../../../../services/AxiosApi";
-import { InputMask } from '../../../../../utils/InputMask';
-import { FormValidation } from '../../../../../utils/FormValidation';
 import { AutoCompleteCity } from './input/AutoCompleteCity';
 import { AutoCompleteState } from './input/AutoCompleteState';
 // Libs
 import { useSnackbar } from 'notistack';
 
-const initialControlledInput = {
-    anac_license: "Carregando",
-    cpf: "Carregando",
-    cnpj: "Carregando",
-    telephone: "Carregando",
-    cellphone: "Carregando",
-    company_name: "Carregando",
-    trading_name: "Carregando",
-    address: "Carregando",
-    number: "Carregando",
-    cep: "Carregando",
-    complement: "Carregando"
+const initialDocumentsForm = {};
+const initialDocumentsFormError = {};
+
+const initialAddressForm =
+{
+    address: "",
+    cep: "",
+    city: "0",
+    complement: "",
+    number: "",
+    state: "0"
 };
 
-const initialFieldError = { anac_license: false, cpf: false, cnpj: false, telephone: false, cellphone: false, company_name: false, trading_name: false, address: false, number: false, cep: false, city: false, state: false, complement: false };
-const initialFieldErrorMessage = { anac_license: "", cpf: "", cnpj: "", telephone: "", cellphone: "", company_name: "", trading_name: "", address: "", number: "", cep: "", complement: "" };
+const initialAddressFormError = {
+    address: { error: false, message: "" },
+    cep: { error: false, message: "" },
+    city: { error: false, message: "" },
+    complement: { error: false, message: "" },
+    number: { error: false, message: "" },
+    state: { error: false, message: "" }
+};
+
+const initialFormLoading = { documents: false, address: false };
+
+const documentsFormConfig = {
+    cpf: { label: "CPF", validation: { regex: /^\d{3}\.\d{3}\.\d{3}\-\d{2}$/, message: 'CPF inválido.' } },
+    cnpj: { label: "CNPJ", validation: { regex: /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/, message: 'CNPJ inválido.' } },
+    cellphone: { label: "Celular", validation: { regex: /^\d{11}$/, message: 'Número de celular inválido. Digite apenas os números incluindo o DDD.' } },
+    telephone: { label: "Telefone", validation: { regex: /^\d{11}$/, message: 'Número de telefone inválido. Digite apenas os números incluindo o DDD.' } },
+    anac_license: { label: "Licença Anac", validation: { regex: /^[A-Z]{2}\d{3}[A-Z]{1}\d{2}[A-Z0-9]{1}$/, message: 'Licença Anac inválida.' } },
+    company_name: { label: "Razão Social", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' } },
+    trading_name: { label: "Nome Fantasia", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' } }
+}
+
+const addressFormConfig = {
+    address: { label: "Endereço", validation: { regex: /^\d{3,}$/, message: 'CEP inválido.' } },
+    cep: { label: "CEP", validation: { regex: /^\d{5}-\d{3}$/, message: 'CEP inválido.' } },
+    complement: { label: "Complemento", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' } },
+    number: { label: "Número", validation: { regex: /^\d+$/, message: 'Número residêncial inválido.' } },
+    city: { label: "Cidade", validation: { regex: /^[^0]\d*\.?\d+$/, message: 'A cidade precisa ser selecionada.' } },
+    state: { label: "Estado", validation: { regex: /^[^0]\d*\.?\d+$/, message: 'O estado precisa ser selecionado.' } }
+}
 
 export function ComplementaryInformation() {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [addressUpdateLoading, setAddressUpdateLoading] = React.useState(false);
-    const [documentUpdateLoading, setDocumentUpdateLoading] = React.useState(false);
-    const [loadingFields, setLoadingFields] = React.useState(true);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-    const [keyPressed, setKeyPressed] = React.useState(null);
+    // Form states
+    const [documentsForm, setDocumentsForm] = React.useState(initialDocumentsForm);
+    const [documentsFormError, setDocumentsFormError] = React.useState(initialDocumentsFormError);
+    const [addressForm, setAddressForm] = React.useState(initialAddressForm);
+    const [addressFormError, setAddressFormError] = React.useState(initialAddressFormError);
+    // Others
+    const [formLoading, setFormLoading] = React.useState(initialFormLoading);
     const [selectedState, setSelectedState] = React.useState(null);
     const [selectedCity, setSelectedCity] = React.useState(null);
     const { enqueueSnackbar } = useSnackbar();
@@ -56,209 +80,139 @@ export function ComplementaryInformation() {
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        setControlledInput(initialControlledInput);
+
+        let is_mounted = true;
+        if (!is_mounted) {
+            return '';
+        }
+
+        setDocumentsForm(initialDocumentsForm);
+        setAddressForm(initialAddressForm);
+        setDocumentsFormError(initialDocumentsFormError);
+        setAddressFormError(initialAddressFormError);
 
         axios.get("/api/load-complementary-account-data")
             .then(function (response) {
-                setLoadingFields(false);
-                setAddressUpdateLoading(false);
-                setDocumentUpdateLoading(false);
-                setControlledInput({
-                    anac_license: response.data.complementary.anac_license ? response.data.complementary.anac_license : "",
-                    cpf: response.data.complementary.cpf ? response.data.complementary.cpf : "",
-                    cnpj: response.data.complementary.cnpj ? response.data.complementary.cnpj : "",
-                    telephone: response.data.complementary.telephone ? response.data.complementary.telephone : "",
-                    cellphone: response.data.complementary.cellphone ? response.data.complementary.cellphone : "",
-                    company_name: response.data.complementary.company_name ? response.data.complementary.company_name : "",
-                    trading_name: response.data.complementary.trading_name ? response.data.complementary.trading_name : "",
-                    address: response.data.address.address ? response.data.address.address : "",
-                    number: response.data.address.number ? response.data.address.number : "",
-                    cep: response.data.address.cep ? response.data.address.cep : "",
-                    city: response.data.address.city,
-                    state: response.data.address.state,
-                    complement: response.data.address.complement ? response.data.address.complement : ""
+
+                setDocumentsForm(response.data.documents);
+                setDocumentsFormError(() => {
+                    let documentsFormClone = Object.assign({}, response.data.documents);
+                    for (let field in documentsFormClone) {
+                        documentsFormClone[field] = { error: false, message: "" }
+                    }
+                    return documentsFormClone;
                 });
+                setAddressForm(response.data.address);
+
             })
             .catch(function (error) {
-                setLoadingFields(false);
-                setAddressUpdateLoading(false);
-                setDocumentUpdateLoading(false);
-                setControlledInput({
-                    anac_license: "Erro",
-                    cpf: "Erro",
-                    cnpj: "Erro",
-                    telephone: "Erro",
-                    cellphone: "Erro",
-                    company_name: "Erro",
-                    trading_name: "Erro",
-                    address: "Erro",
-                    number: "Erro",
-                    cep: "Erro",
-                    complement: "Erro"
-                });
                 handleOpenSnackbar(error.response.data.message, "error");
+            })
+            .finally(() => {
+                setFormLoading(formLoading);
             });
 
-    }, [loadingFields]);
-
-    function handleDocumentsSubmitForm(e) {
-        e.preventDefault();
-        if (documentFormValidation()) {
-            setDocumentUpdateLoading(true);
-            documentsRequestServerOperation();
+        return () => {
+            is_mounted = false;
         }
+
+    }, []);
+
+    function handleDocumentsSubmitForm() {
+        if (!documentFormValidation()) {
+            return '';
+        }
+        setFormLoading({ documents: true, address: true });
+        documentsRequestServerOperation();
     }
 
-    function handleAddressSubmitForm(e) {
-        e.preventDefault();
-        if (addressFormValidation()) {
-            setAddressUpdateLoading(true);
-            addressRequestServerOperation();
+    function handleAddressSubmitForm() {
+        if (!addressFormValidation()) {
+            return '';
         }
+        setFormLoading({ documents: false, address: true });
+        addressRequestServerOperation();
     }
 
     function documentFormValidation() {
 
-        const anacLicenseValidate = FormValidation(controlledInput.anac_license, 3, null, /^\d{6}$/, "HABILITAÇÃO ANAC");
-        const cpfValidate = FormValidation(controlledInput.cpf, null, null, /^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "CPF");
-        const cnpjValidate = FormValidation(controlledInput.cnpj, null, null, /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, "CNPJ");
-        const telephoneValidate = FormValidation(controlledInput.telephone, null, null, /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/, "NÚMERO DE TELEFONE");
-        const cellphoneValidate = FormValidation(controlledInput.cellphone, null, null, /(\(?\d{2}\)?\s)?(\d{4,5}-\d{4})/, "NÚMERO DE CELULAR");
-        const companyNameValidate = FormValidation(controlledInput.company_name, 3);
-        const tradingNameValidate = FormValidation(controlledInput.trading_name, 3);
+        let is_valid = true;
 
-        setFieldError(
-            {
-                anac_license: anacLicenseValidate.error,
-                cpf: cpfValidate.error,
-                cnpj: cnpjValidate.error,
-                telephone: telephoneValidate.error,
-                cellphone: cellphoneValidate.error,
-                company_name: companyNameValidate.error,
-                trading_name: tradingNameValidate.error,
-                address: false,
-                number: false,
-                cep: false,
-                city: false,
-                state: false,
-                complement: false
+        let documentsFormErrorClone = Object.assign({}, documentsFormError);
+
+        for (let field in documentsForm) {
+
+            let field_regex = documentsFormConfig[field].validation.regex;
+            let field_error_message = documentsFormConfig[field].validation.message;
+            let field_value = documentsForm[field];
+
+            if (field_regex.test(field_value)) {
+                documentsFormErrorClone[field].error = false;
+                documentsFormErrorClone[field].message = "";
+            } else {
+                is_valid = false;
+                documentsFormErrorClone[field].error = true;
+                documentsFormErrorClone[field].message = field_error_message;
             }
-        );
+        }
 
-        setFieldErrorMessage(
-            {
-                anac_license: anacLicenseValidate.message,
-                cpf: cpfValidate.message,
-                cnpj: cnpjValidate.message,
-                telephone: telephoneValidate.message,
-                cellphone: cellphoneValidate.message,
-                company_name: companyNameValidate.message,
-                trading_name: tradingNameValidate.message,
-                address: "",
-                number: "",
-                cep: "",
-                city: "",
-                state: "",
-                complement: ""
-            }
-        );
+        setDocumentsFormError(documentsFormErrorClone);
 
-        return !(anacLicenseValidate.error || cpfValidate.error || cnpjValidate.error || telephoneValidate.error || cellphoneValidate.error || companyNameValidate.error || tradingNameValidate.error);
+        return is_valid;
 
     }
 
     function addressFormValidation() {
 
-        const addressValidate = FormValidation(controlledInput.address, 3);
-        const numberValidate = FormValidation(controlledInput.number, null, null, /^\d+$/, "NÚMERO DE ENDEREÇO");
-        const cepValidate = FormValidation(controlledInput.cep, null, null, /^[0-9]{5}-[0-9]{3}$/, "CEP");
-        const cityValidate = selectedCity != 0 ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" };
-        const stateValidate = selectedState != 0 ? { error: false, message: "" } : { error: true, message: "Selecione um estado" };
-        const complementValidate = FormValidation(controlledInput.complement);
+        let is_valid = true;
 
-        setFieldError(
-            {
-                anac_license: false,
-                cpf: false,
-                cnpj: false,
-                telephone: false,
-                cellphone: false,
-                company_name: false,
-                trading_name: false,
-                address: addressValidate.error,
-                number: numberValidate.error,
-                cep: cepValidate.error,
-                city: cityValidate.error,
-                state: stateValidate.error,
-                complement: complementValidate.error
+        let addressFormErrorClone = Object.assign({}, addressFormError);
+
+        for (let field in addressForm) {
+
+            let field_regex = addressFormConfig[field].validation.regex;
+            let field_error_message = addressFormConfig[field].validation.message;
+            let field_value = addressForm[field];
+
+            if (field_regex.test(field_value)) {
+                addressFormErrorClone[field].error = false;
+                addressFormErrorClone[field].message = "";
+            } else {
+                is_valid = false;
+                addressFormErrorClone[field].error = true;
+                addressFormErrorClone[field].message = field_error_message;
             }
-        );
+        }
 
-        setFieldErrorMessage(
-            {
-                anac_license: "",
-                cpf: "",
-                cnpj: "",
-                telephone: "",
-                cellphone: "",
-                company_name: "",
-                trading_name: "",
-                address: addressValidate.message,
-                number: numberValidate.message,
-                cep: cepValidate.message,
-                city: cityValidate.message,
-                state: stateValidate.message,
-                complement: complementValidate.message
-            }
-        );
+        setDocumentsFormError(addressFormErrorClone);
 
-        return !(addressValidate.error || numberValidate.error || cepValidate.error || cityValidate.error || stateValidate.error || complementValidate.error);
+        return is_valid;
     }
 
     function documentsRequestServerOperation() {
-        axios.patch("/api/update-documents-data", {
-            complementary_data_id: controlledInput.complementary_data_id,
-            address_id: controlledInput.address_id,
-            anac_license: controlledInput.anac_license,
-            cpf: controlledInput.cpf,
-            cnpj: controlledInput.cnpj,
-            telephone: controlledInput.telephone,
-            cellphone: controlledInput.cellphone,
-            company_name: controlledInput.company_name,
-            trading_name: controlledInput.trading_name
-        })
+        axios.patch("/api/update-documents-data", documentsForm)
             .then(function (response) {
-                setDocumentUpdateLoading(false);
-                setLoadingFields(true);
                 handleOpenSnackbar(response.data.message, "success");
             })
             .catch(function (error) {
-                setDocumentUpdateLoading(false);
                 documentsErrorRequestServerOperation(error.response);
+            })
+            .finally(() => {
+                setFormLoading(formLoading);
             });
+
     }
 
     function addressRequestServerOperation() {
-        axios.patch("/api/update-address-data", {
-            address: controlledInput.address,
-            number: controlledInput.number,
-            cep: controlledInput.cep,
-            city: selectedCity,
-            state: selectedState,
-            complement: controlledInput.complement
-        })
+        axios.patch("/api/update-address-data", addressForm)
             .then(function (response) {
-
-                setAddressUpdateLoading(false);
-                setLoadingFields(true);
                 handleOpenSnackbar(response.data.message, "success");
-
             })
             .catch(function (error) {
-
-                setAddressUpdateLoading(false);
                 addressErrorRequestServerOperation(error.response);
-
+            })
+            .finally(() => {
+                setFormLoading(formLoading);
             });
     }
 
@@ -282,38 +236,7 @@ export function ComplementaryInformation() {
             }
         }
 
-        setFieldError({
-            anac_license: request_errors.anac_license.error,
-            cpf: request_errors.cpf.error,
-            cnpj: request_errors.cnpj.error,
-            telephone: request_errors.telephone.error,
-            cellphone: request_errors.cellphone.error,
-            company_name: request_errors.company_name.error,
-            trading_name: request_errors.trading_name.error,
-            address: "",
-            number: "",
-            cep: "",
-            city: "",
-            state: "",
-            complement: ""
-        });
-
-        setFieldErrorMessage({
-            anac_license: request_errors.anac_license.message,
-            cpf: request_errors.cpf.message,
-            cnpj: request_errors.cnpj.message,
-            telephone: request_errors.telephone.message,
-            cellphone: request_errors.cellphone.message,
-            company_name: request_errors.company_name.message,
-            trading_name: request_errors.trading_name.message,
-            address: "",
-            number: "",
-            cep: "",
-            city: "",
-            state: "",
-            complement: ""
-        });
-
+        setDocumentsFormError(request_errors);
 
     }
 
@@ -336,54 +259,27 @@ export function ComplementaryInformation() {
             }
         }
 
-        setFieldError({
-            anac_license: false,
-            cpf: false,
-            cnpj: false,
-            telephone: false,
-            cellphone: false,
-            company_name: false,
-            trading_name: false,
-            address: request_errors.address.error,
-            number: request_errors.number.error,
-            cep: request_errors.cep.error,
-            city: request_errors.city.error,
-            state: request_errors.state.error,
-            complement: request_errors.complement.error
-        });
-
-        setFieldErrorMessage({
-            anac_license: "",
-            cpf: "",
-            cnpj: "",
-            telephone: "",
-            cellphone: "",
-            company_name: "",
-            trading_name: "",
-            address: request_errors.address.message,
-            number: request_errors.number.message,
-            cep: request_errors.cep.message,
-            city: request_errors.city.message,
-            state: request_errors.state.message,
-            complement: request_errors.complement.message
-        });
+        setDocumentsFormError(request_errors);
     }
 
     function reloadFormulary() {
-        setLoadingFields(true);
+        console.log('reload');
     }
 
-    function handleInputChange(e) {
-        setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
+    function handleDocumentsFormChange(e) {
+        setDocumentsForm({ ...documentsForm, [e.target.name]: e.currentTarget.value });
     }
 
-
-    function handleInputSetMask(e) {
-        InputMask(e, keyPressed);
+    function handleAddressFormChange(e) {
+        setAddressForm({ ...addressForm, [e.target.name]: e.currentTarget.value });
     }
 
     function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
+    }
+
+    function checkIfCanRenderDocuments() {
+        return !formLoading.documents && Object.keys(documentsFormError).length != 0 && Object.keys(documentsForm).length != 0;
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -400,61 +296,39 @@ export function ComplementaryInformation() {
                 </Grid>
             </Grid>
 
-            <Box component="form" onSubmit={handleDocumentsSubmitForm} sx={{ mt: 2 }} >
+            <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 0px' }}>
 
                     <Typography variant="h5" marginBottom={2}>Documentos</Typography>
 
                     <Grid container spacing={3}>
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="anac_license"
-                                name="anac_license"
-                                label="Habilitação ANAC"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.anac_license}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.anac_license}
-                                error={fieldError.anac_license}
-                                onChange={(event) => {
-                                    handleInputSetMask(event);
-                                    handleInputChange(event);
-                                }}
-                            />
-                        </Grid>
+                        {checkIfCanRenderDocuments() && Object.keys(documentsForm).map((key) => {
 
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="cpf"
-                                name="cpf"
-                                label="CPF"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.cpf}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.cpf}
-                                error={fieldError.cpf}
-                                onChange={(event) => {
-                                    handleInputSetMask(event);
-                                    handleInputChange(event);
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            />
-                        </Grid>
+                            return (
+                                <>
+                                    <Grid item xs={12} sm={6}>
+                                        <TextField
+                                            id={key}
+                                            name={key}
+                                            label={documentsFormConfig[key].label}
+                                            fullWidth
+                                            variant="outlined"
+                                            value={documentsForm[key]}
+                                            disabled={formLoading.documents}
+                                            error={documentsFormError[key].error}
+                                            helperText={documentsFormError[key].message}
+                                            onChange={(event) => handleDocumentsFormChange(event)}
+                                        />
+                                    </Grid>
+                                </>
+                            )
 
+                        })}
+
+                        {/*
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                id="cnpj"
-                                name="cnpj"
-                                label="CNPJ"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.cnpj}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.cnpj}
-                                error={fieldError.cnpj}
                                 onChange={(event) => {
                                     handleInputSetMask(event);
                                     handleInputChange(event);
@@ -465,93 +339,20 @@ export function ComplementaryInformation() {
                                 onKeyDown={(event) => { setKeyPressed(event.key) }}
                             />
                         </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="telephone"
-                                name="telephone"
-                                label="Telefone (com DDD)"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.telephone}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.telephone}
-                                error={fieldError.telephone}
-                                onChange={(event) => {
-                                    handleInputSetMask(event);
-                                    handleInputChange(event);
-                                }}
-                                InputProps={{
-                                    maxLength: 14
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="cellphone"
-                                name="cellphone"
-                                label="Celular (com DDD)"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.cellphone}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.cellphone}
-                                error={fieldError.cellphone}
-                                onChange={(event) => {
-                                    handleInputSetMask(event);
-                                    handleInputChange(event);
-                                }}
-                                InputProps={{
-                                    maxLength: 14
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="company_name"
-                                name="company_name"
-                                label="Razão Social"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.company_name}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.company_name}
-                                error={fieldError.company_name}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                id="trading_name"
-                                name="trading_name"
-                                label="Nome Fantasia"
-                                fullWidth
-                                variant="outlined"
-                                value={controlledInput.trading_name}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.trading_name}
-                                error={fieldError.trading_name}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
+                        */}
 
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={documentUpdateLoading || loadingFields} sx={{ mt: 2 }}>
-                        {documentUpdateLoading ? "Processando..." : "Atualizar"}
+                    <Button type="submit" variant="contained" color="primary" disabled={formLoading.documents} sx={{ mt: 2 }} onClick={handleDocumentsSubmitForm}>
+                        Atualizar
                     </Button>
                 </Paper>
             </Box>
 
-            <Box component="form" onSubmit={handleAddressSubmitForm} sx={{ mt: 2 }} >
+            <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
 
-                    <Typography variant="h5" marginBottom={2}>Endereço</Typography>
+                    <Typography variant="h5" mb={2}>Endereço</Typography>
 
                     <Grid container spacing={3} columns={10}>
 
@@ -562,25 +363,25 @@ export function ComplementaryInformation() {
                                 source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
                                 primary_key={"id"}
                                 key_text={"sigla"}
-                                error={fieldError.state}
+                                error={addressFormError.state}
                                 setSelectedState={setSelectedState}
-                                setControlledInput={setControlledInput}
-                                controlledInput={controlledInput}
+                                setControlledInput={setAddressForm}
+                                controlledInput={addressForm}
                             />
                         </Grid>
 
                         <Grid item xs={5} lg={2} xl={2}>
-                            {(selectedState != null) ?
+                            {selectedState ?
                                 <AutoCompleteCity
                                     label={"Cidades"}
                                     name={"city"}
                                     source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + selectedState + "/municipios"}
                                     primary_key={"id"}
                                     key_text={"nome"}
-                                    error={fieldError.city}
+                                    error={addressFormError.city}
                                     setSelectedCity={setSelectedCity}
-                                    setControlledInput={setControlledInput}
-                                    controlledInput={controlledInput}
+                                    setControlledInput={setAddressForm}
+                                    controlledInput={addressForm}
                                 />
                                 :
                                 <TextField
@@ -599,14 +400,11 @@ export function ComplementaryInformation() {
                                 label="CEP"
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.cep}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.cep}
-                                error={fieldError.cep}
-                                onChange={(event) => {
-                                    handleInputSetMask(event);
-                                    handleInputChange(event);
-                                }}
+                                value={addressForm.cep}
+                                disabled={formLoading.address}
+                                error={addressFormError.cep.error}
+                                helperText={addressFormError.cep.message}
+                                onChange={(event) => handleAddressFormChange(event)}
                                 InputProps={{
                                     maxLength: 9
                                 }}
@@ -620,11 +418,11 @@ export function ComplementaryInformation() {
                                 label="Numero"
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.number}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.number}
-                                error={fieldError.number}
-                                onChange={handleInputChange}
+                                value={addressForm.number}
+                                disabled={formLoading.address}
+                                error={addressFormError.number.error}
+                                helperText={addressFormError.number.message}
+                                onChange={(event) => handleAddressFormChange(event)}
                             />
                         </Grid>
 
@@ -635,11 +433,11 @@ export function ComplementaryInformation() {
                                 label="Logradouro"
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.address}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.address}
-                                error={fieldError.address}
-                                onChange={handleInputChange}
+                                value={addressForm.address}
+                                disabled={formLoading.address}
+                                error={addressFormError.address.error}
+                                helperText={addressFormError.address.message}
+                                onChange={(event) => handleAddressFormChange(event)}
                             />
                         </Grid>
 
@@ -650,18 +448,18 @@ export function ComplementaryInformation() {
                                 label="Complemento"
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.complement}
-                                disabled={loadingFields}
-                                helperText={fieldErrorMessage.complement}
-                                error={fieldError.complement}
-                                onChange={handleInputChange}
+                                value={addressForm.complement}
+                                disabled={formLoading.address}
+                                error={addressFormError.complement.error}
+                                helperText={addressFormError.complement.message}
+                                onChange={(event) => handleAddressFormChange(event)}
                             />
                         </Grid>
 
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={addressUpdateLoading || loadingFields} sx={{ mt: 2 }}>
-                        {addressUpdateLoading ? "Processando..." : "Atualizar"}
+                    <Button variant="contained" color="primary" disabled={formLoading.address} sx={{ mt: 2 }} onClick={handleAddressSubmitForm}>
+                        Atualizar
                     </Button>
 
                 </Paper>
