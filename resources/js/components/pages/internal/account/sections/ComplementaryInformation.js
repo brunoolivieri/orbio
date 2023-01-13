@@ -303,11 +303,11 @@ export function ComplementaryInformation() {
 
                     <Grid container spacing={3}>
 
-                        {checkIfCanRenderDocuments() && Object.keys(documentsForm).map((key) => {
+                        {checkIfCanRenderDocuments() && Object.keys(documentsForm).map((key, index) => {
 
                             return (
                                 <>
-                                    <Grid item xs={12} sm={6}>
+                                    <Grid item xs={12} sm={6} key={key}>
                                         <TextField
                                             id={key}
                                             name={key}
@@ -325,21 +325,6 @@ export function ComplementaryInformation() {
                             )
 
                         })}
-
-                        {/*
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                onChange={(event) => {
-                                    handleInputSetMask(event);
-                                    handleInputChange(event);
-                                }}
-                                InputProps={{
-                                    maxLength: 18
-                                }}
-                                onKeyDown={(event) => { setKeyPressed(event.key) }}
-                            />
-                        </Grid>
-                        */}
 
                     </Grid>
 

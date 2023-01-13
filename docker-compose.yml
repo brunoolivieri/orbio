@@ -1,0 +1,27 @@
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www
+    environment:
+      - DB_HOST=db
+      - DB_DATABASE=laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    command: php-fpm
+  db:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=laravel
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+  node:
+    build: .
+    working_dir: /var/www
+    command: yarn start
