@@ -29,18 +29,18 @@ marcador = new mapboxgl.Marker({ color: 'black' })
 	.setLngLat(home)
 	.addTo(map);
 
-// ========= FERRAMENTA DE BUSCA POR LOCALIDADES =========== //
+// ========= ATT ORBIO: FERRAMENTA DE BUSCA POR LOCALIDADES =========== //
 
 // Adicionando o controle de busca ao mapa.
-map.addControl(
-	new MapboxGeocoder({
-		accessToken: mapboxgl.accessToken,
-		mapboxgl: mapboxgl
-	})
-);
+var mapBoxGeocoder = new MapboxGeocoder({
+	accessToken: mapboxgl.accessToken,
+	mapboxgl: mapboxgl
+});
+map.addControl(mapBoxGeocoder);
 
+var mapBoxNavigationControl = new mapboxgl.NavigationControl();
 // Adicionando controles de zoom e rotação no mapa
-map.addControl(new mapboxgl.NavigationControl());
+map.addControl(mapBoxNavigationControl);
 
 // ========== ADICIONANDO AS OPÇÕES DE MAPA ============= //
 /*
@@ -1200,23 +1200,29 @@ function recomputeDistanceBetweenLines() {
 	}
 }
 
-// ========= ACESSANDO O MENU DE OPÇÕES DA MISSÃO: NOVO, ABRIR, SALVAR, IMPORTAR ========= //
+// ========= ATT ORBIO: ACESSANDO O MENU DE OPÇÕES DA MISSÃO: NOVO, ABRIR, SALVAR, IMPORTAR ========= //
 
 // Acessando o botão de menu
 var btnMenu = document.getElementById("btn-mission");
 
+// Acessando o menu lateral do marcador
+var markerSideMenu = document.getElementById('side_menu');
+
+// Acessando box de logos
+var boxLogos = document.getElementById("logo-box");
+
+// Acessando a caixa dos cálculos de área
+var calculationBox = document.getElementById("calculation-box");
+
 // Acessando o elemento <nav> com o menu de opções
 var menuOptions = document.getElementById("menu-options");
+
+// ====================================================================== //
 
 // Quando o usuário clica no botão, abre-se o modal
 btnMenu.onclick = function () {
 	menuOptions.style.display = (menuOptions.style.display == "block") ? "none" : "block";
 }
-
-// Exibindo e ocultando o menu de acordo com o evento do mouse
-//btnMenu.addEventListener("mouseover", function(){ menu.style.display = "block"; });
-//menu.addEventListener("mouseover", function(){ this.style.display = "block"; });
-//menu.addEventListener("mouseout", function(){ this.style.display = "none"; });
 
 // ==== MENU: NOVO ==== //
 var btnClean = document.getElementById("btn-clean");
@@ -1558,44 +1564,44 @@ function getTextAndSaveCSV(e) {
 // ==== ATT ORBIO ==== //
 function openModalToCheckFlightPlanBeforeCreation() {
 
-    removeElementsForPrintScreen();
+	removeElementsForPrintScreen();
 
-    html2canvas(document.body).then(canvas => {
+	html2canvas(document.body).then(canvas => {
 
-        var blobImg = new Blob([canvas], { type: "image/jpeg" });
-        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+		var blobImg = new Blob([canvas], { type: "image/jpeg" });
+		var dataURL = canvas.toDataURL('image/jpeg', 1.0);
 
-        filenameImg = new Date().getTime() + ".jpeg";
+		filenameImg = new Date().getTime() + ".jpeg";
 
-        return { blobImg, filenameImg, dataURL, canvas };
+		return { blobImg, filenameImg, dataURL, canvas };
 
-    }).then(({ blobImg, filenameImg, dataURL, canvas }) => {
+	}).then(({ blobImg, filenameImg, dataURL, canvas }) => {
 
-        // Nome do arquivo com data em milissegundos decorridos
-        const timestamp = new Date().getTime();
-        const filename = timestamp + ".txt";
+		// Nome do arquivo com data em milissegundos decorridos
+		const timestamp = new Date().getTime();
+		const filename = timestamp + ".txt";
 
-        confirmationModal.style.display = "flex";
-        document.getElementsByClassName("flight_plan_name")[0].value = filename;
+		confirmationModal.style.display = "flex";
+		document.getElementsByClassName("flight_plan_name")[0].value = filename;
 
-        canvas.toBlob(function (blobImg) {
-            var elem = document.createElement("img");
-            const blobUrl = URL.createObjectURL(blobImg)
-            elem.setAttribute("src", blobUrl);
-            elem.setAttribute("width", "100%");
-            elem.setAttribute("height", "100%");
-            let div = document.getElementsByClassName("flight_plan_image")[0];
-            div.replaceChildren([]);
-            div.appendChild(elem);
-        });
+		canvas.toBlob(function (blobImg) {
+			var elem = document.createElement("img");
+			const blobUrl = URL.createObjectURL(blobImg)
+			elem.setAttribute("src", blobUrl);
+			elem.setAttribute("width", "100%");
+			elem.setAttribute("height", "100%");
+			let div = document.getElementsByClassName("flight_plan_image")[0];
+			div.replaceChildren([]);
+			div.appendChild(elem);
+		});
 
-        flightPlanData = {
-            timestamp: timestamp,
-            filename: filename,
-            canvas: { blobImg, filenameImg, dataURL }
-        }
+		flightPlanData = {
+			timestamp: timestamp,
+			filename: filename,
+			canvas: { blobImg, filenameImg, dataURL }
+		}
 
-    })
+	})
 
 }
 
