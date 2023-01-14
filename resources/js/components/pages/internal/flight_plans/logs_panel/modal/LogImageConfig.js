@@ -2,7 +2,6 @@ import * as React from 'react';
 import { IconButton, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box } from '@mui/material';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
-import { MapBox } from './Mapbox';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
@@ -41,7 +40,7 @@ export function LogImageConfig() {
                 <Divider />
                 <DialogContent>
                     <div id="modal-content" style={{ height: "500px" }}>
-                        <iframe id="iframe-content" src="http://localhost:8000/internal/map-modal?userid=1" style={{ width: "100%", height: "100%" }}></iframe>
+                        <iframe id="iframe-content" src="http://localhost:8000/internal/map-modal" style={{ width: "100%", height: "100%" }}></iframe>
                     </div>
                 </DialogContent>
                 <Divider />

@@ -44,7 +44,6 @@
         "@react-spring/web": "^9.5.2",
         "@types/react": "^17.0.45",
         "date-fns": "^2.29.1",
-        "mapbox-gl": "^2.12.0",
         "moment": "^2.29.1",
         "notistack": "^2.0.4",
         "react-router-dom": "^6.0.2",
