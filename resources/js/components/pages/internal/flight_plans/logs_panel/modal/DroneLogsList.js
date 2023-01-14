@@ -18,8 +18,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import ReplayIcon from '@mui/icons-material/Replay';
-// Custom
-import AxiosApi from '../../../../../../services/AxiosApi';
 // Libs
 import moment from 'moment';
 

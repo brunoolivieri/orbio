@@ -2,6 +2,7 @@ import * as React from 'react';
 // Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 // Custom
+import { LogImageConfig } from '../modal/LogImageConfig';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../../services/AxiosApi';
 // Fonts awesome
@@ -93,7 +94,7 @@ export const CreateLog = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText sx={{ mb: 2 }}>
-                        Os arquivos que você está prestes a fazer upload devem estar no formato KMZ. Eles serão extraídos e salvos como KML. Certifique-se de não selecionar arquivos que já foram salvos no sistema.
+                        Texto
                     </DialogContentText>
 
                     <Box mt={1}>
@@ -120,7 +121,12 @@ export const CreateLog = React.memo((props) => {
                             <ul>
                                 <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + selectedLogs.length}</ListSubheader>
                                 {selectedLogs.map((logfile, index) => (
-                                    <ListItem key={index}>
+                                    <ListItem
+                                        key={index}
+                                        secondaryAction={
+                                            <LogImageConfig />
+                                        }
+                                    >
                                         <ListItemText primary={logfile.name} secondary={'Tamanho: ' + logfile.size} />
                                     </ListItem>
                                 ))}

@@ -75,6 +75,7 @@ Route::middleware(["session.auth"])->group(function () {
     })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard");
     Route::get('api/auth/logout', LogoutController::class);
     Route::view('/internal/map', "map");
+    Route::view('/internal/map-modal', "map_modal");
     // Internal Dashboard 
     Route::get('/api/load-dashboard-metrics', DashboardController::class);
     // Internal "MyAccount" operations
