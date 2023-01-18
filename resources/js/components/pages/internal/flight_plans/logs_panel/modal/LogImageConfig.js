@@ -1,16 +1,13 @@
 import * as React from 'react';
-import { IconButton, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Box } from '@mui/material';
-// Custom
-import axios from '../../../../../../services/AxiosApi';
+import { IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Tooltip } from '@mui/material';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage } from '@fortawesome/free-solid-svg-icons';
 
-export function LogImageConfig() {
+export const LogImageConfig = React.memo((props) => {
 
     React.useEffect(() => {
-
-        //
+        //console.log(props.log)
     });
 
     const [open, setOpen] = React.useState(false);
@@ -23,11 +20,21 @@ export function LogImageConfig() {
         setOpen(false);
     };
 
-    return (
-        <>
-            <IconButton onClick={handleOpen}>
+    if (!props.is_valid) {
+        return (
+            <IconButton>
                 <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
             </IconButton>
+        )
+    }
+
+    return (
+        <>
+            <Tooltip title="Gerar imagem">
+                <IconButton onClick={handleOpen}>
+                    <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
+                </IconButton>
+            </Tooltip>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -35,12 +42,16 @@ export function LogImageConfig() {
                 maxWidth="md"
             >
                 <DialogTitle>
-                    {"IMAGEM DO LOG"}
+                    IMAGEM DO LOG
                 </DialogTitle>
                 <Divider />
                 <DialogContent>
                     <div id="modal-content" style={{ height: "500px" }}>
-                        <iframe id="iframe-content" src="http://localhost:8000/internal/map-modal" style={{ width: "100%", height: "100%" }}></iframe>
+                        <iframe
+                            id="iframe-content"
+                            src="http://localhost:8000/internal/map-modal"
+                            style={{ width: "100%", height: "100%" }}
+                        ></iframe>
                     </div>
                 </DialogContent>
                 <Divider />
@@ -53,4 +64,4 @@ export function LogImageConfig() {
             </Dialog>
         </>
     );
-}
+});

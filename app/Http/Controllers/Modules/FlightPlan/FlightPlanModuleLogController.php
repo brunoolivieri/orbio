@@ -47,6 +47,13 @@ class FlightPlanModuleLogController extends Controller
         return $this->service->download($filename);
     }
 
+    public function convertTlogToKml(Request $request)
+    {
+        Gate::authorize('flight_plans_write');
+        
+        return $this->service->convertTlogToKml($request->file('files'));
+    }
+
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');

@@ -48,18 +48,20 @@ class FlightPlanLogService implements ServiceInterface
         }
     }
 
-    function createOne(array $log_files)
+    function convertTlogToKml(array $log_files)
     {
 
         try {
 
-            foreach ($log_files as $log_file) {
+            foreach ($log_files as $index => $log_file) {
 
                 // Extraction 
 
                 $zip = new ZipArchive;
 
                 if ($zip->open($log_file)) {
+
+                    dd($zip->numFiles);
 
                     // Loop folder and files 
                     for ($i = 0; $i < $zip->numFiles; $i++) {
@@ -100,7 +102,7 @@ class FlightPlanLogService implements ServiceInterface
 
                 $kml_filename = str_replace(".tlog", "", str_replace("flightlogs/tlogs/", "", $tlog_kml_path));
 
-                $data = [
+                $data[$index] = [
                     "flight_plan_id" => null,
                     "name" => Str::random(10),
                     "files" => [
@@ -117,14 +119,17 @@ class FlightPlanLogService implements ServiceInterface
                     ],
                     "timestamp" => preg_replace('/\D/', "", $log_file->getClientOriginalName()) // Remove non-numeric from timestamp
                 ];
-
-                $this->repository->createOne(collect($data));
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 403);
         }
 
-        return response(["message" => "Logs salvos com sucesso!"], 201);
+        return response(["data" => $data], 200);
+    }
+
+    function createOne(array $log_files)
+    {
+        //
     }
 
     function updateOne(array $data, string $identifier)

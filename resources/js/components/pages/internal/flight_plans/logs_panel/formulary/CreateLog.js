@@ -1,6 +1,7 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, Stack, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 // Custom
 import { LogImageConfig } from '../modal/LogImageConfig';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -10,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const initialDisplatAlert = { display: false, type: "", message: "" };
+const kmlRegex = /^(?!.*\.tlog\.kml$).*\.kml$/;
 
 export const CreateLog = React.memo((props) => {
 
@@ -18,7 +20,6 @@ export const CreateLog = React.memo((props) => {
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const [setLogs] = React.useState([]);
     const [selectedLogs, setSelectedLogs] = React.useState([]);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
 
@@ -64,10 +65,33 @@ export const CreateLog = React.memo((props) => {
         setOpen(false);
     }
 
-    function handleUploadLog(event) {
+    async function handleUploadLog(event) {
 
+        const files = event.currentTarget.files;
+
+        // Filter .tlog.kml files
+        const tlogKmlFiles = Array.from(files).filter((file) => !kmlRegex.test(file.name));
+        // Filter .kml files
+        let kmlFiles = Array.from(files).filter((file) => kmlRegex.test(file.name));
+
+        if (tlogKmlFiles.length > 0) {
+
+            const formData = new FormData();
+
+            tlogKmlFiles.forEach((file) => {
+                formData.append("files[]", file);
+            })
+
+            const response = await axios.post("api/kml-conversion", formData);
+
+            console.log(response.data)
+
+        }
+
+        /*
         const selected_logs = Array.from(event.currentTarget.files);
         setSelectedLogs(selected_logs);
+        */
 
     }
 
@@ -124,7 +148,15 @@ export const CreateLog = React.memo((props) => {
                                     <ListItem
                                         key={index}
                                         secondaryAction={
-                                            <LogImageConfig />
+                                            <Stack direction="row" spacing={1}>
+
+                                                {!kmlRegex.test(logfile.name) &&
+                                                    <CircularProgress />
+                                                }
+
+                                                <LogImageConfig log={logfile} is_valid={kmlRegex.test(logfile.name)} />
+
+                                            </Stack>
                                         }
                                     >
                                         <ListItemText primary={logfile.name} secondary={'Tamanho: ' + logfile.size} />
