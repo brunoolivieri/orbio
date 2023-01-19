@@ -68,30 +68,24 @@ export const CreateLog = React.memo((props) => {
 
     async function handleUploadLog(event) {
 
-        const files = event.currentTarget.files;
+        const files = Array.from(event.currentTarget.files);
 
+        /*
         // Filter .tlog.kml files
-        const tlogKmlFiles = Array.from(files).filter((file) => !kmlRegex.test(file.name));
+        const tlogKmzFiles = Array.from(files).filter((file) => !kmlRegex.test(file.name));
         // Filter .kml files
         let kmlFiles = Array.from(files).filter((file) => kmlRegex.test(file.name));
+        */
 
-        let logs = [...kmlFiles];
+        const formData = new FormData();
 
-        if (tlogKmlFiles.length > 0) {
+        files.forEach((file) => {
+            formData.append("files[]", file);
+        })
 
-            const formData = new FormData();
+        const response = await axios.post("api/process-selected-logs", formData);
 
-            tlogKmlFiles.forEach((file) => {
-                formData.append("files[]", file);
-            })
-
-            const response = await axios.post("api/kml-conversion", formData);
-
-            logs = logs.concat(response.data);
-
-        }
-
-        setLogs(logs);
+        setLogs(response.data);
 
     }
 
@@ -150,15 +144,17 @@ export const CreateLog = React.memo((props) => {
                                         secondaryAction={
                                             <Stack direction="row" spacing={1}>
 
-                                                {file.is_valid ?
+                                                {file.status.is_valid ?
                                                     <>
-                                                        <IconButton>
-                                                            <CheckCircleIcon color="success" />
-                                                        </IconButton>
-                                                        <LogImageConfig log={file.kml || file} />
+                                                        <Tooltip title={file.status.message}>
+                                                            <IconButton>
+                                                                <CheckCircleIcon color="success" />
+                                                            </IconButton>
+                                                        </Tooltip>
+                                                        <LogImageConfig log={file} />
                                                     </>
                                                     :
-                                                    <Tooltip title="Arquivo inválido.">
+                                                    <Tooltip title={file.status.message}>
                                                         <IconButton>
                                                             <DangerousIcon color="error" />
                                                         </IconButton>
@@ -168,7 +164,7 @@ export const CreateLog = React.memo((props) => {
                                             </Stack>
                                         }
                                     >
-                                        <ListItemText primary={`Nome: ${file.name}`} secondary={`Tamanho: ${file.size}`} />
+                                        <ListItemText primary={`Nome: ${file.original_name}`} secondary={`Tamanho: ${file.size}`} />
                                     </ListItem>
                                 ))}
                             </ul>

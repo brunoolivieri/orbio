@@ -48,78 +48,140 @@ class FlightPlanLogService implements ServiceInterface
         }
     }
 
-    function convertTlogToKml(array $log_files)
+    function processSelectedLogs(array $logs = [])
     {
+
+        $data = [];
 
         try {
 
-            foreach ($log_files as $index => $log_file) {
+            foreach ($logs as $index => $log) {
 
-                // Extraction 
+                $original_log_name = $log->getClientOriginalName();
 
-                $zip = new ZipArchive;
+                // Actual log is a tlog.kmz
+                if (preg_match("/\.tlog\.kmz$/", $original_log_name)) {
 
-                if ($zip->open($log_file)) {
+                    // Converted [name].tlog.kmz to [name].tlog.kml
+                    $kml_filename = preg_replace("/\.tlog\.kmz$/", ".kml", $original_log_name);
 
-                    // Loop folder and files 
-                    for ($i = 0; $i < $zip->numFiles; $i++) {
+                    // Check if $kml_filename already exists in storage
+                    if (Storage::disk('public')->exists("flight_plans/flightlogs/kml/" . $kml_filename)) {
 
-                        // Get actual filename
-                        $file_fullpath = $zip->getNameIndex($i);
+                        $data[$index] = [
+                            "status" => [
+                                "is_valid" => false,
+                                "message" => "Já existe"
+                            ],
+                            "size" => filesize($log),
+                            "original_name" => $original_log_name
+                        ];
 
-                        // Check if filename has extension kml
-                        if (preg_match('/\.kml$/i', $file_fullpath)) {
+                        // If $kml_filename not exists in storage
+                    } else {
 
-                            // Tlog KML data
-                            $tlog_kml_path = $file_fullpath;
-                            $tlog_kml_content = $zip->getFromIndex($i);
+                        // Extraction 
+
+                        $zip = new ZipArchive;
+
+                        // If actual tlog file can be open
+                        if ($zip->open($log)) {
+
+                            // Loop folder and files 
+                            for ($i = 0; $i < $zip->numFiles; $i++) {
+
+                                // Get actual filename
+                                $file_fullpath = $zip->getNameIndex($i);
+
+                                // Check if filename has extension kml
+                                if (preg_match('/\.kml$/i', $file_fullpath)) {
+
+                                    $tlog_kml_content = $zip->getFromIndex($i);
+                                }
+                            }
+
+                            // Acessing .tlog.kml content object
+                            $tlog_kml_structure = simplexml_load_string($tlog_kml_content);
+                            $tlog_kml_placemark = $tlog_kml_structure->Document->Folder->Folder->Placemark;
+                            $tlog_kml_coordinates = (string) $tlog_kml_placemark->LineString->coordinates;
+
+                            // Creating .KML from .tlog.kml content 
+                            $kml = new SimpleXMLElement("<kml />");
+                            $document = $kml->addChild('Document');
+                            $placemark = $document->addChild('Placemark');
+                            $placemark->addChild('name', $tlog_kml_placemark->name);
+                            $line = $placemark->addChild('LineString');
+                            $line->addChild('altitudeMode', 'absolute');
+                            $line->addChild('coordinates', substr($tlog_kml_coordinates, strpos($tlog_kml_coordinates, "\n") + 1)); // string coordinates without the first "\n"
+
+                            // KML content as string and filename
+                            $kml_string_content = $kml->asXML();
+
+                            // Actual tlog.kml is valid and generated a KML
+                            $data[$index] = [
+                                "status" => [
+                                    "is_valid" => true,
+                                    "message" => "Processado"
+                                ],
+                                "size" => filesize($log),
+                                "timestamp" => preg_replace('/\D/', "", $original_log_name), // Remove non-numeric from timestamp
+                                "original_name" => $original_log_name,
+                                "name" => $kml_filename,
+                                "storage_path" => "flight_plans/flightlogs/kml/" . $kml_filename,
+                                "contents" => $kml_string_content
+                            ];
+
+                            // If actual tlog cant be open
+                        } else {
+
+                            $data[$index] = [
+                                "status" => [
+                                    "is_valid" => false,
+                                    "message" => "Corrompido"
+                                ],
+                                "size" => filesize($log),
+                                "original_name" => $original_log_name
+                            ];
                         }
                     }
 
-                    // Acessing .tlog.kml content object
-                    $tlog_kml_structure = simplexml_load_string($tlog_kml_content);
-                    $tlog_kml_placemark = $tlog_kml_structure->Document->Folder->Folder->Placemark;
-                    $tlog_kml_coordinates = (string) $tlog_kml_placemark->LineString->coordinates;
+                    // Actual log is a .kml
+                }
+                if (preg_match("/\.kml$/", $original_log_name)) {
 
-                    // Creating .KML from .tlog.kml content 
-                    $kml = new SimpleXMLElement("<kml />");
-                    $document = $kml->addChild('Document');
-                    $placemark = $document->addChild('Placemark');
-                    $placemark->addChild('name', $tlog_kml_placemark->name);
-                    $line = $placemark->addChild('LineString');
-                    $line->addChild('altitudeMode', 'absolute');
-                    $line->addChild('coordinates', substr($tlog_kml_coordinates, strpos($tlog_kml_coordinates, "\n") + 1)); // string coordinates without the first "\n"
+                    // Check if already exists
+                    if (Storage::disk('public')->exists("flight_plans/flightlogs/kml/" . $original_log_name)) {
 
-                    // KML content as string and filename
-                    $kml_string_content = $kml->asXML();
+                        $data[$index] = [
+                            "status" => [
+                                "is_valid" => false,
+                                "message" => "Já existe"
+                            ],
+                            "size" => filesize($log),
+                            "original_name" => $original_log_name
+                        ];
+                    } else {
 
-                    $kml_filename = str_replace(".tlog", "", str_replace("flightlogs/tlogs/", "", $tlog_kml_path));
+                        // Future: verify file integrity with libxml and SimpleXML
 
-                    // Actual tlog.kml is valid and generated a KML
-                    $data[$index] = [
-                        "is_valid" => true,
-                        "size" => filesize($log_file),
-                        "timestamp" => preg_replace('/\D/', "", $log_file->getClientOriginalName()), // Remove non-numeric from timestamp
-                        "name" => $log_file->getClientOriginalName(),
-                        "kml" => [
-                            "name" => $kml_filename,
-                            "storage_path" => "flight_plans/flightlogs/kml/" . $kml_filename,
-                            "contents" => $kml_string_content
-                        ],
-                    ];
-                } else {
-
-                    // Actual tlog.kml is invalid 
-                    $data[$index] = [
-                        "is_valid" => false,
-                        "size" => filesize($log_file),
-                        "name" => $log_file->getClientOriginalName()
-                    ];
+                        $data[$index] = [
+                            "status" => [
+                                "is_valid" => true,
+                                "message" => "Processado"
+                            ],
+                            "timestamp" => preg_replace('/\D/', "", $original_log_name),
+                            "size" => filesize($log),
+                            "original_name" => $original_log_name,
+                            "storage_path" => "flight_plans/flightlogs/kml/" . $original_log_name,
+                            "contents" => file_get_contents($log)
+                        ];
+                    }
                 }
             }
 
             return response($data, 200);
         } catch (\Exception $e) {
+
             return response(["message" => $e->getMessage()], 403);
         }
     }
