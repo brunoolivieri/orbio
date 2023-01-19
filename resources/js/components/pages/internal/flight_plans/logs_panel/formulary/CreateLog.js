@@ -1,7 +1,8 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, Stack, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
-import CircularProgress from '@mui/material/CircularProgress';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, Stack, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider, Icon } from '@mui/material';
+import DangerousIcon from '@mui/icons-material/Dangerous';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // Custom
 import { LogImageConfig } from '../modal/LogImageConfig';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
@@ -20,7 +21,7 @@ export const CreateLog = React.memo((props) => {
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const [selectedLogs, setSelectedLogs] = React.useState([]);
+    const [logs, setLogs] = React.useState([]);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -31,7 +32,7 @@ export const CreateLog = React.memo((props) => {
 
         const formData = new FormData();
 
-        selectedLogs.forEach((file) => {
+        logs.forEach((file) => {
             formData.append("files[]", file);
         })
 
@@ -61,7 +62,7 @@ export const CreateLog = React.memo((props) => {
 
     function handleClose() {
         setDisplayAlert({ display: false, type: "", message: "" });
-        setSelectedLogs([]);
+        setLogs([]);
         setOpen(false);
     }
 
@@ -74,6 +75,8 @@ export const CreateLog = React.memo((props) => {
         // Filter .kml files
         let kmlFiles = Array.from(files).filter((file) => kmlRegex.test(file.name));
 
+        let logs = [...kmlFiles];
+
         if (tlogKmlFiles.length > 0) {
 
             const formData = new FormData();
@@ -84,14 +87,11 @@ export const CreateLog = React.memo((props) => {
 
             const response = await axios.post("api/kml-conversion", formData);
 
-            console.log(response.data)
+            logs = logs.concat(response.data);
 
         }
 
-        /*
-        const selected_logs = Array.from(event.currentTarget.files);
-        setSelectedLogs(selected_logs);
-        */
+        setLogs(logs);
 
     }
 
@@ -128,7 +128,7 @@ export const CreateLog = React.memo((props) => {
                         </Button>
                     </Box>
 
-                    {selectedLogs.length > 0 &&
+                    {logs.length > 0 &&
                         <List
                             sx={{
                                 maxWidth: '100%',
@@ -143,23 +143,32 @@ export const CreateLog = React.memo((props) => {
                             subheader={<li />}
                         >
                             <ul>
-                                <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + selectedLogs.length}</ListSubheader>
-                                {selectedLogs.map((logfile, index) => (
+                                <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + logs.length}</ListSubheader>
+                                {logs.map((file, index) => (
                                     <ListItem
                                         key={index}
                                         secondaryAction={
                                             <Stack direction="row" spacing={1}>
 
-                                                {!kmlRegex.test(logfile.name) &&
-                                                    <CircularProgress />
+                                                {file.is_valid ?
+                                                    <>
+                                                        <IconButton>
+                                                            <CheckCircleIcon color="success" />
+                                                        </IconButton>
+                                                        <LogImageConfig log={file.kml || file} />
+                                                    </>
+                                                    :
+                                                    <Tooltip title="Arquivo inválido.">
+                                                        <IconButton>
+                                                            <DangerousIcon color="error" />
+                                                        </IconButton>
+                                                    </Tooltip>
                                                 }
-
-                                                <LogImageConfig log={logfile} is_valid={kmlRegex.test(logfile.name)} />
 
                                             </Stack>
                                         }
                                     >
-                                        <ListItemText primary={logfile.name} secondary={'Tamanho: ' + logfile.size} />
+                                        <ListItemText primary={`Nome: ${file.name}`} secondary={`Tamanho: ${file.size}`} />
                                     </ListItem>
                                 ))}
                             </ul>
@@ -178,7 +187,7 @@ export const CreateLog = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button type="submit" disabled={selectedLogs.length === 0 || loading} variant="contained" onClick={handleSubmit}>Salvar</Button>
+                    <Button type="submit" disabled={logs.length === 0 || loading} variant="contained" onClick={handleSubmit}>Salvar</Button>
                 </DialogActions>
 
             </Dialog >
