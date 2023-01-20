@@ -100,6 +100,9 @@
         // Evento vindo de um iframe do mapa
         window.addEventListener("message", (event) => {
 
+            event.source.postMessage("Resposta", event.origin);
+
+            /*
             let contents = event.data.contents;
 
             var regex = new RegExp(".tlog.kmz");
@@ -110,13 +113,8 @@
                 importKMLPolygon(contents);
             }
 
-            console.log(document.body)
-
-            //event.source.postMessage("Resposta", event.origin);
-
-            // console.log(document.body);
-
-            //event.source.postMessage("Resposta", event.origin);
+            console.log(document.body);
+            */
 
             /*
             html2canvas(document.body).then(canvas => {
