@@ -6,10 +6,6 @@ import { faImage } from '@fortawesome/free-solid-svg-icons';
 
 export const LogImageConfig = React.memo((props) => {
 
-    React.useEffect(() => {
-        //console.log(props.log)
-    });
-
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -20,12 +16,17 @@ export const LogImageConfig = React.memo((props) => {
         setOpen(false);
     };
 
-    if (!props.is_valid) {
-        return (
-            <IconButton>
-                <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
-            </IconButton>
-        )
+    function handleOpenIframe(e) {
+
+        e.target.contentWindow.postMessage(props.log, "http://localhost:8000");
+
+        //console.log("ok")
+    }
+
+    function handleSaveIframeImage(e) {
+
+        //console.log('save iframe image');
+
     }
 
     return (
@@ -49,6 +50,7 @@ export const LogImageConfig = React.memo((props) => {
                     <div id="modal-content" style={{ height: "500px" }}>
                         <iframe
                             id="iframe-content"
+                            onLoad={handleOpenIframe}
                             src="http://localhost:8000/internal/map-modal"
                             style={{ width: "100%", height: "100%" }}
                         ></iframe>
@@ -57,7 +59,7 @@ export const LogImageConfig = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleClose} variant="contained">
+                    <Button onClick={handleSaveIframeImage} variant="contained">
                         Salvar
                     </Button>
                 </DialogActions>

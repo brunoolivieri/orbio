@@ -50,8 +50,6 @@
 		</ul>
 	</nav>
 
-	<button id="btn-mission" class="btn btn-success">Missão</button>
-
 	<script>
         // Token gerado para uso no MAPBOX-GL
         mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
@@ -61,7 +59,7 @@
 
         var coordinatesLongLat;
         var initialPosition = [];
-        var longestEdgeLongLat;
+        //var longestEdgeLongLat;
         var farthestVertexLongLat;
         var selectedPosition;
 
@@ -97,110 +95,149 @@
 
         map.addControl(draw); // Adicionando o controle de desenho ao mapa
 
-        // ========= ACESSANDO O MENU DE OPÇÕES DA MISSÃO: NOVO, ABRIR, SALVAR, IMPORTAR ========= //
+        // ==== EVENTOS ==== //
 
-        // Acessando o botão de menu
-        var btnMenu = document.getElementById("btn-mission");
+        // Evento vindo de um iframe do mapa
+        window.addEventListener("message", (event) => {
 
-        // Acessando o elemento <nav> com o menu de opções
-        var menuOptions = document.getElementById("menu-options");
+            let contents = event.data.contents;
 
-        // Quando o usuário clica no botão, abre-se o modal
-        btnMenu.onclick = function () {
-            menuOptions.style.display = (menuOptions.style.display == "block") ? "none" : "block";
-        }
+            var regex = new RegExp(".tlog.kmz");
 
-        // ==== MENU: IMPORTAR RORA KML ==== //
-        var btnImportPath = document.getElementById("file-import-path");
-        btnImportPath.addEventListener('change', importKMLPath, false);
+            if(regex.test(event.data.original_name)){
+                importKMLPath(contents);   
+            }else{
+                importKMLPolygon(contents);
+            }
 
-        // ==== MENU: CONFIGURAÇÂO  ==== //
-        // Acessando o elemento "modal"
-        var modal = document.getElementById("modal");
+            console.log(document.body)
 
-        // Acessando o botão que aciona o modal
-        var btn = document.getElementById("btn");
+            //event.source.postMessage("Resposta", event.origin);
 
-        // Quando o usuário clica no botão, abre-se o modal
-        btn.onclick = function () {
-            modal.style.display = (modal.style.display == "block") ? "none" : "block";
-        }
+            // console.log(document.body);
 
-        // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR UMA ÁREA NO MAPA === //
-        function importKMLPath(e) {
+            //event.source.postMessage("Resposta", event.origin);
 
-            // Limpando layers, campos e polígono
-            cleanLayers();
-            cleanPolygon();
+            /*
+            html2canvas(document.body).then(canvas => {
+               
+                var blobImg = new Blob([canvas], { type: "image/jpeg" });
+                var dataURL = canvas.toDataURL('image/jpeg', 1.0);
 
-            var file = e.target.files[0];
-            var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-            if (!file || extension !== 'kml') { return; }
+                filenameImg = event.data.original_name.replace("/\.tlog\.kmz|\.kml/", "") + ".jpeg";
 
-            var reader = new FileReader();
+                event.source.postMessage({ blobImg, filenameImg, dataURL }, event.origin);
 
-            reader.onload = function (e) {
-                // Conteúdo completo do arquivo
-                var contents = e.target.result;
+	        });     
+            */ 
 
-                // Localizando as tags <coordinates> dentro do arquivo
+        }, false);
+
+        // ========================= //
+
+        function importKMLPath(contents){
+
+            // Localizando as tags <coordinates> dentro do arquivo
                 var coordinates = contents.substring(
-                    contents.search("<coordinates>") + 13,
-                    contents.search("</coordinates>")
-                );
+                contents.search("<coordinates>") + 13,
+                contents.search("</coordinates>")
+            );
 
-                // Quebrando todas as coordenadas do polígono
-                coordinates = coordinates.split("\n");
+            // Quebrando todas as coordenadas do polígono
+            coordinates = coordinates.split("\n");
 
-                // Array que irá armazenar as coordenadas da área
-                kmlArea = [];
+            // Array que irá armazenar as coordenadas da área
+            kmlArea = [];
 
-                // Percorrendo todas as coordenadas e quebrando as informações de lat e long
-                for (i = 0; i < coordinates.length - 1; i++) {
-                    console.log(coordinates[i]);
+            // Percorrendo todas as coordenadas e quebrando as informações de lat e long
+            for (i = 0; i < coordinates.length - 1; i++) {
+                //console.log(coordinates[i]);
 
-                    latLong = coordinates[i].split(",");
-                    kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
-                }
+                latLong = coordinates[i].split(",");
+                kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
+            }
 
-                // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
-                if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
-                    console.log("São IGUAIS!");
-                } else {
-                    console.log("NÃO SÃO IGUAIS!");
-                    kmlArea[i] = kmlArea[0];
-                }
+            // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
+            if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
+                //console.log("São IGUAIS!");
+            } else {
+                //console.log("NÃO SÃO IGUAIS!");
+                kmlArea[i] = kmlArea[0];
+            }
 
-                console.log(kmlArea[0]);
-                console.log(kmlArea[kmlArea.length - 1]);
+            // console.log(kmlArea[0]);
+            // console.log(kmlArea[kmlArea.length - 1]);
 
-                home = kmlArea[0];
+            home = kmlArea[0];
 
-                // Acessando o centroide da área para posicionar no mapa
-                var polygon = turf.polygon([kmlArea]);
-                var centroid = turf.coordAll(turf.centroid(polygon));
+            // Acessando o centroide da área para posicionar no mapa
+            var polygon = turf.polygon([kmlArea]);
+            var centroid = turf.coordAll(turf.centroid(polygon));
 
-                // Direcionando o mapa
-                map.flyTo({
-                    center: [
-                        centroid[0][0], centroid[0][1]
-                    ],
-                    essential: true
-                });
+            // Direcionando o mapa
+            map.flyTo({
+                center: [
+                    centroid[0][0], centroid[0][1]
+                ],
+                essential: true
+            });
 
-                // Desenhando o polígono no mapa e calculando o tamanho da área importada
-                drawTxtArea(kmlArea);
-                calculateTxtArea();
+            // Desenhando o polígono no mapa e calculando o tamanho da área importada
+            drawTxtArea(kmlArea);
 
-                // Chamando novamente as funções que calculam a maior aresta e o vértice mais distante
-                longestEdgeLongLat = longestEdge(kmlArea);
-                farthestVertexLongLat = farthestVertex(kmlArea, longestEdgeLongLat);
+            // Desenhando a rota e calculando sua distância
+            drawTxtPath(kmlArea); 
 
-                // Desenhando a rota e calculando sua distância
-                drawTxtPath(kmlArea);
-                calculateTxtDistance(kmlArea);
-            };
-            reader.readAsText(file);
+        }
+
+        // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR UM POLÍGONO NO MAPA === //
+        function importKMLPolygon(contents) {
+
+            // Localizando as tags <coordinates> dentro do arquivo
+            var coordinates = contents.substring(
+                contents.search("<coordinates>") + 13,
+                contents.search("</coordinates>")
+            );
+
+            // Quebrando todas as coordenadas do polígono
+            coordinates = coordinates.split(" ");
+
+            // Array que irá armazenar as coordenadas da área
+            kmlArea = [];
+
+            // Percorrendo todas as coordenadas e quebrando as informações de lat e long
+            for (i = 0; i < coordinates.length - 1; i++) {
+                //console.log(coordinates[i]);
+
+                latLong = coordinates[i].split(",");
+                kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
+            }
+
+            // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
+            if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
+                console.log("São IGUAIS!");
+            } else {
+                //console.log("NÃO SÃO IGUAIS!");
+                kmlArea[i] = kmlArea[0];
+            }
+
+            home = kmlArea[0];
+
+            // Acessando o centroide da área para posicionar no mapa
+            var polygon = turf.polygon([kmlArea]);
+            var centroid = turf.coordAll(turf.centroid(polygon));
+
+            // Direcionando o mapa
+            map.flyTo({
+                center: [
+                    centroid[0][0], centroid[0][1]
+                ],
+                essential: true
+            });
+
+            // Desenhando o polígono no mapa e calculando o tamanho da área importada
+            drawTxtArea(kmlArea);
+
         }
 
         // == NEEED - DESENHANDO O POLÍGONO DA ÁREA == //
