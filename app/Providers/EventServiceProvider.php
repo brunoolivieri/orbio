@@ -21,8 +21,6 @@ use App\Listeners\Modules\ServiceOrder\{
     SendEmailAfterUpdated,
     SendEmailAfterDeleted
 };
-// Models
-use App\Models\ServiceOrders\ServiceOrder;
 
 class EventServiceProvider extends ServiceProvider
 {

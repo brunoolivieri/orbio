@@ -34,21 +34,16 @@
 	<!-- HTML2CANVAS -->
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 
+    <!-- FILESAVER -->
+	<script src="{{ asset('js/map/libs/file_saver/src/FileSaver.js') }}"></script>
+
  	<title>{{ env('APP_NAME'); }}</title>
  </head>
  <body>
 
-    <div id='map'></div>
+    <div id="map"></div>
 
-    <nav id="menu-options" style="display: none">
-		<ul class="menu-options">
-			<li>
-				<label>Importar Rota
-					<input type="file" id="file-import-path" hidden />
-				</label>
-			</li>
-		</ul>
-	</nav>
+	<button id="print-button" class = "btn btn-success">PRINT</button>
 
 	<script>
         // Token gerado para uso no MAPBOX-GL
@@ -95,48 +90,63 @@
 
         map.addControl(draw); // Adicionando o controle de desenho ao mapa
 
-        // ==== EVENTOS ==== //
+        // =============== EVENTOS ==================== //
 
         // Evento vindo de um iframe do mapa
         window.addEventListener("message", (event) => {
 
-            event.source.postMessage("Resposta", event.origin);
+			if(event.data.type === 'modal-request'){
 
-            /*
-            let contents = event.data.contents;
+				let contents = event.data.log.contents;
+				const regex = new RegExp(".tlog.kmz");
 
-            var regex = new RegExp(".tlog.kmz");
+				if (regex.test(event.data.log.original_name)) {
+					importKMLPath(contents);
+				} else {
+					importKMLPolygon(contents);
+				}
 
-            if(regex.test(event.data.original_name)){
-                importKMLPath(contents);   
-            }else{
-                importKMLPolygon(contents);
-            }
+				document.getElementById("print-button").addEventListener("click", () => {
+					print(event);
+				});
 
-            console.log(document.body);
-            */
-
-            /*
-            html2canvas(document.body).then(canvas => {
-               
-                var blobImg = new Blob([canvas], { type: "image/jpeg" });
-                var dataURL = canvas.toDataURL('image/jpeg', 1.0);
-
-                filenameImg = event.data.original_name.replace("/\.tlog\.kmz|\.kml/", "") + ".jpeg";
-
-                event.source.postMessage({ blobImg, filenameImg, dataURL }, event.origin);
-
-	        });     
-            */ 
+			}
 
         }, false);
 
+		function print(event){
+
+			html2canvas(document.body).then(canvas => {
+                
+				var blobImg = new Blob([canvas], { type: "image/jpeg" });
+				var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+
+				fileNameImg = event.data.log.original_name.replace(/(.tlog.kmz|.kml)$/, "") + ".jpeg";
+				
+				/*
+				canvas.toBlob(function(blobImg) {
+					saveAs(blobImg, fileNameImg);
+				});
+				*/
+				
+				const response = {
+					type: 'iframe-response',
+					data: {
+						blobImg, fileNameImg, dataURL
+					}
+				}
+
+				event.source.postMessage(response, event.origin);
+
+			});  
+		}
+
         // ========================= //
 
-        function importKMLPath(contents){
+        function importKMLPath(contents) {
 
             // Localizando as tags <coordinates> dentro do arquivo
-                var coordinates = contents.substring(
+            var coordinates = contents.substring(
                 contents.search("<coordinates>") + 13,
                 contents.search("</coordinates>")
             );
@@ -147,12 +157,16 @@
             // Array que irá armazenar as coordenadas da área
             kmlArea = [];
 
+            //console.log(coordinates)
+
             // Percorrendo todas as coordenadas e quebrando as informações de lat e long
             for (i = 0; i < coordinates.length - 1; i++) {
                 //console.log(coordinates[i]);
 
                 latLong = coordinates[i].split(",");
                 kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
+
+                //console.log(kmlArea[i])
             }
 
             // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
@@ -271,21 +285,24 @@
                 }
             }
 
-            map.addSource('txtPath', objBF);
+            map.on('load', function(){
+                map.addSource('txtPath', objBF);
 
-            map.addLayer({
-                'id': 'txtPath',
-                'type': 'line',
-                'source': 'txtPath',
-                'layout': {
-                    'line-join': 'round',
-                    'line-cap': 'round'
-                },
-                'paint': {
-                    'line-color': '#fcba03',
-                    'line-width': 3
-                }
-            });
+                map.addLayer({
+                    'id': 'txtPath',
+                    'type': 'line',
+                    'source': 'txtPath',
+                    'layout': {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    'paint': {
+                        'line-color': '#fcba03',
+                        'line-width': 3
+                    }
+                });
+            })
+            
         }
 
         // === NEEED - LIMPANDO AS ROTAS DESENHADAS NO MAPA === //

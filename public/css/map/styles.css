@@ -1,12 +1,12 @@
-body{
+body {
 	margin: 0;
 	padding: 0;
 }
 
-#map{
-	position: absolute; 
-	top: 0; 
-	bottom: 0; 
+#map {
+	position: absolute;
+	top: 0;
+	bottom: 0;
 	width: 100%;
 }
 
@@ -18,18 +18,18 @@ body{
 	font-family: Arial, sans-serif;
 }
 
-.side-menu{
+.side-menu {
 	width: 30px;
 	position: absolute;
 	right: 10px;
 	top: 220px;
 }
 
-.marker{
+.marker {
 	background-size: 18px 18px;
 }
 
-#question-mark{
+#question-mark {
 	font-weight: bold;
 	font-size: 20px;
 }
@@ -51,7 +51,7 @@ body{
 	font-family: system-ui;
 }
 
-.calculation-box span{
+.calculation-box span {
 	font-weight: bold
 }
 
@@ -62,13 +62,13 @@ body{
 	color: #0971CE;
 }
 
-div#calculated-area p{
+div#calculated-area p {
 	font-weight: bold;
 	color: #231F20;
 	font-family: system-ui;
 }
 
-.logo-box{
+.logo-box {
 	width: 220px;
 	position: absolute;
 	margin-left: auto;
@@ -82,64 +82,64 @@ div#calculated-area p{
 	border: none;
 }
 
-.logo-box img:first-child{
+.logo-box img:first-child {
 	width: 50%;
 }
 
-.logo-box img:last-child{
+.logo-box img:last-child {
 	width: 25%;
 }
 
-.logo-box img{
+.logo-box img {
 	width: 20%;
 }
 
 [hidden] {
-  display: none !important;
+	display: none !important;
 }
 
-nav{
+nav {
 	width: 150px;
 	position: absolute;
 	display: none;
 	left: 10px;
 	bottom: 86px;
 	background-color: #fff;
-  	border: none;
-  	border-radius: 5px;
-  	font-family: system-ui;
-  	font-size: 14px;	
+	border: none;
+	border-radius: 5px;
+	font-family: system-ui;
+	font-size: 14px;
 }
 
-ul.menu-options{
+ul.menu-options {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
 }
 
-ul.menu-options li{
+ul.menu-options li {
 	padding: 5px 20px;
 	cursor: pointer;
 }
 
-ul.menu-options li label{
+ul.menu-options li label {
 	width: 100%;
 	cursor: pointer;
 }
 
-ul.menu-options li:first-child{
+ul.menu-options li:first-child {
 	margin-top: 5px;
 }
 
-ul.menu-options li:last-child{
-	margin-bottom: 5px;	
+ul.menu-options li:last-child {
+	margin-bottom: 5px;
 }
 
-ul.menu-options li:hover{
+ul.menu-options li:hover {
 	background-color: #ccc;
 }
 
-#btn-mission{
+#btn-mission {
 	width: 150px;
 	position: absolute;
 	left: 10px;
@@ -148,53 +148,75 @@ ul.menu-options li:hover{
 	padding: 10px 20px;
 }
 
-#btn{
-	width: 150px;	
+#btn {
+	width: 150px;
 	position: absolute;
+	border-radius: 10px;
 	right: 10px;
 	bottom: 30px;
 	padding: 10px 20px;
 }
 
-.modal-dialog{
+#print-button {
+	width: 150px;
+	position: absolute;
+	left: 10px;
+	bottom: 30px;
+	padding: 10px 20px;
+	border-radius: 5px;
+	border: none;
+	outline: unset;
+	cursor: pointer;
+	font-family: Arial, sans-serif;
+	background-color: #2196f3;
+	color: #fff;
+	font-weight: 600;
+}
+
+#print-button:hover {
+	background-color: #1769aa;
+}
+
+.modal-dialog {
 	max-width: 530px;
 }
 
 .modal-config {
 	width: 150px;
 	position: absolute;
-  	display: none;
-  	bottom: 86px;
-  	right: 10px; 
-  	padding: 10px;
-  	background-color: #fefefe;
-  	border: none;
-  	font-size: 14px;
+	display: none;
+	bottom: 86px;
+	right: 10px;
+	padding: 10px;
+	background-color: #fefefe;
+	border: none;
+	font-size: 14px;
 }
 
-.help-options{
+.help-options {
 	padding: 10px;
 	text-align: center;
 }
 
-label.form-label{
+label.form-label {
 	margin-bottom: 5px;
 }
 
-.form-control, .form-select{
+.form-control,
+.form-select {
 	font-size: 14px;
 	height: 34px;
 }
 
-h4{
+h4 {
 	font-size: 16px;
 }
 
-.mb-3:last-child{
+.mb-3:last-child {
 	margin-bottom: 0;
 }
 
-#btn-top{
+#btn-top {
 	top: 10px;
 	left: 15px;
 	padding: 5px 5px;
@@ -206,65 +228,65 @@ h4{
 
 
 #btn-top:hover {
-    /*color: #009a9a;
+	/*color: #009a9a;
     background-color: #FFFF00;*/
-    color: #000000;
-    background-color: #F3F781 !important;
+	color: #000000;
+	background-color: #F3F781 !important;
 }
 
 #btn-top:focus,
 .btn-top.focus {
-    box-shadow: 0 0 0 .2rem rgba(0, 128, 128, 0.5)
+	box-shadow: 0 0 0 .2rem rgba(0, 128, 128, 0.5)
 }
 
 #btn-top.disabled,
 #btn-top:disabled {
-    color: #009a9a;
-    background-color: transparent
+	color: #009a9a;
+	background-color: transparent
 }
 
 #btn-top:not(:disabled):not(.disabled):active,
 #btn-top:not(:disabled):not(.disabled).active,
 .show>.btn-top.dropdown-toggle {
-    color: #fff;
-    background-color: #009a9a;
-/*    border-color: #009a9a*/
+	color: #fff;
+	background-color: #009a9a;
+	/*    border-color: #009a9a*/
 }
 
 #btn-top:not(:disabled):not(.disabled):active:focus,
 .btn-top:not(:disabled):not(.disabled).active:focus,
 .show>.btn-top.dropdown-toggle:focus {
-    box-shadow: 0 0 0 .2rem rgba(0, 128, 128, 0.5)
+	box-shadow: 0 0 0 .2rem rgba(0, 128, 128, 0.5)
 }
 
-#confirmation-modal{
+#confirmation-modal {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	min-width: 450px;
 }
 
-@media screen and (max-width: 767px){
+@media screen and (max-width: 767px) {
 
-	#btn-top{
+	#btn-top {
 		top: 72px;
 		left: 10px;
 	}
 
-	.calculation-box{
+	.calculation-box {
 		left: 10px;
 		margin-left: 0;
 		margin-right: 0;
 	}
-	
+
 }
 
-@media screen and (max-width: 600px){
-	#btn-top{
+@media screen and (max-width: 600px) {
+	#btn-top {
 		top: 10px;
 	}
 
-	.calculation-box{
+	.calculation-box {
 		left: 0;
 		margin-left: auto;
 		margin-right: auto;
@@ -276,20 +298,23 @@ h4{
 	}
 
 	div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl {
-    	margin: 10px 10px 0 10px;
+		margin: 10px 10px 0 10px;
 	}
 
-	.side-menu{
+	.side-menu {
 		top: 300px;
 	}
 }
 
-@media screen and (max-width: 560px){
-	#btn, #btn-mission{
+@media screen and (max-width: 560px) {
+
+	#btn,
+	#btn-mission {
 		bottom: 70px;
 	}
 
-	nav, .modal-config{
+	nav,
+	.modal-config {
 		bottom: 124px;
 		z-index: 99;
 	}

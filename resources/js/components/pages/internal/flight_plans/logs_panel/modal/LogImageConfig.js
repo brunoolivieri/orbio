@@ -7,6 +7,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons';
 export const LogImageConfig = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
+    const [logImg, setLogImg] = React.useState(null);
 
     const handleOpen = () => {
         setOpen(true);
@@ -24,7 +25,11 @@ export const LogImageConfig = React.memo((props) => {
 
     // Listen for a response from the iframe
     window.addEventListener("message", (event) => {
-        console.log(event.data);
+
+        if (event.data.type === 'iframe-response') {
+            console.log(event.data.data);
+        }
+
     }, false);
 
     return (
@@ -48,7 +53,7 @@ export const LogImageConfig = React.memo((props) => {
                     <div id="modal-content" style={{ height: "500px" }}>
                         <iframe
                             id="iframe-content"
-                            onLoad={(e) => e.target.contentWindow.postMessage(props.log, "http://localhost:8000")}
+                            onLoad={(e) => e.target.contentWindow.postMessage({ type: 'modal-request', log: props.log }, "http://localhost:8000")}
                             src="http://localhost:8000/internal/map-modal"
                             style={{ width: "100%", height: "100%" }}
                         ></iframe>
@@ -57,7 +62,7 @@ export const LogImageConfig = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleSaveIframeImage} variant="contained">
+                    <Button onClick={handleSaveIframeImage} variant="contained" disabled={!!logImg}>
                         Salvar
                     </Button>
                 </DialogActions>
