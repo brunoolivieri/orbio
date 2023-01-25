@@ -30,6 +30,8 @@ export const CreateLog = React.memo((props) => {
 
         setLoading(true);
 
+        if (!logsValidation()) return '';
+
         const formData = new FormData();
 
         logs.forEach((file) => {
@@ -46,6 +48,11 @@ export const CreateLog = React.memo((props) => {
             .finally(() => {
                 setLoading(false);
             })
+    }
+
+    function logsValidation() {
+
+        // Check if valid logs have images
     }
 
     function successResponse(response) {
@@ -69,13 +76,6 @@ export const CreateLog = React.memo((props) => {
     async function handleUploadLog(event) {
 
         const files = Array.from(event.currentTarget.files);
-
-        /*
-        // Filter .tlog.kml files
-        const tlogKmzFiles = Array.from(files).filter((file) => !kmlRegex.test(file.name));
-        // Filter .kml files
-        let kmlFiles = Array.from(files).filter((file) => kmlRegex.test(file.name));
-        */
 
         const formData = new FormData();
 
@@ -112,7 +112,7 @@ export const CreateLog = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText sx={{ mb: 2 }}>
-                        Texto
+                        Upload de arquivos de log de vôo no formato .kml ou .tlog.kmz. Certifique-se de gerar uma imagem para cada um que for processado com sucesso clicando no ícone de imagem.
                     </DialogContentText>
 
                     <Box mt={1}>
@@ -151,7 +151,7 @@ export const CreateLog = React.memo((props) => {
                                                                 <CheckCircleIcon color="success" />
                                                             </IconButton>
                                                         </Tooltip>
-                                                        <LogImageConfig log={file} />
+                                                        <LogImageConfig actual_log={file} index={index} logs={logs} setLogs={setLogs} />
                                                     </>
                                                     :
                                                     <Tooltip title={file.status.message}>

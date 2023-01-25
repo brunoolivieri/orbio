@@ -116,6 +116,10 @@
 
 		function print(event){
 
+            map.removeControl(draw);
+	        map.removeControl(mapBoxNavigationControl);
+            document.getElementById("print-button").style.display = 'none';
+
 			html2canvas(document.body).then(canvas => {
                 
 				var blobImg = new Blob([canvas], { type: "image/jpeg" });
@@ -131,10 +135,14 @@
 				
 				const response = {
 					type: 'iframe-response',
-					data: {
+					canvas: {
 						blobImg, fileNameImg, dataURL
 					}
 				}
+
+                map.addControl(draw);
+                map.addControl(mapBoxNavigationControl);
+                document.getElementById("print-button").style.display = 'block';
 
 				event.source.postMessage(response, event.origin);
 

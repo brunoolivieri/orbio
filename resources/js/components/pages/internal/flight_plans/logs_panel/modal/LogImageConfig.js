@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Tooltip } from '@mui/material';
-// Fontsawesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImage } from '@fortawesome/free-solid-svg-icons';
+import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual';
 
 export const LogImageConfig = React.memo((props) => {
 
@@ -15,19 +13,38 @@ export const LogImageConfig = React.memo((props) => {
 
     const handleClose = () => {
         setOpen(false);
+        setLogImg(null);
     }
 
-    function handleSaveIframeImage(e) {
+    function handleSaveIframeImage() {
 
-        //console.log('save iframe image');
+        //console.log(props.logs)
+        //console.log(props.actual_log)
 
+        props.setLogs((selectedLogs) => {
+
+            return selectedLogs.map((selected_log) => {
+
+                if (selected_log.original_name == props.actual_log.original_name) {
+                    return {
+                        ...selected_log,
+                        image: logImg
+                    }
+                } else {
+                    return selected_log;
+                }
+            });
+
+        });
+
+        handleClose();
     }
 
     // Listen for a response from the iframe
     window.addEventListener("message", (event) => {
 
         if (event.data.type === 'iframe-response') {
-            console.log(event.data.data);
+            setLogImg(event.data.canvas);
         }
 
     }, false);
@@ -36,24 +53,23 @@ export const LogImageConfig = React.memo((props) => {
         <>
             <Tooltip title="Gerar imagem">
                 <IconButton onClick={handleOpen}>
-                    <FontAwesomeIcon icon={faImage} color={"#E0E0E0"} size="sm" />
+                    <PhotoSizeSelectActualIcon color={props.actual_log.image ? "success" : "disabled"} fontSize="medium" />
                 </IconButton>
             </Tooltip>
             <Dialog
                 open={open}
                 onClose={handleClose}
-                fullWidth
-                maxWidth="md"
+                fullScreen
             >
                 <DialogTitle>
                     IMAGEM DO LOG
                 </DialogTitle>
                 <Divider />
                 <DialogContent>
-                    <div id="modal-content" style={{ height: "500px" }}>
+                    <div id="modal-content" style={{ height: "100%" }}>
                         <iframe
                             id="iframe-content"
-                            onLoad={(e) => e.target.contentWindow.postMessage({ type: 'modal-request', log: props.log }, "http://localhost:8000")}
+                            onLoad={(e) => e.target.contentWindow.postMessage({ type: 'modal-request', log: props.actual_log }, "http://localhost:8000")}
                             src="http://localhost:8000/internal/map-modal"
                             style={{ width: "100%", height: "100%" }}
                         ></iframe>
@@ -62,7 +78,7 @@ export const LogImageConfig = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleSaveIframeImage} variant="contained" disabled={!!logImg}>
+                    <Button onClick={handleSaveIframeImage} variant="contained" disabled={logImg == null}>
                         Salvar
                     </Button>
                 </DialogActions>
