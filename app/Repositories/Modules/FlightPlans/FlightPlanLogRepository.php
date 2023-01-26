@@ -30,25 +30,26 @@ class FlightPlanLogRepository implements RepositoryInterface
     {
         DB::transaction(function () use ($data) {
 
-            if (Storage::disk('public')->exists($data->get("storage_path"))) {
-                throw new \ErrorException("Erro! O log {$data->get('filename')} já existe no sistema.");
-            }
-
             $log = $this->logModel->create([
                 "name" => $data->get("name"),
-                "filename" => $data->get("files")['kml']['filename'],
-                "path" => $data->get("files")['kml']['storage_path'],
+                "filename" => $data->get("filename"),
+                "path" => $data->get("file_storage")["path"] . "/" . $data->get("filename"),
                 "timestamp" => $data->get("timestamp")
             ]);
 
-            Storage::disk('public')->put($data->get('files')['tlog.kml']['storage_path'], $data->get('files')['tlog.kml']['contents']);
-            Storage::disk('public')->put($data->get('files')['kml']['storage_path'], $data->get('files')['kml']['contents']);
+            Storage::disk('public')->putFileAs($data->get("file_storage")["path"], $data->get("file_storage")["file"], $data->get("file_storage")["filename"]);
 
-            /*
-            $log->image()->create([
-                "path" => $data->get('path')
-            ]);
-            */
+            if ($data->get("is_valid")) {
+
+
+                $log->image()->create([
+                    "path" => $data->get("image_storage")["path"] . "/" . $data->get("image_storage")["filename"]
+                ]);
+
+                Storage::disk('public')->putFileAs($data->get("image_storage")["path"], $data->get("image_storage")["file"], $data->get("image_storage")["filename"]);
+            }
+
+            return $log;
         });
     }
 

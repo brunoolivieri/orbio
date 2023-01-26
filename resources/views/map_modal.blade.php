@@ -122,29 +122,32 @@
 
 			html2canvas(document.body).then(canvas => {
                 
-				var blobImg = new Blob([canvas], { type: "image/jpeg" });
-				var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+                canvas.toBlob(function (blobImg) {
 
-				fileNameImg = event.data.log.original_name.replace(/(.tlog.kmz|.kml)$/, "") + ".jpeg";
-				
-				/*
-				canvas.toBlob(function(blobImg) {
-					saveAs(blobImg, fileNameImg);
-				});
-				*/
-				
-				const response = {
-					type: 'iframe-response',
-					canvas: {
-						blobImg, fileNameImg, dataURL
-					}
-				}
+                    var dataURL = canvas.toDataURL('image/jpeg', 1.0);
 
-                map.addControl(draw);
-                map.addControl(mapBoxNavigationControl);
-                document.getElementById("print-button").style.display = 'block';
+                    fileNameImg = event.data.log.original_name.replace(/(.tlog.kmz|.kml)$/, "") + ".jpeg";
+                    
+                    /*
+                    canvas.toBlob(function(blobImg) {
+                        saveAs(blobImg, fileNameImg);
+                    });
+                    */
+                    
+                    const response = {
+                        type: 'iframe-response',
+                        canvas: {
+                            blobImg, fileNameImg, dataURL
+                        }
+                    }
 
-				event.source.postMessage(response, event.origin);
+                    map.addControl(draw);
+                    map.addControl(mapBoxNavigationControl);
+                    document.getElementById("print-button").style.display = 'block';
+
+                    event.source.postMessage(response, event.origin);
+
+		        });	
 
 			});  
 		}

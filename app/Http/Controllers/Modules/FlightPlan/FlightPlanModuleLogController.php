@@ -60,7 +60,7 @@ class FlightPlanModuleLogController extends Controller
 
         return $this->service->createOne([
             "logs" => $request->file('files'),
-            "images" => $request->images
+            "images" => $request->file('images')
         ]);
     }
 

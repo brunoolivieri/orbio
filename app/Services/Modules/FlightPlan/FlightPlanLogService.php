@@ -59,28 +59,30 @@ class FlightPlanLogService implements ServiceInterface
 
                 $original_log_name = $log->getClientOriginalName();
 
-                // Actual log is a tlog.kmz
-                if (preg_match("/\.tlog\.kmz$/", $original_log_name)) {
+                $is_kmz = preg_match("/\.tlog\.kmz$/", $original_log_name);
 
-                    // Converted [name].tlog.kmz to [name].tlog.kml
-                    $kml_filename = preg_replace("/\.tlog\.kmz$/", ".kml", $original_log_name);
+                // If is a .tlog.kmz convert to .kml, if not, original name is already .kml
+                $kml_filename = $is_kmz ? preg_replace("/\.tlog\.kmz$/", ".kml", $original_log_name) : $original_log_name;
+                $kml_filename_without_extension = str_replace(".kml", "", $kml_filename);
 
-                    // Check if $kml_filename already exists in storage
-                    if (Storage::disk('public')->exists("flight_plans/flightlogs/kml/" . $kml_filename)) {
+                $already_exists_as_valid_kml = Storage::disk('public')->exists("flight_plans/flightlogs/valid/{$kml_filename_without_extension}/" . $kml_filename);
+                $already_exists_as_invalid_kml = Storage::disk('public')->exists("flight_plans/flightlogs/invalid/{$kml_filename_without_extension}/" . $kml_filename);
 
-                        $data[$index] = [
-                            "status" => [
-                                "is_valid" => false,
-                                "message" => "Já existe"
-                            ],
-                            "size" => filesize($log),
-                            "original_name" => $original_log_name
-                        ];
+                if ($already_exists_as_valid_kml || $already_exists_as_invalid_kml) {
 
-                        // If $kml_filename not exists in storage
-                    } else {
+                    $data[$index] = [
+                        "status" => [
+                            "is_valid" => false,
+                            "message" => "Já existe"
+                        ],
+                        "size" => filesize($log),
+                        "original_name" => $original_log_name
+                    ];
+                } else {
 
-                        // Extraction 
+                    if ($is_kmz) {
+
+                        // KMZ is a zipped KML
 
                         $zip = new ZipArchive;
 
@@ -143,23 +145,6 @@ class FlightPlanLogService implements ServiceInterface
                                 "image" => null
                             ];
                         }
-                    }
-
-                    // Actual log is a .kml
-                }
-                if (preg_match("/\.kml$/", $original_log_name)) {
-
-                    // Check if already exists
-                    if (Storage::disk('public')->exists("flight_plans/flightlogs/kml/" . $original_log_name)) {
-
-                        $data[$index] = [
-                            "status" => [
-                                "is_valid" => false,
-                                "message" => "Já existe"
-                            ],
-                            "size" => filesize($log),
-                            "original_name" => $original_log_name
-                        ];
                     } else {
 
                         // Future: verify file integrity with libxml and SimpleXML
@@ -171,7 +156,8 @@ class FlightPlanLogService implements ServiceInterface
                             ],
                             "size" => filesize($log),
                             "original_name" => $original_log_name,
-                            "contents" => file_get_contents($log)
+                            "contents" => file_get_contents($log),
+                            "image" => null
                         ];
                     }
                 }
@@ -179,19 +165,70 @@ class FlightPlanLogService implements ServiceInterface
 
             return response($data, 200);
         } catch (\Exception $e) {
-
             return response(["message" => $e->getMessage()], 403);
         }
     }
 
     function createOne(array $data)
     {
-        
-        $fileLogs = $data["logs"];
-        $fileImages = $data["images"];
 
-        dd($fileLogs);
+        $logFiles = $data["logs"];
+        $logImages = $data["images"];
 
+        foreach ($logFiles as $logFile) {
+
+            $kml_original_filename = $logFile->getClientOriginalName();
+            $kml_name_without_extension = str_replace(".kml", "", $kml_original_filename);
+            $kml_timestamp = preg_replace("/[^0-9]/", "", $kml_original_filename);
+            $kml_have_image = false;
+
+            // Search for actual KML image
+            foreach ($logImages as $logImage) {
+
+                $kml_have_image = true;
+
+                $image_original_filename = $logImage->getClientOriginalName();
+                $image_name_without_extension = str_replace(".jpeg", "", $image_original_filename);
+
+                //dd("KML: {$kml_name_without_extension} | Image: {$image_name_without_extension}");
+                if ($kml_name_without_extension === $image_name_without_extension) {
+
+                    $log = $this->repository->createOne(collect([
+                        "name" => Str::random(10),
+                        "is_valid" => true,
+                        "filename" => $kml_original_filename,
+                        "timestamp" => $kml_timestamp,
+                        "file_storage" => [
+                            "path" => "flight_plans/flightlogs/valid/{$kml_name_without_extension}/",
+                            "file" => $logFile,
+                            "filename" => $kml_original_filename
+                        ],
+                        "image_storage" => [
+                            "path" => "flight_plans/flightlogs/valid/{$kml_name_without_extension}/",
+                            "file" => $logImage,
+                            "filename" => $image_original_filename
+                        ]
+                    ]));
+                }
+            }
+
+            if (!$kml_have_image) {
+
+                $log = $this->repository->createOne([
+                    "name" => Str::random(10),
+                    "is_valid" => false,
+                    "filename" => $kml_original_filename,
+                    "timestamp" => $kml_timestamp,
+                    "file_storage" => [
+                        "path" => "flight_plans/flightlogs/invalid/{$kml_name_without_extension}",
+                        "file" => $logFile,
+                        "filename" => $kml_original_filename
+                    ]
+                ]);
+            }
+        }
+
+        return response(["message" => "Logs salvos com sucesso!"], 200);
     }
 
     function updateOne(array $data, string $identifier)

@@ -34,9 +34,9 @@ export const CreateLog = React.memo((props) => {
 
         const formData = new FormData();
 
-
         logs.forEach((log) => {
 
+            // Create KML file
             const fileName = log.name;
             const fileContent = log.contents;
             const fileType = "application/xml";
@@ -46,14 +46,18 @@ export const CreateLog = React.memo((props) => {
             formData.append("files[]", logFile);
 
             if (log.status.is_valid) {
-                // Only valid logs have images
 
-                formData.append("images[]", log.image.dataURL);
+                // Create image for valid KML
+                // formData.append("images[]", log.image.dataURL);
+
+                const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/png" });
+
+                formData.append("images[]", imageFile);
 
             }
 
         });
-
+        
         axios.post(`/api/plans-module-logs`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -89,7 +93,7 @@ export const CreateLog = React.memo((props) => {
         setDisplayAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
-            setOpen(false);
+            handleClose();
         }, 2000);
     }
 
