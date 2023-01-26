@@ -37,11 +37,13 @@ export const CreateLog = React.memo((props) => {
         logs.forEach((log) => {
 
             // Create KML file
-            const fileName = log.name;
-            const fileContent = log.contents;
-            const fileType = "application/xml";
-            const blob = new Blob([fileContent], { type: fileType });
-            const logFile = new File([blob], fileName, { type: fileType });
+            const kml_filename = log.name;
+            const file_content = log.contents;
+            const file_type = "application/xml";
+            const blob = new Blob([file_content], { type: file_type });
+            const logFile = new File([blob], kml_filename, { type: file_type });
+
+            console.log(kml_filename)
 
             formData.append("files[]", logFile);
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
 use SimpleXMLElement;
+use App\Models\Logs\Log;
 // Contracts
 use App\Services\Contracts\ServiceInterface;
 // Repository
@@ -34,9 +35,12 @@ class FlightPlanLogService implements ServiceInterface
 
     function download(string $filename, $identifier = null)
     {
-        if (Storage::disk("public")->exists("flight_plans/flightlogs/kml/$filename")) {
 
-            $path = Storage::disk("public")->path("flight_plans/flightlogs/kml/$filename");
+        $log = Log::where("filename", $filename)->first();
+
+        if (Storage::disk("public")->exists($log->path)) {
+
+            $path = Storage::disk("public")->path($log->path);
             $contents = file_get_contents($path);
 
             return response($contents)->withHeaders([
@@ -156,6 +160,7 @@ class FlightPlanLogService implements ServiceInterface
                             ],
                             "size" => filesize($log),
                             "original_name" => $original_log_name,
+                            "name" => $original_log_name,
                             "contents" => file_get_contents($log),
                             "image" => null
                         ];
@@ -179,7 +184,16 @@ class FlightPlanLogService implements ServiceInterface
 
             $kml_original_filename = $logFile->getClientOriginalName();
             $kml_name_without_extension = str_replace(".kml", "", $kml_original_filename);
-            $kml_timestamp = preg_replace("/[^0-9]/", "", $kml_original_filename);
+
+            // Get date format from name - can be a timestamp or a date
+            $kml_name_numbers = preg_replace("/[^0-9]/", "", $kml_original_filename);
+            if(strtotime($kml_name_numbers)){
+                $kml_timestamp = strtotime($kml_name_numbers);
+            }else{
+                $kml_date = substr($kml_name_numbers, 0, 7); //yyyymmdd
+                $kml_timestamp = strtotime($kml_date);
+            }
+
             $kml_have_image = false;
 
             // Search for actual KML image

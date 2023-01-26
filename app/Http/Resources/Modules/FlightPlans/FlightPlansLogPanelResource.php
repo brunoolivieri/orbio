@@ -31,6 +31,7 @@ class FlightPlansLogPanelResource extends JsonResource
             $this->formatedData["records"][$row] = [
                 "id" => $log->id,
                 "name" => $log->name,
+                "image_url" => Storage::url($log->image->path),
                 "service_order" => null,
                 "flight_plan" => null,
                 "filename" => $log->filename,
