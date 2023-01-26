@@ -4,15 +4,15 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, Ico
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // Custom
-import { LogImageConfig } from '../modal/LogImageConfig';
+import { LogImageGeneration } from '../modal/LogImageGeneration';
+import { LogImageVisualization } from '../modal/LogImageVisualization';
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import axios from '../../../../../../services/AxiosApi';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const initialDisplatAlert = { display: false, type: "", message: "" };
-const kmlRegex = /^(?!.*\.tlog\.kml$).*\.kml$/;
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateLog = React.memo((props) => {
 
@@ -22,23 +22,43 @@ export const CreateLog = React.memo((props) => {
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [logs, setLogs] = React.useState([]);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     function handleSubmit() {
 
-        setLoading(true);
+        if (!checkIfAllValidLogsHaveImages()) return '';
 
-        if (!logsValidation()) return '';
+        setLoading(true);
 
         const formData = new FormData();
 
-        logs.forEach((file) => {
-            formData.append("files[]", file);
-        })
 
-        axios.post(`/api/plans-module-logs`, formData)
+        logs.forEach((log) => {
+
+            const fileName = log.name;
+            const fileContent = log.contents;
+            const fileType = "application/xml";
+            const blob = new Blob([fileContent], { type: fileType });
+            const logFile = new File([blob], fileName, { type: fileType });
+
+            formData.append("files[]", logFile);
+
+            if (log.status.is_valid) {
+                // Only valid logs have images
+
+                formData.append("images[]", log.image.dataURL);
+
+            }
+
+        });
+
+        axios.post(`/api/plans-module-logs`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
             .then(function (response) {
                 successResponse(response);
             })
@@ -47,12 +67,22 @@ export const CreateLog = React.memo((props) => {
             })
             .finally(() => {
                 setLoading(false);
-            })
+            });
     }
 
-    function logsValidation() {
+    function checkIfAllValidLogsHaveImages() {
 
-        // Check if valid logs have images
+        let validation = logs.reduce((acm, log) => {
+
+            return acm && (Boolean(log.status.is_valid) && Boolean(log.image));
+
+        }, true);
+
+        if (!validation) {
+            setDisplayAlert({ display: true, type: "error", message: "Todos os logs válidos devem ter imagens." });
+        }
+
+        return validation;
     }
 
     function successResponse(response) {
@@ -68,7 +98,7 @@ export const CreateLog = React.memo((props) => {
     }
 
     function handleClose() {
-        setDisplayAlert({ display: false, type: "", message: "" });
+        setDisplayAlert(initialDisplayAlert);
         setLogs([]);
         setOpen(false);
     }
@@ -138,23 +168,26 @@ export const CreateLog = React.memo((props) => {
                         >
                             <ul>
                                 <ListSubheader sx={{ bgcolor: '#1976D2', color: '#fff', fontWeight: 'bold' }}>{"Logs selecionados: " + logs.length}</ListSubheader>
-                                {logs.map((file, index) => (
+                                {logs.map((log, index) => (
                                     <ListItem
                                         key={index}
                                         secondaryAction={
                                             <Stack direction="row" spacing={1}>
 
-                                                {file.status.is_valid ?
+                                                {log.status.is_valid ?
                                                     <>
-                                                        <Tooltip title={file.status.message}>
+                                                        <Tooltip title={log.status.message}>
                                                             <IconButton>
                                                                 <CheckCircleIcon color="success" />
                                                             </IconButton>
                                                         </Tooltip>
-                                                        <LogImageConfig actual_log={file} index={index} logs={logs} setLogs={setLogs} />
+                                                        <LogImageGeneration actual_log={log} index={index} logs={logs} setLogs={setLogs} />
+                                                        {log.image &&
+                                                            <LogImageVisualization actual_log={log} />
+                                                        }
                                                     </>
                                                     :
-                                                    <Tooltip title={file.status.message}>
+                                                    <Tooltip title={log.status.message}>
                                                         <IconButton>
                                                             <DangerousIcon color="error" />
                                                         </IconButton>
@@ -164,7 +197,7 @@ export const CreateLog = React.memo((props) => {
                                             </Stack>
                                         }
                                     >
-                                        <ListItemText primary={`Nome: ${file.original_name}`} secondary={`Tamanho: ${file.size}`} />
+                                        <ListItemText primary={`Nome: ${log.original_name}`} secondary={`Tamanho: ${log.size}`} />
                                     </ListItem>
                                 ))}
                             </ul>

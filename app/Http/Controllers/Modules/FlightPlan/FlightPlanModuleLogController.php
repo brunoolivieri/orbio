@@ -50,7 +50,7 @@ class FlightPlanModuleLogController extends Controller
     public function processSelectedLogs(Request $request)
     {
         Gate::authorize('flight_plans_write');
-        
+
         return $this->service->processSelectedLogs((array) $request->file('files'));
     }
 
@@ -58,7 +58,10 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->createOne($request->file('log_files'));
+        return $this->service->createOne([
+            "logs" => $request->file('files'),
+            "images" => $request->images
+        ]);
     }
 
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response

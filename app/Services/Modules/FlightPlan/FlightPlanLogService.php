@@ -124,11 +124,10 @@ class FlightPlanLogService implements ServiceInterface
                                     "message" => "Processado"
                                 ],
                                 "size" => filesize($log),
-                                "timestamp" => preg_replace('/\D/', "", $original_log_name), // Remove non-numeric from timestamp
                                 "original_name" => $original_log_name,
                                 "name" => $kml_filename,
-                                "storage_path" => "flight_plans/flightlogs/kml/" . $kml_filename,
-                                "contents" => $kml_string_content
+                                "contents" => $kml_string_content,
+                                "image" => null
                             ];
 
                             // If actual tlog cant be open
@@ -140,7 +139,8 @@ class FlightPlanLogService implements ServiceInterface
                                     "message" => "Corrompido"
                                 ],
                                 "size" => filesize($log),
-                                "original_name" => $original_log_name
+                                "original_name" => $original_log_name,
+                                "image" => null
                             ];
                         }
                     }
@@ -169,10 +169,8 @@ class FlightPlanLogService implements ServiceInterface
                                 "is_valid" => true,
                                 "message" => "Processado"
                             ],
-                            "timestamp" => preg_replace('/\D/', "", $original_log_name),
                             "size" => filesize($log),
                             "original_name" => $original_log_name,
-                            "storage_path" => "flight_plans/flightlogs/kml/" . $original_log_name,
                             "contents" => file_get_contents($log)
                         ];
                     }
@@ -186,9 +184,14 @@ class FlightPlanLogService implements ServiceInterface
         }
     }
 
-    function createOne(array $log_files)
+    function createOne(array $data)
     {
-        //
+        
+        $fileLogs = $data["logs"];
+        $fileImages = $data["images"];
+
+        dd($fileLogs);
+
     }
 
     function updateOne(array $data, string $identifier)
