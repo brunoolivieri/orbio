@@ -26,9 +26,7 @@ class UpdateLogRequest extends FormRequest
         $log_id = $this->route("plans_module_log");
 
         return [
-            "name" => ["required", "unique:logs,name,$log_id", "min:3"],
-            "flight_plan_id" => ["required"],
-            "service_order_id" => ["required"]
+            "name" => ["required", "unique:logs,name,$log_id", "min:3"]
         ];
     }
 
@@ -42,9 +40,7 @@ class UpdateLogRequest extends FormRequest
         return [
             'name.required' => "O nome do log deve ser informado",
             'name.unique' => "Já existe um log com esse nome",
-            "name.min" => "O nome deve ter pelo menos 3 caracteres",
-            "flight_plan_id.required" => "Um plano de voo deve ser vinculado",
-            "service_order_id.required" => "Selecione a ordem de serviço"
+            "name.min" => "O nome deve ter pelo menos 3 caracteres"
         ];
     }
 }

@@ -77,7 +77,8 @@ class FlightPlanLogService implements ServiceInterface
                     $data[$index] = [
                         "status" => [
                             "is_valid" => false,
-                            "message" => "Já existe"
+                            "message" => "Já existe",
+                            "to_save" => false
                         ],
                         "size" => filesize($log),
                         "original_name" => $original_log_name
@@ -127,7 +128,8 @@ class FlightPlanLogService implements ServiceInterface
                             $data[$index] = [
                                 "status" => [
                                     "is_valid" => true,
-                                    "message" => "Processado"
+                                    "message" => "Processado",
+                                    "to_save" => true
                                 ],
                                 "size" => filesize($log),
                                 "original_name" => $original_log_name,
@@ -142,7 +144,8 @@ class FlightPlanLogService implements ServiceInterface
                             $data[$index] = [
                                 "status" => [
                                     "is_valid" => false,
-                                    "message" => "Corrompido"
+                                    "message" => "Corrompido",
+                                    "to_save" => true
                                 ],
                                 "size" => filesize($log),
                                 "original_name" => $original_log_name,
@@ -247,12 +250,6 @@ class FlightPlanLogService implements ServiceInterface
 
     function updateOne(array $data, string $identifier)
     {
-        foreach ($data as $key => $value) {
-            if ($value === "0") {
-                $data[$key] = null;
-            }
-        }
-
         $log = $this->repository->updateOne(collect($data), $identifier);
 
         return response(["message" => "Log atualizado com sucesso!"], 200);

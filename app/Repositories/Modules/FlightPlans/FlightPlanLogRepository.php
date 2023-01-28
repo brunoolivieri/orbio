@@ -57,11 +57,8 @@ class FlightPlanLogRepository implements RepositoryInterface
     {
         $log = $this->logModel->findOrFail($identifier);
 
-        $service_order_flight_plan = $this->serviceOrderFlightPlanModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->firstOrFail();
-
         $log->update([
-            "name" => $data->get("name"),
-            "service_order_flight_plan_id" => $service_order_flight_plan->id
+            "name" => $data->get("name")
         ]);
 
         $log->refresh();

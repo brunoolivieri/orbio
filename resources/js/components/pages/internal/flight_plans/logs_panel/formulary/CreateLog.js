@@ -36,30 +36,34 @@ export const CreateLog = React.memo((props) => {
 
         logs.forEach((log) => {
 
-            // Create KML file
-            const kml_filename = log.name;
-            const file_content = log.contents;
-            const file_type = "application/xml";
-            const blob = new Blob([file_content], { type: file_type });
-            const logFile = new File([blob], kml_filename, { type: file_type });
+            if (log.status.to_save) {
 
-            console.log(kml_filename)
+                // Create KML file
+                const kml_filename = log.name;
+                const file_content = log.contents;
+                const file_type = "application/xml";
+                const blob = new Blob([file_content], { type: file_type });
+                const logFile = new File([blob], kml_filename, { type: file_type });
 
-            formData.append("files[]", logFile);
+                console.log(kml_filename)
 
-            if (log.status.is_valid) {
+                formData.append("files[]", logFile);
 
-                // Create image for valid KML
-                // formData.append("images[]", log.image.dataURL);
+                if (log.status.is_valid) {
 
-                const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/png" });
+                    // Create image for valid KML
+                    // formData.append("images[]", log.image.dataURL);
 
-                formData.append("images[]", imageFile);
+                    const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/png" });
+
+                    formData.append("images[]", imageFile);
+
+                }
 
             }
 
         });
-        
+
         axios.post(`/api/plans-module-logs`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'

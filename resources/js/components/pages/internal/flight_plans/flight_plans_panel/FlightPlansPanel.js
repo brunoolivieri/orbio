@@ -15,6 +15,7 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { FlightPlanGeneration } from './modal/FlightPlanGeneration';
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -194,7 +195,7 @@ const columns = [
                 content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
               }
             }
-            
+
             //console.log(content);
 
             let blob = new Blob([content],
@@ -317,13 +318,15 @@ export function FlightPlansPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <Tooltip title="Novo Plano">
-              <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
-                <IconButton>
-                  <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
-                </IconButton>
-              </Link>
-            </Tooltip>
+            <FlightPlanGeneration />
+            /*<Tooltip title="Novo Plano">
+                <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
+                  <IconButton>
+                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                  </IconButton>
+                </Link>
+              </Tooltip>
+            */
           }
         </Grid>
 
