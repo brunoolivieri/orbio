@@ -85,23 +85,6 @@ const columns = [
         sortable: true,
         editable: false,
         width: 150
-    },
-    {
-        field: 'flight_plans',
-        headerName: 'Planos de voo',
-        sortable: true,
-        editable: false,
-        width: 150,
-        valueGetter: (data) => {
-            return data.row.flight_plans.length;
-        }
-    },
-    {
-        field: 'total_logs',
-        headerName: 'Logs',
-        sortable: true,
-        editable: false,
-        width: 150
     }
 ];
 
@@ -249,8 +232,9 @@ export const ServiceOrderForReport = React.memo((props) => {
                     name: flight_plan.name,
                     city: flight_plan.localization.city,
                     state: flight_plan.localization.state,
-                    date: flight_plan.logs[0].timestamp, // need to be date from main log
+                    date: flight_plan.log.timestamp,
                     image_url: flight_plan.image_url,
+                    log_image_url: flight_plan.log.image_url,
                     area: '',
                     number: '',
                     dosage: '',
@@ -262,6 +246,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                     completed: false
                 }
             });
+
             props.setFlightPlans(flight_plans_for_report);
 
             // Can be [] or [X] being X the last value selected

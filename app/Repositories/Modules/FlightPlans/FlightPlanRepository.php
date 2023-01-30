@@ -7,14 +7,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Logs\Log;
 // Model
 use App\Models\FlightPlans\FlightPlan;
 
 class FlightPlanRepository implements RepositoryInterface
 {
-    public function __construct(FlightPlan $flightPlanModel)
+    public function __construct(FlightPlan $flightPlanModel, Log $logModel)
     {
         $this->flightPlanModel = $flightPlanModel;
+        $this->logModel = $logModel;
     }
 
     function getPaginate(string $limit, string $page, string $search)
@@ -57,13 +59,24 @@ class FlightPlanRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $flight_plan = $this->flightPlanModel->findOrFail($identifier);
+        return DB::transaction(function () use ($data, $identifier) {
 
-        $flight_plan->update($data->only(["name", "description"])->all());
+            // Update flight plan itself
+            $flight_plan = $this->flightPlanModel->findOrFail($identifier);
+            $flight_plan->update($data->only(["name", "description"])->all());
+            $flight_plan->refresh();
 
-        $flight_plan->refresh();
+            if (!(is_null($data->get("service_order_id")) && is_null($data->get("log_id")))) {
+                // Update log relationship with flight plan through service order pivot
+                $pivot_flight_plan_service_order = $flight_plan->service_orders()->where("service_order_id", $data->get("service_order_id"))->first();
+                $log = $this->logModel->find($data->get("log_id"));
+                $log->update([
+                    "service_order_flight_plan_id" => $pivot_flight_plan_service_order->id
+                ]);
+            }
 
-        return $flight_plan;
+            return $flight_plan;
+        });
     }
 
     function delete(array $ids)

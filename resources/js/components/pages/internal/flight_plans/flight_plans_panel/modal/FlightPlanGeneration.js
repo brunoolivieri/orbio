@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Tooltip } from '@mui/material';
+import { IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Tooltip, Alert } from '@mui/material';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Axios
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 
-export function FlightPlanGeneration() {
+const initialDisplayAlert = { display: false, type: "", message: "" };
+
+export function FlightPlanGeneration(props) {
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
 
     function handleOpen() {
         setOpen(true);
@@ -17,11 +20,20 @@ export function FlightPlanGeneration() {
 
     function handleClose() {
         setOpen(false);
+        setDisplayAlert(initialDisplayAlert);
     }
 
-    function handleSaveFlightPlan() {
-        console.log('save flight plan');
-    }
+    window.addEventListener("message", (event) => {
+
+        if (event.origin === 'http://localhost:8000' && event.data.type === 'flight_plan_creation') {
+            setDisplayAlert({ display: true, type: "error", message: event.data.message });
+            setTimeout(() => {
+                props.reloadTable((old) => !old);
+                handleClose();
+            }, 2000);
+        }
+
+    }, false);
 
     return (
         <>
@@ -48,12 +60,14 @@ export function FlightPlanGeneration() {
                         ></iframe>
                     </div>
                 </DialogContent>
+
+                {displayAlert.display &&
+                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                }
+
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleSaveFlightPlan} variant="contained">
-                        Salvar
-                    </Button>
                 </DialogActions>
             </Dialog>
         </>

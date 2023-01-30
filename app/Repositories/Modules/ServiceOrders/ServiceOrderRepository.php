@@ -37,7 +37,6 @@ class ServiceOrderRepository implements RepositoryInterface
             // ==== Create service order ==== //
 
             $service_order = $this->serviceOrderModel->create([
-                "uuid" => Str::uuid(),
                 "start_date" => date("Y-m-d", strtotime($data->get("start_date"))),
                 "end_date" => date("Y-m-d", strtotime($data->get("end_date"))),
                 "number" => $data->get("number"),

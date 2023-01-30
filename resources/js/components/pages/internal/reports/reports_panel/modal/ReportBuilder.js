@@ -141,7 +141,7 @@ export const ReportDocument = React.memo((props) => {
 
                         <View style={styles.section}>
                             <Image
-                                src={flight_plan.image_url}
+                                src={flight_plan.log_image_url}
                             ></Image>
                         </View>
 

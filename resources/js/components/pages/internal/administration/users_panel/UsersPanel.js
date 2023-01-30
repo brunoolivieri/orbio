@@ -106,10 +106,19 @@ export function UsersPanel() {
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
+
+    let is_mounted = true;
+    if (!is_mounted) return '';
+
     setLoading(true);
     setRecords([]);
     setSelectedRecords([]);
     fetchRecords();
+
+    return () => {
+      is_mounted = false;
+    }
+
   }, [reload]);
 
   function fetchRecords() {

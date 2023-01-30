@@ -184,9 +184,6 @@
 			  <h5 class="modal-title">Deseja manter essas configurações e salvar?</h5>
 			</div>
 			<div class="modal-body">
-				<div>
-					<p>O enquadramento e posicionamento do desenho na sua tela definirá o resultado final da imagem.</p>
-				</div>
 				<label for="name" class="form-label">Nome</label>
 				<input type="text" id="name" class="form-control flight_plan_name" value="" readonly>
 				<div class="modal-body flight_plan_image">

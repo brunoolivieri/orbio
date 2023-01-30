@@ -27,9 +27,9 @@ class ServiceOrderReportResource extends JsonResource
     public function toArray($request)
     {
 
-        foreach ($this->data as $row => $service_order) {
+        foreach ($this->data as $service_order_index => $service_order) {
 
-            $this->formatedData["records"][$row] = [
+            $this->formatedData["records"][$service_order_index] = [
                 "id" => $service_order->id,
                 "status" => $service_order->status,
                 "number" => $service_order->number,
@@ -45,9 +45,9 @@ class ServiceOrderReportResource extends JsonResource
             // ============================== RELATED USERS ============================== //
 
             // Get creator, pilot and client 
-            foreach ($service_order->users as $index => $user) {
+            foreach ($service_order->users as $user) {
 
-                $this->formatedData["records"][$row]["users"][$user->pivot->role] = [
+                $this->formatedData["records"][$service_order_index]["users"][$user->pivot->role] = [
                     "id" => $user->id,
                     "profile_id" => $user->profile_id,
                     "name" => $user->name,
@@ -58,47 +58,58 @@ class ServiceOrderReportResource extends JsonResource
 
             // ============================== RELATED FLIGHT PLANS WITH INCIDENTS ============================== //
 
-            $check_if_all_plans_has_log = [];
-            foreach ($service_order->flight_plans as $index => $flight_plan) {
+            $log_per_flight_plan = [];
+            foreach ($service_order->flight_plans as $flight_plan_index => $flight_plan) {
 
-                $incidents = Incident::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
-                $logs = Log::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
-
-                $this->formatedData["records"][$row]["flight_plans"][$index] = [
+                // Initial flight plan data 
+                $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index] = [
                     "id" => $flight_plan->id,
                     "image_url" => Storage::url($flight_plan->image->path),
                     "file" => $flight_plan->file,
                     "name" => $flight_plan->name,
-                    "logs" => $logs,
+                    "log" => null,
                     "localization" => [
                         "coordinates" => $flight_plan->coordinates,
                         "city" => $flight_plan->city,
                         "state" =>  $flight_plan->state
                     ],
-                    "drone_id" => $flight_plan->pivot->drone_id,
-                    "battery_id" => $flight_plan->pivot->battery_id,
-                    "equipment_id" => $flight_plan->pivot->equipment_id,
-                    "incidents" => $incidents,
+                    "incidents" => null,
                     "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];
 
+                // Pivot - Equipments
+                $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index]["battery_id"] = $flight_plan->pivot->battery_id;
+                $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index]["equipment_id"] = $flight_plan->pivot->equipment_id;
+                $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index]["drone_id"] = $flight_plan->pivot->drone_id;
+
+                // Pivot - Incidents
+                $incidents = Incident::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
+                $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index]["incidents"] = $incidents;
                 $total_incidents = $incidents->count();
-                $total_logs = $logs->count();
 
-                $this->formatedData["records"][$row]["total_incidents"] += $total_incidents;
-                $this->formatedData["records"][$row]["total_logs"] += $total_logs;
+                // Pivot - log
+                $log_check = 0;
+                $log = Log::where("service_order_flight_plan_id", $flight_plan->pivot->id)->first();
+                if ($log) {
 
-                // Each position corresponds to each flight plan and receives 1 or 0 if has a log or not
-                if ($total_logs > 0) {
-                    $check_if_all_plans_has_log[$index] = 1;
-                } else {
-                    $check_if_all_plans_has_log[$index] = 0;
+                    $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index]["log"] = [
+                        "id" => $log->id,
+                        "image_url" => Storage::url($log->image->path),
+                        "timestamp" => $log->timestamp,
+                        "filename" => $log->filename
+                    ];
+
+                    $log_check = 1;
                 }
+
+                $this->formatedData["records"][$service_order_index]["total_incidents"] += $total_incidents;
+                $log_per_flight_plan[$flight_plan_index] = $log_check;
+                
             }
 
-            // An available service order need to have logs for all flight plans and no report
-            if (in_array(0, $check_if_all_plans_has_log) || !is_null($service_order->report_id)) {
-                $this->formatedData["records"][$row]["available"] = false;
+            // A service order need to have log for each flight plan and no report
+            if (in_array(0, $log_per_flight_plan) || !is_null($service_order->report_id)) {
+                $this->formatedData["records"][$service_order_index]["available"] = false;
             }
         }
 

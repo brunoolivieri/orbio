@@ -50,7 +50,7 @@ class FlightPlanModuleController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-       
+
         return $this->service->createOne($request->only(["name", "routes_file", "image_file", "image_filename", "description", "coordinates"]));
     }
 
@@ -58,13 +58,13 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateOne($request->validated(), $id);
+        return $this->service->updateOne($request->only(["name", "description", "service_order_id", "log_id"]), $id);
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-        
+
         return $this->service->delete($request->ids);;
     }
 }

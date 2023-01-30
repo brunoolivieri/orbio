@@ -15,7 +15,6 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { FlightPlanGeneration } from './modal/FlightPlanGeneration';
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -45,6 +44,7 @@ const columns = [
     field: 'name',
     headerName: 'Nome',
     flex: 1,
+    minWidth: 200,
     sortable: true,
     editable: false
   },
@@ -54,6 +54,7 @@ const columns = [
     sortable: true,
     editable: false,
     flex: 1,
+    minWidth: 200,
     valueGetter: (data) => {
       return data.row.creator.name;
     },
@@ -247,10 +248,19 @@ export function FlightPlansPanel() {
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
+
+    let is_mounted = true;
+    if (!is_mounted) return '';
+
     setLoading(true);
     setRecords([]);
     setSelectedRecords([]);
     fetchRecords();
+
+    return () => {
+      is_mounted = false;
+    }
+
   }, [reload]);
 
   function fetchRecords() {
@@ -318,15 +328,14 @@ export function FlightPlansPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <FlightPlanGeneration />
-            /*<Tooltip title="Novo Plano">
-                <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
-                  <IconButton>
-                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
-                  </IconButton>
-                </Link>
-              </Tooltip>
-            */
+            /* <FlightPlanGeneration reloadTable={setReload} /> */
+            <Tooltip title="Novo Plano">
+              <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
+                <IconButton>
+                  <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                </IconButton>
+              </Link>
+            </Tooltip>
           }
         </Grid>
 

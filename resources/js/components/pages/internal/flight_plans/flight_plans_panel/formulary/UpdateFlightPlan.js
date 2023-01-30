@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Link } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Typography, MenuItem } from '@mui/material';
 // Custom
 import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
 import { FormValidation } from '../../../../../../utils/FormValidation';
@@ -9,8 +9,7 @@ import axios from '../../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-const initialFieldError = { name: false, description: false };
-const initialFieldErrorMessage = { name: "", description: "" };
+const initialFieldError = { name: { error: false, message: "" }, description: { error: false, message: "" }, service_order_id: { error: false, message: "" }, log_id: { error: false, message: "" } };
 const initialDisplatAlert = { display: false, type: "", message: "" };
 
 export const UpdateFlightPlan = React.memo((props) => {
@@ -19,22 +18,50 @@ export const UpdateFlightPlan = React.memo((props) => {
 
   const { AuthData } = useAuthentication();
 
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
+  const [formError, setFormError] = React.useState(initialFieldError);
+  const [serviceOrderId, setServiceOrderId] = React.useState("0");
+  const [serviceOrders, setServiceOrders] = React.useState([]);
+  const [logId, setLogId] = React.useState("0");
+  const [logs, setLogs] = React.useState([]);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
+  React.useEffect(() => {
+
+    let is_mounted = true;
+
+    axios.get("api/load-service-orders/" + props.record.id)
+      .then((response) => {
+
+        if (is_mounted) {
+          setServiceOrders(response.data);
+          return axios.get("api/load-logs");
+        }
+
+      })
+      .then((response) => {
+        setLogs(response.data);
+      })
+      .catch((error) => {
+        console.log(error)
+      });
+
+    return () => {
+      is_mounted = false;
+    }
+
+  }, []);
+
   function handleClickOpen() {
     setOpen(true);
   }
 
   function handleClose() {
-    setFieldError({ description: false });
-    setFieldErrorMessage({ description: "" });
+    setFormError(initialFieldError);
     setDisplayAlert({ display: false, type: "", message: "" });
     setLoading(false);
     setOpen(false);
@@ -48,20 +75,35 @@ export const UpdateFlightPlan = React.memo((props) => {
   }
 
   function formValidation() {
-    const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
-    const descriptionValidate = FormValidation(controlledInput.description, 3, null, null, "descrição");
 
-    setFieldError({ name: nameValidate.error, description: descriptionValidate.error });
-    setFieldErrorMessage({ name: nameValidate.message, description: descriptionValidate.message });
+    const nameValidate = FormValidation(formData.name, 3, null, null, "nome");
+    const descriptionValidate = FormValidation(formData.description, 3, null, null, "descrição");
+
+    setFormError(
+      {
+        name: { error: nameValidate.error, message: nameValidate.message },
+        description: { error: descriptionValidate.error, message: descriptionValidate.message },
+        service_order_id: { error: false, message: "" },
+        log_id: { error: false, message: "" }
+      }
+    );
 
     return !(nameValidate.error || descriptionValidate.error);
   }
 
   function requestServerOperation() {
-    axios.patch(`/api/plans-module/${controlledInput.id}`, {
-      name: controlledInput.name,
-      description: controlledInput.description
-    })
+
+    let data = {
+      name: formData.name,
+      description: formData.description
+    };
+
+    if (serviceOrderId != "0" && logId != "0") {
+      data["service_order_id"] = serviceOrderId;
+      data["log_id"] = logId;
+    }
+
+    axios.patch(`/api/plans-module/${formData.id}`, data)
       .then(function (response) {
         successResponse(response);
       })
@@ -87,7 +129,9 @@ export const UpdateFlightPlan = React.memo((props) => {
 
     let request_errors = {
       name: { error: false, message: null },
-      description: { error: false, message: null }
+      description: { error: false, message: null },
+      service_order_id: { error: false, message: null },
+      log_id: { error: false, message: null },
     }
 
     for (let prop in response_data.errors) {
@@ -97,19 +141,11 @@ export const UpdateFlightPlan = React.memo((props) => {
       }
     }
 
-    setFieldError({
-      name: request_errors.name.error,
-      description: request_errors.description.error
-    });
-
-    setFieldErrorMessage({
-      name: request_errors.name.message,
-      description: request_errors.description.message
-    });
+    setFormError(request_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //
@@ -135,36 +171,18 @@ export const UpdateFlightPlan = React.memo((props) => {
         <DialogContent>
           <Grid container spacing={1}>
 
-            <Grid item xs={2}>
+            <Grid item xs={12}>
               <TextField
                 margin="dense"
-                id="id"
-                name="id"
-                label="ID do plano"
-                type="text"
-                fullWidth
-                variant="outlined"
-                onChange={handleInputChange}
-                defaultValue={props.record.id}
-                inputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={10}>
-              <TextField
-                margin="dense"
-                id="name"
                 name="name"
                 label="Nome do plano"
                 type="text"
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                defaultValue={props.record.name}
-                helperText={fieldErrorMessage.name}
-                error={fieldError.name}
+                value={formData.name}
+                helperText={formError.name.message}
+                error={formError.name.error}
               />
             </Grid>
 
@@ -177,19 +195,62 @@ export const UpdateFlightPlan = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                defaultValue={props.record.description}
-                helperText={fieldErrorMessage.description}
-                error={fieldError.description}
+                value={formData.description}
+                helperText={formError.description.message}
+                error={formError.description.error}
               />
             </Grid>
 
-            <Grid item xs={6}>
-              <Button variant="contained" disabled>
-                <Link href={`/internal/map?file=${props.record.file}`} target="_blank" sx={{ color: '#fff', textDecoration: 'none' }}>
-                  Editar plano
-                </Link>
-              </Button>
-            </Grid>
+            {serviceOrders.length > 0 &&
+              <>
+                <Grid item xs={12} mb={2} mt={1}>
+                  <Typography>Este plano de voo está vinculado a ordens de serviço e pode ser vinculado a logs. Primeiro selecione a ordem de serviço em que este plano foi executado, e, em seguida, o log correspondente.</Typography>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    select
+                    label="Ordem de serviço"
+                    value={serviceOrderId}
+                    fullWidth
+                    onChange={(e) => setServiceOrderId(e.target.value)}
+                    error={formError.service_order_id.error}
+                    helperText={formError.service_order_id.message}
+                  >
+                    <MenuItem value={"0"} disabled>
+                      Escolha
+                    </MenuItem>
+                    {serviceOrders.map((service_order) =>
+                      <MenuItem value={service_order.id} key={service_order.id}>
+                        {service_order.number}
+                      </MenuItem>
+                    )}
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    select
+                    label="Log"
+                    value={logId}
+                    fullWidth
+                    disabled={serviceOrderId === "0"}
+                    onChange={(e) => setLogId(e.target.value)}
+                    error={formError.log_id.error}
+                    helperText={formError.log_id.message}
+                  >
+                    <MenuItem value={"0"} disabled>
+                      Escolha
+                    </MenuItem>
+                    {serviceOrderId != "0" && logs.length > 0 && logs.map((log) =>
+                      <MenuItem value={log.id} key={log.id}>
+                        {log.name}
+                      </MenuItem>
+                    )}
+                  </TextField>
+                </Grid>
+              </>
+            }
 
           </Grid>
         </DialogContent>

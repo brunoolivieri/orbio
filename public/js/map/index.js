@@ -879,7 +879,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
 
 			// Verificando o tempo de voo baseado na distância parcial atual percorrida
 			calculateFlightTime(partialDistance);
-			console.log(time);
+			//console.log(time);
 
 			// Acessando o limite máximo de tempo definido pelo usuário
 			maxFlightTime = Number.parseInt(document.getElementById('max-flight-time').value) * 60;
@@ -897,7 +897,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
 		}
 	}
 
-	console.log(breakpoints);
+	//console.log(breakpoints);
 
 	// Distância percorrida na fase 03 da rota
 	for (j = 0; j < initialFinalPath[1].length - 1; j++) {
@@ -1192,7 +1192,7 @@ function recomputeDistanceBetweenLines() {
 var btnMenu = document.getElementById("btn-mission");
 
 // Acessando o menu lateral do marcador
-var markerSideMenu = document.getElementById('side_menu');
+// var markerSideMenu = document.getElementById('side_menu');
 
 // Acessando box de logos
 var boxLogos = document.getElementById("logo-box");
@@ -1252,10 +1252,6 @@ btnCancelCreation.addEventListener("click", () => {
 	confirmationModal.style.display = "none";
 });
 
-// Botão para confirmar a criação do plano no modal
-var btnConfirmCreation = document.getElementById("btn-confirm-creation");
-btnConfirmCreation.addEventListener("click", saveFullPath);
-
 // Alerta
 var alertMessage = document.getElementsByClassName("alert-message")[0];
 
@@ -1275,9 +1271,13 @@ var btnFullSave = document.getElementById("btn-full-save");
 // Atrelando a função ao evento onclick do botão
 
 // ==== ATT ORBIO ==== //
-btnFullSave.addEventListener("click", openModalToCheckFlightPlanBeforeCreation);
+btnFullSave.addEventListener("click", flightPlanImageConfirmation);
 // Modal confirmar salvamento 
 var confirmationModal = document.getElementById("confirmation-modal");
+
+// Botão para confirmar a criação do plano no modal
+var btnConfirmCreation = document.getElementById("btn-confirm-creation");
+btnConfirmCreation.addEventListener("click", saveFullPath);
 
 // ==== MENU: SALVAR ROTA CSV ==== //
 // Salva as coordenadas de latitude, longitude e altitude em um arquivo no formato .csv.
@@ -1524,7 +1524,7 @@ function getTextAndSaveCSV(e) {
 		// Quebrando as linhas do arquivo em um array
 		var lines = contents.split("\n");
 
-		console.log(lines.length);
+		//console.log(lines.length);
 		// Quebrando todas as linhas nos espaços \t
 		for (i = 4; i < lines.length - 2; i++) {
 			line = lines[i].split("\t");
@@ -1536,7 +1536,7 @@ function getTextAndSaveCSV(e) {
 				content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
 			}
 		}
-		console.log(content);
+		//console.log(content);
 		var blob = new Blob([content],
 			{ type: "text/plain;charset=utf-8" });
 
@@ -1548,7 +1548,7 @@ function getTextAndSaveCSV(e) {
 }
 
 // ==== ATT ORBIO ==== //
-function openModalToCheckFlightPlanBeforeCreation() {
+function flightPlanImageConfirmation() {
 
 	removeElementsForPrintScreen();
 
@@ -1563,13 +1563,13 @@ function openModalToCheckFlightPlanBeforeCreation() {
 
 	}).then(({ blobImg, filenameImg, dataURL, canvas }) => {
 
-		// Nome do arquivo com data em milissegundos decorridos
 		const timestamp = new Date().getTime();
 		const filename = timestamp + ".txt";
 
 		confirmationModal.style.display = "flex";
 		document.getElementsByClassName("flight_plan_name")[0].value = filename;
 
+		// Set canvas into confirmation modal
 		canvas.toBlob(function (blobImg) {
 			var elem = document.createElement("img");
 			const blobUrl = URL.createObjectURL(blobImg)
@@ -1725,11 +1725,9 @@ function saveFlightPlanToStorage(coordinates, blobRoutes) {
 
 		setTimeout(() => {
 			window.close();
-		}, 3000);
+		},2000);
 
 	}).catch((error) => {
-
-		console.log(error.response);
 
 		alertMessage.classList.add("alert-danger");
 		alertMessage.innerText = "Erro! Tente novamente.";
@@ -1738,7 +1736,6 @@ function saveFlightPlanToStorage(coordinates, blobRoutes) {
 	}).finally(() => {
 		btnConfirmCreation.setAttribute("disabled", true);
 	});
-
 
 }
 
@@ -1749,7 +1746,7 @@ function removeElementsForPrintScreen() {
 	menuOptions.style.display = 'none';
 	boxLogos.style.display = 'none';
 	calculationBox.style.display = 'none';
-	markerSideMenu.style.display = 'none'
+	//markerSideMenu.style.display = 'none'
 	map.removeControl(mapBoxGeocoder);
 	map.removeControl(draw);
 	map.removeControl(mapBoxNavigationControl);
@@ -1762,7 +1759,7 @@ function displayElementsAfterPrintScreen() {
 	menuOptions.style.display = 'block';
 	boxLogos.style.display = 'block';
 	calculationBox.style.display = 'block';
-	markerSideMenu.style.display = 'block'
+	//markerSideMenu.style.display = 'block'
 	map.addControl(mapBoxGeocoder);
 	map.addControl(draw);
 	map.addControl(mapBoxNavigationControl);
@@ -1789,7 +1786,7 @@ function savePath() {
 	inputSpeed = document.getElementById("speed").value;
 	var speed = (inputSpeed == '') ? 8 : inputSpeed;
 
-	console.log("quantos breakpoints: " + breakpoints.length);
+	//console.log("quantos breakpoints: " + breakpoints.length);
 
 	// São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
 	for (k = 0; k <= breakpoints.length; k++) {
@@ -1926,7 +1923,7 @@ function importKMLPoint(e) {
 	cleanLayers();
 	cleanPolygon();
 
-	console.log(marcador);
+	//console.log(marcador);
 	// Apagando o marcador anterior
 	marcador.remove();
 
@@ -1999,7 +1996,7 @@ function importKMLPolygon(e) {
 
 		// Percorrendo todas as coordenadas e quebrando as informações de lat e long
 		for (i = 0; i < coordinates.length - 1; i++) {
-			console.log(coordinates[i]);
+			//console.log(coordinates[i]);
 
 			latLong = coordinates[i].split(",");
 			kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -2013,8 +2010,8 @@ function importKMLPolygon(e) {
 			kmlArea[i] = kmlArea[0];
 		}
 
-		console.log(kmlArea[0]);
-		console.log(kmlArea[kmlArea.length - 1]);
+		//console.log(kmlArea[0]);
+		//console.log(kmlArea[kmlArea.length - 1]);
 
 		home = kmlArea[0];
 
@@ -2072,7 +2069,7 @@ function importKMLPath(e) {
 
 		// Percorrendo todas as coordenadas e quebrando as informações de lat e long
 		for (i = 0; i < coordinates.length - 1; i++) {
-			console.log(coordinates[i]);
+			//console.log(coordinates[i]);
 
 			latLong = coordinates[i].split(",");
 			kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -2080,14 +2077,14 @@ function importKMLPath(e) {
 
 		// Certificando-se de que a primeira e a última posição de kmlArea são idênticas
 		if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
-			console.log("São IGUAIS!");
+			//console.log("São IGUAIS!");
 		} else {
-			console.log("NÃO SÃO IGUAIS!");
+			//console.log("NÃO SÃO IGUAIS!");
 			kmlArea[i] = kmlArea[0];
 		}
 
-		console.log(kmlArea[0]);
-		console.log(kmlArea[kmlArea.length - 1]);
+		//console.log(kmlArea[0]);
+		//console.log(kmlArea[kmlArea.length - 1]);
 
 		home = kmlArea[0];
 
@@ -2162,7 +2159,7 @@ function importMPPolygon(e) {
 		coordinatesLongLat = kmlArea;
 		home = kmlArea[0];
 
-		console.log(coordinatesLongLat);
+		//console.log(coordinatesLongLat);
 
 		// Acessando o centroide da área para posicionar no mapa
 		var polygon = turf.polygon([kmlArea]);
@@ -2256,7 +2253,7 @@ function openTxtFileFromComputerOrStorage(contents) {
 			txtPath[index] = [Number(line[9]), Number(line[8])];
 			index++
 		}
-		console.log(Number(line[3]));
+		//console.log(Number(line[3]));
 
 	}
 

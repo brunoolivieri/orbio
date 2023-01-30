@@ -70,7 +70,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
             let cont_validated_inputs = 0;
 
             for (let key in controlledInput) {
-                if (key != 'completed' && key != 'date' && key != 'image_url') {
+                if (key != 'completed' && key != 'date' && key != 'image_url' && key != 'log_image_url') {
                     if (controlledInput[key].length > 0) {
                         cont_validated_inputs++;
                     }

@@ -146,21 +146,6 @@ export const UpdateUser = React.memo((props) => {
             <Grid item xs={12}>
               <TextField
                 margin="dense"
-                name="id"
-                label="ID"
-                type="email"
-                fullWidth
-                variant="outlined"
-                value={controlledInput.id}
-                inputProps={{
-                  readOnly: true
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                margin="dense"
                 name="name"
                 label="Nome completo"
                 fullWidth
@@ -181,7 +166,7 @@ export const UpdateUser = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                defaultValue={props.record.email}
+                value={controlledInput.email}
                 helperText={fieldErrorMessage.email}
                 error={fieldError.email}
               />

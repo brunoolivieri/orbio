@@ -15,7 +15,6 @@ class CreateServiceOrdersTable extends Migration
     {
         Schema::create('service_orders', function (Blueprint $table) {
             $table->id();
-            $table->uuid("uuid");
             $table->foreignId("report_id")->nullable(true)->constrained('reports');
             $table->string("number");
             $table->dateTime("start_date");

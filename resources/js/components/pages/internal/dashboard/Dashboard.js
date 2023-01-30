@@ -62,27 +62,24 @@ export const Dashboard = React.memo(() => {
     React.useEffect(() => {
 
         let is_mounted = true;
-
-        if (!is_mounted) {
-            return '';
-        }
+        if (!is_mounted) return '';
 
         setPageIndex(0);
 
         axios.get("/api/load-dashboard-metrics")
             .then(function (response) {
 
-                setUsers(response.data.users);
-                setProfiles(response.data.profiles);
-                setFlightPlans(response.data.flight_plans);
-                setServiceOrders(response.data.service_orders);
-                setReports(response.data.reports);
-                handleOpenSnackbar("Métricas carregadas", "success");
+                if (is_mounted) {
+                    setUsers(response.data.users);
+                    setProfiles(response.data.profiles);
+                    setFlightPlans(response.data.flight_plans);
+                    setServiceOrders(response.data.service_orders);
+                    setReports(response.data.reports);
+                    handleOpenSnackbar("Métricas carregadas", "success");
+                }
 
             })
             .catch(function (error) {
-
-                console.log(error)
 
                 const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
                 handleOpenSnackbar(error_message, "error");
