@@ -3,22 +3,12 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 // Material UI
 import { Button, TextField, Grid, Container, Typography, Avatar } from '@mui/material';
-import { makeStyles } from "@mui/styles";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSnackbar } from 'notistack';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 // Custom
 import axios from '../../../../services/AxiosApi';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        backgroundColor: theme.palette.mode == 'light' ? "#fff" : '#2C2C2C'
-    },
-    hiperlink: {
-        color: theme.palette.mode == 'light' ? "#222" : "#fff",
-    }
-}));
 
 const initialFormData = { email: "", code: "", new_password: "", new_password_confirmation: "" };
 const initialFormError = { email: { error: false, message: "" }, code: { error: false, message: "" }, password: { error: false, message: "" }, password_confirmation: { error: false, message: "" } };
@@ -51,7 +41,6 @@ export const ForgotPassword = () => {
     const [codeSent, setCodeSent] = React.useState(false);
     const [timer, setTimer] = React.useState(0);
     const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
-    const classes = useStyles();
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -59,7 +48,7 @@ export const ForgotPassword = () => {
 
     function handleCodeSubmit() {
 
-        if (codeSubmissionValidation()) return '';
+        if (!codeSubmissionValidation()) return '';
 
         setLoading({ send_code: true, change_password: false });
         sendCodeServerRequest();
@@ -344,7 +333,7 @@ export const ForgotPassword = () => {
                     </Grid>
 
                     <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'end', mt: 1 }}>
-                        <Link to="/login" className={classes.hiperlink}>
+                        <Link to="/login" style={{ color: 'inherit' }}>
                             Voltar para a página de acesso
                         </Link>
                     </Grid>

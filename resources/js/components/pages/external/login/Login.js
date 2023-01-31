@@ -30,7 +30,7 @@ const formValidation = {
         message: "Email inválido"
     },
     password: {
-        test: (value) => value != null,
+        test: (value) => value != "",
         message: "Informe a sua senha"
     }
 }
@@ -49,7 +49,7 @@ export function Login() {
 
     function handleSubmit() {
 
-        if (!formValidate) return '';
+        if (!formValidate()) return '';
 
         setLoading(true);
         requestServer();
@@ -68,6 +68,7 @@ export function Login() {
 
         setFormError(validation);
         return !(validation.email.error || validation.password.error);
+
 
     }
 
@@ -161,23 +162,21 @@ export function Login() {
                             label="Lembrar"
                         />
 
-                        {!loading &&
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                sx={{ mt: 3, mb: 2, borderRadius: 1 }}
-                                color="primary"
-                                onClick={handleSubmit}
-                                disabled={loading}
-                            >
-                                {loading ? "Carregando" : "Login"}
-                            </Button>
-                        }
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2, borderRadius: 1 }}
+                            color="primary"
+                            onClick={handleSubmit}
+                            disabled={loading}
+                        >
+                            {loading ? "Carregando" : "Login"}
+                        </Button>
 
                         <Grid container>
                             <Grid item>
-                                <Link to="/forgot-password" variant="body2" className={classes.hiperlink}>
+                                <Link to="/forgot-password" variant="body2" style={{ color: 'inherit' }}>
                                     Esqueceu a senha?
                                 </Link>
                             </Grid>
