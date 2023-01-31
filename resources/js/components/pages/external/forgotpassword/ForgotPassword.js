@@ -1,4 +1,6 @@
 import * as React from 'react';
+// Raect Router
+import { Link } from 'react-router-dom';
 // Material UI
 import { Button, TextField, Grid, Container, Typography, Avatar } from '@mui/material';
 import { makeStyles } from "@mui/styles";
@@ -7,10 +9,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { useSnackbar } from 'notistack';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 // Custom
-import { FormValidation } from '../../../../utils/FormValidation';
 import axios from '../../../../services/AxiosApi';
-// Raect Router
-import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,17 +20,34 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-const initialControlledInput = { email: "", code: "", new_password: "", new_password_confirmation: "" };
-const initialFieldError = { email: false, code: false, new_password: false, new_password_confirmation: false };
-const initialFieldErrorMessage = { email: "", code: "", new_password: "", new_password_confirmation: "" };
+const initialFormData = { email: "", code: "", new_password: "", new_password_confirmation: "" };
+const initialFormError = { email: { error: false, message: "" }, code: { error: false, message: "" }, password: { error: false, message: "" }, password_confirmation: { error: false, message: "" } };
+
+const formValidation = {
+    email: {
+        test: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value),
+        message: "Email inválido"
+    },
+    code: {
+        test: (value) => value.length === 10,
+        message: "Código inválido"
+    },
+    password: {
+        test: (value) => /^.{10,}$/.test(value),
+        message: "A senha deve ter no mínimo 10 caracteres"
+    },
+    password_confirmation: {
+        test: (value, ref) => value === ref,
+        message: "As senhas não coincidem"
+    }
+}
 
 export const ForgotPassword = () => {
 
     // ============================================================================== VARIABLES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFiedlErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [formData, setFormData] = React.useState(initialFormData);
+    const [formError, setFormError] = React.useState(initialFormError);
     const [codeSent, setCodeSent] = React.useState(false);
     const [timer, setTimer] = React.useState(0);
     const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
@@ -42,117 +58,136 @@ export const ForgotPassword = () => {
     // ============================================================================== ROUTINES ============================================================================== //
 
     function handleCodeSubmit() {
-        if (formSendCodeValidation()) {
-            setLoading({ send_code: true, change_password: false });
-            sendCodeServerRequest();
-        }
+
+        if (codeSubmissionValidation()) return '';
+
+        setLoading({ send_code: true, change_password: false });
+        sendCodeServerRequest();
+
     }
 
     function handleChangePasswordSubmit() {
-        if (formChangePasswordValidation()) {
-            setLoading({ send_code: false, change_password: true });
-            changePasswordServerRequest();
+
+        if (!passwordSubmissionValidate()) return '';
+
+        setLoading({ send_code: false, change_password: true });
+        changePasswordServerRequest();
+    }
+
+    function codeSubmissionValidation() {
+
+        let validation = Object.assign({}, initialFormError);
+
+        if (!formValidation.email.test(formData.email)) {
+            validation.email.error = true;
+            validation.email.message = formValidation.email.message;
         }
-    }
 
-    function formSendCodeValidation() {
-
-        const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
-
-        setFieldError({ email: emailValidate.error, code: false, new_password: false, new_password_confirmation: false });
-        setFiedlErrorMessage({ email: emailValidate.message, code: false, new_password: false, new_password_confirmation: false });
-
-        return !emailValidate.error;
+        setFormError(validation);
+        return !validation.email.error;
 
     }
 
-    function formChangePasswordValidation() {
+    function passwordSubmissionValidate() {
 
-        const codeValidate = controlledInput.code.length == 10 ? { error: false, message: "" } : { error: true, message: "código inválido" };
-        const passwordValidate = FormValidation(controlledInput.new_password, 8, null, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "senha");
-        const passwordConfirmValidate = controlledInput.new_password == controlledInput.new_password_confirmation ? { error: false, message: "" } : { error: true, message: "As senhas são incompátiveis" };
+        let validation = Object.assign({}, initialFormError);
 
-        setFieldError({ email: false, code: codeValidate.error, new_password: passwordValidate.error, new_password_confirmation: passwordConfirmValidate.error });
-        setFiedlErrorMessage({ email: "", code: codeValidate.message, new_password: passwordValidate.message, new_password_confirmation: passwordConfirmValidate.message });
+        for (let field in formData) {
+            if (field != 'email' && field != 'password_confirmation') {
+                if (!formValidation[field].test(formData[field])) {
+                    validation[field].error = true;
+                    validation[field].message = formValidation[field].message;
+                }
+            } else if (field != 'email' && field === 'password_confirmation') {
+                if (!formValidation.password_confirmation.test(formData.password_confirmation, formData.password)) {
+                    validation[field].error = true;
+                    validation[field].message = formValidation[field].message;
+                }
+            }
 
-        return !(codeValidate.error || passwordValidate.error || passwordConfirmValidate.error);
+        }
+
+        setFormError(validation);
+        return !(validation.code.error || validation.password.error || validation.password_confirmation.error);
 
     }
 
-    function sendCodeServerRequest() {
-        axios.post("/api/auth/password-token", {
-            email: controlledInput.email
-        })
-            .then(function (response) {
-                successSendCodeResponse();
-                handleOpenSnackbar(response.data.message, "success");
-            }).catch((error) => {
-                setLoading({ send_code: false, change_password: false });
-                errorResponse(error.response);
+    async function sendCodeServerRequest() {
+
+        try {
+
+            const response = axios.post("/api/auth/password-token", {
+                email: formData.email
             });
+
+            successSendCodeResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading({ send_code: false, change_password: false });
+        }
+
     }
 
-    function changePasswordServerRequest() {
-        axios.post("/api/auth/change-password", {
-            token: controlledInput.code,
-            new_password: controlledInput.new_password,
-            new_password_confirmation: controlledInput.new_password_confirmation
-        })
-            .then(function (response) {
-                successChangePasswordResponse();
-                handleOpenSnackbar(response.data.message, "success");
-            }).catch((error) => {
-                setLoading({ send_code: false, change_password: false });
-                errorResponse(error.response);
+    async function changePasswordServerRequest() {
+
+        try {
+
+            const response = axios.post("/api/auth/change-password", {
+                token: formData.code,
+                new_password: formData.new_password,
+                new_password_confirmation: formData.new_password_confirmation
             });
+
+            successChangePasswordResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading({ send_code: false, change_password: false });
+        }
+
     }
 
-    function successSendCodeResponse() {
+    function successSendCodeResponse(response) {
         setTimer(30);
         setCodeSent(true);
-        setLoading({ send_code: false, change_password: false });
+        enqueueSnackbar(response.data.message, { variant: "success" });
     }
 
-    function successChangePasswordResponse() {
-        setLoading({ send_code: false, change_password: false });
+    function successChangePasswordResponse(response) {
+        enqueueSnackbar(response.data.message, { variant: "success" });
+
         setTimeout(() => {
             window.location.href = "/login";
         }, 2000);
     }
 
     const errorResponse = (response) => {
-        handleOpenSnackbar(response.data.message, "error");
+        enqueueSnackbar(response.data.message, { variant: "error" });
 
-        let request_errors = {
-            email: { error: false, message: "" },
-            token: { error: false, message: "" },
-            new_password: { error: false, message: "" },
-            new_password_confirmation: { error: false, message: "" }
-        }
+        let response_errors = {};
 
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({ name: request_errors.name.error, email: request_errors.email.error, new_password: request_errors.new_password.error, new_password_confirmation: request_errors.new_password_confirmation.error });
-        setFiedlErrorMessage({ name: request_errors.name.error, email: request_errors.email.message, new_password: request_errors.new_password.message, new_password_confirmation: request_errors.new_password_confirmation.message });
+        setFormError(response_errors);
 
     }
 
     const handleInputChange = (event) => {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
 
     React.useEffect(() => {
 
         let is_mounted = true;
-
-        if (!is_mounted || timer === 0) {
-            return '';
-        }
+        if (!is_mounted || timer === 0) return '';
 
         setTimeout(() => {
             setTimer((previously) => previously - 1);
@@ -163,10 +198,6 @@ export const ForgotPassword = () => {
         }
 
     }, [timer]);
-
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
-    }
 
     // ============================================================================== STRUCTURES ============================================================================== //
 
@@ -198,8 +229,8 @@ export const ForgotPassword = () => {
                             autoFocus
                             onChange={handleInputChange}
                             disabled={timer > 0}
-                            error={fieldError.email}
-                            helperText={fieldErrorMessage.email}
+                            error={formError.email.error}
+                            helperText={formError.email.message}
                         />
                     </Grid>
 
@@ -245,8 +276,8 @@ export const ForgotPassword = () => {
                             type="text"
                             onChange={handleInputChange}
                             disabled={!codeSent}
-                            error={fieldError.code}
-                            helperText={fieldErrorMessage.code}
+                            error={formError.code.error}
+                            helperText={formError.code.message}
                         />
                     </Grid>
 
@@ -256,13 +287,13 @@ export const ForgotPassword = () => {
                             required
                             fullWidth
                             label="Nova senha"
-                            name="new_password"
+                            name="password"
                             type="password"
                             autoFocus
                             onChange={handleInputChange}
                             disabled={!codeSent}
-                            helperText={fieldErrorMessage.new_password}
-                            error={fieldError.new_password}
+                            error={formError.password.error}
+                            helperText={formError.password.message}
                         />
                     </Grid>
 
@@ -277,8 +308,8 @@ export const ForgotPassword = () => {
                             autoFocus
                             onChange={handleInputChange}
                             disabled={!codeSent}
-                            helperText={fieldErrorMessage.new_password_confirmation}
-                            error={fieldError.new_password_confirmation}
+                            error={formError.password_confirmation.error}
+                            helperText={formError.password_confirmation.message}
                             sx={{ mb: 3 }}
                         />
                     </Grid>

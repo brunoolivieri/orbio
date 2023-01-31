@@ -1,24 +1,12 @@
 import * as React from 'react';
+// React router dom
+import { Link, redirect } from 'react-router-dom';
 // Material UI
 import { Button, TextField, Box, Grid, Typography, Container, Avatar, FormControlLabel, Checkbox } from '@mui/material';
-import { makeStyles } from "@mui/styles";
-import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
 import { useSnackbar } from 'notistack';
 import LockIcon from '@mui/icons-material/Lock';
 // Custom
 import axios from '../../../../services/AxiosApi';
-// React router dom
-import { Link, redirect } from 'react-router-dom';
-
-const useStyles = makeStyles((theme) => ({
-    root: {
-        backgroundColor: '#121212'
-    },
-    hiperlink: {
-        color: theme.palette.mode == 'light' ? "#222" : "#fff",
-    },
-}));
 
 function Copyright(props) {
     return (
@@ -33,8 +21,8 @@ function Copyright(props) {
     );
 }
 
-const initialControlledInput = { email: "", password: "" };
-const initialFieldError = { email: { error: false, message: "" }, password: { error: false, message: "" } };
+const initialFormData = { email: "", password: "" };
+const initialFormError = { email: { error: false, message: "" }, password: { error: false, message: "" } };
 
 const formValidation = {
     email: {
@@ -51,11 +39,10 @@ export function Login() {
 
     // ============================================================================== VARIABLES ============================================================================== //
 
-    const [formData, setFormData] = React.useState(initialControlledInput);
-    const [formError, setFormError] = React.useState(initialFieldError);
+    const [formData, setFormData] = React.useState(initialFormData);
+    const [formError, setFormError] = React.useState(initialFormError);
     const [loading, setLoading] = React.useState(false);
 
-    const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== ROUTINES ============================================================================== //
@@ -70,14 +57,12 @@ export function Login() {
 
     function formValidate() {
 
-        let validation = Object.assign({}, formError);
+        let validation = Object.assign({}, initialFormError);
+
         for (let field in formData) {
             if (!formValidation[field].test(formData[field])) {
-                validation[field].error = true,
-                    validation[field].message = formValidation[field].message;
-            } else {
-                validation[field].error = false;
-                validation[field].message = "";
+                validation[field].error = true;
+                validation[field].message = formValidation[field].message;
             }
         }
 
@@ -98,14 +83,15 @@ export function Login() {
     }
 
     function successResponse(response) {
-        handleOpenSnackbar(response.data.message, "success");
+        enqueueSnackbar(response.data.message, { variant: "success" });
+
         setTimeout(() => {
             return redirect("/internal");
         }, [1000])
     }
 
     function errorResponse(response) {
-        handleOpenSnackbar(response.data.message, "error");
+        enqueueSnackbar(response.data.message, { variant: "error" });
 
         let response_errors = {};
         for (let field in response.data.errors) {
@@ -120,10 +106,6 @@ export function Login() {
 
     function handleInputChange(e) {
         setFormData({ ...formData, [e.target.name]: e.currentTarget.value });
-    }
-
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -187,22 +169,10 @@ export function Login() {
                                 sx={{ mt: 3, mb: 2, borderRadius: 1 }}
                                 color="primary"
                                 onClick={handleSubmit}
+                                disabled={loading}
                             >
-                                Login
+                                {loading ? "Carregando" : "Login"}
                             </Button>
-                        }
-
-                        {loading &&
-                            <LoadingButton
-                                loading
-                                loadingPosition="start"
-                                startIcon={<SaveIcon />}
-                                variant="outlined"
-                                fullWidth
-                                sx={{ mt: 3, mb: 2, borderRadius: 1 }}
-                            >
-                                Carregando
-                            </LoadingButton>
                         }
 
                         <Grid container>
