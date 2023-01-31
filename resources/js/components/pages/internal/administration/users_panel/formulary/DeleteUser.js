@@ -43,7 +43,7 @@ export const DeleteUser = React.memo((props) => {
 
     try {
 
-      const response = axios.delete("/api/admin-module-user/delete", {
+      const response = await axios.delete("/api/admin-module-user/delete", {
         data: {
           ids: selectedIds
         }

@@ -9,8 +9,7 @@ import axios from '../../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-const initialFieldError = { name: false };
-const initialFieldErrorMessage = { name: "" };
+const initialFormError = { name: { error: false, message: "" } }
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateProfile = React.memo((props) => {
@@ -18,9 +17,8 @@ export const UpdateProfile = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name });
+    const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -68,45 +66,49 @@ export const UpdateProfile = React.memo((props) => {
     }
 
     function handleClose() {
-        setFieldError(initialFieldError);
-        setFieldErrorMessage(initialFieldErrorMessage);
+        setFormError(initialFormError);
         setDisplayAlert(initialDisplayAlert);
         setLoading(false);
         setOpen(false);
     }
 
     function handleSubmit() {
-        if (!formValidation()) {
-            return '';
-        }
+        if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
     }
 
-    function formValidation() {
-        const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
+    function formSubmissionValidation() {
 
-        setFieldError({ name: nameValidate.error });
-        setFieldErrorMessage({ name: nameValidate.message });
+        let validation = Object.assign({}, initialFormError);
 
-        return !nameValidate.error;
+        for (let field in formData) {
+            validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
+        }
+
+        setFormError(validation);
+
+        return !(validation.name.error);
     }
 
     function requestServer() {
-        axios.patch(`/api/admin-module-profile/${controlledInput.id}`, {
-            name: controlledInput.name,
-            privileges: privileges,
-            access_data: accessData
-        })
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                errorResponse(error.response);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+
+        try {
+
+            const response = axios.patch(`/api/admin-module-profile/${formData.id}`, {
+                name: formData.name,
+                privileges: privileges,
+                access_data: accessData
+            });
+
+            successResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading(false);
+        }
     }
 
     function successResponse(response) {
@@ -121,23 +123,20 @@ export const UpdateProfile = React.memo((props) => {
     function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        let request_errors = {
-            name: { error: false, message: null }
-        }
+        let response_errors = {}
 
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({ name: request_errors.name.error });
-        setFieldErrorMessage({ name: request_errors.name.message });
+        setFormError(response_errors);
     }
 
     function handleInputChange(event) {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -167,14 +166,14 @@ export const UpdateProfile = React.memo((props) => {
                         <Grid item xs={10}>
                             <TextField
                                 margin="dense"
-                                value={controlledInput.name}
+                                value={formData.name}
                                 name="name"
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.name}
-                                error={fieldError.name}
+                                helperText={formData.name}
+                                error={formError.name.error}
                             />
                         </Grid>
 

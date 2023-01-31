@@ -41,7 +41,7 @@ export const CreateUser = React.memo((props) => {
 
   function handleSubmit() {
     if (!formSubmissionValidation()) return '';
-    
+
     setLoading(true);
     requestServer();
 
@@ -70,7 +70,7 @@ export const CreateUser = React.memo((props) => {
 
     try {
 
-      const response = axios.post("/api/admin-module-user", formData);
+      const response = await axios.post("/api/admin-module-user", formData);
       successResponse(response);
 
     } catch (error) {

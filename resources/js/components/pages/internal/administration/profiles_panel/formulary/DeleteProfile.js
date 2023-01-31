@@ -38,24 +38,27 @@ export const DeleteProfile = React.memo((props) => {
   function handleSubmit(event) {
     event.preventDefault();
     setLoading(true);
-    requestServerOperation();
+    requestServer();
   }
 
-  function requestServerOperation() {
-    axios.delete(`/api/admin-module-profile/delete`, {
-      data: {
-        ids: selectedIds
-      }
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+  async function requestServer() {
+
+    try {
+
+      const response = await axios.delete("/api/admin-module-profile/delete", {
+        data: {
+          ids: selectedIds
+        }
+      });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {

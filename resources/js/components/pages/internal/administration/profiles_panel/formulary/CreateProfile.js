@@ -9,9 +9,8 @@ import { FormValidation } from '../../../../../../utils/FormValidation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
-const initialControlledInput = { name: "" };
-const initialFieldError = { name: false };
-const initialFieldErrorMessage = { name: "" };
+const initialFormData = { name: "" };
+const initialFormError = { name: { error: false, message: "" } };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateProfile = React.memo((props) => {
@@ -20,9 +19,8 @@ export const CreateProfile = React.memo((props) => {
 
   const { user } = useAuth();
 
-  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fiedlErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [formData, setFormData] = React.useState(initialFormData);
+  const [formError, setFormError] = React.useState(initialFormError);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
@@ -53,44 +51,50 @@ export const CreateProfile = React.memo((props) => {
   }
 
   function handleClose() {
-    setControlledInput(initialControlledInput);
-    setFieldError(initialFieldError);
-    setFieldErrorMessage(initialFieldErrorMessage);
+    setFormData(initialFormData);
+    setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
   function handleSubmit() {
-    if (formValidation()) {
-      setLoading(true);
-      requestServerOperation();
+    if (formSubmissionValidation()) return '';
+    setLoading(true);
+    requestServer();
+
+  }
+
+  function formSubmissionValidation() {
+
+    let validation = Object.assign({}, initialFormError);
+
+    for (let field in formData) {
+      validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
     }
+
+    setFormError(validation);
+
+    return !(validation.name.error);
   }
 
-  function formValidation() {
-    const nameValidate = FormValidation(controlledInput.name, 3, null, null, "nome");
+  async function requestServer() {
 
-    setFieldError({ name: nameValidate.error });
-    setFieldErrorMessage({ name: nameValidate.message });
+    try {
 
-    return !(nameValidate.error);
-  }
+      const response = await axios.post("/api/admin-module-profile", {
+        name: formData.name,
+        access_data: accessData
+      });
 
-  function requestServerOperation() {
-    axios.post("/api/admin-module-profile", {
-      name: controlledInput.name,
-      access_data: accessData
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -105,23 +109,20 @@ export const CreateProfile = React.memo((props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      name: { error: false, message: null }
-    }
+    let response_errors = {}
 
-    for (let prop in response.data.errors) {
-      request_errors[prop] = {
+    for (let field in response.data.errors) {
+      response_errors[field] = {
         error: true,
-        message: response.data.errors[prop][0]
+        message: response.data.errors[field][0]
       }
     }
 
-    setFieldError({ name: request_errors.name.error });
-    setFieldErrorMessage({ name: request_errors.name.message });
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //
@@ -156,8 +157,8 @@ export const CreateProfile = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                helperText={fiedlErrorMessage.name}
-                error={fieldError.name}
+                helperText={formData.name}
+                error={formError.name.error}
               />
             </Grid>
 

@@ -133,7 +133,6 @@ export const UpdateUser = React.memo((props) => {
         <DialogContent>
 
           <Grid container columns={12} spacing={1}>
-
             <Grid item xs={12}>
               <TextField
                 margin="dense"
@@ -177,7 +176,6 @@ export const UpdateUser = React.memo((props) => {
                 controlledInput={formData}
               />
             </Grid>
-
           </Grid>
 
         </DialogContent>
