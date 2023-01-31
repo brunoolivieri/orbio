@@ -62,10 +62,13 @@ export const Dashboard = React.memo(() => {
     React.useEffect(() => {
 
         let is_mounted = true;
-
         setPageIndex(0);
-        axios.get("/api/load-dashboard-metrics")
-            .then(function (response) {
+
+        async () => {
+
+            try {
+
+                const response = await axios.get("/api/load-dashboard-metrics");
 
                 if (is_mounted) {
                     setUsers(response.data.users);
@@ -73,29 +76,23 @@ export const Dashboard = React.memo(() => {
                     setFlightPlans(response.data.flight_plans);
                     setServiceOrders(response.data.service_orders);
                     setReports(response.data.reports);
-                    handleOpenSnackbar("Métricas carregadas", "success");
+                    enqueueSnackbar("Métricas carregadas", { variant: "success" });
                 }
 
-            })
-            .catch(function (error) {
-
+            } catch (error) {
                 const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-                handleOpenSnackbar(error_message, "error");
-
-            })
-            .finally(() => {
+                enqueueSnackbar(error_message, { variant: "error" });
+            } finally {
                 setLoading(false);
-            });
+            }
+
+        }
 
         return () => {
             return is_mounted = false;
         }
 
     }, []);
-
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
-    }
 
     // =============================================================== JSX  =============================================================== //
 

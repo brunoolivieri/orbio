@@ -121,24 +121,23 @@ export function UsersPanel() {
 
   }, [reload]);
 
-  function fetchRecords() {
+  async function fetchRecords() {
 
-    axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`)
-      .then(function (response) {
-        setRecords(response.data.records);
-        setTotalRecords(response.data.total_records);
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} usuários`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} usuário`, "success");
-        }
-      })
-      .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+    try {
+
+      const response = await axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`);
+
+      setRecords(response.data.records);
+      setTotalRecords(response.data.total_records);
+
+      enqueueSnackbar(`Usuários encontrados: ${response.data.total_records}`, { variant: "success" });
+
+    } catch (error) {
+      enqueueSnackbar(error.response.data.message, { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function handleChangePage(newPage) {
@@ -157,17 +156,12 @@ export function UsersPanel() {
   }
 
   function handleSelection(newSelectedIds) {
-    // newSelectedIds always bring all selections
     const newSelectedRecords = records.filter((record) => {
       if (newSelectedIds.includes(record.id)) {
         return record;
       }
     })
     setSelectedRecords(newSelectedRecords);
-  }
-
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //
