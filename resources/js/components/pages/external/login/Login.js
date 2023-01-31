@@ -8,9 +8,8 @@ import { useSnackbar } from 'notistack';
 import LockIcon from '@mui/icons-material/Lock';
 // Custom
 import axios from '../../../../services/AxiosApi';
-import { FormValidation } from '../../../../utils/FormValidation';
 // React router dom
-import { Link } from 'react-router-dom';
+import { Link, redirect } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -35,16 +34,25 @@ function Copyright(props) {
 }
 
 const initialControlledInput = { email: "", password: "" };
-const initialFieldError = { email: false, password: false };
-const initialFieldErrorMessage = { email: "", password: "" };
+const initialFieldError = { email: { error: false, message: "" }, password: { error: false, message: "" } };
+
+const formValidation = {
+    email: {
+        test: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value),
+        message: "Email inválido"
+    },
+    password: {
+        test: (value) => value != null,
+        message: "Informe a sua senha"
+    }
+}
 
 export function Login() {
 
     // ============================================================================== VARIABLES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [formData, setFormData] = React.useState(initialControlledInput);
+    const [formError, setFormError] = React.useState(initialFieldError);
     const [loading, setLoading] = React.useState(false);
 
     const classes = useStyles();
@@ -53,68 +61,65 @@ export function Login() {
     // ============================================================================== ROUTINES ============================================================================== //
 
     function handleSubmit() {
-        if (!formValidation()) {
-            return '';
-        }
+
+        if (!formValidate) return '';
+
         setLoading(true);
         requestServer();
     }
 
-    function formValidation() {
+    function formValidate() {
 
-        const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
-        const passwordValidate = FormValidation(controlledInput.password);
+        let validation = Object.assign({}, formError);
+        for (let field in formData) {
+            if (!formValidation[field].test(formData[field])) {
+                validation[field].error = true,
+                    validation[field].message = formValidation[field].message;
+            } else {
+                validation[field].error = false;
+                validation[field].message = "";
+            }
+        }
 
-        setFieldError({ email: emailValidate.error, password: passwordValidate.error });
-        setFieldErrorMessage({ email: emailValidate.message, password: passwordValidate.message });
-
-        return !(emailValidate.error || passwordValidate.error);
+        setFormError(validation);
+        return !(validation.email.error || validation.password.error);
 
     }
 
-    function requestServer() {
-        axios.post("/api/auth/login", {
-            email: controlledInput.email,
-            password: controlledInput.password
-        })
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                errorResponse(error.response);
-            });
+    async function requestServer() {
+        try {
+            const response = axios.post("/api/auth/login", formData);
+            successResponse(response);
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading(false);
+        }
     }
 
     function successResponse(response) {
         handleOpenSnackbar(response.data.message, "success");
         setTimeout(() => {
-            window.location.href = "/internal";
+            return redirect("/internal");
         }, [1000])
     }
 
     function errorResponse(response) {
-        setLoading(false);
         handleOpenSnackbar(response.data.message, "error");
 
-        let request_errors = {
-            email: { error: false, message: null },
-            password: { error: false, message: null }
-        }
-
-        for (let prop in response.data.errors) {
-
-            request_errors[prop] = {
+        let response_errors = {};
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({ email: request_errors.email.error, password: request_errors.password.error });
-        setFieldErrorMessage({ email: request_errors.email.message, password: request_errors.password.message });
+        setFormError(response_errors);
     }
 
     function handleInputChange(e) {
-        setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
+        setFormData({ ...formData, [e.target.name]: e.currentTarget.value });
     }
 
     function handleOpenSnackbar(text, variant) {
@@ -152,8 +157,8 @@ export function Login() {
                             autoComplete="email"
                             autoFocus
                             onChange={handleInputChange}
-                            helperText={fieldErrorMessage.email}
-                            error={fieldError.email}
+                            helperText={formError.email.message}
+                            error={formError.email.error}
                         />
 
                         <TextField
@@ -165,8 +170,8 @@ export function Login() {
                             type="password"
                             id="password"
                             onChange={handleInputChange}
-                            helperText={fieldErrorMessage.password}
-                            error={fieldError.password}
+                            helperText={formError.password.message}
+                            error={formError.password.error}
                         />
 
                         <FormControlLabel

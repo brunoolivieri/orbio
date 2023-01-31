@@ -15,6 +15,7 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { CreateFlightPlan } from './formulary/CreateFlightPlan';
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -328,7 +329,7 @@ export function FlightPlansPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            /* <FlightPlanGeneration reloadTable={setReload} /> */
+            /* <CreateFlightPlan reloadTable={setReload} /> */
             <Tooltip title="Novo Plano">
               <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
                 <IconButton>

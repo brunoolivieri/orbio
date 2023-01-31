@@ -43,6 +43,7 @@
         "@react-pdf/renderer": "^3.0.0",
         "@react-spring/web": "^9.5.2",
         "@types/react": "^17.0.45",
+        "cropperjs": "^1.5.13",
         "date-fns": "^2.29.1",
         "moment": "^2.29.1",
         "notistack": "^2.0.4",

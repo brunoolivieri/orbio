@@ -1571,14 +1571,17 @@ function flightPlanImageConfirmation() {
 
 		// Set canvas into confirmation modal
 		canvas.toBlob(function (blobImg) {
-			var elem = document.createElement("img");
+
+			var image = document.createElement("img");
 			const blobUrl = URL.createObjectURL(blobImg)
-			elem.setAttribute("src", blobUrl);
-			elem.setAttribute("width", "100%");
-			elem.setAttribute("height", "100%");
+			image.setAttribute("src", blobUrl);
+			image.setAttribute("max-width", "100%");
+			image.setAttribute("height", "100%");
+			image.setAttribute("id", "image");
 			let div = document.getElementsByClassName("flight_plan_image")[0];
 			div.replaceChildren([]);
-			div.appendChild(elem);
+			div.appendChild(image);
+
 		});
 
 		flightPlanData = {
@@ -1725,7 +1728,7 @@ function saveFlightPlanToStorage(coordinates, blobRoutes) {
 
 		setTimeout(() => {
 			window.close();
-		},2000);
+		}, 2000);
 
 	}).catch((error) => {
 

@@ -48,6 +48,9 @@
 	<!-- HTML2CANVAS -->
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 
+	<!-- CROPPER -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
  	<title>{{ env('APP_NAME'); }}</title>
  </head>
  <body>
@@ -178,10 +181,10 @@
 
 	<!-- Modal de confirmação da criação do plano --->
 	<div class="modal" tabindex="-1" id="confirmation-modal" style="display: none;">
-		<div class="modal-dialog">
+		<div class="modal-dialog modal-fullscreen">
 		  <div class="modal-content">
 			<div class="modal-header">
-			  <h5 class="modal-title">Deseja manter essas configurações e salvar?</h5>
+			  <h5 class="modal-title">AJUSTAR IMAGEM</h5>
 			</div>
 			<div class="modal-body">
 				<label for="name" class="form-label">Nome</label>

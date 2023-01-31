@@ -92,10 +92,10 @@
 
         // =============== EVENTOS ==================== //
 
-        // Evento vindo de um iframe do mapa
+        // Event from log creation modal (react interface)
         window.addEventListener("message", (event) => {
 
-			if(event.data.type === 'modal-request'){
+			if(event.data.type === 'log-creation-request'){
 
 				let contents = event.data.log.contents;
 				const regex = new RegExp(".tlog.kmz");

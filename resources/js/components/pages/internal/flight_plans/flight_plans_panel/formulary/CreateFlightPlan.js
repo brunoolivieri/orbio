@@ -8,7 +8,7 @@ import { useAuthentication } from '../../../../../context/InternalRoutesAuth/Aut
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export function FlightPlanGeneration(props) {
+export function CreateFlightPlan(props) {
 
     const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
@@ -25,12 +25,18 @@ export function FlightPlanGeneration(props) {
 
     window.addEventListener("message", (event) => {
 
-        if (event.origin === 'http://localhost:8000' && event.data.type === 'flight_plan_creation') {
+        if (event.origin === 'http://localhost:8000' && event.data.type === 'flight_plan-creation-response') {
+
+            console.log('flight plan creation response')
+
+            /*
             setDisplayAlert({ display: true, type: "error", message: event.data.message });
             setTimeout(() => {
                 props.reloadTable((old) => !old);
                 handleClose();
             }, 2000);
+            */
+
         }
 
     }, false);
@@ -57,6 +63,7 @@ export function FlightPlanGeneration(props) {
                             id="iframe-content"
                             src="http://localhost:8000/internal/map"
                             style={{ width: "100%", height: "100%" }}
+                            onLoad={(e) => e.target.contentWindow.postMessage({ type: 'flight_plan-creation-request' }, "http://localhost:8000")}
                         ></iframe>
                     </div>
                 </DialogContent>
