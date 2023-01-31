@@ -5,7 +5,7 @@ import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Custom
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
@@ -28,7 +28,7 @@ export const UpdateOrder = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
   const [controlledInput, setControlledInput] = React.useState({
     id: props.record.id,
     start_date: props.record.start_date,
@@ -236,8 +236,8 @@ export const UpdateOrder = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!AuthData.data.user_powers["3"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!user.data.user_powers["3"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={user.data.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

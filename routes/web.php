@@ -6,7 +6,8 @@ use App\Http\Controllers\Actions\Authentication\{
     LoginController,
     LogoutController,
     PasswordResetController,
-    PasswordTokenController
+    PasswordTokenController,
+    UserAuthenticatedData
 };
 // Api Actions
 use App\Http\Controllers\Actions\Api\{
@@ -16,7 +17,6 @@ use App\Http\Controllers\Actions\Api\{
 use App\Http\Controllers\Actions\Dashboard\DashboardController;
 // Generic Actions
 use App\Http\Controllers\Actions\{
-    LoadAuthData,
     LoadFlightPlansController,
     LoadIncidentsController,
     LoadProfilesController,
@@ -74,7 +74,6 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get('/internal/{internalpage?}', function () {
         return redirect("/internal");
     })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard");
-    Route::get('api/auth/logout', LogoutController::class);
     Route::view('/internal/map', "map");
     Route::view('/internal/map-modal', "map_modal");
     // Internal Dashboard 
@@ -115,12 +114,13 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get("api/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
     Route::post("api/process-selected-logs", [FlightPlanModuleLogController::class, "processSelectedLogs"]);
     // Actions
+    Route::get('api/auth/logout', LogoutController::class);
+    Route::get('api/auth/data', UserAuthenticatedData::class);
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);
     Route::get('api/load-equipments', LoadEquipmentsController::class);
     Route::get('api/get-weather-data', WeatherDataController::class);
-    Route::post('api/get-auth-data', LoadAuthData::class);
     Route::get("api/load-users", LoadUsersController::class);
     Route::get("api/load-profiles", LoadProfilesController::class);
     Route::get("api/load-flight-plans", LoadFlightPlansController::class);

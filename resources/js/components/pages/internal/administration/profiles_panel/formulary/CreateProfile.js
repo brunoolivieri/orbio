@@ -1,8 +1,8 @@
 import *  as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, FormLabel, FormGroup, FormControlLabel, Checkbox, Typography } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 // Custom
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 // Fonts Awesome
@@ -18,7 +18,7 @@ export const CreateProfile = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
   const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -129,8 +129,8 @@ export const CreateProfile = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo Perfil">
-        <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["1"].profile_powers.write == 1}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!user.data.user_powers["1"].profile_powers.write == 1}>
+          <FontAwesomeIcon icon={faPlus} color={user.data.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

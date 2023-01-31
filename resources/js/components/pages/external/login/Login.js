@@ -1,12 +1,13 @@
 import * as React from 'react';
 // React router dom
-import { Link, redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 // Material UI
 import { Button, TextField, Box, Grid, Typography, Container, Avatar, FormControlLabel, Checkbox } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import LockIcon from '@mui/icons-material/Lock';
 // Custom
-import axios from '../../../../services/AxiosApi';
+import { useAuth } from '../../../context/Auth';
+import { FormValidation } from '../../../../utils/FormValidation';
 
 function Copyright(props) {
     return (
@@ -24,17 +25,6 @@ function Copyright(props) {
 const initialFormData = { email: "", password: "" };
 const initialFormError = { email: { error: false, message: "" }, password: { error: false, message: "" } };
 
-const formValidation = {
-    email: {
-        test: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value),
-        message: "Email inválido"
-    },
-    password: {
-        test: (value) => value != "",
-        message: "Informe a sua senha"
-    }
-}
-
 export function Login() {
 
     // ============================================================================== VARIABLES ============================================================================== //
@@ -43,66 +33,45 @@ export function Login() {
     const [formError, setFormError] = React.useState(initialFormError);
     const [loading, setLoading] = React.useState(false);
 
+    const { login, logout } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== ROUTINES ============================================================================== //
 
     function handleSubmit() {
 
-        if (!formValidate()) return '';
+        if (!formSubmissionValidation()) return '';
 
         setLoading(true);
         requestServer();
     }
 
-    function formValidate() {
+    function formSubmissionValidation() {
 
         let validation = Object.assign({}, initialFormError);
 
         for (let field in formData) {
-            if (!formValidation[field].test(formData[field])) {
-                validation[field].error = true;
-                validation[field].message = formValidation[field].message;
+            if (field === "email") {
+                validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+            } else if (field === "password") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Senha");
             }
         }
 
         setFormError(validation);
         return !(validation.email.error || validation.password.error);
 
-
     }
 
     async function requestServer() {
         try {
-            const response = axios.post("/api/auth/login", formData);
-            successResponse(response);
+            await login(formData);
         } catch (error) {
-            errorResponse(error.response);
+            console.log(error);
+            enqueueSnackbar(error.response.data.message, { variant: "error" });
         } finally {
             setLoading(false);
         }
-    }
-
-    function successResponse(response) {
-        enqueueSnackbar(response.data.message, { variant: "success" });
-
-        setTimeout(() => {
-            return redirect("/internal");
-        }, [1000])
-    }
-
-    function errorResponse(response) {
-        enqueueSnackbar(response.data.message, { variant: "error" });
-
-        let response_errors = {};
-        for (let field in response.data.errors) {
-            response_errors[field] = {
-                error: true,
-                message: response.data.errors[field][0]
-            }
-        }
-
-        setFormError(response_errors);
     }
 
     function handleInputChange(e) {

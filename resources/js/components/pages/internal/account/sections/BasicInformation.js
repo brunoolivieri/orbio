@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Material UI
 import { Tooltip, IconButton, Grid, TextField, Box, Paper, Button } from '@mui/material';
@@ -12,20 +11,17 @@ import { FormValidation } from '../../../../../utils/FormValidation';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 
-const initialControlledInput = { name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" };
-const errorControlledInput = { name: "Erro", email: "Erro", profile: "Erro", last_access: "Erro", last_update: "Erro" };
-const initialFieldError = { name: false, email: false };
-const initialFieldErrorMessage = { name: "", email: "" };
+const initialFormData = { name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" };
+const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile: { error: false, message: "" }, last_access: { error: false, message: "" }, last_update: { error: false, message: "" } };
 
 export function BasicInformation() {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [updateLoading, setUpdateLoading] = React.useState(false);
-    const [loadingFields, setLoadingFields] = React.useState(true);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [formData, setFormData] = React.useState(initialFormData);
+    const [formError, setFormError] = React.useState(initialFormError);
+    const [loading, setLoading] = React.useState(false);
+    const [refresh, setRefresh] = React.useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -33,106 +29,96 @@ export function BasicInformation() {
     React.useEffect(() => {
 
         let is_mounted = true;
-        if (!is_mounted) {
-            return '';
+        if (!is_mounted) return '';
+
+        setFormData(initialFormData);
+        setLoading(true);
+
+        async () => {
+
+            try {
+                const response = await axios.get("/api/load-basic-account-data");
+                setFormData({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
+            } catch (error) {
+                console.log(error);
+                enqueueSnackbar(error.response.data.message, { variant: "error" });
+            } finally {
+                setLoading(false);
+            }
+
         }
 
-        setControlledInput(initialControlledInput);
-        axios.get("/api/load-basic-account-data")
-            .then(function (response) {
-                setLoadingFields(false);
-                setUpdateLoading(false);
-                setControlledInput({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
-            })
-            .catch(function (error) {
-                setLoadingFields(false);
-                setUpdateLoading(false);
-                setControlledInput(errorControlledInput);
-                handleOpenSnackbar(error.response.data.message, "error");
-            });
-        
         return () => {
             is_mounted = false;
         }
 
-    }, [loadingFields]);
+    }, [refresh]);
 
-    function handleSubmitBasicDataForm(event) {
-        event.preventDefault();
-        if (formValidation()) {
-            setUpdateLoading(true);
-            requestServerOperation();
-        }
-    }
+    function handleSubmit() {
 
-    function formValidation() {
-        const nameValidate = FormValidation(controlledInput.name, 3);
-        const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
+        if (!formSubmissionValidation()) return ''
 
-        setFieldError({ name: nameValidate.error, email: emailValidate.error });
-        setFieldErrorMessage({ name: nameValidate.message, email: emailValidate.message });
-
-        return !(nameValidate.error || emailValidate.error);
+        setLoading(true);
+        requestServer();
 
     }
 
-    function requestServerOperation() {
-        const body_data = {
-            name: controlledInput.name,
-            email: controlledInput.email
-        }
-        axios.patch(`/api/update-basic-data`, body_data)
-            .then(function (response) {
-                setUpdateLoading(false);
-                setLoadingFields(true);
-                handleOpenSnackbar(response.data.message, "success");
-            })
-            .catch(function (error) {
-                setUpdateLoading(false);
-                serverErrorResponseTreatment(error.response);
+    function formSubmissionValidation() {
+
+        const nameValidation = FormValidation(formData.name, 3);
+        const emailValidation = FormValidation(formData.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
+
+        setFormError({ name: nameValidation, email: emailValidation });
+
+        return !(nameValidation.error || emailValidation.error);
+
+    }
+
+    async function requestServer() {
+
+        try {
+
+            const response = await axios.patch("/api/update-basic-data", {
+                name: formData.name,
+                email: formData.email
             });
-    }
 
-    function serverErrorResponseTreatment(response) {
-        handleOpenSnackbar(response.data.message, "error");
+            enqueueSnackbar(response.data.message, { variant: "success" });
 
-        let request_errors = {
-            name: { error: false, message: null },
-            email: { error: false, message: null }
+        } catch (error) {
+            errorServerResponse(error.response);
+        } finally {
+            setLoading(false);
         }
 
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
+    }
+
+    function errorServerResponse(response) {
+
+        enqueueSnackbar(response.data.message, { variant: "error" });
+
+        let serverValidation = {}
+
+        for (let field in response.data.errors) {
+            serverValidation[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({
-            name: request_errors.name.error,
-            email: request_errors.email.error
-        });
-
-        setFieldErrorMessage({
-            name: request_errors.name.message,
-            email: request_errors.email.message
-        });
+        setFormError(serverValidation);
 
     }
 
     function reloadFormulary() {
-        setLoadingFields(true);
+        setRefresh((prev) => !prev);
     }
 
     function handleInputChange(event) {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
 
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
-    }
-
-    // ============================================================================== STRUCTURES ============================================================================== //
+    // ============================================================================== JSX ============================================================================== //
 
     return (
         <>
@@ -146,7 +132,7 @@ export function BasicInformation() {
                 </Grid>
             </Grid>
 
-            < Box component="form" noValidate onSubmit={handleSubmitBasicDataForm} sx={{ mt: 2 }} >
+            < Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
                     <Grid container spacing={3}>
 
@@ -156,11 +142,11 @@ export function BasicInformation() {
                                 name="name"
                                 label="Nome completo"
                                 fullWidth
-                                value={controlledInput.name}
-                                disabled={loadingFields}
+                                value={formData.name}
+                                disabled={loading}
                                 variant="outlined"
-                                helperText={fieldErrorMessage.name}
-                                error={fieldError.name}
+                                helperText={formError.name.message}
+                                error={formError.name.error}
                                 onChange={handleInputChange}
                             />
                         </Grid>
@@ -170,12 +156,12 @@ export function BasicInformation() {
                                 id="email"
                                 name="email"
                                 label="Email"
-                                value={controlledInput.email}
-                                disabled={loadingFields}
+                                value={formData.email}
+                                disabled={loading}
                                 fullWidth
                                 variant="outlined"
-                                helperText={fieldErrorMessage.email}
-                                error={fieldError.email}
+                                helperText={formError.email.message}
+                                error={formError.email.error}
                                 onChange={handleInputChange}
                             />
                         </Grid>
@@ -185,7 +171,7 @@ export function BasicInformation() {
                                 label="Perfil de usuário"
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.profile}
+                                value={formData.profile}
                                 disabled={true}
                                 inputProps={{
                                     readOnly: true
@@ -195,10 +181,10 @@ export function BasicInformation() {
 
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                label="Data do último acesso"
+                                label="Último acesso"
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.last_access}
+                                value={formData.last_access}
                                 disabled={true}
                                 inputProps={{
                                     readOnly: true
@@ -208,9 +194,9 @@ export function BasicInformation() {
 
                         <Grid item xs={12} sm={6}>
                             <TextField
-                                label="Data da última atualização"
+                                label="Última atualização"
                                 fullWidth
-                                value={controlledInput.last_update}
+                                value={formData.last_update}
                                 disabled={true}
                                 variant="outlined"
                                 inputProps={{
@@ -220,8 +206,8 @@ export function BasicInformation() {
                         </Grid>
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={updateLoading || loadingFields} sx={{ mt: 2 }}>
-                        {updateLoading ? "Processando..." : "Atualizar"}
+                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
+                        Atualizar
                     </Button>
                 </Paper>
             </Box>

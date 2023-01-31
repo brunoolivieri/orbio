@@ -3,8 +3,6 @@ import * as React from 'react';
 // Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Alert, IconButton, Grid, FormControl, InputLabel, MenuItem, Select, Tooltip, Divider } from '@mui/material';
 import { useSnackbar } from 'notistack';
-// Custom
-//import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -20,7 +18,6 @@ export const ExportTableData = React.memo((props) => {
 
     // ============================================================================== STATES  ============================================================================== //
 
-    //const { AuthData } = useAuthentication();
     const [open, setOpen] = React.useState(false);
     const [source, setSource] = React.useState(props.source);
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);

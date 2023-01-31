@@ -11,7 +11,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faImage } from '@fortawesome/free-solid-svg-icons';
 import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
@@ -19,7 +18,7 @@ import axios from "../../../../../services/AxiosApi";
 import { CreateLog } from './formulary/CreateLog';
 import { UpdateLog } from './formulary/UpdateLog';
 import { DeleteLog } from './formulary/DeleteLog';
-import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../context/Auth';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 
@@ -71,7 +70,7 @@ const columns = [
         editable: false,
         minWidth: 130,
         renderCell: (data) => {
-            return <ModalImage image_url={data.row.image_url} /> 
+            return <ModalImage image_url={data.row.image_url} />
         }
     },
     {
@@ -119,7 +118,7 @@ export const LogsPanel = () => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
 
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
@@ -238,11 +237,11 @@ export const LogsPanel = () => {
                 </Grid>
 
                 <Grid item>
-                    {AuthData.data.user_powers["2"].profile_powers.read == 1 &&
+                    {user.data.user_powers["2"].profile_powers.read == 1 &&
                         <ExportTableData type="LOGS" source={"/api/logs/export"} />
                     }
 
-                    {!AuthData.data.user_powers["2"].profile_powers.read == 1 &&
+                    {!user.data.user_powers["2"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>

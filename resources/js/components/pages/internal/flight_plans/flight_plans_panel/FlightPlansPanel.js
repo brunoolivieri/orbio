@@ -15,12 +15,11 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { CreateFlightPlan } from './formulary/CreateFlightPlan';
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import axios from "../../../../../services/AxiosApi";
@@ -233,7 +232,7 @@ export function FlightPlansPanel() {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -331,9 +330,9 @@ export function FlightPlansPanel() {
           {selectedRecords.length === 0 &&
             /* <CreateFlightPlan reloadTable={setReload} /> */
             <Tooltip title="Novo Plano">
-              <Link href={`/internal/map?userid=${AuthData.data.id}`} target="_blank">
+              <Link href={`/internal/map?userid=${user.data.id}`} target="_blank">
                 <IconButton>
-                  <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                  <FontAwesomeIcon icon={faPlus} color={user.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
               </Link>
             </Tooltip>
@@ -381,11 +380,11 @@ export function FlightPlansPanel() {
         </Grid>
 
         <Grid item>
-          {AuthData.data.user_powers["2"].profile_powers.read == 1 &&
+          {user.data.user_powers["2"].profile_powers.read == 1 &&
             <ExportTableData type="PLANOS DE VOO" source={"/api/flight-plans/export"} />
           }
 
-          {!AuthData.data.user_powers["2"].profile_powers.read == 1 &&
+          {!user.data.user_powers["2"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

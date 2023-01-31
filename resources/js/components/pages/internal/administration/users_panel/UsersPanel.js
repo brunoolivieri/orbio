@@ -13,7 +13,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
 import { CreateUser } from './formulary/CreateUser';
 import { UpdateUser } from './formulary/UpdateUser';
@@ -90,7 +90,7 @@ export function UsersPanel() {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -229,11 +229,11 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          {AuthData.data.user_powers["1"].profile_powers.read == 1 &&
+          {user.data.user_powers["1"].profile_powers.read == 1 &&
             <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
           }
 
-          {!AuthData.data.user_powers["1"].profile_powers.read == 1 &&
+          {!user.data.user_powers["1"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

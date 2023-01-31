@@ -8,7 +8,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { FlightPlanDataForReport } from '../modal/FlightPlanDataForReport';
 import { ServiceOrderForReport } from '../modal/ServiceOrderForReport';
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import { ReportVisualization, DownloadReport } from '../modal/ReportBuilder';
 // Lib
 import axios from '../../../../../../services/AxiosApi';
@@ -43,7 +43,7 @@ export const CreateReport = (props) => {
 
   // ============================================================================== STATES  ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -155,8 +155,8 @@ export const CreateReport = (props) => {
     <>
 
       <Tooltip title="Gerar relatório">
-        <IconButton disabled={!AuthData.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPlus} size="sm" color={AuthData.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} />
+        <IconButton disabled={!user.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPlus} size="sm" color={user.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} />
         </IconButton>
       </Tooltip>
 

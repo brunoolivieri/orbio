@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Box, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, styled, useTheme } from '@mui/material';
+import { Box, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, styled } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -17,7 +17,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 // Router 
 import { Link } from 'react-router-dom';
 // Custom
-import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../context/Auth';
 
 const drawerWidth = 210;
 
@@ -94,8 +94,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const NavigatorFixed = () => {
 
-    const { AuthData } = useAuthentication();
-    const theme = useTheme();
+    const { user } = useAuth();
     const [open, setOpen] = React.useState(false);
 
     const categories = React.useMemo(() => ([
@@ -114,12 +113,12 @@ export const NavigatorFixed = () => {
         {
             id: "Módulos",
             children: [
-                { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: AuthData.data.user_powers["1"].profile_powers.read == 1 ? true : false, path: "administracao" },
-                { id: 'Planos e Logs', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
-                { id: 'Ordens', icon: <AssignmentIcon />, access: AuthData.data.user_powers["3"].profile_powers.read == 1 ? true : false, path: "ordens" },
-                { id: 'Relatórios', icon: <AssessmentIcon />, access: AuthData.data.user_powers["4"].profile_powers.read == 1 ? true : false, path: "relatorios" },
-                { id: 'Incidentes', icon: <ReportIcon />, access: AuthData.data.user_powers["5"].profile_powers.read == 1 ? true : false, path: "incidentes" },
-                { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: AuthData.data.user_powers["6"].profile_powers.read == 1 ? true : false, path: "equipamentos" }
+                { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.data.user_powers["1"].profile_powers.read == 1 ? true : false, path: "administracao" },
+                { id: 'Planos e Logs', icon: <MapIcon />, access: user.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
+                { id: 'Ordens', icon: <AssignmentIcon />, access: user.data.user_powers["3"].profile_powers.read == 1 ? true : false, path: "ordens" },
+                { id: 'Relatórios', icon: <AssessmentIcon />, access: user.data.user_powers["4"].profile_powers.read == 1 ? true : false, path: "relatorios" },
+                { id: 'Incidentes', icon: <ReportIcon />, access: user.data.user_powers["5"].profile_powers.read == 1 ? true : false, path: "incidentes" },
+                { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.data.user_powers["6"].profile_powers.read == 1 ? true : false, path: "equipamentos" }
             ]
         },
         {

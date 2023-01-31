@@ -7,7 +7,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { SelectExternalData } from '../../../../../shared/input_select/SelectExternalData';
 // Libs
@@ -22,7 +22,7 @@ export const CreateIncident = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
   const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
   const [fieldError, setFieldError] = React.useState(initialFieldError);
   const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
@@ -160,8 +160,8 @@ export const CreateIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo incidente">
-        <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["5"].profile_powers.write == 1}>
-          <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!user.data.user_powers["5"].profile_powers.write == 1}>
+          <FontAwesomeIcon icon={faPlus} color={user.data.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

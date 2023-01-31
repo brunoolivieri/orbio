@@ -9,28 +9,10 @@ import { useSnackbar } from 'notistack';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 // Custom
 import axios from '../../../../services/AxiosApi';
+import { FormValidation } from '../../../../utils/FormValidation';
 
 const initialFormData = { email: "", code: "", new_password: "", new_password_confirmation: "" };
 const initialFormError = { email: { error: false, message: "" }, code: { error: false, message: "" }, password: { error: false, message: "" }, password_confirmation: { error: false, message: "" } };
-
-const formValidation = {
-    email: {
-        test: (value) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value),
-        message: "Email inválido"
-    },
-    code: {
-        test: (value) => value.length === 10,
-        message: "Código inválido"
-    },
-    password: {
-        test: (value) => /^.{10,}$/.test(value),
-        message: "A senha deve ter no mínimo 10 caracteres"
-    },
-    password_confirmation: {
-        test: (value, ref) => value === ref,
-        message: "As senhas não coincidem"
-    }
-}
 
 export const ForgotPassword = () => {
 
@@ -67,9 +49,10 @@ export const ForgotPassword = () => {
 
         let validation = Object.assign({}, initialFormError);
 
-        if (!formValidation.email.test(formData.email)) {
-            validation.email.error = true;
-            validation.email.message = formValidation.email.message;
+        for (let field in formData) {
+            if (field === "email") {
+                validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+            }
         }
 
         setFormError(validation);
@@ -82,18 +65,13 @@ export const ForgotPassword = () => {
         let validation = Object.assign({}, initialFormError);
 
         for (let field in formData) {
-            if (field != 'email' && field != 'password_confirmation') {
-                if (!formValidation[field].test(formData[field])) {
-                    validation[field].error = true;
-                    validation[field].message = formValidation[field].message;
-                }
-            } else if (field != 'email' && field === 'password_confirmation') {
-                if (!formValidation.password_confirmation.test(formData.password_confirmation, formData.password)) {
-                    validation[field].error = true;
-                    validation[field].message = formValidation[field].message;
-                }
+            if (field === "code") {
+                validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+            } else if (field === "password") {
+                validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+            } else if (field === "password_confirmation") {
+                validation[field] = formData[field] === formData.password ? { error: false, message: "" } : { error: true, message: "As senhas não coincidem." }
             }
-
         }
 
         setFormError(validation);
@@ -105,7 +83,7 @@ export const ForgotPassword = () => {
 
         try {
 
-            const response = axios.post("/api/auth/password-token", {
+            const response = await axios.post("/api/auth/password-token", {
                 email: formData.email
             });
 
@@ -123,7 +101,7 @@ export const ForgotPassword = () => {
 
         try {
 
-            const response = axios.post("/api/auth/change-password", {
+            const response = await axios.post("/api/auth/change-password", {
                 token: formData.code,
                 new_password: formData.new_password,
                 new_password_confirmation: formData.new_password_confirmation

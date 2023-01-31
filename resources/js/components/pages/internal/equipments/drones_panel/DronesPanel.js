@@ -20,7 +20,7 @@ import { DeleteDrone } from './formulary/DeleteDrone';
 import { DroneInformation } from './formulary/DroneInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
 
 const columns = [
@@ -100,7 +100,7 @@ export const DronesPanel = () => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
 
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
@@ -231,11 +231,11 @@ export const DronesPanel = () => {
                 </Grid>
 
                 <Grid item>
-                    {AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+                    {user.data.user_powers["6"].profile_powers.read == 1 &&
                         <ExportTableData type="DRONES" source={"/api/drones/export"} />
                     }
 
-                    {!AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+                    {!user.data.user_powers["6"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>

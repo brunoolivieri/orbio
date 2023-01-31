@@ -11,7 +11,7 @@ import moment from 'moment';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 
 const Input = styled('input')({
     display: 'none',
@@ -25,7 +25,7 @@ export const UpdateBattery = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
     const [open, setOpen] = React.useState(false);
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge });
     const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -174,8 +174,8 @@ export const UpdateBattery = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!user.data.user_powers["6"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPen} color={user.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

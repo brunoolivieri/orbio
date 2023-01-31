@@ -83,9 +83,7 @@ export function ComplementaryInformation() {
     React.useEffect(() => {
 
         let is_mounted = true;
-        if (!is_mounted) {
-            return '';
-        }
+        if (!is_mounted) return '';
 
         setDocumentsForm(initialDocumentsForm);
         setAddressForm(initialAddressForm);
@@ -283,7 +281,7 @@ export function ComplementaryInformation() {
         return Object.keys(documentsFormError).length != 0 && Object.keys(documentsForm).length != 0;
     }
 
-    // ============================================================================== STRUCTURES ============================================================================== //
+    // ============================================================================== JSX ============================================================================== //
 
     return (
         <>
@@ -334,9 +332,7 @@ export function ComplementaryInformation() {
                                     </Grid>
                                 </>
                             )
-
                         })}
-
                     </Grid>
 
                     <Button type="submit" variant="contained" color="primary" disabled={formLoading.documents} sx={{ mt: 2 }} onClick={handleDocumentsSubmitForm}>

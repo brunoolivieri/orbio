@@ -9,7 +9,7 @@ import { faFile } from '@fortawesome/free-solid-svg-icons';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 // Moment
 import moment from 'moment';
 
@@ -26,7 +26,7 @@ export const CreateBattery = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
     const [open, setOpen] = React.useState(false);
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -168,8 +168,8 @@ export const CreateBattery = React.memo((props) => {
     return (
         <>
             <Tooltip title="Nova bateria">
-                <IconButton onClick={handleClickOpen} disabled={!AuthData.data.user_powers["6"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faPlus} color={AuthData.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!user.data.user_powers["6"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPlus} color={user.data.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

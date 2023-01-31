@@ -4,13 +4,11 @@ namespace App\Http\Controllers\Actions;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Modules\Module;
 
 class LoadAuthData extends Controller
 {
     public function __invoke(): \Illuminate\Http\Response
     {
-
         $data = [
             "id" => Auth::user()->id,
             "name" => Auth::user()->name,
@@ -24,10 +22,9 @@ class LoadAuthData extends Controller
         foreach ($profile->modules as $module) {
 
             $module_first_name = explode(" ", $module->name);
-
             $data["user_powers"][$module->id] = ["module" => $module_first_name, "profile_powers" => ["read" => $module->pivot->read, "write" => $module->pivot->write]];
         }
 
-        return response($data, 200);
+        return response(["user" => $data], 200);
     }
 }

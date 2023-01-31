@@ -1,14 +1,13 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, FormHelperText, Grid, TextField, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress,  Grid, TextField, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
-import { SelectExternalData } from '../../../../../shared/input_select/SelectExternalData';
 
 const initialFieldError = { name: false, flight_plan_id: false };
 const initialFieldErrorMessage = { name: "", flight_plan_id: "" };
@@ -18,7 +17,7 @@ export const UpdateLog = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
     const [open, setOpen] = React.useState(false);
     const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
     const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -121,8 +120,8 @@ export const UpdateLog = React.memo((props) => {
         <>
 
             <Tooltip title="Editar">
-                <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.write == 1} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                <IconButton disabled={!user.data.user_powers["2"].profile_powers.write == 1} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faPen} color={user.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

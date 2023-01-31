@@ -16,7 +16,7 @@ import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 import { CreateReport } from './formulary/CreateReport';
 import { UpdateReport } from './formulary/UpdateReport';
 import { DeleteReport } from './formulary/DeleteReport';
-import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../context/Auth';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import axios from "../../../../../services/AxiosApi";
@@ -107,7 +107,7 @@ export function ReportsPanel() {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -226,11 +226,11 @@ export function ReportsPanel() {
         </Grid>
 
         <Grid item>
-          {AuthData.data.user_powers["4"].profile_powers.read == 1 &&
+          {user.data.user_powers["4"].profile_powers.read == 1 &&
             <ExportTableData type="RELATÓRIOS" source={"/api/reports/export"} />
           }
 
-          {!AuthData.data.user_powers["4"].profile_powers.read == 1 &&
+          {!user.data.user_powers["4"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

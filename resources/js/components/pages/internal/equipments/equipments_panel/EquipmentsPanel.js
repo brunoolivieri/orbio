@@ -20,7 +20,7 @@ import { UpdateEquipment } from './formulary/UpdateEquipmentFormulary';
 import { EquipmentInformation } from './formulary/EquipmentInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
 // Moment
 import moment from 'moment';
@@ -110,7 +110,7 @@ export const EquipmentPanel = React.memo(() => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -241,11 +241,11 @@ export const EquipmentPanel = React.memo(() => {
         </Grid>
 
         <Grid item>
-          {AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+          {user.data.user_powers["6"].profile_powers.read == 1 &&
             <ExportTableData type="EQUIPAMENTOS" source={"/api/equipments/export"} />
           }
 
-          {!AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+          {!user.data.user_powers["6"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

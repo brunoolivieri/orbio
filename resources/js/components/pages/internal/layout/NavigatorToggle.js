@@ -11,7 +11,7 @@ import ReportIcon from '@mui/icons-material/Report';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 // Custom
 import { Link } from 'react-router-dom';
-import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../context/Auth';
 // Assets
 import EmbrapaLogo from "../../../assets/images/Logos/Embrapa.png";
 
@@ -25,7 +25,7 @@ const item = {
 
 export const NavigatorToggle = React.memo((props) => {
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const categories = React.useMemo(() => ([
     {
@@ -43,12 +43,12 @@ export const NavigatorToggle = React.memo((props) => {
     {
       id: "Módulos",
       children: [
-        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: AuthData.data.user_powers["1"].profile_powers.read == 1 ? true : false, path: "administracao" },
-        { id: 'Planos', icon: <MapIcon />, access: AuthData.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
-        { id: 'Ordens', icon: <AssignmentIcon />, access: AuthData.data.user_powers["3"].profile_powers.read == 1 ? true : false, path: "ordens" },
-        { id: 'Relatórios', icon: <AssessmentIcon />, access: AuthData.data.user_powers["4"].profile_powers.read == 1 ? true : false, path: "relatorios" },
-        { id: 'Incidentes', icon: <ReportIcon />, access: AuthData.data.user_powers["5"].profile_powers.read == 1 ? true : false, path: "incidentes" },
-        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: AuthData.data.user_powers["6"].profile_powers.read == 1 ? true : false, path: "equipamentos" }
+        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.data.user_powers["1"].profile_powers.read == 1 ? true : false, path: "administracao" },
+        { id: 'Planos', icon: <MapIcon />, access: user.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
+        { id: 'Ordens', icon: <AssignmentIcon />, access: user.data.user_powers["3"].profile_powers.read == 1 ? true : false, path: "ordens" },
+        { id: 'Relatórios', icon: <AssessmentIcon />, access: user.data.user_powers["4"].profile_powers.read == 1 ? true : false, path: "relatorios" },
+        { id: 'Incidentes', icon: <ReportIcon />, access: user.data.user_powers["5"].profile_powers.read == 1 ? true : false, path: "incidentes" },
+        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.data.user_powers["6"].profile_powers.read == 1 ? true : false, path: "equipamentos" }
       ]
     },
     {

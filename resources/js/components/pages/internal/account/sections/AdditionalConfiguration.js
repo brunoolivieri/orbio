@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from "../../../../../services/AxiosApi";
-import { useAuthentication } from '../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../context/Auth';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { GenericModalDialog } from '../../../../shared/modals/dialog/GenericModalDialog';
 // Assets
@@ -34,7 +34,7 @@ export function AdditionalConfiguration() {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
     const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
     const [loading, setLoading] = React.useState(true);
     const [updateLoading, setUpdateLoading] = React.useState(false);
@@ -84,7 +84,7 @@ export function AdditionalConfiguration() {
     }
 
     function requestServerOperation() {
-        axios.post(`/api/update-password/${AuthData.data.id}`, controlledInput)
+        axios.post(`/api/update-password/${user.data.id}`, controlledInput)
             .then(function (response) {
                 setUpdateLoading(false);
                 setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
@@ -127,7 +127,7 @@ export function AdditionalConfiguration() {
     }
 
     function disableAccount() {
-        axios.post(`/api/desactivate-account/${AuthData.data.id}`)
+        axios.post(`/api/desactivate-account/${user.data.id}`)
             .then(function (response) {
                 setOpenGenericModal(false);
                 handleOpenSnackbar(response.data.message, "success");
@@ -149,7 +149,7 @@ export function AdditionalConfiguration() {
         enqueueSnackbar(text, { variant });
     }
 
-    // ============================================================================== STRUCTURES ============================================================================== //
+    // ============================================================================== JSX ============================================================================== //
 
     return (
         <>

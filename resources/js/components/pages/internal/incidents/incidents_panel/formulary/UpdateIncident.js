@@ -7,7 +7,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Outros
 import moment from 'moment';
 // Custom
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
@@ -25,7 +25,7 @@ export const UpdateIncident = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date });
   const [fieldError, setFieldError] = React.useState(initialFieldError);
@@ -169,8 +169,8 @@ export const UpdateIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!AuthData.data.user_powers["5"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!user.data.user_powers["5"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={user.data.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

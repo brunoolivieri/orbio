@@ -46,26 +46,24 @@ const paperStyle = {
 
 export const Dashboard = React.memo(() => {
 
+    // ============================================================================== STATES ============================================================================== //
+
     const [loading, setLoading] = React.useState(true);
     const [users, setUsers] = React.useState(null);
     const [profiles, setProfiles] = React.useState(null);
     const [flightPlans, setFlightPlans] = React.useState(null);
     const [serviceOrders, setServiceOrders] = React.useState(null);
     const [reports, setReports] = React.useState(null);
-
-    // Context do snackbar
     const { enqueueSnackbar } = useSnackbar();
-
-    // Context page
     const { setPageIndex } = usePage();
+
+    // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
 
         let is_mounted = true;
-        if (!is_mounted) return '';
 
         setPageIndex(0);
-
         axios.get("/api/load-dashboard-metrics")
             .then(function (response) {
 
@@ -93,11 +91,13 @@ export const Dashboard = React.memo(() => {
             return is_mounted = false;
         }
 
-    }, []); 275
+    }, []);
 
     function handleOpenSnackbar(text, variant) {
         enqueueSnackbar(text, { variant });
     }
+
+    // =============================================================== JSX  =============================================================== //
 
     return (
         <>

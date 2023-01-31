@@ -21,7 +21,7 @@ import { DeleteOrder } from './formulary/DeleteOrder';
 import { ServiceOrderInformation } from './formulary/ServiceOrderInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
 import { CircularStaticWithLabel } from '../../../../shared/progress/CircularStaticWithLabel';
 import { WhiteTooltip } from '../../../../shared/tooltip/WhiteTooltip';
@@ -235,7 +235,7 @@ export function ServiceOrdersPanel() {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -366,11 +366,11 @@ export function ServiceOrdersPanel() {
         </Grid>
 
         <Grid item>
-          {AuthData.data.user_powers["3"].profile_powers.read == 1 &&
+          {user.data.user_powers["3"].profile_powers.read == 1 &&
             <ExportTableData type="ORDENS DE SERVIÇO" source={"/api/service-orders/export"} />
           }
 
-          {!AuthData.data.user_powers["3"].profile_powers.read == 1 &&
+          {!user.data.user_powers["3"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

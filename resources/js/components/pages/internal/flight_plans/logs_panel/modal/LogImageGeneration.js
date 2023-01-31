@@ -18,9 +18,6 @@ export const LogImageGeneration = React.memo((props) => {
 
     function handleSaveIframeImage() {
 
-        //console.log(props.logs)
-        //console.log(props.actual_log)
-
         props.setLogs((selectedLogs) => {
 
             return selectedLogs.map((selected_log) => {

@@ -20,7 +20,7 @@ import { DeleteBattery } from './formulary/DeleteBattery';
 import { BatteryInformation } from './formulary/BatteryInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
 // Moment
 import moment from 'moment';
@@ -98,7 +98,7 @@ export function BatteriesPanel() {
 
     // ============================================================================== STATES ============================================================================== //
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
 
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
@@ -231,11 +231,11 @@ export function BatteriesPanel() {
                 </Grid>
 
                 <Grid item>
-                    {AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+                    {user.data.user_powers["6"].profile_powers.read == 1 &&
                         <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
                     }
 
-                    {!AuthData.data.user_powers["6"].profile_powers.read == 1 &&
+                    {!user.data.user_powers["6"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>

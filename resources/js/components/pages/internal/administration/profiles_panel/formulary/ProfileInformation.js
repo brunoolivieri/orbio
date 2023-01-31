@@ -2,7 +2,7 @@ import * as React from 'react';
 // Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Grid, Divider } from '@mui/material';
 // Custom
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +11,7 @@ import moment from 'moment/moment';
 
 export const ProfileInformation = React.memo((props) => {
 
-    const { AuthData } = useAuthentication();
+    const { user } = useAuth();
     const [open, setOpen] = React.useState(false);
 
     function handleClickOpen() {
@@ -25,8 +25,8 @@ export const ProfileInformation = React.memo((props) => {
     return (
         <>
             <Tooltip title="Info">
-                <IconButton disabled={AuthData.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faCircleInfo} color={AuthData.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                <IconButton disabled={user.data.user_powers["1"].profile_powers.write == 1 ? false : true} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faCircleInfo} color={user.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

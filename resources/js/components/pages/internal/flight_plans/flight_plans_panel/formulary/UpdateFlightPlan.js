@@ -2,7 +2,7 @@ import * as React from 'react';
 // Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Typography, MenuItem } from '@mui/material';
 // Custom
-import { useAuthentication } from '../../../../../context/InternalRoutesAuth/AuthenticationContext';
+import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 // Fonts Awesome
@@ -16,7 +16,7 @@ export const UpdateFlightPlan = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
   const [formError, setFormError] = React.useState(initialFieldError);
@@ -153,8 +153,8 @@ export const UpdateFlightPlan = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!AuthData.data.user_powers["2"].profile_powers.write == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={AuthData.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!user.data.user_powers["2"].profile_powers.write == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={user.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

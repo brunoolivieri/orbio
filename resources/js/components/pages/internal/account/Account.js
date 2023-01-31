@@ -1,4 +1,3 @@
-// React
 import * as React from 'react';
 // Custom
 import { BasicInformation } from './sections/BasicInformation';
@@ -6,7 +5,6 @@ import { ComplementaryInformation } from './sections/ComplementaryInformation';
 import { AdditionalConfiguration } from './sections/AdditionalConfiguration';
 import { Switcher } from "../../../shared/switcher/Switcher";
 import { usePage } from '../../../context/PageContext';
-import { useAuthentication } from '../../../context/InternalRoutesAuth/AuthenticationContext';
 // Material UI
 import Paper from '@mui/material/Paper';
 import { Grid } from "@mui/material";
@@ -16,7 +14,6 @@ export const Account = () => {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
   const [actualPanel, setActualPanel] = React.useState("basic");
   const { setPageIndex } = usePage();
 
@@ -28,7 +25,7 @@ export const Account = () => {
     setPageIndex(8);
   }, []);
 
-  // ============================================================================== STRUCTURES ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
@@ -38,7 +35,6 @@ export const Account = () => {
             <Switcher panelStateSetter={setActualPanel} options={options} />
           </Grid>
         </Grid>
-
         <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
           {(actualPanel === "basic") && <BasicInformation />}
@@ -46,14 +42,7 @@ export const Account = () => {
           {(actualPanel === "account_configuration") && <AdditionalConfiguration />}
 
         </Box>
-
       </Paper>
     </>
-
-
-
-
-
-
   )
 }

@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 // Custom
-import { AuthProvider } from './components/context/InternalRoutesAuth/AuthenticationContext';
+import { AuthProvider } from './components/context/Auth';
 import { PageProvider } from './components/context/PageContext';
 // Libs
 import { MainRoutes } from "./routes/index";

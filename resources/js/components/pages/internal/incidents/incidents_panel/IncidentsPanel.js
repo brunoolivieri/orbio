@@ -4,7 +4,7 @@ import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Link } from 
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Custom
-import { useAuthentication } from "../../../../context/InternalRoutesAuth/AuthenticationContext";
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
 import { CreateIncident } from './formulary/CreateIncident';
 import { UpdateIncident } from './formulary/UpdateIncident';
@@ -78,7 +78,7 @@ export function IncidentsPanel() {
 
   // ============================================================================== STATES ============================================================================== //
 
-  const { AuthData } = useAuthentication();
+  const { user } = useAuth();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -196,11 +196,11 @@ export function IncidentsPanel() {
         </Grid>
 
         <Grid item>
-          {AuthData.data.user_powers["5"].profile_powers.read == 1 &&
+          {user.data.user_powers["5"].profile_powers.read == 1 &&
             <ExportTableData type="EQUIPAMENTOS" source={"/api/incidents/export"} />
           }
 
-          {!AuthData.data.user_powers["5"].profile_powers.read == 1 &&
+          {!user.data.user_powers["5"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
