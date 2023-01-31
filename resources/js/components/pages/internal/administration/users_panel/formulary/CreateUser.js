@@ -10,9 +10,8 @@ import { SelectAttributeControl } from '../../../../../shared/input_select/Selec
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 
-const initialControlledInput = { name: "", email: "", profile: "0" };
-const initialFieldError = { name: false, email: false, profile: false };
-const initialFieldErrorMessage = { name: "", email: "", profile: "" };
+const initialFormData = { name: "", email: "", profile_id: "0" };
+const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile_id: { error: false, message: "" } }
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateUser = React.memo((props) => {
@@ -20,9 +19,8 @@ export const CreateUser = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [formData, setFormData] = React.useState(initialFormData);
+  const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -34,47 +32,53 @@ export const CreateUser = React.memo((props) => {
   }
 
   function handleClose() {
-    setControlledInput(initialControlledInput);
-    setFieldError(initialFieldError);
-    setFieldErrorMessage(initialFieldErrorMessage);
+    setFormData(initialFormData);
+    setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
   function handleSubmit() {
-    if (formValidation()) {
-      setLoading(true);
-      requestServer();
+    if (!formSubmissionValidation()) return '';
+    
+    setLoading(true);
+    requestServer();
+
+  }
+
+  function formSubmissionValidation() {
+
+    let validation = Object.assign({}, initialFormError);
+
+    for (let field in formData) {
+      if (field === "name") {
+        validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
+      } else if (field === "email") {
+        validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+      } else if (field === "profile_id") {
+        validation[field] = formData[field] != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um perfil" }
+      }
     }
+
+    setFormError(validation);
+
+    return !(validation.name.error || validation.email.error || validation.profile.error);
   }
 
-  function formValidation() {
-    const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
-    const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
-    const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
+  async function requestServer() {
 
-    setFieldError({ name: nameValidate.error, email: emailValidate.error, profile: profileValidate.error });
-    setFieldErrorMessage({ name: nameValidate.message, email: emailValidate.message, profile: profileValidate.message });
+    try {
 
-    return !(nameValidate.error || emailValidate.error || profileValidate.error);
-  }
+      const response = axios.post("/api/admin-module-user", formData);
+      successResponse(response);
 
-  function requestServer() {
-    axios.post(`/api/admin-module-user`, {
-      email: controlledInput.email,
-      name: controlledInput.name,
-      profile_id: controlledInput.profile
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -89,37 +93,23 @@ export const CreateUser = React.memo((props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      name: { error: false, message: null },
-      email: { error: false, message: null },
-      profile_id: { error: false, message: null }
-    }
+    let response_errors = {}
 
     for (let prop in response.data.errors) {
-      request_errors[prop] = {
+      response_errors[prop] = {
         error: true,
         message: response.data.errors[prop][0]
       }
     }
 
-    setFieldError({
-      name: request_errors.name.error,
-      email: request_errors.email.error,
-      profile: request_errors.profile_id.error
-    });
-
-    setFieldErrorMessage({
-      name: request_errors.name.message,
-      email: request_errors.email.message,
-      profile: request_errors.profile_id.message
-    });
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== STRUCTURES ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
@@ -156,8 +146,8 @@ export const CreateUser = React.memo((props) => {
                 required
                 name="name"
                 onChange={handleInputChange}
-                helperText={fieldErrorMessage.name}
-                error={fieldError.name}
+                helperText={formError.name.message}
+                error={formError.name.error}
               />
             </Grid>
 
@@ -171,8 +161,8 @@ export const CreateUser = React.memo((props) => {
                 required
                 name="email"
                 onChange={handleInputChange}
-                helperText={fieldErrorMessage.email}
-                error={fieldError.email}
+                helperText={formError.email.message}
+                error={formError.email.error}
               />
             </Grid>
 
@@ -182,11 +172,11 @@ export const CreateUser = React.memo((props) => {
                 data_source={"/api/load-profiles"}
                 primary_key={"id"}
                 key_content={"name"}
-                error={fieldError.profile}
+                error={formError.profile_id.error}
                 name={"profile"}
-                value={controlledInput.profile}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                value={formData.profile_id}
+                setControlledInput={setFormData}
+                controlledInput={formData}
               />
             </Grid>
 

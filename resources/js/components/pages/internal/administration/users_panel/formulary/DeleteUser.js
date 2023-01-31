@@ -22,7 +22,7 @@ export const DeleteUser = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  function handleClickOpen() {
+  function handleOpen() {
     setOpen(true);
     const ids = props.records.map((item) => item.id);
     setSelectedIds(ids);
@@ -34,27 +34,29 @@ export const DeleteUser = React.memo((props) => {
     setOpen(false);
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
+  function handleSubmit() {
     setLoading(true);
-    requestServerOperation();
+    requestServer();
   }
 
-  function requestServerOperation() {
-    axios.delete(`/api/admin-module-user/delete`, {
-      data: {
-        ids: selectedIds
-      }
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+  async function requestServer() {
+
+    try {
+
+      const response = axios.delete("/api/admin-module-user/delete", {
+        data: {
+          ids: selectedIds
+        }
+      });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -69,12 +71,12 @@ export const DeleteUser = React.memo((props) => {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
-  // ============================================================================== STRUCTURES ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
       <Tooltip title="Desativar">
-        <IconButton disabled={!user.data.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
+        <IconButton disabled={!user.data.user_powers["1"].profile_powers.write == 1} onClick={handleOpen}>
           <FontAwesomeIcon icon={faTrashCan} color={user.data.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>

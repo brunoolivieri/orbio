@@ -10,8 +10,8 @@ import axios from '../../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-const initialFieldError = { name: false, email: false, profile: false };
-const initialFieldErrorMessage = { name: "", email: "", profile: "" };
+const initialFormData = { name: "", email: "", profile_id: "" };
+const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile_id: { error: false, message: "" } };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateUser = React.memo((props) => {
@@ -20,9 +20,8 @@ export const UpdateUser = React.memo((props) => {
 
   const { user } = useAuth();
 
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile: props.record.profile.id });
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile_id: props.record.profile.id });
+  const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -34,51 +33,58 @@ export const UpdateUser = React.memo((props) => {
   }
 
   function handleClose() {
-    setFieldError(initialFieldError);
-    setFieldErrorMessage(initialFieldErrorMessage);
+    setFormData(initialFormData);
+    setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
 
   function handleSubmit() {
-    if (formValidation()) {
-      setLoading(true);
-      requestServer();
+    if (!formSubmissionValidation()) return ''
+
+    setLoading(true);
+    requestServer();
+
+  }
+
+  function formSubmissionValidation() {
+
+    let validation = Object.assign({}, initialFormError);
+
+    for (let field in formData) {
+      if (field === "name") {
+        validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
+      } else if (field === "email") {
+        validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+      } else if (field === "profile_id") {
+        validation[field] = formData[field] != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um perfil" }
+      }
     }
+
+    setFormError(validation);
+
+    return !(validation.name.error || validation.email.error || validation.profile.error);
   }
 
-  function formValidation() {
-    const emailValidate = FormValidation(controlledInput.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
-    const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
-    const profileValidate = Number(controlledInput.profile) === 0 ? { error: true, message: "Selecione um perfil" } : { error: false, message: "" };
+  async function requestServer() {
 
-    setFieldError({ email: emailValidate.error, name: nameValidate.error, profile: profileValidate.error });
-    setFieldErrorMessage({ email: emailValidate.message, name: nameValidate.message, profile: profileValidate.message });
+    try {
 
-    return !(emailValidate.error === true || nameValidate.error === true || profileValidate.error);
-  }
+      const response = await axios.patch(`/api/admin-module-user/${formData.id}`, formData);
+      successResponse(response);
 
-  function requestServer() {
-    axios.patch(`/api/admin-module-user/${controlledInput.id}`, {
-      name: controlledInput.name,
-      email: controlledInput.email,
-      status: controlledInput.status,
-      profile_id: controlledInput.profile
-    })
-      .then((response) => {
-        successResponse(response);
-      })
-      .catch((error) => {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
     setDisplayAlert({ display: true, type: "success", message: response.data.message });
+
     setTimeout(() => {
       props.reloadTable((old) => !old);
       setLoading(false);
@@ -89,37 +95,22 @@ export const UpdateUser = React.memo((props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      email: { error: false, message: null },
-      name: { error: false, message: null },
-      profile_id: { error: false, message: null }
-    }
-
-    for (let prop in response.data.errors) {
-      request_errors[prop] = {
+    let response_errors = {};
+    for (let field in response.data.errors) {
+      response_errors[field] = {
         error: true,
-        message: response.data.errors[prop][0]
+        message: response.data.errors[field][0]
       }
     }
 
-    setFieldError({
-      email: request_errors.email.error,
-      name: request_errors.name.error,
-      profile: request_errors.profile_id.error
-    });
-
-    setFieldErrorMessage({
-      email: request_errors.email.message,
-      name: request_errors.name.message,
-      profile: request_errors.profile_id.message
-    });
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== STRUCTURES ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
@@ -151,9 +142,9 @@ export const UpdateUser = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                value={controlledInput.name}
-                helperText={fieldErrorMessage.name}
-                error={fieldError.name}
+                value={formData.name}
+                helperText={formError.name.message}
+                error={formError.name.error}
               />
             </Grid>
 
@@ -166,9 +157,9 @@ export const UpdateUser = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                value={controlledInput.email}
-                helperText={fieldErrorMessage.email}
-                error={fieldError.email}
+                value={formData.email}
+                helperText={formError.email.message}
+                error={formError.email.error}
               />
             </Grid>
 
@@ -180,10 +171,10 @@ export const UpdateUser = React.memo((props) => {
                 key_content={"name"}
                 name={"profile"}
                 onChange={handleInputChange}
-                error={fieldError.profile}
-                value={controlledInput.profile}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                error={formError.profile_id.error}
+                value={formData.profile_id}
+                setControlledInput={setFormData}
+                controlledInput={formData}
               />
             </Grid>
 

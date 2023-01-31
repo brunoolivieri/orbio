@@ -314,5 +314,4 @@ export const UserInformation = React.memo((props) => {
             </Dialog>
         </>
     )
-
 });
