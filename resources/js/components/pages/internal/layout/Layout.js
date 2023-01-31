@@ -13,30 +13,37 @@ const drawerWidth = 265;
 
 export const Layout = () => {
 
-  // ============================================================================== STATES ============================================================================== //
+  // ================== STATES =================== //
 
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(true);
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const { isAuthenticated, verifyAuthentication } = useAuth();
+  const { user, isAuthenticated, verifyAuthentication, logout } = useAuth();
 
-  // ============================================================================== FUNCTIONS ============================================================================== //
+  // =========================================== FUNCTIONS ======================= //
 
   React.useEffect(() => {
-    setLoading(true);
-    async () => {
+
+    const fetch = async () => {
       await verifyAuthentication();
       setLoading(false);
     }
+
+    fetch();
+
   }, []);
 
   function handleDrawerToggle() {
     setMenuOpen(!menuOpen);
   }
 
-  // =============================================================== JSX  =============================================================== //
+  // ================ JSX  ============= //
 
   if (loading) {
     return <BackdropLoading />;
+  }
+
+  if (loading && !isAuthenticated) {
+    logout();
   }
 
   if (!loading && isAuthenticated) {

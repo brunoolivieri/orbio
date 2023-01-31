@@ -155,8 +155,8 @@ export const CreateReport = (props) => {
     <>
 
       <Tooltip title="Gerar relatório">
-        <IconButton disabled={!user.data.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPlus} size="sm" color={user.data.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} />
+        <IconButton disabled={!user.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPlus} size="sm" color={user.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} />
         </IconButton>
       </Tooltip>
 

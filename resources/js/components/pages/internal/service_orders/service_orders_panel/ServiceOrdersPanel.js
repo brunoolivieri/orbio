@@ -366,11 +366,11 @@ export function ServiceOrdersPanel() {
         </Grid>
 
         <Grid item>
-          {user.data.user_powers["3"].profile_powers.read == 1 &&
+          {user.user_powers["3"].profile_powers.read == 1 &&
             <ExportTableData type="ORDENS DE SERVIÇO" source={"/api/service-orders/export"} />
           }
 
-          {!user.data.user_powers["3"].profile_powers.read == 1 &&
+          {!user.user_powers["3"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

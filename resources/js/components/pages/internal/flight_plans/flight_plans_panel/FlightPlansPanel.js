@@ -330,9 +330,9 @@ export function FlightPlansPanel() {
           {selectedRecords.length === 0 &&
             /* <CreateFlightPlan reloadTable={setReload} /> */
             <Tooltip title="Novo Plano">
-              <Link href={`/internal/map?userid=${user.data.id}`} target="_blank">
+              <Link href={`/internal/map?userid=${user.id}`} target="_blank">
                 <IconButton>
-                  <FontAwesomeIcon icon={faPlus} color={user.data.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                  <FontAwesomeIcon icon={faPlus} color={user.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
               </Link>
             </Tooltip>
@@ -380,11 +380,11 @@ export function FlightPlansPanel() {
         </Grid>
 
         <Grid item>
-          {user.data.user_powers["2"].profile_powers.read == 1 &&
+          {user.user_powers["2"].profile_powers.read == 1 &&
             <ExportTableData type="PLANOS DE VOO" source={"/api/flight-plans/export"} />
           }
 
-          {!user.data.user_powers["2"].profile_powers.read == 1 &&
+          {!user.user_powers["2"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

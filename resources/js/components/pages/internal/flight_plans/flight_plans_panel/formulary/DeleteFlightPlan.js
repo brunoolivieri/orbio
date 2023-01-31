@@ -75,8 +75,8 @@ export const DeleteFlightPlan = React.memo((props) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={!user.data.user_powers["2"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={user.data.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!user.user_powers["2"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

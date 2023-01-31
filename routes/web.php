@@ -114,7 +114,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get("api/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
     Route::post("api/process-selected-logs", [FlightPlanModuleLogController::class, "processSelectedLogs"]);
     // Actions
-    Route::get('api/auth/logout', LogoutController::class);
+    Route::post('api/auth/logout', LogoutController::class);
     Route::get('api/auth/data', UserAuthenticatedData::class);
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);

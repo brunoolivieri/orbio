@@ -169,8 +169,8 @@ export const UpdateIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!user.data.user_powers["5"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={user.data.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!user.user_powers["5"].profile_powers.read == 1} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={user.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

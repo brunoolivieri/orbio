@@ -64,7 +64,7 @@ export const Dashboard = React.memo(() => {
         let is_mounted = true;
         setPageIndex(0);
 
-        async () => {
+        const fetch = async () => {
 
             try {
 
@@ -87,6 +87,8 @@ export const Dashboard = React.memo(() => {
             }
 
         }
+
+        fetch();
 
         return () => {
             return is_mounted = false;

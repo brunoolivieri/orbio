@@ -223,11 +223,11 @@ export function UsersPanel() {
         </Grid>
 
         <Grid item>
-          {user.data.user_powers["1"].profile_powers.read == 1 &&
+          {user.user_powers["1"].profile_powers.read == 1 &&
             <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
           }
 
-          {!user.data.user_powers["1"].profile_powers.read == 1 &&
+          {!user.user_powers["1"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

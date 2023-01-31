@@ -237,11 +237,11 @@ export const LogsPanel = () => {
                 </Grid>
 
                 <Grid item>
-                    {user.data.user_powers["2"].profile_powers.read == 1 &&
+                    {user.user_powers["2"].profile_powers.read == 1 &&
                         <ExportTableData type="LOGS" source={"/api/logs/export"} />
                     }
 
-                    {!user.data.user_powers["2"].profile_powers.read == 1 &&
+                    {!user.user_powers["2"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>

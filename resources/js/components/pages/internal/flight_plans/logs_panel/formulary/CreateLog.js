@@ -134,8 +134,8 @@ export const CreateLog = React.memo((props) => {
     return (
         <>
             <Tooltip title="Novo Log">
-                <IconButton onClick={handleClickOpen} disabled={!user.data.user_powers["4"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faPlus} color={user.data.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["4"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPlus} color={user.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

@@ -33,7 +33,7 @@ export function Login() {
     const [formError, setFormError] = React.useState(initialFormError);
     const [loading, setLoading] = React.useState(false);
 
-    const { login, logout } = useAuth();
+    const { login } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== ROUTINES ============================================================================== //

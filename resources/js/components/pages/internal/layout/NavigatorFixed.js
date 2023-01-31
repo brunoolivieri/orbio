@@ -113,12 +113,12 @@ export const NavigatorFixed = () => {
         {
             id: "Módulos",
             children: [
-                { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.data.user_powers["1"].profile_powers.read == 1 ? true : false, path: "administracao" },
-                { id: 'Planos e Logs', icon: <MapIcon />, access: user.data.user_powers["2"].profile_powers.read == 1 ? true : false, path: "planos" },
-                { id: 'Ordens', icon: <AssignmentIcon />, access: user.data.user_powers["3"].profile_powers.read == 1 ? true : false, path: "ordens" },
-                { id: 'Relatórios', icon: <AssessmentIcon />, access: user.data.user_powers["4"].profile_powers.read == 1 ? true : false, path: "relatorios" },
-                { id: 'Incidentes', icon: <ReportIcon />, access: user.data.user_powers["5"].profile_powers.read == 1 ? true : false, path: "incidentes" },
-                { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.data.user_powers["6"].profile_powers.read == 1 ? true : false, path: "equipamentos" }
+                { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.user_powers["1"].profile_powers.read == 1, path: "administracao" },
+                { id: 'Planos e Logs', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "planos" },
+                { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "ordens" },
+                { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "relatorios" },
+                { id: 'Incidentes', icon: <ReportIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "incidentes" },
+                { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["6"].profile_powers.read == 1, path: "equipamentos" }
             ]
         },
         {

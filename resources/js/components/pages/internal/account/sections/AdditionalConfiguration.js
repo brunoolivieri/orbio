@@ -84,7 +84,7 @@ export function AdditionalConfiguration() {
     }
 
     function requestServerOperation() {
-        axios.post(`/api/update-password/${user.data.id}`, controlledInput)
+        axios.post(`/api/update-password/${user.id}`, controlledInput)
             .then(function (response) {
                 setUpdateLoading(false);
                 setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
@@ -127,7 +127,7 @@ export function AdditionalConfiguration() {
     }
 
     function disableAccount() {
-        axios.post(`/api/desactivate-account/${user.data.id}`)
+        axios.post(`/api/desactivate-account/${user.id}`)
             .then(function (response) {
                 setOpenGenericModal(false);
                 handleOpenSnackbar(response.data.message, "success");

@@ -226,11 +226,11 @@ export function ReportsPanel() {
         </Grid>
 
         <Grid item>
-          {user.data.user_powers["4"].profile_powers.read == 1 &&
+          {user.user_powers["4"].profile_powers.read == 1 &&
             <ExportTableData type="RELATÓRIOS" source={"/api/reports/export"} />
           }
 
-          {!user.data.user_powers["4"].profile_powers.read == 1 &&
+          {!user.user_powers["4"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

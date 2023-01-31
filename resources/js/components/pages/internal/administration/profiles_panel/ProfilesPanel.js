@@ -173,11 +173,8 @@ export function ProfilesPanel() {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);
 
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} perfis`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} perfil`, "success");
-        }
+        enqueueSnackbar(`Perfis encontrados: ${response.data.total_records}`, { variant: "success" });
+
       })
       .catch(function (error) {
         handleOpenSnackbar(error.response.data.message, "error");
@@ -276,11 +273,11 @@ export function ProfilesPanel() {
         </Grid>
 
         <Grid item>
-          {user.data.user_powers["1"].profile_powers.read == 1 &&
+          {user.user_powers["1"].profile_powers.read == 1 &&
             <ExportTableData type="PERFIS" source={"/api/profiles/export"} />
           }
 
-          {!user.data.user_powers["1"].profile_powers.read == 1 &&
+          {!user.user_powers["1"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

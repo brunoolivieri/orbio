@@ -1,19 +1,17 @@
 import * as React from "react";
 import axios from '../../services/AxiosApi';
 
-const AuthenticationContext = React.createContext({ status: false });
+const AuthenticationContext = React.createContext({});
 
 export function AuthProvider({ children }) {
 
-    const [user, setUser] = React.useState({});
+    const [user, setUser] = React.useState(null);
     const isAuthenticated = !!user;
 
     async function verifyAuthentication() {
 
-        if (!isAuthenticated) logout();
-
         const response = await axios.get("/api/auth/data");
-        setUser(response.data.user);
+        setUser(response.data);
 
     }
 

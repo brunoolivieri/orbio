@@ -231,11 +231,11 @@ export function BatteriesPanel() {
                 </Grid>
 
                 <Grid item>
-                    {user.data.user_powers["6"].profile_powers.read == 1 &&
+                    {user.user_powers["6"].profile_powers.read == 1 &&
                         <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
                     }
 
-                    {!user.data.user_powers["6"].profile_powers.read == 1 &&
+                    {!user.user_powers["6"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
