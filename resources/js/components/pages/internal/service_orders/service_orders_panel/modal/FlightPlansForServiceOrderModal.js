@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide, Divider } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 // Axios
@@ -99,7 +99,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         fetchRecords();
     }, [reload]);
 
-    function fetchRecords() {
+    async function fetchRecords() {
 
         let http_request = "api/load-flight-plans-service-order?";
         if (props.serviceOrderId != null) {
@@ -107,23 +107,23 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         }
         http_request += `limit=${perPage}&search=${search}&page=${currentPage}`;
 
-        axios.get(http_request)
-            .then(function (response) {
+        try {
 
-                setRecords(response.data.records);
-                setTotalRecords(response.data.total_records);
-                // Set default selections if exists
-                setControlledSelection(() => {
-                    return response.data.records.filter((item) => item.selected).map((item) => item.id)
-                });
+            const response = await axios.get(http_request);
 
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+            setRecords(response.data.records);
+            setTotalRecords(response.data.total_records);
+            // Set default selections if exists
+            setControlledSelection(() => {
+                return response.data.records.filter((item) => item.selected).map((item) => item.id)
+            });
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     function handleChangePage(newPage) {
@@ -141,74 +141,71 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         setReload((old) => !old);
     }
 
-    const handleSelection = (newSelectedIds) => {
+    function handleSelection(newSelectedIds) {
         // Save only ids for grid controll
         setControlledSelection(newSelectedIds);
     }
 
-    const handleClickOpen = () => {
+    function handleClickOpen() {
         setOpen(true);
         setControlledSelection(() => {
             return props.selectedFlightPlans.map((item) => item.id);
         });
     }
 
-    const handleClose = () => {
+    function handleClose() {
         setOpen(false);
         setControlledSelection([]);
         props.setSelectedFlightPlans([]);
     }
 
-    const handleSave = () => {
-        setOpen(false);
+    async function handleSave() {
 
-        const newSelectedIds = controlledSelection;
+        const execute = async () => {
 
-        // Find unchanged selections to preserve data - get entire record
-        let preservedFlightPlansWithEquipments = [];
-        if (props.selectedFlightPlans.length > 0) {
+            const newSelectedIds = controlledSelection;
 
-            // The preserveds array receives the already selected preserving the formatting
-            // Preserve the formatting is necesary to not unselect the equipments if already selected
-            preservedFlightPlansWithEquipments = props.selectedFlightPlans.filter((props_record) => {
-                if (newSelectedIds.includes(props_record.id)) {
-                    return props_record;
+            // Find unchanged selections to preserve data - get entire record
+            let preservedFlightPlansWithEquipments = [];
+            if (props.selectedFlightPlans.length > 0) {
+
+                // The preserveds array receives the already selected preserving the formatting
+                // Preserve the formatting is necesary to not unselect the equipments if already selected
+                preservedFlightPlansWithEquipments = props.selectedFlightPlans.filter((props_record) => {
+                    if (newSelectedIds.includes(props_record.id)) {
+                        return props_record;
+                    }
+                });
+            }
+
+            // Get entire flight plan data record by ID - just for new selections
+            const newSelectedFlightPlans = records.filter((record) => {
+
+                let preservedSelectionsIds = preservedFlightPlansWithEquipments.map((item) => item.id);
+
+                // Record ID must exists in newSelectedIds and not in preserved_selections ids array
+                if (newSelectedIds.includes(record.id) && !preservedSelectionsIds.includes(record.id)) {
+                    return record;
                 }
+            })
+
+            const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
+                return { id: item.id, name: item.name, drone_id: "0", battery_id: "0", equipment_id: "0" };
             });
+
+            props.setSelectedFlightPlans(() => {
+                return [...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id);
+            });
+
         }
 
-        // Get entire flight plan data record by ID - just for new selections
-        const newSelectedFlightPlans = records.filter((record) => {
-
-            let preservedSelectionsIds = preservedFlightPlansWithEquipments.map((item) => item.id);
-
-            // Record ID must exists in newSelectedIds and not in preserved_selections ids array
-            if (newSelectedIds.includes(record.id) && !preservedSelectionsIds.includes(record.id)) {
-                return record;
-            }
-        })
-
-        const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
-            return { id: item.id, name: item.name, drone_id: "0", battery_id: "0", equipment_id: "0" };
-        });
-
-        /*
-        console.log('----------------------------------------------')
-        console.log(newSelectedFlightPlansWithEquipments)
-        console.log(preservedFlightPlansWithEquipments)
-
-        console.log('----------------------------------------------')
-        console.log([...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id));
-        */
-
-        props.setSelectedFlightPlans(() => {
-            return [...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id);
-        });
+        await execute();
+        setOpen(false);
 
     }
 
     return (
-        <div>
+        <>
             <Button variant="outlined" onClick={handleClickOpen}>
                 {"Planos de voo disponíveis: " + (records.length - props.selectedFlightPlans.length)}
             </Button>
@@ -298,9 +295,8 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             }}
                         />
                     </Box>
-
                 </DialogContent>
             </Dialog>
-        </div>
+        </>
     );
 });

@@ -33,26 +33,23 @@ export const DeleteLog = React.memo((props) => {
         setOpen(false);
     }
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        requestServerOperation();
-    }
+    async function handleSubmit() {
 
-    function requestServerOperation() {
-        axios.delete(`/api/plans-module-logs/delete`, {
-            data: {
-                ids: selectedIds
-            }
-        })
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                errorResponse(error.response.data);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+        try {
+
+            const response = await axios.delete("/api/plans-module-logs/delete", {
+                data: {
+                    ids: selectedIds
+                }
+            });
+
+            successResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response.data);
+        } finally {
+            setLoading(false);
+        }
     }
 
     function successResponse(response) {
@@ -67,7 +64,7 @@ export const DeleteLog = React.memo((props) => {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
 
-    // ============================================================================== STRUCTURES ============================================================================== //
+    // ============================================================================== JSX ============================================================================== //
 
     return (
         <>

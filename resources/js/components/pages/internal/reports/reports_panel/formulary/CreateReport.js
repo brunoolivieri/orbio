@@ -13,7 +13,7 @@ import { ReportVisualization, DownloadReport } from '../modal/ReportBuilder';
 // Lib
 import axios from '../../../../../../services/AxiosApi';
 
-const initialControlledInput = {
+const initialFormData = {
   name: '',
   client: '0',
   state: '',
@@ -21,22 +21,8 @@ const initialControlledInput = {
   farm: ''
 }
 
-const initialFieldError = {
-  name: false,
-  client: false,
-  state: false,
-  city: false,
-  farm: false
-}
-
-const initialFieldErrorMessage = {
-  name: '',
-  client: '',
-  state: '',
-  city: '',
-  farm: ''
-}
-
+const fieldError = { error: false, message: "" };
+const initialFormError = { name: fieldError, client: fieldError, state: fieldError, city: fieldError, farm: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateReport = (props) => {
@@ -44,15 +30,15 @@ export const CreateReport = (props) => {
   // ============================================================================== STATES  ============================================================================== //
 
   const { user } = useAuth();
-  const [loading, setLoading] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+
+  const [formError, setFormError] = React.useState(initialFormError);
+  const [formData, setFormData] = React.useState(initialFormData);
   const [serviceOrder, setServiceOrder] = React.useState(null);
   const [flightPlans, setFlightPlans] = React.useState(null);
   const [canSave, setCanSave] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -67,50 +53,60 @@ export const CreateReport = (props) => {
     setDisplayAlert(initialDisplayAlert);
   }
 
-  function handleSubmit(report_blob) {
+  React.useEffect(() => {
+    if (flightPlans) {
+      const is_data_completed = flightPlans.length == flightPlans.reduce((acm, current) => {
+        return acm += current.completed ? 1 : 0
+      }, 0);
+      setCanSave(is_data_completed);
+    }
+  }, [flightPlans]);
 
-    if (formValidation()) {
-      setLoading(true);
+  async function handleSubmit(report_blob) {
 
-      const report_file = new File([report_blob], `${controlledInput.name}.pdf`, { type: 'application/pdf' });
+    if (!formSubmissionValidation()) return '';
 
-      const formData = new FormData();
-      formData.append('name', controlledInput.name);
-      formData.append('file', report_file);
-      formData.append('blob', report_blob);
-      formData.append('service_order_id', serviceOrder.id)
+    setLoading(true);
 
-      axios.post("/api/reports-module", formData, {
+    const report_file = new File([report_blob], `${formData.name}.pdf`, { type: 'application/pdf' });
+
+    const formData_ = new FormData();
+    formData_.append('name', formData.name);
+    formData_.append('file', report_file);
+    formData_.append('blob', report_blob);
+    formData_.append('service_order_id', serviceOrder.id);
+
+    try {
+
+      const response = await axios.post("/api/reports-module", formData_, {
         headers: {
           'Content-Type': 'application/pdf'
         }
-      })
-        .then((response) => {
-          successResponse(response);
-        })
-        .catch(function (error) {
-          errorResponse(error.response);
-        })
-        .finally(() => {
-          setLoading(false);
-        })
+      });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
     }
+
   }
 
-  function formValidation() {
+  function formSubmissionValidation() {
 
-    let inputs_validate = [];
-    let controlledInputErrors = {};
-    for (let field in controlledInput) {
-      let is_invalid = (controlledInput[field] == null || controlledInput[field].length == 0);
-      controlledInputErrors[field] = is_invalid;
-      inputs_validate.push(is_invalid ? 0 : 1);
+    let validation = Object.assign({}, formError);
+
+    for (let field in formData) {
+      if (formData[field] === null || formData[field].length === 0) {
+        validation[field] = { error: true, message: "O campo deve ser preenchido" }
+      }
     }
 
-    setFieldError(controlledInputErrors);
+    setFormError(validation);
 
-    // If includes 0, form is invalid, an the true result turns into false
-    return !inputs_validate.includes(0);
+    return !(validation.name.error || validation.city.error || validation.state.error || validation.farm.error || validation.farm.error);
   }
 
   function successResponse(response) {
@@ -122,31 +118,23 @@ export const CreateReport = (props) => {
   }
 
   function errorResponse(response) {
+    
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {};
-    let request_messages = {};
+    let response_errors = {}
 
-    for (let prop in response.data.errors) {
-      request_errors[prop] = true;
-      request_messages[prop] = response.data.errors[prop][0];
+    for (let field in response.data.errors) {
+      response_errors[field] = {
+        error: true,
+        message: response.data.errors[field][0]
+      }
     }
 
-    setFieldError(request_errors);
-    setFieldErrorMessage(request_messages);
+    setFormError(response_errors);
   }
 
-  React.useEffect(() => {
-    if (flightPlans) {
-      const is_data_completed = flightPlans.length == flightPlans.reduce((acm, current) => {
-        return acm += current.completed ? 1 : 0
-      }, 0);
-      setCanSave(is_data_completed);
-    }
-  }, [flightPlans]);
-
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -179,7 +167,7 @@ export const CreateReport = (props) => {
           <Box mb={3}>
             <ServiceOrderForReport
               serviceOrder={serviceOrder}
-              setControlledInput={setControlledInput}
+              setControlledInput={setFormData}
               setServiceOrder={setServiceOrder}
               serviceOrderId={null}
               setFlightPlans={setFlightPlans}
@@ -192,7 +180,6 @@ export const CreateReport = (props) => {
 
                 <Grid item xs={6}>
                   <TextField
-                    id="responsible"
                     name="responsible"
                     label="Responsável (piloto)"
                     fullWidth
@@ -206,30 +193,27 @@ export const CreateReport = (props) => {
 
                 <Grid item xs={6}>
                   <TextField
-                    id="name"
                     name="name"
                     label="Nome do relatório"
                     fullWidth
                     variant="outlined"
                     onChange={handleInputChange}
-                    value={controlledInput.name}
-                    error={fieldError.name}
-                    helperText={fieldErrorMessage.name}
+                    value={formData.name}
+                    error={formError.name.error}
+                    helperText={formError.name.message}
                   />
                 </Grid>
 
-                {/* State and city are updated on ServiceOrderForReport modal */}
                 <Grid item xs={6}>
                   <TextField
-                    id="name"
                     name="state"
                     label="Estado"
                     fullWidth
                     variant="outlined"
                     onChange={handleInputChange}
-                    value={controlledInput.state}
-                    error={fieldError.state}
-                    helperText={fieldErrorMessage.state}
+                    value={formData.state}
+                    error={formError.state.error}
+                    helperText={formError.state.message}
                     inputProps={{
                       readOnly: true
                     }}
@@ -238,15 +222,14 @@ export const CreateReport = (props) => {
 
                 <Grid item xs={6}>
                   <TextField
-                    id="name"
                     name="city"
                     label="Cidade"
                     fullWidth
                     variant="outlined"
                     onChange={handleInputChange}
-                    value={controlledInput.city}
-                    error={fieldError.city}
-                    helperText={fieldErrorMessage.city}
+                    value={formData.city}
+                    error={formError.city.error}
+                    helperText={formError.city.message}
                     inputProps={{
                       readOnly: true
                     }}
@@ -260,9 +243,9 @@ export const CreateReport = (props) => {
                     fullWidth
                     variant="outlined"
                     onChange={handleInputChange}
-                    helperText={fieldErrorMessage.farm}
-                    error={fieldError.farm}
-                    value={controlledInput.farm}
+                    helperText={formError.farm.message}
+                    error={formError.farm.error}
+                    value={formData.farm}
                   />
                 </Grid>
               </Grid>
@@ -322,8 +305,8 @@ export const CreateReport = (props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          {serviceOrder && <ReportVisualization basicData={controlledInput} flightPlans={flightPlans} />}
-          {flightPlans && <DownloadReport data={controlledInput} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleSubmit} />}
+          {serviceOrder && <ReportVisualization basicData={formData} flightPlans={flightPlans} />}
+          {flightPlans && <DownloadReport data={formData} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleSubmit} />}
         </DialogActions>
 
       </Dialog >

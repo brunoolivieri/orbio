@@ -68,13 +68,13 @@ export const UpdateFlightPlan = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (formValidation()) {
-      setLoading(true);
-      requestServerOperation();
-    }
+    if (!formSubmissionValidation()) return ''
+    setLoading(true);
+    requestServer();
+
   }
 
-  function formValidation() {
+  function formSubmissionValidation() {
 
     const nameValidate = FormValidation(formData.name, 3, null, null, "nome");
     const descriptionValidate = FormValidation(formData.description, 3, null, null, "descrição");
@@ -91,28 +91,29 @@ export const UpdateFlightPlan = React.memo((props) => {
     return !(nameValidate.error || descriptionValidate.error);
   }
 
-  function requestServerOperation() {
+  async function requestServer() {
 
-    let data = {
+    let formData_ = {
       name: formData.name,
       description: formData.description
     };
 
     if (serviceOrderId != "0" && logId != "0") {
-      data["service_order_id"] = serviceOrderId;
-      data["log_id"] = logId;
+      formData_["service_order_id"] = serviceOrderId;
+      formData_["log_id"] = logId;
     }
 
-    axios.patch(`/api/plans-module/${formData.id}`, data)
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+    try {
+
+      const response = await axios.patch(`/api/plans-module/${formData.id}`, formData_);
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response.data);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -127,28 +128,23 @@ export const UpdateFlightPlan = React.memo((props) => {
   function errorResponse(response_data) {
     setDisplayAlert({ display: true, type: "error", message: response_data.message });
 
-    let request_errors = {
-      name: { error: false, message: null },
-      description: { error: false, message: null },
-      service_order_id: { error: false, message: null },
-      log_id: { error: false, message: null },
-    }
+    let response_errors = {}
 
-    for (let prop in response_data.errors) {
-      request_errors[prop] = {
+    for (let field in response_data.errors) {
+      response_errors[field] = {
         error: true,
-        message: response_data.errors[prop][0]
+        message: response_data.errors[field][0]
       }
     }
 
-    setFormError(request_errors);
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
     setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
-  // ============================================================================== STRUCTURES ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>

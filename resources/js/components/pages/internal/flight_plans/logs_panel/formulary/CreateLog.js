@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, Stack, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider, Icon } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, Stack, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 // Custom
@@ -33,7 +33,6 @@ export const CreateLog = React.memo((props) => {
         setLoading(true);
 
         const formData = new FormData();
-
         logs.forEach((log) => {
 
             if (log.status.to_save) {
@@ -45,47 +44,44 @@ export const CreateLog = React.memo((props) => {
                 const blob = new Blob([file_content], { type: file_type });
                 const logFile = new File([blob], kml_filename, { type: file_type });
 
-                console.log(kml_filename)
-
                 formData.append("files[]", logFile);
 
                 if (log.status.is_valid) {
-
                     // Create image for valid KML
                     // formData.append("images[]", log.image.dataURL);
-
                     const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/png" });
-
                     formData.append("images[]", imageFile);
-
                 }
-
             }
-
         });
 
-        axios.post(`/api/plans-module-logs`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
-            })
-            .finally(() => {
-                setLoading(false);
+        requestServer(formData);
+    }
+
+    async function requestServer(formData) {
+
+        try {
+
+            const response = await axios.post("/api/plans-module-logs", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             });
+
+            successResponse(response);
+
+        } catch (error) {
+            setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     function checkIfAllValidLogsHaveImages() {
 
         let validation = logs.reduce((acm, log) => {
-
             return acm && (Boolean(log.status.is_valid) && Boolean(log.image));
-
         }, true);
 
         if (!validation) {
@@ -116,7 +112,6 @@ export const CreateLog = React.memo((props) => {
     async function handleUploadLog(event) {
 
         const files = Array.from(event.currentTarget.files);
-
         const formData = new FormData();
 
         files.forEach((file) => {
@@ -124,12 +119,11 @@ export const CreateLog = React.memo((props) => {
         })
 
         const response = await axios.post("api/process-selected-logs", formData);
-
         setLogs(response.data);
 
     }
 
-    // ============================================================================== STRUCTURES ============================================================================== //
+    // ============================================================================== JSX ============================================================================== //
 
     return (
         <>

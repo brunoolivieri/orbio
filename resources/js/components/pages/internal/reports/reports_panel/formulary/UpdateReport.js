@@ -9,14 +9,11 @@ import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 
-const initialFieldError = {
-  name: false,
-  observation: false
-}
+const fieldError = { error: false, message: "" }
 
-const initialFieldErrorMessage = {
-  name: '',
-  observation: ''
+const initialFormError = {
+  name: fieldError,
+  observation: fieldError
 }
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
@@ -26,10 +23,10 @@ export const UpdateReport = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
+
   const [open, setOpen] = React.useState(false);
-  const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation });
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation });
+  const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
@@ -40,43 +37,46 @@ export const UpdateReport = React.memo((props) => {
   }
 
   function handleClose() {
-    setFieldError({ observation: false });
-    setFieldErrorMessage({ observation: "" });
+    setFormError(initialFormError);
     setDisplayAlert({ display: false, type: "", message: "" });
     setOpen(false);
     setLoading(false);
   }
 
   function handleSubmit() {
-    if (formValidation()) {
-      setLoading(true);
-      requestServer();
+    if (!formSubmissionValidation()) return '';
+    setLoading(true);
+    requestServer();
+
+  }
+
+  function formSubmissionValidation() {
+
+    let validation = Object.assign({}, formError);
+
+    for (let field in formData) {
+      validation[field] = FormValidation(formData.name, 3);
     }
-  }
 
-  function formValidation() {
+    setFormError(validation);
 
-    const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
-    const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
-
-    setFieldError({ name: nameValidate.error, observation: observationValidate.error });
-    setFieldErrorMessage({ name: nameValidate.message, observation: observationValidate.message });
-
-    return !(observationValidate.error || nameValidate.error);
+    return !(validation.name.error || validation.observation.error);
 
   }
 
-  function requestServer() {
-    axios.patch(`/api/reports-module/${controlledInput.id}`, controlledInput)
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorServerResponseTreatment(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  async function requestServer() {
+
+    try {
+
+      const response = await axios.patch(`/api/reports-module/${formData.id}`, formData);
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -87,38 +87,25 @@ export const UpdateReport = React.memo((props) => {
     }, 2000);
   }
 
-  function errorServerResponseTreatment(data) {
+  function errorResponse(response) {
 
-    let error_message = (data.message != "" && data.message != undefined) ? data.message : "Erro do servidor!";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
+    setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    // Definição dos objetos de erro possíveis de serem retornados pelo validation do Laravel
-    let input_errors = {
-      observation: { error: false, message: null },
-    }
+    let response_errors = {}
 
-    // Coleta dos objetos de erro existentes na response
-    for (let prop in data.errors) {
-
-      input_errors[prop] = {
+    for (let field in response.data.errors) {
+      response_errors[field] = {
         error: true,
-        message: data.errors[prop][0]
+        message: response.data.errors[field][0]
       }
-
     }
 
-    setFieldError({
-      observation: input_errors.observation.error
-    });
-
-    setFieldErrorMessage({
-      observation: input_errors.observation.message
-    });
+    setFormError(response_errors);
 
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -152,28 +139,12 @@ export const UpdateReport = React.memo((props) => {
             <Grid item xs={12}>
               <TextField
                 margin="dense"
-                id="id"
-                name="id"
-                label="ID"
-                type="text"
-                fullWidth
-                variant="outlined"
-                value={controlledInput.id}
-                InputProps={{
-                  readOnly: true,
-                }}
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <TextField
-                margin="dense"
                 label="Nome"
                 type="text"
                 fullWidth
                 name="name"
                 variant="outlined"
-                value={controlledInput.name}
+                value={formData.name}
               />
             </Grid>
 
@@ -186,9 +157,9 @@ export const UpdateReport = React.memo((props) => {
                 type="text"
                 fullWidth
                 variant="outlined"
-                value={controlledInput.observation}
-                helperText={fieldErrorMessage.observation}
-                error={fieldError.observation}
+                value={formData.observation}
+                helperText={formError.observation.message}
+                error={formError.observation.error}
                 onChange={handleInputChange}
               />
             </Grid>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress,  Grid, TextField, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, TextField, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -9,20 +9,20 @@ import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 
-const initialFieldError = { name: false, flight_plan_id: false };
-const initialFieldErrorMessage = { name: "", flight_plan_id: "" };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const fieldError = { error: false, message: "" }
+const initialFormError = { name: fieldError, flight_plan_id: fieldError };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateLog = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
+
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState({ id: props.record.id, name: props.record.name });
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+    const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name });
+    const [formError, setFormError] = React.useState(initialFormError);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -30,9 +30,8 @@ export const UpdateLog = React.memo((props) => {
     function handleClickOpen() {
         setOpen(true);
         setLoading(false);
-        setFieldError(initialFieldError);
-        setFieldErrorMessage(initialFieldErrorMessage);
-        setDisplayAlert(initialDisplatAlert);
+        setFormError(initialFormError);
+        setDisplayAlert(initialDisplayAlert);
     }
 
     function handleClose() {
@@ -40,36 +39,37 @@ export const UpdateLog = React.memo((props) => {
     }
 
     function handleSubmit() {
-        if (formValidation()) {
-            setLoading(true);
-            requestServerOperation();
-        }
+        if (!formSubmissionValidation()) return ''
+        setLoading(true);
+        requestServer();
     }
 
-    function formValidation() {
-        const nameValidate = FormValidation(controlledInput.name, 3, null, null, null);
+    function formSubmissionValidation() {
 
-        setFieldError({ name: nameValidate.error });
-        setFieldErrorMessage({ name: nameValidate.message });
+        let validation = Object.assign({}, formError);
+        validation["name"] = FormValidation(formData.name, 3, 255, null, null);
 
-        return !(nameValidate.error);
+        setFormError(validation);
+
+        return !(validation.name.error);
     }
 
-    function requestServerOperation() {
+    async function requestServer() {
 
-        let data = {
-            name: controlledInput.name
-        }
+        try {
 
-        axios.patch(`/api/plans-module-logs/${controlledInput.id}`, data)
-            .then(function (response) {
-                setLoading(false);
-                successResponse(response);
-            })
-            .catch(function (error) {
-                setLoading(false);
-                errorResponse(error.response);
+            const response = await axios.patch(`/api/plans-module-logs/${formData.id}`, {
+                name: formData.name
             });
+
+            successResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     function successResponse(response) {
@@ -84,37 +84,23 @@ export const UpdateLog = React.memo((props) => {
     function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        let input_errors = {
-            name: { error: false, message: null },
-            flight_plan_id: { error: false, message: null },
-            service_order_id: { error: false, message: null }
-        }
+        let response_errors = {}
 
-        for (let prop in response.data.errors) {
-            input_errors[prop] = {
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({
-            name: input_errors.name.error,
-            flight_plan_id: input_errors.flight_plan_id.error,
-            service_order_id: input_errors.service_order_id.error
-        });
-
-        setFieldErrorMessage({
-            name: input_errors.name.message,
-            flight_plan_id: input_errors.flight_plan_id.message,
-            service_order_id: input_errors.service_order_id.message
-        });
+        setFormError(response_errors);
     }
 
     function handleInputChange(e) {
-        setControlledInput({ ...controlledInput, [e.target.name]: e.currentTarget.value });
+        setFormData({ ...formData, [e.target.name]: e.currentTarget.value });
     }
 
-    // ============================================================================== STRUCTURES - MUI ============================================================================== //
+    // ============================================================================== JSX ============================================================================== //
 
     return (
         <>
@@ -139,22 +125,6 @@ export const UpdateLog = React.memo((props) => {
 
                     <Grid item container spacing={1}>
 
-                        <Grid item xs={12} hidden>
-                            <TextField
-                                margin="dense"
-                                id="id"
-                                name="id"
-                                label="ID"
-                                type="text"
-                                fullWidth
-                                variant="outlined"
-                                defaultValue={props.record.id}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                            />
-                        </Grid>
-
                         <Grid item xs={12}>
                             <TextField
                                 margin="dense"
@@ -163,10 +133,10 @@ export const UpdateLog = React.memo((props) => {
                                 fullWidth
                                 name="name"
                                 variant="outlined"
-                                value={controlledInput.name}
+                                value={formData.name}
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.name}
-                                error={fieldError.name}
+                                helperText={formError.name.message}
+                                error={formError.name.error}
                             />
                         </Grid>
 

@@ -36,25 +36,26 @@ export const DeleteReport = React.memo((props) => {
 
   const handleSubmit = () => {
     setLoading(false);
-    requestServerOperation();
+    requestServer();
   }
 
-  function requestServerOperation() {
+  async function requestServer() {
 
-    axios.delete(`/api/reports-module/delete`, {
-      data: {
-        ids: selectedIds
-      }
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+    try {
+
+      const response = await axios.delete(`/api/reports-module/delete`, {
+        data: {
+          ids: selectedIds
+        }
+      });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
 
   }
 

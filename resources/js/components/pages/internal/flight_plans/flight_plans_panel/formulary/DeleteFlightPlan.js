@@ -22,39 +22,41 @@ export const DeleteFlightPlan = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  const handleClickOpen = () => {
+  function handleClickOpen() {
     setOpen(true);
     const ids = props.records.map((item) => item.id);
     setSelectedIds(ids);
   }
 
-  const handleClose = () => {
+  function handleClose() {
     setDisplayAlert({ display: false, type: "", message: "" });
     setLoading(false);
     setOpen(false);
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  function handleSubmit() {
     setLoading(true);
-    requestServerOperation();
+    requestServer();
   }
 
-  const requestServerOperation = () => {
-    axios.delete(`/api/plans-module/delete`, {
-      data: {
-        ids: selectedIds
-      }
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+  async function requestServer() {
+
+    try {
+
+      const response = await axios.delete("/api/plans-module/delete", {
+        data: {
+          ids: selectedIds
+        }
+      });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+  
   }
 
   const successResponse = (response) => {
@@ -70,7 +72,7 @@ export const DeleteFlightPlan = React.memo((props) => {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
