@@ -150,7 +150,6 @@ export function AdditionalConfiguration() {
                         }}
                     />
                 </Grid>
-
             </Grid>
 
             <Box sx={{ mt: 2 }} >

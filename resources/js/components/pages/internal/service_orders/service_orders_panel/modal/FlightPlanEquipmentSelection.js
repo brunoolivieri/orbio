@@ -3,18 +3,18 @@ import * as React from 'react';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Divider, DialogContentText } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 // Custom
-import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
+import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 
 const initialControlledInput = { id: "", array_index: "", drone_id: "", battery_id: "", equipment_id: "" }
 
 export const FlightPlanEquipmentSelection = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
+    const [formData, setFormData] = React.useState(initialControlledInput);
 
     const handleClickOpen = () => {
         setOpen(true);
-        setControlledInput({
+        setFormData({
             id: props.current.id,
             name: props.current.name,
             drone_id: props.current.drone_id,
@@ -31,8 +31,8 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
 
         let updatedSelectedFlightPlans = props.selectedFlightPlans.map((selected_flight_plan) => {
 
-            if (selected_flight_plan.id === controlledInput.id) {
-                return controlledInput;
+            if (selected_flight_plan.id === formData.id) {
+                return formData;
             } else {
                 return selected_flight_plan;
             }
@@ -74,7 +74,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                         fullWidth
                         variant="outlined"
                         required
-                        value={controlledInput.name}
+                        value={formData.name}
                         sx={{ mb: 2 }}
                         InputProps={{
                             readOnly: true
@@ -82,43 +82,43 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
                     />
 
                     <Box sx={{ mb: 2 }}>
-                        <SelectAttributeControl
+                        <FetchedDataSelection
                             label_text="Drone"
                             data_source={"/api/load-drones"}
                             primary_key={"id"}
                             key_content={"name"}
-                            setControlledInput={setControlledInput}
-                            controlledInput={controlledInput}
+                            setFormData={setFormData}
+                            formData={formData}
                             name={"drone_id"}
-                            value={controlledInput.drone_id}
+                            selected={formData.drone_id}
                             error={false}
                         />
                     </Box>
 
                     <Box sx={{ mb: 2 }}>
-                        <SelectAttributeControl
+                        <FetchedDataSelection
                             label_text="Bateria"
                             data_source={"/api/load-batteries"}
                             primary_key={"id"}
                             key_content={"name"}
-                            setControlledInput={setControlledInput}
-                            controlledInput={controlledInput}
+                            setFormData={setFormData}
+                            formData={formData}
                             name={"battery_id"}
-                            value={controlledInput.battery_id}
+                            selected={formData.battery_id}
                             error={false}
                         />
                     </Box>
 
                     <Box sx={{ mb: 2 }}>
-                        <SelectAttributeControl
+                        <FetchedDataSelection
                             label_text="Equipamento"
                             data_source={"/api/load-equipments"}
                             primary_key={"id"}
                             key_content={"name"}
-                            setControlledInput={setControlledInput}
-                            controlledInput={controlledInput}
+                            setFormData={setFormData}
+                            formData={formData}
                             name={"equipment_id"}
-                            value={controlledInput.equipment_id}
+                            selected={formData.equipment_id}
                             error={false}
                         />
                     </Box>

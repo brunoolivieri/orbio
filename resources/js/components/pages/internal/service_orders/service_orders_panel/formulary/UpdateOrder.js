@@ -9,7 +9,7 @@ import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
-import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
+import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
 import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
@@ -238,30 +238,30 @@ export const UpdateOrder = React.memo((props) => {
             </Grid>
 
             <Grid item xs={6}>
-              <SelectAttributeControl
+              <FetchedDataSelection
                 label_text="Piloto"
-                data_source={"/api/load-users?where=profile_id.3"}
+                fetch_from={"/api/load-users?where=profile_id.3"}
                 primary_key={"id"}
                 key_content={"name"}
-                setControlledInput={setFormData}
+                setFormData={setFormData}
                 controlledInput={formData}
                 error={formError.pilot_id.error}
-                value={formData.pilot_id}
+                selected={formData.pilot_id}
                 name={"pilot_id"}
               />
               <FormHelperText error>{formError.pilot_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
-              <SelectAttributeControl
+              <FetchedDataSelection
                 label_text="Cliente"
-                data_source={"/api/load-users?where=profile_id.4"}
+                fetch_from={"/api/load-users?where=profile_id.4"}
                 primary_key={"id"}
                 key_content={"name"}
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                setFormData={setFormData}
+                formData={formData}
                 error={formError.client_id.error}
-                value={formData.client_id}
+                selected={formData.client_id}
                 name={"client_id"}
               />
               <FormHelperText error>{formError.client_id.message}</FormHelperText>

@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
-import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
+import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 
@@ -126,7 +126,7 @@ export const CreateUser = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            O usuário criado receberá um e-mail com os dados de acesso padrão.
+            O usuário criado receberá um e-mail com os dados de acesso.
           </DialogContentText>
 
           <Grid container columns={12} spacing={1}>
@@ -161,16 +161,16 @@ export const CreateUser = React.memo((props) => {
             </Grid>
 
             <Grid item xs={6}>
-              <SelectAttributeControl
+              <FetchedDataSelection
                 label_text={"Perfil"}
-                data_source={"/api/load-profiles"}
+                fetch_from={"/api/load-profiles"}
                 primary_key={"id"}
                 key_content={"name"}
                 error={formError.profile_id.error}
                 name={"profile"}
-                value={formData.profile_id}
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                selected={formData.profile_id}
+                setFormData={setFormData}
+                formData={formData}
               />
             </Grid>
 

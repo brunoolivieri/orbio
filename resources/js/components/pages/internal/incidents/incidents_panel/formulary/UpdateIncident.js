@@ -11,7 +11,7 @@ import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
-import { SelectExternalData } from '../../../../../shared/input_select/SelectExternalData';
+import { GivenDataSelection } from '../../../../../shared/input_select/GivenDataSelection';
 
 const fieldError = { error: false, message: "" }
 const initialFormError = { type: fieldError, description: fieldError, date: fieldError, flight_plan_id: fieldError, service_order_id: fieldError }
@@ -215,7 +215,7 @@ export const UpdateIncident = React.memo((props) => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <SelectExternalData
+              <GivenDataSelection
                 label_text={"Plano de voo"}
                 primary_key={"id"}
                 key_content={"name"}
@@ -228,14 +228,14 @@ export const UpdateIncident = React.memo((props) => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <SelectExternalData
+              <GivenDataSelection
                 label_text={"Ordem de serviço"}
                 primary_key={"id"}
                 key_content={"number"}
-                setter={setSelectedServiceOrder}
+                setSelection={setSelectedServiceOrder}
                 options={serviceOrdersByFlightPlan}
                 error={formError.service_order_id.error}
-                value={selectedServiceOrder}
+                selected={selectedServiceOrder}
               />
               <FormHelperText error>{formError.service_order_id.message}</FormHelperText>
             </Grid>

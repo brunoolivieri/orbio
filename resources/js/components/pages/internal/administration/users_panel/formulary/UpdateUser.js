@@ -4,7 +4,7 @@ import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, T
 // Custom
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
-import { SelectAttributeControl } from '../../../../../shared/input_select/SelectAttributeControl';
+import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import axios from '../../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -157,17 +157,16 @@ export const UpdateUser = React.memo((props) => {
             </Grid>
 
             <Grid item xs={6}>
-              <SelectAttributeControl
+              <FetchedDataSelection
                 label_text={"Perfil"}
-                data_source={"/api/load-profiles"}
+                fetch_from={"/api/load-profiles"}
                 primary_key={"id"}
                 key_content={"name"}
-                name={"profile"}
-                onChange={handleInputChange}
                 error={formError.profile_id.error}
-                value={formData.profile_id}
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                name={"profile"}
+                selected={formData.profile_id}
+                setFormData={setFormData}
+                formData={formData}
               />
             </Grid>
           </Grid>
