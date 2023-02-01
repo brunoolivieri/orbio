@@ -121,26 +121,23 @@ export function BatteriesPanel() {
         fetchRecords();
     }, [reload]);
 
-    function fetchRecords() {
+    async function fetchRecords() {
 
-        axios.get(`/api/equipments-module-battery?limit=${perPage}&search=${search}&page=${currentPage}`)
-            .then(function (response) {
-                setRecords(response.data.records);
-                setTotalRecords(response.data.total_records);
+        try {
 
-                if (response.data.total_records > 1) {
-                    handleOpenSnackbar(`Foram encontrados ${response.data.total_records} baterias`, "success");
-                } else {
-                    handleOpenSnackbar(`Foi encontrado ${response.data.total_records} bateria`, "success");
-                }
+            const response = await axios.get(`/api/equipments-module-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
 
-            })
-            .catch(function (error) {
-                handleOpenSnackbar(error.response.data.message, "error");
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+            setRecords(response.data.records);
+            setTotalRecords(response.data.total_records);
+
+            enqueueSnackbar(`Baterias encontradas: ${response.data.total_records}`, { variant: "success" });
+
+        } catch (error) {
+            enqueueSnackbar(error.response.data.message, { variant: "error" });
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     function handleChangePage(newPage) {
@@ -166,10 +163,6 @@ export function BatteriesPanel() {
             }
         })
         setSelectedRecords(newSelectedRecords);
-    }
-
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //

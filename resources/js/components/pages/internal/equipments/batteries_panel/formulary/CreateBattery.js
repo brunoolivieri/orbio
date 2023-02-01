@@ -17,20 +17,20 @@ const Input = styled('input')({
     display: 'none',
 });
 
-const initialFieldError = { image: false, name: false, manufacturer: false, model: false, serial_number: false, last_charge: false };
-const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: "" };
+const initialFormData = { image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: moment() };
+const fieldError = { error: false, message: "" };
+const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError };
 const initialDisplatAlert = { display: false, type: "", message: "" };
-const initialControlledInput = { name: "", manufacturer: "", model: "", serial_number: "", last_charge: moment() };
 
 export const CreateBattery = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
+
     const [open, setOpen] = React.useState(false);
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+    const [formData, setFormData] = React.useState(initialFormData);
+    const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
@@ -45,64 +45,63 @@ export const CreateBattery = React.memo((props) => {
     function handleClose() {
         setOpen(false);
         setLoading(false);
+        setFormData(initialFormData);
+        setFormError(initialFormError);
     }
 
     function handleSubmit() {
-        if (formValidation()) {
-            setLoading(true);
-            requestServerOperation();
+        if (!formSubmissionValidation()) return '';
+        setLoading(true);
+        requestServer();
+
+    }
+
+    function formSubmissionValidation() {
+
+        let validation = Object.assign({}, initialFormError);
+
+        for (let field in formData) {
+            if (field === "name") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
+            } else if (field === "manufacturer") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Fabricante");
+            } else if (field === "model") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Modelo");
+            } else if (field === "serial_number") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Número serial");
+            } else if (field === "last_charge") {
+                validation[field] = formData[field] ? { error: false, message: "" } : { error: true, message: "Informe a data da última carga" };
+            } else if (field === "image") {
+                validation[field] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
+            }
         }
+
+        setFormError(validation);
+
+        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error || validation.image.error);
     }
 
-    function formValidation() {
-        const nameValidation = FormValidation(controlledInput.name, 3);
-        const manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
-        const modelValidation = FormValidation(controlledInput.model);
-        const serialNumberValidation = FormValidation(controlledInput.serial_number);
-        const imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
-        const lastChargeValidation = controlledInput.last_charge ? { error: false, message: "" } : { error: true, message: "A data da última carga precisa ser informada" };
+    async function requestServer() {
 
-        setFieldError({
-            image: imageValidation.error,
-            name: nameValidation.error,
-            manufacturer: manufacturerValidation.error,
-            model: modelValidation.error,
-            serial_number: serialNumberValidation.error,
-            last_charge: lastChargeValidation.error
-        });
+        const formData_ = new FormData();
+        formData_.append("name", formData.name);
+        formData_.append("manufacturer", formData.manufacturer);
+        formData_.append("model", formData.model);
+        formData_.append("serial_number", formData.serial_number);
+        formData_.append("last_charge", moment(formData.last_charge).format('YYYY-MM-DD'));
+        formData_.append("image", uploadedImage);
 
+        try {
 
-        setFieldErrorMessage({
-            image: imageValidation.message,
-            name: nameValidation.message,
-            manufacturer: manufacturerValidation.message,
-            model: modelValidation.message,
-            serial_number: serialNumberValidation.message,
-            last_charge: lastChargeValidation.message
-        });
+            const response = await axios.post("/api/equipments-module-battery", formData_);
+            successResponse(response);
 
-        return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || serialNumberValidation.error || lastChargeValidation.error || imageValidation.error);
-    }
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading(false);
+        }
 
-    function requestServerOperation() {
-        const formData = new FormData();
-        formData.append("name", controlledInput.name);
-        formData.append("manufacturer", controlledInput.manufacturer);
-        formData.append("model", controlledInput.model);
-        formData.append("serial_number", controlledInput.serial_number);
-        formData.append("last_charge", moment(controlledInput.last_charge).format('YYYY-MM-DD'));
-        formData.append("image", uploadedImage);
-
-        axios.post("/api/equipments-module-battery", formData)
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                errorResponse(error.response);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
     }
 
     const successResponse = (response) => {
@@ -116,39 +115,16 @@ export const CreateBattery = React.memo((props) => {
     function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        let request_errors = {
-            image: { error: false, message: null },
-            name: { error: false, message: null },
-            manufacturer: { error: false, message: null },
-            model: { error: false, message: null },
-            serial_number: { error: false, message: null },
-            last_charge: { error: false, message: null }
-        }
+        let response_errors = {}
 
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({
-            image: request_errors.image.error,
-            name: request_errors.name.error,
-            manufacturer: request_errors.manufacturer.error,
-            model: request_errors.model.error,
-            serial_number: request_errors.serial_number.error,
-            last_charge: request_errors.last_charge.error
-        });
-
-        setFieldErrorMessage({
-            image: request_errors.image.message,
-            name: request_errors.name.message,
-            manufacturer: request_errors.manufacturer.message,
-            model: request_errors.model.message,
-            serial_number: request_errors.serial_number.message,
-            last_charge: request_errors.last_charge.error
-        });
+        setFormError(response_errors);
     }
 
     function handleUploadedImage(event) {
@@ -160,7 +136,7 @@ export const CreateBattery = React.memo((props) => {
     }
 
     function handleInputChange(event) {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
 
     // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -196,9 +172,10 @@ export const CreateBattery = React.memo((props) => {
                                 variant="outlined"
                                 required
                                 name="name"
+                                value={formData.name}
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.name}
-                                error={fieldError.name}
+                                helperText={formError.name.message}
+                                error={formError.name.error}
                             />
                         </Grid>
 
@@ -211,9 +188,10 @@ export const CreateBattery = React.memo((props) => {
                                 variant="outlined"
                                 required
                                 name="manufacturer"
+                                value={formData.manufacturer}
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.manufacturer}
-                                error={fieldError.manufacturer}
+                                helperText={formError.manufacturer.message}
+                                error={formError.manufacturer.error}
                             />
                         </Grid>
 
@@ -226,9 +204,10 @@ export const CreateBattery = React.memo((props) => {
                                 variant="outlined"
                                 required
                                 name="model"
+                                value={formData.model}
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.model}
-                                error={fieldError.model}
+                                helperText={formError.model.message}
+                                error={formError.model.error}
                             />
                         </Grid>
 
@@ -241,22 +220,23 @@ export const CreateBattery = React.memo((props) => {
                                 variant="outlined"
                                 required
                                 name="serial_number"
+                                value={formData.serial_number}
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.serial_number}
-                                error={fieldError.serial_number}
+                                helperText={formError.serial_number.message}
+                                error={formError.serial_number.error}
                             />
                         </Grid>
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                setControlledInput={setControlledInput}
-                                controlledInput={controlledInput}
+                                setControlledInput={setFormData}
+                                controlledInput={formData}
                                 name={"last_charge"}
                                 label={"Data da última carga"}
                                 error={fieldError.last_charge}
-                                value={controlledInput.last_charge}
+                                value={formData.last_charge}
                             />
-                            <FormHelperText error>{fieldErrorMessage.last_charge}</FormHelperText>
+                            <FormHelperText error>{formError.last_charge.error}</FormHelperText>
                         </Grid>
 
                     </Grid>
@@ -265,7 +245,7 @@ export const CreateBattery = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                                {fieldError.image ? formError.image.message : "Escolher imagem"}
                             </Button>
                         </label>
                     </Box>

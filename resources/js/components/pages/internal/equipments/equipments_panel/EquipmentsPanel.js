@@ -132,25 +132,23 @@ export const EquipmentPanel = React.memo(() => {
     fetchRecords();
   }, [reload]);
 
-  function fetchRecords() {
+  async function fetchRecords() {
 
-    axios.get(`/api/equipments-module-equipment?limit=${perPage}&search=${search}&page=${currentPage}`)
-      .then(function (response) {
-        setRecords(response.data.records);
-        setTotalRecords(response.data.total_records);
+    try {
 
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} equipamentos`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} equipamento`, "success");
-        }
-      })
-      .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+      const response = await axios.get(`/api/equipments-module-equipment?limit=${perPage}&search=${search}&page=${currentPage}`);
+
+      setRecords(response.data.records);
+      setTotalRecords(response.data.total_records);
+
+      enqueueSnackbar(`Equipamentos encontrados: ${response.data.total_records}`, { variant: "success" });
+
+    } catch (error) {
+      enqueueSnackbar(error.response.data.message, { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function handleChangePage(newPage) {
@@ -176,10 +174,6 @@ export const EquipmentPanel = React.memo(() => {
       }
     })
     setSelectedRecords(newSelectedRecords);
-  }
-
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //

@@ -15,6 +15,7 @@ export const DeleteBattery = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
+    
     const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
