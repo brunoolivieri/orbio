@@ -92,11 +92,11 @@ export const UpdateProfile = React.memo((props) => {
         return !(validation.name.error);
     }
 
-    function requestServer() {
+    async function requestServer() {
 
         try {
 
-            const response = axios.patch(`/api/admin-module-profile/${formData.id}`, {
+            const response = await axios.patch(`/api/admin-module-profile/${formData.id}`, {
                 name: formData.name,
                 privileges: privileges,
                 access_data: accessData

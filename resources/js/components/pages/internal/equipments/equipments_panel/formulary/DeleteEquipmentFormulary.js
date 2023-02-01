@@ -44,7 +44,7 @@ export const DeleteEquipment = React.memo((props) => {
 
         try {
 
-            const response = axios.delete("/api/equipments-module-equipment/delete", {
+            const response = await axios.delete("/api/equipments-module-equipment/delete", {
                 data: {
                     ids: selectedIds
                 }

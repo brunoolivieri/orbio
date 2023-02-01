@@ -95,7 +95,7 @@ export const UpdateEquipment = React.memo((props) => {
         return !(validation.name.error || validation.manufacturer.error || validation.record_number.error || validation.serial_number.error || validation.weight.error || validation.observation.error || validation.image.error || validation.purchase_date.error);
     }
 
-    function requestServer() {
+    async function requestServer() {
 
         const formData_ = new FormData();
         formData_.append("name", formData.name);
@@ -115,7 +115,7 @@ export const UpdateEquipment = React.memo((props) => {
 
         try {
 
-            const response = axios.post(`/api/equipments-module-equipment/${formData.id}`, formData_);
+            const response = await axios.post(`/api/equipments-module-equipment/${formData.id}`, formData_);
             successResponse(response);
 
         } catch (error) {

@@ -88,7 +88,7 @@ export const CreateEquipment = React.memo((props) => {
 
     }
 
-    function requestServer() {
+    async function requestServer() {
 
         const formData_ = new FormData();
         formData_.append("name", formData.name);
@@ -103,7 +103,7 @@ export const CreateEquipment = React.memo((props) => {
 
         try {
 
-            const response = axios.post("/api/equipments-module-equipment", formData_);
+            const response = await axios.post("/api/equipments-module-equipment", formData_);
             successResponse(response);
 
         } catch (error) {

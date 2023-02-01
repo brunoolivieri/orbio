@@ -44,7 +44,7 @@ export const DeleteBattery = React.memo((props) => {
         
         try {
 
-            const response = axios.delete("/api/equipments-module-battery/delete", {
+            const response = await axios.delete("/api/equipments-module-battery/delete", {
                 data: {
                     ids: selectedIds
                 }
