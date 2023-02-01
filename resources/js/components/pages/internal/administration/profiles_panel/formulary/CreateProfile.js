@@ -59,7 +59,7 @@ export const CreateProfile = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (formSubmissionValidation()) return '';
+    if (!formSubmissionValidation()) return '';
     setLoading(true);
     requestServer();
 
@@ -155,7 +155,7 @@ export const CreateProfile = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 onChange={handleInputChange}
-                helperText={formData.name}
+                helperText={formError.name.message}
                 error={formError.name.error}
               />
             </Grid>

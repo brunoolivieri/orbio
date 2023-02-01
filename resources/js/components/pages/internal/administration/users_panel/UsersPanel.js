@@ -275,6 +275,7 @@ export function UsersPanel() {
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
           checkboxSelection
+          isRowSelectable={(data) => (data.row.id != user.id) && (user.user_powers["1"].profile_powers.write == 1)}
           disableSelectionOnClick
           paginationMode='server'
           experimentalFeatures={{ newEditingApi: true }}

@@ -62,13 +62,12 @@ export const Dashboard = React.memo(() => {
     React.useEffect(() => {
 
         let is_mounted = true;
+        if (!is_mounted) return '';
+
         setPageIndex(0);
 
-        const fetch = async () => {
-
-            try {
-
-                const response = await axios.get("/api/load-dashboard-metrics");
+        axios.get("/api/load-dashboard-metrics")
+            .then((response) => {
 
                 if (is_mounted) {
                     setUsers(response.data.users);
@@ -79,16 +78,14 @@ export const Dashboard = React.memo(() => {
                     enqueueSnackbar("Métricas carregadas", { variant: "success" });
                 }
 
-            } catch (error) {
+            })
+            .catch((error) => {
                 const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
                 enqueueSnackbar(error_message, { variant: "error" });
-            } finally {
+            })
+            .finally(() => {
                 setLoading(false);
-            }
-
-        }
-
-        fetch();
+            })
 
         return () => {
             return is_mounted = false;

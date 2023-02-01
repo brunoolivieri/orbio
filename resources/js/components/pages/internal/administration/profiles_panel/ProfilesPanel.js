@@ -51,8 +51,6 @@ const columns = [
   {
     field: 'flight_plan',
     headerName: 'Plano de voo',
-    type: 'number',
-    headerAlign: 'left',
     sortable: false,
     editable: false,
     flex: 1,
