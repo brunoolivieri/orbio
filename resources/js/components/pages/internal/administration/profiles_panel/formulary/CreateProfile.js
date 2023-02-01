@@ -70,7 +70,7 @@ export const CreateProfile = React.memo((props) => {
     let validation = Object.assign({}, initialFormError);
 
     for (let field in formData) {
-      validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
+      validation[field] = FormValidation(formData[field], 3, 255);
     }
 
     setFormError(validation);

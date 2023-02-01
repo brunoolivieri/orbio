@@ -6,6 +6,7 @@ import styled from '@emotion/styled';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { DeactivateAccountModal } from './modal/DeactivateAccount';
 import axios from "../../../../../services/AxiosApi";
 import { useAuth } from '../../../../context/Auth';
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -21,132 +22,101 @@ const PaperStyled = styled(Paper)({
     flexGrow: 1
 });
 
-const initialControlledInput = {
-    actual_password: "",
-    new_password: "",
-    new_password_confirmation: ""
-}
-
-const initialFieldError = { actual_password: false, new_password: false, new_password_confirmation: false };
-const initialFieldErrorMessage = { actual_password: "", new_password: "", new_password_confirmation: "" };
+const fieldError = { error: false, message: "" }
+const initialFormError = { actual_password: fieldError, new_password: fieldError, new_password_confirmation: fieldError }
 
 export function AdditionalConfiguration() {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [loading, setLoading] = React.useState(true);
-    const [updateLoading, setUpdateLoading] = React.useState(false);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-    const [openGenericModal, setOpenGenericModal] = React.useState(false);
     const { enqueueSnackbar } = useSnackbar();
+
+    const [formData, setFormData] = React.useState({});
+    const [loading, setLoading] = React.useState(true);
+    const [refresh, setRefresh] = React.useState(false);
+    const [formError, setFormError] = React.useState(initialFormError);
+    const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        setControlledInput(initialControlledInput);
-    }, [loading]);
+        setFormData({ actual_password: user.password, new_password: "", new_password_confirmation: "" });
+    }, [refresh]);
 
-    function handleChangePasswordSubmit(e) {
-        e.preventDefault();
-        if (formValidation()) {
-            setUpdateLoading(true);
-            requestServerOperation();
-        }
+    function handleSubmitChangePassword() {
+        if (!formSubmissionValidation()) return ''
+        setLoading(true);
+        requestServer();
     }
 
-    function formValidation() {
+    function formSubmissionValidation() {
 
-        const actualPasswordValidate = FormValidation(controlledInput.actual_password);
-        const newPasswordValidate = FormValidation(controlledInput.new_password, null, null, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "PASSWORD");
-        const newPasswordConfirmationValidate = controlledInput.new_password != controlledInput.new_password_confirmation ? { error: true, message: "As senhas são incompátiveis" } : { error: false, message: "" };
+        let validation = Object.assign({}, initialFormError);
 
-        setFieldError(
-            {
-                actual_password: actualPasswordValidate.error,
-                new_password: newPasswordValidate.error,
-                new_password_confirmation: newPasswordConfirmationValidate.error
+        for (let field in formData) {
+            if (field === "actual_password") {
+                validation[field] = FormValidation(formData[field], 3, 255);
+            } else if (field === "new_password") {
+                validation[field] = FormValidation(formData.new_password, null, null, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "Senha");
+            } else if (field === "new_password_confirmation") {
+                validation[field] = formData.new_password != formData.new_password_confirmation ? { error: true, message: "As senhas não coincidem" } : { error: false, message: "" };
             }
-        );
 
-        setFieldErrorMessage(
-            {
-                actual_password: actualPasswordValidate.message,
-                new_password: newPasswordValidate.message,
-                new_password_confirmation: newPasswordConfirmationValidate.message
-            }
-        );
-
-        return !(actualPasswordValidate.error || newPasswordValidate.error || newPasswordConfirmationValidate.error);
-
-    }
-
-    function requestServerOperation() {
-        axios.post(`/api/update-password/${user.id}`, controlledInput)
-            .then(function (response) {
-                setUpdateLoading(false);
-                setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
-                handleOpenSnackbar(response.data.message, "success");
-            })
-            .catch(function (error) {
-                setUpdateLoading(false);
-                setControlledInput({ actual_password: "", new_password: "", new_password_confirmation: "" });
-                requestErrorServerOperation(error.response);
-            });
-    }
-
-    function requestErrorServerOperation(response) {
-        handleOpenSnackbar(response.data.message, "error");
-
-        let request_errors = {
-            actual_password: { error: false, message: null },
-            new_password: { error: false, message: null },
-            new_password_confirmation: { error: false, message: null }
         }
 
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
+        setFormError(validation);
+
+        return !(validation.actual_password.error || validation.new_password.error || validation.new_password_confirmation.error);
+
+    }
+
+    async function requestServer() {
+
+        try {
+
+            const response = axios.post(`/api/update-password/${user.id}`, formData);
+            enqueueSnackbar(response.data.message, { variant: "success" });
+
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading(false);
+        }
+
+    }
+
+    function errorResponse(response) {
+        enqueueSnackbar(response.data.message, { variant: "error" });
+
+        let response_errors = {}
+
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({
-            actual_password: request_errors.actual_password.error,
-            new_password: request_errors.new_password.error,
-            new_password_confirmation: request_errors.new_password_confirmation.error
-        });
-
-        setFieldErrorMessage({
-            actual_password: request_errors.actual_password.message,
-            new_password: request_errors.new_password.message,
-            new_password_confirmation: request_errors.new_password_confirmation.message
-        });
+        setFormError(response_errors);
     }
 
-    function disableAccount() {
-        axios.post(`/api/desactivate-account/${user.id}`)
-            .then(function (response) {
-                setOpenGenericModal(false);
-                handleOpenSnackbar(response.data.message, "success");
-                setTimeout(() => {
-                    window.location.href = "/api/auth/logout";
-                }, [2000])
-            })
-            .catch(function (error) {
-                console.log(error)
-                handleOpenSnackbar(error.response.data.message, "error");
-            });
+    async function disableAccount() {
+
+        try {
+
+            const response = axios.post(`/api/desactivate-account/${user.id}`);
+            setOpenGenericModal(false);
+            enqueueSnackbar(response.data.message, { variant: "success" });
+
+        } catch (error) {
+            console.log(error)
+            enqueueSnackbar(error.response.data.message, { variant: "error" });
+        }
     }
 
     function handleInputChange(event) {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
-    }
-
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
 
     // ============================================================================== JSX ============================================================================== //
@@ -157,7 +127,7 @@ export function AdditionalConfiguration() {
 
                 <Grid item>
                     <Tooltip title="Carregar">
-                        <IconButton onClick={() => setLoading(true)}>
+                        <IconButton onClick={() => setRefresh((prev) => !prev)}>
                             <FontAwesomeIcon icon={faArrowsRotate} size="sm" color={'#007937'} />
                         </IconButton>
                     </Tooltip>
@@ -190,7 +160,7 @@ export function AdditionalConfiguration() {
 
             </Grid>
 
-            <Box component="form" onSubmit={handleChangePasswordSubmit} sx={{ mt: 2 }} >
+            <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
                     <Stack
                         direction="column"
@@ -205,9 +175,9 @@ export function AdditionalConfiguration() {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.actual_password}
-                                helperText={fieldErrorMessage.actual_password}
-                                error={fieldError.actual_password}
+                                value={formData.actual_password}
+                                helperText={formError.actual_password.message}
+                                error={formError.actual_password.error}
                                 onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
@@ -217,9 +187,9 @@ export function AdditionalConfiguration() {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.new_password}
-                                helperText={fieldErrorMessage.new_password}
-                                error={fieldError.new_password}
+                                value={formData.new_password}
+                                helperText={formError.new_password.message}
+                                error={formError.new_password.error}
                                 onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
@@ -229,14 +199,14 @@ export function AdditionalConfiguration() {
                                 type={"password"}
                                 fullWidth
                                 variant="outlined"
-                                value={controlledInput.new_password_confirmation}
-                                helperText={fieldErrorMessage.new_password_confirmation}
-                                error={fieldError.new_password_confirmation}
+                                value={formData.new_password_confirmation}
+                                helperText={formError.new_password_confirmation.message}
+                                error={formError.new_password_confirmation.error}
                                 onChange={handleInputChange}
                                 sx={{ marginBottom: 2 }}
                             />
-                            <Button type="submit" variant="contained" color="primary" disabled={updateLoading}>
-                                {updateLoading ? "Processando..." : "Atualizar"}
+                            <Button variant="contained" color="primary" disabled={loading} onClick={handleSubmitChangePassword}>
+                                Atualizar
                             </Button>
                         </PaperStyled>
 
@@ -247,9 +217,7 @@ export function AdditionalConfiguration() {
                                     <Typography>A conta será desativada, o perfil será alterado para visitante, e todos os dados cadastrados serão preservados. Para que seja novamente reativada, o usuário deve entrar em contato com o suporte.</Typography>
                                 </Paper>
                                 <Paper sx={{ boxShadow: 'none' }}>
-                                    <Button variant="contained" color="error" onClick={() => setOpenGenericModal(true)}>
-                                        Desativar conta
-                                    </Button>
+                                    <DeactivateAccountModal />
                                 </Paper>
                             </Stack>
                         </PaperStyled>
