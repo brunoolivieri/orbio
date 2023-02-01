@@ -54,9 +54,7 @@ export const UpdateReport = React.memo((props) => {
 
     let validation = Object.assign({}, formError);
 
-    for (let field in formData) {
-      validation[field] = FormValidation(formData.name, 3);
-    }
+    validation["name"] = FormValidation(formData.name, 3);
 
     setFormError(validation);
 

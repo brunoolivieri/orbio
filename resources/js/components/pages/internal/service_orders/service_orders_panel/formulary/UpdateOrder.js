@@ -95,13 +95,13 @@ export const UpdateOrder = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (formValidation()) {
-      setLoading(true);
-      requestServer();
-    }
+    if (!formSubmissionValidation()) return '';
+    setLoading(true);
+    requestServer();
+
   }
 
-  function formValidation() {
+  function formSubmissionValidation() {
 
     let validation = Object.assign({}, formError);
 

@@ -34,19 +34,17 @@ export function BasicInformation() {
         setFormData(initialFormData);
         setLoading(true);
 
-        async () => {
-
-            try {
-                const response = await axios.get("/api/load-basic-account-data");
+        axios.get("/api/load-basic-account-data")
+            .then((response) => {
                 setFormData({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
-            } catch (error) {
+            })
+            .catch((error) => {
                 console.log(error);
                 enqueueSnackbar(error.response.data.message, { variant: "error" });
-            } finally {
+            })
+            .finally(() => {
                 setLoading(false);
-            }
-
-        }
+            });
 
         return () => {
             is_mounted = false;
@@ -65,12 +63,14 @@ export function BasicInformation() {
 
     function formSubmissionValidation() {
 
-        const nameValidation = FormValidation(formData.name, 3);
-        const emailValidation = FormValidation(formData.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "e-mail");
+        let validation = Object.assign({}, formError);
 
-        setFormError({ name: nameValidation, email: emailValidation });
+        validation["name"] = FormValidation(formData.name, 3);
+        validation["email"] = FormValidation(formData.email, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "E-mail");
 
-        return !(nameValidation.error || emailValidation.error);
+        setFormError(validation);
+
+        return !(validation.name.error || validation.email.error);
 
     }
 

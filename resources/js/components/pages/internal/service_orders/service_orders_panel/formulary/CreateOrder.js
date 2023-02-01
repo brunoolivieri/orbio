@@ -18,7 +18,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-const formData = { pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() };
+const initialFormData = { pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() };
 const fieldError = { error: false, message: "" }
 const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, status: fieldError, date_interval: fieldError, flight_plans: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
@@ -29,7 +29,7 @@ export const CreateOrder = React.memo((props) => {
 
   const { user } = useAuth();
 
-  const [formData, setFormData] = React.useState(formData);
+  const [formData, setFormData] = React.useState(initialFormData);
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);

@@ -66,24 +66,12 @@ export const UpdateDrone = React.memo((props) => {
         let validation = Object.assign({}, initialFormError);
 
         for (let field in formData) {
-            if (field === "name") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
-            } else if (field === "manufacturer") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Fabricante");
-            } else if (field === "model") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Modelo");
-            } else if (field === "record_number") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Número do registro");
-            } else if (field === "serial_number") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Número serial");
-            } else if (field === "weight") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Peso");
-            } else if (field === "observation") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Observation");
-            } else if (field === "image") {
-                validation[field] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
+            if (field != "image") {
+                validation[field] = FormValidation(formData[field], 3, 255);
             }
         }
+
+        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
 
         setFormError(validation);
 

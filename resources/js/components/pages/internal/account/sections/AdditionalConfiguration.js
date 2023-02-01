@@ -54,16 +54,9 @@ export function AdditionalConfiguration() {
 
         let validation = Object.assign({}, initialFormError);
 
-        for (let field in formData) {
-            if (field === "actual_password") {
-                validation[field] = FormValidation(formData[field], 3, 255);
-            } else if (field === "new_password") {
-                validation[field] = FormValidation(formData.new_password, null, null, /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, "Senha");
-            } else if (field === "new_password_confirmation") {
-                validation[field] = formData.new_password != formData.new_password_confirmation ? { error: true, message: "As senhas não coincidem" } : { error: false, message: "" };
-            }
-
-        }
+        validation["actual_password"] = FormValidation(formData["actual_password"], 3, 255);
+        validation["new_password"] = FormValidation(formData.new_password, 10, 255);
+        validation["new_password_confirmation"] = formData.new_password != formData.new_password_confirmation ? { error: true, message: "As senhas não coincidem" } : { error: false, message: "" };
 
         setFormError(validation);
 

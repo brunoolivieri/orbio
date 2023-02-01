@@ -52,15 +52,9 @@ export const UpdateUser = React.memo((props) => {
 
     let validation = Object.assign({}, initialFormError);
 
-    for (let field in formData) {
-      if (field === "name") {
-        validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
-      } else if (field === "email") {
-        validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
-      } else if (field === "profile_id") {
-        validation[field] = formData[field] != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um perfil" }
-      }
-    }
+    validation["name"] = FormValidation(formData["name"], 3, 255);
+    validation["email"] = FormValidation(formData["email"], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
+    validation["profile_id"] = formData["profile_id"] != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um perfil" };
 
     setFormError(validation);
 

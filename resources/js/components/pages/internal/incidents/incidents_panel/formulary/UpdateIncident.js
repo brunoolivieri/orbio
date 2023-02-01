@@ -88,16 +88,9 @@ export const UpdateIncident = React.memo((props) => {
 
     let validation = Object.assign({}, initialFormError);
 
-    for (let field in formData) {
-      if (field === "type") {
-        validation[field] = FormValidation(formData[field], 3, 255, null, "Tipo");
-      } else if (field === "date") {
-        validation[field] = formData.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-      } else if (field === "description") {
-        validation[field] = FormValidation(formData[field], 3, 255, null, "Descrição");
-      }
-    }
-
+    validation["type"] = FormValidation(formData["type"], 3, 255);
+    validation["date"] = formData.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+    validation["description"] = FormValidation(formData["description"], 3, 255);
     validation["flight_plan_id"] = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: false, message: "Selecione um plano de voo" };
     validation["service_order_id"] = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: false, message: "Selecione uma ordem de serviço" };
 
@@ -110,7 +103,7 @@ export const UpdateIncident = React.memo((props) => {
 
     try {
 
-      const response = axios.patch(`/api/incidents-module/${formData.id}`, {
+      const response = await axios.patch(`/api/incidents-module/${formData.id}`, {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
         description: formData.description,

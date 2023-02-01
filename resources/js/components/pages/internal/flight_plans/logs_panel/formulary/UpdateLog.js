@@ -47,7 +47,7 @@ export const UpdateLog = React.memo((props) => {
     function formSubmissionValidation() {
 
         let validation = Object.assign({}, formError);
-        validation["name"] = FormValidation(formData.name, 3, 255, null, null);
+        validation["name"] = FormValidation(formData.name, 3, 255);
 
         setFormError(validation);
 

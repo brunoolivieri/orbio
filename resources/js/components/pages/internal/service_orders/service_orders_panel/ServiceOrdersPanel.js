@@ -23,8 +23,6 @@ import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableDat
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
-import { CircularStaticWithLabel } from '../../../../shared/progress/CircularStaticWithLabel';
-import { WhiteTooltip } from '../../../../shared/tooltip/WhiteTooltip';
 // Moment
 import moment from 'moment';
 
@@ -170,19 +168,20 @@ const columns = [
 
       const title = `
       Início: ${start_date}
-      Fim: ${final_date}
+      Término: ${final_date}
       Total (dias): ${total_days}
       Progresso (dias): ${progress_days}
       `;
 
       return (
         <>
-          <CircularStaticWithLabel value={progress_percentage} />
-          <WhiteTooltip title={title}>
-            <IconButton sx={{ ml: 1 }}>
-              <InfoIcon sx={{ color: "#007937" }} />
-            </IconButton>
-          </WhiteTooltip>
+          <Tooltip title={title}>
+            <Chip
+              label={progress_percentage + "%"}
+              variant="outlined"
+              deleteIcon={<InfoIcon />}
+            />
+          </Tooltip>
         </>
       )
 

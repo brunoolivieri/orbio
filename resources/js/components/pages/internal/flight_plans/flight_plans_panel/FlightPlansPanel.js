@@ -178,7 +178,6 @@ const columns = [
           .then(function (response) {
             enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
 
-            // ========= Routine that already exists in the map algorithm ========= //
             let content = "latitude;longitude;altitude(m)\n";
 
             // Create array from file lines
@@ -196,8 +195,6 @@ const columns = [
                 content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
               }
             }
-
-            //console.log(content);
 
             let blob = new Blob([content],
               { type: "text/plain;charset=utf-8" });

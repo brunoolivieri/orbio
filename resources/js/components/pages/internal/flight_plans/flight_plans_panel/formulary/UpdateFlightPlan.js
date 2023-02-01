@@ -9,8 +9,9 @@ import axios from '../../../../../../services/AxiosApi';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-const initialFieldError = { name: { error: false, message: "" }, description: { error: false, message: "" }, service_order_id: { error: false, message: "" }, log_id: { error: false, message: "" } };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const fieldError = { error: false, message: "" }
+const initialFormError = { name: fieldError, description: fieldError, service_order_id: fieldError, log_id: fieldError };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateFlightPlan = React.memo((props) => {
 
@@ -19,12 +20,12 @@ export const UpdateFlightPlan = React.memo((props) => {
   const { user } = useAuth();
 
   const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
-  const [formError, setFormError] = React.useState(initialFieldError);
+  const [formError, setFormError] = React.useState(initialFormError);
   const [serviceOrderId, setServiceOrderId] = React.useState("0");
   const [serviceOrders, setServiceOrders] = React.useState([]);
   const [logId, setLogId] = React.useState("0");
   const [logs, setLogs] = React.useState([]);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -61,7 +62,7 @@ export const UpdateFlightPlan = React.memo((props) => {
   }
 
   function handleClose() {
-    setFormError(initialFieldError);
+    setFormError(initialFormError);
     setDisplayAlert({ display: false, type: "", message: "" });
     setLoading(false);
     setOpen(false);
@@ -76,19 +77,17 @@ export const UpdateFlightPlan = React.memo((props) => {
 
   function formSubmissionValidation() {
 
-    const nameValidate = FormValidation(formData.name, 3, null, null, "nome");
-    const descriptionValidate = FormValidation(formData.description, 3, null, null, "descrição");
+    let validation = Object.assign({}, initialFormError);
 
-    setFormError(
-      {
-        name: { error: nameValidate.error, message: nameValidate.message },
-        description: { error: descriptionValidate.error, message: descriptionValidate.message },
-        service_order_id: { error: false, message: "" },
-        log_id: { error: false, message: "" }
+    for (let field in formData) {
+      if (field != "service_order_id" && field != "log_id") {
+        validation[field] = FormValidation(formData[field], 3, 255);
       }
-    );
+    }
 
-    return !(nameValidate.error || descriptionValidate.error);
+    setFormError(validation);
+
+    return !(validation.name.error || validation.description.error);
   }
 
   async function requestServer() {
