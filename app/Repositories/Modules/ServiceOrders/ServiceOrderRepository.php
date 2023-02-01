@@ -41,7 +41,6 @@ class ServiceOrderRepository implements RepositoryInterface
                 "end_date" => date("Y-m-d", strtotime($data->get("end_date"))),
                 "number" => $data->get("number"),
                 "observation" => $data->get("observation"),
-                "status" => $data->get("status"),
                 "report_id" => null
             ]);
 
@@ -77,7 +76,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
             $service_order = $this->serviceOrderModel->findOrFail($identifier);
            
-            $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
+            $service_order->update($data->only(["start_date", "end_date", "observation"])->all());
 
             // ==== Second step: Update service order users relationship ==== //
 

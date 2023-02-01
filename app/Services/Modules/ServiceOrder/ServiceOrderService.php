@@ -28,7 +28,6 @@ class ServiceOrderService implements ServiceInterface
     public function createOne(array $data)
     {
         $data["number"] = "os" . time();
-        $data["status"] = boolval(intval($data["status"]));
 
         // Change, if its "0", each equipment value for null
         foreach ($data["flight_plans"] as $index => $flight_plan) {

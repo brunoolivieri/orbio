@@ -30,7 +30,6 @@ class ServiceOrderStoreRequest extends FormRequest
             "pilot_id" => ['required', 'numeric'],
             "client_id" => ['required', 'numeric'],
             "observation" => ['required', 'string'],
-            "status" => ['required', 'boolean'],
             "flight_plans" => ['required', 'array']
         ];
     }
@@ -50,8 +49,6 @@ class ServiceOrderStoreRequest extends FormRequest
             'pilot_id.required' => "O piloto deve ser selecionado",
             'client_id.required' => "O cliente deve ser selecionado",
             'observation.required' => "A observação deve ser informada",
-            'status.required' => "O status deve ser definido",
-            'status.boolean' => "O status deve ser 1 ou 0",
             'flight_plans_ids.required' => "Selecione no mínimo 1 plano de voo"
         ];
     }

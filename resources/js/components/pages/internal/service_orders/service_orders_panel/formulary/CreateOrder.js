@@ -18,22 +18,20 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-const initialControlledInput = { pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() };
-const initialFieldError = { start_date: false, end_date: false, pilot_id: false, client_id: false, observation: false, flight_plans: false};
-const initialFieldErrorMessage = { start_date: "", end_date: "", pilot_id: "", client_id: "", observation: "", flight_plans: ""};
-const initialDisplatAlert = { display: false, type: "", message: "" };
-const regexForSelectedFlightPlan = /^[1-9]\d*$/;
+const formData = { pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() };
+const fieldError = { error: false, message: "" }
+const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, status: fieldError, date_interval: fieldError, flight_plans: fieldError };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateOrder = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-  
-  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+
+  const [formData, setFormData] = React.useState(formData);
+  const [formError, setFormError] = React.useState(initialFormError);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
@@ -55,7 +53,7 @@ export const CreateOrder = React.memo((props) => {
 
         let current_check = 1;
         for (let key in selected_flight_plan) {
-          if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
+          if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
             current_check = 0;
           }
         }
@@ -77,73 +75,58 @@ export const CreateOrder = React.memo((props) => {
   function handleClose() {
     setOpen(false);
     setLoading(false);
-    setFieldError(initialFieldError);
-    setFieldErrorMessage(initialFieldErrorMessage);
-    setDisplayAlert(initialDisplatAlert);
-    setControlledInput(initialControlledInput);
+    setFormError(initialFormError);
+    setDisplayAlert(initialDisplayAlert);
+    setFormData(formData);
     setSelectedFlightPlans([]);
   }
 
   function handleSubmit() {
-    if (!formValidation()) {
-      return '';
-    }
+
+    if (!formSubmissionValidation()) return '';
+
     requestServer();
   }
 
-  function formValidation() {
+  function formSubmissionValidation() {
 
-    const dateValidate = verifyDateInterval();
-    const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
-    const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
-    const observationValidate = FormValidation(controlledInput.observation, 3, null, null, null);
-    const fligthPlansValidate = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
+    let validation = Object.assign({}, formError);
 
-    setFieldError({
-      date_interval: dateValidate.error,
-      pilot_id: pilotNameValidate.error,
-      client_id: clientNameValidate.error,
-      observation: observationValidate.error,
-      flight_plans: fligthPlansValidate.error
-    });
+    validation["date_interval"] = moment(formData.start_date).format('YYYY-MM-DD') < moment(formData.end_date).format('YYYY-MM-DD') ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
+    validation["pilot_id"] = Number(formData.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
+    validation["client_id"] = Number(formData.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
+    validation["observation"] = FormValidation(formData.observation, 3, 255);
+    validation["flight_plans"] = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
 
-    setFieldErrorMessage({
-      date_interval: dateValidate.message,
-      pilot_id: pilotNameValidate.message,
-      client_id: clientNameValidate.message,
-      observation: observationValidate.message,
-      flight_plans: fligthPlansValidate.message
-    });
+    setFormError(validation);
 
-    return !(dateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error);
+    return !(validation.date_interval.error || validation.client_id.error || validation.pilot_id.error || validation.observation.error || validation.flight_plans.error);
 
   }
 
-  function verifyDateInterval() {
-    return moment(controlledInput.start_date).format('YYYY-MM-DD') < moment(controlledInput.end_date).format('YYYY-MM-DD') ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
-  }
+  async function requestServer() {
 
-  function requestServer() {
     setLoading(true);
 
-    axios.post(`/api/orders-module`, {
-      start_date: controlledInput.start_date,
-      end_date: controlledInput.end_date,
-      pilot_id: controlledInput.pilot_id,
-      client_id: controlledInput.client_id,
-      observation: controlledInput.observation,
-      status: true,
-      flight_plans: selectedFlightPlans
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+    try {
+
+      const response = await axios.post("/api/orders-module", {
+        start_date: formData.start_date,
+        end_date: formData.end_date,
+        pilot_id: formData.pilot_id,
+        client_id: formData.client_id,
+        observation: formData.observation,
+        flight_plans: selectedFlightPlans
+      });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -157,46 +140,20 @@ export const CreateOrder = React.memo((props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      start_date: { error: false, message: null },
-      end_date: { error: false, message: null },
-      pilot_id: { error: false, message: null },
-      client_id: { error: false, message: null },
-      observation: { error: false, message: null },
-      status: { error: false, message: null },
-      fligth_plans_ids: { error: false, message: null }
-    }
+    let response_errors = {}
 
-    for (let prop in response.data.errors) {
-      request_errors[prop] = {
+    for (let field in response.data.errors) {
+      response_errors[field] = {
         error: true,
-        message: response.data.errors[prop][0]
+        message: response.data.errors[field][0]
       }
     }
 
-    setFieldError({
-      start_date: request_errors.start_date.error,
-      end_date: request_errors.end_date.error,
-      pilot_id: request_errors.pilot_id.error,
-      client_id: request_errors.client_id.error,
-      observation: request_errors.observation.error,
-      flight_plans: request_errors.fligth_plans_ids.error,
-      status: request_errors.status.error
-    });
-
-    setFieldErrorMessage({
-      start_date: request_errors.start_date.message,
-      end_date: request_errors.end_date.message,
-      pilot_id: request_errors.pilot_id.message,
-      client_id: request_errors.client_id.message,
-      observation: request_errors.observation.message,
-      flight_plans: request_errors.fligth_plans_ids.message,
-      status: request_errors.status.message
-    });
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   function avatarSelectionStyle(selected_flight_plan) {
@@ -204,7 +161,7 @@ export const CreateOrder = React.memo((props) => {
     let is_completed = true;
 
     for (let key in selected_flight_plan) {
-      if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
+      if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
         is_completed = false;
       }
     }
@@ -243,25 +200,25 @@ export const CreateOrder = React.memo((props) => {
 
             <Grid item sx={6}>
               <DatePicker
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                setControlledInput={setFormData}
+                controlledInput={formData}
                 name={"start_date"}
                 label={"Data inicial"}
                 error={fieldError.date_interval}
-                value={controlledInput.start_date}
+                value={formData.start_date}
                 read_only={false}
               />
-              <FormHelperText error>{fieldErrorMessage.date_interval}</FormHelperText>
+              <FormHelperText error>{formError.date_interval.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
               <DatePicker
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                setControlledInput={setFormData}
+                controlledInput={formData}
                 name={"end_date"}
                 label={"Data final"}
                 error={fieldError.end_date}
-                value={controlledInput.end_date}
+                value={formData.end_date}
                 operation={"create"}
                 read_only={false}
               />
@@ -273,13 +230,13 @@ export const CreateOrder = React.memo((props) => {
                 data_source={"/api/load-users?where=profile_id.3"}
                 primary_key={"id"}
                 key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                error={fieldError.pilot_id}
-                value={controlledInput.pilot_id}
+                setControlledInput={setFormData}
+                controlledInput={formData}
+                error={formError.pilot_id.error}
+                value={formData.pilot_id}
                 name={"pilot_id"}
               />
-              <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
+              <FormHelperText error>{formError.pilot_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
@@ -288,13 +245,13 @@ export const CreateOrder = React.memo((props) => {
                 data_source={"/api/load-users?where=profile_id.4"}
                 primary_key={"id"}
                 key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                error={fieldError.client_id}
-                value={controlledInput.client_id}
+                setControlledInput={setFormData}
+                controlledInput={formData}
+                error={formError.client_id.error}
+                value={formData.client_id}
                 name={"client_id"}
               />
-              <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
+              <FormHelperText error>{formError.client_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={12}>
@@ -304,11 +261,11 @@ export const CreateOrder = React.memo((props) => {
                 label="Observação"
                 fullWidth
                 variant="outlined"
-                id="observation"
                 name="observation"
+                value={formData.observation}
                 onChange={handleInputChange}
-                helperText={fieldErrorMessage.observation}
-                error={fieldError.observation}
+                helperText={formError.observation.message}
+                error={formError.observation.error}
                 sx={{ mb: 2 }}
               />
             </Grid>

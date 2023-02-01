@@ -36,23 +36,27 @@ export const DeleteOrder = React.memo((props) => {
 
   function handleSubmit() {
     setLoading(true);
-    requestServerOperation();
+    requestServer();
   }
 
-  function requestServerOperation() {
-    axios.delete("/api/orders-module/delete", {
-      data: {
-        ids: selectedIds
-      }
-    })
-      .then(function (response) {
-        setLoading(false);
-        successResponse(response);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        errorResponse(error.response);
+  async function requestServer() {
+
+    try {
+
+      const response = await axios.delete("/api/orders-module/delete", {
+        data: {
+          ids: selectedIds
+        }
       });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -67,7 +71,7 @@ export const DeleteOrder = React.memo((props) => {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>

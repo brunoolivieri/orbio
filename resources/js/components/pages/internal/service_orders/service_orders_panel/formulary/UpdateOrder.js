@@ -19,28 +19,25 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-const initialFieldError = { start_date: false, end_date: false, creator_name: false, pilot_id: false, client_id: false, observation: false, status: false };
-const initialFieldErrorMessage = { start_date: "", end_date: "", creator_name: "", pilot_id: "", client_id: "", observation: "", flight_plan: "", status: "" };
+const fieldError = { error: false, message: "" }
+const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, status: fieldError, date_interval: fieldError, flight_plans: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
-const regexForSelectedFlightPlan = /^[1-9]\d*$/;
 
 export const UpdateOrder = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-  const [controlledInput, setControlledInput] = React.useState({
+  const [formData, setFormData] = React.useState({
     id: props.record.id,
     start_date: props.record.start_date,
     end_date: props.record.end_date,
-    creator_name: props.record.users.creator.name,
     pilot_id: props.record.users.pilot.id,
     client_id: props.record.users.client.id,
     observation: props.record.observation,
     status: props.record.status
   });
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
+  const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
@@ -49,6 +46,7 @@ export const UpdateOrder = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
+  // Verify if data is completed
   React.useEffect(() => {
 
     setCanSave(() => {
@@ -61,7 +59,7 @@ export const UpdateOrder = React.memo((props) => {
 
         let current_check = 1;
         for (let key in selected_flight_plan) {
-          if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
+          if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
             current_check = 0;
           }
         }
@@ -90,8 +88,7 @@ export const UpdateOrder = React.memo((props) => {
   }
 
   function handleClose() {
-    setFieldError(initialFieldError);
-    setFieldErrorMessage(initialFieldErrorMessage);
+    setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
@@ -106,58 +103,42 @@ export const UpdateOrder = React.memo((props) => {
 
   function formValidation() {
 
-    const dateValidate = verifyDateInterval();
-    const pilotNameValidate = Number(controlledInput.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
-    const clientNameValidate = Number(controlledInput.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
-    const observationValidate = FormValidation(controlledInput.observation, 3, null, null, "observação");
-    const fligthPlansValidate = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
-    const statusValidate = Number(controlledInput.status) != 0 && Number(controlledInput.status) != 1 ? { error: true, message: "O status deve ser 1 ou 0" } : { error: false, message: "" };
+    let validation = Object.assign({}, formError);
 
-    setFieldError({
-      date_interval: dateValidate.error,
-      pilot_id: pilotNameValidate.error,
-      client_id: clientNameValidate.error,
-      observation: observationValidate.error,
-      flight_plan: fligthPlansValidate.error,
-      status: statusValidate.error
-    });
+    validation["date_interval"] = moment(formData.start_date).format('YYYY-MM-DD') < moment(formData.end_date).format('YYYY-MM-DD') ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
+    validation["pilot_id"] = Number(formData.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
+    validation["client_id"] = Number(formData.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
+    validation["observation"] = FormValidation(formData.observation, 3, 255);
+    validation["flight_plans"] = selectedFlightPlans != null ? { error: false, message: "" } : { error: true, message: "" };
 
-    setFieldErrorMessage({
-      date_interval: dateValidate.error,
-      pilot_id: pilotNameValidate.message,
-      client_id: clientNameValidate.message,
-      observation: observationValidate.message,
-      flight_plan: fligthPlansValidate.message,
-      status: statusValidate.message
-    });
+    setFormError(validation);
 
-    return !(dateValidate.error || pilotNameValidate.error || clientNameValidate.error || observationValidate.error || fligthPlansValidate.error || statusValidate.error);
+    return !(validation.date_interval.error || validation.client_id.error || validation.pilot_id.error || validation.observation.error || validation.flight_plans.error);
   }
 
-  function verifyDateInterval() {
-    return moment(controlledInput.start_date).format('YYYY-MM-DD hh:mm:ss') < moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss');
-  }
+  async function requestServer() {
 
-  function requestServer() {
-    axios.patch(`/api/orders-module/${controlledInput.id}`, {
-      start_date: moment(controlledInput.start_date).format('YYYY-MM-DD hh:mm:ss'),
-      end_date: moment(controlledInput.end_date).format('YYYY-MM-DD hh:mm:ss'),
-      pilot_id: controlledInput.pilot_id,
-      client_id: controlledInput.client_id,
-      creator_id: props.record.users.creator.id,
-      observation: controlledInput.observation,
-      status: controlledInput.status,
-      flight_plans: selectedFlightPlans
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
+    setLoading(true);
+
+    try {
+
+      const response = await axios.patch(`/api/orders-module/${formData.id}`, {
+        start_date: moment(formData.start_date).format('YYYY-MM-DD hh:mm:ss'),
+        end_date: moment(formData.end_date).format('YYYY-MM-DD hh:mm:ss'),
+        pilot_id: formData.pilot_id,
+        client_id: formData.client_id,
+        observation: formData.observation,
+        flight_plans: selectedFlightPlans
       });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -172,49 +153,20 @@ export const UpdateOrder = React.memo((props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      start_date: { error: false, message: null },
-      end_date: { error: false, message: null },
-      creator_name: { error: false, message: null },
-      pilot_id: { error: false, message: null },
-      client_id: { error: false, message: null },
-      observation: { error: false, message: null },
-      status: { error: false, message: null },
-      fligth_plans_ids: { error: false, message: null }
-    }
+    let response_errors = {}
 
-    for (let prop in response.data.errors) {
-      request_errors[prop] = {
+    for (let field in response.data.errors) {
+      response_errors[field] = {
         error: true,
-        message: response.data.errors[prop][0]
+        message: response.data.errors[field][0]
       }
     }
 
-    setFieldError({
-      start_date: request_errors.start_date.error,
-      end_date: request_errors.end_date.error,
-      creator_name: request_errors.creator_name.error,
-      pilot_id: request_errors.pilot_id.error,
-      client_id: request_errors.client_id.error,
-      observation: request_errors.observation.error,
-      flight_plans: request_errors.fligth_plans_ids.error,
-      status: request_errors.status.error
-    });
-
-    setFieldErrorMessage({
-      start_date: request_errors.start_date.message,
-      end_date: request_errors.end_date.message,
-      creator_name: request_errors.creator_name.message,
-      pilot_id: request_errors.pilot_id.message,
-      client_id: request_errors.client_id.message,
-      observation: request_errors.observation.message,
-      flight_plans: request_errors.fligth_plans_ids.message,
-      status: request_errors.status.message
-    });
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   function avatarSelectionStyle(selected_flight_plan) {
@@ -222,7 +174,7 @@ export const UpdateOrder = React.memo((props) => {
     let is_completed = true;
 
     for (let key in selected_flight_plan) {
-      if (key != "name" && !regexForSelectedFlightPlan.test(selected_flight_plan[key].toString())) {
+      if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
         is_completed = false;
       }
     }
@@ -231,7 +183,7 @@ export const UpdateOrder = React.memo((props) => {
 
   }
 
-  // ============================================================================== STRUCTURES - MUI ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
@@ -261,25 +213,25 @@ export const UpdateOrder = React.memo((props) => {
 
             <Grid item sx={6}>
               <DatePicker
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                setControlledInput={setFormData}
+                controlledInput={formData}
                 name={"start_date"}
                 label={"Data inicial"}
-                error={fieldError.date_interval}
-                value={controlledInput.start_date}
+                error={formError.date_interval.error}
+                value={formData.start_date}
                 read_only={false}
               />
-              <FormHelperText error>{fieldErrorMessage.date_interval}</FormHelperText>
+              <FormHelperText error>{formError.date_interval.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
               <DatePicker
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                setControlledInput={setFormData}
+                controlledInput={formData}
                 name={"end_date"}
                 label={"Data final"}
-                error={fieldError.end_date}
-                value={controlledInput.end_date}
+                error={null}
+                value={formData.end_date}
                 operation={"create"}
                 read_only={false}
               />
@@ -291,13 +243,13 @@ export const UpdateOrder = React.memo((props) => {
                 data_source={"/api/load-users?where=profile_id.3"}
                 primary_key={"id"}
                 key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                error={fieldError.pilot_id}
-                value={controlledInput.pilot_id}
+                setControlledInput={setFormData}
+                controlledInput={formData}
+                error={formError.pilot_id.error}
+                value={formData.pilot_id}
                 name={"pilot_id"}
               />
-              <FormHelperText error>{fieldErrorMessage.pilot_id}</FormHelperText>
+              <FormHelperText error>{formError.pilot_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
@@ -306,13 +258,13 @@ export const UpdateOrder = React.memo((props) => {
                 data_source={"/api/load-users?where=profile_id.4"}
                 primary_key={"id"}
                 key_content={"name"}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
-                error={fieldError.client_id}
-                value={controlledInput.client_id}
+                setControlledInput={setFormData}
+                controlledInput={formData}
+                error={formError.client_id.error}
+                value={formData.client_id}
                 name={"client_id"}
               />
-              <FormHelperText error>{fieldErrorMessage.client_id}</FormHelperText>
+              <FormHelperText error>{formError.client_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={12}>
@@ -322,12 +274,11 @@ export const UpdateOrder = React.memo((props) => {
                 label="Observação"
                 fullWidth
                 variant="outlined"
-                id="observation"
                 name="observation"
                 onChange={handleInputChange}
-                helperText={fieldErrorMessage.observation}
-                error={fieldError.observation}
-                value={controlledInput.observation}
+                helperText={formError.observation.message}
+                error={formError.observation.error}
+                value={formData.observation}
                 sx={{ mb: 2 }}
               />
             </Grid>
@@ -390,8 +341,8 @@ export const UpdateOrder = React.memo((props) => {
             <Grid item xs={6}>
               <StatusRadio
                 default={1}
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                setControlledInput={setFormData}
+                controlledInput={formData}
               />
             </Grid>
 

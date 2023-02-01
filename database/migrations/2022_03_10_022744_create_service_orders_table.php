@@ -19,7 +19,7 @@ class CreateServiceOrdersTable extends Migration
             $table->string("number");
             $table->dateTime("start_date");
             $table->dateTime("end_date");
-            $table->boolean("status")->default(false);
+            $table->boolean("status")->default(true);
             $table->text("observation");
             $table->timestamps();
             $table->softDeletes();

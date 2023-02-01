@@ -52,14 +52,14 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->createOne($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "status", "number", "flight_plans"]));
+        return $this->service->createOne($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "number", "flight_plans"]));
     }
 
     public function update(ServiceOrderUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
         
-        return $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "creator_id", "client_id", "observation", "status", "number", "flight_plans"]), $id);
+        return $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "creator_id", "client_id", "observation", "number", "flight_plans"]), $id);
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
