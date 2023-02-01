@@ -170,49 +170,49 @@ export const CreateProfile = React.memo((props) => {
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["address"]} onChange={(event) => { dispatch({ field: "address", new_value: event.currentTarget.checked }) }} />} label="Endereço" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["address"])} onChange={(event) => { dispatch({ field: "address", new_value: event.currentTarget.checked }) }} />} label="Endereço" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["anac_license"]} onChange={(event) => { dispatch({ field: "anac_license", new_value: event.currentTarget.checked }) }} />} label="Licença Anac" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["anac_license"])} onChange={(event) => { dispatch({ field: "anac_license", new_value: event.currentTarget.checked }) }} />} label="Licença Anac" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["cpf"]} onChange={(event) => { dispatch({ field: "cpf", new_value: event.currentTarget.checked }) }} />} label="CPF" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["cpf"])} onChange={(event) => { dispatch({ field: "cpf", new_value: event.currentTarget.checked }) }} />} label="CPF" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["cnpj"]} onChange={(event) => { dispatch({ field: "cnpj", new_value: event.currentTarget.checked }) }} />} label="CNPJ" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["cnpj"])} onChange={(event) => { dispatch({ field: "cnpj", new_value: event.currentTarget.checked }) }} />} label="CNPJ" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["telephone"]} onChange={(event) => { dispatch({ field: "telephone", new_value: event.currentTarget.checked }) }} />} label="Telefone" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["telephone"])} onChange={(event) => { dispatch({ field: "telephone", new_value: event.currentTarget.checked }) }} />} label="Telefone" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["cellphone"]} onChange={(event) => { dispatch({ field: "cellphone", new_value: event.currentTarget.checked }) }} />} label="Celular" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["cellphone"])} onChange={(event) => { dispatch({ field: "cellphone", new_value: event.currentTarget.checked }) }} />} label="Celular" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["company_name"]} onChange={(event) => { dispatch({ field: "company_name", new_value: event.currentTarget.checked }) }} />} label="Razão Social" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["company_name"])} onChange={(event) => { dispatch({ field: "company_name", new_value: event.currentTarget.checked }) }} />} label="Razão Social" />
               </FormGroup>
             </Grid>
 
             <Grid item xs={4}>
               <FormGroup>
-                <FormControlLabel control={<Checkbox checked={accessData["trading_name"]} onChange={(event) => { dispatch({ field: "trading_name", new_value: event.currentTarget.checked }) }} />} label="Nome fantasia" />
+                <FormControlLabel control={<Checkbox checked={Boolean(accessData["trading_name"])} onChange={(event) => { dispatch({ field: "trading_name", new_value: event.currentTarget.checked }) }} />} label="Nome fantasia" />
               </FormGroup>
             </Grid>
           </Grid>

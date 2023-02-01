@@ -23,7 +23,7 @@ export const FetchedDataSelection = React.memo((props) => {
     }, [open]);
 
     function handleChange(event) {
-        props.setFormData({ ...props.FormData, [event.target.name]: event.target.value });
+        props.setFormData({ ...props.formData, [event.target.name]: event.target.value });
     }
 
     return (

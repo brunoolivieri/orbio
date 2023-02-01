@@ -42,8 +42,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[0].read == 1} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[0].write == 1} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[0].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[0].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }
@@ -60,8 +60,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[1].read == 1} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[1].write == 1} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[1].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[1].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }
@@ -76,8 +76,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[2].read == 1} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[2].write == 1} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[2].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[2].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }
@@ -92,8 +92,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[3].read == 1} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[3].write == 1} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[3].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[3].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }
@@ -108,8 +108,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[4].read == 1} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[4].write == 1} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }
@@ -124,8 +124,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[5].read == 1} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox defaultChecked={data.row.modules[5].write == 1} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[5].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[5].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }

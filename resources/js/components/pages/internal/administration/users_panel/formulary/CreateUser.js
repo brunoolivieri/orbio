@@ -57,7 +57,7 @@ export const CreateUser = React.memo((props) => {
 
     setFormError(validation);
 
-    return !(validation.name.error || validation.email.error || validation.profile.error);
+    return !(validation.name.error || validation.email.error || validation.profile_id.error);
   }
 
   async function requestServer() {
@@ -167,7 +167,7 @@ export const CreateUser = React.memo((props) => {
                 primary_key={"id"}
                 key_content={"name"}
                 error={formError.profile_id.error}
-                name={"profile"}
+                name={"profile_id"}
                 selected={formData.profile_id}
                 setFormData={setFormData}
                 formData={formData}
