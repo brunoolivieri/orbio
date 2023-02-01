@@ -13,20 +13,20 @@ import { SelectExternalData } from '../../../../../shared/input_select/SelectExt
 // Libs
 import moment from 'moment';
 
-const initialControlledInput = { type: "", description: "", date: moment() };
-const initialFieldError = { name: false, description: false };
-const initialFieldErrorMessage = { name: "", description: "" };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialFormData = { type: "", description: "", date: moment() };
+const fieldError = { error: false, message: "" }
+const initialFormError = { type: fieldError, description: fieldError, date: fieldError, flight_plan_id: fieldError, service_order_id: fieldError }
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateIncident = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-  const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-  const [fieldError, setFieldError] = React.useState(initialFieldError);
-  const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+
+  const [formData, setFormData] = React.useState(initialFormData);
+  const [formError, setFormError] = React.useState(initialFormError);
+  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   // Select Inputs
@@ -37,7 +37,21 @@ export const CreateIncident = React.memo((props) => {
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
-  function handleClickOpen() {
+  React.useEffect(() => {
+
+    axios.get(`api/load-service-orders/${selectedFlightPlan}`, {
+    })
+      .then(function (response) {
+        setServiceOrdersByFlightPlan(response.data);
+      })
+      .catch(function (error) {
+        setLoading(false);
+        errorResponse(error.response);
+      });
+
+  }, [selectedFlightPlan]);
+
+  function handleOpen() {
     setOpen(true);
 
     axios.get("/api/load-flight-plans", {
@@ -56,62 +70,59 @@ export const CreateIncident = React.memo((props) => {
   function handleClose() {
     setOpen(false);
     setLoading(false);
-    setFieldError(initialFieldError);
-    setFieldErrorMessage(initialFieldErrorMessage);
-    setDisplayAlert(initialDisplatAlert);
-    setControlledInput(initialControlledInput);
+    setFormData(initialFormData);
+    setFormError(initialFormError);
+    setDisplayAlert(initialDisplayAlert);
   }
 
-  React.useEffect(() => {
-    const url = "/api/load-service-orders-by-flight-plan?flight_plan_id=" + selectedFlightPlan;
-    axios.get(url, {
-    })
-      .then(function (response) {
-        setServiceOrdersByFlightPlan(response.data);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        errorResponse(error.response);
-      });
-  }, [selectedFlightPlan]);
+  function handleSubmit() {
+    if (!formSubmissionValidation()) return ''
+    setLoading(true);
+    requestServer();
+  }
 
-  const handleSubmit = () => {
-    if (formValidation()) {
-      setLoading(true);
-      requestServerOperation();
+  function formSubmissionValidation() {
+
+    let validation = Object.assign({}, initialFormError);
+
+    for (let field in formData) {
+      if (field === "type") {
+        validation[field] = FormValidation(formData[field], 3, 255, null, "Tipo");
+      } else if (field === "date") {
+        validation[field] = formData.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
+      } else if (field === "description") {
+        validation[field] = FormValidation(formData[field], 3, 255, null, "Descrição");
+      }
     }
+
+    validation["flight_plan_id"] = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: false, message: "Selecione um plano de voo" };
+    validation["service_order_id"] = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: false, message: "Selecione uma ordem de serviço" };
+
+    setFormError(validation);
+
+    return !(validation.type.error || validation.date.error || validation.description.error || validation.flight_plan_id.error || validation.service_order_id.error);
   }
 
-  function formValidation() {
-    const incidentDateValidate = controlledInput.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
-    const incidentTypeValidate = FormValidation(controlledInput.type, 2, null, null, null);
-    const incidentNoteValidate = FormValidation(controlledInput.description, 3, null, null, null);
-    const incidentFlightPlanValidate = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: false, message: "O plano de voo precisa ser selecionado" };
-    const incidentDateFlightPlanServiceOrderValidate = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: false, message: "A ordem de serviço precisa ser selecionada" }
+  async function requestServer() {
 
-    setFieldError({ flight_plan_id: incidentFlightPlanValidate.error, service_order_id: incidentDateFlightPlanServiceOrderValidate.error, date: incidentDateValidate.error, type: incidentTypeValidate.error, description: incidentNoteValidate.error });
-    setFieldErrorMessage({ flight_plan_id: incidentFlightPlanValidate.message, service_order_id: incidentDateFlightPlanServiceOrderValidate.message, date: incidentDateValidate.message, type: incidentTypeValidate.message, description: incidentNoteValidate.message });
+    try {
 
-    return !(incidentFlightPlanValidate.error || incidentDateFlightPlanServiceOrderValidate.error || incidentDateValidate.error || incidentTypeValidate.error || incidentNoteValidate.error);
-  }
-
-  function requestServerOperation() {
-    axios.post(`/api/incidents-module`, {
-      date: moment(controlledInput.date).format('YYYY-MM-DD'),
-      type: controlledInput.type,
-      description: controlledInput.description,
-      flight_plan_id: selectedFlightPlan,
-      service_order_id: selectedServiceOrder
-    })
-      .then(function (response) {
-        successResponse(response);
-      })
-      .catch(function (error) {
-        errorResponse(error.response);
-      })
-      .finally(() => {
-        setLoading(false);
+      const response = axios.post("/api/incidents-module", {
+        date: moment(formData.date).format('YYYY-MM-DD'),
+        type: formData.type,
+        description: formData.description,
+        flight_plan_id: selectedFlightPlan,
+        service_order_id: selectedServiceOrder
       });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
@@ -125,34 +136,20 @@ export const CreateIncident = React.memo((props) => {
   function errorResponse(response) {
     setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-    let request_errors = {
-      date: { error: false, message: null },
-      type: { error: false, message: null },
-      description: { error: false, message: null }
-    }
+    let response_errors = {}
 
-    for (let prop in response.data.errors) {
-      request_errors[prop] = {
+    for (let field in response.data.errors) {
+      response_errors[field] = {
         error: true,
-        message: response.data.errors[prop][0]
+        message: response.data.errors[field][0]
       }
     }
 
-    setFieldError({
-      date: request_errors.date.error,
-      type: request_errors.type.error,
-      description: request_errors.description.error
-    });
-
-    setFieldErrorMessage({
-      date: request_errors.date.message,
-      type: request_errors.type.message,
-      description: request_errors.description.message
-    });
+    setFormError(response_errors);
   }
 
   function handleInputChange(event) {
-    setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //
@@ -160,7 +157,7 @@ export const CreateIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo incidente">
-        <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.write == 1}>
+        <IconButton onClick={handleOpen} disabled={!user.user_powers["5"].profile_powers.write == 1}>
           <FontAwesomeIcon icon={faPlus} color={user.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
@@ -180,12 +177,12 @@ export const CreateIncident = React.memo((props) => {
 
             <Grid item xs={12}>
               <DatePicker
-                setControlledInput={setControlledInput}
-                controlledInput={controlledInput}
+                setControlledInput={setFormData}
+                controlledInput={formData}
                 name={"date"}
                 label={"Data do incidente"}
-                error={fieldError.date}
-                value={controlledInput.date}
+                error={formError.date.error}
+                value={formData.date}
                 operation={"create"}
                 read_only={false}
               />
@@ -195,13 +192,14 @@ export const CreateIncident = React.memo((props) => {
               <TextField
                 type="text"
                 margin="dense"
-                label="Tipo do incidente"
+                label="Tipo"
                 fullWidth
                 variant="outlined"
                 name="type"
+                value={formData.type}
                 onChange={handleInputChange}
-                helperText={fieldErrorMessage.type}
-                error={fieldError.type}
+                helperText={formError.type.message}
+                error={formError.type.error}
               />
             </Grid>
 
@@ -213,9 +211,10 @@ export const CreateIncident = React.memo((props) => {
                 fullWidth
                 variant="outlined"
                 name="description"
+                value={formData.description}
                 onChange={handleInputChange}
-                helperText={fieldErrorMessage.description}
-                error={fieldError.description}
+                helperText={formError.description.message}
+                error={formError.description.error}
               />
             </Grid>
 
@@ -226,10 +225,10 @@ export const CreateIncident = React.memo((props) => {
                 key_content={"name"}
                 setter={setSelectedFlightPlan}
                 options={flightPlans}
-                error={fieldError.flight_plan_id}
+                error={formError.flight_plan_id.error}
                 value={selectedFlightPlan}
               />
-              <FormHelperText error>{fieldErrorMessage.flight_plan_id}</FormHelperText>
+              <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={12} md={6}>
@@ -239,11 +238,12 @@ export const CreateIncident = React.memo((props) => {
                 key_content={"number"}
                 setter={setSelectedServiceOrder}
                 options={serviceOrdersByFlightPlan}
-                error={fieldError.service_order_id}
+                error={formError.service_order_id.error}
                 value={selectedServiceOrder}
               />
-              <FormHelperText error>{fieldErrorMessage.service_order_id}</FormHelperText>
+              <FormHelperText error>{formError.service_order_id.message}</FormHelperText>
             </Grid>
+            
           </Grid>
         </DialogContent>
 

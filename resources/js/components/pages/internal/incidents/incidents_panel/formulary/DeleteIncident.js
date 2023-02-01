@@ -34,25 +34,29 @@ export const DeleteIncident = React.memo((props) => {
     setOpen(false);
   }
 
-  const handleSubmit = () => {
+  function handleSubmit() {
     setLoading(false);
-    requestServerOperation();
+    requestServer();
   }
 
-  const requestServerOperation = () => {
-    axios.delete(`/api/incidents-module/delete`, {
-      data: {
-        ids: selectedIds
-      }
-    })
-      .then(function (response) {
-        setLoading(false);
-        successResponse(response);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        errorResponse(error.response);
+  async function requestServer() {
+
+    try {
+
+      const response = axios.delete("/api/incidents-module/delete", {
+        data: {
+          ids: selectedIds
+        }
       });
+
+      successResponse(response);
+
+    } catch (error) {
+      errorResponse(error.response);
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function successResponse(response) {
