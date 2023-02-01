@@ -15,7 +15,7 @@ export const DeleteEquipment = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    
+
     const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -37,24 +37,26 @@ export const DeleteEquipment = React.memo((props) => {
 
     function handleSubmit() {
         setLoading(true);
-        requestServerOperation();
+        requestServer();
     }
 
-    const requestServerOperation = () => {
-        axios.delete(`/api/equipments-module-equipment/delete`, {
-            data: {
-                ids: selectedIds
-            }
-        })
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                errorResponse(error.response.data);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+    async function requestServer() {
+
+        try {
+
+            const response = axios.delete("/api/equipments-module-equipment/delete", {
+                data: {
+                    ids: selectedIds
+                }
+            });
+
+            successResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response.data);
+        } finally {
+            setLoading(false);
+        }
     }
 
     function successResponse(response) {

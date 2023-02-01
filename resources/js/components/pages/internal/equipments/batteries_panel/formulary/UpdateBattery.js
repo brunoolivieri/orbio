@@ -168,31 +168,14 @@ export const UpdateBattery = React.memo((props) => {
                             <TextField
                                 type="text"
                                 margin="dense"
-                                label="ID da bateria"
-                                fullWidth
-                                variant="outlined"
-                                required
-                                id="id"
-                                name="id"
-                                value={formData.id}
-                                InputProps={{
-                                    readOnly: true,
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12}>
-                            <TextField
-                                type="text"
-                                margin="dense"
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
                                 required
                                 name="name"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.name}
-                                error={fieldError.name}
+                                helperText={formError.name.message}
+                                error={formError.name.error}
                                 value={formData.name}
                             />
                         </Grid>
@@ -207,8 +190,8 @@ export const UpdateBattery = React.memo((props) => {
                                 required
                                 name="manufacturer"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.manufacturer}
-                                error={fieldError.manufacturer}
+                                helperText={formError.manufacturer.message}
+                                error={formError.manufacturer.error}
                                 value={formData.manufacturer}
                             />
                         </Grid>
@@ -223,8 +206,8 @@ export const UpdateBattery = React.memo((props) => {
                                 required
                                 name="model"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.model}
-                                error={fieldError.model}
+                                helperText={formError.model.message}
+                                error={formError.model.error}
                                 value={formData.model}
                             />
                         </Grid>
@@ -239,8 +222,8 @@ export const UpdateBattery = React.memo((props) => {
                                 required
                                 name="serial_number"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.serial_number}
-                                error={fieldError.serial_number}
+                                helperText={formError.serial_number.message}
+                                error={formError.serial_number.error}
                                 value={formData.serial_number}
                             />
                         </Grid>
@@ -254,7 +237,7 @@ export const UpdateBattery = React.memo((props) => {
                                 error={fieldError.last_charge}
                                 value={formData.last_charge}
                             />
-                            <FormHelperText error>{fieldErrorMessage.last_charge}</FormHelperText>
+                            <FormHelperText error>{formError.last_charge.error}</FormHelperText>
                         </Grid>
 
                     </Grid>
@@ -263,7 +246,7 @@ export const UpdateBattery = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                                {formError.image.error ? formError.image.message : "Escolher imagem"}
                             </Button>
                         </label>
                     </Box>

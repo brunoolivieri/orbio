@@ -17,7 +17,7 @@ const Input = styled('input')({
     display: 'none',
 });
 
-const initialFormData = { image: "", name: "", manufacturer: "", model: "", serial_number: "", last_charge: moment() };
+const initialFormData = { name: "", manufacturer: "", model: "", serial_number: "", last_charge: moment() };
 const fieldError = { error: false, message: "" };
 const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError };
 const initialDisplatAlert = { display: false, type: "", message: "" };
@@ -245,7 +245,7 @@ export const CreateBattery = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {fieldError.image ? formError.image.message : "Escolher imagem"}
+                                {formError.image.error ? formError.image.message : "Escolher imagem"}
                             </Button>
                         </label>
                     </Box>

@@ -17,21 +17,20 @@ const Input = styled('input')({
     display: 'none',
 });
 
-const initialControlledInput = { name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: moment() };
-const initialFieldError = { image: false, name: false, manufacturer: false, model: false, record_number: false, serial_number: false, weight: false, observation: false, purchase_date: false };
-const initialFieldErrorMessage = { image: "", name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: "" };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialFormData = { name: "", manufacturer: "", model: "", record_number: "", serial_number: "", weight: "", observation: "", purchase_date: moment() };
+const fieldError = { error: false, message: "" };
+const initialFormError = { image: fieldError, name: fieldError, manufacturer: fieldError, model: fieldError, record_number: fieldError, serial_number: fieldError, weight: fieldError, observation: fieldError, purchase_date: fieldError };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateEquipment = React.memo((props) => {
 
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    
-    const [controlledInput, setControlledInput] = React.useState(initialControlledInput);
-    const [fieldError, setFieldError] = React.useState(initialFieldError);
-    const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+
+    const [formData, setFormData] = React.useState(initialFormData);
+    const [formError, setFormError] = React.useState(initialFormError);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
@@ -44,79 +43,75 @@ export const CreateEquipment = React.memo((props) => {
     }
 
     function handleClose() {
+        setFormError(initialFormError);
+        setDisplayAlert(initialDisplayAlert);
         setOpen(false);
         setLoading(false);
     }
 
     function handleSubmit() {
-        if (formValidation()) {
-            setLoading(true);
-            requestServerOperation();
+        if (!formSubmissionValidation()) return '';
+        setLoading(true);
+        requestServer();
+
+    }
+
+    function formSubmissionValidation() {
+
+        let validation = Object.assign({}, initialFormError);
+
+        for (let field in formData) {
+            if (field === "name") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Nome");
+            } else if (field === "manufacturer") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Fabricante");
+            } else if (field === "model") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Modelo");
+            } else if (field === "record_number") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Número do registro");
+            } else if (field === "serial_number") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Número serial");
+            } else if (field === "weight") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Peso");
+            } else if (field === "observation") {
+                validation[field] = FormValidation(formData[field], 3, 255, null, "Observation");
+            } else if (field === "image") {
+                validation[field] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
+            } else if (field === "purchase") {
+                validation[field] = formData.purchase_date ? { error: false, message: "" } : { error: true, message: "Informe a data da compra" };
+            }
         }
-    }
 
-    function formValidation() {
+        setFormError(validation);
 
-        let nameValidation = FormValidation(controlledInput.name, 3);
-        let manufacturerValidation = FormValidation(controlledInput.manufacturer, 3);
-        let modelValidation = FormValidation(controlledInput.model);
-        let recordNumberValidation = FormValidation(controlledInput.record_number);
-        let serialNumberValidation = FormValidation(controlledInput.serial_number);
-        let weightValidation = FormValidation(controlledInput.weight);
-        let observationValidation = FormValidation(controlledInput.observation, 3);
-        let imageValidation = uploadedImage == null ? { error: true, message: "Uma imagem precisa ser selecionada" } : { error: false, message: "" };
-        let purchaseValidation = controlledInput.purchase_date ? { error: false, message: "" } : { error: true, message: "A data da compra precisa ser informada" };
-
-        setFieldError({
-            image: imageValidation.error,
-            name: nameValidation.error,
-            manufacturer: manufacturerValidation.error,
-            model: modelValidation.error,
-            record_number: recordNumberValidation.error,
-            serial_number: serialNumberValidation.error,
-            weight: weightValidation.error,
-            observation: observationValidation.error,
-            purchase_date: purchaseValidation.error
-        });
-
-        setFieldErrorMessage({
-            image: imageValidation.message,
-            name: nameValidation.message,
-            manufacturer: manufacturerValidation.message,
-            model: modelValidation.message,
-            record_number: recordNumberValidation.message,
-            serial_number: serialNumberValidation.message,
-            weight: weightValidation.message,
-            observation: observationValidation.message,
-            purchase_date: purchaseValidation.message
-        });
-
-        return !(nameValidation.error || manufacturerValidation.error || modelValidation.error || recordNumberValidation.error || serialNumberValidation.error || weightValidation.error || observationValidation.error || purchaseValidation.error || imageValidation.error);
+        return !(validation.name.error || validation.manufacturer.error || validation.record_number.error || validation.serial_number.error || validation.weight.error || validation.observation.error || validation.image.error || validation.purchase_date.error);
 
     }
 
-    function requestServerOperation() {
-        const formData = new FormData();
-        formData.append("name", controlledInput.name);
-        formData.append("manufacturer", controlledInput.manufacturer);
-        formData.append("model", controlledInput.model);
-        formData.append("record_number", controlledInput.record_number);
-        formData.append("serial_number", controlledInput.serial_number);
-        formData.append("weight", controlledInput.weight);
-        formData.append("observation", controlledInput.observation);
-        formData.append("image", uploadedImage);
-        formData.append("purchase_date", moment(controlledInput.purchase_date).format('YYYY-MM-DD'));
+    function requestServer() {
 
-        axios.post(`/api/equipments-module-equipment`, formData)
-            .then(function (response) {
-                successResponse(response);
-            })
-            .catch(function (error) {
-                errorResponse(error.response);
-            })
-            .finally(() => {
-                setLoading(false);
-            })
+        const formData_ = new FormData();
+        formData_.append("name", formData.name);
+        formData_.append("manufacturer", formData.manufacturer);
+        formData_.append("model", formData.model);
+        formData_.append("record_number", formData.record_number);
+        formData_.append("serial_number", formData.serial_number);
+        formData_.append("weight", formData.weight);
+        formData_.append("observation", formData.observation);
+        formData_.append("image", uploadedImage);
+        formData_.append("purchase_date", moment(formData.purchase_date).format('YYYY-MM-DD'));
+
+        try {
+
+            const response = axios.post("/api/equipments-module-equipment", formData_);
+            successResponse(response);
+
+        } catch (error) {
+            errorResponse(error.response);
+        } finally {
+            setLoading(false);
+        }
+
     }
 
     function successResponse(response) {
@@ -130,48 +125,16 @@ export const CreateEquipment = React.memo((props) => {
     function errorResponse(response) {
         setDisplayAlert({ display: true, type: "error", message: response.data.message });
 
-        let request_errors = {
-            image: { error: false, message: null },
-            name: { error: false, message: null },
-            manufacturer: { error: false, message: null },
-            model: { error: false, message: null },
-            record_number: { error: false, message: null },
-            serial_number: { error: false, message: null },
-            weight: { error: false, message: null },
-            observation: { error: false, message: null },
-            purchase_date: { error: false, message: null }
-        }
+        let response_errors = {}
 
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
+        for (let field in response.data.errors) {
+            response_errors[field] = {
                 error: true,
-                message: response.data.errors[prop][0]
+                message: response.data.errors[field][0]
             }
         }
 
-        setFieldError({
-            image: request_errors.image.error,
-            name: request_errors.name.error,
-            manufacturer: request_errors.manufacturer.error,
-            model: request_errors.model.error,
-            record_number: request_errors.record_number.error,
-            serial_number: request_errors.serial_number.error,
-            weight: request_errors.weight.error,
-            observation: request_errors.observation.error,
-            purchase_date: request_errors.purchase_date.error
-        });
-
-        setFieldErrorMessage({
-            image: request_errors.image.message,
-            name: request_errors.name.message,
-            manufacturer: request_errors.manufacturer.message,
-            model: request_errors.model.message,
-            record_number: request_errors.record_number.message,
-            serial_number: request_errors.serial_number.message,
-            weight: request_errors.weight.message,
-            observation: request_errors.observation.message,
-            purchase_date: request_errors.purchase_date.message
-        });
+        setFormError(response_errors);
     }
 
     function handleUploadedImage(event) {
@@ -183,7 +146,7 @@ export const CreateEquipment = React.memo((props) => {
     }
 
     function handleInputChange(event) {
-        setControlledInput({ ...controlledInput, [event.target.name]: event.currentTarget.value });
+        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -220,9 +183,9 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="name"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.name}
-                                error={fieldError.name}
-                                value={controlledInput.name}
+                                helperText={formData.name}
+                                error={formError.name.error}
+                                value={formError.name.message}
                             />
                         </Grid>
 
@@ -236,9 +199,9 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="manufacturer"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.manufacturer}
-                                error={fieldError.manufacturer}
-                                value={controlledInput.manufacturer}
+                                helperText={formError.manufacturer.message}
+                                error={formError.manufacturer.error}
+                                value={formData.manufacturer}
                             />
                         </Grid>
 
@@ -252,9 +215,9 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="model"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.model}
-                                error={fieldError.model}
-                                value={controlledInput.model}
+                                helperText={formError.model.message}
+                                error={formError.model.error}
+                                value={formData.model}
                             />
                         </Grid>
 
@@ -268,9 +231,9 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="record_number"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.record_number}
-                                error={fieldError.record_number}
-                                value={controlledInput.record_number}
+                                helperText={formError.record_number.message}
+                                error={formError.record_number.error}
+                                value={formData.record_number}
                             />
                         </Grid>
 
@@ -284,9 +247,9 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="serial_number"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.serial_number}
-                                error={fieldError.serial_number}
-                                value={controlledInput.serial_number}
+                                helperText={formError.serial_number.message}
+                                error={formError.serial_number.error}
+                                value={formData.serial_number}
                             />
                         </Grid>
 
@@ -300,9 +263,9 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="weight"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.weight}
-                                error={fieldError.weight}
-                                value={controlledInput.weight}
+                                helperText={formError.weight.message}
+                                error={formError.weight.error}
+                                value={formData.weight}
                             />
                         </Grid>
 
@@ -316,22 +279,22 @@ export const CreateEquipment = React.memo((props) => {
                                 required
                                 name="observation"
                                 onChange={handleInputChange}
-                                helperText={fieldErrorMessage.observation}
-                                error={fieldError.observation}
-                                value={controlledInput.observation}
+                                helperText={formError.observation.message}
+                                error={formError.observation.error}
+                                value={formData.observation}
                             />
                         </Grid>
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                setControlledInput={setControlledInput}
-                                controlledInput={controlledInput}
+                                setControlledInput={setFormData}
+                                controlledInput={formData}
                                 name={"purchase_date"}
                                 label={"Data da compra"}
-                                error={fieldError.purchase_date}
-                                value={controlledInput.purchase_date}
+                                error={formError.purchase_date.error}
+                                value={formData.purchase_date}
                             />
-                            <FormHelperText error>{fieldErrorMessage.purchase_date}</FormHelperText>
+                            <FormHelperText error>{formError.purchase_date.message}</FormHelperText>
                         </Grid>
                     </Grid>
 
@@ -339,7 +302,7 @@ export const CreateEquipment = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {fieldError.image ? fieldErrorMessage.image : "Escolher imagem"}
+                                {formError.image.error ? formError.image.message : "Escolher imagem"}
                             </Button>
                         </label>
                     </Box>

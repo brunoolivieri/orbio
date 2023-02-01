@@ -17,7 +17,7 @@ export const Layout = () => {
 
   const [loading, setLoading] = React.useState(true);
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const { user, isAuthenticated, verifyAuthentication, logout } = useAuth();
+  const { isAuthenticated, verifyAuthentication, logout } = useAuth();
 
   // =========================================== FUNCTIONS ======================= //
 
