@@ -20,7 +20,7 @@ const Input = styled('input')({
 const initialFormData = { name: "", manufacturer: "", model: "", serial_number: "", last_charge: moment() };
 const fieldError = { error: false, message: "" };
 const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateBattery = React.memo((props) => {
 
@@ -31,7 +31,7 @@ export const CreateBattery = React.memo((props) => {
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
     const htmlImage = React.useRef();
@@ -123,8 +123,11 @@ export const CreateBattery = React.memo((props) => {
     function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+            setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
             setUploadedImage(uploaded_file);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
     }
 
@@ -163,7 +166,6 @@ export const CreateBattery = React.memo((props) => {
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
@@ -179,7 +181,6 @@ export const CreateBattery = React.memo((props) => {
                                 label="Fabricante"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="manufacturer"
                                 value={formData.manufacturer}
                                 onChange={handleInputChange}
@@ -195,7 +196,6 @@ export const CreateBattery = React.memo((props) => {
                                 label="Modelo"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="model"
                                 value={formData.model}
                                 onChange={handleInputChange}
@@ -211,7 +211,6 @@ export const CreateBattery = React.memo((props) => {
                                 label="Número Serial"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="serial_number"
                                 value={formData.serial_number}
                                 onChange={handleInputChange}

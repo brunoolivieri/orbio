@@ -48,12 +48,10 @@ const columns = [
     {
         field: 'manufacturer',
         headerName: 'Fabricante',
-        type: 'number',
-        flex: 1,
-        minWidth: 200,
-        headerAlign: 'left',
         sortable: true,
-        editable: false
+        editable: false,
+        flex: 1,
+        minWidth: 200
     },
     {
         field: 'model',
@@ -69,7 +67,7 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 150
+        minWidth: 125
     },
     {
         field: 'serial_number',
@@ -77,7 +75,7 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 150
+        minWidth: 125
     },
     {
         field: 'weight',

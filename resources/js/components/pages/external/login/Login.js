@@ -69,9 +69,8 @@ export function Login() {
         } catch (error) {
             console.log(error);
             enqueueSnackbar(error.response.data.message, { variant: "error" });
-        } finally {
             setLoading(false);
-        }
+        } 
     }
 
     function handleInputChange(e) {
@@ -140,7 +139,7 @@ export function Login() {
                             onClick={handleSubmit}
                             disabled={loading}
                         >
-                            {loading ? "Carregando" : "Login"}
+                            Acessar
                         </Button>
 
                         <Grid container>

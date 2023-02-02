@@ -132,17 +132,15 @@ export const UpdateDrone = React.memo((props) => {
     }
 
     function handleUploadedImage(event) {
-
         const uploaded_file = event.currentTarget.files[0];
-
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
-
+            setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-
             setUploadedImage(uploaded_file);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
-
     }
 
     function handleInputChange(event) {
@@ -180,7 +178,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="name"
                                 value={formData.name}
                                 onChange={handleInputChange}
@@ -196,7 +193,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Fabricante"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="manufacturer"
                                 value={formData.manufacturer}
                                 onChange={handleInputChange}
@@ -212,7 +208,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Modelo"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="model"
                                 value={formData.model}
                                 onChange={handleInputChange}
@@ -228,7 +223,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Número do registro"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="record_number"
                                 value={formData.record_number}
                                 onChange={handleInputChange}
@@ -244,7 +238,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Número Serial"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="serial_number"
                                 value={formData.serial_number}
                                 onChange={handleInputChange}
@@ -260,7 +253,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Peso (KG)"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="weight"
                                 value={formData.weight}
                                 onChange={handleInputChange}
@@ -276,7 +268,6 @@ export const UpdateDrone = React.memo((props) => {
                                 label="Observação"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="observation"
                                 value={formData.observation}
                                 onChange={handleInputChange}

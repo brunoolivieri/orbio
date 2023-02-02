@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -61,7 +61,7 @@ export const CreateDrone = React.memo((props) => {
 
         for (let field in formData) {
             if (field != "image") {
-                validation[field] = FormValidation(formData[field], 3, 255);
+                validation[field] = FormValidation(formData[field]);
             }
         }
 
@@ -123,8 +123,11 @@ export const CreateDrone = React.memo((props) => {
     function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+            setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
             setUploadedImage(uploaded_file);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
     }
 
@@ -154,104 +157,115 @@ export const CreateDrone = React.memo((props) => {
 
                 <DialogContent>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Nome"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        helperText={formError.name.message}
-                        error={formError.name.error}
-                    />
+                    <Grid container spacing={1}>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Fabricante"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="manufacturer"
-                        value={formData.manufacturer}
-                        onChange={handleInputChange}
-                        helperText={formError.manufacturer.message}
-                        error={formError.manufacturer.error}
-                    />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Nome"
+                                fullWidth
+                                variant="outlined"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleInputChange}
+                                helperText={formError.name.message}
+                                error={formError.name.error}
+                            />
+                        </Grid>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Modelo"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="model"
-                        value={formData.model}
-                        onChange={handleInputChange}
-                        helperText={formError.model.message}
-                        error={formError.model.error}
-                    />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Fabricante"
+                                fullWidth
+                                variant="outlined"
+                                name="manufacturer"
+                                value={formData.manufacturer}
+                                onChange={handleInputChange}
+                                helperText={formError.manufacturer.message}
+                                error={formError.manufacturer.error}
+                            />
+                        </Grid>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Número do registro"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="record_number"
-                        value={formData.record_number}
-                        onChange={handleInputChange}
-                        helperText={formError.record_number.message}
-                        error={formError.record_number.error}
-                    />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Modelo"
+                                fullWidth
+                                variant="outlined"
+                                name="model"
+                                value={formData.model}
+                                onChange={handleInputChange}
+                                helperText={formError.model.message}
+                                error={formError.model.error}
+                            />
+                        </Grid>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Número Serial"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="serial_number"
-                        value={formData.serial_number}
-                        onChange={handleInputChange}
-                        helperText={formError.serial_number.message}
-                        error={formError.serial_number.error}
-                    />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número do registro"
+                                fullWidth
+                                variant="outlined"
+                                name="record_number"
+                                value={formData.record_number}
+                                onChange={handleInputChange}
+                                helperText={formError.record_number.message}
+                                error={formError.record_number.error}
+                            />
+                        </Grid>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Peso (KG)"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="weight"
-                        value={formData.weight}
-                        onChange={handleInputChange}
-                        helperText={formError.weight.message}
-                        error={formError.weight.error}
-                    />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Número Serial"
+                                fullWidth
+                                variant="outlined"
+                                name="serial_number"
+                                value={formData.serial_number}
+                                onChange={handleInputChange}
+                                helperText={formError.serial_number.message}
+                                error={formError.serial_number.error}
+                            />
+                        </Grid>
 
-                    <TextField
-                        type="text"
-                        margin="dense"
-                        label="Observação"
-                        fullWidth
-                        variant="outlined"
-                        required
-                        name="observation"
-                        value={formData.observation}
-                        onChange={handleInputChange}
-                        helperText={formError.observation.message}
-                        error={formError.observation.error}
-                        sx={{ mb: 2 }}
-                    />
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Peso (KG)"
+                                fullWidth
+                                variant="outlined"
+                                name="weight"
+                                value={formData.weight}
+                                onChange={handleInputChange}
+                                helperText={formError.weight.message}
+                                error={formError.weight.error}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Observação"
+                                fullWidth
+                                variant="outlined"
+                                name="observation"
+                                value={formData.observation}
+                                onChange={handleInputChange}
+                                helperText={formError.observation.message}
+                                error={formError.observation.error}
+                                sx={{ mb: 2 }}
+                            />
+                        </Grid>
+
+                    </Grid>
 
                     <Box sx={{ mt: 2, mb: 2, display: 'flex' }}>
                         <label htmlFor="contained-button-file">

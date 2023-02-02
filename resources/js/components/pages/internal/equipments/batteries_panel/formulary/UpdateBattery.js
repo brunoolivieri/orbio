@@ -19,7 +19,7 @@ const Input = styled('input')({
 
 const fieldError = { error: false, message: "" };
 const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError };
-const initialDisplatAlert = { display: false, type: "", message: "" };
+const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateBattery = React.memo((props) => {
 
@@ -30,7 +30,7 @@ export const UpdateBattery = React.memo((props) => {
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge });
     const [formError, setFormError] = React.useState(initialFormError);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
     const [uploadedImage, setUploadedImage] = React.useState(null);
     const htmlImage = React.useRef();
@@ -43,7 +43,7 @@ export const UpdateBattery = React.memo((props) => {
 
     function handleClose() {
         setFormError(initialFormError);
-        setDisplayAlert(initialDisplatAlert);
+        setDisplayAlert(initialDisplayAlert);
         setLoading(false);
         setOpen(false);
     }
@@ -125,8 +125,11 @@ export const UpdateBattery = React.memo((props) => {
     function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
+            setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
             setUploadedImage(event.target.files[0]);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
     }
 
@@ -164,7 +167,6 @@ export const UpdateBattery = React.memo((props) => {
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="name"
                                 onChange={handleInputChange}
                                 helperText={formError.name.message}
@@ -180,7 +182,6 @@ export const UpdateBattery = React.memo((props) => {
                                 label="Fabricante"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="manufacturer"
                                 onChange={handleInputChange}
                                 helperText={formError.manufacturer.message}
@@ -196,7 +197,6 @@ export const UpdateBattery = React.memo((props) => {
                                 label="Modelo"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="model"
                                 onChange={handleInputChange}
                                 helperText={formError.model.message}
@@ -212,7 +212,6 @@ export const UpdateBattery = React.memo((props) => {
                                 label="Número Serial"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="serial_number"
                                 onChange={handleInputChange}
                                 helperText={formError.serial_number.message}

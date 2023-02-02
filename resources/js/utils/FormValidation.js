@@ -1,6 +1,6 @@
 export const FormValidation = (value, minLength = null, maxLength = null, regex = null, field_name = null) => {
 
-    if (nullCheck(value)) {
+    if (emptyCheck(value)) {
         return { error: true, message: "O campo deve ser informado" }
     }
 
@@ -32,8 +32,8 @@ export const FormValidation = (value, minLength = null, maxLength = null, regex 
 
 }
 
-function nullCheck(value) {
-    return value == null;
+function emptyCheck(value) {
+    return value == null || value.length === 0;
 }
 
 function minLengthCheck(value, minLength) {

@@ -127,8 +127,11 @@ export const CreateEquipment = React.memo((props) => {
     function handleUploadedImage(event) {
         const file = event.currentTarget.files[0];
         if (file && file.type.startsWith('image/')) {
+            setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(file);
             setUploadedImage(event.target.files[0]);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
     }
 
@@ -167,7 +170,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Nome"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="name"
                                 onChange={handleInputChange}
                                 helperText={formData.name}
@@ -183,7 +185,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Fabricante"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="manufacturer"
                                 onChange={handleInputChange}
                                 helperText={formError.manufacturer.message}
@@ -199,7 +200,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Modelo"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="model"
                                 onChange={handleInputChange}
                                 helperText={formError.model.message}
@@ -215,7 +215,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Número do registro"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="record_number"
                                 onChange={handleInputChange}
                                 helperText={formError.record_number.message}
@@ -231,7 +230,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Número Serial"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="serial_number"
                                 onChange={handleInputChange}
                                 helperText={formError.serial_number.message}
@@ -247,7 +245,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Peso (KG)"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="weight"
                                 onChange={handleInputChange}
                                 helperText={formError.weight.message}
@@ -263,7 +260,6 @@ export const CreateEquipment = React.memo((props) => {
                                 label="Observação"
                                 fullWidth
                                 variant="outlined"
-                                required
                                 name="observation"
                                 onChange={handleInputChange}
                                 helperText={formError.observation.message}
