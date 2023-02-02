@@ -26,10 +26,7 @@ class UpdateLogRequest extends FormRequest
         $log_id = $this->route("plans_module_log");
 
         return [
-            "name" => ["required", "min:3", "max:255", "unique:logs,name,$log_id", "min:3"],
-            "description" => ["required", "min:3", "max:255"],
-            "service_order_id" => ["sometimes", "exists:service_orders, id"],
-            "log_id" => ["sometimes", "exists:logs, id"]
+            "name" => ["required", "min:3", "max:255", "unique:logs,name,$log_id", "min:3"]
         ];
     }
 
@@ -44,9 +41,7 @@ class UpdateLogRequest extends FormRequest
             "name.required" => "O nome do log deve ser informado",
             "name.unique" => "Já existe um log com esse nome",
             "name.min" => "O nome deve ter pelo menos 3 caracteres",
-            "name.max" => "O nome deve ter no máximo 255 caracteres",
-            "service_order_id.exists" => "Essa ordem de serviço não existe",
-            "log_id.exists" => "Esse log não existe"
+            "name.max" => "O nome deve ter no máximo 255 caracteres"
         ];
     }
 }

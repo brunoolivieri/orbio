@@ -219,10 +219,10 @@ export const UpdateIncident = React.memo((props) => {
                 label_text={"Plano de voo"}
                 primary_key={"id"}
                 key_content={"name"}
-                setter={setSelectedFlightPlan}
+                setSelection={setSelectedFlightPlan}
                 options={flightPlans}
                 error={formError.flight_plan_id.error}
-                value={selectedFlightPlan}
+                selected={selectedFlightPlan}
               />
               <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText>
             </Grid>

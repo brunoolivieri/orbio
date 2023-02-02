@@ -1,11 +1,13 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, FormHelperText, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, FormHelperText, Divider, TextField } from '@mui/material';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
@@ -45,8 +47,10 @@ export const CreateIncident = React.memo((props) => {
         setServiceOrdersByFlightPlan(response.data);
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
+      })
+      .finally(() => {
+        setLoading(false);
       });
 
   }, [selectedFlightPlan]);
@@ -58,12 +62,12 @@ export const CreateIncident = React.memo((props) => {
     })
       .then(function (response) {
         setFlightPlans(response.data);
-        setSelectedFlightPlan("0");
-        setSelectedServiceOrder("0");
       })
       .catch(function (error) {
-        setLoading(false);
         errorResponse(error.response);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }
 
@@ -76,7 +80,8 @@ export const CreateIncident = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (!formSubmissionValidation()) return ''
+    if (!formSubmissionValidation()) return '';
+
     setLoading(true);
     requestServer();
   }
@@ -169,16 +174,16 @@ export const CreateIncident = React.memo((props) => {
           <Grid item container spacing={1} mt={1}>
 
             <Grid item xs={12}>
-              <DatePicker
-                setControlledInput={setFormData}
-                controlledInput={formData}
-                name={"date"}
-                label={"Data do incidente"}
-                error={formError.date.error}
-                value={formData.date}
-                operation={"create"}
-                read_only={false}
-              />
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  label={"Data"}
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  inputFormat="dd/MM/yyyy"
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              {/* <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText> */}
             </Grid>
 
             <Grid item xs={12}>
@@ -191,8 +196,8 @@ export const CreateIncident = React.memo((props) => {
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
-                helperText={formError.type.message}
-                error={formError.type.error}
+              //helperText={formError.type.message}
+              //error={formError.type.error}
               />
             </Grid>
 
@@ -206,22 +211,23 @@ export const CreateIncident = React.memo((props) => {
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
-                helperText={formError.description.message}
-                error={formError.description.error}
+              //helperText={formError.description.message}
+              //error={formError.description.error}
               />
             </Grid>
 
+            {/*
             <Grid item xs={12} md={6}>
               <GivenDataSelection
                 label_text={"Plano de voo"}
                 primary_key={"id"}
                 key_content={"name"}
-                setter={setSelectedFlightPlan}
+                setSelection={setSelectedFlightPlan}
                 options={flightPlans}
                 error={formError.flight_plan_id.error}
-                value={selectedFlightPlan}
+                selected={selectedFlightPlan}
               />
-              <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText>
+              <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText> 
             </Grid>
 
             <Grid item xs={12} md={6}>
@@ -236,7 +242,8 @@ export const CreateIncident = React.memo((props) => {
               />
               <FormHelperText error>{formError.service_order_id.message}</FormHelperText>
             </Grid>
-            
+            */}
+
           </Grid>
         </DialogContent>
 

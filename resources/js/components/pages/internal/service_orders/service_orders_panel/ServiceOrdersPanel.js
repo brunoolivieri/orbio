@@ -262,19 +262,15 @@ export function ServiceOrdersPanel() {
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);
-
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} ordem de serviço`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} ordens de serviço`, "success");
-        }
+        enqueueSnackbar(`Ordens de serviço encontradas: ${response.data.total_records}`, { variant: "success" });
       })
       .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
       })
       .finally(() => {
         setLoading(false);
-      })
+      });
+      
   }
 
   function handleChangePage(newPage) {
@@ -300,10 +296,6 @@ export function ServiceOrdersPanel() {
       }
     })
     setSelectedRecords(newSelectedRecords);
-  }
-
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //

@@ -94,10 +94,19 @@ export function IncidentsPanel() {
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
+
+    let is_mounted = true;
+    if (!is_mounted) return '';
+
     setLoading(true);
     setRecords([]);
     setSelectedRecords([]);
     fetchRecords();
+
+    return () => {
+      is_mounted = false;
+    }
+
   }, [reload]);
 
   function fetchRecords() {
@@ -106,18 +115,15 @@ export function IncidentsPanel() {
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} incidentes`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} incidente`, "success");
-        }
+        enqueueSnackbar(`Incidentes encontrados: ${response.data.total_records}`, { variant: "success" });
       })
       .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
       })
       .finally(() => {
-        setLoading(false);
-      })
+        //setLoading(false);
+      });
+
   }
 
   function handleChangePage(newPage) {
@@ -143,10 +149,6 @@ export function IncidentsPanel() {
       }
     })
     setSelectedRecords(newSelectedRecords);
-  }
-
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
   }
 
   // ============================================================================== STRUCTURES ============================================================================== //

@@ -18,9 +18,9 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Libs
 import moment from 'moment';
 
-const initialFormData = { pilot_id: "", client_id: "", observation: "", status: "1", start_date: moment(), end_date: moment() };
+const initialFormData = { pilot_id: "0", client_id: "0", observation: "", start_date: moment(), end_date: moment() };
 const fieldError = { error: false, message: "" }
-const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, status: fieldError, date_interval: fieldError, flight_plans: fieldError };
+const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, date_interval: fieldError, flight_plans: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateOrder = React.memo((props) => {
@@ -204,7 +204,7 @@ export const CreateOrder = React.memo((props) => {
                 controlledInput={formData}
                 name={"start_date"}
                 label={"Data inicial"}
-                error={fieldError.date_interval}
+                error={formError.date_interval.error}
                 value={formData.start_date}
                 read_only={false}
               />
@@ -217,7 +217,7 @@ export const CreateOrder = React.memo((props) => {
                 controlledInput={formData}
                 name={"end_date"}
                 label={"Data final"}
-                error={fieldError.end_date}
+                error={false}
                 value={formData.end_date}
                 operation={"create"}
                 read_only={false}

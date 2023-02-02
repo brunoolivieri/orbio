@@ -10,7 +10,7 @@ import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 
 const fieldError = { error: false, message: "" }
-const initialFormError = { name: fieldError, flight_plan_id: fieldError };
+const initialFormError = { name: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateLog = React.memo((props) => {
@@ -39,7 +39,8 @@ export const UpdateLog = React.memo((props) => {
     }
 
     function handleSubmit() {
-        if (!formSubmissionValidation()) return ''
+        if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
     }
@@ -55,7 +56,7 @@ export const UpdateLog = React.memo((props) => {
     }
 
     async function requestServer() {
-
+        
         try {
 
             const response = await axios.patch(`/api/plans-module-logs/${formData.id}`, {
