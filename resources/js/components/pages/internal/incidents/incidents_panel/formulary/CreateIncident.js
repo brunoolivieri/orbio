@@ -1,9 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, FormHelperText, Divider, TextField } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, Divider, TextField } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -12,6 +9,7 @@ import axios from '../../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { GivenDataSelection } from '../../../../../shared/input_select/GivenDataSelection';
+import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 // Libs
 import moment from 'moment';
 
@@ -174,16 +172,15 @@ export const CreateIncident = React.memo((props) => {
           <Grid item container spacing={1} mt={1}>
 
             <Grid item xs={12}>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  label={"Data"}
-                  value={formData.date}
-                  onChange={handleInputChange}
-                  inputFormat="dd/MM/yyyy"
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-              {/* <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText> */}
+              <DatePicker
+                label={"Data"}
+                name={"date"}
+                value={formData.date}
+                setFormData={setFormData}
+                formData={formData}
+                error={formError.date.error}
+                errorMessage={formError.date.message}
+              />
             </Grid>
 
             <Grid item xs={12}>

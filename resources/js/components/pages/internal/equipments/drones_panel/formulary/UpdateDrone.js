@@ -15,7 +15,7 @@ const Input = styled('input')({
 });
 
 const fieldError = { error: false, message: "" };
-const initialFormError = { image: fieldError, name: fieldError, manufacturer: fieldError, model: fieldError, record_number: fieldError, serial_number: fieldError, weight: fieldError, observation: fieldError };
+const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, record_number: fieldError, serial_number: fieldError, weight: fieldError, observation: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateDrone = React.memo((props) => {
@@ -37,7 +37,7 @@ export const UpdateDrone = React.memo((props) => {
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
-    const [uploadedImage, setUploadedImage] = React.useState(null);
+    const [image, setImage] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const htmlImage = React.useRef();
 
@@ -56,9 +56,9 @@ export const UpdateDrone = React.memo((props) => {
 
     function handleSubmit() {
         if (!formSubmissionValidation()) return '';
+        
         setLoading(true);
         requestServer();
-
     }
 
     function formSubmissionValidation() {
@@ -71,11 +71,9 @@ export const UpdateDrone = React.memo((props) => {
             }
         }
 
-        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
-
         setFormError(validation);
 
-        return !(validation.name.error || validation.manufacturer.error || validation.record_number.error || validation.serial_number.error || validation.weight.error || validation.observation.error || validation.image.error);
+        return !(validation.name.error || validation.manufacturer.error || validation.record_number.error || validation.serial_number.error || validation.weight.error || validation.observation.error);
     }
 
     async function requestServer() {
@@ -90,15 +88,13 @@ export const UpdateDrone = React.memo((props) => {
         formData_.append("observation", formData.observation);
         formData_.append('_method', 'PATCH');
 
-        if (uploadedImage !== null) {
-            formData_.append("image", uploadedImage);
+        if (image !== null) {
+            formData_.append("image", image);
         }
 
         try {
-
             const response = await axios.post(`/api/equipments-module-drone/${formData.id}`, formData_);
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -137,7 +133,7 @@ export const UpdateDrone = React.memo((props) => {
             setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-            setUploadedImage(uploaded_file);
+            setImage(uploaded_file);
         } else {
             setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
@@ -281,7 +277,7 @@ export const UpdateDrone = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {formError.image.error ? formError.image.message : "Escolher imagem"}
+                                Escolher Imagem
                             </Button>
                         </label>
                     </Box>

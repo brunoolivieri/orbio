@@ -31,7 +31,7 @@ export const CreateDrone = React.memo((props) => {
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-    const [uploadedImage, setUploadedImage] = React.useState(null);
+    const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -50,9 +50,9 @@ export const CreateDrone = React.memo((props) => {
 
     function handleSubmit() {
         if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
-
     }
 
     function formSubmissionValidation() {
@@ -65,7 +65,7 @@ export const CreateDrone = React.memo((props) => {
             }
         }
 
-        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
+        validation["image"] = image === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
 
         setFormError(validation);
 
@@ -82,13 +82,11 @@ export const CreateDrone = React.memo((props) => {
         formData_.append("serial_number", formData.serial_number);
         formData_.append("weight", formData.weight);
         formData_.append("observation", formData.observation);
-        formData_.append("image", uploadedImage);
+        formData_.append("image", image);
 
         try {
-
             const response = await axios.post("/api/equipments-module-drone", formData_);
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -125,7 +123,7 @@ export const CreateDrone = React.memo((props) => {
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
             setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-            setUploadedImage(uploaded_file);
+            setImage(uploaded_file);
         } else {
             setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }

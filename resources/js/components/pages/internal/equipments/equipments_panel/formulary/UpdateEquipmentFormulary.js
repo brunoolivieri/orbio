@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Grid, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -18,7 +18,7 @@ const Input = styled('input')({
 });
 
 const fieldError = { error: false, message: "" };
-const initialFormError = { image: fieldError, name: fieldError, manufacturer: fieldError, model: fieldError, record_number: fieldError, serial_number: fieldError, weight: fieldError, observation: fieldError, purchase_date: fieldError };
+const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, record_number: fieldError, serial_number: fieldError, weight: fieldError, observation: fieldError, purchase_date: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateEquipment = React.memo((props) => {
@@ -60,6 +60,7 @@ export const UpdateEquipment = React.memo((props) => {
 
     function handleSubmit() {
         if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
     }
@@ -74,12 +75,11 @@ export const UpdateEquipment = React.memo((props) => {
             }
         }
 
-        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
         validation["purchase_date"] = formData.purchase_date ? { error: false, message: "" } : { error: true, message: "Informe a data da compra" };
 
         setFormError(validation);
 
-        return !(validation.name.error || validation.manufacturer.error || validation.record_number.error || validation.serial_number.error || validation.weight.error || validation.observation.error || validation.image.error || validation.purchase_date.error);
+        return !(validation.name.error || validation.manufacturer.error || validation.record_number.error || validation.serial_number.error || validation.weight.error || validation.observation.error || validation.purchase_date.error);
     }
 
     async function requestServer() {
@@ -283,14 +283,14 @@ export const UpdateEquipment = React.memo((props) => {
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                setControlledInput={setFormData}
-                                controlledInput={formData}
-                                name={"purchase_date"}
                                 label={"Data da compra"}
-                                error={fieldError.purchase_date}
+                                name={"puchase_date"}
                                 value={formData.purchase_date}
+                                setFormData={setFormData}
+                                formData={formData}
+                                error={formError.purchase_date.error}
+                                errorMessage={formError.purchase_date.message}
                             />
-                            <FormHelperText error>{formError.purchase_date.message}</FormHelperText>
                         </Grid>
                     </Grid>
 
@@ -298,7 +298,7 @@ export const UpdateEquipment = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {formError.image.error ? formError.image.message : "Escolher imagem"}
+                                Escolher Imagem
                             </Button>
                         </label>
                     </Box>

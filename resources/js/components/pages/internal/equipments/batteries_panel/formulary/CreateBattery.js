@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Divider, Grid } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -51,9 +51,9 @@ export const CreateBattery = React.memo((props) => {
 
     function handleSubmit() {
         if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
-
     }
 
     function formSubmissionValidation() {
@@ -85,10 +85,8 @@ export const CreateBattery = React.memo((props) => {
         formData_.append("image", uploadedImage);
 
         try {
-
             const response = await axios.post("/api/equipments-module-battery", formData_);
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -221,14 +219,14 @@ export const CreateBattery = React.memo((props) => {
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                setControlledInput={setFormData}
-                                controlledInput={formData}
+                                label={"Data da carga"}
                                 name={"last_charge"}
-                                label={"Data da última carga"}
-                                error={fieldError.last_charge}
                                 value={formData.last_charge}
+                                setFormData={setFormData}
+                                formData={formData}
+                                error={formError.last_charge.error}
+                                errorMessage={formError.last_charge.message}
                             />
-                            <FormHelperText error>{formError.last_charge.error}</FormHelperText>
                         </Grid>
 
                     </Grid>

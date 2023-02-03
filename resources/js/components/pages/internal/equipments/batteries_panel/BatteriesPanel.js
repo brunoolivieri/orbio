@@ -30,7 +30,7 @@ const columns = [
     {
         field: 'image',
         headerName: 'Image',
-        width: 100,
+        width: 125,
         sortable: false,
         editable: false,
         renderCell: (data) => {
@@ -48,12 +48,10 @@ const columns = [
     {
         field: 'manufacturer',
         headerName: 'Fabricante',
-        type: 'number',
         flex: 1,
         minWidth: 200,
-        headerAlign: 'left',
         sortable: true,
-        editable: false
+        editable: false,
     },
     {
         field: 'model',

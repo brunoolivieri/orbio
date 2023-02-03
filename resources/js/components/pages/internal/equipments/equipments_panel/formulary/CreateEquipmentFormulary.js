@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Grid, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -33,7 +33,7 @@ export const CreateEquipment = React.memo((props) => {
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-    const [uploadedImage, setUploadedImage] = React.useState(null);
+    const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -51,9 +51,9 @@ export const CreateEquipment = React.memo((props) => {
 
     function handleSubmit() {
         if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
-
     }
 
     function formSubmissionValidation() {
@@ -66,7 +66,7 @@ export const CreateEquipment = React.memo((props) => {
             }
         }
 
-        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
+        validation["image"] = image === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
         validation["purchase_date"] = formData.purchase_date ? { error: false, message: "" } : { error: true, message: "Informe a data da compra" };
 
         setFormError(validation);
@@ -85,14 +85,12 @@ export const CreateEquipment = React.memo((props) => {
         formData_.append("serial_number", formData.serial_number);
         formData_.append("weight", formData.weight);
         formData_.append("observation", formData.observation);
-        formData_.append("image", uploadedImage);
+        formData_.append("image", image);
         formData_.append("purchase_date", moment(formData.purchase_date).format('YYYY-MM-DD'));
 
         try {
-
             const response = await axios.post("/api/equipments-module-equipment", formData_);
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -129,7 +127,7 @@ export const CreateEquipment = React.memo((props) => {
         if (file && file.type.startsWith('image/')) {
             setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(file);
-            setUploadedImage(event.target.files[0]);
+            setImage(event.target.files[0]);
         } else {
             setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
@@ -270,14 +268,14 @@ export const CreateEquipment = React.memo((props) => {
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                setControlledInput={setFormData}
-                                controlledInput={formData}
-                                name={"purchase_date"}
                                 label={"Data da compra"}
-                                error={formError.purchase_date.error}
+                                name={"puchase_date"}
                                 value={formData.purchase_date}
+                                setFormData={setFormData}
+                                formData={formData}
+                                error={formError.purchase_date.error}
+                                errorMessage={formError.purchase_date.message}
                             />
-                            <FormHelperText error>{formError.purchase_date.message}</FormHelperText>
                         </Grid>
                     </Grid>
 

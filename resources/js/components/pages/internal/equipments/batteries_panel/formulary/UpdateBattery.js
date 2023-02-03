@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, FormHelperText, Divider, Grid } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -18,7 +18,7 @@ const Input = styled('input')({
 });
 
 const fieldError = { error: false, message: "" };
-const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError };
+const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateBattery = React.memo((props) => {
@@ -50,9 +50,9 @@ export const UpdateBattery = React.memo((props) => {
 
     function handleSubmit() {
         if (!formSubmissionValidation()) return '';
+
         setLoading(true);
         requestServer();
-
     }
 
     function formSubmissionValidation() {
@@ -66,11 +66,10 @@ export const UpdateBattery = React.memo((props) => {
         }
 
         validation["last_charge"] = formData["last_charge"] ? { error: false, message: "" } : { error: true, message: "Informe a data da última carga" };
-        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
 
         setFormError(validation);
 
-        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error || validation.image.error);
+        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error);
     }
 
     async function requestServer() {
@@ -88,10 +87,8 @@ export const UpdateBattery = React.memo((props) => {
         }
 
         try {
-
             const response = await axios.post(`/api/equipments-module-battery/${formData.id}`, formData_);
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -222,14 +219,14 @@ export const UpdateBattery = React.memo((props) => {
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                setControlledInput={setFormData}
-                                controlledInput={formData}
+                                label={"Data da carga"}
                                 name={"last_charge"}
-                                label={"Data da última carga"}
-                                error={fieldError.last_charge}
                                 value={formData.last_charge}
+                                setFormData={setFormData}
+                                formData={formData}
+                                error={formError.last_charge.error}
+                                errorMessage={formError.last_charge.message}
                             />
-                            <FormHelperText error>{formError.last_charge.error}</FormHelperText>
                         </Grid>
 
                     </Grid>
@@ -238,7 +235,7 @@ export const UpdateBattery = React.memo((props) => {
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="image" onChange={handleUploadedImage} />
                             <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {formError.image.error ? formError.image.message : "Escolher imagem"}
+                                Escolher imagem
                             </Button>
                         </label>
                     </Box>

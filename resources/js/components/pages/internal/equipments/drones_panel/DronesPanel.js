@@ -28,7 +28,7 @@ const columns = [
     {
         field: 'image',
         headerName: 'Image',
-        width: 100,
+        width: 125,
         sortable: false,
         editable: false,
         renderCell: (data) => {
