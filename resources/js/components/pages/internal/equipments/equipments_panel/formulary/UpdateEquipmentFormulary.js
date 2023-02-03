@@ -41,7 +41,7 @@ export const UpdateEquipment = React.memo((props) => {
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
-    const [uploadedImage, setUploadedImage] = React.useState(null);
+    const [image, setImage] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const htmlImage = React.useRef();
 
@@ -71,7 +71,7 @@ export const UpdateEquipment = React.memo((props) => {
 
         for (let field in formData) {
             if (field != "image" && field != "purchase_date") {
-                validation[field] = FormValidation(formData[field], 3, 255);
+                validation[field] = FormValidation(formData[field]);
             }
         }
 
@@ -92,19 +92,16 @@ export const UpdateEquipment = React.memo((props) => {
         formData_.append("serial_number", formData.serial_number);
         formData_.append("weight", formData.weight);
         formData_.append("observation", formData.observation);
-        formData_.append("image", uploadedImage);
         formData_.append("purchase_date", moment(formData.purchase_date).format('YYYY-MM-DD'));
         formData_.append('_method', 'PATCH');
 
-        if (uploadedImage !== null) {
-            formData_.append("image", uploadedImage);
+        if (image) {
+            formData_.append("image", image);
         }
 
         try {
-
             const response = await axios.post(`/api/equipments-module-equipment/${formData.id}`, formData_);
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -122,18 +119,19 @@ export const UpdateEquipment = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        setDisplayAlert({ display: true, type: "error", message: response.data.message });
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
+        setDisplayAlert({ display: true, type: "error", message: error_message });
 
-        let response_errors = {}
-
-        for (let field in response.data.errors) {
-            response_errors[field] = {
-                error: true,
-                message: response.data.errors[field][0]
+        if (response.data.errors) {
+            let response_errors = {}
+            for (let field in response.data.errors) {
+                response_errors[field] = {
+                    error: true,
+                    message: response.data.errors[field][0]
+                }
             }
+            setFormError(response_errors);
         }
-
-        setFormError(response_errors);
     }
 
     function handleUploadedImage(event) {
@@ -142,7 +140,7 @@ export const UpdateEquipment = React.memo((props) => {
             setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-            setUploadedImage(event.target.files[0]);
+            setImage(event.target.files[0]);
         } else {
             setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
@@ -185,9 +183,9 @@ export const UpdateEquipment = React.memo((props) => {
                                 variant="outlined"
                                 name="name"
                                 onChange={handleInputChange}
-                                helperText={formData.name}
+                                helperText={formError.name.message}
                                 error={formError.name.error}
-                                value={formError.name.message}
+                                value={formData.name}
                             />
                         </Grid>
 

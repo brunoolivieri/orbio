@@ -105,18 +105,19 @@ export const CreateProfile = React.memo((props) => {
   }
 
   function errorResponse(response) {
-    setDisplayAlert({ display: true, type: "error", message: response.data.message });
+    const error_message = response.data.message ? response.data.message : "Erro do servidor";
+    setDisplayAlert({ display: true, type: "error", message: error_message });
 
-    let response_errors = {}
-
-    for (let field in response.data.errors) {
-      response_errors[field] = {
-        error: true,
-        message: response.data.errors[field][0]
+    if (response.data.errors) {
+      let response_errors = {}
+      for (let field in response.data.errors) {
+        response_errors[field] = {
+          error: true,
+          message: response.data.errors[field][0]
+        }
       }
+      setFormError(response_errors);
     }
-
-    setFormError(response_errors);
   }
 
   function handleInputChange(event) {

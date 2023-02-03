@@ -44,7 +44,7 @@ class EquipmentService implements ServiceInterface
     }
 
     public function updateOne(array $data, string $identifier)
-    {
+    {   
         if (isset($data['image'])) {
 
             // Filename is the hash of the content

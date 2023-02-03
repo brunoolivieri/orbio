@@ -32,7 +32,7 @@ export const UpdateBattery = React.memo((props) => {
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
-    const [uploadedImage, setUploadedImage] = React.useState(null);
+    const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -82,8 +82,8 @@ export const UpdateBattery = React.memo((props) => {
         formData_.append("last_charge", moment(formData.last_charge).format('YYYY-MM-DD'));
         formData_.append('_method', 'PATCH');
 
-        if (uploadedImage) {
-            formData_.append("image", uploadedImage);
+        if (image) {
+            formData_.append("image", image);
         }
 
         try {
@@ -105,26 +105,28 @@ export const UpdateBattery = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        setDisplayAlert({ display: true, type: "error", message: response.data.message });
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
+        setDisplayAlert({ display: true, type: "error", message: error_message });
 
-        let response_errors = {}
-
-        for (let field in response.data.errors) {
-            response_errors[field] = {
-                error: true,
-                message: response.data.errors[field][0]
+        if (response.data.errors) {
+            let response_errors = {}
+            for (let field in response.data.errors) {
+                response_errors[field] = {
+                    error: true,
+                    message: response.data.errors[field][0]
+                }
             }
+            setFormError(response_errors);
         }
-
-        setFormError(response_errors);
     }
 
     function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
             setDisplayAlert(initialDisplayAlert);
+            htmlImage.current.src = "";
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-            setUploadedImage(event.target.files[0]);
+            setImage(event.target.files[0]);
         } else {
             setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }

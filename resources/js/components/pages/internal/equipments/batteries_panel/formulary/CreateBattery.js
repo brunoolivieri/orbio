@@ -33,7 +33,7 @@ export const CreateBattery = React.memo((props) => {
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
-    const [uploadedImage, setUploadedImage] = React.useState(null);
+    const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -67,7 +67,7 @@ export const CreateBattery = React.memo((props) => {
         }
 
         validation["last_charge"] = formData["last_charge"] ? { error: false, message: "" } : { error: true, message: "Informe a data da última carga" };
-        validation["image"] = uploadedImage === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
+        validation["image"] = image === null ? { error: true, message: "Selecione uma imagem" } : { error: false, message: "" };
 
         setFormError(validation);
 
@@ -82,7 +82,7 @@ export const CreateBattery = React.memo((props) => {
         formData_.append("model", formData.model);
         formData_.append("serial_number", formData.serial_number);
         formData_.append("last_charge", moment(formData.last_charge).format('YYYY-MM-DD'));
-        formData_.append("image", uploadedImage);
+        formData_.append("image", image);
 
         try {
             const response = await axios.post("/api/equipments-module-battery", formData_);
@@ -104,18 +104,19 @@ export const CreateBattery = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        setDisplayAlert({ display: true, type: "error", message: response.data.message });
+        const error_message = response.data.message ? response.data.message : "Erro do servidor";
+        setDisplayAlert({ display: true, type: "error", message: error_message });
 
-        let response_errors = {}
-
-        for (let field in response.data.errors) {
-            response_errors[field] = {
-                error: true,
-                message: response.data.errors[field][0]
+        if (response.data.errors) {
+            let response_errors = {}
+            for (let field in response.data.errors) {
+                response_errors[field] = {
+                    error: true,
+                    message: response.data.errors[field][0]
+                }
             }
+            setFormError(response_errors);
         }
-
-        setFormError(response_errors);
     }
 
     function handleUploadedImage(event) {
@@ -123,7 +124,7 @@ export const CreateBattery = React.memo((props) => {
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
             setDisplayAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
-            setUploadedImage(uploaded_file);
+            setImage(uploaded_file);
         } else {
             setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
