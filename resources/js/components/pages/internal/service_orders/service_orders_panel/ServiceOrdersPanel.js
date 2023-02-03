@@ -58,12 +58,10 @@ const columns = [
   {
     field: 'creator',
     headerName: 'Criador',
-    type: 'number',
-    flex: 1,
-    minWidth: 200,
-    headerAlign: 'left',
     sortable: true,
     editable: false,
+    flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
 
       function chipStyle(is_deleted, status) {
@@ -166,45 +164,9 @@ const columns = [
         progress_days = total_days;
       }
 
-      const title = `
-      Início: ${start_date}
-      Término: ${final_date}
-      Total (dias): ${total_days}
-      Progresso (dias): ${progress_days}
-      `;
-
-      return (
-        <>
-          <Tooltip title={title}>
-            <Chip
-              label={progress_percentage + "%"}
-              variant="outlined"
-              deleteIcon={<InfoIcon />}
-            />
-          </Tooltip>
-        </>
-      )
+      return `${Math.floor(progress_percentage)}% (${Math.floor(progress_days)} de ${Math.floor(total_days)} dias)`;
 
     }
-  },
-  {
-    field: 'flight_plans',
-    headerName: 'Planos de voo',
-    sortable: true,
-    editable: false,
-    width: 150,
-    align: 'center',
-    valueGetter: (data) => {
-      return data.row.flight_plans.length;
-    }
-  },
-  {
-    field: 'total_incidents',
-    headerName: 'Incidentes',
-    sortable: true,
-    editable: false,
-    width: 150,
-    align: 'center'
   },
   {
     field: 'report',
@@ -270,7 +232,7 @@ export function ServiceOrdersPanel() {
       .finally(() => {
         setLoading(false);
       });
-      
+
   }
 
   function handleChangePage(newPage) {

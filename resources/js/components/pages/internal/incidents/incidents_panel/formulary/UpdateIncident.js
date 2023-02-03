@@ -1,17 +1,17 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, FormHelperText, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider } from '@mui/material';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Outros
-import moment from 'moment';
 // Custom
+import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
-import { GivenDataSelection } from '../../../../../shared/input_select/GivenDataSelection';
+// Outros
+import moment from 'moment';
 
 const fieldError = { error: false, message: "" }
 const initialFormError = { type: fieldError, description: fieldError, date: fieldError, flight_plan_id: fieldError, service_order_id: fieldError }
@@ -19,42 +19,20 @@ const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateIncident = React.memo((props) => {
 
-  React.useEffect(() => {
-    setSelectedServiceOrder("0");
-  }, [selectedFlightPlan])
-
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
 
-  const [formData, setFormData] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date });
+  const [formData, setFormData] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date, flight_plan_id: props.record.service_order.flight_plan.id, service_order_id: props.record.service_order.id });
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
-  // Select Inputs
-  const [serviceOrdersByFlightPlan, setServiceOrdersByFlightPlan] = React.useState([]);
-  const [flightPlans, setFlightPlans] = React.useState([]);
-  const [selectedFlightPlan, setSelectedFlightPlan] = React.useState("");
-  const [selectedServiceOrder, setSelectedServiceOrder] = React.useState("");
-
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   function handleOpen() {
     setOpen(true);
-
-    axios.get("/api/load-flight-plans", {
-    })
-      .then(function (response) {
-        setFlightPlans(response.data);
-        setSelectedFlightPlan(props.record.service_order.flight_plan.id);
-        setSelectedServiceOrder(props.record.service_order.id);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        errorResponse(error.response);
-      });
   }
 
   function handleClose() {
@@ -63,19 +41,6 @@ export const UpdateIncident = React.memo((props) => {
     setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
   }
-
-  React.useEffect(() => {
-    const url = "/api/load-service-orders-by-flight-plan?flight_plan_id=" + selectedFlightPlan;
-    axios.get(url, {
-    })
-      .then(function (response) {
-        setServiceOrdersByFlightPlan(response.data);
-      })
-      .catch(function (error) {
-        setLoading(false);
-        errorResponse(error.response);
-      });
-  }, [selectedFlightPlan]);
 
   function handleSubmit() {
     if (!formSubmissionValidation()) return ''
@@ -91,8 +56,8 @@ export const UpdateIncident = React.memo((props) => {
     validation["type"] = FormValidation(formData["type"], 3, 255);
     validation["date"] = formData.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     validation["description"] = FormValidation(formData["description"], 3, 255);
-    validation["flight_plan_id"] = selectedFlightPlan != "0" ? { error: false, message: "" } : { error: false, message: "Selecione um plano de voo" };
-    validation["service_order_id"] = selectedServiceOrder != "0" ? { error: false, message: "" } : { error: false, message: "Selecione uma ordem de serviço" };
+    validation["flight_plan_id"] = formData.flight_plan_id != "0" ? { error: false, message: "" } : { error: false, message: "Selecione um plano de voo" };
+    validation["service_order_id"] = formData.service_order_id != "0" ? { error: false, message: "" } : { error: false, message: "Selecione uma ordem de serviço" };
 
     setFormError(validation);
 
@@ -107,8 +72,8 @@ export const UpdateIncident = React.memo((props) => {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
         description: formData.description,
-        flight_plan_id: selectedFlightPlan,
-        service_order_id: selectedServiceOrder
+        flight_plan_id: formData.flight_plan_id,
+        service_order_id: formData.service_order_id
       });
 
       successResponse(response);
@@ -216,29 +181,33 @@ export const UpdateIncident = React.memo((props) => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <GivenDataSelection
+              <FetchedDataSelection
                 label_text={"Plano de voo"}
+                fetch_from={"/api/load-flight-plans"}
                 primary_key={"id"}
                 key_content={"name"}
-                setSelection={setSelectedFlightPlan}
-                options={flightPlans}
                 error={formError.flight_plan_id.error}
-                selected={selectedFlightPlan}
+                name={"flight_plan_id"}
+                selected={formData.flight_plan_id}
+                setFormData={setFormData}
+                formData={formData}
               />
-              <FormHelperText error>{formError.flight_plan_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <GivenDataSelection
-                label_text={"Ordem de serviço"}
-                primary_key={"id"}
-                key_content={"number"}
-                setSelection={setSelectedServiceOrder}
-                options={serviceOrdersByFlightPlan}
-                error={formError.service_order_id.error}
-                selected={selectedServiceOrder}
-              />
-              <FormHelperText error>{formError.service_order_id.message}</FormHelperText>
+              {formData.flight_plan_id != "0" &&
+                <FetchedDataSelection
+                  label_text={"Ordem de serviço"}
+                  fetch_from={`api/load-service-orders/${formData.flight_plan_id}`}
+                  primary_key={"id"}
+                  key_content={"number"}
+                  error={formError.service_order_id.error}
+                  name={"service_order_id"}
+                  selected={formData.service_order_id}
+                  setFormData={setFormData}
+                  formData={formData}
+                />
+              }
             </Grid>
 
           </Grid>

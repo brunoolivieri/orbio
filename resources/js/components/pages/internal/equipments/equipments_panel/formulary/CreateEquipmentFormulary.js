@@ -269,12 +269,11 @@ export const CreateEquipment = React.memo((props) => {
 
                         <Grid item xs={12} mt={1}>
                             <DatePicker
-                                label={"Data da compra"}
+                                label={"Compra"}
                                 name={"puchase_date"}
                                 value={formData.purchase_date}
                                 setFormData={setFormData}
                                 formData={formData}
-                                error={formError.purchase_date.error}
                                 errorMessage={formError.purchase_date.message}
                             />
                         </Grid>

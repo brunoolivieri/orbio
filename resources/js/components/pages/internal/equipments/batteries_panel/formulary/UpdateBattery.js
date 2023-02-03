@@ -226,7 +226,6 @@ export const UpdateBattery = React.memo((props) => {
                                 value={formData.last_charge}
                                 setFormData={setFormData}
                                 formData={formData}
-                                error={formError.last_charge.error}
                                 errorMessage={formError.last_charge.message}
                             />
                         </Grid>

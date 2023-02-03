@@ -28,6 +28,7 @@ class ServiceOrderUpdateRequest extends FormRequest
             "start_date" => ['required', 'date'],
             "end_date" => ['required', 'date'],
             "pilot_id" => ['required', 'numeric'],
+            "creator_id" => ['required', 'numeric'],
             "client_id" => ['required', 'numeric'],
             "observation" => ['required', 'string'],
             "flight_plans" => ['required', 'array']
@@ -46,6 +47,7 @@ class ServiceOrderUpdateRequest extends FormRequest
             'end_date.required' => "A data final deve ser informada",
             'pilot_id.required' => "O piloto deve ser selecionado",
             'client_id.required' => "O cliente deve ser selecionado",
+            'creator_id.required' => "O criador deve ser informado",
             'observation.required' => "A observação deve ser informada",
             'flight_plans.required' => "Selecione no mínimo 1 plano de voo"
         ];

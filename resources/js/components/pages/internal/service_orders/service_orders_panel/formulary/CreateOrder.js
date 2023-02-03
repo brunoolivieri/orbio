@@ -5,9 +5,9 @@ import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Custom
+import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
-import { FormValidation } from '../../../../../../utils/FormValidation';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
@@ -20,7 +20,7 @@ import moment from 'moment';
 
 const initialFormData = { pilot_id: "0", client_id: "0", observation: "", start_date: moment(), end_date: moment() };
 const fieldError = { error: false, message: "" }
-const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, date_interval: fieldError, flight_plans: fieldError };
+const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, start_date: fieldError, flight_plans: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateOrder = React.memo((props) => {
@@ -75,16 +75,16 @@ export const CreateOrder = React.memo((props) => {
   function handleClose() {
     setOpen(false);
     setLoading(false);
-    setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
+    setFormError(initialFormError);
     setFormData(formData);
     setSelectedFlightPlans([]);
   }
 
   function handleSubmit() {
-
     if (!formSubmissionValidation()) return '';
 
+    setLoading(true);
     requestServer();
   }
 
@@ -92,7 +92,7 @@ export const CreateOrder = React.memo((props) => {
 
     let validation = Object.assign({}, formError);
 
-    validation["date_interval"] = moment(formData.start_date).format('YYYY-MM-DD') < moment(formData.end_date).format('YYYY-MM-DD') ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
+    validation["start_date"] = moment(formData.start_date) < moment(formData.end_date) ? { error: false, message: '' } : { error: true, message: 'A data inicial deve anteceder a final' };
     validation["pilot_id"] = Number(formData.pilot_id) != 0 ? { error: false, message: "" } : { error: true, message: "O piloto deve ser selecionado" };
     validation["client_id"] = Number(formData.client_id) != 0 ? { error: false, message: "" } : { error: true, message: "O cliente deve ser selecionado" };
     validation["observation"] = FormValidation(formData.observation, 3, 255);
@@ -100,13 +100,12 @@ export const CreateOrder = React.memo((props) => {
 
     setFormError(validation);
 
-    return !(validation.date_interval.error || validation.client_id.error || validation.pilot_id.error || validation.observation.error || validation.flight_plans.error);
+    return !(validation.start_date.error || validation.client_id.error || validation.pilot_id.error || validation.observation.error || validation.flight_plans.error);
+
 
   }
 
   async function requestServer() {
-
-    setLoading(true);
 
     try {
 
@@ -201,27 +200,23 @@ export const CreateOrder = React.memo((props) => {
 
             <Grid item sx={6}>
               <DatePicker
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                label={"Início"}
                 name={"start_date"}
-                label={"Data inicial"}
-                error={formError.date_interval.error}
                 value={formData.start_date}
-                read_only={false}
+                setFormData={setFormData}
+                formData={formData}
+                errorMessage={formError.start_date.message}
               />
-              <FormHelperText error>{formError.date_interval.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
               <DatePicker
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                label={"Término"}
                 name={"end_date"}
-                label={"Data final"}
-                error={false}
                 value={formData.end_date}
-                operation={"create"}
-                read_only={false}
+                setFormData={setFormData}
+                formData={formData}
+                errorMessage={""}
               />
             </Grid>
 
@@ -232,7 +227,7 @@ export const CreateOrder = React.memo((props) => {
                 primary_key={"id"}
                 key_content={"name"}
                 setFormData={setFormData}
-                controlledInput={formData}
+                formData={formData}
                 error={formError.pilot_id.error}
                 selected={formData.pilot_id}
                 name={"pilot_id"}

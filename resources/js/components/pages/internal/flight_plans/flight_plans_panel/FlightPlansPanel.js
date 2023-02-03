@@ -73,39 +73,6 @@ const columns = [
     }
   },
   {
-    field: 'service_orders',
-    headerName: 'Ordens de serviço',
-    width: 160,
-    align: 'center',
-    sortable: true,
-    editable: false,
-    valueGetter: (data) => {
-      return data.row.service_orders.data.length;
-    }
-  },
-  {
-    field: 'logs',
-    headerName: 'Logs',
-    sortable: true,
-    editable: false,
-    width: 120,
-    align: 'center',
-    valueGetter: (data) => {
-      return data.row.logs.length;
-    }
-  },
-  {
-    field: 'incidents',
-    headerName: 'Incidentes',
-    sortable: true,
-    editable: false,
-    width: 150,
-    align: 'center',
-    valueGetter: (data) => {
-      return data.row.total_incidents;
-    }
-  },
-  {
     field: 'open',
     headerName: 'Abrir',
     width: 150,

@@ -52,6 +52,7 @@ class IncidentsPanelResource extends JsonResource
 
             $this->formatedData["records"][$row]["service_order"]["flight_plan"] = [
                 "id" => $flight_plan->id,
+                "image_url" => Storage::url($flight_plan->image->path),
                 "creator" => [
                     "name" => $flight_plan->user->name,
                     "email" => $flight_plan->user->email,

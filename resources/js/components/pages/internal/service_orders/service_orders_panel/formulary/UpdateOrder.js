@@ -127,6 +127,7 @@ export const UpdateOrder = React.memo((props) => {
         end_date: moment(formData.end_date).format('YYYY-MM-DD hh:mm:ss'),
         pilot_id: formData.pilot_id,
         client_id: formData.client_id,
+        creator_id: props.record.users.creator.id,
         observation: formData.observation,
         flight_plans: selectedFlightPlans
       });
@@ -214,27 +215,23 @@ export const UpdateOrder = React.memo((props) => {
 
             <Grid item sx={6}>
               <DatePicker
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                label={"Início"}
                 name={"start_date"}
-                label={"Data inicial"}
-                error={formError.date_interval.error}
                 value={formData.start_date}
-                read_only={false}
+                setFormData={setFormData}
+                formData={formData}
+                errorMessage={formError.date_interval.message}
               />
-              <FormHelperText error>{formError.date_interval.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
               <DatePicker
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                label={"Término"}
                 name={"end_date"}
-                label={"Data final"}
-                error={null}
                 value={formData.end_date}
-                operation={"create"}
-                read_only={false}
+                setFormData={setFormData}
+                formData={formData}
+                errorMessage={""}
               />
             </Grid>
 
@@ -245,7 +242,7 @@ export const UpdateOrder = React.memo((props) => {
                 primary_key={"id"}
                 key_content={"name"}
                 setFormData={setFormData}
-                controlledInput={formData}
+                formData={formData}
                 error={formError.pilot_id.error}
                 selected={formData.pilot_id}
                 name={"pilot_id"}

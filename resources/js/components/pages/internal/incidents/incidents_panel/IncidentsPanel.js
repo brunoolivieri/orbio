@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Link } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Custom
@@ -11,10 +11,10 @@ import { UpdateIncident } from './formulary/UpdateIncident';
 import { DeleteIncident } from './formulary/DeleteIncident';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
+import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -47,18 +47,14 @@ const columns = [
     editable: false
   },
   {
-    field: 'flight_plan',
+    field: 'image_url',
     headerName: 'Plano de voo',
     sortable: true,
     editable: false,
     minWidth: 150,
     renderCell: (data) => {
       return (
-        <Link href={`/internal/map?file=${data.row.service_order.flight_plan.file}`} target="_blank">
-          <IconButton>
-            <FontAwesomeIcon icon={faEye} color={"#00713A"} size="sm" />
-          </IconButton>
-        </Link>
+        <ModalImage image_url={data.row.service_order.flight_plan.image_url} />
       )
     }
   },
@@ -90,7 +86,7 @@ export function IncidentsPanel() {
   const [reload, setReload] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
-
+  console.log(records)
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
@@ -121,7 +117,7 @@ export function IncidentsPanel() {
         enqueueSnackbar(error.response.data.message, { variant: "error" });
       })
       .finally(() => {
-        //setLoading(false);
+        setLoading(false);
       });
 
   }
@@ -251,6 +247,7 @@ export function IncidentsPanel() {
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
           checkboxSelection
+          rowHeight={70}
           disableSelectionOnClick
           paginationMode='server'
           experimentalFeatures={{ newEditingApi: true }}

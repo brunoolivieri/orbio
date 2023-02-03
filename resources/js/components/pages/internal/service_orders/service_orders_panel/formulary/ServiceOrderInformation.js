@@ -116,7 +116,7 @@ export const ServiceOrderInformation = React.memo((props) => {
 
                     {props.record.flight_plans.length > 0 &&
                         <Grid item xs={12} md={6}>
-                            <Button variant="contained">Visualizar</Button>
+                            <Button variant="contained" disabled>Visualizar</Button>
                         </Grid>
                     }
 

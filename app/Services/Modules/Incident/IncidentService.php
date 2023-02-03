@@ -19,7 +19,7 @@ class IncidentService implements ServiceInterface
     public function getPaginate(string $limit, string $page, string $search)
     {
         $data = $this->repository->getPaginate($limit, $page, $search);
-
+       
         if ($data->total() > 0) {
             return response(new IncidentsPanelResource($data), 200);
         } else {

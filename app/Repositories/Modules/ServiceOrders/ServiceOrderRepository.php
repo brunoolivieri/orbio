@@ -75,15 +75,15 @@ class ServiceOrderRepository implements RepositoryInterface
             // ==== First step: Update service order ==== //
 
             $service_order = $this->serviceOrderModel->findOrFail($identifier);
-           
+            
             $service_order->update($data->only(["start_date", "end_date", "observation"])->all());
 
             // ==== Second step: Update service order users relationship ==== //
-
+            
             $creator = $this->userModel->findOrFail($data->get('creator_id'));
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
-
+            
             $service_order->users()->sync([
                 $creator->id, ['role' => "creator"],
                 $pilot->id => ['role' => "pilot"],
