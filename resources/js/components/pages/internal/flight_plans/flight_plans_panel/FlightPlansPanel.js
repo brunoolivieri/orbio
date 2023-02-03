@@ -12,7 +12,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faMap } from '@fortawesome/free-solid-svg-icons';
 import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
@@ -30,7 +29,7 @@ const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
     field: 'image',
-    headerName: 'Ver plano',
+    headerName: 'Visualização',
     width: 130,
     sortable: false,
     editable: false,
@@ -70,22 +69,6 @@ const columns = [
     width: 130,
     valueGetter: (data) => {
       return moment(data.row.created_at).format("DD/MM/YYYY")
-    }
-  },
-  {
-    field: 'open',
-    headerName: 'Abrir',
-    width: 150,
-    sortable: false,
-    align: 'center',
-    renderCell: (data) => {
-      return (
-        <IconButton>
-          <Link href={`/internal/map?file=${data.row.file}`} target="_blank">
-            <FontAwesomeIcon icon={faMap} color={"#00713A"} size="sm" />
-          </Link>
-        </IconButton>
-      )
     }
   },
   {

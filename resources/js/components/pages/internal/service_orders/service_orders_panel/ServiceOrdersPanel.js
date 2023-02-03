@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-import InfoIcon from '@mui/icons-material/Info';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -37,7 +36,7 @@ const columns = [
     renderCell: (data) => {
 
       function chipStyle(status) {
-        return status ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
+        return status.toString() === "1" ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
       }
 
       const chip_style = chipStyle(data.row.status);

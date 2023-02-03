@@ -128,6 +128,7 @@ export const UpdateOrder = React.memo((props) => {
         pilot_id: formData.pilot_id,
         client_id: formData.client_id,
         creator_id: props.record.users.creator.id,
+        status: formData.status,
         observation: formData.observation,
         flight_plans: selectedFlightPlans
       });
@@ -338,9 +339,9 @@ export const UpdateOrder = React.memo((props) => {
 
             <Grid item xs={6}>
               <StatusRadio
-                default={1}
-                setControlledInput={setFormData}
-                controlledInput={formData}
+                default={formData.status.toString()}
+                setFormData={setFormData}
+                formData={formData}
               />
             </Grid>
 

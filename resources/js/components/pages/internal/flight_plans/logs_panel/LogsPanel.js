@@ -25,6 +25,16 @@ import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
+        field: 'log_image',
+        headerName: 'Visualização',
+        sortable: false,
+        editable: false,
+        minWidth: 130,
+        renderCell: (data) => {
+            return <ModalImage image_url={data.row.image_url} />
+        }
+    },
+    {
         field: 'name',
         headerName: 'Nome',
         flex: 1,
@@ -62,16 +72,6 @@ const columns = [
                 <Chip {...chip_style} />
             )
         },
-    },
-    {
-        field: 'log_image',
-        headerName: 'Ver imagem',
-        sortable: false,
-        editable: false,
-        minWidth: 130,
-        renderCell: (data) => {
-            return <ModalImage image_url={data.row.image_url} />
-        }
     },
     {
         field: 'export_txt',
