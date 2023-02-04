@@ -1571,17 +1571,17 @@ function flightPlanImageConfirmation() {
 
 		// Set canvas into confirmation modal
 		canvas.toBlob(function (blobImg) {
-
 			var image = document.createElement("img");
 			const blobUrl = URL.createObjectURL(blobImg)
 			image.setAttribute("src", blobUrl);
-			image.setAttribute("max-width", "100%");
-			image.setAttribute("height", "100%");
 			image.setAttribute("id", "image");
+			image.style.maxWidth = '100%';
+			image.style.height = 'auto';
+			image.style.display = 'block';
+			image.style.margin = '0 auto'
 			let div = document.getElementsByClassName("flight_plan_image")[0];
 			div.replaceChildren([]);
 			div.appendChild(image);
-
 		});
 
 		flightPlanData = {
