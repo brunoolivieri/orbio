@@ -121,16 +121,16 @@ Route::middleware(["session.auth"])->group(function () {
         Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/service-order/logs", LogsForServiceOrderFlightPlansController::class);
     });
-
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
+    Route::get('api/get-weather-data', WeatherDataController::class);
+    Route::get("api/load-service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
+    
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);
     Route::get('api/load-equipments', LoadEquipmentsController::class);
-    Route::get('api/get-weather-data', WeatherDataController::class);
     Route::get("api/load-users", LoadUsersController::class);
     Route::get("api/load-profiles", LoadProfilesController::class);
     Route::get("api/load-flight-plans", LoadFlightPlansController::class);
-    Route::get("api/load-service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
     Route::get("api/load-service-orders", LoadServiceOrdersController::class);
     Route::get("api/load-incidents", LoadIncidentsController::class);
     Route::get("api/load-reports", LoadReportsController::class);

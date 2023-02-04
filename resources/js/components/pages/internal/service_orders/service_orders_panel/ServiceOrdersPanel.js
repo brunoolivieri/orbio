@@ -278,7 +278,7 @@ export function ServiceOrdersPanel() {
         </Grid>
 
         <Grid item>
-          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+          {(selectedRecords.length === 0 || selectedRecords.length > 1 || selectedRecords[0].finished) &&
             <Tooltip title="Selecione um registro">
               <IconButton>
                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
@@ -286,7 +286,7 @@ export function ServiceOrdersPanel() {
             </Tooltip>
           }
 
-          {(!loading && selectedRecords.length === 1) &&
+          {(!loading && selectedRecords.length === 1 && !selectedRecords[0].finished) &&
             <UpdateOrder record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
