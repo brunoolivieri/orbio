@@ -68,7 +68,7 @@ export function AdditionalConfiguration() {
 
         try {
 
-            const response = axios.post(`/api/update-password/${user.id}`, formData);
+            const response = axios.patch(`api/myprofile/change-password/${user.id}`, formData);
             enqueueSnackbar(response.data.message, { variant: "success" });
 
         } catch (error) {

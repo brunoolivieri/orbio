@@ -2,19 +2,35 @@
 
 use Illuminate\Support\Facades\Route;
 // Authentication Actions
-use App\Http\Controllers\Actions\Authentication\{
+use App\Http\Controllers\Authentication\{
     LoginController,
     LogoutController,
     PasswordResetController,
     PasswordTokenController,
     UserAuthenticatedData
 };
-// Api Actions
-use App\Http\Controllers\Actions\Api\{
-    WeatherDataController
+// Modules and its specific actions
+use App\Http\Controllers\Modules\Dashboard\DashboardController;
+use App\Http\Controllers\Modules\MyProfile\MyProfileController;
+use App\Http\Controllers\Modules\Administration\{
+    AdministrationModuleUsersController,
+    AdministrationModuleProfilesController
 };
-// Dashboard Action
-use App\Http\Controllers\Actions\Dashboard\DashboardController;
+use App\Http\Controllers\Modules\Report\{
+    ReportModuleController,
+    Actions\WeatherDataController
+};
+use App\Http\Controllers\Modules\FlightPlan\{
+    FlightPlanModuleController,
+    FlightPlanModuleLogController
+};
+use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
+use App\Http\Controllers\Modules\Incident\IncidentModuleController;
+use App\Http\Controllers\Modules\Equipment\{
+    EquipmentModuleBatteryController,
+    EquipmentModuleDroneController,
+    EquipmentModuleEquipmentController
+};
 // Generic Actions
 use App\Http\Controllers\Actions\{
     LoadFlightPlansController,
@@ -31,27 +47,6 @@ use App\Http\Controllers\Actions\{
     LoadServiceOrderForReport,
     LoadLogsController
 };
-// Internal Controller 
-use App\Http\Controllers\Internal\{
-    MyAccountController
-};
-// Modules
-use App\Http\Controllers\Modules\Administration\{
-    AdministrationModuleUsersController,
-    AdministrationModuleProfilesController
-};
-use App\Http\Controllers\Modules\Report\ReportModuleController;
-use App\Http\Controllers\Modules\FlightPlan\{
-    FlightPlanModuleController,
-    FlightPlanModuleLogController
-};
-use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
-use App\Http\Controllers\Modules\Incident\IncidentModuleController;
-use App\Http\Controllers\Modules\Equipment\{
-    EquipmentModuleBatteryPanelController,
-    EquipmentModuleDronePanelController,
-    EquipmentModuleEquipmentPanelController
-};
 
 // Views
 Route::middleware(['guest'])->group(function () {
@@ -62,32 +57,28 @@ Route::middleware(['guest'])->group(function () {
     Route::view('/forgot-password', "react_root");
 });
 
+// Auth operations
+Route::group(['prefix' => 'api/auth'], function () {
+    Route::post('login', LoginController::class);
+    Route::post('password-token', PasswordTokenController::class);
+    Route::post('change-password', PasswordResetController::class);
+    Route::middleware(["session.auth"])->group(function () {
+        Route::get('user-data', UserAuthenticatedData::class);
+        Route::post('logout', LogoutController::class);
+    });
+});
 
-// Guest operations
-Route::post('api/auth/login', LoginController::class);
-Route::post('api/auth/password-token', PasswordTokenController::class);
-Route::post('api/auth/change-password', PasswordResetController::class);
+
 
 Route::middleware(["session.auth"])->group(function () {
-    // Internal simple operations
     Route::view('/internal', "react_root");
     Route::get('/internal/{internalpage?}', function () {
         return redirect("/internal");
     })->where(["internalpage" => "^(?!auth|map).*$"])->name("dashboard");
     Route::view('/internal/map', "map");
     Route::view('/internal/map-modal', "map_modal");
-    // Internal Dashboard 
-    Route::get('/api/load-dashboard-metrics', DashboardController::class);
-    // Internal "MyAccount" operations
-    Route::get('api/load-basic-account-data', [MyAccountController::class, "loadBasicData"]);
-    Route::get('api/load-complementary-account-data', [MyAccountController::class, "loadComplementaryData"]);
-    Route::get('api/load-sessions-data', [MyAccountController::class, "loadActiveSessions"]);
-    Route::patch('api/update-basic-data', [MyAccountController::class, "basicDataUpdate"]);
-    Route::patch('api/update-documents-data', [MyAccountController::class, "documentsUpdate"]);
-    Route::patch('api/update-address-data', [MyAccountController::class, "addressUpdate"]);
-    Route::post("api/desactivate-account/{id}", [MyAccountController::class, "accountDesactivation"]);
-    Route::post("api/update-password", [MyAccountController::class, "passwordUpdate"]);
-    // Internal Modules operations
+    // Module core operations
+    Route::get('/api/dashboard', DashboardController::class);
     Route::ApiResource("api/admin-module-user", AdministrationModuleUsersController::class);
     Route::ApiResource("api/admin-module-profile", AdministrationModuleProfilesController::class);
     Route::ApiResource("api/reports-module", ReportModuleController::class);
@@ -95,10 +86,10 @@ Route::middleware(["session.auth"])->group(function () {
     Route::ApiResource("api/plans-module-logs", FlightPlanModuleLogController::class);
     Route::ApiResource("api/orders-module", ServiceOrderModuleController::class);
     Route::ApiResource("api/incidents-module", IncidentModuleController::class);
-    Route::ApiResource("api/equipments-module-drone", EquipmentModuleDronePanelController::class);
-    Route::ApiResource("api/equipments-module-battery", EquipmentModuleBatteryPanelController::class);
-    Route::ApiResource("api/equipments-module-equipment", EquipmentModuleEquipmentPanelController::class);
-    // Internal Modules extra operations
+    Route::ApiResource("api/equipments-module-drone", EquipmentModuleDroneController::class);
+    Route::ApiResource("api/equipments-module-battery", EquipmentModuleBatteryController::class);
+    Route::ApiResource("api/equipments-module-equipment", EquipmentModuleEquipmentController::class);
+    // Module additional operations
     Route::post("api/users/export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
     Route::post("api/profiles/export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
     Route::post("api/flight-plans/export", [FlightPlanModuleController::class, "exportTableAsCsv"]);
@@ -113,9 +104,15 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get("api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
     Route::get("api/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
     Route::post("api/process-selected-logs", [FlightPlanModuleLogController::class, "processSelectedLogs"]);
-    // Actions
-    Route::post('api/auth/logout', LogoutController::class);
-    Route::get('api/auth/data', UserAuthenticatedData::class);
+    // Module "MyProfile" operations
+    Route::get('api/myprofile/basic-data', [MyAccountController::class, "loadBasicData"]);
+    Route::patch('api/myprofile/basic-data', [MyAccountController::class, "basicDataUpdate"]);
+    Route::get('api/myprofile/complementary-data', [MyAccountController::class, "loadComplementaryData"]);
+    Route::patch('api/myprofile/documents', [MyAccountController::class, "documentsUpdate"]);
+    Route::patch('api/myprofile/address', [MyAccountController::class, "addressUpdate"]);
+    Route::post("api/myprofile/desactivate/{id}", [MyAccountController::class, "accountDeactivation"]);
+    Route::patch("api/myprofile/change-password/{id}", [MyAccountController::class, "passwordUpdate"]);
+    // Module and generic actions
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);

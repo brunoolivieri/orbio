@@ -126,15 +126,23 @@ export const FlightPlansLogSelection = React.memo((props) => {
         console.log('save log');
     }
 
+    function handleOpen(){
+        setOpen(true);
+    }
+
+    function handleClose(){
+        setOpen(false);
+    }
+
     return (
         <>
-            <IconButton onClick={() => setOpen(true)}>
+            <IconButton onClick={handleOpen}>
                 <InsertDriveFileIcon />
             </IconButton>
             <Dialog
                 fullScreen
                 open={open}
-                onClose={() => setOpen(false)}
+                onClose={handleClose}
                 TransitionComponent={Transition}
             >
 
@@ -143,7 +151,7 @@ export const FlightPlansLogSelection = React.memo((props) => {
                         <IconButton
                             edge="start"
                             color="primary"
-                            onClick={() => setOpen(false)}
+                            onClick={handleClose}
                             aria-label="close"
                         >
                             <CloseIcon />

@@ -34,7 +34,7 @@ export function BasicInformation() {
         setFormData(initialFormData);
         setLoading(true);
 
-        axios.get("/api/load-basic-account-data")
+        axios.get("api/myprofile/basic-data")
             .then((response) => {
                 setFormData({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
             })
@@ -78,7 +78,7 @@ export function BasicInformation() {
 
         try {
 
-            const response = await axios.patch("/api/update-basic-data", {
+            const response = await axios.patch("api/myprofile/basic-data", {
                 name: formData.name,
                 email: formData.email
             });

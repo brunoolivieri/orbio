@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
     async function verifyAuthentication() {
 
-        const response = await axios.get("/api/auth/data");
+        const response = await axios.get("/api/auth/user-data");
         setUser(response.data);
 
     }

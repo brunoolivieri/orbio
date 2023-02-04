@@ -66,7 +66,7 @@ export const Dashboard = React.memo(() => {
 
         setPageIndex(0);
 
-        axios.get("/api/load-dashboard-metrics")
+        axios.get("/api/dashboard")
             .then((response) => {
 
                 if (is_mounted) {

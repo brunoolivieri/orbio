@@ -90,7 +90,7 @@ export function ComplementaryInformation() {
         setDocumentsFormError(initialDocumentsFormError);
         setAddressFormError(initialAddressFormError);
 
-        axios.get("/api/load-complementary-account-data")
+        axios.get("api/myprofile/complementary-data")
             .then(function (response) {
 
                 setDocumentsForm(response.data.documents);
@@ -189,7 +189,7 @@ export function ComplementaryInformation() {
     }
 
     function documentsRequestServerOperation() {
-        axios.patch("/api/update-documents-data", documentsForm)
+        axios.patch("api/myprofile/documents", documentsForm)
             .then(function (response) {
                 handleOpenSnackbar(response.data.message, "success");
             })
@@ -203,7 +203,7 @@ export function ComplementaryInformation() {
     }
 
     function addressRequestServerOperation() {
-        axios.patch("/api/update-address-data", addressForm)
+        axios.patch("api/myprofile/address", addressForm)
             .then(function (response) {
                 handleOpenSnackbar(response.data.message, "success");
             })
