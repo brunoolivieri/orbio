@@ -24,7 +24,12 @@ use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleController,
     FlightPlanModuleLogController
 };
-use App\Http\Controllers\Modules\ServiceOrder\ServiceOrderModuleController;
+use App\Http\Controllers\Modules\ServiceOrder\{
+    ServiceOrderModuleController,
+    Actions\FlightPlansForServiceOrderController,
+    Actions\EquipmentsForServiceOrderFlightPlanController,
+    Actions\LogsForServiceOrderFlightPlansController
+};
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 use App\Http\Controllers\Modules\Equipment\{
     EquipmentModuleBatteryController,
@@ -38,7 +43,6 @@ use App\Http\Controllers\Actions\{
     LoadProfilesController,
     LoadReportsController,
     LoadUsersController,
-    LoadFlightPlansForServiceOrderController,
     LoadServiceOrdersController,
     LoadServiceOrderByFlightPlanController,
     LoadDronesController,
@@ -59,12 +63,12 @@ Route::middleware(['guest'])->group(function () {
 
 // Auth operations
 Route::group(['prefix' => 'api/auth'], function () {
-    Route::post('login', LoginController::class);
-    Route::post('password-token', PasswordTokenController::class);
-    Route::post('change-password', PasswordResetController::class);
+    Route::post('/login', LoginController::class);
+    Route::post('/password-token', PasswordTokenController::class);
+    Route::post('/change-password', PasswordResetController::class);
     Route::middleware(["session.auth"])->group(function () {
-        Route::get('user-data', UserAuthenticatedData::class);
-        Route::post('logout', LogoutController::class);
+        Route::get('/user-data', UserAuthenticatedData::class);
+        Route::post('/logout', LogoutController::class);
     });
 });
 
@@ -110,9 +114,14 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get('api/myprofile/complementary-data', [MyAccountController::class, "loadComplementaryData"]);
     Route::patch('api/myprofile/documents', [MyAccountController::class, "documentsUpdate"]);
     Route::patch('api/myprofile/address', [MyAccountController::class, "addressUpdate"]);
-    Route::post("api/myprofile/desactivate/{id}", [MyAccountController::class, "accountDeactivation"]);
-    Route::patch("api/myprofile/change-password/{id}", [MyAccountController::class, "passwordUpdate"]);
-    // Module and generic actions
+    Route::post("api/myprofile/desactivate/{user_id}", [MyAccountController::class, "accountDeactivation"]);
+    Route::patch("api/myprofile/change-password/{user_id}", [MyAccountController::class, "passwordUpdate"]);
+    // Module actions
+    Route::group(["prefix" => "api/action/module"], function () {
+        Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);
+        Route::get("/service-order/logs", LogsForServiceOrderFlightPlansController::class);
+    });
+
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);
@@ -125,6 +134,5 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get("api/load-service-orders", LoadServiceOrdersController::class);
     Route::get("api/load-incidents", LoadIncidentsController::class);
     Route::get("api/load-reports", LoadReportsController::class);
-    Route::get("api/load-flight-plans-service-order", LoadFlightPlansForServiceOrderController::class);
     Route::get("api/load-logs", LoadLogsController::class);
 });

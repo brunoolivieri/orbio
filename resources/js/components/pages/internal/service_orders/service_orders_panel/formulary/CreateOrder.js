@@ -11,7 +11,7 @@ import { useAuth } from '../../../../../context/Auth';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
-import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
+import { ServiceOrderFlightPlanEquipmentSelection } from '../modal/ServiceOrderFlightPlanEquipmentSelectionModal';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -298,7 +298,7 @@ export const CreateOrder = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <FlightPlanEquipmentSelection
+                          <ServiceOrderFlightPlanEquipmentSelection
                             selectedFlightPlans={selectedFlightPlans}
                             setSelectedFlightPlans={setSelectedFlightPlans}
                             current={flight_plan}

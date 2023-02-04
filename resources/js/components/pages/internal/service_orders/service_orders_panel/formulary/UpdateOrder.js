@@ -12,8 +12,8 @@ import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
-import { FlightPlansLogSelection } from '../modal/FlightPlanLogSelection';
-import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
+import { ServiceOrderFlightPlanLogModal } from '../modal/ServiceOrderFlightPlanLogModal';
+import { ServiceOrderFlightPlanEquipmentSelection } from '../modal/ServiceOrderFlightPlanEquipmentSelectionModal';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -316,18 +316,17 @@ export const UpdateOrder = React.memo((props) => {
                         key={index}
                         secondaryAction={
                           <Stack direction="row" spacing={2}>
-                            <FlightPlanEquipmentSelection
+                            <ServiceOrderFlightPlanEquipmentSelection
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}
                             />
-                            <FlightPlansLogSelection
+                            <ServiceOrderFlightPlanLogModal
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}
                             />
                           </Stack>
-
                         }
                       >
                         <ListItemAvatar>

@@ -20,7 +20,7 @@ const columns = [
     {
         field: 'image',
         headerName: 'Imagem',
-        width: 100,
+        width: 130,
         sortable: false,
         editable: false,
         renderCell: (data) => {
@@ -37,33 +37,11 @@ const columns = [
         editable: false
     },
     {
-        field: 'creator',
-        headerName: 'Criador',
-        sortable: true,
-        editable: false,
-        flex: 1,
-        valueGetter: (data) => {
-            return data.row.creator.name;
-        },
-    },
-    {
         field: 'created_at',
         headerName: 'Criado em',
-        type: 'number',
-        headerAlign: 'left',
         sortable: true,
         editable: false,
         width: 150
-    },
-    {
-        field: 'service_orders',
-        headerName: 'Ordens de serviço',
-        width: 150,
-        sortable: true,
-        editable: false,
-        valueGetter: (data) => {
-            return data.row.total_service_orders
-        }
     },
     {
         field: 'incidents',
@@ -99,17 +77,30 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
         fetchRecords();
     }, [reload]);
 
+    function handleClickOpen() {
+        setOpen(true);
+        setControlledSelection(() => {
+            return props.selectedFlightPlans.map((item) => item.id);
+        });
+    }
+
+    function handleClose() {
+        setOpen(false);
+        setControlledSelection([]);
+        props.setSelectedFlightPlans([]);
+    }
+
     async function fetchRecords() {
 
-        let http_request = "api/load-flight-plans-service-order?";
+        let url = `api/action/module/service-order/flight-plans?`;
         if (props.serviceOrderId != null) {
-            http_request += `service_order=${props.serviceOrderId}&`;
+            url += `service_order_id=${props.serviceOrderId}&`;
         }
-        http_request += `limit=${perPage}&search=${search}&page=${currentPage}`;
+        url += `limit=${perPage}&search=${search}&page=${currentPage}`;
 
         try {
 
-            const response = await axios.get(http_request);
+            const response = await axios.get(url);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);
@@ -144,19 +135,6 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     function handleSelection(newSelectedIds) {
         // Save only ids for grid controll
         setControlledSelection(newSelectedIds);
-    }
-
-    function handleClickOpen() {
-        setOpen(true);
-        setControlledSelection(() => {
-            return props.selectedFlightPlans.map((item) => item.id);
-        });
-    }
-
-    function handleClose() {
-        setOpen(false);
-        setControlledSelection([]);
-        props.setSelectedFlightPlans([]);
     }
 
     async function handleSave() {
