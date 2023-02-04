@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Typography, MenuItem } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid } from '@mui/material';
 // Custom
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
@@ -21,41 +21,11 @@ export const UpdateFlightPlan = React.memo((props) => {
 
   const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
   const [formError, setFormError] = React.useState(initialFormError);
-  const [serviceOrderId, setServiceOrderId] = React.useState("0");
-  const [serviceOrders, setServiceOrders] = React.useState([]);
-  const [logId, setLogId] = React.useState("0");
-  const [logs, setLogs] = React.useState([]);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
-
-  React.useEffect(() => {
-
-    let is_mounted = true;
-
-    axios.get("api/load-service-orders/" + props.record.id)
-      .then((response) => {
-
-        if (is_mounted) {
-          setServiceOrders(response.data);
-          return axios.get("api/load-logs");
-        }
-
-      })
-      .then((response) => {
-        setLogs(response.data);
-      })
-      .catch((error) => {
-        console.log(error)
-      });
-
-    return () => {
-      is_mounted = false;
-    }
-
-  }, []);
 
   function handleClickOpen() {
     setOpen(true);
@@ -92,19 +62,9 @@ export const UpdateFlightPlan = React.memo((props) => {
 
   async function requestServer() {
 
-    let formData_ = {
-      name: formData.name,
-      description: formData.description
-    };
-
-    if (serviceOrderId != "0" && logId != "0") {
-      formData_["service_order_id"] = serviceOrderId;
-      formData_["log_id"] = logId;
-    }
-
     try {
 
-      const response = await axios.patch(`/api/plans-module/${formData.id}`, formData_);
+      const response = await axios.patch(`/api/plans-module/${formData.id}`, formData);
       successResponse(response);
 
     } catch (error) {
@@ -196,57 +156,6 @@ export const UpdateFlightPlan = React.memo((props) => {
                 error={formError.description.error}
               />
             </Grid>
-
-            {serviceOrders.length > 0 &&
-              <>
-                <Grid item xs={12} mb={2} mt={1}>
-                  <Typography>Este plano de voo está vinculado a ordens de serviço e pode ser vinculado a logs. Primeiro selecione a ordem de serviço em que este plano foi executado, e, em seguida, o log correspondente.</Typography>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    select
-                    label="Ordem de serviço"
-                    value={serviceOrderId}
-                    fullWidth
-                    onChange={(e) => setServiceOrderId(e.target.value)}
-                    error={formError.service_order_id.error}
-                    helperText={formError.service_order_id.message}
-                  >
-                    <MenuItem value={"0"} disabled>
-                      Escolha
-                    </MenuItem>
-                    {serviceOrders.map((service_order) =>
-                      <MenuItem value={service_order.id} key={service_order.id}>
-                        {service_order.number}
-                      </MenuItem>
-                    )}
-                  </TextField>
-                </Grid>
-
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    select
-                    label="Log"
-                    value={logId}
-                    fullWidth
-                    disabled={serviceOrderId === "0"}
-                    onChange={(e) => setLogId(e.target.value)}
-                    error={formError.log_id.error}
-                    helperText={formError.log_id.message}
-                  >
-                    <MenuItem value={"0"} disabled>
-                      Escolha
-                    </MenuItem>
-                    {serviceOrderId != "0" && logs.length > 0 && logs.map((log) =>
-                      <MenuItem value={log.id} key={log.id}>
-                        {log.name}
-                      </MenuItem>
-                    )}
-                  </TextField>
-                </Grid>
-              </>
-            }
 
           </Grid>
         </DialogContent>

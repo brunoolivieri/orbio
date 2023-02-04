@@ -1,7 +1,7 @@
 import * as React from 'react';
 // Material UI
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Divider, DialogContentText, FormHelperText } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
+import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 // Custom
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 
@@ -65,7 +65,7 @@ export const FlightPlanEquipmentSelection = React.memo((props) => {
     return (
         <>
             <IconButton edge="end" onClick={handleClickOpen}>
-                <SettingsIcon />
+                <HomeRepairServiceIcon />
             </IconButton>
             <Dialog
                 fullWidth

@@ -66,15 +66,6 @@ class FlightPlanRepository implements RepositoryInterface
             $flight_plan->update($data->only(["name", "description"])->all());
             $flight_plan->refresh();
 
-            if (!(is_null($data->get("service_order_id")) && is_null($data->get("log_id")))) {
-                // Update log relationship with flight plan through service order pivot
-                $pivot_flight_plan_service_order = $flight_plan->service_orders()->where("service_order_id", $data->get("service_order_id"))->first();
-                $log = $this->logModel->find($data->get("log_id"));
-                $log->update([
-                    "service_order_flight_plan_id" => $pivot_flight_plan_service_order->id
-                ]);
-            }
-
             return $flight_plan;
         });
     }

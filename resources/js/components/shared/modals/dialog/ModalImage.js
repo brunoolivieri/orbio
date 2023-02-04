@@ -25,7 +25,7 @@ export function ModalImage(props) {
             <Dialog
                 open={open}
                 fullWidth
-                maxWidth="md"
+                fullScreen
             >
                 <DialogContent>
                     <img src={props.image_url} width={"100%"} height={"100%"} />

@@ -6,7 +6,6 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 // Models
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;

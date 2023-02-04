@@ -58,7 +58,7 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateOne($request->only(["name", "description", "service_order_id", "log_id"]), $id);
+        return $this->service->updateOne($request->only(["name", "description"]), $id);
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response

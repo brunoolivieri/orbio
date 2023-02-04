@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText, Stack } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -12,6 +12,7 @@ import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
+import { FlightPlansLogSelection } from '../modal/FlightPlanLogSelection';
 import { FlightPlanEquipmentSelection } from '../modal/FlightPlanEquipmentSelection';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -314,11 +315,19 @@ export const UpdateOrder = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <FlightPlanEquipmentSelection
-                            selectedFlightPlans={selectedFlightPlans}
-                            setSelectedFlightPlans={setSelectedFlightPlans}
-                            current={flight_plan}
-                          />
+                          <Stack direction="row" spacing={2}>
+                            <FlightPlanEquipmentSelection
+                              selectedFlightPlans={selectedFlightPlans}
+                              setSelectedFlightPlans={setSelectedFlightPlans}
+                              current={flight_plan}
+                            />
+                            <FlightPlansLogSelection
+                              selectedFlightPlans={selectedFlightPlans}
+                              setSelectedFlightPlans={setSelectedFlightPlans}
+                              current={flight_plan}
+                            />
+                          </Stack>
+
                         }
                       >
                         <ListItemAvatar>
