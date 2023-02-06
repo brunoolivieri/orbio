@@ -13,7 +13,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import PropTypes from 'prop-types';
 // Custom
-import { HeaderMenu } from "../../../shared/header_menu/HeaderMenu";
+import { useAuth } from '../../../context/Auth';
 import { usePage } from '../../../context/PageContext';
 
 const headerStyle = {
@@ -34,8 +34,13 @@ const menuOpenIconStyle = {
 
 export const Header = React.memo((props) => {
 
+  const { logout } = useAuth();
   const { onDrawerToggle } = props;
   const { pageIndex } = usePage();
+
+  function handleLogout() {
+    logout();
+  }
 
   const pages = [
     { icon: <DashboardIcon />, title: "DASHBOARD" },
@@ -62,7 +67,13 @@ export const Header = React.memo((props) => {
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           </Typography>
-          <HeaderMenu />
+          <IconButton
+            size="large"
+            aria-label="menu"
+            onClick={handleLogout}
+          >
+            <AccountCircleIcon color="success" style={{ color: '#fff' }} />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <AppBar position="static" sx={subHeaderStyle}>

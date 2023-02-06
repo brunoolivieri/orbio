@@ -92,12 +92,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export const NavigatorFixed = () => {
+export const MenuDesktop = () => {
 
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [open, setOpen] = React.useState(false);
 
-    const categories = React.useMemo(() => ([
+    const categories = [
         {
             id: '',
             children: [
@@ -127,7 +127,11 @@ export const NavigatorFixed = () => {
                 { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "conta" }
             ],
         },
-    ]), []);
+    ];
+
+    function handleLogout() {
+        logout();
+    }
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -201,27 +205,26 @@ export const NavigatorFixed = () => {
                 <Divider />
                 <List>
                     <ListItem disablePadding sx={{ display: 'block' }}>
-                        <a href="/api/auth/logout" style={{ width: '100%', display: 'block' }}>
-                            <ListItemButton
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: open ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={handleLogout}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: open ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                    color: '#007937'
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                        color: '#007937'
-                                    }}
-                                >
-                                    <LogoutIcon />
-                                </ListItemIcon>
-                                <ListItemText primary={"Sair"} sx={{ opacity: open ? 1 : 0, color: '#000' }} />
-                            </ListItemButton>
-                        </a>
+                                <LogoutIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={"Sair"} sx={{ opacity: open ? 1 : 0, color: '#000' }} />
+                        </ListItemButton>
                     </ListItem>
                 </List>
             </Drawer>

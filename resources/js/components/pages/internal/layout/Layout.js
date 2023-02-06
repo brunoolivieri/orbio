@@ -4,8 +4,8 @@ import Box from '@mui/material/Box';
 // Custom
 import { InternalRoutes } from "../../../../routes/index";
 import { useAuth } from '../../../context/Auth';
-import { NavigatorToggle } from './NavigatorToggle';
-import { NavigatorFixed } from './NavigatorFixed';
+import { MenuMobile } from './MenuMobile';
+import { MenuDesktop } from './MenuDesktop';
 import { Header } from './Header';
 import { BackdropLoading } from "../../../shared/backdrop/BackdropLoading";
 
@@ -51,19 +51,17 @@ export const Layout = () => {
     return (
       <>
         <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#FCFCFC' }}>
-          <NavigatorFixed />
+          <MenuDesktop />
           <Box
             component="nav"
             sx={{ flexShrink: { sm: 0 } }}
           >
-
-            <NavigatorToggle
+            <MenuMobile
               PaperProps={{ style: { width: drawerWidth } }}
               variant="temporary"
               open={menuOpen}
               onClose={handleDrawerToggle}
             />
-
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <Header onDrawerToggle={handleDrawerToggle} />

@@ -23,33 +23,22 @@ const item = {
   }
 };
 
-export const NavigatorToggle = React.memo((props) => {
+export const MenuMobile = React.memo((props) => {
 
   const { user } = useAuth();
 
-  const categories = React.useMemo(() => ([
+  const categories = [
     {
       id: '',
       children: [
-        {
-          id: 'Dashboard',
-          icon: <DashboardIcon />,
-          active: false,
-          access: true,
-          path: ""
-        },
-      ],
-    },
-    {
-      id: "Módulos",
-      children: [
+        { id: 'Dashboard', icon: <DashboardIcon />, active: false, access: true, path: "" },
         { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.user_powers["1"].profile_powers.read == 1, path: "administracao" },
         { id: 'Planos', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "planos" },
         { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "ordens" },
         { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "relatorios" },
         { id: 'Incidentes', icon: <ReportIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "incidentes" },
         { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["6"].profile_powers.read == 1, path: "equipamentos" }
-      ]
+      ],
     },
     {
       id: 'Outros',
@@ -57,16 +46,11 @@ export const NavigatorToggle = React.memo((props) => {
         { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "conta" }
       ],
     },
-  ]), []);
+  ];
 
   return (
     <Drawer {...props} sx={{ display: { xs: 'block', md: 'block', lg: 'none', xl: 'none' } }}>
       <List disablePadding>
-
-        <ListItem sx={{ fontSize: 20, display: 'flex', justifyContent: 'center' }}>
-          <img src={EmbrapaLogo} width={110} />
-        </ListItem>
-
         {categories.map(({ id, children }) => (
           <Box key={id}>
             <ListItem>
