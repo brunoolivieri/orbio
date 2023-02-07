@@ -14,6 +14,7 @@ import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
 import { ServiceOrderFlightPlanLogModal } from '../modal/ServiceOrderFlightPlanLogModal';
 import { ServiceOrderFlightPlanEquipmentSelection } from '../modal/ServiceOrderFlightPlanEquipmentSelectionModal';
+import { ServiceOrderFlightPlanIncidentsModal } from '../modal/ServiceOrderFlightPlanIncidentsModal';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -321,6 +322,12 @@ export const UpdateOrder = React.memo((props) => {
                         secondaryAction={
                           <Stack direction="row" spacing={2}>
                             <ServiceOrderFlightPlanEquipmentSelection
+                              selectedFlightPlans={selectedFlightPlans}
+                              setSelectedFlightPlans={setSelectedFlightPlans}
+                              current={flight_plan}
+                            />
+                            <ServiceOrderFlightPlanIncidentsModal
+                              serviceOrderId={formData.id}
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}
