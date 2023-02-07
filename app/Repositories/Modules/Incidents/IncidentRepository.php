@@ -25,13 +25,10 @@ class IncidentRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
-
         $incident = $this->incidentModel->create([
             "type" => $data->get("type"),
             "date" => $data->get("date"),
-            "description" => $data->get("description"),
-            "service_order_flight_plan_id" => $service_order_flight_plan->id
+            "description" => $data->get("description")
         ]);
 
         return $incident;
@@ -41,13 +38,10 @@ class IncidentRepository implements RepositoryInterface
     {
         $incident = $this->incidentModel->findOrFail($identifier);
 
-        $service_order_flight_plan = $this->flightPlanServiceOrderModel->where("service_order_id", $data->get("service_order_id"))->where("flight_plan_id", $data->get("flight_plan_id"))->first();
-
         $incident->update([
             "type" => $data->get("type"),
             "date" => $data->get("date"),
-            "description" => $data->get("description"),
-            "service_order_flight_plan_id" => $service_order_flight_plan->id
+            "description" => $data->get("description")
         ]);
 
         $incident->refresh();

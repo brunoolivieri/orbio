@@ -5,7 +5,6 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, Ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
@@ -14,7 +13,7 @@ import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import moment from 'moment';
 
 const fieldError = { error: false, message: "" }
-const initialFormError = { type: fieldError, description: fieldError, date: fieldError, flight_plan_id: fieldError, service_order_id: fieldError }
+const initialFormError = { type: fieldError, description: fieldError, date: fieldError }
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateIncident = React.memo((props) => {
@@ -56,12 +55,10 @@ export const UpdateIncident = React.memo((props) => {
     validation["type"] = FormValidation(formData["type"], 3, 255);
     validation["date"] = formData.date != null ? { error: false, message: "" } : { error: true, message: "Selecione a data inicial" };
     validation["description"] = FormValidation(formData["description"], 3, 255);
-    validation["flight_plan_id"] = formData.flight_plan_id != "0" ? { error: false, message: "" } : { error: false, message: "Selecione um plano de voo" };
-    validation["service_order_id"] = formData.service_order_id != "0" ? { error: false, message: "" } : { error: false, message: "Selecione uma ordem de serviço" };
 
     setFormError(validation);
 
-    return !(validation.type.error || validation.date.error || validation.description.error || validation.flight_plan_id.error || validation.service_order_id.error);
+    return !(validation.type.error || validation.date.error || validation.description.error);
   }
 
   async function requestServer() {
@@ -71,9 +68,7 @@ export const UpdateIncident = React.memo((props) => {
       const response = await axios.patch(`/api/incidents-module/${formData.id}`, {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
-        description: formData.description,
-        flight_plan_id: formData.flight_plan_id,
-        service_order_id: formData.service_order_id
+        description: formData.description
       });
 
       successResponse(response);
@@ -178,36 +173,6 @@ export const UpdateIncident = React.memo((props) => {
                 helperText={formError.description.message}
                 error={formError.description.error}
               />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              <FetchedDataSelection
-                label_text={"Plano de voo"}
-                fetch_from={"/api/load-flight-plans"}
-                primary_key={"id"}
-                key_content={"name"}
-                error={formError.flight_plan_id.error}
-                name={"flight_plan_id"}
-                selected={formData.flight_plan_id}
-                setFormData={setFormData}
-                formData={formData}
-              />
-            </Grid>
-
-            <Grid item xs={12} md={6}>
-              {formData.flight_plan_id != "0" &&
-                <FetchedDataSelection
-                  label_text={"Ordem de serviço"}
-                  fetch_from={`api/load-service-orders/${formData.flight_plan_id}`}
-                  primary_key={"id"}
-                  key_content={"number"}
-                  error={formError.service_order_id.error}
-                  name={"service_order_id"}
-                  selected={formData.service_order_id}
-                  setFormData={setFormData}
-                  formData={formData}
-                />
-              }
             </Grid>
 
           </Grid>
