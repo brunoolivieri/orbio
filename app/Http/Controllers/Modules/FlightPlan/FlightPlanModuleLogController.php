@@ -57,7 +57,7 @@ class FlightPlanModuleLogController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-
+       
         return $this->service->createOne([
             "logs" => $request->file('files'),
             "images" => $request->file('images')

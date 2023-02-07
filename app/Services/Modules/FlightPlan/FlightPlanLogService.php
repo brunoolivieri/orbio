@@ -159,7 +159,8 @@ class FlightPlanLogService implements ServiceInterface
                         $data[$index] = [
                             "status" => [
                                 "is_valid" => true,
-                                "message" => "Processado"
+                                "message" => "Processado",
+                                "to_save" => true
                             ],
                             "size" => filesize($log),
                             "original_name" => $original_log_name,
@@ -221,7 +222,7 @@ class FlightPlanLogService implements ServiceInterface
                             "filename" => $kml_original_filename
                         ],
                         "image_storage" => [
-                            "path" => "flight_plans/flightlogs/valid/{$kml_name_without_extension}/",
+                            "path" => "images/flightlogs/{$kml_name_without_extension}/",
                             "file" => $logImage,
                             "filename" => $image_original_filename
                         ]

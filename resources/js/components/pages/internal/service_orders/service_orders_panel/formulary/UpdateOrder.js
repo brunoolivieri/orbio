@@ -59,9 +59,11 @@ export const UpdateOrder = React.memo((props) => {
       let selections_check = selectedFlightPlans.map((selected_flight_plan) => {
 
         let current_check = 1;
-        for (let key in selected_flight_plan) {
-          if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
-            current_check = 0;
+        for (let prop in selected_flight_plan) {
+          if (prop != "name" && prop != "log_id") {
+            if (!/^[1-9]\d*$/.test(selected_flight_plan[prop].toString())) {
+              current_check = 0;
+            }
           }
         }
 
@@ -83,7 +85,8 @@ export const UpdateOrder = React.memo((props) => {
         name: flight_plan.name,
         drone_id: flight_plan.drone_id,
         battery_id: flight_plan.battery_id,
-        equipment_id: flight_plan.equipment_id
+        equipment_id: flight_plan.equipment_id,
+        log_id: flight_plan.log_id
       }
     }));
   }
@@ -176,10 +179,11 @@ export const UpdateOrder = React.memo((props) => {
   function avatarSelectionStyle(selected_flight_plan) {
 
     let is_completed = true;
-
-    for (let key in selected_flight_plan) {
-      if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
-        is_completed = false;
+    for (let prop in selected_flight_plan) {
+      if (prop != "name" && prop != "log_id") {
+        if (!/^[1-9]\d*$/.test(selected_flight_plan[prop])) {
+          is_completed = false;
+        }
       }
     }
 
@@ -322,6 +326,7 @@ export const UpdateOrder = React.memo((props) => {
                               current={flight_plan}
                             />
                             <ServiceOrderFlightPlanLogModal
+                              serviceOrderId={formData.id}
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}

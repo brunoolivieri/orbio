@@ -57,7 +57,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [totalRecords, setTotalRecords] = React.useState(0);
     const [search, setSearch] = React.useState("0");
-    const [selectedRecords, setSelectedRecords] = React.useState([]);
+    const [controlledSelection, setControlledSelection] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -67,7 +67,6 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
     React.useEffect(() => {
         setLoading(true);
         setRecords([]);
-        setSelectedRecords([]);
         fetchRecords();
     }, [reload]);
 
@@ -80,11 +79,20 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
     }
 
     function fetchRecords() {
-
-        axios.get(`api/action/module/service-order/logs?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/action/module/service-order/logs?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
             .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
+                console.log(response.data)
+                if (response.data.total_records > 0) {
+                    setControlledSelection(() => {
+                        return response.data.records.map((log) => {
+                            if (log.selected) {
+                                return log.id;
+                            }
+                        });
+                    });
+                }
             })
             .catch((error) => {
                 console.log(error)
@@ -92,7 +100,6 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
             .finally(() => {
                 setLoading(false);
             })
-
     }
 
     function handleChangePage(newPage) {
@@ -111,24 +118,62 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
     }
 
     function handleSelection(newSelectedIds) {
-        // newSelectedIds always bring all selections
-        const newSelectedRecords = records.filter((record) => {
-            if (newSelectedIds.includes(record.id)) {
-                return record;
-            }
-        })
-        setSelectedRecords(newSelectedRecords);
+
+        let new_selection_id = [];
+        if (newSelectedIds.length === 1) {
+            new_selection_id = newSelectedIds;
+        } else if (newSelectedIds.length > 1) {
+            new_selection_id = newSelectedIds[newSelectedIds.length - 1];
+        }
+
+        setControlledSelection(new_selection_id);
+
     }
 
     async function handleSave() {
-        console.log('save log');
+
+        const execute = async () => {
+            const selectedFlightPlansUpdated = props.selectedFlightPlans.map((flight_plan) => {
+                if (flight_plan.id != props.current.id) {
+                    return flight_plan;
+                } else {
+                    return { ...flight_plan, log_id: controlledSelection.length === 1 ? controlledSelection[0] : null }
+                }
+            });
+
+            // Sort array by flight plan ID
+            props.setSelectedFlightPlans(() => selectedFlightPlansUpdated.sort((a, b) => a.id - b.id));
+        }
+
+        await execute();
+        setOpen(false);
+
+    }
+
+    function logIsSelectable(current_grid_log) {
+        let is_selectable = true;
+        if (props.selectedFlightPlans.length > 0) {
+            let filter_log_by_id = props.selectedFlightPlans.filter((selected_flight_plan) => {
+                // If flight plan is not the current 
+                if (selected_flight_plan.id != props.current.id) {
+                    // Check if flight plan log is the same of the current grid row
+                    return selected_flight_plan.log_id == current_grid_log.id;
+                }
+            });
+            if (filter_log_by_id.length === 1) {
+                is_selectable = false;
+            }
+        }
+        return is_selectable;
     }
 
     return (
         <>
-            <IconButton onClick={handleOpen}>
-                <InsertDriveFileIcon />
-            </IconButton>
+            <Tooltip title="Selecionar log">
+                <IconButton onClick={handleOpen}>
+                    <InsertDriveFileIcon />
+                </IconButton>
+            </Tooltip>
             <Dialog
                 fullScreen
                 open={open}
@@ -193,10 +238,11 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
                             pageSize={perPage}
                             loading={loading}
                             page={currentPage - 1}
+                            selectionModel={controlledSelection}
                             rowsPerPageOptions={[10, 25, 50, 100]}
+                            isRowSelectable={(data) => logIsSelectable(data.row) && data.row.is_selectable}
                             rowHeight={70}
                             checkboxSelection
-                            isRowSelectable={(data) => data.row.is_available}
                             disableSelectionOnClick
                             paginationMode='server'
                             experimentalFeatures={{ newEditingApi: true }}

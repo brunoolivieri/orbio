@@ -49,13 +49,11 @@ class ServiceOrdersPanelResource extends JsonResource
             foreach ($service_order->flight_plans as $index => $flight_plan) {
 
                 $incidents = Incident::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
-                $logs = Log::where("service_order_flight_plan_id", $flight_plan->pivot->id)->get();
 
                 $this->formatedData["records"][$row]["flight_plans"][$index] = [
                     "id" => $flight_plan->id,
                     "file" => $flight_plan->file,
                     "name" => $flight_plan->name,
-                    "logs" => $logs,
                     "localization" => [
                         "coordinates" => $flight_plan->coordinates,
                         "city" => $flight_plan->city,
@@ -64,12 +62,18 @@ class ServiceOrdersPanelResource extends JsonResource
                     "drone_id" => is_null($flight_plan->pivot->drone_id) ? "0" : $flight_plan->pivot->drone_id,
                     "battery_id" => is_null($flight_plan->pivot->battery_id) ? "0" : $flight_plan->pivot->battery_id,
                     "equipment_id" => is_null($flight_plan->pivot->equipment_id) ? "0" : $flight_plan->pivot->equipment_id,
+                    "log_id" => null,
                     "incidents" => $incidents,
                     "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];
 
+                $log = Log::where("service_order_flight_plan_id", $flight_plan->pivot->id)->first();
+                if (!is_null($log)) {
+                    $this->formatedData["records"][$row]["flight_plans"][$index]["log_id"] = $log->id;
+                    $this->formatedData["records"][$row]["total_logs"] += 1;
+                }
+
                 $this->formatedData["records"][$row]["total_incidents"] += $incidents->count();
-                $this->formatedData["records"][$row]["total_logs"] += $logs->count();
             }
 
             // ============================== RELATED USERS ============================== //

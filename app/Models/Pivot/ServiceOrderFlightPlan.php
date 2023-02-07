@@ -31,8 +31,14 @@ class ServiceOrderFlightPlan extends Model
         return $this->hasMany(Incident::class, "service_order_flight_plan_id")->withTrashed();
     }
 
+    // remove this
     function logs()
     {
         return $this->hasMany(Log::class, "service_order_flight_plan_id")->withTrashed();
+    }
+
+    function log()
+    {
+        return $this->hasOne(Log::class, "service_order_flight_plan_id")->withTrashed();
     }
 }

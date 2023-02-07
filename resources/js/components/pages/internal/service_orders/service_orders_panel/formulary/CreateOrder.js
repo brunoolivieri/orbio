@@ -52,9 +52,11 @@ export const CreateOrder = React.memo((props) => {
       let selections_check = selectedFlightPlans.map((selected_flight_plan) => {
 
         let current_check = 1;
-        for (let key in selected_flight_plan) {
-          if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
-            current_check = 0;
+        for (let prop in selected_flight_plan) {
+          if (prop != "name" && prop != "log_id") {
+            if (!/^[1-9]\d*$/.test(selected_flight_plan[prop].toString())) {
+              current_check = 0;
+            }
           }
         }
 
@@ -159,10 +161,11 @@ export const CreateOrder = React.memo((props) => {
   function avatarSelectionStyle(selected_flight_plan) {
 
     let is_completed = true;
-
-    for (let key in selected_flight_plan) {
-      if (key != "name" && !/^[1-9]\d*$/.test(selected_flight_plan[key].toString())) {
-        is_completed = false;
+    for (let prop in selected_flight_plan) {
+      if (prop != "name" && prop != "log_id") {
+        if (!/^[1-9]\d*$/.test(selected_flight_plan[prop])) {
+          is_completed = false;
+        }
       }
     }
 

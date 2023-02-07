@@ -1,10 +1,11 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider, Stack } from '@mui/material';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import SearchIcon from '@mui/icons-material/Search';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faFile } from '@fortawesome/free-regular-svg-icons';
 // Moment
 import moment from 'moment';
 // Custom
@@ -279,14 +280,17 @@ export const CreateEquipment = React.memo((props) => {
                         </Grid>
                     </Grid>
 
-                    <Box sx={{ mt: 2, display: 'flex' }}>
+                    <Stack direction="row" spacing={2} mt={2}>
                         <label htmlFor="contained-button-file">
-                            <Input accept=".png, .jpg, .svg" id="contained-button-file" multiple type="file" name="flight_log_file" onChange={handleUploadedImage} />
-                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {formError.image.error ? formError.image.message : "Escolher imagem"}
+                            <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FileUploadIcon />}>
+                                Upload de imagem
                             </Button>
                         </label>
-                    </Box>
+                        <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<SearchIcon />} disabled>
+                            Procurar imagem
+                        </Button>
+                    </Stack>
 
                     <Box sx={{ mt: 2 }}>
                         <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }}></img>

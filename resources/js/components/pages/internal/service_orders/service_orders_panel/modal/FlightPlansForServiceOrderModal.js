@@ -168,9 +168,10 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
             })
 
             const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
-                return { id: item.id, name: item.name, drone_id: "0", battery_id: "0", equipment_id: "0" };
+                return { id: item.id, name: item.name, drone_id: "0", battery_id: "0", equipment_id: "0", log_id: null };
             });
 
+            // Sort array by flight plan ID
             props.setSelectedFlightPlans(() => {
                 return [...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id);
             });

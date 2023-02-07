@@ -19,7 +19,7 @@ export const CreateLog = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    
+
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [logs, setLogs] = React.useState([]);
@@ -60,6 +60,8 @@ export const CreateLog = React.memo((props) => {
     }
 
     async function requestServer(formData) {
+
+        console.log(logs)
 
         try {
 

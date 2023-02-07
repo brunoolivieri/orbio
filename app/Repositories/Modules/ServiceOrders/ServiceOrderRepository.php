@@ -74,24 +74,24 @@ class ServiceOrderRepository implements RepositoryInterface
             // ==== First step: Update service order ==== //
 
             $service_order = $this->serviceOrderModel->findOrFail($identifier);
-            
+
             $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
 
             // ==== Second step: Update service order users relationship ==== //
-            
+
             $creator = $this->userModel->findOrFail($data->get('creator_id'));
             $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
             $client = $this->userModel->findOrFail($data->get('client_id'));
-            
+
             $service_order->users()->sync([
                 $creator->id, ['role' => "creator"],
                 $pilot->id => ['role' => "pilot"],
                 $client->id => ['role' => "client"]
             ]);
 
-            // ==== Third step: Detected unselected flight plans ==== //
+            // ==== Third step: Detected unselected flight plans and delete its data ==== //
 
-            // Get only ids from selected flight plans - they will be necessary later
+            // Get only ids from new selected flight plans - they will be necessary later
             $new_flight_plans_ids = [];
             foreach ($data->get('flight_plans') as $index => $flight_plan) {
                 $new_flight_plans_ids[$index] = $flight_plan["id"];
@@ -101,13 +101,11 @@ class ServiceOrderRepository implements RepositoryInterface
             $already_stored_flight_plans_ids = [];
             foreach ($service_order->flight_plans as $index => $stored_flight_plan) {
 
-                // If the flight plan id not exists in array of ids of new flight plans
+                // If the stored flight plan id not exists in array of ids of new flight plans was unselected
                 if (!in_array($stored_flight_plan->id, $new_flight_plans_ids)) {
-
-                    // Delete external relationships of the pivot
+                    // Delete all pivot data
                     $this->incidentModel->where("service_order_flight_plan_id", $stored_flight_plan->pivot->id)->forceDelete();
                     $this->logModel->where("service_order_flight_plan_id", $stored_flight_plan->pivot->id)->forceDelete();
-                    // Delete the pivot ifself
                     $stored_flight_plan->pivot->delete();
                 }
 
@@ -115,17 +113,50 @@ class ServiceOrderRepository implements RepositoryInterface
                 $already_stored_flight_plans_ids[$index] = $stored_flight_plan->id;
             }
 
-            // ==== Fourth step: Detected unselected flight plans ==== //
+            // ==== Fourth step: Create or Update Pivot ==== //
 
-            foreach ($data->get('flight_plans') as $flight_plan) {
+            foreach ($data->get('flight_plans') as $selected_flight_plan) {
 
-                $flight_plan_id = $flight_plan["id"];
-                $equipments_by_id = ["drone_id" => $flight_plan["drone_id"], "battery_id" => $flight_plan["battery_id"], "equipment_id" => $flight_plan["equipment_id"]];
+                $equipments_by_id = ["drone_id" => $selected_flight_plan["drone_id"], "battery_id" => $selected_flight_plan["battery_id"], "equipment_id" => $selected_flight_plan["equipment_id"]];
 
-                if (!in_array($flight_plan["id"], $already_stored_flight_plans_ids)) {
-                    $service_order->flight_plans()->attach($flight_plan_id, $equipments_by_id);
+                // If selected flight plan id is not already stored 
+                if (!in_array($selected_flight_plan["id"], $already_stored_flight_plans_ids)) {
+                    // so is really a new one - create new pivot
+                    $service_order->flight_plans()->attach($selected_flight_plan["id"], $equipments_by_id);
                 } else {
-                    $service_order->flight_plans()->updateExistingPivot($flight_plan_id, $equipments_by_id);
+                    // Is not new, just updated it
+                    $service_order->flight_plans()->updateExistingPivot($selected_flight_plan["id"], $equipments_by_id);
+                }
+
+                // ==== Fifty step: Log relationships ==== //
+
+                $service_order_flight_plan = $service_order->flight_plans()->where("flight_plan_id", $selected_flight_plan["id"])->first();
+                $log = $this->logModel->where("service_order_flight_plan_id", $service_order_flight_plan->pivot->id)->first();
+
+                if ($log) {
+
+                    // Pivot have log and have no more 
+                    // Pivot have log and now have a different one
+                    if (is_null($selected_flight_plan["log_id"])) {
+                        $log->update([
+                            "service_order_flight_plan_id" => null
+                        ]);
+                    } else {
+                        $log->update(["service_order_flight_plan_id" => null]);
+
+                        $this->logModel->where("id", $selected_flight_plan["log_id"])->update([
+                            "service_order_flight_plan_id" => $service_order_flight_plan->pivot->id
+                        ]);
+                    }
+                    
+                } else {
+
+                    // Pivot doesnt have log and sent one - log_id not null
+                    if (!is_null($selected_flight_plan["log_id"])) {
+                        $this->logModel->where("id", $selected_flight_plan["log_id"])->update([
+                            "service_order_flight_plan_id" => $service_order_flight_plan->pivot->id
+                        ]);
+                    }
                 }
             }
 

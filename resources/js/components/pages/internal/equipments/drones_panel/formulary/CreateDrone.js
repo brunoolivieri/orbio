@@ -1,10 +1,11 @@
 import * as React from 'react';
 // Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack } from '@mui/material';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import SearchIcon from '@mui/icons-material/Search';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
@@ -266,14 +267,17 @@ export const CreateDrone = React.memo((props) => {
 
                     </Grid>
 
-                    <Box sx={{ mt: 2, mb: 2, display: 'flex' }}>
+                    <Stack direction="row" spacing={2} mt={2}>
                         <label htmlFor="contained-button-file">
                             <Input accept=".png, .jpg, .svg" id="contained-button-file" type="file" name="image" enctype="multipart/form-data" onChange={handleUploadedImage} />
-                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FontAwesomeIcon icon={faFile} color={"#fff"} size="sm" />}>
-                                {formError.image.error ? formError.image.message : "Escolher imagem"}
+                            <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<FileUploadIcon />}>
+                                Upload de imagem
                             </Button>
                         </label>
-                    </Box>
+                        <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<SearchIcon />} disabled>
+                            Procurar imagem
+                        </Button>
+                    </Stack>
 
                     <Box sx={{ mt: 2 }}>
                         <img ref={htmlImage} width={"190px"} style={{ borderRadius: 10 }} />

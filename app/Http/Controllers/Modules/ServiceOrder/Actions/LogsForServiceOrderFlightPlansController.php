@@ -31,7 +31,7 @@ class LogsForServiceOrderFlightPlansController extends Controller
         $data = $this->repository->getPaginate($limit, $page, $search, []);
 
         if ($data->total() > 0) {
-            return response(new LogsForServiceOrderFlightPlansResource($data), 200);
+            return response(new LogsForServiceOrderFlightPlansResource($data, (int) request()->service_order_id, (int) request()->flight_plan_id), 200);
         } else {
             return response(["message" => "Nenhum plano de voo encontrado."], 404);
         }
