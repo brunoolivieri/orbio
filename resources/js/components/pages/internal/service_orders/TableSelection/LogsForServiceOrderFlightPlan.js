@@ -2,24 +2,17 @@ import * as React from 'react';
 // Material UI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-import ReportIcon from '@mui/icons-material/Report';
 import CloseIcon from '@mui/icons-material/Close';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+// Axios
+import axios from '../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Axios
-import axios from '../../../../../../services/AxiosApi';
-// Moment
-import moment from 'moment';
+import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 // Custom
-import { CreateIncident } from '../../../incidents/incidents_panel/formulary/CreateIncident';
-import { UpdateIncident } from '../../../incidents/incidents_panel/formulary/UpdateIncident';
-import { DeleteIncident } from '../../../incidents/incidents_panel/formulary/DeleteIncident';
-import { TableToolbar } from '../../../../../shared/table_toolbar/TableToolbar';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -28,60 +21,53 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
-        field: 'type',
-        headerName: 'Tipo',
-        minWidth: 150,
-        sortable: true,
+        field: 'log_image',
+        headerName: 'Visualização',
+        sortable: false,
         editable: false,
+        minWidth: 130,
+        renderCell: (data) => {
+            return <ModalImage image_url={data.row.image_url} />
+        }
     },
     {
-        field: 'description',
-        headerName: 'Descrição',
+        field: 'name',
+        headerName: 'Nome',
         flex: 1,
         minWidth: 200,
         sortable: true,
-        editable: false,
+        editable: false
     },
     {
-        field: 'date',
-        headerName: 'Data',
-        minWidth: 150,
-        headerAlign: 'left',
+        field: 'filename',
+        headerName: 'Arquivo',
         sortable: true,
         editable: false,
-        valueGetter: (data) => {
-            return moment(data.row.date).format("DD/MM/YYYY")
-        }
-    }
-];
+        flex: 1,
+        minWidth: 150
+    },
+]
 
-export function ServiceOrderFlightPlanIncidentsModal(props) {
+export const LogsForServiceOrderFlightPlan = React.memo((props) => {
+
+    // ============================================================================== STATES ============================================================================== //
 
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [totalRecords, setTotalRecords] = React.useState(0);
     const [search, setSearch] = React.useState("0");
-    const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [selectionModel, setSelectionModel] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
 
+    // ============================================================================== FUNCTIONS ============================================================================== //
+
     React.useEffect(() => {
-
-        let is_mounted = true;
-        if (!is_mounted) return '';
-
         setLoading(true);
         setRecords([]);
-        setSelectedRecords([]);
         fetchRecords();
-
-        return () => {
-            is_mounted = false;
-        }
-
     }, [reload]);
 
     function handleOpen() {
@@ -93,23 +79,31 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
     }
 
     function fetchRecords() {
-
-        axios.get(`api/action/module/service-order/${props.serviceOrderId}/incidents?limit=${perPage}&search=${search}&page=${currentPage}`)
-            .then(function (response) {
+        axios.get(`api/action/module/service-order/logs?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
+            .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
+                if (response.data.total_records > 0) {
+                    setSelectionModel(() => {
+                        return response.data.records.map((log) => {
+                            if (log.selected) {
+                                return log.id;
+                            }
+                        });
+                    });
+                }
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.log(error)
-                setRecords([]);
             })
             .finally(() => {
                 setLoading(false);
-            });
-
+            })
     }
 
     function handleChangePage(newPage) {
+        // If actual page is bigger than the new one, is a reduction of actual
+        // If actual is smaller, the page is increasing
         setCurrentPage((current) => {
             return current > newPage ? (current - 1) : newPage;
         });
@@ -123,28 +117,65 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
     }
 
     function handleSelection(newSelectedIds) {
-        // newSelectedIds always bring all selections
-        const newSelectedRecords = records.filter((record) => {
-            if (newSelectedIds.includes(record.id)) {
-                return record;
+
+        let new_selection_id = [];
+        if (newSelectedIds.length === 1) {
+            new_selection_id = newSelectedIds;
+        } else if (newSelectedIds.length > 1) {
+            new_selection_id = newSelectedIds[newSelectedIds.length - 1];
+        }
+
+        setSelectionModel(new_selection_id);
+
+    }
+
+    async function handleSave() {
+
+        const execute = async () => {
+            const selectedFlightPlansUpdated = props.selectedFlightPlans.map((flight_plan) => {
+                if (flight_plan.id != props.current.id) {
+                    return flight_plan;
+                } else {
+                    return { ...flight_plan, log_id: selectionModel.length === 1 ? selectionModel[0] : null }
+                }
+            });
+
+            // Sort array by flight plan ID
+            props.setSelectedFlightPlans(() => selectedFlightPlansUpdated.sort((a, b) => a.id - b.id));
+        }
+
+        await execute();
+        setOpen(false);
+
+    }
+
+    function logIsAvailable(current_grid_log) {
+        let is_selectable = true;
+
+        if (props.selectedFlightPlans.length > 0) {
+
+            let filter_log_by_id = props.selectedFlightPlans.filter((selected_flight_plan) => {
+                // If flight plan is not the current... 
+                if (selected_flight_plan.id != props.current.id) {
+                    // Check if flight plan log is the same of the current grid row
+                    return selected_flight_plan.log_id == current_grid_log.id;
+                }
+            });
+
+            // If log is already selected by a different flight plan...
+            if (filter_log_by_id.length === 1) {
+                is_selectable = false;
             }
-        })
-        setSelectedRecords(newSelectedRecords);
-    }
+        }
 
-    function handleSave() {
-        console.log('save incidents')
-    }
-
-    function incidentIsAvailable(current_grid_incident) {
-        return true;
+        return is_selectable;
     }
 
     return (
         <>
-            <Tooltip title="Incidentes">
+            <Tooltip title="Log">
                 <IconButton onClick={handleOpen}>
-                    <ReportIcon />
+                    <InsertDriveFileIcon />
                 </IconButton>
             </Tooltip>
             <Dialog
@@ -172,46 +203,6 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
 
                 <DialogContent>
                     <Grid container columns={12} spacing={1} alignItems="center">
-
-                        <Grid item>
-                            {selectedRecords.length > 0 &&
-                                <IconButton>
-                                    <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
-                                </IconButton>
-                            }
-
-                            {selectedRecords.length === 0 &&
-                                <CreateIncident reloadTable={setReload} />
-                            }
-                        </Grid>
-
-                        <Grid item>
-                            {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
-                                <Tooltip title="Selecione um registro">
-                                    <IconButton>
-                                        <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
-                                    </IconButton>
-                                </Tooltip>
-                            }
-
-                            {(!loading && selectedRecords.length === 1) &&
-                                <UpdateIncident record={selectedRecords[0]} reloadTable={setReload} />
-                            }
-                        </Grid>
-
-                        <Grid item>
-                            {(selectedRecords.length === 0) &&
-                                <Tooltip title="Selecione um registro">
-                                    <IconButton>
-                                        <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
-                                    </IconButton>
-                                </Tooltip>
-                            }
-
-                            {(!loading && selectedRecords.length > 0) &&
-                                <DeleteIncident records={selectedRecords} reloadTable={setReload} />
-                            }
-                        </Grid>
 
                         <Grid item>
                             <Tooltip title="Carregar">
@@ -253,7 +244,7 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
                             page={currentPage - 1}
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
-                            isRowSelectable={(data) => incidentIsAvailable(data.row) && data.row.is_selectable}
+                            isRowSelectable={(data) => logIsAvailable(data.row) && data.row.is_available}
                             rowHeight={70}
                             checkboxSelection
                             disableSelectionOnClick
@@ -284,5 +275,5 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
                 </DialogContent>
             </Dialog>
         </>
-    )
-}
+    );
+});

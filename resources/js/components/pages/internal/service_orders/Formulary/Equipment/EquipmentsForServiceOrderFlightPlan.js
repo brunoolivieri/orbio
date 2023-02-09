@@ -9,7 +9,7 @@ const initialFormData = { id: "", array_index: "", drone_id: "", battery_id: "",
 const fieldError = { error: false, message: "" }
 const initialFormError = { drone_id: fieldError, battery_id: fieldError, equipment_id: fieldError }
 
-export const ServiceOrderFlightPlanEquipmentsModal = React.memo((props) => {
+export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = React.useState(initialFormData);

@@ -13,8 +13,8 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import PropTypes from 'prop-types';
 // Custom
-import { useAuth } from '../../../context/Auth';
-import { usePage } from '../../../context/PageContext';
+import { useAuth } from '../../context/Auth';
+import { usePage } from '../../context/PageContext';
 
 const headerStyle = {
   boxShadow: 2,

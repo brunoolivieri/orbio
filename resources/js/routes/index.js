@@ -2,11 +2,12 @@
 import React from "react";
 // React Router
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-// Custom pages
+// Internal Layout
+import { Layout } from "../components/shared/layout/Layout";
+// All Pages
 import { NotFound } from "../components/pages/notfound/NotFound";
 import { Login } from "../components/pages/external/login/Login";
 import { ForgotPassword } from "../components/pages/external/forgotpassword/ForgotPassword";
-import { Layout } from "../components/pages/internal/layout/Layout";
 import { Dashboard } from "../components/pages/internal/Dashboard/Dashboard";
 import { FlightPlans } from "../components/pages/internal/flight_plans/FlightPlans";
 import { Reports } from "../components/pages/internal/reports/Reports";
@@ -14,6 +15,7 @@ import { Account } from "../components/pages/internal/account/Account";
 import { Administration } from "../components/pages/internal/administration/Administration";
 import { ServiceOrders } from "../components/pages/internal/service_orders/ServiceOrders";
 import { Equipments } from "../components/pages/internal/equipments/Equipments";
+
 
 export function MainRoutes() {
     return (

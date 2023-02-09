@@ -20,17 +20,10 @@ export const Equipments = () => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
-        <Switcher panelStateSetter={setActualPanel} options={[{ page: "drones", title: "Drones", icon: '' }, { page: "batteries", title: "Baterias", icon: '' }, { page: "equipments", title: "Equipamentos", icon: '' }]} />
-      </Paper>
-
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
-        <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-
-          {actualPanel == "drones" ? <DronesPanel /> : (actualPanel == "batteries" ? <BatteriesPanel /> : <EquipmentPanel />)}
-
-        </Box>
-      </Paper>
+      <Switcher panelStateSetter={setActualPanel} options={[{ page: "drones", title: "Drones", icon: '' }, { page: "batteries", title: "Baterias", icon: '' }, { page: "equipments", title: "Equipamentos", icon: '' }]} />
+      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+        {actualPanel == "drones" ? <DronesPanel /> : (actualPanel == "batteries" ? <BatteriesPanel /> : <EquipmentPanel />)}
+      </Box>
     </>
   )
 }

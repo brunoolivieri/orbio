@@ -1,13 +1,13 @@
 import * as React from 'react';
 // Material UI
-import Box from '@mui/material/Box';
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip, Paper } from "@mui/material";
 // Custom
-import { InternalRoutes } from "../../../../routes/index";
-import { useAuth } from '../../../context/Auth';
+import { InternalRoutes } from '../../../routes/index';
+import { useAuth } from '../../context/Auth';
 import { MenuMobile } from './MenuMobile';
 import { MenuDesktop } from './MenuDesktop';
 import { Header } from './Header';
-import { BackdropLoading } from "../../../shared/backdrop/BackdropLoading";
+import { BackdropLoading } from "../backdrop/BackdropLoading";
 
 const drawerWidth = 265;
 
@@ -67,7 +67,9 @@ export const Layout = () => {
             <Header onDrawerToggle={handleDrawerToggle} />
             <Box component="main" sx={{ flexGrow: 1, py: 6, px: 4 }}>
 
-              <InternalRoutes />
+              <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
+                <InternalRoutes />
+              </Paper>
 
             </Box>
             <Box component="footer">

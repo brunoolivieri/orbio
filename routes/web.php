@@ -107,13 +107,13 @@ Route::middleware(["session.auth"])->group(function () {
     Route::get("api/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
     Route::post("api/process-selected-logs", [FlightPlanModuleLogController::class, "processSelectedLogs"]);
     // Module "MyProfile" operations
-    Route::get('api/myprofile/basic-data', [MyAccountController::class, "loadBasicData"]);
-    Route::patch('api/myprofile/basic-data', [MyAccountController::class, "basicDataUpdate"]);
-    Route::get('api/myprofile/complementary-data', [MyAccountController::class, "loadComplementaryData"]);
-    Route::patch('api/myprofile/documents', [MyAccountController::class, "documentsUpdate"]);
-    Route::patch('api/myprofile/address', [MyAccountController::class, "addressUpdate"]);
-    Route::post("api/myprofile/desactivate/{user_id}", [MyAccountController::class, "accountDeactivation"]);
-    Route::patch("api/myprofile/change-password/{user_id}", [MyAccountController::class, "passwordUpdate"]);
+    Route::get('api/myprofile/basic-data', [MyProfileController::class, "loadBasicData"]);
+    Route::patch('api/myprofile/basic-data', [MyProfileController::class, "basicDataUpdate"]);
+    Route::get('api/myprofile/complementary-data', [MyProfileController::class, "loadComplementaryData"]);
+    Route::patch('api/myprofile/documents', [MyProfileController::class, "documentsUpdate"]);
+    Route::patch('api/myprofile/address', [MyProfileController::class, "addressUpdate"]);
+    Route::post("api/myprofile/desactivate/{user_id}", [MyProfileController::class, "accountDeactivation"]);
+    Route::patch("api/myprofile/change-password/{user_id}", [MyProfileController::class, "passwordUpdate"]);
     // Module actions
     Route::group(["prefix" => "api/action/module"], function () {
         Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);

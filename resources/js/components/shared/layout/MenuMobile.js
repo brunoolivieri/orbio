@@ -10,7 +10,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 // Custom
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../../context/Auth';
+import { useAuth } from '../../context/Auth';
 
 const item = {
   '&:hover, &:focus': {

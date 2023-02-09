@@ -10,8 +10,8 @@ import axios from '../../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
-import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
-import { ServiceOrderFlightPlanEquipmentsModal } from '../modal/ServiceOrderFlightPlanEquipmentsModal';
+import { FlightPlansForServiceOrder } from '../../TableSelection/FlightPlansForServiceOrder';
+import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -23,7 +23,7 @@ const fieldError = { error: false, message: "" }
 const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, start_date: fieldError, flight_plans: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const CreateOrder = React.memo((props) => {
+export const CreateServiceOrder = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -269,7 +269,7 @@ export const CreateOrder = React.memo((props) => {
 
             <Grid item xs={6}>
               <Box>
-                <FlightPlansForServiceOrderModal
+                <FlightPlansForServiceOrder
                   setSelectedFlightPlans={setSelectedFlightPlans}
                   selectedFlightPlans={selectedFlightPlans}
                   serviceOrderId={null}
@@ -299,7 +299,7 @@ export const CreateOrder = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <ServiceOrderFlightPlanEquipmentsModal
+                          <EquipmentsForServiceOrderFlightPlan
                             selectedFlightPlans={selectedFlightPlans}
                             setSelectedFlightPlans={setSelectedFlightPlans}
                             current={flight_plan}

@@ -19,21 +19,16 @@ export const FlightPlans = React.memo(() => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
-        <Switcher
-          panelStateSetter={setActualPanel}
-          options={[
-            { page: "flight_plans", title: "Planos de voo", icon: '' },
-            { page: "logs", title: "Logs", icon: '' }
-          ]}
-        />
-      </Paper>
-
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
-        <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-          {actualPanel === "flight_plans" ? <FlightPlansPanel /> : <LogsPanel />}
-        </Box>
-      </Paper>
+      <Switcher
+        panelStateSetter={setActualPanel}
+        options={[
+          { page: "flight_plans", title: "Planos de voo", icon: '' },
+          { page: "logs", title: "Logs", icon: '' }
+        ]}
+      />
+      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+        {actualPanel === "flight_plans" ? <FlightPlansPanel /> : <LogsPanel />}
+      </Box>
     </>
   )
 });

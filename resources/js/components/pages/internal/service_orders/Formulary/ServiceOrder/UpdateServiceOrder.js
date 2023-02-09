@@ -11,10 +11,11 @@ import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
-import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
-import { ServiceOrderFlightPlanLogModal } from '../modal/ServiceOrderFlightPlanLogModal';
-import { ServiceOrderFlightPlanEquipmentsModal } from '../modal/ServiceOrderFlightPlanEquipmentsModal';
-import { ServiceOrderFlightPlanIncidentsModal } from '../modal/ServiceOrderFlightPlanIncidentsModal';
+import { FlightPlansForServiceOrder } from '../../TableSelection/FlightPlansForServiceOrder';
+import { LogsForServiceOrderFlightPlan } from '../../TableSelection/LogsForServiceOrderFlightPlan';
+import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
+import { IncidentsForServiceOrderFlightPlan } from '../../TableSelection/IncidentsForServiceOrderFlightPlan';
+
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -25,7 +26,7 @@ const fieldError = { error: false, message: "" }
 const initialFormError = { pilot_id: fieldError, client_id: fieldError, observation: fieldError, status: fieldError, date_interval: fieldError, flight_plans: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const UpdateOrder = React.memo((props) => {
+export const UpdateServiceOrder = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -290,7 +291,7 @@ export const UpdateOrder = React.memo((props) => {
 
             <Grid item xs={6}>
               <Box>
-                <FlightPlansForServiceOrderModal
+                <FlightPlansForServiceOrder
                   setSelectedFlightPlans={setSelectedFlightPlans}
                   selectedFlightPlans={selectedFlightPlans}
                   serviceOrderId={null}
@@ -321,18 +322,18 @@ export const UpdateOrder = React.memo((props) => {
                         key={index}
                         secondaryAction={
                           <Stack direction="row" spacing={2}>
-                            <ServiceOrderFlightPlanEquipmentsModal
+                            <EquipmentsForServiceOrderFlightPlan
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}
                             />
-                            <ServiceOrderFlightPlanIncidentsModal
+                            <IncidentsForServiceOrderFlightPlan
                               serviceOrderId={formData.id}
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}
                             />
-                            <ServiceOrderFlightPlanLogModal
+                            <LogsForServiceOrderFlightPlan
                               serviceOrderId={formData.id}
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}

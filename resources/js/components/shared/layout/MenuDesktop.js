@@ -16,7 +16,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 // Router 
 import { Link } from 'react-router-dom';
 // Custom
-import { useAuth } from '../../../context/Auth';
+import { useAuth } from '../../context/Auth';
 
 const drawerWidth = 210;
 

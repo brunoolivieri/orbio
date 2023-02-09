@@ -10,7 +10,7 @@ import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
-export const DeleteOrder = React.memo((props) => {
+export const DeleteServiceOrder = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
 

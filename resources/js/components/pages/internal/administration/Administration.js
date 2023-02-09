@@ -20,23 +20,16 @@ export const Administration = () => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden', mb: 1, borderRadius: 5 }}>
-        <Switcher
-          panelStateSetter={setActualPanel}
-          options={[
-            { page: "users", title: "Usuários", icon: "" },
-            { page: "profiles", title: "Perfis", icon: "" }
-          ]}
-        />
-      </Paper>
-
-      <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
-        <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-
-          {actualPanel == "users" ? <UsersPanel /> : <ProfilesPanel />}
-
-        </Box>
-      </Paper>
+      <Switcher
+        panelStateSetter={setActualPanel}
+        options={[
+          { page: "users", title: "Usuários", icon: "" },
+          { page: "profiles", title: "Perfis", icon: "" }
+        ]}
+      />
+      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+        {actualPanel == "users" ? <UsersPanel /> : <ProfilesPanel />}
+      </Box>
     </>
   )
 }

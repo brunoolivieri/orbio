@@ -2,14 +2,24 @@ import * as React from 'react';
 // Material UI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import ReportIcon from '@mui/icons-material/Report';
 import CloseIcon from '@mui/icons-material/Close';
-// Axios
-import axios from '../../../../../../services/AxiosApi';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import { ModalImage } from '../../../../../shared/modals/dialog/ModalImage';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+// Axios
+import axios from '../../../../../services/AxiosApi';
+// Moment
+import moment from 'moment';
+// Custom
+import { CreateIncident } from "../Formulary/Incident/CreateIncident";
+import { UpdateIncident } from '../Formulary/Incident/UpdateIncident';
+import { DeleteIncident } from '../Formulary/Incident/DeleteIncident';
+import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -18,108 +28,88 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
-        field: 'image',
-        headerName: 'Imagem',
-        width: 130,
-        sortable: false,
+        field: 'type',
+        headerName: 'Tipo',
+        minWidth: 150,
+        sortable: true,
         editable: false,
-        renderCell: (data) => {
-            return (
-                <ModalImage image_url={data.row.image_url} />
-            )
-        }
     },
     {
-        field: 'name',
-        headerName: 'Nome',
+        field: 'description',
+        headerName: 'Descrição',
         flex: 1,
-        sortable: true,
-        editable: false
-    },
-    {
-        field: 'created_at',
-        headerName: 'Criado em',
+        minWidth: 200,
         sortable: true,
         editable: false,
-        width: 150
     },
     {
-        field: 'incidents',
-        headerName: 'Incidentes',
+        field: 'date',
+        headerName: 'Data',
+        minWidth: 150,
+        headerAlign: 'left',
         sortable: true,
         editable: false,
-        width: 150,
         valueGetter: (data) => {
-            return data.row.total_incidents
+            return moment(data.row.date).format("DD/MM/YYYY")
         }
-    },
-]
+    }
+];
 
-export const FlightPlansForServiceOrderModal = React.memo((props) => {
-
-    // ============================================================================== STATES ============================================================================== //
+export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
 
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
     const [totalRecords, setTotalRecords] = React.useState(0);
     const [search, setSearch] = React.useState("0");
+    const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [selectionModel, setSelectionModel] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
 
-    // ============================================================================== FUNCTIONS ============================================================================== //
-
     React.useEffect(() => {
+
+        let is_mounted = true;
+        if (!is_mounted) return '';
+
         setLoading(true);
         setRecords([]);
+        setSelectedRecords([]);
         fetchRecords();
+
+        return () => {
+            is_mounted = false;
+        }
+
     }, [reload]);
 
-    function handleClickOpen() {
+    function handleOpen() {
         setOpen(true);
-        setSelectionModel(() => {
-            return props.selectedFlightPlans.map((item) => item.id);
-        });
     }
 
     function handleClose() {
         setOpen(false);
-        setSelectionModel([]);
-        props.setSelectedFlightPlans([]);
     }
 
-    async function fetchRecords() {
+    function fetchRecords() {
 
-        let url = `api/action/module/service-order/flight-plans?`;
-        if (props.serviceOrderId != null) {
-            url += `service_order_id=${props.serviceOrderId}&`;
-        }
-        url += `limit=${perPage}&search=${search}&page=${currentPage}`;
-
-        try {
-
-            const response = await axios.get(url);
-
-            setRecords(response.data.records);
-            setTotalRecords(response.data.total_records);
-            // Set default selections if exists
-            setSelectionModel(() => {
-                return response.data.records.filter((item) => item.selected).map((item) => item.id)
+        axios.get(`api/action/module/service-order/${props.serviceOrderId}/incidents?limit=${perPage}&search=${search}&page=${currentPage}`)
+            .then(function (response) {
+                setRecords(response.data.records);
+                setTotalRecords(response.data.total_records);
+            })
+            .catch(function (error) {
+                console.log(error)
+                setRecords([]);
+            })
+            .finally(() => {
+                setLoading(false);
             });
-
-        } catch (error) {
-            console.log(error)
-        } finally {
-            setLoading(false);
-        }
 
     }
 
     function handleChangePage(newPage) {
-        // If actual page is bigger than the new one, is a reduction of actual
-        // If actual is smaller, the page is increasing
         setCurrentPage((current) => {
             return current > newPage ? (current - 1) : newPage;
         });
@@ -133,67 +123,37 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     }
 
     function handleSelection(newSelectedIds) {
-        // Save only ids for grid controll
-        setSelectionModel(newSelectedIds);
+        // newSelectedIds always bring all selections
+        const newSelectedRecords = records.filter((record) => {
+            if (newSelectedIds.includes(record.id)) {
+                return record;
+            }
+        })
+        setSelectedRecords(newSelectedRecords);
     }
 
-    async function handleSave() {
+    function handleSave() {
+        console.log('save incidents')
+    }
 
-        const execute = async () => {
-
-            const newSelectedIds = selectionModel;
-
-            // Find unchanged selections to preserve data - get entire record
-            let preservedFlightPlansWithEquipments = [];
-            if (props.selectedFlightPlans.length > 0) {
-
-                // The preserveds array receives the already selected preserving the formatting
-                // Preserve the formatting is necesary to not unselect the equipments if already selected
-                preservedFlightPlansWithEquipments = props.selectedFlightPlans.filter((props_record) => {
-                    if (newSelectedIds.includes(props_record.id)) {
-                        return props_record;
-                    }
-                });
-            }
-
-            // Get entire flight plan data record by ID - just for new selections
-            const newSelectedFlightPlans = records.filter((record) => {
-
-                let preservedSelectionsIds = preservedFlightPlansWithEquipments.map((item) => item.id);
-
-                // Record ID must exists in newSelectedIds and not in preserved_selections ids array
-                if (newSelectedIds.includes(record.id) && !preservedSelectionsIds.includes(record.id)) {
-                    return record;
-                }
-            })
-
-            const newSelectedFlightPlansWithEquipments = newSelectedFlightPlans.map((item) => {
-                return { id: item.id, name: item.name, drone_id: "0", battery_id: "0", equipment_id: "0", log_id: null };
-            });
-
-            // Sort array by flight plan ID
-            props.setSelectedFlightPlans(() => {
-                return [...newSelectedFlightPlansWithEquipments, ...preservedFlightPlansWithEquipments].sort((a, b) => a.id - b.id);
-            });
-
-        }
-
-        await execute();
-        setOpen(false);
-
+    function incidentIsAvailable(current_grid_incident) {
+        return true;
     }
 
     return (
         <>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                {"Planos de voo disponíveis: " + (records.length - props.selectedFlightPlans.length)}
-            </Button>
+            <Tooltip title="Incidentes">
+                <IconButton onClick={handleOpen}>
+                    <ReportIcon />
+                </IconButton>
+            </Tooltip>
             <Dialog
                 fullScreen
                 open={open}
                 onClose={handleClose}
                 TransitionComponent={Transition}
             >
+
                 <AppBar sx={{ position: 'relative', bgcolor: '#fff' }}>
                     <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
                         <IconButton
@@ -211,8 +171,47 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                 </AppBar>
 
                 <DialogContent>
-
                     <Grid container columns={12} spacing={1} alignItems="center">
+
+                        <Grid item>
+                            {selectedRecords.length > 0 &&
+                                <IconButton>
+                                    <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+                                </IconButton>
+                            }
+
+                            {selectedRecords.length === 0 &&
+                                <CreateIncident reloadTable={setReload} />
+                            }
+                        </Grid>
+
+                        <Grid item>
+                            {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+                                <Tooltip title="Selecione um registro">
+                                    <IconButton>
+                                        <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
+                                    </IconButton>
+                                </Tooltip>
+                            }
+
+                            {(!loading && selectedRecords.length === 1) &&
+                                <UpdateIncident record={selectedRecords[0]} reloadTable={setReload} />
+                            }
+                        </Grid>
+
+                        <Grid item>
+                            {(selectedRecords.length === 0) &&
+                                <Tooltip title="Selecione um registro">
+                                    <IconButton>
+                                        <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
+                                    </IconButton>
+                                </Tooltip>
+                            }
+
+                            {(!loading && selectedRecords.length > 0) &&
+                                <DeleteIncident records={selectedRecords} reloadTable={setReload} />
+                            }
+                        </Grid>
 
                         <Grid item>
                             <Tooltip title="Carregar">
@@ -225,7 +224,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                         <Grid item xs>
                             <TextField
                                 fullWidth
-                                placeholder={"Pesquisar plano por id e nome"}
+                                placeholder={"Pesquisar log por nome ou id"}
                                 onChange={(e) => setSearch(e.currentTarget.value)}
                                 onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                                 InputProps={{
@@ -254,6 +253,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             page={currentPage - 1}
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
+                            isRowSelectable={(data) => incidentIsAvailable(data.row) && data.row.is_selectable}
                             rowHeight={70}
                             checkboxSelection
                             disableSelectionOnClick
@@ -264,18 +264,25 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             onPageChange={(newPage) => handleChangePage(newPage + 1)}
                             rowCount={totalRecords}
                             localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
+                            components={{
+                                Toolbar: TableToolbar,
+                            }}
                             sx={{
                                 "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
                                     outline: "none !important",
                                 },
                                 '& .super-app-theme--header': {
                                     color: '#222'
+                                },
+                                '& .MuiDataGrid-columnHeaders': {
+                                    boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
                                 }
                             }}
                         />
                     </Box>
+
                 </DialogContent>
             </Dialog>
         </>
-    );
+    )
 });

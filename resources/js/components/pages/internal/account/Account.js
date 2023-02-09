@@ -29,20 +29,18 @@ export const Account = () => {
 
   return (
     <>
-      <Paper sx={{ maxWidth: '100%', margin: 'auto', overflow: 'hidden', borderRadius: 5 }}>
-        <Grid container spacing={1} alignItems="center">
-          <Grid item xs>
-            <Switcher panelStateSetter={setActualPanel} options={options} />
-          </Grid>
+      <Grid container spacing={1} alignItems="center">
+        <Grid item xs>
+          <Switcher panelStateSetter={setActualPanel} options={options} />
         </Grid>
-        <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+      </Grid>
+      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
-          {(actualPanel === "basic") && <BasicInformation />}
-          {(actualPanel === "complementary") && <ComplementaryInformation />}
-          {(actualPanel === "account_configuration") && <AdditionalConfiguration />}
+        {(actualPanel === "basic") && <BasicInformation />}
+        {(actualPanel === "complementary") && <ComplementaryInformation />}
+        {(actualPanel === "account_configuration") && <AdditionalConfiguration />}
 
-        </Box>
-      </Paper>
+      </Box>
     </>
   )
 }
