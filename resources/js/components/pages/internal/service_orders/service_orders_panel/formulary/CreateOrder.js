@@ -229,11 +229,11 @@ export const CreateOrder = React.memo((props) => {
                 fetch_from={"/api/load-users?where=profile_id.3"}
                 primary_key={"id"}
                 key_content={"name"}
-                setFormData={setFormData}
-                formData={formData}
-                error={formError.pilot_id.error}
-                selected={formData.pilot_id}
                 name={"pilot_id"}
+                error={formError.pilot_id.error}
+                errorMessage={formError.pilot_id.message}
+                selected={formData.pilot_id}
+                handleChange={handleInputChange}
               />
               <FormHelperText error>{formError.pilot_id.message}</FormHelperText>
             </Grid>
@@ -244,11 +244,11 @@ export const CreateOrder = React.memo((props) => {
                 fetch_from={"/api/load-users?where=profile_id.4"}
                 primary_key={"id"}
                 key_content={"name"}
-                setFormData={setFormData}
-                formData={formData}
-                error={formError.client_id.error}
-                selected={formData.client_id}
                 name={"client_id"}
+                error={formError.client_id.error}
+                errorMessage={formError.client_id.message}
+                selected={formData.client_id}
+                handleChange={handleInputChange}
               />
               <FormHelperText error>{formError.client_id.message}</FormHelperText>
             </Grid>

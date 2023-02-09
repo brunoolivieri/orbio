@@ -164,11 +164,11 @@ export const UpdateUser = React.memo((props) => {
                 fetch_from={"/api/load-profiles"}
                 primary_key={"id"}
                 key_content={"name"}
-                error={formError.profile_id.error}
                 name={"profile_id"}
+                error={formError.profile_id.error}
+                errorMessage={formError.profile_id.message}
                 selected={formData.profile_id}
-                setFormData={setFormData}
-                formData={formData}
+                handleChange={handleInputChange}
               />
             </Grid>
           </Grid>

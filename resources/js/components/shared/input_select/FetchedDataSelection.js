@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { InputLabel, MenuItem, FormControl, Select, TextField } from '@mui/material';
+import { InputLabel, MenuItem, FormControl, Select, TextField, FormHelperText } from '@mui/material';
 // Custom
 import axios from "../../../services/AxiosApi";
 
@@ -23,7 +23,7 @@ export const FetchedDataSelection = React.memo((props) => {
     }, [open]);
 
     function handleChange(event) {
-        props.setFormData({ ...props.formData, [event.target.name]: event.target.value });
+        props.handleChange(event);
     }
 
     return (
@@ -51,6 +51,7 @@ export const FetchedDataSelection = React.memo((props) => {
                         }
 
                     </Select>
+                    <FormHelperText error>{props.errorMessage}</FormHelperText>
                 </FormControl>
             }
 
