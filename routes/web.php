@@ -28,7 +28,7 @@ use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
     Actions\FlightPlansForServiceOrderController,
     Actions\EquipmentsForServiceOrderFlightPlanController,
-    Actions\LogsForServiceOrderFlightPlansController
+    Actions\LogsForServiceOrderFlightPlanController
 };
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 use App\Http\Controllers\Modules\Equipment\{
@@ -71,8 +71,6 @@ Route::group(['prefix' => 'api/auth'], function () {
         Route::post('/logout', LogoutController::class);
     });
 });
-
-
 
 Route::middleware(["session.auth"])->group(function () {
     Route::view('/internal', "react_root");
@@ -119,12 +117,12 @@ Route::middleware(["session.auth"])->group(function () {
     // Module actions
     Route::group(["prefix" => "api/action/module"], function () {
         Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);
-        Route::get("/service-order/logs", LogsForServiceOrderFlightPlansController::class);
+        Route::get("/service-order/logs", LogsForServiceOrderFlightPlanController::class);
     });
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/get-weather-data', WeatherDataController::class);
     Route::get("api/load-service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
-    
+
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);
     Route::get('api/load-equipments', LoadEquipmentsController::class);

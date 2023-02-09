@@ -86,7 +86,7 @@ export function IncidentsPanel() {
   const [reload, setReload] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
-  console.log(records)
+ 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {

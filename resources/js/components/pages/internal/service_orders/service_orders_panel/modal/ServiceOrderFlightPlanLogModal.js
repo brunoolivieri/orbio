@@ -57,7 +57,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [totalRecords, setTotalRecords] = React.useState(0);
     const [search, setSearch] = React.useState("0");
-    const [controlledSelection, setControlledSelection] = React.useState([]); // For grid controll
+    const [selectionModel, setSelectionModel] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -85,7 +85,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
                 setTotalRecords(response.data.total_records);
                 console.log(response.data)
                 if (response.data.total_records > 0) {
-                    setControlledSelection(() => {
+                    setSelectionModel(() => {
                         return response.data.records.map((log) => {
                             if (log.selected) {
                                 return log.id;
@@ -126,7 +126,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
             new_selection_id = newSelectedIds[newSelectedIds.length - 1];
         }
 
-        setControlledSelection(new_selection_id);
+        setSelectionModel(new_selection_id);
 
     }
 
@@ -137,7 +137,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
                 if (flight_plan.id != props.current.id) {
                     return flight_plan;
                 } else {
-                    return { ...flight_plan, log_id: controlledSelection.length === 1 ? controlledSelection[0] : null }
+                    return { ...flight_plan, log_id: selectionModel.length === 1 ? selectionModel[0] : null }
                 }
             });
 
@@ -238,7 +238,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
                             pageSize={perPage}
                             loading={loading}
                             page={currentPage - 1}
-                            selectionModel={controlledSelection}
+                            selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
                             isRowSelectable={(data) => logIsSelectable(data.row) && data.row.is_selectable}
                             rowHeight={70}

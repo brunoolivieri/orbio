@@ -64,7 +64,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const [totalRecords, setTotalRecords] = React.useState(0);
     const [search, setSearch] = React.useState("0");
-    const [controlledSelection, setControlledSelection] = React.useState([]); // For grid controll
+    const [selectionModel, setSelectionModel] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
@@ -79,14 +79,14 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     function handleClickOpen() {
         setOpen(true);
-        setControlledSelection(() => {
+        setSelectionModel(() => {
             return props.selectedFlightPlans.map((item) => item.id);
         });
     }
 
     function handleClose() {
         setOpen(false);
-        setControlledSelection([]);
+        setSelectionModel([]);
         props.setSelectedFlightPlans([]);
     }
 
@@ -105,7 +105,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);
             // Set default selections if exists
-            setControlledSelection(() => {
+            setSelectionModel(() => {
                 return response.data.records.filter((item) => item.selected).map((item) => item.id)
             });
 
@@ -134,14 +134,14 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
 
     function handleSelection(newSelectedIds) {
         // Save only ids for grid controll
-        setControlledSelection(newSelectedIds);
+        setSelectionModel(newSelectedIds);
     }
 
     async function handleSave() {
 
         const execute = async () => {
 
-            const newSelectedIds = controlledSelection;
+            const newSelectedIds = selectionModel;
 
             // Find unchanged selections to preserve data - get entire record
             let preservedFlightPlansWithEquipments = [];
@@ -252,7 +252,7 @@ export const FlightPlansForServiceOrderModal = React.memo((props) => {
                             pageSize={perPage}
                             loading={loading}
                             page={currentPage - 1}
-                            selectionModel={controlledSelection}
+                            selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
                             rowHeight={70}
                             checkboxSelection
