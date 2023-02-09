@@ -27,11 +27,11 @@ class UpdateBatteryRequest extends FormRequest
         $battery_id_parameter = $this->route("equipments_module_battery");
 
         return [
-            'name' => 'bail|required|unique:batteries,name,'.$battery_id_parameter,
-            'manufacturer' => 'bail|required',
-            'model' => 'bail|required',
-            'serial_number' => 'bail|required',
-            'last_charge' => 'bail|required|date'
+            'name' => 'required|unique:batteries,name,'.$battery_id_parameter,
+            'manufacturer' => 'required',
+            'model' => 'required',
+            'serial_number' => 'required',
+            'last_charge' => 'required|date'
         ]; 
     }
 

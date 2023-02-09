@@ -27,13 +27,13 @@ class UpdateDroneRequest extends FormRequest
         $drone_id_parameter = $this->route("equipments_module_drone");
 
         return [
-            'name' => 'bail|required|unique:drones,name,'.$drone_id_parameter,
-            'manufacturer' => 'bail|required',
-            'model' => 'bail|required',
-            'record_number' => 'bail|required',
-            'serial_number' => 'bail|required',
-            'weight' => 'bail|required|numeric',
-            'observation' => 'bail|required'
+            'name' => 'required|unique:drones,name,'.$drone_id_parameter,
+            'manufacturer' => 'required',
+            'model' => 'required',
+            'record_number' => 'required',
+            'serial_number' => 'required',
+            'weight' => 'required|numeric',
+            'observation' => 'required'
         ]; 
     }
 

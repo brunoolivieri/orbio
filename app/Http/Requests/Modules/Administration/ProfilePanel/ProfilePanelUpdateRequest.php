@@ -29,7 +29,7 @@ class ProfilePanelUpdateRequest extends FormRequest
         $profile_id_parameter = $this->route("admin_module_profile");
 
         return [
-            'name' => 'bail|required|string|unique:profiles,name,' . $profile_id_parameter,
+            'name' => 'required|string|unique:profiles,name,' . $profile_id_parameter,
             'privileges' => 'required',
             'access_data' => 'required'
         ];

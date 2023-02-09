@@ -8,6 +8,7 @@ export const FetchedDataSelection = React.memo((props) => {
 
     const [loading, setLoading] = React.useState(true);
     const [options, setOptions] = React.useState([]);
+    const [selected, setSelected] = React.useState(props.selected);
 
     React.useEffect(() => {
         axios.get(props.fetch_from)
@@ -23,6 +24,7 @@ export const FetchedDataSelection = React.memo((props) => {
     }, [open]);
 
     function handleChange(event) {
+        setSelected(event.target.value);
         props.handleChange(event);
     }
 
@@ -34,16 +36,14 @@ export const FetchedDataSelection = React.memo((props) => {
 
                     <Select
                         id={props.name}
-                        value={props.selected}
+                        value={selected}
                         label={props.label_text}
                         onChange={handleChange}
                         name={props.name}
                         error={(options.length == 0) || props.error}
                         disabled={loading}
                     >
-
                         <MenuItem value="0" disabled>Escolha</MenuItem>
-
                         {options.length > 0 &&
                             options.map((item) =>
                                 <MenuItem value={item[props.primary_key]} key={item[props.primary_key]}>{item[props.key_content]}</MenuItem>

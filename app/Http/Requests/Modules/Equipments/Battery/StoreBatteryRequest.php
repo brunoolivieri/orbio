@@ -24,12 +24,12 @@ class StoreBatteryRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'bail|required|image|mimes:png,jpg,jpeg,svg',
-            'name' => 'bail|required|unique:batteries,name',
-            'manufacturer' => 'bail|required',
-            'model' => 'bail|required',
-            'serial_number' => 'bail|required',
-            'last_charge' => 'bail|required|date'
+            'image' => 'required|image|mimes:png,jpg,jpeg,svg',
+            'name' => 'required|unique:batteries,name',
+            'manufacturer' => 'required',
+            'model' => 'required',
+            'serial_number' => 'required',
+            'last_charge' => 'required|date'
         ]; 
     }
 

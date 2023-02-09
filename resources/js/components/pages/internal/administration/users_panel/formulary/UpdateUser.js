@@ -20,7 +20,7 @@ export const UpdateUser = React.memo((props) => {
 
   const { user } = useAuth();
 
-  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, email: props.record.email, profile_id: props.record.profile.id });
+  const [formData, setFormData] = React.useState({});
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
@@ -30,6 +30,7 @@ export const UpdateUser = React.memo((props) => {
 
   function handleClickOpen() {
     setOpen(true);
+    setFormData({ id: props.record.id, name: props.record.name, email: props.record.email, profile_id: props.record.profile.id });
   }
 
   function handleClose() {
@@ -103,7 +104,8 @@ export const UpdateUser = React.memo((props) => {
   }
 
   function handleInputChange(event) {
-    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
+    console.log(event.target)
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   }
 
   // ============================================================================== JSX ============================================================================== //

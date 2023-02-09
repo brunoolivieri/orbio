@@ -62,6 +62,10 @@ export const ServiceOrderFlightPlanEquipmentSelection = React.memo((props) => {
         return !(validation.drone_id.error || validation.battery_id.error || validation.equipment_id.error);
     }
 
+    function handleInputChange(event) {
+        setFormData({ ...formData, [event.target.name]: event.target.value });
+    }
+
     return (
         <>
             <Tooltip title="Selecionar equipamentos">
@@ -104,13 +108,12 @@ export const ServiceOrderFlightPlanEquipmentSelection = React.memo((props) => {
                             fetch_from={"/api/load-drones"}
                             primary_key={"id"}
                             key_content={"name"}
-                            setFormData={setFormData}
-                            formData={formData}
                             name={"drone_id"}
                             selected={formData.drone_id}
                             error={formError.drone_id.error}
+                            errorMessage={formError.drone_id.message}
+                            handleChange={handleInputChange}
                         />
-                        <FormHelperText error>{formError.drone_id.message}</FormHelperText>
                     </Box>
 
                     <Box sx={{ mb: 2 }}>
@@ -119,13 +122,12 @@ export const ServiceOrderFlightPlanEquipmentSelection = React.memo((props) => {
                             fetch_from={"/api/load-batteries"}
                             primary_key={"id"}
                             key_content={"name"}
-                            setFormData={setFormData}
-                            formData={formData}
                             name={"battery_id"}
                             selected={formData.battery_id}
                             error={formError.battery_id.error}
+                            errorMessage={formError.battery_id.message}
+                            handleChange={handleInputChange}
                         />
-                        <FormHelperText error>{formError.battery_id.message}</FormHelperText>
                     </Box>
 
                     <Box sx={{ mb: 2 }}>
@@ -134,13 +136,12 @@ export const ServiceOrderFlightPlanEquipmentSelection = React.memo((props) => {
                             fetch_from={"/api/load-equipments"}
                             primary_key={"id"}
                             key_content={"name"}
-                            setFormData={setFormData}
-                            formData={formData}
                             name={"equipment_id"}
                             selected={formData.equipment_id}
                             error={formError.equipment_id.error}
+                            errorMessage={formError.equipment_id.message}
+                            handleChange={handleInputChange}
                         />
-                        <FormHelperText error>{formError.equipment_id.message}</FormHelperText>
                     </Box>
 
                 </DialogContent>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, FormHelperText, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText, Stack } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText, Stack } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -30,15 +30,7 @@ export const UpdateOrder = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-  const [formData, setFormData] = React.useState({
-    id: props.record.id,
-    start_date: props.record.start_date,
-    end_date: props.record.end_date,
-    pilot_id: props.record.users.pilot.id,
-    client_id: props.record.users.client.id,
-    observation: props.record.observation,
-    status: props.record.status
-  });
+  const [formData, setFormData] = React.useState({});
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
@@ -79,6 +71,15 @@ export const UpdateOrder = React.memo((props) => {
 
   function handleClickOpen() {
     setOpen(true);
+    setFormData({
+      id: props.record.id,
+      start_date: props.record.start_date,
+      end_date: props.record.end_date,
+      pilot_id: props.record.users.pilot.id,
+      client_id: props.record.users.client.id,
+      observation: props.record.observation,
+      status: props.record.status
+    });
 
     setSelectedFlightPlans(props.record.flight_plans.map((flight_plan) => {
       return {
@@ -174,7 +175,7 @@ export const UpdateOrder = React.memo((props) => {
   }
 
   function handleInputChange(event) {
-    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   }
 
   function avatarSelectionStyle(selected_flight_plan) {
@@ -254,7 +255,6 @@ export const UpdateOrder = React.memo((props) => {
                 selected={formData.pilot_id}
                 handleChange={handleInputChange}
               />
-              <FormHelperText error>{formError.pilot_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={6}>
@@ -269,7 +269,6 @@ export const UpdateOrder = React.memo((props) => {
                 selected={formData.client_id}
                 handleChange={handleInputChange}
               />
-              <FormHelperText error>{formError.client_id.message}</FormHelperText>
             </Grid>
 
             <Grid item xs={12}>

@@ -24,15 +24,15 @@ class StoreEquipmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => 'bail|required|image|mimes:png,jpg,svg',
-            'name' => 'bail|required|unique:equipments,name',
-            'manufacturer' => 'bail|required',
-            'model' => 'bail|required',
-            'record_number' => 'bail|required',
-            'serial_number' => 'bail|required',
-            'weight' => 'bail|required|numeric',
-            'observation' => 'bail|required',
-            'purchase_date' => 'bail|required|date'
+            'image' => 'required|image|mimes:png,jpg,svg',
+            'name' => 'required|unique:equipments,name',
+            'manufacturer' => 'required',
+            'model' => 'required',
+            'record_number' => 'required',
+            'serial_number' => 'required',
+            'weight' => 'required|numeric',
+            'observation' => 'required',
+            'purchase_date' => 'required|date'
         ]; 
     }
 

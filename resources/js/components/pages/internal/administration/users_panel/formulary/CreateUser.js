@@ -63,7 +63,7 @@ export const CreateUser = React.memo((props) => {
   async function requestServer() {
 
     try {
-
+      
       const response = await axios.post("/api/admin-module-user", formData);
       successResponse(response);
 
@@ -101,7 +101,7 @@ export const CreateUser = React.memo((props) => {
   }
 
   function handleInputChange(event) {
-    setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   }
 
   // ============================================================================== JSX ============================================================================== //

@@ -29,9 +29,9 @@ class UserPanelUpdateRequest extends FormRequest
         $user_id_parameter = $this->route("admin_module_user");
 
         return [
-            'name' => 'bail|required|string',
-            'email' => 'bail|required|email|unique:users,email,'.$user_id_parameter,
-            'profile_id' => 'bail|required|integer|numeric'
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email,'.$user_id_parameter,
+            'profile_id' => 'required|integer|numeric'
         ]; 
     }
 

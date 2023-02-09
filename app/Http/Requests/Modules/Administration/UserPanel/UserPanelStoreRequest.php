@@ -26,9 +26,9 @@ class UserPanelStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'bail|required',
-            'email' => 'bail|required|email|unique:users,email',
-            'profile_id' => 'bail|required|exists:profiles,id'
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'profile_id' => 'required|exists:profiles,id'
         ];
     }
 
