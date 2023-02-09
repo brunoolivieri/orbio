@@ -140,8 +140,8 @@ const columns = [
         return <Chip label="Finalizado" color="success" variant="outlined" />;
       }
 
-      const start_date = start_moment.format("DD/MM/YYYY");
-      const final_date = end_moment.format("DD/MM/YYYY");
+      //const start_date = start_moment.format("DD/MM/YYYY");
+      //const final_date = end_moment.format("DD/MM/YYYY");
       const total_days = end_moment.diff(start_moment, 'days');
 
       // > 0 = started and < 0 = to start

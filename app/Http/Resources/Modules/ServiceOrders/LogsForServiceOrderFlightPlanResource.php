@@ -27,7 +27,7 @@ class LogsForServiceOrderFlightPlanResource extends JsonResource
         $index_counter = 0;
         foreach ($this->data as $log) {
 
-            $is_selectable = true;
+            $is_available = true;
             $selected = false;
             $to_render = true;
             $total_rendered = 0;
@@ -46,7 +46,7 @@ class LogsForServiceOrderFlightPlanResource extends JsonResource
                     if ($log->service_order_flight_plan->flight_plan_id == $this->flightPlanId) {
                         $selected = true;
                     } else if ($log->service_order_flight_plan->flight_plan_id != $this->flightPlanId) {
-                        $is_selectable = false;
+                        $is_available = false;
                     }
                 } else {
                     $to_render = false;
@@ -62,7 +62,7 @@ class LogsForServiceOrderFlightPlanResource extends JsonResource
                     "path" => $log->path,
                     "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),
                     "created_at" => $log->created_at,
-                    "is_selectable" => $is_selectable,
+                    "is_available" => $is_available,
                     "selected" => $selected
                 ];
 

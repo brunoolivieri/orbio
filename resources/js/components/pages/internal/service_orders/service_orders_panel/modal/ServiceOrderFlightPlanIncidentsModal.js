@@ -8,9 +8,17 @@ import CloseIcon from '@mui/icons-material/Close';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Axios
 import axios from '../../../../../../services/AxiosApi';
+// Moment
+import moment from 'moment';
 // Custom
+import { CreateIncident } from '../../../incidents/incidents_panel/formulary/CreateIncident';
+import { UpdateIncident } from '../../../incidents/incidents_panel/formulary/UpdateIncident';
+import { DeleteIncident } from '../../../incidents/incidents_panel/formulary/DeleteIncident';
 import { TableToolbar } from '../../../../../shared/table_toolbar/TableToolbar';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -22,7 +30,7 @@ const columns = [
     {
         field: 'type',
         headerName: 'Tipo',
-        minWidth: 100,
+        minWidth: 150,
         sortable: true,
         editable: false,
     },
@@ -37,10 +45,13 @@ const columns = [
     {
         field: 'date',
         headerName: 'Data',
-        minWidth: 130,
+        minWidth: 150,
         headerAlign: 'left',
         sortable: true,
-        editable: false
+        editable: false,
+        valueGetter: (data) => {
+            return moment(data.row.date).format("DD/MM/YYYY")
+        }
     }
 ];
 
@@ -55,6 +66,7 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
     const [selectionModel, setSelectionModel] = React.useState([]); // For grid controll
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
+    const [open, setOpen] = React.useState(false);
 
     React.useEffect(() => {
 
@@ -72,9 +84,17 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
 
     }, [reload]);
 
+    function handleOpen() {
+        setOpen(true);
+    }
+
+    function handleClose() {
+        setOpen(false);
+    }
+
     function fetchRecords() {
 
-        axios.get(`/api/incidents-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/action/module/service-order/${props.serviceOrderId}/incidents?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
@@ -116,21 +136,13 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
         console.log('save incidents')
     }
 
-    function handleOpen() {
-        console.log('open');
-    }
-
-    function handleClose() {
-        console.log('close');
-    }
-
-    function logIsSelectable(current_grid_incident) {
+    function incidentIsAvailable(current_grid_incident) {
         return true;
     }
 
     return (
         <>
-            <Tooltip title="Selecionar log">
+            <Tooltip title="Incidentes">
                 <IconButton onClick={handleOpen}>
                     <ReportIcon />
                 </IconButton>
@@ -160,6 +172,46 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
 
                 <DialogContent>
                     <Grid container columns={12} spacing={1} alignItems="center">
+
+                        <Grid item>
+                            {selectedRecords.length > 0 &&
+                                <IconButton>
+                                    <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+                                </IconButton>
+                            }
+
+                            {selectedRecords.length === 0 &&
+                                <CreateIncident reloadTable={setReload} />
+                            }
+                        </Grid>
+
+                        <Grid item>
+                            {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+                                <Tooltip title="Selecione um registro">
+                                    <IconButton>
+                                        <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
+                                    </IconButton>
+                                </Tooltip>
+                            }
+
+                            {(!loading && selectedRecords.length === 1) &&
+                                <UpdateIncident record={selectedRecords[0]} reloadTable={setReload} />
+                            }
+                        </Grid>
+
+                        <Grid item>
+                            {(selectedRecords.length === 0) &&
+                                <Tooltip title="Selecione um registro">
+                                    <IconButton>
+                                        <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
+                                    </IconButton>
+                                </Tooltip>
+                            }
+
+                            {(!loading && selectedRecords.length > 0) &&
+                                <DeleteIncident records={selectedRecords} reloadTable={setReload} />
+                            }
+                        </Grid>
 
                         <Grid item>
                             <Tooltip title="Carregar">
@@ -201,7 +253,7 @@ export function ServiceOrderFlightPlanIncidentsModal(props) {
                             page={currentPage - 1}
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
-                            isRowSelectable={(data) => logIsSelectable(data.row) && data.row.is_selectable}
+                            isRowSelectable={(data) => incidentIsAvailable(data.row) && data.row.is_selectable}
                             rowHeight={70}
                             checkboxSelection
                             disableSelectionOnClick

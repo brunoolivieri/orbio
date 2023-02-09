@@ -28,7 +28,8 @@ use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
     Actions\FlightPlansForServiceOrderController,
     Actions\EquipmentsForServiceOrderFlightPlanController,
-    Actions\LogsForServiceOrderFlightPlanController
+    Actions\LogsForServiceOrderFlightPlanController,
+    Actions\ServiceOrderIncidentController
 };
 use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 use App\Http\Controllers\Modules\Equipment\{
@@ -81,16 +82,15 @@ Route::middleware(["session.auth"])->group(function () {
     Route::view('/internal/map-modal', "map_modal");
     // Module core operations
     Route::get('/api/dashboard', DashboardController::class);
-    Route::ApiResource("api/admin-module-user", AdministrationModuleUsersController::class);
-    Route::ApiResource("api/admin-module-profile", AdministrationModuleProfilesController::class);
-    Route::ApiResource("api/reports-module", ReportModuleController::class);
-    Route::ApiResource("api/plans-module", FlightPlanModuleController::class);
-    Route::ApiResource("api/plans-module-logs", FlightPlanModuleLogController::class);
-    Route::ApiResource("api/orders-module", ServiceOrderModuleController::class);
-    Route::ApiResource("api/incidents-module", IncidentModuleController::class);
-    Route::ApiResource("api/equipments-module-drone", EquipmentModuleDroneController::class);
-    Route::ApiResource("api/equipments-module-battery", EquipmentModuleBatteryController::class);
-    Route::ApiResource("api/equipments-module-equipment", EquipmentModuleEquipmentController::class);
+    Route::apiResource("api/admin-module-user", AdministrationModuleUsersController::class);
+    Route::apiResource("api/admin-module-profile", AdministrationModuleProfilesController::class);
+    Route::apiResource("api/reports-module", ReportModuleController::class);
+    Route::apiResource("api/plans-module", FlightPlanModuleController::class);
+    Route::apiResource("api/plans-module-logs", FlightPlanModuleLogController::class);
+    Route::apiResource("api/orders-module", ServiceOrderModuleController::class);
+    Route::apiResource("api/equipments-module-drone", EquipmentModuleDroneController::class);
+    Route::apiResource("api/equipments-module-battery", EquipmentModuleBatteryController::class);
+    Route::apiResource("api/equipments-module-equipment", EquipmentModuleEquipmentController::class);
     // Module additional operations
     Route::post("api/users/export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
     Route::post("api/profiles/export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
@@ -118,11 +118,12 @@ Route::middleware(["session.auth"])->group(function () {
     Route::group(["prefix" => "api/action/module"], function () {
         Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/service-order/logs", LogsForServiceOrderFlightPlanController::class);
+        Route::apiResource("/service-order/{identifier}/incidents", ServiceOrderIncidentController::class);
     });
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/get-weather-data', WeatherDataController::class);
     Route::get("api/load-service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
-
+    // Generic actions
     Route::get('api/load-drones', LoadDronesController::class);
     Route::get('api/load-batteries', LoadBatteriesController::class);
     Route::get('api/load-equipments', LoadEquipmentsController::class);

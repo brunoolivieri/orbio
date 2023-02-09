@@ -11,7 +11,6 @@ import MapIcon from '@mui/icons-material/Map';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import ReportIcon from '@mui/icons-material/Report';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import LogoutIcon from '@mui/icons-material/Logout';
 // Router 
@@ -117,7 +116,6 @@ export const MenuDesktop = () => {
                 { id: 'Planos e Logs', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "planos" },
                 { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "ordens" },
                 { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "relatorios" },
-                { id: 'Incidentes', icon: <ReportIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "incidentes" },
                 { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["6"].profile_powers.read == 1, path: "equipamentos" }
             ]
         },

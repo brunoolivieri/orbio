@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+// Moment
+import moment from 'moment';
 // Custom
 import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
@@ -11,7 +13,6 @@ import { UpdateIncident } from './formulary/UpdateIncident';
 import { DeleteIncident } from './formulary/DeleteIncident';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
-import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +27,7 @@ const columns = [
   {
     field: 'type',
     headerName: 'Tipo',
-    minWidth: 100,
+    minWidth: 150,
     sortable: true,
     editable: false,
   },
@@ -41,33 +42,14 @@ const columns = [
   {
     field: 'date',
     headerName: 'Data',
-    minWidth: 130,
+    minWidth: 150,
     headerAlign: 'left',
     sortable: true,
-    editable: false
-  },
-  {
-    field: 'image_url',
-    headerName: 'Plano de voo',
-    sortable: true,
     editable: false,
-    minWidth: 150,
-    renderCell: (data) => {
-      return (
-        <ModalImage image_url={data.row.service_order.flight_plan.image_url} />
-      )
-    }
-  },
-  {
-    field: 'service_order',
-    headerName: 'Ordem de serviço',
-    sortable: true,
-    editable: false,
-    minWidth: 150,
     valueGetter: (data) => {
-      return data.row.service_order.number
+      return moment(data.row.date).format("DD/MM/YYYY")
     }
-  },
+  }
 ];
 
 export function IncidentsPanel() {
@@ -86,7 +68,7 @@ export function IncidentsPanel() {
   const [reload, setReload] = React.useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
- 
+
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {

@@ -83,7 +83,6 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
             .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
-                console.log(response.data)
                 if (response.data.total_records > 0) {
                     setSelectionModel(() => {
                         return response.data.records.map((log) => {
@@ -150,26 +149,31 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
 
     }
 
-    function logIsSelectable(current_grid_log) {
+    function logIsAvailable(current_grid_log) {
         let is_selectable = true;
+
         if (props.selectedFlightPlans.length > 0) {
+
             let filter_log_by_id = props.selectedFlightPlans.filter((selected_flight_plan) => {
-                // If flight plan is not the current 
+                // If flight plan is not the current... 
                 if (selected_flight_plan.id != props.current.id) {
                     // Check if flight plan log is the same of the current grid row
                     return selected_flight_plan.log_id == current_grid_log.id;
                 }
             });
+
+            // If log is already selected by a different flight plan...
             if (filter_log_by_id.length === 1) {
                 is_selectable = false;
             }
         }
+
         return is_selectable;
     }
 
     return (
         <>
-            <Tooltip title="Selecionar log">
+            <Tooltip title="Log">
                 <IconButton onClick={handleOpen}>
                     <InsertDriveFileIcon />
                 </IconButton>
@@ -240,7 +244,7 @@ export const ServiceOrderFlightPlanLogModal = React.memo((props) => {
                             page={currentPage - 1}
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
-                            isRowSelectable={(data) => logIsSelectable(data.row) && data.row.is_selectable}
+                            isRowSelectable={(data) => logIsAvailable(data.row) && data.row.is_available}
                             rowHeight={70}
                             checkboxSelection
                             disableSelectionOnClick

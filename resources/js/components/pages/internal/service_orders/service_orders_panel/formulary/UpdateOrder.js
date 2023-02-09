@@ -13,7 +13,7 @@ import { FetchedDataSelection } from '../../../../../shared/input_select/Fetched
 import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrderModal } from '../modal/FlightPlansForServiceOrderModal';
 import { ServiceOrderFlightPlanLogModal } from '../modal/ServiceOrderFlightPlanLogModal';
-import { ServiceOrderFlightPlanEquipmentSelection } from '../modal/ServiceOrderFlightPlanEquipmentSelectionModal';
+import { ServiceOrderFlightPlanEquipmentsModal } from '../modal/ServiceOrderFlightPlanEquipmentsModal';
 import { ServiceOrderFlightPlanIncidentsModal } from '../modal/ServiceOrderFlightPlanIncidentsModal';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -58,6 +58,7 @@ export const UpdateOrder = React.memo((props) => {
               current_check = 0;
             }
           }
+
         }
 
         return current_check;
@@ -320,7 +321,7 @@ export const UpdateOrder = React.memo((props) => {
                         key={index}
                         secondaryAction={
                           <Stack direction="row" spacing={2}>
-                            <ServiceOrderFlightPlanEquipmentSelection
+                            <ServiceOrderFlightPlanEquipmentsModal
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
                               current={flight_plan}
@@ -356,6 +357,7 @@ export const UpdateOrder = React.memo((props) => {
               }
             </Grid>
 
+            {/*
             <Grid item xs={6}>
               <StatusRadio
                 default={formData.status.toString()}
@@ -363,6 +365,7 @@ export const UpdateOrder = React.memo((props) => {
                 formData={formData}
               />
             </Grid>
+            */}
 
           </Grid>
         </DialogContent>
