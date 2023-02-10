@@ -5,15 +5,14 @@ namespace App\Http\Resources\Modules\ServiceOrders;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class ServiceOrderIncidentResource extends JsonResource
 {
-    private LengthAwarePaginator $data;
-    private array $formatedData = [];
-
     function __construct(LengthAwarePaginator $data)
     {
         $this->data = $data;
+        $this->formatedData = [];
     }
 
     /**
@@ -24,6 +23,7 @@ class ServiceOrderIncidentResource extends JsonResource
      */
     public function toArray($request)
     {
+
         foreach ($this->data as $row => $incident) {
 
             $this->formatedData["records"][$row] = [

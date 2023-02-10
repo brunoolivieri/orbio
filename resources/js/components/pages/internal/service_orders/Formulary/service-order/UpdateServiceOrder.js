@@ -11,10 +11,10 @@ import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
-import { FlightPlansForServiceOrder } from '../../TableSelection/FlightPlansForServiceOrder';
-import { LogsForServiceOrderFlightPlan } from '../../TableSelection/LogsForServiceOrderFlightPlan';
+import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
+import { LogsForServiceOrderFlightPlan } from '../../table-selection/LogsForServiceOrderFlightPlan';
 import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
-import { IncidentsForServiceOrderFlightPlan } from '../../TableSelection/IncidentsForServiceOrderFlightPlan';
+import { IncidentsForServiceOrderFlightPlan } from '../../table-selection/IncidentsForServiceOrderFlightPlan';
 
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

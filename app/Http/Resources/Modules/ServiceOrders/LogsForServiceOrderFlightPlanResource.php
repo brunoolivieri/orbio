@@ -72,7 +72,7 @@ class LogsForServiceOrderFlightPlanResource extends JsonResource
             $index_counter++;
         }
 
-        $this->formatedData["total_records"] += $total_rendered;
+        $this->formatedData["total_records"] = $total_rendered;
         $this->formatedData["records_per_page"] = $this->data->perPage();
         $this->formatedData["total_pages"] = $this->data->lastPage();
 

@@ -14,10 +14,10 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { CreateServiceOrder } from './Formulary/ServiceOrder/CreateServiceOrder';
-import { UpdateServiceOrder } from './Formulary/ServiceOrder/UpdateServiceOrder';
-import { DeleteServiceOrder } from './Formulary/ServiceOrder/DeleteServiceOrder';
-import { ServiceOrderInformation } from './Formulary/ServiceOrder/ServiceOrderInformation';
+import { CreateServiceOrder } from './Formulary/service-order/CreateServiceOrder';
+import { UpdateServiceOrder } from './Formulary/service-order/UpdateServiceOrder';
+import { DeleteServiceOrder } from './Formulary/service-order/DeleteServiceOrder';
+import { ServiceOrderInformation } from './Formulary/service-order/ServiceOrderInformation';
 import { ExportTableData } from '../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../shared/table_toolbar/TableToolbar';
 import { useAuth } from '../../../context/Auth';
@@ -25,7 +25,6 @@ import { usePage } from '../../../context/PageContext';
 import axios from '../../../../services/AxiosApi';
 // Moment
 import moment from 'moment';
-
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -266,7 +265,7 @@ export function ServiceOrders() {
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
-        <>
+        <Box padding={2}>
             <Grid container spacing={1} alignItems="center" mb={1}>
 
                 <Grid item>
@@ -398,6 +397,6 @@ export function ServiceOrders() {
                     }}
                 />
             </Box>
-        </>
+        </Box>
     );
 }

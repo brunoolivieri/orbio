@@ -16,9 +16,9 @@ import axios from '../../../../../services/AxiosApi';
 // Moment
 import moment from 'moment';
 // Custom
-import { CreateIncident } from "../Formulary/Incident/CreateIncident";
-import { UpdateIncident } from '../Formulary/Incident/UpdateIncident';
-import { DeleteIncident } from '../Formulary/Incident/DeleteIncident';
+import { CreateIncident } from "../formulary/incident/CreateIncident";
+import { UpdateIncident } from '../formulary/incident/UpdateIncident';
+import { DeleteIncident } from '../formulary/incident/DeleteIncident';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -94,7 +94,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
 
     function fetchRecords() {
 
-        axios.get(`api/action/module/service-order/${props.serviceOrderId}/incidents?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/action/module/service-order/incidents?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
@@ -122,22 +122,18 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
         setReload((old) => !old);
     }
 
-    function handleSelection(newSelectedIds) {
-        // newSelectedIds always bring all selections
+    function handleSelection(newSelectedIds) { 
+        setSelectionModel(newSelectedIds);
         const newSelectedRecords = records.filter((record) => {
             if (newSelectedIds.includes(record.id)) {
                 return record;
             }
-        })
+        });
         setSelectedRecords(newSelectedRecords);
     }
 
     function handleSave() {
         console.log('save incidents')
-    }
-
-    function incidentIsAvailable(current_grid_incident) {
-        return true;
     }
 
     return (
@@ -181,7 +177,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
                             }
 
                             {selectedRecords.length === 0 &&
-                                <CreateIncident reloadTable={setReload} />
+                                <CreateIncident reloadTable={setReload} serviceOrderId={props.serviceOrderId} flightPlanId={props.current.id} />
                             }
                         </Grid>
 
@@ -253,7 +249,6 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
                             page={currentPage - 1}
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
-                            isRowSelectable={(data) => incidentIsAvailable(data.row) && data.row.is_selectable}
                             rowHeight={70}
                             checkboxSelection
                             disableSelectionOnClick

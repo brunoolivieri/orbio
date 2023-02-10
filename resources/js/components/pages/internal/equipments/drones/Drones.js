@@ -14,16 +14,14 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
-import { CreateBattery } from './formulary/CreateBattery';
-import { UpdateBattery } from './formulary/UpdateBattery';
-import { DeleteBattery } from './formulary/DeleteBattery';
-import { BatteryInformation } from './formulary/BatteryInformation';
+import { CreateDrone } from './formulary/CreateDrone';
+import { UpdateDrone } from './formulary/UpdateDrone';
+import { DeleteDrone } from './formulary/DeleteDrone';
+import { DroneInformation } from './formulary/DroneInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
-// Moment
-import moment from 'moment';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -34,7 +32,9 @@ const columns = [
         sortable: false,
         editable: false,
         renderCell: (data) => {
-            return <ModalImage image_url={data.row.image_url} />
+            return (
+                <ModalImage image_url={data.row.image_url} />
+            )
         }
     },
     {
@@ -48,10 +48,10 @@ const columns = [
     {
         field: 'manufacturer',
         headerName: 'Fabricante',
-        flex: 1,
-        minWidth: 200,
         sortable: true,
         editable: false,
+        flex: 1,
+        minWidth: 200
     },
     {
         field: 'model',
@@ -59,7 +59,15 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 150
+        minWidth: 200
+    },
+    {
+        field: 'record_number',
+        headerName: 'Nº registro',
+        sortable: true,
+        editable: false,
+        flex: 1,
+        minWidth: 125
     },
     {
         field: 'serial_number',
@@ -67,17 +75,14 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 150
+        minWidth: 125
     },
     {
-        field: 'last_charge',
-        headerName: 'Carga',
+        field: 'weight',
+        headerName: 'Peso',
         sortable: true,
         editable: false,
-        width: 120,
-        valueGetter: (data) => {
-            return data.row.last_charge != "nunca" ? moment(data.row.last_charge).format("DD/MM/YYYY") : data.row.last_charge
-        }
+        width: 100
     },
     {
         field: 'observation',
@@ -85,14 +90,11 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 200,
-        valueGetter: () => {
-            return 'Nenhuma'
-        }
+        minWidth: 200
     },
 ];
 
-export function BatteriesPanel() {
+export function Drones() {
 
     // ============================================================================== STATES ============================================================================== //
 
@@ -111,7 +113,6 @@ export function BatteriesPanel() {
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
-
     React.useEffect(() => {
         setLoading(true);
         setRecords([]);
@@ -123,12 +124,12 @@ export function BatteriesPanel() {
 
         try {
 
-            const response = await axios.get(`/api/equipments-module-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
+            const response = await axios.get(`/api/equipments-module-drone?limit=${perPage}&search=${search}&page=${currentPage}`);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);
 
-            enqueueSnackbar(`Baterias encontradas: ${response.data.total_records}`, { variant: "success" });
+            enqueueSnackbar(`Drones encontrados: ${response.data.total_records}`, { variant: "success" });
 
         } catch (error) {
             enqueueSnackbar(error.response.data.message, { variant: "error" });
@@ -177,13 +178,13 @@ export function BatteriesPanel() {
                     }
 
                     {selectedRecords.length === 0 &&
-                        <CreateBattery reloadTable={setReload} />
+                        <CreateDrone reloadTable={setReload} />
                     }
                 </Grid>
 
                 <Grid item>
                     {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
-                        <Tooltip title="Selecione um registror">
+                        <Tooltip title="Selecione um registro">
                             <IconButton>
                                 <FontAwesomeIcon icon={faPen} color={"#E0E0E0"} size="sm" />
                             </IconButton>
@@ -191,7 +192,7 @@ export function BatteriesPanel() {
                     }
 
                     {(!loading && selectedRecords.length === 1) &&
-                        <UpdateBattery record={selectedRecords[0]} reloadTable={setReload} />
+                        <UpdateDrone record={selectedRecords[0]} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -205,7 +206,7 @@ export function BatteriesPanel() {
                     }
 
                     {(!loading && selectedRecords.length > 0) &&
-                        <DeleteBattery records={selectedRecords} reloadTable={setReload} />
+                        <DeleteDrone records={selectedRecords} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -217,13 +218,13 @@ export function BatteriesPanel() {
                     }
 
                     {(selectedRecords.length === 1) &&
-                        <BatteryInformation record={selectedRecords[0]} />
+                        <DroneInformation record={selectedRecords[0]} />
                     }
                 </Grid>
 
                 <Grid item>
                     {user.user_powers["6"].profile_powers.read == 1 &&
-                        <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
+                        <ExportTableData type="DRONES" source={"/api/drones/export"} />
                     }
 
                     {!user.user_powers["6"].profile_powers.read == 1 &&

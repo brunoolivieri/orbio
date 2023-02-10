@@ -12,7 +12,7 @@ import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 // Libs
 import moment from 'moment';
 
-const initialFormData = { type: "", description: "", date: moment(), flight_plan_id: "0", service_order_id: "0" };
+const initialFormData = { type: "", description: "", date: moment() };
 const fieldError = { error: false, message: "" }
 const initialFormError = { type: fieldError, description: fieldError, date: fieldError }
 const initialDisplayAlert = { display: false, type: "", message: "" };
@@ -44,7 +44,8 @@ export const CreateIncident = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (!formSubmissionValidation()) return '';
+
+    if (!formSubmissionValidation()) return;
 
     setLoading(true);
     requestServer();
@@ -67,7 +68,7 @@ export const CreateIncident = React.memo((props) => {
 
     try {
 
-      const response = await axios.post("/api/incidents-module", {
+      const response = await axios.post(`api/action/module/service-order/incidents?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}`, {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
         description: formData.description

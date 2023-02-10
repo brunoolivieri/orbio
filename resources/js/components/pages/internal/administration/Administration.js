@@ -1,15 +1,15 @@
 // React
 import * as React from 'react';
-// Custom
-import { UsersPanel } from "./users_panel/UsersPanel";
-import { ProfilesPanel } from "./profiles_panel/ProfilesPanel";
-import { usePage } from '../../../context/PageContext';
 // Material UI
-import Paper from '@mui/material/Paper';
 import { Box } from "@mui/system";
 import { Switcher } from "../../../shared/switcher/Switcher";
+// Custom
+import { Users } from './users/Users';
+import { Profiles } from './profiles/Profiles';
+import { usePage } from '../../../context/PageContext';
 
-export const Administration = () => {
+
+export function Administration() {
 
   const [actualPanel, setActualPanel] = React.useState("users");
   const { setPageIndex } = usePage();
@@ -28,7 +28,7 @@ export const Administration = () => {
         ]}
       />
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-        {actualPanel == "users" ? <UsersPanel /> : <ProfilesPanel />}
+        {actualPanel == "users" ? <Users /> : <Profiles />}
       </Box>
     </>
   )

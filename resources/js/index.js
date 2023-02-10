@@ -11,7 +11,7 @@ import { PageProvider } from './components/context/PageContext';
 import { MainRoutes } from "./routes/index";
 import { SnackbarProvider } from 'notistack';
 // Theme
-import { theme } from './components/pages/internal/layout/theme';
+import { theme } from "../../resources/js/components/shared/layout/theme";
 
 export default function Index() {
 

@@ -1,25 +1,28 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { CreateReport } from './formulary/CreateReport';
-import { UpdateReport } from './formulary/UpdateReport';
-import { DeleteReport } from './formulary/DeleteReport';
-import { useAuth } from '../../../../context/Auth';
+import { CreateUser } from './formulary/CreateUser';
+import { UpdateUser } from './formulary/UpdateUser';
+import { DeleteUser } from './formulary/DeleteUser';
+import { UserInformation } from './formulary/UserInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
+import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
+// Moment
+import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -29,85 +32,66 @@ const columns = [
     flex: 1,
     minWidth: 200,
     sortable: true,
-    editable: false
+    editable: false,
   },
   {
-    field: 'service_order',
-    headerName: 'Ordem de serviço',
+    field: 'email',
+    headerName: 'Email',
     flex: 1,
-    minWidth: 150,
+    minWidth: 200,
     sortable: true,
     editable: false,
-    valueGetter: (data) => {
-      return data.row.service_order.number
-    }
   },
   {
-    field: 'observation',
-    headerName: 'Observação',
+    field: 'status',
+    headerName: 'Status',
+    type: 'number',
+    width: 150,
+    align: 'center',
+    headerAlign: 'left',
     sortable: true,
     editable: false,
-    flex: 1,
-    minWidth: 200
-  },
-  {
-    field: 'created_at',
-    headerName: 'Criado em',
-    sortable: true,
-    editable: false,
-    minWidth: 130
-  },
-  {
-    field: 'export',
-    headerName: 'Exportar',
-    sortable: true,
-    editable: false,
-    minWidth: 150,
     renderCell: (data) => {
 
-      const { enqueueSnackbar } = useSnackbar();
-
-      function handleDownloadReport(report) {
-
-        axios.get(`/api/reports-module-download/${report.file}?report_id=${report.id}`,
-          {
-            headers: {
-              'Content-type': 'application/json'
-            },
-            responseType: 'blob'
-          })
-          .then(function (response) {
-            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${report.file}`, { variant: "success" });
-
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${report.file}`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-
-          })
-          .catch(function () {
-            enqueueSnackbar(`O download não foi realizado! Arquivo: ${report.file}`, { variant: "error" });
-          });
+      function chipStyle(status) {
+        return status === 1 ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
       }
 
+      const chip_style = chipStyle(data.row.status);
+
       return (
-        <Tooltip title={"Download"}>
-          <IconButton onClick={() => handleDownloadReport(data.row)}>
-            <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
-          </IconButton>
-        </Tooltip>
+        <Chip {...chip_style} />
       )
     }
-  }
+  },
+  {
+    field: 'profile',
+    headerName: 'Perfil',
+    sortable: true,
+    editable: false,
+    width: 180,
+    valueGetter: (data) => {
+      return data.row.profile.name;
+    },
+  },
+  {
+    field: 'last_access',
+    headerName: 'Último acesso',
+    sortable: true,
+    editable: false,
+    width: 150,
+    valueGetter: (data) => {
+      return data.row.last_access != "nunca" ? moment(data.row.last_access).format("DD/MM/YYYY") : data.row.last_access
+    }
+  },
 ];
 
-export function ReportsPanel() {
+export function Users() {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -118,36 +102,41 @@ export function ReportsPanel() {
   const [loading, setLoading] = React.useState(true);
   const [reload, setReload] = React.useState(false);
 
-  const { enqueueSnackbar } = useSnackbar();
-
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
+
+    let is_mounted = true;
+    if (!is_mounted) return '';
+
     setLoading(true);
     setRecords([]);
     setSelectedRecords([]);
     fetchRecords();
+
+    return () => {
+      is_mounted = false;
+    }
+
   }, [reload]);
 
-  function fetchRecords() {
+  async function fetchRecords() {
 
-    axios.get(`/api/reports-module?limit=${perPage}&search=${search}&page=${currentPage}`)
-      .then(function (response) {
-        setRecords(response.data.records);
-        setTotalRecords(response.data.total_records);
+    try {
 
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} relatórios`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} relatório`, "success");
-        }
-      })
-      .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
-      })
-      .finally(() => {
-        setLoading(false);
-      })
+      const response = await axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`);
+
+      setRecords(response.data.records);
+      setTotalRecords(response.data.total_records);
+
+      enqueueSnackbar(`Usuários encontrados: ${response.data.total_records}`, { variant: "success" });
+
+    } catch (error) {
+      enqueueSnackbar(error.response.data.message, { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+
   }
 
   function handleChangePage(newPage) {
@@ -166,7 +155,6 @@ export function ReportsPanel() {
   }
 
   function handleSelection(newSelectedIds) {
-    // newSelectedIds always bring all selections
     const newSelectedRecords = records.filter((record) => {
       if (newSelectedIds.includes(record.id)) {
         return record;
@@ -175,11 +163,7 @@ export function ReportsPanel() {
     setSelectedRecords(newSelectedRecords);
   }
 
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
-  }
-
-  // ============================================================================== STRUCTURES ============================================================================== //
+  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>
@@ -193,7 +177,7 @@ export function ReportsPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateReport reloadTable={setReload} />
+            <CreateUser reloadTable={setReload} />
           }
         </Grid>
 
@@ -207,7 +191,7 @@ export function ReportsPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateReport record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateUser record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -221,16 +205,28 @@ export function ReportsPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteReport records={selectedRecords} reloadTable={setReload} />
+            <DeleteUser records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 
         <Grid item>
-          {user.user_powers["4"].profile_powers.read == 1 &&
-            <ExportTableData type="RELATÓRIOS" source={"/api/reports/export"} />
+          {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+            <IconButton>
+              <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
+            </IconButton>
           }
 
-          {!user.user_powers["4"].profile_powers.read == 1 &&
+          {(selectedRecords.length === 1) &&
+            <UserInformation record={selectedRecords[0]} />
+          }
+        </Grid>
+
+        <Grid item>
+          {user.user_powers["1"].profile_powers.read == 1 &&
+            <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
+          }
+
+          {!user.user_powers["1"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -248,7 +244,7 @@ export function ReportsPanel() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            placeholder={"Pesquisar um incidente por ID"}
+            placeholder={"Pesquisar um usuário por ID, nome, email ou perfil"}
             onChange={(e) => setSearch(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{
@@ -277,8 +273,8 @@ export function ReportsPanel() {
           loading={loading}
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
-          rowHeight={70}
           checkboxSelection
+          isRowSelectable={(data) => (data.row.id != user.id) && (user.user_powers["1"].profile_powers.write == 1)}
           disableSelectionOnClick
           paginationMode='server'
           experimentalFeatures={{ newEditingApi: true }}
@@ -304,5 +300,5 @@ export function ReportsPanel() {
         />
       </Box>
     </>
-  );
+  )
 }

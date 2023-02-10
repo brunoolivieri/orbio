@@ -13,15 +13,15 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { CreateEquipment } from './formulary/CreateEquipmentFormulary';
-import { DeleteEquipment } from './formulary/DeleteEquipmentFormulary';
 import { UpdateEquipment } from './formulary/UpdateEquipmentFormulary';
+import { DeleteEquipment } from './formulary/DeleteEquipmentFormulary';
 import { EquipmentInformation } from './formulary/EquipmentInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
+import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { useAuth } from '../../../../context/Auth';
-import axios from "../../../../../services/AxiosApi";
+import axios from '../../../../../services/AxiosApi';
 // Moment
 import moment from 'moment';
 
@@ -106,7 +106,7 @@ const columns = [
   },
 ];
 
-export const EquipmentPanel = React.memo(() => {
+export function Equipments() {
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -314,4 +314,4 @@ export const EquipmentPanel = React.memo(() => {
       </Box>
     </>
   )
-});
+}

@@ -1,14 +1,14 @@
 
 import * as React from 'react';
 // Material UI
-import { Paper, Box } from '@mui/material';
+import { Box } from '@mui/material';
 // Custom
-import { FlightPlansPanel } from "./flight_plans_panel/FlightPlansPanel";
-import { LogsPanel } from "./logs_panel/LogsPanel";
 import { usePage } from '../../../context/PageContext';
 import { Switcher } from '../../../shared/switcher/Switcher';
+import { FlightPlans } from './flight_plans/FlightPlans';
+import { Logs } from './logs/Logs';
 
-export const FlightPlans = React.memo(() => {
+export function FlightPlansAndLogs() {
 
   const { setPageIndex } = usePage();
   const [actualPanel, setActualPanel] = React.useState("flight_plans");
@@ -27,8 +27,8 @@ export const FlightPlans = React.memo(() => {
         ]}
       />
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-        {actualPanel === "flight_plans" ? <FlightPlansPanel /> : <LogsPanel />}
+        {actualPanel === "flight_plans" ? <FlightPlans /> : <Logs />}
       </Box>
     </>
   )
-});
+}

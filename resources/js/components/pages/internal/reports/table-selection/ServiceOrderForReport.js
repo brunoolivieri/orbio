@@ -10,14 +10,13 @@ import Toolbar from '@mui/material/Toolbar';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
+import { useSnackbar } from 'notistack';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import axios from '../../../../../../services/AxiosApi';
-// Libs
-import { useSnackbar } from 'notistack';
+import axios from '../../../../../services/AxiosApi';
 
 const columns = [
     {

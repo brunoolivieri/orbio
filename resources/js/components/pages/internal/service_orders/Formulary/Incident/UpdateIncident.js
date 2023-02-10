@@ -14,7 +14,7 @@ import moment from 'moment';
 
 const fieldError = { error: false, message: "" }
 const initialFormError = { type: fieldError, description: fieldError, date: fieldError }
-const initialDisplayAlert = { display: false, type: "", message: "" };
+const initialAlert = { display: false, type: "", message: "" };
 
 export const UpdateIncident = React.memo((props) => {
 
@@ -22,9 +22,9 @@ export const UpdateIncident = React.memo((props) => {
 
   const { user } = useAuth();
 
-  const [formData, setFormData] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date, flight_plan_id: props.record.service_order.flight_plan.id, service_order_id: props.record.service_order.id });
+  const [formData, setFormData] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date });
   const [formError, setFormError] = React.useState(initialFormError);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [displayAlert, setDisplayAlert] = React.useState(initialAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -38,7 +38,7 @@ export const UpdateIncident = React.memo((props) => {
     setOpen(false);
     setLoading(false);
     setFormError(initialFormError);
-    setDisplayAlert(initialDisplayAlert);
+    setDisplayAlert(initialAlert);
   }
 
   function handleSubmit() {
@@ -65,7 +65,7 @@ export const UpdateIncident = React.memo((props) => {
 
     try {
 
-      const response = await axios.patch(`/api/incidents-module/${formData.id}`, {
+      const response = await axios.patch(`api/action/module/service-order/incidents/${formData.id}`, {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
         description: formData.description

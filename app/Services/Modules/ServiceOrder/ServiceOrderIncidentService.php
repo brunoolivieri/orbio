@@ -17,13 +17,7 @@ class ServiceOrderIncidentService implements ServiceInterface
 
     public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $page, $search);
-
-        if ($data->total() > 0) {
-            return response(new ServiceOrderIncidentResource($data), 200);
-        } else {
-            return response(["message" => "Nenhum incidente encontrado."], 404);
-        }
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     public function createOne(array $data)

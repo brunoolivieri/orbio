@@ -1,9 +1,9 @@
-import * as React from 'react';
+import * as React from "react";
 // Material UI
-import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, Box, InputAdornment, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-// Fonts Awesome
+// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -12,174 +12,130 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
-import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
-import { FlightPlanInformation } from './formulary/FlightPlanInformation';
-import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
-import { useAuth } from '../../../../context/Auth';
-import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
-import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
+import { useAuth } from "../../../../context/Auth";
 import axios from "../../../../../services/AxiosApi";
-// Moment
-import moment from 'moment';
+import { CreateProfile } from "./formulary/CreateProfile";
+import { UpdateProfile } from "./formulary/UpdateProfile";
+import { DeleteProfile } from "./formulary/DeleteProfile";
+import { ProfileInformation } from "./formulary/ProfileInformation";
+import { ExportTableData } from "../../../../shared/modals/dialog/ExportTableData";
+import { TableToolbar } from "../../../../shared/table_toolbar/TableToolbar";
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
-  {
-    field: 'image',
-    headerName: 'Visualização',
-    width: 130,
-    sortable: false,
-    editable: false,
-    renderCell: (data) => {
-      return (
-        <ModalImage image_url={data.row.image_url} />
-      )
-    }
-  },
   {
     field: 'name',
     headerName: 'Nome',
     flex: 1,
     minWidth: 200,
     sortable: true,
-    editable: false
+    editable: false,
   },
   {
-    field: 'creator',
-    headerName: 'Criador',
-    sortable: true,
+    field: 'administration',
+    headerName: 'Administração',
+    sortable: false,
     editable: false,
     flex: 1,
     minWidth: 200,
-    valueGetter: (data) => {
-      return data.row.creator.name;
-    },
-  },
-  {
-    field: 'created_at',
-    headerName: 'Criado em',
-    type: 'number',
-    headerAlign: 'left',
-    align: 'center',
-    sortable: true,
-    editable: false,
-    width: 130,
-    valueGetter: (data) => {
-      return moment(data.row.created_at).format("DD/MM/YYYY")
-    }
-  },
-  {
-    field: 'export_txt',
-    headerName: 'Exportar TXT',
-    sortable: false,
-    editable: false,
-    width: 150,
-    align: 'center',
     renderCell: (data) => {
-
-      const { enqueueSnackbar } = useSnackbar();
-
-      function handleDownloadFlightPlan(filename) {
-        axios.get(`/api/plans-module-download/${filename}`, null, {
-          responseType: 'blob'
-        })
-          .then(function (response) {
-            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
-
-            // Download forçado do arquivo com o conteúdo retornado do servidor
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${filename}`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-
-          })
-          .catch(() => {
-            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
-          })
-      }
-
       return (
-        <IconButton onClick={() => handleDownloadFlightPlan(data.row.file)}>
-          <FontAwesomeIcon icon={faFileLines} color={"#00713A"} size="sm" />
-        </IconButton>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[0].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[0].write == 1)} disabled size="small" />} label="Escrever" />
+        </FormGroup>
       )
     }
   },
   {
-    field: 'export_csv',
-    headerName: 'Exportar CSV',
+    field: 'flight_plan',
+    headerName: 'Plano de voo',
     sortable: false,
     editable: false,
-    width: 150,
-    align: 'center',
+    flex: 1,
+    minWidth: 200,
     renderCell: (data) => {
-
-      const { enqueueSnackbar } = useSnackbar();
-
-      function handleDownloadFlightPlanAsCSV(filename) {
-        axios.get(`/api/plans-module-download/${filename}`, null, {
-          responseType: 'blob'
-        })
-          .then(function (response) {
-            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
-
-            let content = "latitude;longitude;altitude(m)\n";
-
-            // Create array from file lines
-            var lines = response.data.split("\n");
-
-            // Breaking lines where exists spaces (\t)
-            for (let i = 4; i < lines.length - 2; i++) {
-              let line = lines[i].split("\t");
-
-              // Only waypoints with latitude and longitude are considered - code 16
-              // Code 183 waypoints (dispenser trigger) have lat/long reset and cannot be added to route drawing
-              if (Number(line[3]) == 16) {
-
-                // Latitude, longitude, and altitude positions are at indices 8, 9, and 10 of each row
-                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
-              }
-            }
-
-            let blob = new Blob([content],
-              { type: "text/plain;charset=utf-8" });
-
-            // Nome do arquivo com data em milissegundos decorridos
-            let filename = new Date().getTime() + ".csv";
-
-            // Download forçado
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${filename}`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-
-          })
-          .catch(() => {
-            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
-          })
-      }
-
       return (
-        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.file)}>
-          <FontAwesomeIcon icon={faFileCsv} color={"#00713A"} size="sm" />
-        </IconButton>
+        <FormGroup>
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[1].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[1].write == 1)} disabled size="small" />} label="Escrever" />
+        </FormGroup>
+      )
+    }
+  },
+  {
+    field: 'service_order',
+    headerName: 'Ordens de serviço',
+    sortable: false,
+    editable: false,
+    flex: 1,
+    minWidth: 200,
+    renderCell: (data) => {
+      return (
+        <FormGroup>
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[2].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[2].write == 1)} disabled size="small" />} label="Escrever" />
+        </FormGroup>
+      )
+    }
+  },
+  {
+    field: 'reports',
+    headerName: 'Relatórios',
+    sortable: false,
+    editable: false,
+    flex: 1,
+    minWidth: 200,
+    renderCell: (data) => {
+      return (
+        <FormGroup>
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[3].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[3].write == 1)} disabled size="small" />} label="Escrever" />
+        </FormGroup>
+      )
+    }
+  },
+  {
+    field: 'incidents',
+    headerName: 'Incidentes',
+    sortable: false,
+    editable: false,
+    flex: 1,
+    minWidth: 200,
+    renderCell: (data) => {
+      return (
+        <FormGroup>
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].write == 1)} disabled size="small" />} label="Escrever" />
+        </FormGroup>
+      )
+    }
+  },
+  {
+    field: 'equipments',
+    headerName: 'Equipamentos',
+    sortable: false,
+    editable: false,
+    flex: 1,
+    minWidth: 200,
+    renderCell: (data) => {
+      return (
+        <FormGroup>
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[5].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[5].write == 1)} disabled size="small" />} label="Escrever" />
+        </FormGroup>
       )
     }
   },
 ];
 
-export function FlightPlansPanel() {
+export function Profiles() {
 
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
+  const { enqueueSnackbar } = useSnackbar();
 
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
@@ -189,8 +145,6 @@ export function FlightPlansPanel() {
   const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [reload, setReload] = React.useState(false);
-
-  const { enqueueSnackbar } = useSnackbar();
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -207,21 +161,17 @@ export function FlightPlansPanel() {
     return () => {
       is_mounted = false;
     }
-
   }, [reload]);
 
   function fetchRecords() {
 
-    axios.get(`/api/plans-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+    axios.get(`/api/admin-module-profile?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);
 
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
-        }
+        enqueueSnackbar(`Perfis encontrados: ${response.data.total_records}`, { variant: "success" });
+
       })
       .catch(function (error) {
         handleOpenSnackbar(error.response.data.message, "error");
@@ -229,6 +179,7 @@ export function FlightPlansPanel() {
       .finally(() => {
         setLoading(false);
       })
+
   }
 
   function handleChangePage(newPage) {
@@ -262,7 +213,6 @@ export function FlightPlansPanel() {
 
   // ============================================================================== STRUCTURES ============================================================================== //
 
-
   return (
     <>
       <Grid container spacing={1} alignItems="center" mb={1}>
@@ -275,14 +225,7 @@ export function FlightPlansPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            /* <CreateFlightPlan reloadTable={setReload} /> */
-            <Tooltip title="Novo Plano">
-              <Link href={`/internal/map?userid=${user.id}`} target="_blank">
-                <IconButton>
-                  <FontAwesomeIcon icon={faPlus} color={user.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
-                </IconButton>
-              </Link>
-            </Tooltip>
+            <CreateProfile reloadTable={setReload} />
           }
         </Grid>
 
@@ -296,7 +239,7 @@ export function FlightPlansPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateFlightPlan record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateProfile record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -310,7 +253,7 @@ export function FlightPlansPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteFlightPlan records={selectedRecords} reloadTable={setReload} />
+            <DeleteProfile records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 
@@ -322,16 +265,16 @@ export function FlightPlansPanel() {
           }
 
           {(selectedRecords.length === 1) &&
-            <FlightPlanInformation record={selectedRecords[0]} />
+            <ProfileInformation record={selectedRecords[0]} />
           }
         </Grid>
 
         <Grid item>
-          {user.user_powers["2"].profile_powers.read == 1 &&
-            <ExportTableData type="PLANOS DE VOO" source={"/api/flight-plans/export"} />
+          {user.user_powers["1"].profile_powers.read == 1 &&
+            <ExportTableData type="PERFIS" source={"/api/profiles/export"} />
           }
 
-          {!user.user_powers["2"].profile_powers.read == 1 &&
+          {!user.user_powers["1"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -349,7 +292,7 @@ export function FlightPlansPanel() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            placeholder={"Pesquisar plano por id e nome"}
+            placeholder={"Pesquisar perfil por ID"}
             onChange={(e) => setSearch(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{
@@ -378,7 +321,7 @@ export function FlightPlansPanel() {
           loading={loading}
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
-          rowHeight={70}
+          rowHeight={100}
           checkboxSelection
           disableSelectionOnClick
           paginationMode='server'
@@ -405,5 +348,5 @@ export function FlightPlansPanel() {
         />
       </Box>
     </>
-  );
+  )
 }

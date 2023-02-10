@@ -1,40 +1,37 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
-import { useSnackbar } from 'notistack';
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faFile } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
-import { CreateDrone } from './formulary/CreateDrone';
-import { UpdateDrone } from './formulary/UpdateDrone';
-import { DeleteDrone } from './formulary/DeleteDrone';
-import { DroneInformation } from './formulary/DroneInformation';
+import { CreateLog } from './formulary/CreateLog';
+import { UpdateLog } from './formulary/UpdateLog';
+import { DeleteLog } from './formulary/DeleteLog';
+import { useAuth } from '../../../../context/Auth';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
-import { useAuth } from '../../../../context/Auth';
-import axios from "../../../../../services/AxiosApi";
+import axios from '../../../../../services/AxiosApi';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
     {
-        field: 'image',
-        headerName: 'Image',
-        width: 125,
+        field: 'log_image',
+        headerName: 'Visualização',
         sortable: false,
         editable: false,
+        minWidth: 130,
         renderCell: (data) => {
-            return (
-                <ModalImage image_url={data.row.image_url} />
-            )
+            return <ModalImage image_url={data.row.image_url} />
         }
     },
     {
@@ -43,58 +40,81 @@ const columns = [
         flex: 1,
         minWidth: 200,
         sortable: true,
-        editable: false,
+        editable: false
     },
     {
-        field: 'manufacturer',
-        headerName: 'Fabricante',
+        field: 'filename',
+        headerName: 'Arquivo',
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 200
+        minWidth: 150
     },
     {
-        field: 'model',
-        headerName: 'Modelo',
+        field: 'service_order',
+        headerName: 'Ordem de serviço',
         sortable: true,
         editable: false,
-        flex: 1,
-        minWidth: 200
-    },
-    {
-        field: 'record_number',
-        headerName: 'Nº registro',
-        sortable: true,
-        editable: false,
-        flex: 1,
-        minWidth: 125
-    },
-    {
-        field: 'serial_number',
-        headerName: 'Nº serial',
-        sortable: true,
-        editable: false,
-        flex: 1,
-        minWidth: 125
-    },
-    {
-        field: 'weight',
-        headerName: 'Peso',
-        sortable: true,
-        editable: false,
-        width: 100
-    },
-    {
-        field: 'observation',
-        headerName: 'Observação',
-        sortable: true,
-        editable: false,
-        flex: 1,
-        minWidth: 200
-    },
-];
+        minWidth: 250,
+        renderCell: (data) => {
 
-export const DronesPanel = () => {
+            function chipStyle(related_service_order) {
+                if (related_service_order === null) {
+                    return { label: "Nenhuma", disabled: true, variant: "outlined" };
+                } else if (related_service_order != null) {
+                    return { label: related_service_order.number, color: related_service_order.deleted == 1 ? "error" : "success", variant: related_service_order.deleted == 1 ? "contained" : "outlined" };
+                }
+            }
+
+            const chip_style = chipStyle(data.row.service_order);
+
+            return (
+                <Chip {...chip_style} />
+            )
+        },
+    },
+    {
+        field: 'export_txt',
+        headerName: 'Exportar KML',
+        sortable: false,
+        editable: false,
+        width: 150,
+        align: 'center',
+        renderCell: (data) => {
+
+            const { enqueueSnackbar } = useSnackbar();
+
+            function handleDownloadLog(filename) {
+                axios.get(`api/logs-module-download/${filename}`, null, {
+                    responseType: 'blob'
+                })
+                    .then(function (response) {
+                        enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+
+                        // Download forçado do arquivo com o conteúdo retornado do servidor
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', `${filename}`); //or any other extension
+                        document.body.appendChild(link);
+                        link.click();
+
+                    })
+                    .catch(() => {
+                        enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+                    })
+            }
+
+            return (
+                <IconButton onClick={() => handleDownloadLog(data.row.filename)}>
+                    <FontAwesomeIcon icon={faFile} color={"#00713A"} size="sm" />
+                </IconButton>
+            )
+        }
+    },
+]
+
+export function Logs() {
 
     // ============================================================================== STATES ============================================================================== //
 
@@ -120,22 +140,25 @@ export const DronesPanel = () => {
         fetchRecords();
     }, [reload]);
 
-    async function fetchRecords() {
+    function fetchRecords() {
 
-        try {
+        axios.get(`/api/plans-module-logs?limit=${perPage}&search=${search}&page=${currentPage}`)
+            .then((response) => {
+                setRecords(response.data.records);
+                setTotalRecords(response.data.total_records);
 
-            const response = await axios.get(`/api/equipments-module-drone?limit=${perPage}&search=${search}&page=${currentPage}`);
-
-            setRecords(response.data.records);
-            setTotalRecords(response.data.total_records);
-
-            enqueueSnackbar(`Drones encontrados: ${response.data.total_records}`, { variant: "success" });
-
-        } catch (error) {
-            enqueueSnackbar(error.response.data.message, { variant: "error" });
-        } finally {
-            setLoading(false);
-        }
+                if (response.data.total_records > 1) {
+                    handleOpenSnackbar(`Foram encontrados ${response.data.total_records} logs`, "success");
+                } else {
+                    handleOpenSnackbar(`Foi encontrado ${response.data.total_records} log`, "success");
+                }
+            })
+            .catch((error) => {
+                handleOpenSnackbar(error.response.data.message, "error");
+            })
+            .finally(() => {
+                setLoading(false);
+            })
 
     }
 
@@ -164,12 +187,15 @@ export const DronesPanel = () => {
         setSelectedRecords(newSelectedRecords);
     }
 
+    function handleOpenSnackbar(text, variant) {
+        enqueueSnackbar(text, { variant });
+    }
+
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
         <>
             <Grid container spacing={1} alignItems="center" mb={1}>
-
                 <Grid item>
                     {selectedRecords.length > 0 &&
                         <IconButton>
@@ -178,7 +204,7 @@ export const DronesPanel = () => {
                     }
 
                     {selectedRecords.length === 0 &&
-                        <CreateDrone reloadTable={setReload} />
+                        <CreateLog reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -192,7 +218,7 @@ export const DronesPanel = () => {
                     }
 
                     {(!loading && selectedRecords.length === 1) &&
-                        <UpdateDrone record={selectedRecords[0]} reloadTable={setReload} />
+                        <UpdateLog record={selectedRecords[0]} reloadTable={setReload} />
                     }
                 </Grid>
 
@@ -206,28 +232,16 @@ export const DronesPanel = () => {
                     }
 
                     {(!loading && selectedRecords.length > 0) &&
-                        <DeleteDrone records={selectedRecords} reloadTable={setReload} />
+                        <DeleteLog records={selectedRecords} reloadTable={setReload} />
                     }
                 </Grid>
 
                 <Grid item>
-                    {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
-                        <IconButton>
-                            <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
-                        </IconButton>
+                    {user.user_powers["2"].profile_powers.read == 1 &&
+                        <ExportTableData type="LOGS" source={"/api/logs/export"} />
                     }
 
-                    {(selectedRecords.length === 1) &&
-                        <DroneInformation record={selectedRecords[0]} />
-                    }
-                </Grid>
-
-                <Grid item>
-                    {user.user_powers["6"].profile_powers.read == 1 &&
-                        <ExportTableData type="DRONES" source={"/api/drones/export"} />
-                    }
-
-                    {!user.user_powers["6"].profile_powers.read == 1 &&
+                    {!user.user_powers["2"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
@@ -245,7 +259,7 @@ export const DronesPanel = () => {
                 <Grid item xs={12}>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar um incidente por ID"}
+                        placeholder={"Pesquisar plano por ID ou nome"}
                         onChange={(e) => setSearch(e.currentTarget.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                         InputProps={{
@@ -301,5 +315,5 @@ export const DronesPanel = () => {
                 />
             </Box>
         </>
-    )
+    );
 }

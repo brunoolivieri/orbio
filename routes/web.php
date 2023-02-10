@@ -118,7 +118,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::group(["prefix" => "api/action/module"], function () {
         Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/service-order/logs", LogsForServiceOrderFlightPlanController::class);
-        Route::apiResource("/service-order/{identifier}/incidents", ServiceOrderIncidentController::class);
+        Route::apiResource("/service-order/incidents", ServiceOrderIncidentController::class);
     });
     Route::get('api/load-service-orders-for-report', LoadServiceOrderForReport::class);
     Route::get('api/get-weather-data', WeatherDataController::class);

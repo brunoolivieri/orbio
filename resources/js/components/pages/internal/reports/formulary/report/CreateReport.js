@@ -6,10 +6,10 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { FlightPlanDataForReport } from '../modal/FlightPlanDataForReport';
-import { ServiceOrderForReport } from '../modal/ServiceOrderForReport';
+import { FlightPlanDataForReport } from '../flight-plan/FlightPlanDataForReport';
+import { ServiceOrderForReport } from '../../table-selection/ServiceOrderForReport';
 import { useAuth } from '../../../../../context/Auth';
-import { ReportVisualization, DownloadReport } from '../modal/ReportBuilder';
+import { ReportVisualization, DownloadReport } from "../../modal/ReportBuilder";
 // Lib
 import axios from '../../../../../../services/AxiosApi';
 
@@ -23,7 +23,7 @@ const initialFormData = {
 
 const fieldError = { error: false, message: "" };
 const initialFormError = { name: fieldError, client: fieldError, state: fieldError, city: fieldError, farm: fieldError };
-const initialDisplayAlert = { display: false, type: "", message: "" };
+const initialAlert = { display: false, type: "", message: "" };
 
 export const CreateReport = (props) => {
 
@@ -38,7 +38,7 @@ export const CreateReport = (props) => {
   const [canSave, setCanSave] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [alert, setAlert] = React.useState(initialAlert);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -50,7 +50,7 @@ export const CreateReport = (props) => {
     setOpen(false);
     setServiceOrder(null);
     setFlightPlans(null);
-    setDisplayAlert(initialDisplayAlert);
+    setAlert(initialAlert);
   }
 
   React.useEffect(() => {
@@ -110,7 +110,7 @@ export const CreateReport = (props) => {
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
       handleClose();
@@ -119,7 +119,7 @@ export const CreateReport = (props) => {
 
   function errorResponse(response) {
     const error_message = response.data.message ? response.data.message : "Erro do servidor";
-    setDisplayAlert({ display: true, type: "error", message: error_message });
+    setAlert({ display: true, type: "error", message: error_message });
 
     if (response.data.errors) {
       let response_errors = {}
@@ -296,8 +296,8 @@ export const CreateReport = (props) => {
           }
         </DialogContent>
 
-        {displayAlert.display &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {alert.display &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}

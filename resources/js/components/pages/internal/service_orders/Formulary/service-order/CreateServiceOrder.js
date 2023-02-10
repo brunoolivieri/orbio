@@ -10,7 +10,7 @@ import axios from '../../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
-import { FlightPlansForServiceOrder } from '../../TableSelection/FlightPlansForServiceOrder';
+import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
 import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
 // Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -103,7 +103,6 @@ export const CreateServiceOrder = React.memo((props) => {
     setFormError(validation);
 
     return !(validation.start_date.error || validation.client_id.error || validation.pilot_id.error || validation.observation.error || validation.flight_plans.error);
-
 
   }
 

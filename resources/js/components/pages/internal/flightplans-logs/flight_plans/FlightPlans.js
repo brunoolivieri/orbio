@@ -1,8 +1,8 @@
 import * as React from 'react';
 // Material UI
-import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
-import { useSnackbar } from 'notistack';
+import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
@@ -12,81 +12,170 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { useAuth } from '../../../../context/Auth';
-import axios from "../../../../../services/AxiosApi";
-import { CreateUser } from './formulary/CreateUser';
-import { UpdateUser } from './formulary/UpdateUser';
-import { DeleteUser } from './formulary/DeleteUser';
-import { UserInformation } from './formulary/UserInformation';
+import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
+import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
+import { FlightPlanInformation } from './formulary/FlightPlanInformation';
+import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
+import { useAuth } from '../../../../context/Auth';
+import axios from '../../../../../services/AxiosApi';
 // Moment
 import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
   {
+    field: 'image',
+    headerName: 'Visualização',
+    width: 130,
+    sortable: false,
+    editable: false,
+    renderCell: (data) => {
+      return (
+        <ModalImage image_url={data.row.image_url} />
+      )
+    }
+  },
+  {
     field: 'name',
     headerName: 'Nome',
     flex: 1,
     minWidth: 200,
     sortable: true,
-    editable: false,
+    editable: false
   },
   {
-    field: 'email',
-    headerName: 'Email',
+    field: 'creator',
+    headerName: 'Criador',
+    sortable: true,
+    editable: false,
     flex: 1,
     minWidth: 200,
-    sortable: true,
-    editable: false,
+    valueGetter: (data) => {
+      return data.row.creator.name;
+    },
   },
   {
-    field: 'status',
-    headerName: 'Status',
+    field: 'created_at',
+    headerName: 'Criado em',
     type: 'number',
-    width: 150,
-    align: 'center',
     headerAlign: 'left',
+    align: 'center',
     sortable: true,
     editable: false,
+    width: 130,
+    valueGetter: (data) => {
+      return moment(data.row.created_at).format("DD/MM/YYYY")
+    }
+  },
+  {
+    field: 'export_txt',
+    headerName: 'Exportar TXT',
+    sortable: false,
+    editable: false,
+    width: 150,
+    align: 'center',
     renderCell: (data) => {
 
-      function chipStyle(status) {
-        return status === 1 ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
+      const { enqueueSnackbar } = useSnackbar();
+
+      function handleDownloadFlightPlan(filename) {
+        axios.get(`/api/plans-module-download/${filename}`, null, {
+          responseType: 'blob'
+        })
+          .then(function (response) {
+            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+
+            // Download forçado do arquivo com o conteúdo retornado do servidor
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${filename}`); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+
+          })
+          .catch(() => {
+            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+          })
       }
 
-      const chip_style = chipStyle(data.row.status);
-
       return (
-        <Chip {...chip_style} />
+        <IconButton onClick={() => handleDownloadFlightPlan(data.row.file)}>
+          <FontAwesomeIcon icon={faFileLines} color={"#00713A"} size="sm" />
+        </IconButton>
       )
     }
   },
   {
-    field: 'profile',
-    headerName: 'Perfil',
-    sortable: true,
-    editable: false,
-    width: 180,
-    valueGetter: (data) => {
-      return data.row.profile.name;
-    },
-  },
-  {
-    field: 'last_access',
-    headerName: 'Último acesso',
-    sortable: true,
+    field: 'export_csv',
+    headerName: 'Exportar CSV',
+    sortable: false,
     editable: false,
     width: 150,
-    valueGetter: (data) => {
-      return data.row.last_access != "nunca" ? moment(data.row.last_access).format("DD/MM/YYYY") : data.row.last_access
+    align: 'center',
+    renderCell: (data) => {
+
+      const { enqueueSnackbar } = useSnackbar();
+
+      function handleDownloadFlightPlanAsCSV(filename) {
+        axios.get(`/api/plans-module-download/${filename}`, null, {
+          responseType: 'blob'
+        })
+          .then(function (response) {
+            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+
+            let content = "latitude;longitude;altitude(m)\n";
+
+            // Create array from file lines
+            var lines = response.data.split("\n");
+
+            // Breaking lines where exists spaces (\t)
+            for (let i = 4; i < lines.length - 2; i++) {
+              let line = lines[i].split("\t");
+
+              // Only waypoints with latitude and longitude are considered - code 16
+              // Code 183 waypoints (dispenser trigger) have lat/long reset and cannot be added to route drawing
+              if (Number(line[3]) == 16) {
+
+                // Latitude, longitude, and altitude positions are at indices 8, 9, and 10 of each row
+                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
+              }
+            }
+
+            let blob = new Blob([content],
+              { type: "text/plain;charset=utf-8" });
+
+            // Nome do arquivo com data em milissegundos decorridos
+            let filename = new Date().getTime() + ".csv";
+
+            // Download forçado
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${filename}`); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+
+          })
+          .catch(() => {
+            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+          })
+      }
+
+      return (
+        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.file)}>
+          <FontAwesomeIcon icon={faFileCsv} color={"#00713A"} size="sm" />
+        </IconButton>
+      )
     }
   },
 ];
 
-export function UsersPanel() {
+export function FlightPlans() {
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -121,23 +210,25 @@ export function UsersPanel() {
 
   }, [reload]);
 
-  async function fetchRecords() {
+  function fetchRecords() {
 
-    try {
+    axios.get(`/api/plans-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+      .then(function (response) {
+        setRecords(response.data.records);
+        setTotalRecords(response.data.total_records);
 
-      const response = await axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`);
-
-      setRecords(response.data.records);
-      setTotalRecords(response.data.total_records);
-
-      enqueueSnackbar(`Usuários encontrados: ${response.data.total_records}`, { variant: "success" });
-
-    } catch (error) {
-      enqueueSnackbar(error.response.data.message, { variant: "error" });
-    } finally {
-      setLoading(false);
-    }
-
+        if (response.data.total_records > 1) {
+          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
+        } else {
+          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
+        }
+      })
+      .catch(function (error) {
+        handleOpenSnackbar(error.response.data.message, "error");
+      })
+      .finally(() => {
+        setLoading(false);
+      })
   }
 
   function handleChangePage(newPage) {
@@ -156,6 +247,7 @@ export function UsersPanel() {
   }
 
   function handleSelection(newSelectedIds) {
+    // newSelectedIds always bring all selections
     const newSelectedRecords = records.filter((record) => {
       if (newSelectedIds.includes(record.id)) {
         return record;
@@ -164,7 +256,12 @@ export function UsersPanel() {
     setSelectedRecords(newSelectedRecords);
   }
 
-  // ============================================================================== JSX ============================================================================== //
+  function handleOpenSnackbar(text, variant) {
+    enqueueSnackbar(text, { variant });
+  }
+
+  // ============================================================================== STRUCTURES ============================================================================== //
+
 
   return (
     <>
@@ -178,7 +275,14 @@ export function UsersPanel() {
           }
 
           {selectedRecords.length === 0 &&
-            <CreateUser reloadTable={setReload} />
+            /* <CreateFlightPlan reloadTable={setReload} /> */
+            <Tooltip title="Novo Plano">
+              <Link href={`/internal/map?userid=${user.id}`} target="_blank">
+                <IconButton>
+                  <FontAwesomeIcon icon={faPlus} color={user.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                </IconButton>
+              </Link>
+            </Tooltip>
           }
         </Grid>
 
@@ -192,7 +296,7 @@ export function UsersPanel() {
           }
 
           {(!loading && selectedRecords.length === 1) &&
-            <UpdateUser record={selectedRecords[0]} reloadTable={setReload} />
+            <UpdateFlightPlan record={selectedRecords[0]} reloadTable={setReload} />
           }
         </Grid>
 
@@ -206,7 +310,7 @@ export function UsersPanel() {
           }
 
           {(!loading && selectedRecords.length > 0) &&
-            <DeleteUser records={selectedRecords} reloadTable={setReload} />
+            <DeleteFlightPlan records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
 
@@ -218,16 +322,16 @@ export function UsersPanel() {
           }
 
           {(selectedRecords.length === 1) &&
-            <UserInformation record={selectedRecords[0]} />
+            <FlightPlanInformation record={selectedRecords[0]} />
           }
         </Grid>
 
         <Grid item>
-          {user.user_powers["1"].profile_powers.read == 1 &&
-            <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
+          {user.user_powers["2"].profile_powers.read == 1 &&
+            <ExportTableData type="PLANOS DE VOO" source={"/api/flight-plans/export"} />
           }
 
-          {!user.user_powers["1"].profile_powers.read == 1 &&
+          {!user.user_powers["2"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -245,7 +349,7 @@ export function UsersPanel() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            placeholder={"Pesquisar um usuário por ID, nome, email ou perfil"}
+            placeholder={"Pesquisar plano por id e nome"}
             onChange={(e) => setSearch(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{
@@ -274,8 +378,8 @@ export function UsersPanel() {
           loading={loading}
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
+          rowHeight={70}
           checkboxSelection
-          isRowSelectable={(data) => (data.row.id != user.id) && (user.user_powers["1"].profile_powers.write == 1)}
           disableSelectionOnClick
           paginationMode='server'
           experimentalFeatures={{ newEditingApi: true }}
@@ -301,5 +405,5 @@ export function UsersPanel() {
         />
       </Box>
     </>
-  )
+  );
 }
