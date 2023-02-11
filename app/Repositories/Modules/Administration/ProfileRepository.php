@@ -37,7 +37,6 @@ class ProfileRepository implements RepositoryInterface
             $profile->modules()->attach(3, ["read" => false, "write" => false]);
             $profile->modules()->attach(4, ["read" => false, "write" => false]);
             $profile->modules()->attach(5, ["read" => false, "write" => false]);
-            $profile->modules()->attach(6, ["read" => false, "write" => false]);
 
             return $profile;
         });
@@ -75,10 +74,6 @@ class ProfileRepository implements RepositoryInterface
                 5 => [
                     'read' => $data->get("privileges")[5]["read"],
                     'write' => $data->get("privileges")[5]["write"]
-                ],
-                6 => [
-                    'read' => $data->get("privileges")[6]["read"],
-                    'write' => $data->get("privileges")[6]["write"]
                 ]
             ]);
 

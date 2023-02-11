@@ -48,9 +48,7 @@ export const Header = React.memo((props) => {
     { icon: <MapIcon sx={{ mr: 1 }} />, title: "PLANOS DE VOO E LOGS" },
     { icon: <AssignmentIcon sx={{ mr: 1 }} />, title: "ORDENS DE SERVIÇO" },
     { icon: <AssessmentIcon sx={{ mr: 1 }} />, title: "RELATÓRIOS" },
-    { icon: <ReportIcon sx={{ mr: 1 }} />, title: "INCIDENTES" },
     { icon: <HomeRepairServiceIcon sx={{ mr: 1 }} />, title: "EQUIPAMENTOS" },
-    { icon: <HelpIcon sx={{ mr: 1 }} />, title: "SUPORTE" },
     { icon: <AccountCircleIcon sx={{ mr: 1 }} />, title: "MINHA CONTA" }
   ];
 

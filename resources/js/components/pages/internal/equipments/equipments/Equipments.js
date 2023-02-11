@@ -84,14 +84,14 @@ const columns = [
     headerName: 'Peso',
     sortable: true,
     editable: false,
-    width: 100
+    width: 130
   },
   {
     field: 'purchase_date',
     headerName: 'Compra',
     sortable: true,
     editable: false,
-    width: 120,
+    width: 150,
     valueGetter: (data) => {
       return data.row.purchase_date != "nunca" ? moment(data.row.purchase_date).format("DD/MM/YYYY") : data.row.purchase_date
     }
@@ -136,7 +136,7 @@ export function Equipments() {
 
     try {
 
-      const response = await axios.get(`/api/equipments-module-equipment?limit=${perPage}&search=${search}&page=${currentPage}`);
+      const response = await axios.get(`api/module/equipments?limit=${perPage}&search=${search}&page=${currentPage}`);
 
       setRecords(response.data.records);
       setTotalRecords(response.data.total_records);
@@ -235,11 +235,11 @@ export function Equipments() {
         </Grid>
 
         <Grid item>
-          {user.user_powers["6"].profile_powers.read == 1 &&
+          {user.user_powers["5"].profile_powers.read == 1 &&
             <ExportTableData type="EQUIPAMENTOS" source={"/api/equipments/export"} />
           }
 
-          {!user.user_powers["6"].profile_powers.read == 1 &&
+          {!user.user_powers["5"].profile_powers.read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>

@@ -97,22 +97,6 @@ const columns = [
     }
   },
   {
-    field: 'incidents',
-    headerName: 'Incidentes',
-    sortable: false,
-    editable: false,
-    flex: 1,
-    minWidth: 200,
-    renderCell: (data) => {
-      return (
-        <FormGroup>
-          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].read == 1)} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].write == 1)} disabled size="small" />} label="Escrever" />
-        </FormGroup>
-      )
-    }
-  },
-  {
     field: 'equipments',
     headerName: 'Equipamentos',
     sortable: false,
@@ -122,8 +106,8 @@ const columns = [
     renderCell: (data) => {
       return (
         <FormGroup>
-          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[5].read == 1)} disabled size="small" />} label="Ler" />
-          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[5].write == 1)} disabled size="small" />} label="Escrever" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].read == 1)} disabled size="small" />} label="Ler" />
+          <FormControlLabel control={<Checkbox checked={Boolean(data.row.modules[4].write == 1)} disabled size="small" />} label="Escrever" />
         </FormGroup>
       )
     }

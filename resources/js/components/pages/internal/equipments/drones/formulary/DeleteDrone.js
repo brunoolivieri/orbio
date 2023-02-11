@@ -44,7 +44,7 @@ export const DeleteDrone = React.memo((props) => {
 
         try {
 
-            const response = await axios.delete("/api/equipments-module-drone/delete", {
+            const response = await axios.delete("api/module/equipments-drone/delete", {
                 data: {
                     ids: selectedIds
                 }
@@ -77,8 +77,8 @@ export const DeleteDrone = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["6"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["5"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

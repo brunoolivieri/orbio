@@ -15,7 +15,7 @@ export function DronesBatteriesAndEquipments() {
   const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    setPageIndex(6);
+    setPageIndex(5);
   }, []);
 
   return (

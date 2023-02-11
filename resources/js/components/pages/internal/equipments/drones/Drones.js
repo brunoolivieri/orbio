@@ -67,7 +67,7 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 125
+        minWidth: 130
     },
     {
         field: 'serial_number',
@@ -75,14 +75,14 @@ const columns = [
         sortable: true,
         editable: false,
         flex: 1,
-        minWidth: 125
+        minWidth: 130
     },
     {
         field: 'weight',
         headerName: 'Peso',
         sortable: true,
         editable: false,
-        width: 100
+        width: 130
     },
     {
         field: 'observation',
@@ -124,7 +124,7 @@ export function Drones() {
 
         try {
 
-            const response = await axios.get(`/api/equipments-module-drone?limit=${perPage}&search=${search}&page=${currentPage}`);
+            const response = await axios.get(`api/module/equipments-drone?limit=${perPage}&search=${search}&page=${currentPage}`);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);
@@ -223,11 +223,11 @@ export function Drones() {
                 </Grid>
 
                 <Grid item>
-                    {user.user_powers["6"].profile_powers.read == 1 &&
+                    {user.user_powers["5"].profile_powers.read == 1 &&
                         <ExportTableData type="DRONES" source={"/api/drones/export"} />
                     }
 
-                    {!user.user_powers["6"].profile_powers.read == 1 &&
+                    {!user.user_powers["5"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>

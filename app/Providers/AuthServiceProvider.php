@@ -74,28 +74,16 @@ class AuthServiceProvider extends ServiceProvider
             return $logged_user->profile->modules[3]->pivot->write;
         });
 
-        // === INCIDENTS GATES === //
-
-        Gate::define("incidents_read", function (User $logged_user): bool {
-
-            return $logged_user->profile->modules[4]->pivot->read;
-        });
-
-        Gate::define("incidents_write", function (User $logged_user): bool {
-
-            return $logged_user->profile->modules[4]->pivot->write;
-        });
-
         // === EQUIPMENTS GATES === //
 
         Gate::define("equipments_read", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[5]->pivot->read;
+            return $logged_user->profile->modules[4]->pivot->read;
         });
 
         Gate::define("equipments_write", function (User $logged_user): bool {
 
-            return $logged_user->profile->modules[5]->pivot->write;
+            return $logged_user->profile->modules[4]->pivot->write;
         });
     }
 }

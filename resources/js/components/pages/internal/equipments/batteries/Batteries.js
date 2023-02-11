@@ -74,7 +74,7 @@ const columns = [
         headerName: 'Carga',
         sortable: true,
         editable: false,
-        width: 120,
+        width: 130,
         valueGetter: (data) => {
             return data.row.last_charge != "nunca" ? moment(data.row.last_charge).format("DD/MM/YYYY") : data.row.last_charge
         }
@@ -123,7 +123,7 @@ export function Batteries() {
 
         try {
 
-            const response = await axios.get(`/api/equipments-module-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
+            const response = await axios.get(`api/module/equipments-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);
@@ -222,11 +222,11 @@ export function Batteries() {
                 </Grid>
 
                 <Grid item>
-                    {user.user_powers["6"].profile_powers.read == 1 &&
+                    {user.user_powers["5"].profile_powers.read == 1 &&
                         <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
                     }
 
-                    {!user.user_powers["6"].profile_powers.read == 1 &&
+                    {!user.user_powers["5"].profile_powers.read == 1 &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>

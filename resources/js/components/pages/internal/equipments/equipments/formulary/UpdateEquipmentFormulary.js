@@ -2,7 +2,6 @@ import * as React from 'react';
 // Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider, Stack } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import SearchIcon from '@mui/icons-material/Search';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -11,6 +10,7 @@ import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuth } from '../../../../../context/Auth';
+import { ImageListSelection } from '../../../../../shared/modals/dialog/ImageListSelection';
 // Moment
 import moment from 'moment';
 
@@ -101,7 +101,7 @@ export const UpdateEquipment = React.memo((props) => {
         }
 
         try {
-            const response = await axios.post(`/api/equipments-module-equipment/${formData.id}`, formData_);
+            const response = await axios.post(`api/module/equipments/${formData.id}`, formData_);
             successResponse(response);
         } catch (error) {
             errorResponse(error.response);
@@ -156,8 +156,8 @@ export const UpdateEquipment = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["6"].profile_powers.read == 1}>
-                    <FontAwesomeIcon icon={faPen} color={user.user_powers["6"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.read == 1}>
+                    <FontAwesomeIcon icon={faPen} color={user.user_powers["5"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -299,9 +299,9 @@ export const UpdateEquipment = React.memo((props) => {
                                 Upload de imagem
                             </Button>
                         </label>
-                        <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<SearchIcon />} disabled>
-                            Procurar imagem
-                        </Button>
+                        <ImageListSelection
+                            fetch_from={"api/action/module/equipments"}
+                        />
                     </Stack>
 
                     <Box sx={{ mt: 2 }}>

@@ -2,7 +2,6 @@ import * as React from 'react';
 // Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import SearchIcon from '@mui/icons-material/Search';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +9,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuth } from '../../../../../context/Auth';
+import { ImageListSelection } from '../../../../../shared/modals/dialog/ImageListSelection';
 
 const Input = styled('input')({
     display: 'none',
@@ -94,7 +94,7 @@ export const UpdateDrone = React.memo((props) => {
         }
 
         try {
-            const response = await axios.post(`/api/equipments-module-drone/${formData.id}`, formData_);
+            const response = await axios.post(`api/module/equipments-drone/${formData.id}`, formData_);
             successResponse(response);
         } catch (error) {
             errorResponse(error.response);
@@ -149,8 +149,8 @@ export const UpdateDrone = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["6"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faPen} color={user.user_powers["6"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.write == 1}>
+                    <FontAwesomeIcon icon={faPen} color={user.user_powers["5"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -281,9 +281,9 @@ export const UpdateDrone = React.memo((props) => {
                                 Upload de imagem
                             </Button>
                         </label>
-                        <Button variant="contained" component="span" color={fieldError.image ? "error" : "primary"} startIcon={<SearchIcon />} disabled>
-                            Procurar imagem
-                        </Button>
+                        <ImageListSelection
+                            fetch_from={"api/action/module/equipments-drone"}
+                        />
                     </Stack>
 
                     <Box sx={{ mt: 2 }}>

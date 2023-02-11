@@ -19,7 +19,6 @@ class ModulesSeeder extends Seeder
             ["name" => "Planos de voo"],
             ["name" => "Ordens de serviço"],
             ["name" => "Relatórios pós-voo"],
-            ["name" => "Incidentes"],
             ["name" => "Equipamentos"]
         ];
 

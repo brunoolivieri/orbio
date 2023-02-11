@@ -36,8 +36,7 @@ export const UpdateProfile = React.memo((props) => {
         "2": { read: props.record.modules[1].read == 1 ? true : false, write: props.record.modules[1].write == 1 ? true : false },
         "3": { read: props.record.modules[2].read == 1 ? true : false, write: props.record.modules[2].write == 1 ? true : false },
         "4": { read: props.record.modules[3].read == 1 ? true : false, write: props.record.modules[3].write == 1 ? true : false },
-        "5": { read: props.record.modules[4].read == 1 ? true : false, write: props.record.modules[4].write == 1 ? true : false },
-        "6": { read: props.record.modules[5].read == 1 ? true : false, write: props.record.modules[5].write == 1 ? true : false }
+        "5": { read: props.record.modules[4].read == 1 ? true : false, write: props.record.modules[4].write == 1 ? true : false }
     });
 
     // Access data function reducer
@@ -216,18 +215,10 @@ export const UpdateProfile = React.memo((props) => {
                         </Grid>
 
                         <Grid item>
-                            <FormLabel component="legend">Incidentes</FormLabel>
+                            <FormLabel component="legend">Equipamentos</FormLabel>
                             <FormGroup>
                                 <FormControlLabel control={<Checkbox checked={privileges["5"].read} onChange={(event) => { dispatchPrivileges({ module: "5", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
                                 <FormControlLabel control={<Checkbox checked={privileges["5"].write} onChange={(event) => { dispatchPrivileges({ module: "5", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
-                            </FormGroup>
-                        </Grid>
-
-                        <Grid item>
-                            <FormLabel component="legend">Equipamentos</FormLabel>
-                            <FormGroup>
-                                <FormControlLabel control={<Checkbox checked={privileges["6"].read} onChange={(event) => { dispatchPrivileges({ module: "6", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
-                                <FormControlLabel control={<Checkbox checked={privileges["6"].write} onChange={(event) => { dispatchPrivileges({ module: "6", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
                             </FormGroup>
                         </Grid>
                     </Grid>

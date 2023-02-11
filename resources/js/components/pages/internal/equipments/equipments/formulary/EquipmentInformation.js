@@ -27,8 +27,8 @@ export const EquipmentInformation = React.memo((props) => {
     return (
         <>
             <Tooltip title="Info">
-                <IconButton disabled={!user.user_powers["6"].profile_powers.write == 1} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faCircleInfo} color={user.user_powers["6"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                <IconButton disabled={!user.user_powers["5"].profile_powers.write == 1} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faCircleInfo} color={user.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 

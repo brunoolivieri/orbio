@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
-import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 // Libs
@@ -20,8 +19,6 @@ const initialDisplayAlert = { display: false, type: "", message: "" };
 export const CreateIncident = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
-
-  const { user } = useAuth();
 
   const [formData, setFormData] = React.useState(initialFormData);
   const [formError, setFormError] = React.useState(initialFormError);
@@ -117,8 +114,8 @@ export const CreateIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo incidente">
-        <IconButton onClick={handleOpen} disabled={!user.user_powers["5"].profile_powers.write == 1}>
-          <FontAwesomeIcon icon={faPlus} color={user.user_powers["5"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleOpen}>
+          <FontAwesomeIcon icon={faPlus} color="#007937" size="sm" />
         </IconButton>
       </Tooltip>
 

@@ -5,7 +5,6 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, Ico
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 // Custom
-import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
@@ -19,8 +18,6 @@ const initialAlert = { display: false, type: "", message: "" };
 export const UpdateIncident = React.memo((props) => {
 
   // ============================================================================== STATES ============================================================================== //
-
-  const { user } = useAuth();
 
   const [formData, setFormData] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date });
   const [formError, setFormError] = React.useState(initialFormError);
@@ -114,8 +111,8 @@ export const UpdateIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!user.user_powers["5"].profile_powers.read == 1} onClick={handleOpen}>
-          <FontAwesomeIcon icon={faPen} color={user.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleOpen}>
+          <FontAwesomeIcon icon={faPen} color="#007937" size="sm" />
         </IconButton>
       </Tooltip>
 

@@ -5,7 +5,6 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 // Custom
-import { useAuth } from '../../../../../context/Auth';
 import axios from '../../../../../../services/AxiosApi';
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
@@ -14,7 +13,6 @@ export const DeleteIncident = React.memo((props) => {
 
   /// ============================================================================== STATES ============================================================================== //
 
-  const { user } = useAuth();
   const [selectedIds, setSelectedIds] = React.useState([]);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -77,8 +75,8 @@ export const DeleteIncident = React.memo((props) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={!user.user_powers["5"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["5"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color="#007937" size="sm" />
         </IconButton>
       </Tooltip>
 

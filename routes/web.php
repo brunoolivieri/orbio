@@ -88,9 +88,9 @@ Route::middleware(["session.auth"])->group(function () {
     Route::apiResource("api/plans-module", FlightPlanModuleController::class);
     Route::apiResource("api/plans-module-logs", FlightPlanModuleLogController::class);
     Route::apiResource("api/orders-module", ServiceOrderModuleController::class);
-    Route::apiResource("api/equipments-module-drone", EquipmentModuleDroneController::class);
-    Route::apiResource("api/equipments-module-battery", EquipmentModuleBatteryController::class);
-    Route::apiResource("api/equipments-module-equipment", EquipmentModuleEquipmentController::class);
+    Route::apiResource("api/module/equipments-drone", EquipmentModuleDroneController::class);
+    Route::apiResource("api/module/equipments-battery", EquipmentModuleBatteryController::class);
+    Route::apiResource("api/module/equipments", EquipmentModuleEquipmentController::class);
     // Module additional operations
     Route::post("api/users/export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
     Route::post("api/profiles/export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
