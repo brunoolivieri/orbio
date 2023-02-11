@@ -191,9 +191,9 @@ class FlightPlanLogService implements ServiceInterface
 
             // Get date format from name - can be a timestamp or a date
             $kml_name_numbers = preg_replace("/[^0-9]/", "", $kml_original_filename);
-            if(strtotime($kml_name_numbers)){
+            if (strtotime($kml_name_numbers)) {
                 $kml_timestamp = strtotime($kml_name_numbers);
-            }else{
+            } else {
                 $kml_date = substr($kml_name_numbers, 0, 7); //yyyymmdd
                 $kml_timestamp = strtotime($kml_date);
             }
@@ -258,8 +258,34 @@ class FlightPlanLogService implements ServiceInterface
 
     function delete(array $ids)
     {
-        $log = $this->repository->delete($ids);
+        $undeleteable_ids = $this->repository->delete($ids);
 
-        return response(["message" => "Deleção realizada com sucesso!"], 200);
+        if (count($undeleteable_ids) === 0) {
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } else {
+
+            if (count($undeleteable_ids) === count($ids)) {
+
+                if (count($undeleteable_ids) === 1) {
+                    return response(["message" => "Erro! O log possui vínculo com ordem de serviço ativa!"], 409);
+                } else {
+                    return response(["message" => "Erro! Os logs possuem vínculo com ordem de serviço ativa!"], 409);
+                }
+                
+            } else if (count($undeleteable_ids) < count($ids)) {
+
+                $message = "Erro! Os logs de id ";
+                foreach ($undeleteable_ids as $index => $undeleteable_log_id) {
+
+                    if (count($undeleteable_ids) > ($index + 1)) {
+                        $message .= $undeleteable_log_id . ", ";
+                    } else if (count($undeleteable_ids) === ($index + 1)) {
+                        $message .= $undeleteable_log_id . " possuem vínculo com ordem de serviço ativa!";
+                    }
+                }
+
+                return response(["message" => $message], 409);
+            }
+        }
     }
 }

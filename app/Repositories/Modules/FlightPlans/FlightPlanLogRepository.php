@@ -6,17 +6,18 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Carbon;
 // Model
 use App\Models\Logs\Log;
 use App\Models\Pivot\ServiceOrderFlightPlan;
+use App\Models\ServiceOrders\ServiceOrder;
 
 class FlightPlanLogRepository implements RepositoryInterface
 {
-    public function __construct(Log $logModel, ServiceOrderFlightPlan $serviceOrderFlightPlanModel)
+    public function __construct(Log $logModel, ServiceOrderFlightPlan $serviceOrderFlightPlanModel, ServiceOrder $serviceOrderModel)
     {
         $this->logModel = $logModel;
         $this->serviceOrderFlightPlanModel = $serviceOrderFlightPlanModel;
+        $this->serviceOrderModel = $serviceOrderModel;
     }
 
     function getPaginate(string $limit, string $page, string $search)
@@ -68,13 +69,28 @@ class FlightPlanLogRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
-        foreach ($ids as $log_id) {
+        return DB::transaction(function () use ($ids) {
 
-            $log = $this->logModel->findOrFail($log_id);
+            $undeleteable_ids = [];
+            foreach ($ids as $log_id) {
 
-            $log->delete();
-        }
+                $log = $this->logModel->findOrFail($log_id);
 
-        return $log;
+                if ($log->service_order_flight_plan) {
+
+                    $log_service_order = $this->serviceOrderModel->where("id", $log->service_order_flight_plan->service_order_id)->where("status", true)->first();
+
+                    if ($log_service_order->status) {
+                        array_push($undeleteable_ids, $log->id);
+                    }
+                }
+            }
+
+            if (count($undeleteable_ids) === 0) {
+                $this->logModel->delete("id", $ids);
+            }
+
+            return $undeleteable_ids;
+        });
     }
 }
