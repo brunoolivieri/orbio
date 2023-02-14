@@ -163,6 +163,10 @@ export function Users() {
     setSelectedRecords(newSelectedRecords);
   }
 
+  function isRowSelectable(data) {
+    return (data.row.id != user.id) && Boolean(user.user_powers["1"].profile_powers.write);
+  }
+
   // ============================================================================== JSX ============================================================================== //
 
   return (
@@ -274,7 +278,7 @@ export function Users() {
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
           checkboxSelection
-          isRowSelectable={(data) => (data.row.id != user.id) && (user.user_powers["1"].profile_powers.write == 1)}
+          isRowSelectable={isRowSelectable}
           disableSelectionOnClick
           paginationMode='server'
           experimentalFeatures={{ newEditingApi: true }}

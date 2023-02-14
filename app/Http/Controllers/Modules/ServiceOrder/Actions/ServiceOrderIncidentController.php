@@ -55,7 +55,7 @@ class ServiceOrderIncidentController extends Controller
     public function store(Request $request)
     {
         Gate::authorize('service_orders_write');
-
+       
         $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", request()->service_order_id)->where("flight_plan_id", request()->flight_plan_id)->first();
 
         $incident = $this->model->create([

@@ -164,6 +164,10 @@ export function Drones() {
         setSelectedRecords(newSelectedRecords);
     }
 
+    function isRowSelectable() {
+        return Boolean(user.user_powers["5"].profile_powers.write);
+    }
+
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
@@ -278,6 +282,7 @@ export function Drones() {
                     checkboxSelection
                     disableSelectionOnClick
                     paginationMode='server'
+                    isRowSelectable={isRowSelectable}
                     experimentalFeatures={{ newEditingApi: true }}
                     onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
                     onSelectionModelChange={handleSelection}

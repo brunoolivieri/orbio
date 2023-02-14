@@ -260,6 +260,10 @@ export function FlightPlans() {
     enqueueSnackbar(text, { variant });
   }
 
+  function isRowSelectable() {
+    return Boolean(user.user_powers["2"].profile_powers.write);
+  }
+
   // ============================================================================== STRUCTURES ============================================================================== //
 
 
@@ -383,6 +387,7 @@ export function FlightPlans() {
           disableSelectionOnClick
           paginationMode='server'
           experimentalFeatures={{ newEditingApi: true }}
+          isRowSelectable={isRowSelectable}
           onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
           onSelectionModelChange={handleSelection}
           onPageChange={(newPage) => handleChangePage(newPage + 1)}

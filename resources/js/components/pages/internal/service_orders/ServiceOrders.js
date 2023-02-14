@@ -262,6 +262,10 @@ export function ServiceOrders() {
         setSelectedRecords(newSelectedRecords);
     }
 
+    function isRowSelectable() {
+        return Boolean(user.user_powers["3"].profile_powers.write);
+    }
+
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
@@ -376,6 +380,7 @@ export function ServiceOrders() {
                     disableSelectionOnClick
                     paginationMode='server'
                     experimentalFeatures={{ newEditingApi: true }}
+                    isRowSelectable={isRowSelectable}
                     onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
                     onSelectionModelChange={handleSelection}
                     onPageChange={(newPage) => handleChangePage(newPage + 1)}

@@ -109,8 +109,9 @@ Route::middleware(["session.auth"])->group(function () {
     // Module "MyProfile" operations
     Route::get('api/myprofile/basic-data', [MyProfileController::class, "loadBasicData"]);
     Route::patch('api/myprofile/basic-data', [MyProfileController::class, "basicDataUpdate"]);
-    Route::get('api/myprofile/complementary-data', [MyProfileController::class, "loadComplementaryData"]);
+    Route::get('api/myprofile/documents', [MyProfileController::class, "loadDocuments"]);
     Route::patch('api/myprofile/documents', [MyProfileController::class, "documentsUpdate"]);
+    Route::get('api/myprofile/address', [MyProfileController::class, "loadAddress"]);
     Route::patch('api/myprofile/address', [MyProfileController::class, "addressUpdate"]);
     Route::post("api/myprofile/desactivate/{user_id}", [MyProfileController::class, "accountDeactivation"]);
     Route::patch("api/myprofile/change-password/{user_id}", [MyProfileController::class, "passwordUpdate"]);

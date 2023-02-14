@@ -191,6 +191,10 @@ export function Logs() {
         enqueueSnackbar(text, { variant });
     }
 
+    function isRowSelectable(){
+        return Boolean(user.user_powers["2"].profile_powers.write);
+    }
+
     // ============================================================================== STRUCTURES ============================================================================== //
 
     return (
@@ -292,6 +296,7 @@ export function Logs() {
                     checkboxSelection
                     disableSelectionOnClick
                     paginationMode='server'
+                    isRowSelectable={isRowSelectable}
                     experimentalFeatures={{ newEditingApi: true }}
                     onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
                     onSelectionModelChange={handleSelection}

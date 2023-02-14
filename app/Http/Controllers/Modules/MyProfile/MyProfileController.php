@@ -48,9 +48,8 @@ class MyProfileController extends Controller
         ], 200);
     }
 
-    function loadComplementaryData(): \Illuminate\Http\Response
+    function loadDocuments(): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->findOrFail(Auth::user()->id);
 
         $available_data = json_decode($user->profile->access_data);
@@ -58,12 +57,28 @@ class MyProfileController extends Controller
         $data = [];
 
         foreach ($available_data as $key => $item) {
-
-            if ($key === "address") {
-
+            if ($key != "address") {
                 if (boolval($item)) {
+                    $data[$key] = is_null($user->personal_document->$key) ? "" : $user->personal_document->$key;
+                }
+            }
+        }
 
-                    $data["address"] = [
+        return response($data, 200);
+    }
+
+    function loadAddress(): \Illuminate\Http\Response
+    {
+        $user = $this->userModel->findOrFail(Auth::user()->id);
+
+        $available_data = json_decode($user->profile->access_data);
+
+        $data = [];
+
+        foreach ($available_data as $key => $item) {
+            if ($key === "address") {
+                if (boolval($item)) {
+                    $data = [
                         'address' => $user->personal_document->address->address,
                         'number' => $user->personal_document->address->number,
                         'cep' => $user->personal_document->address->cep,
@@ -71,14 +86,6 @@ class MyProfileController extends Controller
                         'state' => isset($user->personal_document->address->state) ? $user->personal_document->address->state : "0",
                         'complement' => $user->personal_document->address->complement
                     ];
-                } else {
-
-                    $data["address"] = [];
-                }
-            } else {
-
-                if (boolval($item)) {
-                    $data["documents"][$key] = is_null($user->personal_document->$key) ? "" : $user->personal_document->$key;
                 }
             }
         }
@@ -99,7 +106,6 @@ class MyProfileController extends Controller
 
     function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
     {
-
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->personalDocumentModel->where("id", $user->personal_document->id)->update($request->validated());

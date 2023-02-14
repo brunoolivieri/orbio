@@ -176,6 +176,10 @@ export function Equipments() {
     setSelectedRecords(newSelectedRecords);
   }
 
+  function isRowSelectable() {
+    return Boolean(user.user_powers["5"].profile_powers.write);
+  }
+
   // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
@@ -290,6 +294,7 @@ export function Equipments() {
           checkboxSelection
           disableSelectionOnClick
           paginationMode='server'
+          isRowSelectable={isRowSelectable}
           experimentalFeatures={{ newEditingApi: true }}
           onPageSizeChange={(newPageSize) => handleChangeRowsPerPage(newPageSize)}
           onSelectionModelChange={handleSelection}

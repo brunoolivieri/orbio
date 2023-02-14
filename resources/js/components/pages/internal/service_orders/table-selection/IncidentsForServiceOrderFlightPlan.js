@@ -122,7 +122,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
         setReload((old) => !old);
     }
 
-    function handleSelection(newSelectedIds) { 
+    function handleSelection(newSelectedIds) {
         setSelectionModel(newSelectedIds);
         const newSelectedRecords = records.filter((record) => {
             if (newSelectedIds.includes(record.id)) {
@@ -130,10 +130,6 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
             }
         });
         setSelectedRecords(newSelectedRecords);
-    }
-
-    function handleSave() {
-        console.log('save incidents')
     }
 
     return (
@@ -160,7 +156,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
                         >
                             <CloseIcon />
                         </IconButton>
-                        <Button autoFocus color="primary" onClick={handleSave} variant="contained">
+                        <Button autoFocus color="primary" onClick={handleClose} variant="contained">
                             Salvar
                         </Button>
                     </Toolbar>
@@ -250,7 +246,6 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
                             rowHeight={70}
-                            checkboxSelection
                             disableSelectionOnClick
                             paginationMode='server'
                             experimentalFeatures={{ newEditingApi: true }}

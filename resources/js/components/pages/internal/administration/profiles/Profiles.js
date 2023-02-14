@@ -195,6 +195,10 @@ export function Profiles() {
     enqueueSnackbar(text, { variant });
   }
 
+  function isRowSelectable() {
+    return Boolean(user.user_powers["1"].profile_powers.write);
+  }
+
   // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
@@ -228,7 +232,7 @@ export function Profiles() {
         </Grid>
 
         <Grid item>
-          {(selectedRecords.length === 0) &&
+          {(selectedRecords.length === 0) || (selectedRecords.length > 0 && [1, 2, 3, 4, 5].includes(selectedRecords[0].id)) &&
             <Tooltip title="Selecione um registro">
               <IconButton>
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
@@ -236,7 +240,7 @@ export function Profiles() {
             </Tooltip>
           }
 
-          {(!loading && selectedRecords.length > 0) &&
+          {(!loading && selectedRecords.length > 0) && (![1, 2, 3, 4, 5].includes(selectedRecords[0].id)) &&
             <DeleteProfile records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
@@ -305,6 +309,7 @@ export function Profiles() {
           loading={loading}
           page={currentPage - 1}
           rowsPerPageOptions={[10, 25, 50, 100]}
+          isRowSelectable={isRowSelectable}
           rowHeight={100}
           checkboxSelection
           disableSelectionOnClick
