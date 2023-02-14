@@ -15,6 +15,7 @@ import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
+import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { AutoCompleteState } from '../input/AutoCompleteState';
 import { AutoCompleteCity } from '../input/AutoCompleteCity';
@@ -39,12 +40,12 @@ const initialFormError = {
 }
 
 const formConfig = {
-    address: { label: "Endereço", validation: { regex: /^\d{3,}$/, message: 'CEP inválido.' } },
-    cep: { label: "CEP", validation: { regex: /^\d{5}-\d{3}$/, message: 'CEP inválido.' } },
-    complement: { label: "Complemento", validation: { regex: /^[a-zA-Z]{3,}$/, message: 'Deve ter pelo menos 3 letras.' } },
-    number: { label: "Número", validation: { regex: /^\d+$/, message: 'Número residêncial inválido.' } },
-    city: { label: "Cidade", validation: { regex: /^[^0]\d*\.?\d+$/, message: 'A cidade precisa ser selecionada.' } },
-    state: { label: "Estado", validation: { regex: /^[^0]\d*\.?\d+$/, message: 'O estado precisa ser selecionado.' } }
+    address: { label: "Endereço", test: (value) => FormValidation(value, 3, 255, null, null) },
+    cep: { label: "CEP", test: (value) => FormValidation(value, 3, 255, /^\d{5}-\d{3}$/, "cep") },
+    complement: { label: "Complemento", test: (value) => FormValidation(value, 3, 255, null, null) },
+    number: { label: "Número", test: (value) => FormValidation(value, 3, 255, /^\d+$/, "número") },
+    city: { label: "Cidade", test: (value) => FormValidation(value, 3, 255, null, null) },
+    state: { label: "Estado", test: (value) => FormValidation(value, 3, 255, null, null) }
 }
 
 export function AddressFormulary() {
@@ -87,21 +88,15 @@ export function AddressFormulary() {
         let form_validation = Object.assign({}, formError);
 
         for (let field in formData) {
-            let field_regex = formConfig[field].validation.regex;
-            let field_error_message = formConfig[field].validation.message;
-            let field_value = formData[field];
-
-            if (field_regex.test(field_value)) {
-                form_validation[field].error = false;
-                form_validation[field].message = "";
-            } else {
+            form_validation[field] = formConfig[field].test(formData[field]);
+            if (form_validation[field].error) {
                 is_valid = false;
-                form_validation[field].error = true;
-                form_validation[field].message = field_error_message;
             }
         }
 
-        setFormError(formError);
+        console.log(form_validation)
+
+        setFormError(form_validation);
         return is_valid;
 
     }
@@ -157,7 +152,7 @@ export function AddressFormulary() {
 
                         <Grid item xs={5} lg={2} xl={2}>
                             <AutoCompleteState
-                                label={"Estados"}
+                                label={"Estado"}
                                 name={"state"}
                                 source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
                                 primary_key={"id"}
@@ -172,7 +167,7 @@ export function AddressFormulary() {
                         <Grid item xs={5} lg={2} xl={2}>
                             {selectedState ?
                                 <AutoCompleteCity
-                                    label={"Cidades"}
+                                    label={"Cidade"}
                                     name={"city"}
                                     source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + selectedState + "/municipios"}
                                     primary_key={"id"}
