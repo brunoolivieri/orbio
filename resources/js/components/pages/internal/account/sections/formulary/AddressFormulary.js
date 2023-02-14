@@ -11,6 +11,9 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
+// Fonts Awesome
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
 import { AutoCompleteState } from '../input/AutoCompleteState';
@@ -135,6 +138,16 @@ export function AddressFormulary() {
 
     return (
         <>
+            <Grid container spacing={1} alignItems="center" mt={2}>
+                <Grid item>
+                    <Tooltip title="Carregar">
+                        <IconButton onClick={() => setRefresh((old) => !old)}>
+                            <FontAwesomeIcon icon={faArrowsRotate} size="sm" color={'#007937'} />
+                        </IconButton>
+                    </Tooltip>
+                </Grid>
+            </Grid>
+
             <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
 

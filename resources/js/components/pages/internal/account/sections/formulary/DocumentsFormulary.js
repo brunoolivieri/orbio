@@ -41,8 +41,6 @@ export function DocumentsFormulary() {
 
     React.useEffect(() => {
 
-        setFormError(initialFormError);
-
         axios.get("api/myprofile/documents")
             .then(function (response) {
                 setFormData(response.data);
