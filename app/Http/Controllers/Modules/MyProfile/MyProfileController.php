@@ -143,7 +143,7 @@ class MyProfileController extends Controller
     function accountDeactivation($identifier): \Illuminate\Http\Response
     {
         $user = $this->userModel->find($identifier);
-
+        
         $user->delete();
 
         $user->notify(new UserDisabledNotification($user));

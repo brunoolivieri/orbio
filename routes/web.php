@@ -113,7 +113,7 @@ Route::middleware(["session.auth"])->group(function () {
     Route::patch('api/myprofile/documents', [MyProfileController::class, "documentsUpdate"]);
     Route::get('api/myprofile/address', [MyProfileController::class, "loadAddress"]);
     Route::patch('api/myprofile/address', [MyProfileController::class, "addressUpdate"]);
-    Route::post("api/myprofile/desactivate/{user_id}", [MyProfileController::class, "accountDeactivation"]);
+    Route::delete("api/myprofile/deactivation/{user_id}", [MyProfileController::class, "accountDeactivation"]);
     Route::patch("api/myprofile/change-password/{user_id}", [MyProfileController::class, "passwordUpdate"]);
     // Module actions
     Route::group(["prefix" => "api/action/module"], function () {

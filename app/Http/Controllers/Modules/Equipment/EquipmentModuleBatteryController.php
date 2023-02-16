@@ -44,14 +44,14 @@ class EquipmentModuleBatteryController extends Controller
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->createOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]));
+        return $this->service->createOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "observation", "image"]));
     }
 
     public function update(UpdateBatteryRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize("equipments_write");
 
-        return $this->service->updateOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "image"]), $id);
+        return $this->service->updateOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "observation", "image"]), $id);
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response

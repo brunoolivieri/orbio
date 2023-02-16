@@ -27,7 +27,7 @@ class BatteryRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $battery = $this->batteryModel->create($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"])->all());
+            $battery = $this->batteryModel->create($data->only(["name", "manufacturer", "model", "serial_number", "observation", "last_charge"])->all());
 
             $battery->image()->create([
                 "path" => $data->get('path')
@@ -48,7 +48,7 @@ class BatteryRepository implements RepositoryInterface
 
             $battery = $this->batteryModel->findOrFail($identifier);
 
-            $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "last_charge"])->all());
+            $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "observation", "last_charge"])->all());
 
             if ($data->get('change_file') === 1) {
 

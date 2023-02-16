@@ -31,7 +31,7 @@ export function AdditionalConfiguration() {
 
     const { user } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
-
+    
     const [formData, setFormData] = React.useState({});
     const [loading, setLoading] = React.useState(true);
     const [refresh, setRefresh] = React.useState(false);

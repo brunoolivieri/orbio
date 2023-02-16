@@ -18,9 +18,9 @@ const Input = styled('input')({
     display: 'none',
 });
 
-const initialFormData = { name: "", manufacturer: "", model: "", serial_number: "", last_charge: moment() };
+const initialFormData = { name: "", manufacturer: "", model: "", serial_number: "", observation: "", last_charge: moment() };
 const fieldError = { error: false, message: "" };
-const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError };
+const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, image: fieldError, observation: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const CreateBattery = React.memo((props) => {
@@ -72,7 +72,7 @@ export const CreateBattery = React.memo((props) => {
 
         setFormError(validation);
 
-        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error || validation.image.error);
+        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error || validation.image.error || validation.observation.error);
     }
 
     async function requestServer() {
@@ -83,6 +83,7 @@ export const CreateBattery = React.memo((props) => {
         formData_.append("model", formData.model);
         formData_.append("serial_number", formData.serial_number);
         formData_.append("last_charge", moment(formData.last_charge).format('YYYY-MM-DD'));
+        formData_.append("observation", formData.observation);
         formData_.append("image", image);
 
         try {
@@ -216,6 +217,22 @@ export const CreateBattery = React.memo((props) => {
                                 onChange={handleInputChange}
                                 helperText={formError.serial_number.message}
                                 error={formError.serial_number.error}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Observação"
+                                fullWidth
+                                variant="outlined"
+                                name="observation"
+                                value={formData.observation}
+                                onChange={handleInputChange}
+                                helperText={formError.observation.message}
+                                error={formError.observation.error}
+                                sx={{ mb: 2 }}
                             />
                         </Grid>
 

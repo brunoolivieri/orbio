@@ -45,10 +45,7 @@ const columns = [
   {
     field: 'status',
     headerName: 'Status',
-    type: 'number',
-    width: 150,
-    align: 'center',
-    headerAlign: 'left',
+    minWidth: 120,
     sortable: true,
     editable: false,
     renderCell: (data) => {

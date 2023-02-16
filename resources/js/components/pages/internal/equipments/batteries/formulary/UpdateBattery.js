@@ -19,7 +19,7 @@ const Input = styled('input')({
 });
 
 const fieldError = { error: false, message: "" };
-const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError };
+const initialFormError = { name: fieldError, manufacturer: fieldError, model: fieldError, serial_number: fieldError, last_charge: fieldError, observation: fieldError };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateBattery = React.memo((props) => {
@@ -70,7 +70,7 @@ export const UpdateBattery = React.memo((props) => {
 
         setFormError(validation);
 
-        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error);
+        return !(validation.name.error || validation.manufacturer.error || validation.model.error || validation.serial_number.error || validation.last_charge.error || validation.observation.error);
     }
 
     async function requestServer() {
@@ -81,6 +81,7 @@ export const UpdateBattery = React.memo((props) => {
         formData_.append("model", formData.model);
         formData_.append("serial_number", formData.serial_number);
         formData_.append("last_charge", moment(formData.last_charge).format('YYYY-MM-DD'));
+        formData_.append("observation", formData.observation);
         formData_.append('_method', 'PATCH');
 
         if (image) {
@@ -217,6 +218,22 @@ export const UpdateBattery = React.memo((props) => {
                                 helperText={formError.serial_number.message}
                                 error={formError.serial_number.error}
                                 value={formData.serial_number}
+                            />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <TextField
+                                type="text"
+                                margin="dense"
+                                label="Observação"
+                                fullWidth
+                                variant="outlined"
+                                name="observation"
+                                value={formData.observation}
+                                onChange={handleInputChange}
+                                helperText={formError.observation.message}
+                                error={formError.observation.error}
+                                sx={{ mb: 2 }}
                             />
                         </Grid>
 
