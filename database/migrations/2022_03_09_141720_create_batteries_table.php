@@ -20,6 +20,7 @@ class CreateBatteriesTable extends Migration
             $table->string('model');
             $table->string('serial_number');
             $table->datetime('last_charge');
+            $table->string('observation')->nullable(true);
             $table->softDeletes();
             $table->timestamps();
         });
