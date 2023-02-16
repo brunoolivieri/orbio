@@ -32,7 +32,7 @@ export function Switcher({ ...props }) {
     >
       {props.options.map((item, index) => (
         <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} key={index}>
-          <Typography sx={{ marginRight: 2 }}>{item.title.toUpperCase()}</Typography> {item.icon}
+          <Typography sx={{ marginRight: 2, fontWeight: 600 }}>{item.title.toUpperCase()}</Typography> {item.icon}
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
