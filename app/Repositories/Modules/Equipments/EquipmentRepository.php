@@ -68,12 +68,26 @@ class EquipmentRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
-        foreach ($ids as $equipment_id) {
-            $equipment = $this->equipmentModel->find($equipment_id);
+        return DB::transaction(function () use ($ids) {
+            $undeleteable_ids = [];
+            foreach ($ids as $battery_id) {
 
-            $equipment->delete();
-        }
+                $equipment = $this->equipmentModel->findOrFail($battery_id);
 
-        return $equipment;
+                if ($equipment->service_orders) {
+                    foreach ($equipment->service_orders as $service_order) {
+                        if ($service_order->status) {
+                            array_push($undeleteable_ids, $equipment->id);
+                        }
+                    }
+                }
+            }
+
+            if (count($undeleteable_ids) === 0) {
+                $this->equipmentModel->delete("id", $ids);
+            }
+
+            return $undeleteable_ids;
+        });
     }
 }

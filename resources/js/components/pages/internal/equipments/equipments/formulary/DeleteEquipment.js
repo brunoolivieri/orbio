@@ -53,7 +53,7 @@ export const DeleteEquipment = React.memo((props) => {
             successResponse(response);
 
         } catch (error) {
-            errorResponse(error.response.data);
+            errorResponse(error.response);
         } finally {
             setLoading(false);
         }

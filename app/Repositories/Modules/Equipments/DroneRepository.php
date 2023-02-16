@@ -69,13 +69,26 @@ class DroneRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
-        foreach ($ids as $drone_id) {
+        return DB::transaction(function () use ($ids) {
+            $undeleteable_ids = [];
+            foreach ($ids as $drone_id) {
 
-            $drone = $this->droneModel->findOrFail($drone_id);
+                $drone = $this->droneModel->findOrFail($drone_id);
 
-            $drone->delete();
-        }
+                if ($drone->service_orders) {
+                    foreach ($drone->service_orders as $service_order) {
+                        if ($service_order->status) {
+                            array_push($undeleteable_ids, $drone->id);
+                        }
+                    }
+                }
+            }
 
-        return $drone;
+            if (count($undeleteable_ids) === 0) {
+                $this->droneModel->delete("id", $ids);
+            }
+
+            return $undeleteable_ids;
+        });
     }
 }

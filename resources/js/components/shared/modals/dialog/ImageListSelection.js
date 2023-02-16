@@ -38,7 +38,7 @@ export const ImageListSelection = React.memo((props) => {
 
     return (
         <div>
-            <Button variant="contained" component="span" startIcon={<StorageIcon />} onClick={handleOpen}>
+            <Button variant="contained" component="span" startIcon={<StorageIcon />} onClick={handleOpen} disabled>
                 Procurar imagem
             </Button>
             <Dialog

@@ -35,6 +35,7 @@ class BatteriesPanelResource extends JsonResource
                 "manufacturer" => $battery->manufacturer,
                 "model" => $battery->model,
                 "total_service_orders" => $battery->service_orders()->distinct('service_order_id')->count(),
+                "total_flight_plans" => $battery->flight_plans()->distinct('service_order_id')->count(),
                 "serial_number" => $battery->serial_number,
                 "last_charge" => empty($battery->last_charge) ? "nunca" : $battery->last_charge,
                 "observation" => $battery->observation,

@@ -44,7 +44,7 @@ export const DeleteBattery = React.memo((props) => {
 
         try {
 
-            const response = await axios.delete("api/module/equipments-battery", {
+            const response = await axios.delete("api/module/equipments-battery/delete", {
                 data: {
                     ids: selectedIds
                 }
@@ -53,7 +53,7 @@ export const DeleteBattery = React.memo((props) => {
             successResponse(response);
 
         } catch (error) {
-            errorResponse(error.response.data);
+            errorResponse(error.response);
         } finally {
             setLoading(false);
         }

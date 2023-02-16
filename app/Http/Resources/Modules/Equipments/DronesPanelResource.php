@@ -39,12 +39,12 @@ class DronesPanelResource extends JsonResource
                 "serial_number" => $drone->serial_number,
                 "weight" => $drone->weight,
                 "total_service_orders" => $drone->service_orders()->distinct('service_order_id')->count(),
+                "total_flight_plans" => $drone->flight_plans()->distinct('service_order_id')->count(),
                 "total_incidents" => "",
                 "observation" => $drone->observation,
                 "created_at" => $drone->created_at,
                 "updated_at" => $drone->updated_at
             ];
-
         }
 
         $this->formatedData["total_records"] = $this->data->total();

@@ -68,13 +68,26 @@ class BatteryRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
-        foreach ($ids as $battery_id) {
+        return DB::transaction(function () use ($ids) {
+            $undeleteable_ids = [];
+            foreach ($ids as $battery_id) {
 
-            $battery = $this->batteryModel->findOrFail($battery_id);
+                $battery = $this->batteryModel->findOrFail($battery_id);
 
-            $battery->delete();
-        }
+                if ($battery->service_orders) {
+                    foreach ($battery->service_orders as $service_order) {
+                        if ($service_order->status) {
+                            array_push($undeleteable_ids, $battery->id);
+                        }
+                    }
+                }
+            }
 
-        return $battery;
+            if (count($undeleteable_ids) === 0) {
+                $this->batteryModel->delete("id", $ids);
+            }
+
+            return $undeleteable_ids;
+        });
     }
 }

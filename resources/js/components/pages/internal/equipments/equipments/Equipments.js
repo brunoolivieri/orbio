@@ -13,9 +13,9 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 // Custom
-import { CreateEquipment } from './formulary/CreateEquipmentFormulary';
-import { UpdateEquipment } from './formulary/UpdateEquipmentFormulary';
-import { DeleteEquipment } from './formulary/DeleteEquipmentFormulary';
+import { CreateEquipment } from './formulary/CreateEquipment';
+import { UpdateEquipment } from './formulary/UpdateEquipment';
+import { DeleteEquipment } from './formulary/DeleteEquipment';
 import { EquipmentInformation } from './formulary/EquipmentInformation';
 import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
