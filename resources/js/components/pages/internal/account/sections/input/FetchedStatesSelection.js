@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { InputLabel, MenuItem, FormControl, Select, TextField, FormHelperText } from '@mui/material';
+import { MenuItem, FormControl, Select, TextField, FormHelperText } from '@mui/material';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
 
@@ -8,7 +8,7 @@ export const FetchedStatesSelection = React.memo((props) => {
 
     const [loading, setLoading] = React.useState(true);
     const [options, setOptions] = React.useState([]);
-    const [selected, setSelected] = React.useState(props.selected);
+    const [selected, setSelected] = React.useState();
 
     React.useEffect(() => {
 
@@ -22,6 +22,7 @@ export const FetchedStatesSelection = React.memo((props) => {
                         value: item["sigla"]
                     }));
                     setOptions(options);
+                    setSelected(props.selected);
                 }
             })
             .catch(function () {

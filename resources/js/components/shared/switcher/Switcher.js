@@ -5,9 +5,12 @@ import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const ToggleButton = styled(MuiToggleButton)({
+  display: 'flex',
+  border: 'none',
   "&.Mui-selected, &.Mui-selected:hover": {
+    boxShadow: '0 0 5px 2px rgba(0,0,0,0.2)',
     color: "#007937",
-    backgroundColor: '#fff'
+    backgroundColor: 'transparent'
   }
 });
 
@@ -28,7 +31,7 @@ export function Switcher({ ...props }) {
       fullWidth
     >
       {props.options.map((item, index) => (
-        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} sx={{ display: "flex", border: 'none', borderRadius: 5 }} key={index}>
+        <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} key={index}>
           <Typography sx={{ marginRight: 2 }}>{item.title.toUpperCase()}</Typography> {item.icon}
         </ToggleButton>
       ))}

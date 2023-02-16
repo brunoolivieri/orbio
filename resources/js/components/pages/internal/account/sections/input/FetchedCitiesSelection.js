@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { InputLabel, MenuItem, FormControl, Select, TextField, FormHelperText } from '@mui/material';
+import { MenuItem, FormControl, Select, TextField, FormHelperText } from '@mui/material';
 // Custom
 import axios from '../../../../../../services/AxiosApi';
 
@@ -13,6 +13,7 @@ export const FetchedCitiesSelection = React.memo((props) => {
     React.useEffect(() => {
 
         let unmounted = false;
+        setLoading(true);
 
         axios.get(props.fetch_from)
             .then(function (response) {
@@ -22,6 +23,7 @@ export const FetchedCitiesSelection = React.memo((props) => {
                         value: item["nome"]
                     }));
                     setOptions(options);
+                    setSelected(props.selected);
                 }
             })
             .catch(function () {
@@ -49,7 +51,7 @@ export const FetchedCitiesSelection = React.memo((props) => {
         return <TextField fullWidth disabled value={'Carregando...'} />
     }
 
-    if (!loading) {
+    if (!loading && options.length > 0) {
         return (
             <FormControl fullWidth>
                 <Select

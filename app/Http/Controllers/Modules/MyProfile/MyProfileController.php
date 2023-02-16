@@ -82,8 +82,8 @@ class MyProfileController extends Controller
                         'address' => $user->personal_document->address->address,
                         'number' => $user->personal_document->address->number,
                         'cep' => $user->personal_document->address->cep,
-                        'city' => isset($user->personal_document->address->city) ? $user->personal_document->address->city : "0",
-                        'state' => isset($user->personal_document->address->state) ? $user->personal_document->address->state : "0",
+                        'city' => is_null($user->personal_document->address->city) ? "0" : $user->personal_document->address->city,
+                        'state' => is_null($user->personal_document->address->state) ? "0" : $user->personal_document->address->state,
                         'complement' => $user->personal_document->address->complement
                     ];
                 }
@@ -117,7 +117,7 @@ class MyProfileController extends Controller
 
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
-       
+
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());
