@@ -15,37 +15,38 @@ import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 // Custom
+
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
-import { AutoCompleteState } from '../input/AutoCompleteState';
-import { AutoCompleteCity } from '../input/AutoCompleteCity';
+import { FetchedStatesSelection } from '../input/FetchedStatesSelection';
+import { FetchedCitiesSelection } from '../input/FetchedCitiesSelection';
 
 const initialFormData =
 {
     address: "",
     cep: "",
-    city: "0",
     complement: "",
     number: "",
-    state: "0"
+    state: "0",
+    city: "0"
 }
 
 const initialFormError = {
     address: { error: false, message: "" },
     cep: { error: false, message: "" },
-    city: { error: false, message: "" },
     complement: { error: false, message: "" },
     number: { error: false, message: "" },
+    city: { error: false, message: "" },
     state: { error: false, message: "" }
 }
 
 const formConfig = {
-    address: { label: "Endereço", test: (value) => FormValidation(value, 3, 255, null, null) },
+    address: { label: "Endereço", test: (value) => FormValidation(value, 3, 255) },
     cep: { label: "CEP", test: (value) => FormValidation(value, 3, 255, /^\d{5}-\d{3}$/, "cep") },
-    complement: { label: "Complemento", test: (value) => FormValidation(value, 3, 255, null, null) },
+    complement: { label: "Complemento", test: (value) => FormValidation(value, 3, 255) },
     number: { label: "Número", test: (value) => FormValidation(value, 3, 255, /^\d+$/, "número") },
-    city: { label: "Cidade", test: (value) => FormValidation(value, 3, 255, null, null) },
-    state: { label: "Estado", test: (value) => FormValidation(value, 3, 255, null, null) }
+    state: { test: (value) => value != "0" ? { error: false, message: "" } : { error: true, message: "Selecione um estado" } },
+    city: { test: (value) => value != "0" ? { error: false, message: "" } : { error: true, message: "Selecione uma cidade" } }
 }
 
 export function AddressFormulary() {
@@ -55,8 +56,6 @@ export function AddressFormulary() {
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
     const [loading, setLoading] = React.useState(true);
-    const [selectedState, setSelectedState] = React.useState(null);
-    const [selectedCity, setSelectedCity] = React.useState(null);
     const [refresh, setRefresh] = React.useState(false);
 
     React.useEffect(() => {
@@ -85,7 +84,7 @@ export function AddressFormulary() {
     function formSubmissionValidation() {
 
         let is_valid = true;
-        let form_validation = Object.assign({}, formError);
+        let form_validation = Object.assign({}, initialFormError);
 
         for (let field in formData) {
             form_validation[field] = formConfig[field].test(formData[field]);
@@ -93,8 +92,6 @@ export function AddressFormulary() {
                 is_valid = false;
             }
         }
-
-        console.log(form_validation)
 
         setFormError(form_validation);
         return is_valid;
@@ -117,18 +114,21 @@ export function AddressFormulary() {
     function errorResponse(response) {
         const message = response.message ? response.message : "Erro do servidor";
         enqueueSnackbar(message, { variant: "error" });
-        let request_errors = {}
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
-                error: true,
-                message: response.data.errors[prop][0]
+
+        if (response.status === 422) {
+            let request_errors = {}
+            for (let prop in response.data.errors) {
+                request_errors[prop] = {
+                    error: true,
+                    message: response.data.errors[prop][0]
+                }
             }
+            setFormError(request_errors);
         }
-        setFormError(request_errors);
     }
 
     function handleInputChange(event) {
-        setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
+        setFormData({ ...formData, [event.target.name]: event.target.value });
     }
 
     return (
@@ -145,46 +145,28 @@ export function AddressFormulary() {
 
             <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
-
                     <Typography variant="h5" mb={2}>Endereço</Typography>
-
                     <Grid container spacing={3} columns={10}>
 
                         <Grid item xs={5} lg={2} xl={2}>
-                            <AutoCompleteState
-                                label={"Estado"}
-                                name={"state"}
-                                source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
-                                primary_key={"id"}
-                                key_text={"sigla"}
-                                error={formError.state}
-                                setSelectedState={setSelectedState}
-                                setControlledInput={setFormData}
-                                controlledInput={formData}
+                            <FetchedStatesSelection
+                                fetch_from={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
+                                handleChange={handleInputChange}
+                                error={formError.state.error}
+                                errorMessage={formError.state.message}
+                                selected={formData.state}
                             />
                         </Grid>
 
                         <Grid item xs={5} lg={2} xl={2}>
-                            {selectedState ?
-                                <AutoCompleteCity
-                                    label={"Cidade"}
-                                    name={"city"}
-                                    source={"https://servicodados.ibge.gov.br/api/v1/localidades/estados/" + selectedState + "/municipios"}
-                                    primary_key={"id"}
-                                    key_text={"nome"}
-                                    error={formError.city}
-                                    setSelectedCity={setSelectedCity}
-                                    setControlledInput={setFormData}
-                                    controlledInput={formData}
-                                />
-                                :
-                                <TextField
-                                    label="Selecione um estado"
-                                    disabled
-                                    fullWidth
-                                    variant="outlined"
-                                />
-                            }
+                            <FetchedCitiesSelection
+                                fetch_from={`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${formData.state}/municipios`}
+                                error={formError.city.error}
+                                errorMessage={formError.city.message}
+                                selected={formData.city}
+                                handleChange={handleInputChange}
+                                refresh={formData.state}
+                            />
                         </Grid>
 
                         <Grid item xs={7} lg={3} xl={3}>
@@ -207,14 +189,13 @@ export function AddressFormulary() {
                                                     <HelpIcon />
                                                 </IconButton>
                                             </Tooltip>
-                                        </InputAdornment>,
+                                        </InputAdornment>
                                 }}
                             />
                         </Grid>
 
                         <Grid item xs={3} lg={3} xl={3}>
                             <TextField
-                                id="number"
                                 name="number"
                                 label="Numero"
                                 fullWidth
@@ -229,7 +210,6 @@ export function AddressFormulary() {
 
                         <Grid item xs={10} sm={6} lg={5} xl={5}>
                             <TextField
-                                id="address"
                                 name="address"
                                 label="Logradouro"
                                 fullWidth
@@ -244,7 +224,6 @@ export function AddressFormulary() {
 
                         <Grid item xs={10} sm={4} lg={5} xl={5}>
                             <TextField
-                                id="complement"
                                 name="complement"
                                 label="Complemento"
                                 fullWidth
@@ -258,14 +237,11 @@ export function AddressFormulary() {
                         </Grid>
 
                     </Grid>
-
                     <Button variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
                         Atualizar
                     </Button>
-
                 </Paper>
             </Box>
-
         </>
     )
 

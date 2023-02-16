@@ -116,7 +116,7 @@ export const UpdateDrone = React.memo((props) => {
         const error_message = response.data.message ? response.data.message : "Erro do servidor";
         setDisplayAlert({ display: true, type: "error", message: error_message });
 
-        if (response.data.errors) {
+        if (response.status === 422) {
             let response_errors = {}
             for (let field in response.data.errors) {
                 response_errors[field] = {

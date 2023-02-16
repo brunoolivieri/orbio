@@ -108,14 +108,17 @@ export function DocumentsFormulary() {
     function errorResponse(response) {
         const message = response.message ? response.message : "Erro do servidor";
         enqueueSnackbar(message, { variant: "error" });
-        let request_errors = {}
-        for (let prop in response.data.errors) {
-            request_errors[prop] = {
-                error: true,
-                message: response.data.errors[prop][0]
+
+        if (response.status === 422) {
+            let response_errors = {}
+            for (let prop in response.data.errors) {
+                response_errors[prop] = {
+                    error: true,
+                    message: response.data.errors[prop][0]
+                }
             }
+            setFormError(response_errors);
         }
-        setFormError(request_errors);
     }
 
     function checkIfCanRenderDocuments() {

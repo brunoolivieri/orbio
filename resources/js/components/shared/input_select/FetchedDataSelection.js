@@ -21,42 +21,44 @@ export const FetchedDataSelection = React.memo((props) => {
             .finally(() => {
                 setLoading(false);
             });
-    }, [open]);
+    }, []);
 
     function handleChange(event) {
         setSelected(event.target.value);
         props.handleChange(event);
     }
 
-    return (
-        <>
-            {!loading &&
-                <FormControl fullWidth sx={{ mt: 1 }}>
-                    <InputLabel>{props.label_text}</InputLabel>
+    if (loading) {
+        return <TextField fullWidth disabled value={'Carregando...'} />
+    }
 
-                    <Select
-                        id={props.name}
-                        value={selected}
-                        label={props.label_text}
-                        onChange={handleChange}
-                        name={props.name}
-                        error={(options.length == 0) || props.error}
-                        disabled={loading}
-                    >
-                        <MenuItem value="0" disabled>Escolha</MenuItem>
-                        {options.length > 0 &&
-                            options.map((item) =>
-                                <MenuItem value={item[props.primary_key]} key={item[props.primary_key]}>{item[props.key_content]}</MenuItem>
-                            )
-                        }
+    if (!loading) {
+        return (
+            <>
+                {!loading &&
+                    <FormControl fullWidth sx={{ mt: 1 }}>
+                        <InputLabel>{props.label_text}</InputLabel>
+                        <Select
+                            id={props.name}
+                            value={selected}
+                            label={props.label_text}
+                            onChange={handleChange}
+                            name={props.name}
+                            error={(options.length == 0) || props.error}
+                            disabled={loading}
+                        >
+                            <MenuItem value="0" disabled>Escolha</MenuItem>
+                            {options.length > 0 &&
+                                options.map((item) =>
+                                    <MenuItem value={item[props.primary_key]} key={item[props.primary_key]}>{item[props.key_content]}</MenuItem>
+                                )
+                            }
+                        </Select>
+                        <FormHelperText error>{props.errorMessage}</FormHelperText>
+                    </FormControl>
+                }
 
-                    </Select>
-                    <FormHelperText error>{props.errorMessage}</FormHelperText>
-                </FormControl>
-            }
-
-            {loading && <TextField fullWidth disabled value={'Carregando...'} />}
-
-        </>
-    );
+            </>
+        );
+    }
 });

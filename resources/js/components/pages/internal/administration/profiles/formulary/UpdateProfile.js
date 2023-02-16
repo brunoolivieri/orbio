@@ -118,10 +118,8 @@ export const UpdateProfile = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        const error_message = response.data.message ? response.data.message : "Erro do servidor";
-        setDisplayAlert({ display: true, type: "error", message: error_message });
-
-        if (response.data.errors) {
+        if (response.status === 422) {
+            setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
             let response_errors = {}
             for (let field in response.data.errors) {
                 response_errors[field] = {
@@ -130,6 +128,8 @@ export const UpdateProfile = React.memo((props) => {
                 }
             }
             setFormError(response_errors);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
         }
     }
 

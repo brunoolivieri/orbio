@@ -117,7 +117,7 @@ class MyProfileController extends Controller
 
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
-        dd("adsads");
+       
         $user = $this->userModel->find(Auth::user()->id);
 
         $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());
@@ -143,7 +143,7 @@ class MyProfileController extends Controller
     function accountDeactivation($identifier): \Illuminate\Http\Response
     {
         $user = $this->userModel->find($identifier);
-        
+
         $user->delete();
 
         $user->notify(new UserDisabledNotification($user));
