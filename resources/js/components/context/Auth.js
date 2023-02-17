@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
     async function verifyAuthentication() {
 
-        const response = await axios.get("/api/auth/user-data");
+        const response = await axios.get(`${process.env.MIX_APP_URL}/api/auth/user-data`);
         setUser(response.data);
 
     }
@@ -19,7 +19,7 @@ export function AuthProvider({ children }) {
 
         try {
 
-            const response = await axios.post("/api/auth/login", formData);
+            const response = await axios.post(`${process.env.MIX_APP_URL}/api/auth/login`, formData);
 
             setUser(response.data.user);
 
@@ -39,11 +39,12 @@ export function AuthProvider({ children }) {
 
         try {
 
-            await axios.post("/api/auth/logout");
+            await axios.post(`${process.env.MIX_APP_URL}/api/auth/logout`);
 
             setTimeout(() => {
-                window.location = "/login";
+                window.location = `${process.env.MIX_APP_URL}/login`;
             }, [1000]);
+
 
         } catch (error) {
 

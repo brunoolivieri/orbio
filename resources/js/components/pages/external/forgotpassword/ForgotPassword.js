@@ -83,7 +83,7 @@ export const ForgotPassword = () => {
 
         try {
 
-            const response = await axios.post("/api/auth/password-token", {
+            const response = await axios.post(`${process.env.MIX_APP_URL}/api/auth/password-token`, {
                 email: formData.email
             });
 
@@ -101,7 +101,7 @@ export const ForgotPassword = () => {
 
         try {
 
-            const response = await axios.post("/api/auth/change-password", {
+            const response = await axios.post(`${process.env.MIX_APP_URL}/api/auth/change-password`, {
                 token: formData.code,
                 new_password: formData.new_password,
                 new_password_confirmation: formData.new_password_confirmation
