@@ -2,12 +2,9 @@
 
 namespace App\Services\Modules\Equipment;
 
-// Contracts
+use Exception;
 use App\Services\Contracts\ServiceInterface;
-// Repository
 use App\Repositories\Modules\Equipments\BatteryRepository;
-// Resources
-use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
 
 class BatteryService implements ServiceInterface
 {
@@ -18,13 +15,7 @@ class BatteryService implements ServiceInterface
 
     public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $page, $search);
-
-        if ($data->total() > 0) {
-            return response(new BatteriesPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhuma bateria encontrada."], 404);
-        }
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     public function createOne(array $data)
@@ -39,8 +30,6 @@ class BatteryService implements ServiceInterface
         $data["path"] = $path;
 
         $battery = $this->repository->createOne(collect($data));
-
-        return response(["message" => "Bateria criada com sucesso!"], 201);
     }
 
     public function updateOne(array $data, string $identifier)
@@ -61,8 +50,6 @@ class BatteryService implements ServiceInterface
         }
 
         $battery = $this->repository->updateOne(collect($data), $identifier);
-
-        return response(["message" => "Bateria atualizada com sucesso!"], 200);
     }
 
     /**
@@ -74,17 +61,16 @@ class BatteryService implements ServiceInterface
     public function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
-       
-        if (count($undeleteable_ids) === 0) {
-            return response(["message" => "Deleção realizada com sucesso!"], 200);
-        } else {
+
+        if (count($undeleteable_ids) > 0) {
+
+            $message = "";
 
             if (count($undeleteable_ids) === count($ids)) {
-
                 if (count($undeleteable_ids) === 1) {
-                    return response(["message" => "Erro! A bateria possui vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! A bateria possui vínculo com ordem de serviço ativa!";
                 } else {
-                    return response(["message" => "Erro! As baterias possuem vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! As baterias possuem vínculo com ordem de serviço ativa!";
                 }
             } else if (count($undeleteable_ids) < count($ids)) {
 
@@ -97,9 +83,9 @@ class BatteryService implements ServiceInterface
                         $message .= $undeleteable_log_id . " possuem vínculo com ordem de serviço ativa!";
                     }
                 }
-
-                return response(["message" => $message], 409);
             }
+
+            throw new Exception($message);
         }
     }
 }

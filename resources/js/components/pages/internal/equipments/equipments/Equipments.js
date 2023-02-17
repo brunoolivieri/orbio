@@ -133,22 +133,16 @@ export function Equipments() {
   }, [reload]);
 
   async function fetchRecords() {
-
     try {
-
       const response = await axios.get(`api/module/equipments?limit=${perPage}&search=${search}&page=${currentPage}`);
-
       setRecords(response.data.records);
       setTotalRecords(response.data.total_records);
-
       enqueueSnackbar(`Equipamentos encontrados: ${response.data.total_records}`, { variant: "success" });
-
     } catch (error) {
       enqueueSnackbar(error.response.data.message, { variant: "error" });
     } finally {
       setLoading(false);
     }
-
   }
 
   function handleChangePage(newPage) {

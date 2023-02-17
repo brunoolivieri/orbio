@@ -62,7 +62,7 @@ class AdministrationModuleUsersController extends Controller
         Gate::authorize('administration_write');
 
         try {
-            $result = $this->service->createOne($request->validated());
+            $this->service->createOne($request->validated());
             return response(["message" => "Usuário criado com sucesso!"], 201);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
@@ -74,14 +74,10 @@ class AdministrationModuleUsersController extends Controller
         Gate::authorize('administration_write');
 
         try {
-            $result = $this->service->updateOne($request->validated(), $id);
+            $this->service->updateOne($request->validated(), $id);
             return response(["message" => "Usuário atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
-            if ($e->getMessage() === "Usuário não encontrado") {
-                return response(["message" => $e->getMessage()], 404);
-            } else {
-                return response(["message" => $e->getMessage()], 500);
-            }
+            return response(["message" => $e->getMessage()], 500);
         }
     }
 
@@ -90,7 +86,7 @@ class AdministrationModuleUsersController extends Controller
         Gate::authorize('administration_write');
 
         try {
-            $result = $this->service->delete($request->ids);
+            $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
