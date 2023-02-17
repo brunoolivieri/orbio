@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
     async function verifyAuthentication() {
         try {
-            const response = await axios.get(`${process.env.MIX_APP_URL}/api/auth/user-data`);
+            const response = await axios.get("api/auth/user-data");
             setUser(response.data);
         } catch (error) {
             console.log(error);

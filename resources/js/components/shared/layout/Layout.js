@@ -30,8 +30,9 @@ export const Layout = () => {
         await verifyAuthentication();
         setLoading(false);
       } catch (error) {
+        console.log(error)
         await logout();
-        enqueueSnackbar("Você foi deslogado", { variant: "error" });
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
       }
     }
     fetch();
