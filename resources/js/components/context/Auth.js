@@ -9,48 +9,39 @@ export function AuthProvider({ children }) {
     const isAuthenticated = !!user;
 
     async function verifyAuthentication() {
-
-        const response = await axios.get(`${process.env.MIX_APP_URL}/api/auth/user-data`);
-        setUser(response.data);
+        try {
+            const response = await axios.get(`${process.env.MIX_APP_URL}/api/auth/user-data`);
+            setUser(response.data);
+        } catch (e) {
+            logout();
+        }
 
     }
 
     async function login(formData) {
 
         try {
-
             const response = await axios.post(`${process.env.MIX_APP_URL}/api/auth/login`, formData);
-
             setUser(response.data.user);
-
             setTimeout(() => {
                 window.location = "/internal";
             }, [1000]);
-
         } catch (error) {
-
             console.log(error);
             throw error;
-
         }
     }
 
     async function logout() {
 
         try {
-
             await axios.post(`${process.env.MIX_APP_URL}/api/auth/logout`);
-
             setTimeout(() => {
                 window.location = `${process.env.MIX_APP_URL}/login`;
             }, [1000]);
-
-
         } catch (error) {
-
             console.log(error);
             throw error;
-
         }
 
     }
