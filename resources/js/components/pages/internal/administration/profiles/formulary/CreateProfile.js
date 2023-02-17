@@ -80,7 +80,7 @@ export const CreateProfile = React.memo((props) => {
 
     try {
 
-      const response = await axios.post("/api/admin-module-profile", {
+      const response = await axios.post("api/module/administration-profile", {
         name: formData.name,
         access_data: accessData
       });

@@ -43,7 +43,7 @@ export const DeleteFlightPlan = React.memo((props) => {
 
     try {
 
-      const response = await axios.delete("/api/plans-module/delete", {
+      const response = await axios.delete("api/module/flight-plans/delete", {
         data: {
           ids: selectedIds
         }

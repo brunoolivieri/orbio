@@ -212,7 +212,7 @@ export function FlightPlans() {
 
   function fetchRecords() {
 
-    axios.get(`/api/plans-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+    axios.get(`api/module/flight-plans?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);

@@ -23,7 +23,7 @@ class UpdateLogRequest extends FormRequest
      */
     public function rules()
     {
-        $log_id = $this->route("plans_module_log");
+        $log_id = $this->route("flight_plan_log");
 
         return [
             "name" => ["required", "min:3", "max:255", "unique:logs,name,$log_id", "min:3"]

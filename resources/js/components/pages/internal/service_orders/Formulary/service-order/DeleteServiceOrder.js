@@ -43,7 +43,7 @@ export const DeleteServiceOrder = React.memo((props) => {
 
     try {
 
-      const response = await axios.delete("/api/orders-module/delete", {
+      const response = await axios.delete("api/module/service-orders/delete", {
         data: {
           ids: selectedIds
         }

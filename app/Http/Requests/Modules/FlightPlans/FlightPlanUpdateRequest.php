@@ -25,7 +25,7 @@ class FlightPlanUpdateRequest extends FormRequest
     public function rules()
     {
 
-        $flight_plan_id_parameter = $this->route("plans_module");
+        $flight_plan_id_parameter = $this->route("flight_plan");
 
         return [
             "name" => ["required", "unique:flight_plans,name,$flight_plan_id_parameter"],

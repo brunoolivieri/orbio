@@ -66,7 +66,7 @@ export const UpdateUser = React.memo((props) => {
 
     try {
 
-      const response = await axios.patch(`/api/admin-module-user/${formData.id}`, formData);
+      const response = await axios.patch(`api/module/administration-user/${formData.id}`, formData);
       successResponse(response);
 
     } catch (error) {
@@ -104,7 +104,6 @@ export const UpdateUser = React.memo((props) => {
   }
 
   function handleInputChange(event) {
-    console.log(event.target)
     setFormData({ ...formData, [event.target.name]: event.target.value });
   }
 

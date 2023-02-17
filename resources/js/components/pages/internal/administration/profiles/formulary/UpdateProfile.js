@@ -93,7 +93,7 @@ export const UpdateProfile = React.memo((props) => {
 
         try {
 
-            const response = await axios.patch(`/api/admin-module-profile/${formData.id}`, {
+            const response = await axios.patch(`api/module/administration-profile/${formData.id}`, {
                 name: formData.name,
                 privileges: privileges,
                 access_data: accessData

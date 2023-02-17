@@ -19,27 +19,27 @@ class UserPanelUpdateRequest extends FormRequest
     }
 
     /**
-    * Get the validation rules that apply to the request.
-    *
-    * @return array
-    */
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
     public function rules()
     {
 
-        $user_id_parameter = $this->route("admin_module_user");
+        $user_id_parameter = $this->route("administration_user");
 
         return [
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email,'.$user_id_parameter,
-            'profile_id' => 'required|integer|numeric'
-        ]; 
+            'email' => 'required|email|unique:users,email,' . $user_id_parameter,
+            'profile_id' => 'required'
+        ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
@@ -47,8 +47,7 @@ class UserPanelUpdateRequest extends FormRequest
             'email.required' => 'O email deve ser informado',
             'email.unique' => 'Esse email já está cadastrado',
             'email.email' => 'Digite um email válido',
-            'profile_id.required' => 'Um perfil deve ser selecionado'
+            'profile_id.required' => 'Selecione um perfil'
         ];
     }
-
 }

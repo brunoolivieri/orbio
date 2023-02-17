@@ -133,7 +133,7 @@ export function Reports() {
 
   function fetchRecords() {
 
-    axios.get(`/api/reports-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+    axios.get(`api/module/reports?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);

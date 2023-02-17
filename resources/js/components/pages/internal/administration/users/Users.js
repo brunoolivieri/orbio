@@ -121,7 +121,7 @@ export function Users() {
 
     try {
 
-      const response = await axios.get(`/api/admin-module-user?limit=${perPage}&search=${search}&page=${currentPage}`);
+      const response = await axios.get(`api/module/administration-user?limit=${perPage}&search=${search}&page=${currentPage}`);
 
       setRecords(response.data.records);
       setTotalRecords(response.data.total_records);

@@ -64,7 +64,7 @@ export const UpdateFlightPlan = React.memo((props) => {
 
     try {
 
-      const response = await axios.patch(`/api/plans-module/${formData.id}`, formData);
+      const response = await axios.patch(`api/module/flight-plans/${formData.id}`, formData);
       successResponse(response);
 
     } catch (error) {

@@ -44,7 +44,7 @@ class UserPanelStoreRequest extends FormRequest
             'email.required' => 'O email do usuário deve ser informado',
             'email.unique' => 'Esse email já está cadastrado',
             'email.email' => 'Digite um email válido',
-            'profile_id.required' => 'Um perfil de usuário deve ser selecionado',
+            'profile_id.required' => 'Selecione um perfil',
             'profile_id.exists' => 'Selecione um perfil válido'
         ];
     }

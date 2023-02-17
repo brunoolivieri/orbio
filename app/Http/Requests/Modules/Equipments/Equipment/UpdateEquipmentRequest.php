@@ -24,7 +24,7 @@ class UpdateEquipmentRequest extends FormRequest
     public function rules()
     {
 
-        $equipment_id_parameter = $this->route("equipments_module_equipment");
+        $equipment_id_parameter = $this->route("equipment");
 
         return [
             'name' => 'required|unique:drones,name,'.$equipment_id_parameter,

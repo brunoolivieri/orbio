@@ -24,7 +24,7 @@ class UpdateBatteryRequest extends FormRequest
     public function rules()
     {
 
-        $battery_id_parameter = $this->route("equipments_module_battery");
+        $battery_id_parameter = $this->route("equipments_battery");
 
         return [
             'name' => 'required|unique:batteries,name,'.$battery_id_parameter,

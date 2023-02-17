@@ -56,10 +56,10 @@ export const UpdateLog = React.memo((props) => {
     }
 
     async function requestServer() {
-        
+
         try {
 
-            const response = await axios.patch(`/api/plans-module-logs/${formData.id}`, {
+            const response = await axios.patch(`api/module/flight-plans-logs/${formData.id}`, {
                 name: formData.name
             });
 

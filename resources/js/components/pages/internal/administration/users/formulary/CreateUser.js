@@ -64,7 +64,7 @@ export const CreateUser = React.memo((props) => {
 
     try {
 
-      const response = await axios.post("/api/admin-module-user", formData);
+      const response = await axios.post("api/module/administration-user", formData);
       successResponse(response);
 
     } catch (error) {

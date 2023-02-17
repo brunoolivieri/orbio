@@ -78,7 +78,7 @@ export const CreateReport = (props) => {
 
     try {
 
-      const response = await axios.post("/api/reports-module", formData_, {
+      const response = await axios.post("api/module/reports", formData_, {
         headers: {
           'Content-Type': 'application/pdf'
         }

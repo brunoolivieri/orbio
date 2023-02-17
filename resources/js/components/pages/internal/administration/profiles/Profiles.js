@@ -149,7 +149,7 @@ export function Profiles() {
 
   function fetchRecords() {
 
-    axios.get(`/api/admin-module-profile?limit=${perPage}&search=${search}&page=${currentPage}`)
+    axios.get(`api/module/administration-profile?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);

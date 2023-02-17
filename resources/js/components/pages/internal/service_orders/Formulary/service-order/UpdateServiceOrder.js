@@ -130,7 +130,7 @@ export const UpdateServiceOrder = React.memo((props) => {
 
     try {
 
-      const response = await axios.patch(`/api/orders-module/${formData.id}`, {
+      const response = await axios.patch(`api/module/service-orders/${formData.id}`, {
         start_date: moment(formData.start_date).format('YYYY-MM-DD hh:mm:ss'),
         end_date: moment(formData.end_date).format('YYYY-MM-DD hh:mm:ss'),
         pilot_id: formData.pilot_id,

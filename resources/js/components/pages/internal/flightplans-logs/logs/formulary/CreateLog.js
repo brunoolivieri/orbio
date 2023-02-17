@@ -65,7 +65,7 @@ export const CreateLog = React.memo((props) => {
 
         try {
 
-            const response = await axios.post("/api/plans-module-logs", formData, {
+            const response = await axios.post("api/module/flight-plans-logs", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

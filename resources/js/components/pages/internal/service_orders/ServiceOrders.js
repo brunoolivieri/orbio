@@ -222,7 +222,7 @@ export function ServiceOrders() {
 
     function fetchRecords() {
 
-        axios.get(`/api/orders-module?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/module/service-orders?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);

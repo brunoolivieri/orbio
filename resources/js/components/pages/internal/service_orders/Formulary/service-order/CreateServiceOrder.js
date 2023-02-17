@@ -110,7 +110,7 @@ export const CreateServiceOrder = React.memo((props) => {
 
     try {
 
-      const response = await axios.post("/api/orders-module", {
+      const response = await axios.post("api/module/service-orders", {
         start_date: formData.start_date,
         end_date: formData.end_date,
         pilot_id: formData.pilot_id,

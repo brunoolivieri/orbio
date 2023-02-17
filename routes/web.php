@@ -31,7 +31,6 @@ use App\Http\Controllers\Modules\ServiceOrder\{
     Actions\LogsForServiceOrderFlightPlanController,
     Actions\ServiceOrderIncidentController
 };
-use App\Http\Controllers\Modules\Incident\IncidentModuleController;
 use App\Http\Controllers\Modules\Equipment\{
     EquipmentModuleBatteryController,
     EquipmentModuleDroneController,
@@ -82,12 +81,12 @@ Route::middleware(["session.auth"])->group(function () {
     Route::view('/internal/map-modal', "map_modal");
     // Module core operations
     Route::get('/api/dashboard', DashboardController::class);
-    Route::apiResource("api/admin-module-user", AdministrationModuleUsersController::class);
-    Route::apiResource("api/admin-module-profile", AdministrationModuleProfilesController::class);
-    Route::apiResource("api/reports-module", ReportModuleController::class);
-    Route::apiResource("api/plans-module", FlightPlanModuleController::class);
-    Route::apiResource("api/plans-module-logs", FlightPlanModuleLogController::class);
-    Route::apiResource("api/orders-module", ServiceOrderModuleController::class);
+    Route::apiResource("api/module/administration-user", AdministrationModuleUsersController::class);
+    Route::apiResource("api/module/administration-profile", AdministrationModuleProfilesController::class);
+    Route::apiResource("api/module/reports", ReportModuleController::class);
+    Route::apiResource("api/module/flight-plans", FlightPlanModuleController::class);
+    Route::apiResource("api/module/flight-plans-logs", FlightPlanModuleLogController::class);
+    Route::apiResource("api/module/service-orders", ServiceOrderModuleController::class);
     Route::apiResource("api/module/equipments-drone", EquipmentModuleDroneController::class);
     Route::apiResource("api/module/equipments-battery", EquipmentModuleBatteryController::class);
     Route::apiResource("api/module/equipments", EquipmentModuleEquipmentController::class);
@@ -98,10 +97,9 @@ Route::middleware(["session.auth"])->group(function () {
     Route::post("api/logs/export", [FlightPlanModuleLogController::class, "exportTableAsCsv"]);
     Route::post("api/service-orders/export", [ServiceOrderModuleController::class, "exportTableAsCsv"]);
     Route::post("api/reports/export", [ReportModuleController::class, "exportTableAsCsv"]);
-    Route::post("api/incidents/export", [IncidentModuleController::class, "exportTableAsCsv"]);
-    Route::post("api/drones/export", [EquipmentModuleDronePanelController::class, "exportTableAsCsv"]);
-    Route::post("api/batteries/export", [EquipmentModuleBatteryPanelController::class, "exportTableAsCsv"]);
-    Route::post("api/equipments/export", [EquipmentModuleEquipmentPanelController::class, "exportTableAsCsv"]);
+    Route::post("api/drones/export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
+    Route::post("api/batteries/export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
+    Route::post("api/equipments/export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
     Route::get("api/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
     Route::get("api/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
     Route::get("api/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);

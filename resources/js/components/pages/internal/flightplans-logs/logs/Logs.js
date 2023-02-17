@@ -142,7 +142,7 @@ export function Logs() {
 
     function fetchRecords() {
 
-        axios.get(`/api/plans-module-logs?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/module/flight-plans-logs?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
@@ -191,7 +191,7 @@ export function Logs() {
         enqueueSnackbar(text, { variant });
     }
 
-    function isRowSelectable(){
+    function isRowSelectable() {
         return Boolean(user.user_powers["2"].profile_powers.write);
     }
 

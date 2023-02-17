@@ -66,7 +66,7 @@ export const UpdateReport = React.memo((props) => {
 
     try {
 
-      const response = await axios.patch(`/api/reports-module/${formData.id}`, formData);
+      const response = await axios.patch(`/api/module/reports/${formData.id}`, formData);
       successResponse(response);
 
     } catch (error) {

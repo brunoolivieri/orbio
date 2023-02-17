@@ -24,7 +24,7 @@ class UpdateDroneRequest extends FormRequest
     public function rules()
     {
 
-        $drone_id_parameter = $this->route("equipments_module_drone");
+        $drone_id_parameter = $this->route("equipments_drone");
 
         return [
             'name' => 'required|unique:drones,name,'.$drone_id_parameter,

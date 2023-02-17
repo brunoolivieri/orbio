@@ -26,7 +26,7 @@ class ProfilePanelUpdateRequest extends FormRequest
     public function rules()
     {
 
-        $profile_id_parameter = $this->route("admin_module_profile");
+        $profile_id_parameter = $this->route("administration_profile");
 
         return [
             'name' => 'required|string|unique:profiles,name,' . $profile_id_parameter,
