@@ -77,22 +77,17 @@ export const CreateProfile = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
-
       const response = await axios.post("api/module/administration-profile", {
         name: formData.name,
         access_data: accessData
       });
-
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {
@@ -116,7 +111,7 @@ export const CreateProfile = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-// Material UI
+import { Link } from 'react-router-dom';
 import { Box, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, styled } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -13,8 +13,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import LogoutIcon from '@mui/icons-material/Logout';
-// Router 
-import { Link } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 // Custom
 import { useAuth } from '../../context/Auth';
 
@@ -93,6 +92,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const MenuDesktop = () => {
 
+    const { enqueueSnackbar } = useSnackbar();
     const { user, logout } = useAuth();
     const [open, setOpen] = React.useState(false);
 
@@ -127,8 +127,15 @@ export const MenuDesktop = () => {
         },
     ];
 
-    function handleLogout() {
-        logout();
+    async function handleLogout() {
+        try {
+            await logout();
+            enqueueSnackbar("Você foi deslogado", { variant: "success" });
+            window.location = `${process.env.MIX_APP_URL}/login`;
+        } catch (e) {
+            console.log(e);
+            enqueueSnackbar(e.response.data.message, { variant: "success" });
+        }
     }
 
     const handleDrawerOpen = () => {

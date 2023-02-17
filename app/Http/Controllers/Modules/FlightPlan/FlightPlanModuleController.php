@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
-// Custom
+use Exception;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 use App\Services\Modules\FlightPlan\FlightPlanService;
 use App\Exports\GenericExport;
 use App\Models\FlightPlans\FlightPlan;
+use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
 
 class FlightPlanModuleController extends Controller
 {
@@ -26,11 +27,22 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->getPaginate(
-            request()->limit,
-            request()->page,
-            is_null(request()->search) ? "0" : request()->search
-        );
+        try {
+
+            $result = $this->service->getPaginate(
+                request()->limit,
+                request()->page,
+                is_null(request()->search) ? "0" : request()->search
+            );
+
+            if ($result->total() > 0) {
+                return response(new FlightPlansPanelResource($result), 200);
+            } else {
+                throw new Exception("Nenhum plano de voo encontrado");
+            }
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 404);
+        }
     }
 
     public function exportTableAsCsv(Request $request)
@@ -50,21 +62,36 @@ class FlightPlanModuleController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-
-        return $this->service->createOne($request->only(["name", "routes_file", "image_file", "image_filename", "description", "coordinates"]));
+        
+        try {
+            $this->service->createOne($request->only(["name", "routes_file", "image_file", "image_filename", "description", "coordinates"]));
+            return response(["message" => "Plano de voo criado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function update(FlightPlanUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateOne($request->only(["name", "description"]), $id);
+        try {
+            $this->service->updateOne($request->only(["name", "description"]), $id);
+            return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->delete($request->ids);;
+        try {
+            $this->service->delete($request->ids);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

@@ -141,25 +141,18 @@ export function Logs() {
     }, [reload]);
 
     function fetchRecords() {
-
         axios.get(`api/module/flight-plans-logs?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);
-
-                if (response.data.total_records > 1) {
-                    handleOpenSnackbar(`Foram encontrados ${response.data.total_records} logs`, "success");
-                } else {
-                    handleOpenSnackbar(`Foi encontrado ${response.data.total_records} log`, "success");
-                }
+                enqueueSnackbar(`Logs encontrados: ${response.data.total_records}`, { variant: "success" });
             })
             .catch((error) => {
-                handleOpenSnackbar(error.response.data.message, "error");
+                enqueueSnackbar(error.response.data.message, { variant: "error" });
             })
             .finally(() => {
                 setLoading(false);
             })
-
     }
 
     function handleChangePage(newPage) {
@@ -185,10 +178,6 @@ export function Logs() {
             }
         })
         setSelectedRecords(newSelectedRecords);
-    }
-
-    function handleOpenSnackbar(text, variant) {
-        enqueueSnackbar(text, { variant });
     }
 
     function isRowSelectable() {

@@ -211,20 +211,14 @@ export function FlightPlans() {
   }, [reload]);
 
   function fetchRecords() {
-
     axios.get(`api/module/flight-plans?limit=${perPage}&search=${search}&page=${currentPage}`)
       .then(function (response) {
         setRecords(response.data.records);
         setTotalRecords(response.data.total_records);
-
-        if (response.data.total_records > 1) {
-          handleOpenSnackbar(`Foram encontrados ${response.data.total_records} planos de voo`, "success");
-        } else {
-          handleOpenSnackbar(`Foi encontrado ${response.data.total_records} plano de voo`, "success");
-        }
+        enqueueSnackbar(`Planos de voo encontrados: ${response.data.total_records}`, { variant: "success" });
       })
       .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
+        enqueueSnackbar(error.response.data.message, { variant: "error" });
       })
       .finally(() => {
         setLoading(false);
@@ -254,10 +248,6 @@ export function FlightPlans() {
       }
     })
     setSelectedRecords(newSelectedRecords);
-  }
-
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
   }
 
   function isRowSelectable() {

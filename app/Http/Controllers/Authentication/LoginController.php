@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 // Custom
 use App\Models\Users\User;
 use App\Http\Requests\Auth\Login\LoginRequest;
@@ -20,27 +21,41 @@ class LoginController extends Controller
 
     public function __invoke(LoginRequest $request)
     {
-        if (Auth::attempt(["email" => $request->email, "password" => $request->password, "deleted_at" => null])) {
+        try {
 
-            $user = $this->userModel->find(Auth::user()->id);
+            if (Auth::attempt(["email" => $request->email, "password" => $request->password, "deleted_at" => null])) {
 
-            $request->session()->regenerate();
+                $user = $this->userModel->find(Auth::user()->id);
 
-            // If is the first login
-            if (!$user->status && is_null($user->last_access)) {
-                FirstSuccessfulLoginEvent::dispatch($user);
+                if (!$user) {
+                    throw new Exception("Credencias inválidas");
+                }
+
+                $request->session()->regenerate();
+
+                // If is the first login
+                if (!$user->status && is_null($user->last_access)) {
+                    FirstSuccessfulLoginEvent::dispatch($user);
+                }
+
+                LoginSuccessfulEvent::dispatch($user);
+
+                return response()->json([
+                    "message" => "Acesso autorizado!"
+                ], 200);
+            } else {
+                throw new Exception("Credencias inválidas");
             }
-
-            LoginSuccessfulEvent::dispatch($user);
-
-            return response()->json([
-                "message" => "Acesso autorizado!"
-            ], 200);
-        } else {
-
-            return response()->json([
-                "message" => "Credenciais inválidas!"
-            ], 500);
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Credencias inválidas") {
+                return response()->json([
+                    "message" => $e->getMessage()
+                ], 404);
+            } else {
+                return response()->json([
+                    "message" => $e->getMessage()
+                ], 500);
+            }
         }
     }
 }

@@ -40,23 +40,18 @@ export const DeleteUser = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
-
       const response = await axios.delete("api/module/administration-user/delete", {
         data: {
           ids: selectedIds
         }
       });
-
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {

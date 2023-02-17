@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-// Custom
+use Exception;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
 use App\Services\Modules\Administration\ProfilePanelService;
 use App\Models\Profiles\Profile;
 use App\Exports\GenericExport;
+use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
 
 class AdministrationModuleProfilesController extends Controller
 {
@@ -26,11 +27,22 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_read');
 
-        return $this->service->getPaginate(
-            request()->limit,
-            request()->page,
-            is_null(request()->search) ? "0" : request()->search
-        );
+        try {
+
+            $result = $this->service->getPaginate(
+                request()->limit,
+                request()->page,
+                is_null(request()->search) ? "0" : request()->search
+            );
+
+            if ($result->total() > 0) {
+                return response(new ProfilesPanelResource($result), 200);
+            } else {
+                throw new Exception("Nenhum perfil encontrado");
+            }
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function exportTableAsCsv(Request $request)
@@ -44,24 +56,35 @@ class AdministrationModuleProfilesController extends Controller
     {
         Gate::authorize('administration_write');
 
-        $this->service->createOne($request->validated());
-
-        return response(["message" => "Perfil criado com sucesso!"], 201);
+        try {
+            $this->service->createOne($request->validated());
+            return response(["message" => "Perfil criado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function update(ProfilePanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        $this->service->updateOne($request->validated(), $id);
-
-        return response(["message" => "Perfil atualizdo com sucesso!"], 200);
+        try {
+            $this->service->updateOne($request->validated(), $id);
+            return response(["message" => "Perfil atualizado com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->delete($request->ids);
+        try {
+            $this->service->delete($request->ids);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

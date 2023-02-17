@@ -1,6 +1,7 @@
 import * as React from 'react';
 // Material UI
 import { Box, Paper } from "@mui/material";
+import { useSnackbar } from 'notistack';
 // Custom
 import { InternalRoutes } from '../../../routes/index';
 import { useAuth } from '../../context/Auth';
@@ -17,19 +18,23 @@ export const Layout = () => {
 
   const [loading, setLoading] = React.useState(true);
   const [menuOpen, setMenuOpen] = React.useState(false);
+
+  const { enqueueSnackbar } = useSnackbar();
   const { isAuthenticated, verifyAuthentication, logout } = useAuth();
 
   // =========================================== FUNCTIONS ======================= //
 
   React.useEffect(() => {
-
     const fetch = async () => {
-      await verifyAuthentication();
-      setLoading(false);
+      try {
+        await verifyAuthentication();
+        setLoading(false);
+      } catch (error) {
+        await logout();
+        enqueueSnackbar("Você foi deslogado", { variant: "error" });
+      }
     }
-
     fetch();
-
   }, []);
 
   function handleDrawerToggle() {
@@ -40,10 +45,6 @@ export const Layout = () => {
 
   if (loading) {
     return <BackdropLoading />;
-  }
-
-  if (loading && !isAuthenticated) {
-    logout();
   }
 
   if (!loading && isAuthenticated) {

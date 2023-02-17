@@ -34,19 +34,15 @@ export const DeleteLog = React.memo((props) => {
     }
 
     async function handleSubmit() {
-
         try {
-
             const response = await axios.delete("api/module/flight-plans-logs/delete", {
                 data: {
                     ids: selectedIds
                 }
             });
-
             successResponse(response);
-
         } catch (error) {
-            errorResponse(error.response.data);
+            errorResponse(error.response);
         } finally {
             setLoading(false);
         }

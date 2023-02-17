@@ -5,17 +5,27 @@ namespace App\Http\Controllers\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 class LogoutController extends Controller
 {
     public function __invoke(Request $request)
     {
-        Auth::logout();
+        try {
 
-        $request->session()->invalidate();
+            Auth::logout();
 
-        $request->session()->regenerateToken();
+            $request->session()->invalidate();
 
-        return redirect("/login");
+            $request->session()->regenerateToken();
+
+            return response()->json([
+                "message" => ""
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => $e->getMessage()
+            ], 500);
+        }
     }
 }

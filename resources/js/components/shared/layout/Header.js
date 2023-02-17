@@ -1,5 +1,4 @@
 import * as React from 'react';
-// Material UI
 import { AppBar, IconButton, Toolbar, Box, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -11,6 +10,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import PropTypes from 'prop-types';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useSnackbar } from 'notistack';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { usePage } from '../../context/PageContext';
@@ -33,12 +33,20 @@ const menuOpenIconStyle = {
 
 export const Header = React.memo((props) => {
 
+  const { enqueueSnackbar } = useSnackbar();
   const { logout } = useAuth();
   const { onDrawerToggle } = props;
   const { pageIndex } = usePage();
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    try {
+      await logout();
+      enqueueSnackbar("Você foi deslogado", { variant: "success" });
+      window.location = `${process.env.MIX_APP_URL}/login`;
+    } catch (e) {
+      console.log(e);
+      enqueueSnackbar(e.response.data.message, { variant: "success" });
+    }
   }
 
   const pages = [

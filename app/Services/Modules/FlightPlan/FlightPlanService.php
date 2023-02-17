@@ -4,13 +4,10 @@ namespace App\Services\Modules\FlightPlan;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
-// Contracts
+use Exception;
 use App\Services\Contracts\ServiceInterface;
-// Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
-// Resources
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
-// Traits
 use App\Traits\DownloadResource;
 
 class FlightPlanService implements ServiceInterface
@@ -25,13 +22,7 @@ class FlightPlanService implements ServiceInterface
 
     function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $page, $search);
-
-        if ($data->total() > 0) {
-            return response(new FlightPlansPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhum plano de voo encontrado."], 404);
-        }
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     function download(string $filename, $identifier = null)
@@ -78,36 +69,30 @@ class FlightPlanService implements ServiceInterface
         $data["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
 
         $flight_plan = $this->repository->createOne(collect($data));
-
-        return response(["message" => "Plano de voo criado com sucesso!"], 200);
     }
 
     function updateOne(array $data, string $identifier)
     {
         $flight_plan = $this->repository->updateOne(collect($data), $identifier);
-
-        return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
     }
 
     function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
 
-        if (count($undeleteable_ids) === 0) {
-            return response(["message" => "Deleção realizada com sucesso!"], 200);
-        } else {
+        if (count($undeleteable_ids) > 0) {
+
+            $message = "";
 
             if (count($undeleteable_ids) === count($ids)) {
-
                 if (count($undeleteable_ids) === 1) {
-                    return response(["message" => "Erro! O plano possui vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! O plano de voo possui vínculo com ordem de serviço ativa!";
                 } else {
-                    return response(["message" => "Erro! Os planos possuem vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! Os planos de voo possuem vínculo com ordem de serviço ativa!";
                 }
-                
             } else if (count($undeleteable_ids) < count($ids)) {
 
-                $message = "Erro! Os planos de id ";
+                $message = "Erro! Os planos de voo de id ";
                 foreach ($undeleteable_ids as $index => $undeleteable_log_id) {
 
                     if (count($undeleteable_ids) > ($index + 1)) {
@@ -116,9 +101,9 @@ class FlightPlanService implements ServiceInterface
                         $message .= $undeleteable_log_id . " possuem vínculo com ordem de serviço ativa!";
                     }
                 }
-
-                return response(["message" => $message], 409);
             }
+
+            throw new Exception($message);
         }
     }
 }

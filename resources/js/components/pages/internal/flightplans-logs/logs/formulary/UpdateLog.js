@@ -56,21 +56,16 @@ export const UpdateLog = React.memo((props) => {
     }
 
     async function requestServer() {
-
         try {
-
             const response = await axios.patch(`api/module/flight-plans-logs/${formData.id}`, {
                 name: formData.name
             });
-
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
             setLoading(false);
         }
-
     }
 
     function successResponse(response) {
@@ -83,18 +78,19 @@ export const UpdateLog = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        setDisplayAlert({ display: true, type: "error", message: response.data.message });
-
-        let response_errors = {}
-
-        for (let field in response.data.errors) {
-            response_errors[field] = {
-                error: true,
-                message: response.data.errors[field][0]
+        if (response.status === 422) {
+            setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+            let response_errors = {}
+            for (let field in response.data.errors) {
+                response_errors[field] = {
+                    error: true,
+                    message: response.data.errors[field][0]
+                }
             }
+            setFormError(response_errors);
+        } else {
+            setDisplayAlert({ display: true, type: "error", message: response.data.message });
         }
-
-        setFormError(response_errors);
     }
 
     function handleInputChange(e) {

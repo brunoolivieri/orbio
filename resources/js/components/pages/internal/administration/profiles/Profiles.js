@@ -147,23 +147,17 @@ export function Profiles() {
     }
   }, [reload]);
 
-  function fetchRecords() {
-
-    axios.get(`api/module/administration-profile?limit=${perPage}&search=${search}&page=${currentPage}`)
-      .then(function (response) {
-        setRecords(response.data.records);
-        setTotalRecords(response.data.total_records);
-
-        enqueueSnackbar(`Perfis encontrados: ${response.data.total_records}`, { variant: "success" });
-
-      })
-      .catch(function (error) {
-        handleOpenSnackbar(error.response.data.message, "error");
-      })
-      .finally(() => {
-        setLoading(false);
-      })
-
+  async function fetchRecords() {
+    try {
+      const response = await axios.get(`api/module/administration-profile?limit=${perPage}&search=${search}&page=${currentPage}`);
+      setRecords(response.data.records);
+      setTotalRecords(response.data.total_records);
+      enqueueSnackbar(`Perfis encontrados: ${response.data.total_records}`, { variant: "success" });
+    } catch (error) {
+      enqueueSnackbar(error.response.data.message, { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
   }
 
   function handleChangePage(newPage) {
@@ -189,10 +183,6 @@ export function Profiles() {
       }
     })
     setSelectedRecords(newSelectedRecords);
-  }
-
-  function handleOpenSnackbar(text, variant) {
-    enqueueSnackbar(text, { variant });
   }
 
   function isRowSelectable() {

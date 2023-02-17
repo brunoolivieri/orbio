@@ -40,23 +40,18 @@ export const DeleteFlightPlan = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
-
       const response = await axios.delete("api/module/flight-plans/delete", {
         data: {
           ids: selectedIds
         }
       });
-
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-  
   }
 
   const successResponse = (response) => {

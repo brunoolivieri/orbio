@@ -60,25 +60,18 @@ export const CreateLog = React.memo((props) => {
     }
 
     async function requestServer(formData) {
-
-        console.log(logs)
-
         try {
-
             const response = await axios.post("api/module/flight-plans-logs", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
             successResponse(response);
-
         } catch (error) {
             setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
         } finally {
             setLoading(false);
         }
-
     }
 
     function checkIfAllValidLogsHaveImages() {

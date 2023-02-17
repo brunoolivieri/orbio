@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
+use Exception;
 // Custom
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;
 use App\Models\Users\User;
 use App\Exports\GenericExport;
+use App\Http\Resources\Modules\Administration\UsersPanelResource;
 
 class AdministrationModuleUsersController extends Controller
 {
@@ -26,11 +28,26 @@ class AdministrationModuleUsersController extends Controller
     {
         Gate::authorize('administration_read');
 
-        return $this->service->getPaginate(
-            request()->limit,
-            request()->page,
-            is_null(request()->search) ? "0" : request()->search
-        );
+        try {
+
+            $result = $this->service->getPaginate(
+                request()->limit,
+                request()->page,
+                is_null(request()->search) ? "0" : request()->search
+            );
+
+            if ($result->total() > 0) {
+                return response(new UsersPanelResource($result), 200);
+            } else {
+                throw new Exception("Nenhum usuário encontrado");
+            }
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Nenhum usuário encontrado") {
+                return response(["message" => $e->getMessage()], 404);
+            } else {
+                return response(["message" => $e->getMessage()], 500);
+            }
+        }
     }
 
     public function exportTableAsCsv(Request $request)
@@ -43,21 +60,40 @@ class AdministrationModuleUsersController extends Controller
     public function store(UserPanelStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
-        
-        return $this->service->createOne($request->validated());
+
+        try {
+            $result = $this->service->createOne($request->validated());
+            return response(["message" => "Usuário criado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function update(UserPanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
-       
-        return $this->service->updateOne($request->validated(), $id);
+
+        try {
+            $result = $this->service->updateOne($request->validated(), $id);
+            return response(["message" => "Usuário atualizado com sucesso!"], 200);
+        } catch (\Exception $e) {
+            if ($e->getMessage() === "Usuário não encontrado") {
+                return response(["message" => $e->getMessage()], 404);
+            } else {
+                return response(["message" => $e->getMessage()], 500);
+            }
+        }
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('administration_write');
 
-        return $this->service->delete($request->ids);
+        try {
+            $result = $this->service->delete($request->ids);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

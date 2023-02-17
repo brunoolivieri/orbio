@@ -68,10 +68,9 @@ export function Login() {
             await login(formData);
         } catch (error) {
             console.log(error);
-            const message = error.response.data ? error.response.data.message : "Erro do servidor";
-            enqueueSnackbar(message, { variant: "error" });
+            enqueueSnackbar(error.response.data.message, { variant: "error" });
             setLoading(false);
-        } 
+        }
     }
 
     function handleInputChange(e) {

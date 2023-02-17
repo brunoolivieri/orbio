@@ -6,9 +6,9 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Logs\Log;
-// Model
 use App\Models\FlightPlans\FlightPlan;
 
 class FlightPlanRepository implements RepositoryInterface

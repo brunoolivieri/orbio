@@ -6,11 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
-// Custom
+use Exception;
 use App\Services\Modules\FlightPlan\FlightPlanLogService;
 use App\Http\Requests\Modules\FlightPlans\Logs\UpdateLogRequest;
 use App\Exports\GenericExport;
 use App\Models\Logs\Log;
+use App\Http\Resources\Modules\FlightPlans\FlightPlansLogPanelResource;
 
 class FlightPlanModuleLogController extends Controller
 {
@@ -26,11 +27,22 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->getPaginate(
-            request()->limit,
-            request()->page,
-            is_null(request()->search) ? "0" : request()->search
-        );
+        try {
+
+            $result = $this->service->getPaginate(
+                request()->limit,
+                request()->page,
+                is_null(request()->search) ? "0" : request()->search
+            );
+
+            if ($result->total() > 0) {
+                return response(new FlightPlansLogPanelResource($result), 200);
+            } else {
+                throw new Exception("Nenhum log encontrado");
+            }
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function exportTableAsCsv(Request $request)
@@ -57,24 +69,39 @@ class FlightPlanModuleLogController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-       
-        return $this->service->createOne([
-            "logs" => $request->file('files'),
-            "images" => $request->file('images')
-        ]);
+
+        try {
+            $result = $this->service->createOne([
+                "logs" => $request->file('files'),
+                "images" => $request->file('images')
+            ]);
+            return response(["message" => "Log criado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->updateOne($request->only(["name", "service_order_id"]), $id);
+        try {
+            $result = $this->service->updateOne($request->only(["name", "service_order_id"]), $id);
+            return response(["message" => "Log atualizado com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
 
-        return $this->service->delete($request->ids);
+        try {
+            $result = $this->service->delete($request->ids);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

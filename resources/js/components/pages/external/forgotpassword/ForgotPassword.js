@@ -1,7 +1,5 @@
 import * as React from 'react';
-// Raect Router
 import { Link } from 'react-router-dom';
-// Material UI
 import { Button, TextField, Grid, Container, Typography, Avatar } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
@@ -29,7 +27,6 @@ export const ForgotPassword = () => {
     // ============================================================================== ROUTINES ============================================================================== //
 
     function handleCodeSubmit() {
-
         if (!codeSubmissionValidation()) return '';
 
         setLoading({ send_code: true, change_password: false });
@@ -38,7 +35,6 @@ export const ForgotPassword = () => {
     }
 
     function handleChangePasswordSubmit() {
-
         if (!passwordSubmissionValidate()) return '';
 
         setLoading({ send_code: false, change_password: true });
@@ -46,7 +42,6 @@ export const ForgotPassword = () => {
     }
 
     function codeSubmissionValidation() {
-
         let validation = Object.assign({}, initialFormError);
 
         for (let field in formData) {
@@ -57,7 +52,6 @@ export const ForgotPassword = () => {
 
         setFormError(validation);
         return !validation.email.error;
-
     }
 
     function passwordSubmissionValidate() {
@@ -76,25 +70,19 @@ export const ForgotPassword = () => {
 
         setFormError(validation);
         return !(validation.code.error || validation.password.error || validation.password_confirmation.error);
-
     }
 
     async function sendCodeServerRequest() {
-
         try {
-
             const response = await axios.post(`${process.env.MIX_APP_URL}/api/auth/password-token`, {
                 email: formData.email
             });
-
             successSendCodeResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
             setLoading({ send_code: false, change_password: false });
         }
-
     }
 
     async function changePasswordServerRequest() {

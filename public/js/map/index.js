@@ -1233,7 +1233,7 @@ window.onload = () => {
 		return '';
 	}
 
-	axios.get(`/api/plans-module-download/${params.file}`)
+	axios.get(`http://localhost:8000/api/plans-module-download/${params.file}`)
 		.then((response) => {
 			openTxtFileFromStorage(response.data, 'storage');
 		})
@@ -1716,7 +1716,7 @@ function saveFlightPlanToStorage(coordinates, blobRoutes) {
 	formData.append("image_filename", image.filenameImg);
 	formData.append("coordinates", coordinates[1] + "," + coordinates[0]);
 
-	axios.post("/api/plans-module", formData, {
+	axios.post("http://localhost:8000/api/module/flight-plans", formData, {
 		headers: {
 			'Content-Type': 'multipart/form-data'
 		}

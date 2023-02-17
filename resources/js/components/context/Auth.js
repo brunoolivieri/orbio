@@ -12,16 +12,15 @@ export function AuthProvider({ children }) {
         try {
             const response = await axios.get(`${process.env.MIX_APP_URL}/api/auth/user-data`);
             setUser(response.data);
-        } catch (e) {
-            logout();
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
-
     }
 
     async function login(formData) {
-
         try {
-            const response = await axios.post(`${process.env.MIX_APP_URL}/api/auth/login`, formData);
+            const response = await axios.post("api/auth/login", formData);
             setUser(response.data.user);
             setTimeout(() => {
                 window.location = "/internal";
@@ -33,17 +32,12 @@ export function AuthProvider({ children }) {
     }
 
     async function logout() {
-
         try {
-            await axios.post(`${process.env.MIX_APP_URL}/api/auth/logout`);
-            setTimeout(() => {
-                window.location = `${process.env.MIX_APP_URL}/login`;
-            }, [1000]);
+            await axios.post("api/auth/logout");
         } catch (error) {
             console.log(error);
             throw error;
         }
-
     }
 
     return (

@@ -90,17 +90,13 @@ export const UpdateProfile = React.memo((props) => {
     }
 
     async function requestServer() {
-
         try {
-
             const response = await axios.patch(`api/module/administration-profile/${formData.id}`, {
                 name: formData.name,
                 privileges: privileges,
                 access_data: accessData
             });
-
             successResponse(response);
-
         } catch (error) {
             errorResponse(error.response);
         } finally {
@@ -129,7 +125,7 @@ export const UpdateProfile = React.memo((props) => {
             }
             setFormError(response_errors);
         } else {
-            setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+            setDisplayAlert({ display: true, type: "error", message: response.data.message });
         }
     }
 

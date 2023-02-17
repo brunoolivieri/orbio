@@ -6,12 +6,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use ZipArchive;
 use SimpleXMLElement;
+use Exception;
 use App\Models\Logs\Log;
-// Contracts
 use App\Services\Contracts\ServiceInterface;
-// Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanLogRepository;
-// Resources
 use App\Http\Resources\Modules\FlightPlans\FlightPlansLogPanelResource;
 
 class FlightPlanLogService implements ServiceInterface
@@ -24,13 +22,7 @@ class FlightPlanLogService implements ServiceInterface
 
     function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $page, $search);
-
-        if ($data->total() > 0) {
-            return response(new FlightPlansLogPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhum log encontrado."], 404);
-        }
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     function download(string $filename, $identifier = null)
@@ -245,33 +237,27 @@ class FlightPlanLogService implements ServiceInterface
                 ]);
             }
         }
-
-        return response(["message" => "Logs salvos com sucesso!"], 200);
     }
 
     function updateOne(array $data, string $identifier)
     {
         $log = $this->repository->updateOne(collect($data), $identifier);
-
-        return response(["message" => "Log atualizado com sucesso!"], 200);
     }
 
     function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
 
-        if (count($undeleteable_ids) === 0) {
-            return response(["message" => "Deleção realizada com sucesso!"], 200);
-        } else {
+        if (count($undeleteable_ids) > 0) {
+
+            $message = "";
 
             if (count($undeleteable_ids) === count($ids)) {
-
                 if (count($undeleteable_ids) === 1) {
-                    return response(["message" => "Erro! O log possui vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! O log possui vínculo com ordem de serviço ativa!";
                 } else {
-                    return response(["message" => "Erro! Os logs possuem vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! Os logs possuem vínculo com ordem de serviço ativa!";
                 }
-                
             } else if (count($undeleteable_ids) < count($ids)) {
 
                 $message = "Erro! Os logs de id ";
@@ -283,9 +269,9 @@ class FlightPlanLogService implements ServiceInterface
                         $message .= $undeleteable_log_id . " possuem vínculo com ordem de serviço ativa!";
                     }
                 }
-
-                return response(["message" => $message], 409);
             }
+
+            throw new Exception($message);
         }
     }
 }

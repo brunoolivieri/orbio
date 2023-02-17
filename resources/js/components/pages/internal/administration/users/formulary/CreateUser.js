@@ -61,18 +61,14 @@ export const CreateUser = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
-
       const response = await axios.post("api/module/administration-user", formData);
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {
@@ -96,7 +92,7 @@ export const CreateUser = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 

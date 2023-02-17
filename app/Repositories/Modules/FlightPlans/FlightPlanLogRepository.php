@@ -6,7 +6,7 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
-// Model
+use Exception;
 use App\Models\Logs\Log;
 use App\Models\Pivot\ServiceOrderFlightPlan;
 use App\Models\ServiceOrders\ServiceOrder;

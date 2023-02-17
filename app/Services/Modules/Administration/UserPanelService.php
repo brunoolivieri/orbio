@@ -3,13 +3,10 @@
 namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Str;
+use Exception;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
-// Contracts
 use App\Services\Contracts\ServiceInterface;
-// Repository
 use App\Repositories\Modules\Administration\UserRepository;
-// Resource
-use App\Http\Resources\Modules\Administration\UsersPanelResource;
 
 class UserPanelService implements ServiceInterface
 {
@@ -21,13 +18,7 @@ class UserPanelService implements ServiceInterface
 
     public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $page, $search);
-
-        if ($data->total() > 0) {
-            return response(new UsersPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhum usuário encontrado."], 404);
-        }
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     public function createOne(array $data)
@@ -38,29 +29,26 @@ class UserPanelService implements ServiceInterface
         $user = $this->repository->createOne(collect($data));
 
         $user->notify(new UserCreatedNotification($user, $random_password));
-
-        return response(["message" => "Usuário criado com sucesso!"], 201);
     }
 
     public function updateOne(array $data, string $identifier)
     {
-        return $this->repository->updateOne(collect($data), $identifier);
+        $profile = $this->repository->updateOne(collect($data), $identifier);
     }
 
     public function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
 
-        if (count($undeleteable_ids) === 0) {
-            return response(["message" => "Deleção realizada com sucesso!"], 200);
-        } else {
+        if (count($undeleteable_ids) > 0) {
+
+            $message = "";
 
             if (count($undeleteable_ids) === count($ids)) {
-
                 if (count($undeleteable_ids) === 1) {
-                    return response(["message" => "Erro! O usuário possui vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! O usuário possui vínculo com ordem de serviço ativa!";
                 } else {
-                    return response(["message" => "Erro! Os usuários possuem vínculo com ordem de serviço ativa!"], 409);
+                    $message = "Erro! Os usuários possuem vínculo com ordem de serviço ativa!";
                 }
             } else if (count($undeleteable_ids) < count($ids)) {
 
@@ -73,9 +61,10 @@ class UserPanelService implements ServiceInterface
                         $message .= $undeleteable_log_id . " possuem vínculo com ordem de serviço ativa!";
                     }
                 }
-
-                return response(["message" => $message], 409);
             }
+
+            throw new Exception($message);
+
         }
     }
 }
