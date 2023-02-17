@@ -38,7 +38,7 @@ class UserAuthenticatedData extends Controller
 
             return response($data, 200);
         } catch (Exception $e) {
-            return response(["message" => $e->getMessage()]);
+            return response(["message" => $e->getMessage()], 500);
         }
     }
 }
