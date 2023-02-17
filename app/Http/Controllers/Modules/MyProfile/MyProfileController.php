@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\MyProfile;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Exception;
 use App\Models\{
     Users\User,
     PersonalDocuments\PersonalDocument,
@@ -37,117 +38,153 @@ class MyProfileController extends Controller
 
     function loadBasicData(): \Illuminate\Http\Response
     {
-        $user = $this->userModel->findOrFail(Auth::user()->id);
+        try {
 
-        return response([
-            "name" => $user->name,
-            "email" => $user->email,
-            "profile" => $user->profile->name,
-            "last_access" => $user->last_access,
-            "last_update" => $user->updated_at
-        ], 200);
+            $user = $this->userModel->findOrFail(Auth::user()->id);
+
+            return response([
+                "name" => $user->name,
+                "email" => $user->email,
+                "profile" => $user->profile->name,
+                "last_access" => $user->last_access,
+                "last_update" => $user->updated_at
+            ], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function loadDocuments(): \Illuminate\Http\Response
     {
-        $user = $this->userModel->findOrFail(Auth::user()->id);
+        try {
 
-        $available_data = json_decode($user->profile->access_data);
+            $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        $data = [];
+            $available_data = json_decode($user->profile->access_data);
 
-        foreach ($available_data as $key => $item) {
-            if ($key != "address") {
-                if (boolval($item)) {
-                    $data[$key] = is_null($user->personal_document->$key) ? "" : $user->personal_document->$key;
+            $data = [];
+
+            foreach ($available_data as $key => $item) {
+                if ($key != "address") {
+                    if (boolval($item)) {
+                        $data[$key] = is_null($user->personal_document->$key) ? "" : $user->personal_document->$key;
+                    }
                 }
             }
-        }
 
-        return response($data, 200);
+            return response($data, 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function loadAddress(): \Illuminate\Http\Response
     {
-        $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        $available_data = json_decode($user->profile->access_data);
+        try {
 
-        $data = [];
+            $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        foreach ($available_data as $key => $item) {
-            if ($key === "address") {
-                if (boolval($item)) {
-                    $data = [
-                        'address' => $user->personal_document->address->address,
-                        'number' => $user->personal_document->address->number,
-                        'cep' => $user->personal_document->address->cep,
-                        'city' => is_null($user->personal_document->address->city) ? "0" : $user->personal_document->address->city,
-                        'state' => is_null($user->personal_document->address->state) ? "0" : $user->personal_document->address->state,
-                        'complement' => $user->personal_document->address->complement
-                    ];
+            $available_data = json_decode($user->profile->access_data);
+
+            $data = [];
+
+            foreach ($available_data as $key => $item) {
+                if ($key === "address") {
+                    if (boolval($item)) {
+                        $data = [
+                            'address' => $user->personal_document->address->address,
+                            'number' => $user->personal_document->address->number,
+                            'cep' => $user->personal_document->address->cep,
+                            'city' => is_null($user->personal_document->address->city) ? "0" : $user->personal_document->address->city,
+                            'state' => is_null($user->personal_document->address->state) ? "0" : $user->personal_document->address->state,
+                            'complement' => $user->personal_document->address->complement
+                        ];
+                    }
                 }
             }
-        }
 
-        return response($data, 200);
+            return response($data, 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function basicDataUpdate(UpdateBasicDataRequest $request): \Illuminate\Http\Response
     {
-        $user = $this->userModel->findOrFail(Auth::user()->id);
+        try {
+            $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        $user->update($request->validated());
+            $user->update($request->validated());
 
-        $user->notify(new BasicDataUpdatedNotification($user));
+            $user->notify(new BasicDataUpdatedNotification($user));
 
-        return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
+            return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function documentsUpdate(UpdateDocumentsRequest $request): \Illuminate\Http\Response
     {
-        $user = $this->userModel->find(Auth::user()->id);
+        try {
+            $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        $this->personalDocumentModel->where("id", $user->personal_document->id)->update($request->validated());
+            $this->personalDocumentModel->where("id", $user->personal_document->id)->update($request->validated());
 
-        $user->notify(new DocumentsUpdatedNotification($user));
+            $user->notify(new DocumentsUpdatedNotification($user));
 
-        return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
+            return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function addressUpdate(UpdateAddressRequest $request): \Illuminate\Http\Response
     {
 
-        $user = $this->userModel->find(Auth::user()->id);
+        try {
+            $user = $this->userModel->findOrFail(Auth::user()->id);
 
-        $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());
+            $this->userAddressModel->where("id", $user->personal_document->address->id)->update($request->validated());
 
-        $user->notify(new AddressUpdatedNotification($user));
+            $user->notify(new AddressUpdatedNotification($user));
 
-        return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
+            return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function passwordUpdate(UpdatePasswordRequest $request, $identifier)
     {
-        $user = $this->userModel->find($identifier);
+        try {
+            $user = $this->userModel->findOrFail($identifier);
 
-        $user->update([
-            "password" => Hash::make($request->safe()->only(['new_password']))
-        ]);
+            $user->update([
+                "password" => Hash::make($request->safe()->only(['new_password']))
+            ]);
 
-        $user->notify(new ChangePasswordNotification($user));
+            $user->notify(new ChangePasswordNotification($user));
 
-        return response(["message" => "Senha atualizada com sucesso!"], 200);
+            return response(["message" => "Senha atualizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     function accountDeactivation($identifier): \Illuminate\Http\Response
     {
-        $user = $this->userModel->find($identifier);
+        try {
+            $user = $this->userModel->findOrFail($identifier);
 
-        $user->delete();
+            $user->delete();
 
-        $user->notify(new UserDisabledNotification($user));
+            $user->notify(new UserDisabledNotification($user));
 
-        return response(["message" => "Conta desativada com sucesso!"], 200);
+            return response(["message" => "Conta desativada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

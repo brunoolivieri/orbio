@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Modules\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
-// Custom
+use Exception;
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
 use App\Models\FlightPlans\FlightPlan;
@@ -30,63 +30,68 @@ class DashboardController extends Controller
     public function __invoke(): \Illuminate\Http\Response
     {
 
-        $collections = [
-            "users" => $this->userModel->withTrashed()->get(),
-            "profiles" => $this->profileModel->withTrashed()->get(),
-            "flight_plans" => $this->flightPlanModel->withTrashed()->get(),
-            "service_orders" => $this->serviceOrderModel->withTrashed()->get(),
-            "reports" => $this->reportModel->withTrashed()->get()
-        ];
+        try {
 
-        $counter = [
-            "trashed" => 0,
-            "active" => 0
-        ];
+            $collections = [
+                "users" => $this->userModel->withTrashed()->get(),
+                "profiles" => $this->profileModel->withTrashed()->get(),
+                "flight_plans" => $this->flightPlanModel->withTrashed()->get(),
+                "service_orders" => $this->serviceOrderModel->withTrashed()->get(),
+                "reports" => $this->reportModel->withTrashed()->get()
+            ];
 
-        $initial_months_data = [
-            'january' => $counter,
-            'february' => $counter,
-            'march' => $counter,
-            'april' => $counter,
-            'may' => $counter,
-            'june' => $counter,
-            'july' => $counter,
-            'august' => $counter,
-            'september' => $counter,
-            'october' => $counter,
-            'november' => $counter,
-            'december' => $counter,
-        ];
+            $counter = [
+                "trashed" => 0,
+                "active" => 0
+            ];
 
-        $data = [];
+            $initial_months_data = [
+                'january' => $counter,
+                'february' => $counter,
+                'march' => $counter,
+                'april' => $counter,
+                'may' => $counter,
+                'june' => $counter,
+                'july' => $counter,
+                'august' => $counter,
+                'september' => $counter,
+                'october' => $counter,
+                'november' => $counter,
+                'december' => $counter,
+            ];
 
-        foreach ($collections as $key => $collection) {
+            $data = [];
 
-            // Initial values for actual collection
-            $data[$key]["total"] = $collection->count();
-            $data[$key]["months"] = $initial_months_data;
+            foreach ($collections as $key => $collection) {
 
-            // Loop each item of actual collection
-            foreach ($collection as $item) {
+                // Initial values for actual collection
+                $data[$key]["total"] = $collection->count();
+                $data[$key]["months"] = $initial_months_data;
 
-                $month = strtolower(Carbon::parse($item->created_at)->format('F'));
-                $year = Carbon::parse($item->created_at)->format('y');
-                $actual_year = Carbon::now()->format('y');
+                // Loop each item of actual collection
+                foreach ($collection as $item) {
 
-                if ($actual_year === $year) {
+                    $month = strtolower(Carbon::parse($item->created_at)->format('F'));
+                    $year = Carbon::parse($item->created_at)->format('y');
+                    $actual_year = Carbon::now()->format('y');
 
-                    // Actual item was created in $month of actual year
-                    // Add 1 to $month in "trashed" or "active" based in "deleted_at" column
+                    if ($actual_year === $year) {
 
-                    if ($item->trashed()) {
-                        $data[$key]["months"][$month]["trashed"]++;
-                    } else {
-                        $data[$key]["months"][$month]["active"]++;
+                        // Actual item was created in $month of actual year
+                        // Add 1 to $month in "trashed" or "active" based in "deleted_at" column
+
+                        if ($item->trashed()) {
+                            $data[$key]["months"][$month]["trashed"]++;
+                        } else {
+                            $data[$key]["months"][$month]["active"]++;
+                        }
                     }
                 }
             }
-        }
 
-        return response($data, 200);
+            return response($data, 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

@@ -3,13 +3,8 @@
 namespace App\Services\Modules\Report;
 
 use Illuminate\Support\Facades\Storage;
-// Contracts
 use App\Services\Contracts\ServiceInterface;
-// Models
 use App\Repositories\Modules\Reports\ReportRepository;
-// Resources
-use App\Http\Resources\Modules\Reports\ReportsPanelResource;
-// Traits
 use App\Traits\DownloadResource;
 
 class ReportService implements ServiceInterface
@@ -24,13 +19,7 @@ class ReportService implements ServiceInterface
 
     public function getPaginate(string $limit, string $page, string $search)
     {
-        $data = $this->repository->getPaginate($limit, $page, $search);
-
-        if ($data->total() > 0) {
-            return response(new ReportsPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhum relatório encontrado."], 404);
-        }
+        return $this->repository->getPaginate($limit, $page, $search);
     }
 
     function download(string $filename, $identifier = null)
@@ -66,21 +55,15 @@ class ReportService implements ServiceInterface
         $data["path"] = $path;
 
         $report = $this->repository->createOne(collect($data));
-
-        return response(["message" => "Relatório criado com sucesso!"], 200);
     }
 
     public function updateOne(array $data, string $identifier)
     {
         $report = $this->repository->updateOne(collect($data), $identifier);
-
-        return response(["message" => "Relatório atualizado com sucesso!"], 200);
     }
 
     public function delete(array $ids)
     {
         $report = $this->repository->delete($ids);
-
-        return response(["message" => "Deleção realizada com sucesso!"], 200);
     }
 }

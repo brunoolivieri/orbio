@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Request;
 use Maatwebsite\Excel\Facades\Excel;
-// Custom
+use Exception;
 use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 use App\Services\Modules\Report\ReportService;
 use App\Exports\GenericExport;
 use App\Models\Reports\Report;
+use App\Http\Resources\Modules\Reports\ReportsPanelResource;
 
 class ReportModuleController extends Controller
 {
@@ -27,11 +28,22 @@ class ReportModuleController extends Controller
     {
         Gate::authorize('reports_read');
 
-        return $this->service->getPaginate(
-            request()->limit,
-            request()->page,
-            is_null(request()->search) ? "0" : request()->search
-        );
+        try {
+
+            $result = $this->service->getPaginate(
+                request()->limit,
+                request()->page,
+                is_null(request()->search) ? "0" : request()->search
+            );
+
+            if ($result->total() > 0) {
+                return response(new ReportsPanelResource($result), 200);
+            } else {
+                throw new Exception("Nenhum relatório encontrado");
+            }
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function exportTableAsCsv(Request $request)
@@ -51,21 +63,36 @@ class ReportModuleController extends Controller
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-       
-        return $this->service->createOne($request->only(['name', 'file', 'blob', 'service_order_id']));
+
+        try {
+            $this->service->createOne($request->only(['name', 'file', 'blob', 'service_order_id']));
+            return response(["message" => "Relatório criado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
 
-        return $this->service->updateOne($request->validated(), $id);
+        try {
+            $this->service->updateOne($request->validated(), $id);
+            return response(["message" => "Relatório atualizado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
 
-        return $this->service->delete($request->ids);
+        try {
+            $this->service->delete($request->ids);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

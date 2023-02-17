@@ -154,6 +154,7 @@ export function Profiles() {
       setTotalRecords(response.data.total_records);
       enqueueSnackbar(`Perfis encontrados: ${response.data.total_records}`, { variant: "success" });
     } catch (error) {
+      console.log(error)
       enqueueSnackbar(error.response.data.message, { variant: "error" });
     } finally {
       setLoading(false);

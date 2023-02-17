@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Modules\ServiceOrder\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Exception;
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrderIncidentResource;
 use App\Models\Incidents\Incident;
 use App\Models\Pivot\ServiceOrderFlightPlan;
@@ -28,21 +29,26 @@ class ServiceOrderIncidentController extends Controller
     {
         Gate::authorize('service_orders_read');
 
-        $limit = request()->limit;
-        $page = request()->page;
-        $search = is_null(request()->search) ? "0" : request()->search;
+        try {
 
-        $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", request()->service_order_id)->where("flight_plan_id", request()->flight_plan_id)->first();
+            $limit = request()->limit;
+            $page = request()->page;
+            $search = is_null(request()->search) ? "0" : request()->search;
 
-        $data = $this->model
-            ->where("service_order_flight_plan_id", $service_order_flight_plan->id)
-            ->search($search)
-            ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
+            $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", request()->service_order_id)->where("flight_plan_id", request()->flight_plan_id)->first();
 
-        if ($data->total() > 0) {
-            return response(new ServiceOrderIncidentResource($data), 200);
-        } else {
-            return response(["message" => "Nenhum incidente encontrado"], 404);
+            $data = $this->model
+                ->where("service_order_flight_plan_id", $service_order_flight_plan->id)
+                ->search($search)
+                ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
+
+            if ($data->total() > 0) {
+                return response(new ServiceOrderIncidentResource($data), 200);
+            } else {
+                throw new Exception("Nenhum incidente encontrado");
+            }
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
         }
     }
 
@@ -55,17 +61,22 @@ class ServiceOrderIncidentController extends Controller
     public function store(Request $request)
     {
         Gate::authorize('service_orders_write');
-       
-        $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", request()->service_order_id)->where("flight_plan_id", request()->flight_plan_id)->first();
 
-        $incident = $this->model->create([
-            "type" => $request->type,
-            "description" => $request->description,
-            "date" => $request->date,
-            "service_order_flight_plan_id" => $service_order_flight_plan->id
-        ]);
+        try {
 
-        return response(["message" => "Incidente criado com sucesso!"], 201);
+            $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", request()->service_order_id)->where("flight_plan_id", request()->flight_plan_id)->first();
+
+            $incident = $this->model->create([
+                "type" => $request->type,
+                "description" => $request->description,
+                "date" => $request->date,
+                "service_order_flight_plan_id" => $service_order_flight_plan->id
+            ]);
+
+            return response(["message" => "Incidente criado com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -79,15 +90,19 @@ class ServiceOrderIncidentController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        $incident = $this->model->findOrFail($incident_id);
+        try {
+            $incident = $this->model->findOrFail($incident_id);
 
-        $incident->update([
-            "type" => $request->type,
-            "description" => $request->description,
-            "date" => $request->date
-        ]);
+            $incident->update([
+                "type" => $request->type,
+                "description" => $request->description,
+                "date" => $request->date
+            ]);
 
-        return response(["message" => "Incidente atualizado com sucesso!"], 200);
+            return response(["message" => "Incidente atualizado com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -100,10 +115,14 @@ class ServiceOrderIncidentController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        $incident = $this->model->findOrFail($incident_id);
+        try {
+            $incident = $this->model->findOrFail($incident_id);
 
-        $incident->delete();
+            $incident->delete();
 
-        return response(["message" => "Incidente deletado com sucesso!"], 200);
+            return response(["message" => "Incidente deletado com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

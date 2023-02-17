@@ -85,8 +85,8 @@ export const Dashboard = React.memo(() => {
                 enqueueSnackbar("Métricas carregadas", { variant: "success" });
             })
             .catch((error) => {
-                const error_message = error.response.data.message ? error.response.data.message : "Erro do servidor";
-                enqueueSnackbar(error_message, { variant: "error" });
+                console.log(error)
+                enqueueSnackbar(error.response.data.message, { variant: "error" });
             })
             .finally(() => {
                 setLoading(false);

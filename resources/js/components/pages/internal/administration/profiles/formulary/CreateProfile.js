@@ -84,6 +84,7 @@ export const CreateProfile = React.memo((props) => {
       });
       successResponse(response);
     } catch (error) {
+      console.log(error)
       errorResponse(error.response);
     } finally {
       setLoading(false);
