@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
-// Custom
+use Exception;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 use App\Services\Modules\ServiceOrder\ServiceOrderService;
@@ -28,16 +28,21 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_read');
 
-        $data = $this->service->getPaginate(
-            request()->limit,
-            request()->page,
-            is_null(request()->search) ? "0" : request()->search
-        );
+        try {
 
-        if ($data->total() > 0) {
-            return response(new ServiceOrdersPanelResource($data), 200);
-        } else {
-            return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
+            $result = $this->service->getPaginate(
+                request()->limit,
+                request()->page,
+                is_null(request()->search) ? "0" : request()->search
+            );
+
+            if ($result->total() > 0) {
+                return response(new ServiceOrdersPanelResource($result), 200);
+            } else {
+                throw new Exception("Nenhuma ordem de serviço encontrada");
+            }
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
         }
     }
 
@@ -52,20 +57,35 @@ class ServiceOrderModuleController extends Controller
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->createOne($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "number", "flight_plans"]));
+        try {
+            $this->service->createOne($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "number", "flight_plans"]));
+            return response(["message" => "Ordem de serviço criada com sucesso!"], 201);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function update(ServiceOrderUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "status", "creator_id", "client_id", "observation", "number", "flight_plans"]), $id);
+        try {
+            $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "status", "creator_id", "client_id", "observation", "number", "flight_plans"]), $id);
+            return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('service_orders_write');
 
-        return $this->service->delete($request->ids);
+        try {
+            $this->service->delete($request->ids);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

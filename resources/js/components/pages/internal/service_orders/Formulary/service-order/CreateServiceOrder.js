@@ -107,9 +107,7 @@ export const CreateServiceOrder = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
-
       const response = await axios.post("api/module/service-orders", {
         start_date: formData.start_date,
         end_date: formData.end_date,
@@ -118,15 +116,12 @@ export const CreateServiceOrder = React.memo((props) => {
         observation: formData.observation,
         flight_plans: selectedFlightPlans
       });
-
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {
@@ -149,7 +144,7 @@ export const CreateServiceOrder = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 

@@ -5,8 +5,6 @@ namespace App\Repositories\Modules\Administration;;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Exception;
-// Model
 use App\Models\Profiles\Profile;
 
 class ProfileRepository implements RepositoryInterface
@@ -47,11 +45,7 @@ class ProfileRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $identifier) {
 
-            $profile = $this->profileModel->find($identifier);
-
-            if(!$profile){
-                throw new Exception("Perfil não encontrado");
-            }
+            $profile = $this->profileModel->findOrFail($identifier);
 
             $profile->update([
                 "name" => $data->get("name"),

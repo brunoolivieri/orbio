@@ -125,11 +125,7 @@ export const UpdateServiceOrder = React.memo((props) => {
   }
 
   async function requestServer() {
-
-    setLoading(true);
-
     try {
-
       const response = await axios.patch(`api/module/service-orders/${formData.id}`, {
         start_date: moment(formData.start_date).format('YYYY-MM-DD hh:mm:ss'),
         end_date: moment(formData.end_date).format('YYYY-MM-DD hh:mm:ss'),
@@ -140,15 +136,12 @@ export const UpdateServiceOrder = React.memo((props) => {
         observation: formData.observation,
         flight_plans: selectedFlightPlans
       });
-
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {
@@ -172,7 +165,7 @@ export const UpdateServiceOrder = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 

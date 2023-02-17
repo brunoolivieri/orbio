@@ -5,8 +5,6 @@ namespace App\Repositories\Modules\Administration;;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Exception;
-// Model
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
 
@@ -37,11 +35,7 @@ class UserRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $user = $this->userModel->find($identifier);
-
-        if (!$user) {
-            throw new Exception("Usuário não encontrado");
-        }
+        $user = $this->userModel->findOrFai($identifier);
 
         $new_profile = $this->profileModel->findOrFail($data->get("profile_id"));
 

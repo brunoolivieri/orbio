@@ -6,7 +6,7 @@ use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
-// Models
+use Exception;
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\Incidents\Incident;
@@ -168,7 +168,6 @@ class ServiceOrderRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
-
         foreach ($ids as $service_order_id) {
 
             $service_order = $this->serviceOrderModel->findOrFail($service_order_id);

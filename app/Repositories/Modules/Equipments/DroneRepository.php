@@ -5,9 +5,7 @@ namespace App\Repositories\Modules\Equipments;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Collection;
-// Interface
 use App\Repositories\Contracts\RepositoryInterface;
-// Model
 use App\Models\Drones\Drone;
 
 class DroneRepository implements RepositoryInterface

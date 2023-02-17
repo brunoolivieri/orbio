@@ -98,7 +98,7 @@ export const UpdateIncident = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setDisplayAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 
