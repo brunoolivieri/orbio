@@ -4,14 +4,13 @@ import { AppBar, IconButton, Toolbar, Box, Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import MapIcon from '@mui/icons-material/Map';
-import HelpIcon from '@mui/icons-material/Help';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AssessmentIcon from '@mui/icons-material/Assessment';
-import ReportIcon from '@mui/icons-material/Report';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import PropTypes from 'prop-types';
+import LogoutIcon from '@mui/icons-material/Logout';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { usePage } from '../../context/PageContext';
@@ -70,7 +69,7 @@ export const Header = React.memo((props) => {
             aria-label="menu"
             onClick={handleLogout}
           >
-            <AccountCircleIcon color="success" style={{ color: '#fff' }} />
+            <LogoutIcon color="success" style={{ color: '#fff' }} />
           </IconButton>
         </Toolbar>
       </AppBar>
