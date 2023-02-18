@@ -21,6 +21,7 @@ export function MainRoutes() {
     return (
         <BrowserRouter>
             <Routes>
+                
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route exact path="/internal/*" element={<Layout />} />

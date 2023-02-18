@@ -52,13 +52,9 @@ use App\Http\Controllers\Actions\{
     LoadLogsController
 };
 
-// Views
+Route::redirect('/', '/login');
 Route::middleware(['guest'])->group(function () {
-    Route::get('/', function () {
-        return redirect("/login");
-    });
-    Route::view('/login', "react_root");
-    Route::view('/forgot-password', "react_root");
+    Route::view('/{external}', "react_root")->where(["external" => "login|forgot-password"]);
 });
 
 // Auth operations

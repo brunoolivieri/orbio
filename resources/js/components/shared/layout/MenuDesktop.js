@@ -14,6 +14,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 // Custom
 import { useAuth } from '../../context/Auth';
 
@@ -92,6 +93,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const MenuDesktop = () => {
 
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const { user, logout } = useAuth();
     const [open, setOpen] = React.useState(false);
@@ -132,7 +134,7 @@ export const MenuDesktop = () => {
             await logout();
             enqueueSnackbar("Você foi deslogado", { variant: "success" });
             setTimeout(() => {
-                window.location = `${process.env.MIX_APP_URL}/login`;
+                navigate("/login", { replace: true });
             }, 1000);
         } catch (e) {
             console.log(e);
