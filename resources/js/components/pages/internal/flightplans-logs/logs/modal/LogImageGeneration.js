@@ -9,6 +9,7 @@ export const LogImageGeneration = React.memo((props) => {
    
     const handleOpen = () => {
         setOpen(true);
+        console.log(process.env.MIX_APP_URL)
     }
 
     const handleClose = () => {
