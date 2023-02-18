@@ -6,6 +6,9 @@ export const LogImageGeneration = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
     const [logImg, setLogImg] = React.useState(null);
+
+    console.log(process.env.MIX_APP_URL)
+    console.log("ooook")
    
     const handleOpen = () => {
         setOpen(true);
