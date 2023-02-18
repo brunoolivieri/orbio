@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://orbio-q8fj6.ondigitalocean.app'),
+    'url' => env('APP_URL', 'localhost:8000'),
 
     'asset_url' => env('ASSET_URL', null),
 

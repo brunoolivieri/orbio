@@ -131,7 +131,9 @@ export const MenuDesktop = () => {
         try {
             await logout();
             enqueueSnackbar("Você foi deslogado", { variant: "success" });
-            window.location = `https://orbio-q8fj6.ondigitalocean.app/login`;
+            setTimeout(() => {
+                window.location = `${process.env.MIX_APP_URL}/login`;
+            }, 1000);
         } catch (e) {
             console.log(e);
             enqueueSnackbar(e.response.data.message, { variant: "success" });
