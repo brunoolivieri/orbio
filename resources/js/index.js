@@ -15,6 +15,9 @@ import { theme } from "../../resources/js/components/shared/layout/theme";
 
 export default function Index() {
 
+  console.log(process.env.MIX_APP_URL)
+  console.log("ooook")
+
   return (
     <>
       <PageProvider>
