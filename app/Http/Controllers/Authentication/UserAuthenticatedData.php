@@ -6,9 +6,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
+use App\Models\Users\User;
 
 class UserAuthenticatedData extends Controller
 {
+    function __construct(User $userModel)
+    {
+        $this->model = $userModel;
+    }
+
     /**
      * Handle the incoming request.
      *
@@ -19,15 +25,17 @@ class UserAuthenticatedData extends Controller
     {
         try {
 
+            $user = $this->model->findOrFail(Auth::user()->id);
+
             $data = [
-                "id" => Auth::user()->id,
-                "name" => Auth::user()->name,
-                "email" => Auth::user()->email,
-                "profile_id" => Auth::user()->profile_id,
-                "profile" => Auth::user()->profile->name
+                "id" =>  $user->id,
+                "name" =>  $user->name,
+                "email" =>  $user->email,
+                "profile_id" =>  $user->profile_id,
+                "profile" =>  $user->profile->name
             ];
 
-            $profile = Auth::user()->profile;
+            $profile =  $user->profile;
 
             foreach ($profile->modules as $module) {
 

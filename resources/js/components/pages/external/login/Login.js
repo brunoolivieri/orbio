@@ -49,7 +49,6 @@ export function Login() {
     function formSubmissionValidation() {
 
         let validation = Object.assign({}, initialFormError);
-
         for (let field in formData) {
             if (field === "email") {
                 validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
@@ -57,7 +56,7 @@ export function Login() {
                 validation[field] = FormValidation(formData[field], 3, 255, null, "Senha");
             }
         }
-
+        
         setFormError(validation);
         return !(validation.email.error || validation.password.error);
 

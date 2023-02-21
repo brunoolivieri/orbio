@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
     async function verifyAuthentication() {
         try {
-            const response = await axios.get("api/auth/user-data");
+            const response = await axios.get("api/user-data");
             setUser(response.data);
         } catch (error) {
             console.log(error);
@@ -20,10 +20,10 @@ export function AuthProvider({ children }) {
 
     async function login(formData) {
         try {
-            const response = await axios.post("api/auth/login", formData);
+            const response = await axios.post("api/login", formData);
             setUser(response.data.user);
             setTimeout(() => {
-                window.location = "/internal";
+                window.location.replace(`${process.env.MIX_APP_URL}/internal/dashboard`);
             }, [1000]);
         } catch (error) {
             console.log(error);
@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
 
     async function logout() {
         try {
-            await axios.post("api/auth/logout");
+            await axios.post("api/logout");
         } catch (error) {
             console.log(error);
             throw error;
@@ -41,7 +41,6 @@ export function AuthProvider({ children }) {
     }
 
     return (
-
         <AuthenticationContext.Provider value={{ user, login, logout, verifyAuthentication, isAuthenticated }}>
             {children}
         </AuthenticationContext.Provider>

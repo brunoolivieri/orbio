@@ -75,7 +75,7 @@ export const Dashboard = React.memo(() => {
     }, []);
 
     function fetchData() {
-        axios.get("/api/dashboard")
+        axios.get("/api/dashboard-data")
             .then((response) => {
                 setUsers(response.data.users);
                 setProfiles(response.data.profiles);

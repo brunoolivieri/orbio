@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Exception;
 // Custom
 use App\Models\Users\User;
 use App\Models\PasswordResets\PasswordReset;
@@ -22,15 +23,17 @@ class PasswordTokenController extends Controller
 
     public function __invoke(PasswordResetTokenRequest $request)
     {
-        $user = $this->userModel->where("email", $request->email)->with("password_reset")->firstOrFail();
+        try {
 
-        if ($user->trashed()) {
-            return response()->json([
-                "message" => "Conta desabilitada.!"
-            ], 500);
-        }
+            $user = $this->userModel->where("email", $request->email)->with("password_reset")->first();
 
-        DB::transaction(function () use ($user) {
+            if (!$user) {
+                throw new Exception("Email não encontrado");
+            }
+
+            if ($user->trashed()) {
+                throw new Exception("Conta desabilitada");
+            }
 
             if ($user->password_reset()->exists()) {
                 $user->password_reset()->delete();
@@ -48,10 +51,10 @@ class PasswordTokenController extends Controller
             $user->refresh();
 
             $user->notify(new SendTokenNotification($user));
-        });
 
-        return response()->json([
-            "message" => "Sucesso! Confira o seu e-mail!"
-        ], 200);
+            return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
+        } catch (Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }
