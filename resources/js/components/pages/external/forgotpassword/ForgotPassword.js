@@ -16,7 +16,6 @@ export function ForgotPassword() {
 
     // ============================================================================== VARIABLES ============================================================================== //
 
-    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = React.useState(initialFormData);

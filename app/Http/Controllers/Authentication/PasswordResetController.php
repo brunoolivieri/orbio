@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Hash;
 // Custom
 use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\ChangePasswordNotification;
@@ -28,7 +29,7 @@ class PasswordResetController extends Controller
             }
 
             $token->user->update([
-                "password" => $request->password
+                "password" => Hash::make($request->password)
             ]);
 
             $token->delete();

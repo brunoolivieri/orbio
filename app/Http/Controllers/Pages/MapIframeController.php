@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Pages;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class MapController extends Controller
+class MapIframeController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -15,6 +15,6 @@ class MapController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return view("map");
+        return view("map_modal");
     }
 }

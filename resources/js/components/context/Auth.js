@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
             const response = await axios.post("api/login", formData);
             setUser(response.data.user);
             setTimeout(() => {
-                window.location.replace(`${process.env.MIX_APP_URL}/internal/dashboard`);
+                window.location.replace(`${process.env.MIX_APP_URL}/internal`);
             }, [1000]);
         } catch (error) {
             console.log(error);
