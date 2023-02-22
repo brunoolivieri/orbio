@@ -45,7 +45,7 @@ const columns = [
   {
     field: 'status',
     headerName: 'Status',
-    minWidth: 120,
+    minWidth: 150,
     sortable: true,
     editable: false,
     renderCell: (data) => {
@@ -66,7 +66,7 @@ const columns = [
     headerName: 'Perfil',
     sortable: true,
     editable: false,
-    width: 180,
+    width: 200,
     valueGetter: (data) => {
       return data.row.profile.name;
     },

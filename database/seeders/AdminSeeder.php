@@ -39,6 +39,5 @@ class AdminSeeder extends Seeder
             "november" => 0,
             "december" => 0
         ]);
-        
     }
 }

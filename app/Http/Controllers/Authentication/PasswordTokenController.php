@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Exception;
-// Custom
 use App\Models\Users\User;
 use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\SendTokenNotification;
@@ -28,29 +27,25 @@ class PasswordTokenController extends Controller
             $user = $this->userModel->where("email", $request->email)->with("password_reset")->first();
 
             if (!$user) {
-                throw new Exception("Email não encontrado");
+                throw new Exception("Erro! O email não foi encontrado.");
             }
 
             if ($user->trashed()) {
-                throw new Exception("Conta desabilitada");
+                throw new Exception("Erro! A conta está inativa.");
             }
 
-            if ($user->password_reset()->exists()) {
+            // Turn invalid all active tokens
+            if ($user->password_reset->count() > 0) {
                 $user->password_reset()->delete();
             }
 
-            $token = Str::random(10);
-
-            $this->passwordResetModel->insert(
-                [
-                    "user_id" => $user->id,
-                    "token" => $token
-                ]
-            );
+            $token = $this->passwordResetModel->create([
+                "user_id" => $user->id,
+                "token" => Str::random(10)
+            ]);
 
             $user->refresh();
-
-            $user->notify(new SendTokenNotification($user));
+            $user->notify(new SendTokenNotification($user, $token));
 
             return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
         } catch (Exception $e) {

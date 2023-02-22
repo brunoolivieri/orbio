@@ -16,7 +16,7 @@ class CreateFlightPlansTable extends Migration
         Schema::create('flight_plans', function (Blueprint $table) {
             $table->id();
             $table->string("creator_id")->constrained('users');
-            $table->string("name");
+            $table->string("name")->unique();
             $table->string("file");
             $table->string("coordinates");
             $table->string("state");

@@ -27,29 +27,29 @@ class UpdateBatteryRequest extends FormRequest
         $battery_id_parameter = $this->route("equipments_battery");
 
         return [
-            'name' => 'required|unique:batteries,name,'.$battery_id_parameter,
+            'name' => 'required|unique:batteries,name,' . $battery_id_parameter,
             'manufacturer' => 'required',
             'model' => 'required',
             'serial_number' => 'required',
             'last_charge' => 'required|date'
-        ]; 
+        ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
-            'name.required' => 'O nome da bateria deve ser informado',
+            'name.required' => 'Informe o nome da bateria',
             'name.unique' => 'Já existe uma bateria com esse nome',
-            'manufacturer.required' => 'O fabricante da bateria deve ser informado',
-            'model.required' => 'O modelo da bateria deve ser informado',
-            'serial_number.required' => 'O número do serial deve ser informado',
-            'last_charge.required' => 'A data da última carga deve ser informada',
-            'last_charge.date' => 'Informe uma data válida'
+            'manufacturer.required' => 'Informe o nome do fabricante da bateria',
+            'model.required' => 'Informe o modelo da bateria',
+            'serial_number.required' => 'Informe o número serial da bateria',
+            'last_charge.required' => 'Informe a data da última carga da bateria',
+            'last_charge.date' => 'Data inválida'
         ];
     }
 }

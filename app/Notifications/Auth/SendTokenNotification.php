@@ -6,22 +6,25 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // Models
+use App\Models\PasswordResets\PasswordReset;
 use App\Models\Users\User;
 
 class SendTokenNotification extends Notification
 {
     use Queueable;
 
-    private $user;
+    private User $user;
+    private PasswordReset $token;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct(User $user, PasswordReset $token)
     {
         $this->user = $user;
+        $this->token = $token;
     }
 
     /**
@@ -47,7 +50,7 @@ class SendTokenNotification extends Notification
             ->subject('ORBIO - Código para alteração da senha')
             ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Recebemos um pedido para alteração da sua senha.")
-            ->line("Código: " . $notifiable->password_reset->token)
+            ->line("Código: " . $this->token->token)
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
     }
 

@@ -43,10 +43,10 @@ class UserPanelUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'O nome deve ser informado',
-            'email.required' => 'O email deve ser informado',
+            'name.required' => 'Informe o nome do usuário',
+            'email.required' => 'Informe o email do usuário',
             'email.unique' => 'Esse email já está cadastrado',
-            'email.email' => 'Digite um email válido',
+            'email.email' => 'Email inválido',
             'profile_id.required' => 'Selecione um perfil'
         ];
     }

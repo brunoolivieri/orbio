@@ -29,7 +29,7 @@ class ProfilePanelUpdateRequest extends FormRequest
         $profile_id_parameter = $this->route("administration_profile");
 
         return [
-            'name' => 'required|string|unique:profiles,name,' . $profile_id_parameter,
+            'name' => 'required|unique:profiles,name,' . $profile_id_parameter,
             'privileges' => 'required',
             'access_data' => 'required'
         ];
@@ -43,8 +43,7 @@ class ProfilePanelUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'O nome do perfil deve ser informado',
-            'name.string' => 'O nome do perfil deve ser textual',
+            'name.required' => 'Informe o nome do perfil',
             'name.unique' => 'Já existe um perfil com esse nome'
         ];
     }

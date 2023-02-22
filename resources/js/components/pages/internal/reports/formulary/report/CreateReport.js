@@ -120,7 +120,7 @@ export const CreateReport = (props) => {
   function errorResponse(response) {
     if (response.status === 422) {
       setAlert({ display: true, type: "error", message: "Dados inválidos!" });
-      let response_errors = {}
+      let response_errors = Object.assign({}, initialFormError);
       for (let field in response.data.errors) {
         response_errors[field] = {
           error: true,

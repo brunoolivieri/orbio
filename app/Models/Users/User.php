@@ -89,7 +89,7 @@ class User extends Authenticatable
     */
     function password_reset()
     {
-        return $this->hasOne(PasswordReset::class, "user_id");
+        return $this->hasMany(PasswordReset::class, "user_id");
     }
 
     /*
