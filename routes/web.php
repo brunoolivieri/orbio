@@ -57,13 +57,13 @@ use App\Http\Controllers\Actions\{
 // Guest views
 Route::redirect('/', '/login');
 Route::middleware(['guest'])->group(function () {
-    Route::view('/{external}', "main")->where(["external" => "login|forgot-password"]);
+    Route::get("/login", ReactController::class);
+    Route::get("/forgot-password", ReactController::class);
 });
 
 // Views that neeed authentication
 Route::middleware(["session.auth"])->group(function () {
-    // Views
-    Route::get("/{internal?}", ReactController::class)->where(["internal" => "^(?!api|map|map-modal|login|forgot-password).*$"]);
+    Route::get("/{internal?}", ReactController::class)->where(["internal" => "^(?!api|login|forgot-password|map(?:-modal)?).*"]);
     Route::get('/map', MapController::class);
     Route::get("/map-modal", MapIframeController::class);
 });
