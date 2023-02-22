@@ -269,7 +269,6 @@ export function FlightPlans() {
           }
 
           {selectedRecords.length === 0 &&
-            /* <CreateFlightPlan reloadTable={setReload} /> */
             <Tooltip title="Novo Plano">
               <Link href={`/map?userid=${user.id}`} target="_blank">
                 <IconButton>
