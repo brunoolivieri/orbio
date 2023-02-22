@@ -35,7 +35,7 @@ class UserRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $user = $this->userModel->findOrFai($identifier);
+        $user = $this->userModel->findOrFail($identifier);
 
         $new_profile = $this->profileModel->findOrFail($data->get("profile_id"));
 
