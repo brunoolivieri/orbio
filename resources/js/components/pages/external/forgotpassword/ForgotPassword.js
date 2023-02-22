@@ -66,7 +66,7 @@ export function ForgotPassword() {
 
     async function sendCodeServerRequest() {
         try {
-            const response = await axios.post(`${process.env.MIX_APP_URL}/api/get-password-token`, {
+            const response = await axios.post("api/get-password-token", {
                 email: formData.email
             });
             enqueueSnackbar(response.data.message, { variant: "success" });
@@ -82,14 +82,14 @@ export function ForgotPassword() {
 
     async function changePasswordServerRequest() {
         try {
-            const response = await axios.post(`${process.env.MIX_APP_URL}/api/change-password`, {
+            const response = await axios.post("api/change-password", {
                 token: formData.code,
                 password: formData.password,
                 password_confirmation: formData.password_confirmation
             });
             enqueueSnackbar(response.data.message, { variant: "success" });
             setTimeout(() => {
-                window.location.replace(`${process.env.MIX_APP_URL}/login`);
+                window.location.replace("/login");
             }, 2000);
         } catch (error) {
             errorResponse(error.response);
