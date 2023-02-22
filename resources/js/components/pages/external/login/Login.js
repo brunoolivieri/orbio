@@ -1,6 +1,6 @@
 import * as React from 'react';
 // React router dom
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // Material UI
 import { Button, TextField, Box, Grid, Typography, Container, Avatar, FormControlLabel, Checkbox } from '@mui/material';
 import { useSnackbar } from 'notistack';
@@ -33,14 +33,16 @@ export function Login() {
     const [formError, setFormError] = React.useState(initialFormError);
     const [loading, setLoading] = React.useState(false);
 
+    const navigate = useNavigate();
     const { login } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
 
     // ============================================================================== ROUTINES ============================================================================== //
 
     function handleSubmit() {
-
-        if (!formSubmissionValidation()) return '';
+        if (!formSubmissionValidation()) {
+            return;
+        }
 
         setLoading(true);
         requestServer();
@@ -65,6 +67,7 @@ export function Login() {
     async function requestServer() {
         try {
             await login(formData);
+            navigate("/dashboard", { replace: true });
         } catch (error) {
             console.log(error);
             enqueueSnackbar(error.response.data.message, { variant: "error" });

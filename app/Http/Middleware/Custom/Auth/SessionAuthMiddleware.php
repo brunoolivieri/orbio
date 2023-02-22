@@ -19,8 +19,7 @@ class SessionAuthMiddleware
     {
 
         if (!Auth::check()) {
-            // Interromper requisição e deslogar
-            return redirect("api/logout");
+            return redirect("/login");
         }
 
         // Continuar requisição
