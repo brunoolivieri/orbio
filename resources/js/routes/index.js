@@ -16,30 +16,49 @@ import { Administration } from "../components/pages/internal/administration/Admi
 import { ServiceOrders } from "../components/pages/internal/service_orders/ServiceOrders";
 import { DronesBatteriesAndEquipments } from "../components/pages/internal/equipments/DronesBatteriesAndEquipments";
 
-
 export function MainRoutes() {
     return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route exact path="/internal/*" element={<Layout />} />
+                <Route path="/dashboard" element={
+                    <Layout>
+                        <Dashboard />
+                    </Layout>
+                } />
+                <Route path="/administracao" element={
+                    <Layout>
+                        <Administration />
+                    </Layout>
+                } />
+                <Route path="/planos" element={
+                    <Layout>
+                        <FlightPlansAndLogs />
+                    </Layout>
+                } />
+                <Route path="/ordens" element={
+                    <Layout>
+                        <ServiceOrders />
+                    </Layout>
+                } />
+                <Route path="/relatorios" element={
+                    <Layout>
+                        <Reports />
+                    </Layout>
+                } />
+                <Route path="/equipamentos" element={
+                    <Layout>
+                        <DronesBatteriesAndEquipments />
+                    </Layout>
+                } />
+                <Route path="/conta" element={
+                    <Layout>
+                        <Account />
+                    </Layout>
+                } />
                 <Route path="*" element={<NotFound />} />
             </Routes>
         </BrowserRouter>
-    )
-}
-
-export function InternalRoutes() {
-    return (
-        <Routes>
-            <Route index element={<Dashboard />} />
-            <Route exact path="planos" element={<FlightPlansAndLogs />} />
-            <Route exact path="relatorios" element={<Reports />} />
-            <Route exact path="conta" element={<Account />} />
-            <Route exact path="administracao" element={<Administration />} />
-            <Route exact path="ordens" element={<ServiceOrders />} />
-            <Route exact path="equipamentos" element={<DronesBatteriesAndEquipments />} />
-        </Routes>
     )
 }

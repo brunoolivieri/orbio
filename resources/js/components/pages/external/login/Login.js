@@ -56,7 +56,7 @@ export function Login() {
                 validation[field] = FormValidation(formData[field], 3, 255, null, "Senha");
             }
         }
-        
+
         setFormError(validation);
         return !(validation.email.error || validation.password.error);
 
@@ -138,7 +138,7 @@ export function Login() {
                             onClick={handleSubmit}
                             disabled={loading}
                         >
-                            Acessar
+                            {loading ? "Verificando..." : "Acessar"}
                         </Button>
 
                         <Grid container>

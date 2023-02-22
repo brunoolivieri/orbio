@@ -11,6 +11,7 @@ import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import PropTypes from 'prop-types';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useSnackbar } from 'notistack';
+import { useNavigate } from 'react-router-dom';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { usePage } from '../../context/PageContext';
@@ -33,6 +34,7 @@ const menuOpenIconStyle = {
 
 export const Header = React.memo((props) => {
 
+  const navigate = useNavigate();
   const { pageIndex } = usePage();
   const { enqueueSnackbar } = useSnackbar();
   const { logout } = useAuth();
@@ -41,9 +43,9 @@ export const Header = React.memo((props) => {
   async function handleLogout() {
     try {
       await logout();
-      enqueueSnackbar("Você foi deslogado", { variant: "success" });
+      enqueueSnackbar("Sessão finalizada", { variant: "success" });
       setTimeout(() => {
-        window.location.replace(`${process.env.MIX_APP_URL}/internal/dashboard`);
+        navigate("/login", { replace: true });
       }, 1000);
     } catch (e) {
       console.log(e);

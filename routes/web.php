@@ -54,20 +54,21 @@ use App\Http\Controllers\Actions\{
     LoadLogsController
 };
 
+// Guest views
 Route::redirect('/', '/login');
-Route::get("/{all?}", ReactController::class)->where(["all" => "^(?!api|map|map-modal).*$"]);
 Route::middleware(['guest'])->group(function () {
     Route::view('/{external}', "main")->where(["external" => "login|forgot-password"]);
 });
 
+// Views that neeed authentication
 Route::middleware(["session.auth"])->group(function () {
-    Route::get('/internal/{internalpage?}', function () {
-        return redirect("/internal");
-    })->where(["internalpage" => "^(?!auth|map).*$"]);
-    Route::view('/internal/map', MapController::class);
-    Route::get("/internal/map-modal", MapIframeController::class);
+    // Views
+    Route::get("/{internal?}", ReactController::class)->where(["internal" => "^(?!api|map|map-modal|login|forgot-password).*$"]);
+    Route::get('/map', MapController::class);
+    Route::get("/map-modal", MapIframeController::class);
 });
 
+// Api routes
 Route::group(["prefix" => "api"], function () {
     Route::post('/login', LoginController::class);
     Route::post('/get-password-token', PasswordTokenController::class);

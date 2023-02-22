@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Box, Paper } from "@mui/material";
 import { useSnackbar } from 'notistack';
 // Custom
-import { InternalRoutes } from '../../../routes/index';
 import { useAuth } from '../../context/Auth';
 import { MenuMobile } from './MenuMobile';
 import { MenuDesktop } from './MenuDesktop';
@@ -12,7 +11,7 @@ import { BackdropLoading } from "../backdrop/BackdropLoading";
 
 const drawerWidth = 265;
 
-export const Layout = () => {
+export const Layout = ({ children }) => {
 
   // ================== STATES =================== //
 
@@ -70,7 +69,7 @@ export const Layout = () => {
             <Box component="main" sx={{ flexGrow: 1, py: 6, px: 4 }}>
 
               <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
-                <InternalRoutes />
+                {children}
               </Paper>
 
             </Box>
