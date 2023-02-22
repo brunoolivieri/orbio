@@ -49,7 +49,6 @@ export function Login() {
     function formSubmissionValidation() {
 
         let validation = Object.assign({}, initialFormError);
-
         for (let field in formData) {
             if (field === "email") {
                 validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
@@ -139,7 +138,7 @@ export function Login() {
                             onClick={handleSubmit}
                             disabled={loading}
                         >
-                            Acessar
+                            {loading ? "Verificando..." : "Acessar"}
                         </Button>
 
                         <Grid container>

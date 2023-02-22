@@ -35,15 +35,15 @@ class UserRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $user = $this->userModel->findOrFai($identifier);
+        $user = $this->userModel->findOrFail($identifier);
 
         $new_profile = $this->profileModel->findOrFail($data->get("profile_id"));
 
-        // Check if user is related to a active service order with different role
+        // Check if user is related to an active service order with different role
         foreach ($user->service_orders as $service_order) {
             if ($service_order->status) {
                 if (strtolower($service_order->pivot->role) != strtolower($new_profile->name)) {
-                    return response(["message" => "Possui vínculo como {$service_order->pivot->role} a uma ordem de serviço ativa!"], 500);
+                    throw new \Exception("Possui vínculo como {$service_order->pivot->role} a uma ordem de serviço ativa!");
                 }
             }
         }
@@ -52,7 +52,7 @@ class UserRepository implements RepositoryInterface
 
         $user->refresh();
 
-        return response(["message" => "Usuário atualizado com sucesso!"], 200);
+        return $user;
     }
 
     function delete(array $ids)

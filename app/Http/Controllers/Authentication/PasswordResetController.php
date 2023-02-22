@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-// Custom
+use Exception;
+use Illuminate\Support\Facades\Hash;
 use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\ChangePasswordNotification;
 use App\Http\Requests\Auth\ForgotPassword\UpdatePasswordRequest;
@@ -14,26 +15,32 @@ class PasswordResetController extends Controller
 
     function __construct(PasswordReset $passwordResetModel)
     {
-        $this->passwordResetModel = $passwordResetModel;
+        $this->model = $passwordResetModel;
     }
 
     public function __invoke(UpdatePasswordRequest $request)
     {
-        DB::transaction(function () use ($request) {
+        try {
 
-            $password_reset = $this->passwordResetModel->where("token", $request->token)->with("user")->firstOrFail();
+            DB::transaction(function () use ($request) {
 
-            $password_reset->user->update([
-                "password" => $request->new_password
-            ]);
+                $token = $this->model->where("token", $request->token)->first();
 
-            $password_reset->delete();
+                if (!$token || $token->trashed()) {
+                    throw new Exception("Token inválido");
+                }
 
-            $password_reset->user->notify(new ChangePasswordNotification($password_reset->user));
-        });
+                $token->user->update([
+                    "password" => Hash::make($request->password)
+                ]);
 
-        return response()->json([
-            "message" => "Senha alterada com sucesso!"
-        ], 200);
+                $token->delete();
+                $token->user->notify(new ChangePasswordNotification($token->user));
+            });
+
+            return response(["message" => "Senha alterada com sucesso!"], 200);
+        } catch (Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }

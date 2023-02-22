@@ -30,7 +30,7 @@ const columns = [
   {
     field: 'image',
     headerName: 'Image',
-    width: 100,
+    width: 130,
     sortable: false,
     editable: false,
     renderCell: (data) => {
@@ -84,7 +84,7 @@ const columns = [
     headerName: 'Peso',
     sortable: true,
     editable: false,
-    width: 130
+    width: 100
   },
   {
     field: 'purchase_date',

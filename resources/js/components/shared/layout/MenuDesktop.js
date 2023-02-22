@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Box, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, styled } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -92,6 +92,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const MenuDesktop = () => {
 
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const { user, logout } = useAuth();
     const [open, setOpen] = React.useState(false);
@@ -105,24 +106,24 @@ export const MenuDesktop = () => {
                     icon: <DashboardIcon />,
                     active: false,
                     access: true,
-                    path: ""
+                    path: "/dashboard"
                 },
             ],
         },
         {
             id: "Módulos",
             children: [
-                { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.user_powers["1"].profile_powers.read == 1, path: "administracao" },
-                { id: 'Planos e Logs', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "planos" },
-                { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "ordens" },
-                { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "relatorios" },
-                { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "equipamentos" }
+                { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.user_powers["1"].profile_powers.read == 1, path: "/administracao" },
+                { id: 'Planos e Logs', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "/planos" },
+                { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "/ordens" },
+                { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "/relatorios" },
+                { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "/equipamentos" }
             ]
         },
         {
             id: 'Outros',
             children: [
-                { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "conta" }
+                { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "/conta" }
             ],
         },
     ];
@@ -130,11 +131,13 @@ export const MenuDesktop = () => {
     async function handleLogout() {
         try {
             await logout();
-            enqueueSnackbar("Você foi deslogado", { variant: "success" });
-            window.location = `${process.env.MIX_APP_URL}/login`;
+            enqueueSnackbar("Sessão finalizada", { variant: "success" });
+            setTimeout(() => {
+                navigate("/login", { replace: true });
+            }, 1000);
         } catch (e) {
             console.log(e);
-            enqueueSnackbar(e.response.data.message, { variant: "success" });
+            enqueueSnackbar(e.response.data.message, { variant: "error" });
         }
     }
 

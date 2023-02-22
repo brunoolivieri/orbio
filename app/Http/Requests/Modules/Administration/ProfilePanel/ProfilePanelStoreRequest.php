@@ -26,7 +26,7 @@ class ProfilePanelStoreRequest extends FormRequest
     {
 
         return [
-            'name' => 'required|string|unique:profiles,name',
+            'name' => 'required|unique:profiles,name',
             'access_data' => 'required'
         ];
     }
@@ -39,8 +39,7 @@ class ProfilePanelStoreRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'O nome do perfil deve ser informado',
-            'name.string' => 'O nome do perfil deve ser textual',
+            'name.required' => 'Informe o nome do perfil',
             'name.unique' => 'Já existe um perfil com esse nome'
         ];
     }

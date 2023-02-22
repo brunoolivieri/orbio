@@ -19,14 +19,11 @@ class SessionAuthMiddleware
     {
 
         if (!Auth::check()) {
-
             // Interromper requisição e deslogar
-            return redirect("/api/auth/logout");
-
+            return redirect("api/logout");
         }
 
         // Continuar requisição
         return $next($request);
-
     }
 }

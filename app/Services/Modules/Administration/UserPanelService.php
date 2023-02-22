@@ -33,7 +33,7 @@ class UserPanelService implements ServiceInterface
 
     public function updateOne(array $data, string $identifier)
     {
-        $profile = $this->repository->updateOne(collect($data), $identifier);
+        $user = $this->repository->updateOne(collect($data), $identifier);
     }
 
     public function delete(array $ids)

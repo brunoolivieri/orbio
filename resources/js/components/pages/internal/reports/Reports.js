@@ -56,7 +56,7 @@ const columns = [
     headerName: 'Criado em',
     sortable: true,
     editable: false,
-    minWidth: 130
+    minWidth: 150
   },
   {
     field: 'export',

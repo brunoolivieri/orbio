@@ -61,21 +61,14 @@ export const Dashboard = React.memo(() => {
 
     React.useEffect(() => {
 
-        let is_mounted = true;
-
-        if (is_mounted) {
-            setPageIndex(0);
-            fetchData();
-        }
-
-        return () => {
-            return is_mounted = false;
-        }
+        console.log('dashboard')
+        setPageIndex(0);
+        fetchData();
 
     }, []);
 
     function fetchData() {
-        axios.get("/api/dashboard")
+        axios.get("/api/dashboard-data")
             .then((response) => {
                 setUsers(response.data.users);
                 setProfiles(response.data.profiles);

@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->foreignId('profile_id')->constrained('profiles');
             $table->string("name");
-            $table->string("email");
+            $table->string("email")->unique();
             $table->string("password");
             $table->boolean("status")->default(false);
             $table->timestamp("last_access")->nullable(true);

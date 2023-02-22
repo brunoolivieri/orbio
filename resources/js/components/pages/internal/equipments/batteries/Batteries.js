@@ -30,7 +30,7 @@ const columns = [
     {
         field: 'image',
         headerName: 'Image',
-        width: 125,
+        width: 130,
         sortable: false,
         editable: false,
         renderCell: (data) => {
@@ -74,7 +74,7 @@ const columns = [
         headerName: 'Carga',
         sortable: true,
         editable: false,
-        width: 130,
+        width: 150,
         valueGetter: (data) => {
             return data.row.last_charge != "nunca" ? moment(data.row.last_charge).format("DD/MM/YYYY") : data.row.last_charge
         }

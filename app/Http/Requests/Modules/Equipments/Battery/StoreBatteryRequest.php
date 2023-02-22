@@ -42,15 +42,15 @@ class StoreBatteryRequest extends FormRequest
     {
         return [
             'image.required' => 'A imagem da bateria deve ser enviada',
-            'image.image' => 'O arquivo deve ser uma imagem',
-            'image.mimes' => 'Deve ser uma imagem .png, .svg ou .jpg',
-            'name.required' => 'O nome da bateria deve ser informado',
+            'image.image' => 'Formato de arquivo inválido',
+            'image.mimes' => 'Deve ser uma imagem com extensão png ou jpg',
+            'name.required' => 'Informe o nome da bateria',
             'name.unique' => 'Já existe uma bateria com esse nome',
-            'manufacturer.required' => 'O fabricante da bateria deve ser informado',
-            'model.required' => 'O modelo da bateria deve ser informado',
-            'serial_number.required' => 'O número do serial deve ser informado',
-            'last_charge.required' => 'A data da última carga deve ser informada',
-            'last_charge.date' => 'Informe uma data válida'
+            'manufacturer.required' => 'Informe o nome do fabricante da bateria',
+            'model.required' => 'Informe o modelo da bateria',
+            'serial_number.required' => 'Informe o número serial da bateria',
+            'last_charge.required' => 'Informe a data da última carga da bateria',
+            'last_charge.date' => 'Data inválida'
         ];
     }
 }

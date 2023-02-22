@@ -25,8 +25,8 @@ class UpdatePasswordRequest extends FormRequest
     {
 
         return [
-            "new_password" => "required|confirmed|min:3|max:15",
-            "token" => "required|string"
+            "password" => "required|confirmed",
+            "token" => "required"
         ];
 
     }
@@ -39,12 +39,9 @@ class UpdatePasswordRequest extends FormRequest
     public function messages()
     {
         return [
-            "new_password.required" => "A nova senha precisa ser informada",
-            "new_password.confirmed" => "As senhas são incompátiveis",
-            "new_password.min" => "A senha deve ter no mínimo 3 caracteres",
-            "new_password.max" => "A senha deve ter no máximo 15 caracteres",
-            "token.required" => "O código precisa ser informado",
-            "token.string" => "Código inválido"
+            "password.required" => "A nova senha precisa ser informada",
+            "password.confirmed" => "As senhas são incompátiveis",
+            "token.required" => "O código precisa ser informado"
         ];
     }
 }

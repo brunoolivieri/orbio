@@ -3,12 +3,13 @@
 namespace App\Models\PasswordResets;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Users\User;
 
 class PasswordReset extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $primaryKey = "user_id";
     protected $guarded = [];

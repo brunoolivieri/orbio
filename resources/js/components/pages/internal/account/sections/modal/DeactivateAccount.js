@@ -17,7 +17,7 @@ export function DeactivateAccountModal() {
     async function handleSave() {
         try {
             await axios.delete(`api/myprofile/deactivation/${user.id}`);
-            await axios.post("api/auth/logout");
+            await axios.post("api/logout");
         } catch (error) {
             enqueueSnackbar(error.response.message, { variant: "error" });
         } finally {

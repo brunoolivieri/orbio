@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-// Custom
+use Exception;
 use App\Models\Users\User;
 use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\SendTokenNotification;
@@ -22,36 +22,34 @@ class PasswordTokenController extends Controller
 
     public function __invoke(PasswordResetTokenRequest $request)
     {
-        $user = $this->userModel->where("email", $request->email)->with("password_reset")->firstOrFail();
+        try {
 
-        if ($user->trashed()) {
-            return response()->json([
-                "message" => "Conta desabilitada.!"
-            ], 500);
-        }
+            $user = $this->userModel->where("email", $request->email)->with("password_reset")->first();
 
-        DB::transaction(function () use ($user) {
+            if (!$user) {
+                throw new Exception("Erro! O email não foi encontrado.");
+            }
 
-            if ($user->password_reset()->exists()) {
+            if ($user->trashed()) {
+                throw new Exception("Erro! A conta está inativa.");
+            }
+
+            // Turn invalid all active tokens
+            if ($user->password_reset->count() > 0) {
                 $user->password_reset()->delete();
             }
 
-            $token = Str::random(10);
-
-            $this->passwordResetModel->insert(
-                [
-                    "user_id" => $user->id,
-                    "token" => $token
-                ]
-            );
+            $token = $this->passwordResetModel->create([
+                "user_id" => $user->id,
+                "token" => Str::random(10)
+            ]);
 
             $user->refresh();
+            $user->notify(new SendTokenNotification($user, $token));
 
-            $user->notify(new SendTokenNotification($user));
-        });
-
-        return response()->json([
-            "message" => "Sucesso! Confira o seu e-mail!"
-        ], 200);
+            return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
+        } catch (Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 }
