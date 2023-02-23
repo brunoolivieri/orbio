@@ -39,6 +39,8 @@ class FlightPlanLogRepository implements RepositoryInterface
                 "timestamp" => date("Y-m-d H:i:s", $data->get("timestamp"))
             ]);
 
+            //dd($data->get("file_storage")["path"]);
+
             Storage::disk('public')->putFileAs($data->get("file_storage")["path"], $data->get("file_storage")["file"], $data->get("file_storage")["filename"]);
 
             if ($data->get("is_valid")) {

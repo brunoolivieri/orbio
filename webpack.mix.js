@@ -17,6 +17,6 @@ mix
     .sass('resources/sass/app.scss', 'public/css')
     .webpackConfig({
         output: {
-            publicPath: process.env.MIX_APP_URL 
+            publicPath: window.location.origin
         }
     });

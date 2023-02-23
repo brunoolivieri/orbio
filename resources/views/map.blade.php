@@ -204,6 +204,6 @@
 	<button id="btn-mission" class="btn btn-success">Missão</button>
 	<button id="btn" class="btn btn-primary">Configuração</button>
 	
-	<script src="'js/map/index.js'"></script>
+	<script src="{{ secure_asset('js/map/index.js') }}"></script>
  </body>
  </html>
