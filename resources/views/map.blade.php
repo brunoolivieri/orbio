@@ -48,9 +48,6 @@
 	<!-- HTML2CANVAS -->
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 
-	<!-- CROPPER -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-
  	<title>{{ env('APP_NAME'); }}</title>
  </head>
  <body>
@@ -207,6 +204,6 @@
 	<button id="btn-mission" class="btn btn-success">Missão</button>
 	<button id="btn" class="btn btn-primary">Configuração</button>
 	
-	<script src="{{ secure_asset('js/map/index.js') }}"></script>
+	<script src="'js/map/index.js'"></script>
  </body>
  </html>
