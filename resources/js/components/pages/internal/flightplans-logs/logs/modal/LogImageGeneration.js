@@ -67,7 +67,7 @@ export const LogImageGeneration = React.memo((props) => {
                         <iframe
                             id="iframe-content"
                             onLoad={(e) => e.target.contentWindow.postMessage({ type: 'log-creation-request', log: props.actual_log }, `${process.env.MIX_APP_URL}`)}
-                            src={`${process.env.MIX_APP_URL}/map-modal`}
+                            src={"/map-modal"}
                             style={{ width: "100%", height: "100%" }}
                         ></iframe>
                     </div>

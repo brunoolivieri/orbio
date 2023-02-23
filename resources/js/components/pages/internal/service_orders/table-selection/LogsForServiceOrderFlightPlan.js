@@ -79,7 +79,7 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
     }
 
     function fetchRecords() {
-        axios.get(`api/action/module/service-order/logs?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/action/service-order/logs?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
             .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);

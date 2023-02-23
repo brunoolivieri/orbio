@@ -101,6 +101,24 @@ Route::group(["prefix" => "api"], function () {
         Route::get("reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
         Route::get("logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
         Route::post("process-selected-logs", [FlightPlanModuleLogController::class, "processSelectedLogs"]);
+        // Module Actions
+        Route::get("action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
+        Route::get("action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
+        Route::apiResource("action/service-order/incidents", ServiceOrderIncidentController::class);
+        Route::get("action/report/service-orders", LoadServiceOrderForReport::class); // To refact
+        Route::get("action/report/weather-data", WeatherDataController::class); // To refact
+        Route::get("action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class); // To refact
+        // Generic Actions
+        Route::get('action/load-drones', LoadDronesController::class);
+        Route::get('action/load-batteries', LoadBatteriesController::class);
+        Route::get('action/load-equipments', LoadEquipmentsController::class);
+        Route::get("action/load-users", LoadUsersController::class);
+        Route::get("action/load-profiles", LoadProfilesController::class);
+        Route::get("action/load-flight-plans", LoadFlightPlansController::class);
+        Route::get("action/load-service-orders", LoadServiceOrdersController::class);
+        Route::get("action/load-incidents", LoadIncidentsController::class);
+        Route::get("action/load-reports", LoadReportsController::class);
+        Route::get("action/load-logs", LoadLogsController::class);
         // Module "MyProfile" operations
         Route::get("myprofile/basic-data", [MyProfileController::class, "loadBasicData"]);
         Route::patch("myprofile/basic-data", [MyProfileController::class, "basicDataUpdate"]);
@@ -110,23 +128,5 @@ Route::group(["prefix" => "api"], function () {
         Route::patch("myprofile/address", [MyProfileController::class, "addressUpdate"]);
         Route::delete("myprofile/deactivation/{user_id}", [MyProfileController::class, "accountDeactivation"]);
         Route::patch("myprofile/change-password/{user_id}", [MyProfileController::class, "passwordUpdate"]);
-        // Module Actions
-        Route::get("/service-order/flight-plans", FlightPlansForServiceOrderController::class);
-        Route::get("/service-order/logs", LogsForServiceOrderFlightPlanController::class);
-        Route::apiResource("/service-order/incidents", ServiceOrderIncidentController::class);
-        Route::get("/load-service-orders-for-report", LoadServiceOrderForReport::class); // To refact
-        Route::get("/get-weather-data", WeatherDataController::class); // To refact
-        Route::get("/load-service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class); // To refact
-        // Generic Actions
-        Route::get('load-drones', LoadDronesController::class);
-        Route::get('load-batteries', LoadBatteriesController::class);
-        Route::get('load-equipments', LoadEquipmentsController::class);
-        Route::get("load-users", LoadUsersController::class);
-        Route::get("load-profiles", LoadProfilesController::class);
-        Route::get("load-flight-plans", LoadFlightPlansController::class);
-        Route::get("load-service-orders", LoadServiceOrdersController::class);
-        Route::get("load-incidents", LoadIncidentsController::class);
-        Route::get("load-reports", LoadReportsController::class);
-        Route::get("load-logs", LoadLogsController::class);
     });
 });

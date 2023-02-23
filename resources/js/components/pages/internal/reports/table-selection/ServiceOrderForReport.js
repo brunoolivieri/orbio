@@ -148,7 +148,7 @@ export const ServiceOrderForReport = React.memo((props) => {
 
     function fetchRecords() {
 
-        axios.get(`api/load-service-orders-for-report?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/action/report/service-orders?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
 
                 setRecords(response.data.records);
