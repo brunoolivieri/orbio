@@ -41,7 +41,7 @@ export const DeleteIncident = React.memo((props) => {
 
     try {
 
-      const response = await axios.delete("api/action/module/service-order/incidents/delete", {
+      const response = await axios.delete("api/action/service-order/incidents/delete", {
         data: {
           ids: selectedIds
         }

@@ -22,7 +22,7 @@ class ReportService implements ServiceInterface
         return $this->repository->getPaginate($limit, $page, $search);
     }
 
-    function download(string $filename)
+    function download(string $filename, $identifier = null)
     {
         if (Storage::disk("public")->exists("reports/$filename")) {
 

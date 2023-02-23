@@ -246,6 +246,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
                             selectionModel={selectionModel}
                             rowsPerPageOptions={[10, 25, 50, 100]}
                             rowHeight={70}
+                            checkboxSelection
                             disableSelectionOnClick
                             paginationMode='server'
                             experimentalFeatures={{ newEditingApi: true }}
