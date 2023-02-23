@@ -88,7 +88,8 @@ const columns = [
             link.click();
 
           })
-          .catch(function () {
+          .catch(function (error) {
+            console.log(error)
             enqueueSnackbar(`O download não foi realizado! Arquivo: ${report.file}`, { variant: "error" });
           });
       }
