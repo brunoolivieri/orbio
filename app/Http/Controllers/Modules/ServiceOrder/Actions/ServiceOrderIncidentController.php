@@ -64,7 +64,7 @@ class ServiceOrderIncidentController extends Controller
 
         try {
 
-            $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", request()->service_order_id)->where("flight_plan_id", request()->flight_plan_id)->first();
+            $service_order_flight_plan = ServiceOrderFlightPlan::where("service_order_id", $request->serviceOrderId)->where("flight_plan_id", $request->flightPlanId)->first();
 
             $incident = $this->model->create([
                 "type" => $request->type,
