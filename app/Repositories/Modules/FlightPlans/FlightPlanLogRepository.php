@@ -39,17 +39,19 @@ class FlightPlanLogRepository implements RepositoryInterface
                 "timestamp" => date("Y-m-d H:i:s", $data->get("timestamp"))
             ]);
 
-            //dd($data->get("file_storage")["path"]);
+            $kml_full_path = $data->get("file_storage")["path"] . $data->get("file_storage")["filename"];
 
-            Storage::disk('public')->putFileAs($data->get("file_storage")["path"], $data->get("file_storage")["file"], $data->get("file_storage")["filename"]);
+            Storage::disk('public')->put($kml_full_path, $data->get("file_storage")["contents"]);
 
             if ($data->get("is_valid")) {
 
+                $image_full_path = $data->get("image_storage")["path"] . $data->get("image_storage")["filename"];
+
                 $log->image()->create([
-                    "path" => $data->get("image_storage")["path"] . $data->get("image_storage")["filename"]
+                    "path" => $image_full_path
                 ]);
 
-                Storage::disk('public')->putFileAs($data->get("image_storage")["path"], $data->get("image_storage")["file"], $data->get("image_storage")["filename"]);
+                Storage::disk('public')->put($image_full_path, $data->get("image_storage")["contents"]);
             }
 
             return $log;

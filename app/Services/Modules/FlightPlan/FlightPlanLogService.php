@@ -209,13 +209,13 @@ class FlightPlanLogService implements ServiceInterface
                         "filename" => $kml_original_filename,
                         "timestamp" => $kml_timestamp,
                         "file_storage" => [
+                            "contents" => file_get_contents($logFile),
                             "path" => "flight_plans/flightlogs/valid/{$kml_name_without_extension}/",
-                            "file" => $logFile,
                             "filename" => $kml_original_filename
                         ],
                         "image_storage" => [
+                            "contents" => file_get_contents($logImage),
                             "path" => "images/flightlogs/{$kml_name_without_extension}/",
-                            "file" => $logImage,
                             "filename" => $image_original_filename
                         ]
                     ]));
@@ -230,8 +230,8 @@ class FlightPlanLogService implements ServiceInterface
                     "filename" => $kml_original_filename,
                     "timestamp" => $kml_timestamp,
                     "file_storage" => [
+                        "contents" => file_get_contents($logFile),
                         "path" => "flight_plans/flightlogs/invalid/{$kml_name_without_extension}",
-                        "file" => $logFile,
                         "filename" => $kml_original_filename
                     ]
                 ]);
