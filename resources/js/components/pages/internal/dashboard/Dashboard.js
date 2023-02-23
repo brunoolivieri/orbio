@@ -60,9 +60,7 @@ export const Dashboard = React.memo(() => {
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        console.log('dashboaaaard');
-        console.log(window.location.origin);
-        console.log(process.env.MIX_APP_URL);
+        console.log('valor do MIX: ' + process.env.MIX_APP_URL);
         setPageIndex(0);
         fetchData();
     }, []);
