@@ -25,7 +25,7 @@ import axios from "../../../../../services/AxiosApi";
 import moment from 'moment';
 
 const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'id', headerName: 'ID', width: 90, sortable: true, editable: false },
   {
     field: 'name',
     headerName: 'Nome',
