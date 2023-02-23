@@ -32,7 +32,9 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
 
     const handleSave = () => {
 
-        if (!handleSubmissionValidation()) return '';
+        if (!handleSubmissionValidation()) {
+            return;
+        }
 
         let updatedSelectedFlightPlans = props.selectedFlightPlans.map((selected_flight_plan) => {
             if (selected_flight_plan.id === formData.id) {
@@ -105,7 +107,7 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
                     <Box sx={{ mb: 2 }}>
                         <FetchedDataSelection
                             label_text="Drone"
-                            fetch_from={"/api/load-drones"}
+                            fetch_from={"/api/action/load-drones"}
                             primary_key={"id"}
                             key_content={"name"}
                             name={"drone_id"}
@@ -119,7 +121,7 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
                     <Box sx={{ mb: 2 }}>
                         <FetchedDataSelection
                             label_text="Bateria"
-                            fetch_from={"/api/load-batteries"}
+                            fetch_from={"/api/action/load-batteries"}
                             primary_key={"id"}
                             key_content={"name"}
                             name={"battery_id"}
@@ -133,7 +135,7 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
                     <Box sx={{ mb: 2 }}>
                         <FetchedDataSelection
                             label_text="Equipamento"
-                            fetch_from={"/api/load-equipments"}
+                            fetch_from={"/api/action/load-equipments"}
                             primary_key={"id"}
                             key_content={"name"}
                             name={"equipment_id"}

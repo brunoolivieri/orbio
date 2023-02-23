@@ -92,7 +92,7 @@ export const FlightPlansForServiceOrder = React.memo((props) => {
 
     async function fetchRecords() {
 
-        let url = `api/action/module/service-order/flight-plans?`;
+        let url = `api/action/service-order/flight-plans?`;
         if (props.serviceOrderId != null) {
             url += `service_order_id=${props.serviceOrderId}&`;
         }

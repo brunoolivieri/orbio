@@ -15,7 +15,6 @@ export function Administration() {
   const { setPageIndex } = usePage();
 
   React.useEffect(() => {
-    console.log('admin')
     setPageIndex(1);
   }, []);
 

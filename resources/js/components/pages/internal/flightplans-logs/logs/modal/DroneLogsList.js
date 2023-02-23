@@ -28,6 +28,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export const DroneLogsList = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
+    const [selectedLogs, setSelectedLogs] = React.useState();
 
     const handleClickRecord = (event) => {
 

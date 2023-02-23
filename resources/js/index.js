@@ -16,18 +16,16 @@ import { theme } from "../../resources/js/components/shared/layout/theme";
 export default function Index() {
 
   return (
-    <>
-      <PageProvider>
-        <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <SnackbarProvider maxSnack={3}>
-              <MainRoutes />
-            </SnackbarProvider>
-          </ThemeProvider>
-        </AuthProvider>
-      </PageProvider>
-    </>
+    <PageProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider maxSnack={3}>
+            <MainRoutes />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </PageProvider>
   );
 }
 

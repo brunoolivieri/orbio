@@ -220,7 +220,7 @@ export const CreateServiceOrder = React.memo((props) => {
             <Grid item xs={6}>
               <FetchedDataSelection
                 label_text="Piloto"
-                fetch_from={"/api/load-users?where=profile_id.3"}
+                fetch_from={"/api/action/load-users?where=profile_id.3"}
                 primary_key={"id"}
                 key_content={"name"}
                 name={"pilot_id"}
@@ -234,7 +234,7 @@ export const CreateServiceOrder = React.memo((props) => {
             <Grid item xs={6}>
               <FetchedDataSelection
                 label_text="Cliente"
-                fetch_from={"/api/load-users?where=profile_id.4"}
+                fetch_from={"/api/action/load-users?where=profile_id.4"}
                 primary_key={"id"}
                 key_content={"name"}
                 name={"client_id"}

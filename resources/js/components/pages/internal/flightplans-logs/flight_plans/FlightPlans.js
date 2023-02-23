@@ -270,7 +270,7 @@ export function FlightPlans() {
 
           {selectedRecords.length === 0 &&
             <Tooltip title="Novo Plano">
-              <Link href={`/map?userid=${user.id}`} target="_blank">
+              <Link href={`${window.location.origin}/map?userid=${user.id}`} target="_blank">
                 <IconButton>
                   <FontAwesomeIcon icon={faPlus} color={user.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
