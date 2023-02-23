@@ -56,13 +56,17 @@ class FlightPlanModuleController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->download($filename);
+        try {
+            return $this->service->download($filename);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-        
+
         try {
             $this->service->createOne($request->only(["name", "routes_file", "image_file", "image_filename", "description", "coordinates"]));
             return response(["message" => "Plano de voo criado com sucesso!"], 201);

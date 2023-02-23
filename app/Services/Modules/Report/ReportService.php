@@ -22,7 +22,7 @@ class ReportService implements ServiceInterface
         return $this->repository->getPaginate($limit, $page, $search);
     }
 
-    function download(string $filename, $identifier = null)
+    function download(string $filename)
     {
         if (Storage::disk("public")->exists("reports/$filename")) {
 
@@ -32,6 +32,7 @@ class ReportService implements ServiceInterface
             return response($contents)->withHeaders([
                 "Content-type" => mime_content_type($path)
             ]);
+
         } else {
             return response(["message" => "Nenhum arquivo encontrado."], 404);
         }

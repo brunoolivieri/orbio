@@ -53,11 +53,15 @@ class ReportModuleController extends Controller
         return Excel::download(new GenericExport(new Report(), $request->limit), 'reports.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
-    public function downloadReport(Request $request): \Illuminate\Http\Response
+    public function downloadReport(Request $request, $identifier = null): \Illuminate\Http\Response
     {
         Gate::authorize('reports_read');
 
-        return $this->service->download(request()->filename, request()->report_id);
+        try {
+            return $this->service->download(request()->filename);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function store(ReportStoreRequest $request): \Illuminate\Http\Response

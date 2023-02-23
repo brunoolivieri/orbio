@@ -56,7 +56,11 @@ class FlightPlanModuleLogController extends Controller
     {
         Gate::authorize('flight_plans_read');
 
-        return $this->service->download($filename);
+        try {
+            return $this->service->download($filename);
+        } catch (\Exception $e) {
+            return response(["message" => $e->getMessage()], 500);
+        }
     }
 
     public function processSelectedLogs(Request $request)

@@ -180,6 +180,7 @@ class FlightPlanLogService implements ServiceInterface
 
             $kml_original_filename = $logFile->getClientOriginalName();
             $kml_name_without_extension = str_replace(".kml", "", $kml_original_filename);
+            $kml_content = file_get_contents($logFile);
 
             // Get date format from name - can be a timestamp or a date
             $kml_name_numbers = preg_replace("/[^0-9]/", "", $kml_original_filename);
@@ -190,52 +191,37 @@ class FlightPlanLogService implements ServiceInterface
                 $kml_timestamp = strtotime($kml_date);
             }
 
-            $kml_have_image = false;
-
-            // Search for actual KML image
+            $kml_image_founded = false;
+            $image_data = null;
+            // Search for actual KML image in the set of images
             foreach ($logImages as $logImage) {
-
-                $kml_have_image = true;
 
                 $image_original_filename = $logImage->getClientOriginalName();
                 $image_name_without_extension = str_replace(".jpeg", "", $image_original_filename);
 
-                //dd("KML: {$kml_name_without_extension} | Image: {$image_name_without_extension}");
                 if ($kml_name_without_extension === $image_name_without_extension) {
-
-                    $log = $this->repository->createOne(collect([
-                        "name" => Str::random(10),
-                        "is_valid" => true,
-                        "filename" => $kml_original_filename,
-                        "timestamp" => $kml_timestamp,
-                        "file_storage" => [
-                            "contents" => file_get_contents($logFile),
-                            "path" => "flight_plans/flightlogs/valid/{$kml_name_without_extension}/",
-                            "filename" => $kml_original_filename
-                        ],
-                        "image_storage" => [
-                            "contents" => file_get_contents($logImage),
-                            "path" => "images/flightlogs/{$kml_name_without_extension}/",
-                            "filename" => $image_original_filename
-                        ]
-                    ]));
+                    // Exists an image with same name of log - its the log image
+                    $kml_image_founded = true;
+                    $image_data = [
+                        "contents" => file_get_contents($logImage),
+                        "path" => "images/flightlogs/$image_original_filename",
+                        "filename" => $image_original_filename
+                    ];
                 }
             }
 
-            if (!$kml_have_image) {
-
-                $log = $this->repository->createOne([
-                    "name" => Str::random(10),
-                    "is_valid" => false,
-                    "filename" => $kml_original_filename,
-                    "timestamp" => $kml_timestamp,
-                    "file_storage" => [
-                        "contents" => file_get_contents($logFile),
-                        "path" => "flight_plans/flightlogs/invalid/{$kml_name_without_extension}",
-                        "filename" => $kml_original_filename
-                    ]
-                ]);
-            }
+            $log = $this->repository->createOne(collect([
+                "name" => Str::random(10),
+                "is_valid" => $kml_image_founded,
+                "filename" => $kml_original_filename,
+                "timestamp" => $kml_timestamp,
+                "file_storage" => [
+                    "contents" => $kml_content,
+                    "path" => "flight_plans/flightlogs/valid/$kml_original_filename",
+                    "filename" => $kml_original_filename
+                ],
+                "image_storage" => $image_data
+            ]));
         }
     }
 

@@ -30,28 +30,24 @@ class FlightPlanLogRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-        DB::transaction(function () use ($data) {
-
-            $kml_full_path = $data->get("file_storage")["path"] . $data->get("file_storage")["filename"];
+        return DB::transaction(function () use ($data) {
 
             $log = $this->logModel->create([
                 "name" => $data->get("name"),
                 "filename" => $data->get("filename"),
-                "path" => $kml_full_path,
+                "path" => $data->get("file_storage")["path"],
                 "timestamp" => date("Y-m-d H:i:s", $data->get("timestamp"))
             ]);
 
-            Storage::disk('public')->put($kml_full_path, $data->get("file_storage")["contents"]);
+            Storage::disk('public')->put($data->get("file_storage")["path"], $data->get("file_storage")["contents"]);
 
-            if ($data->get("is_valid")) {
-
-                $image_full_path = $data->get("image_storage")["path"] . $data->get("image_storage")["filename"];
+            if ($data->get("is_valid") && !is_null($data->get("image_storage"))) {
 
                 $log->image()->create([
-                    "path" => $image_full_path
+                    "path" => $data->get("image_storage")["path"]
                 ]);
 
-                Storage::disk('public')->put($image_full_path, $data->get("image_storage")["contents"]);
+                Storage::disk('public')->put($data->get("image_storage")["path"], $data->get("image_storage")["contents"]);
             }
 
             return $log;
