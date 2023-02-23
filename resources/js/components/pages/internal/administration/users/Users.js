@@ -51,7 +51,7 @@ const columns = [
     renderCell: (data) => {
 
       function chipStyle(status) {
-        return status === 1 ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
+        return Number(status) === 1 ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
       }
 
       const chip_style = chipStyle(data.row.status);
