@@ -62,7 +62,7 @@ export const UpdateIncident = React.memo((props) => {
 
     try {
 
-      const response = await axios.patch(`api/action/module/service-order/incidents/${formData.id}`, {
+      const response = await axios.patch(`action/service-order/incidents/${formData.id}`, {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
         description: formData.description
