@@ -22,9 +22,6 @@
     <body>
 
         <div id = "root" >
-
-            <!-- AQUI OS COMPONENTES REACT SÃO RENDERIZADOS -->
-
         </div>
         
     </body>
