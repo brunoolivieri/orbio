@@ -29,10 +29,9 @@ class FlightPlanRepository implements RepositoryInterface
 
     function createOne(Collection $data)
     {
-
         // Flight plan is stored just if does not already exists
-        if (Storage::disk('public')->exists($data->get("path"))) {
-            return response(["message" => "O plano de voo já existe!"], 500);
+        if (Storage::disk('public')->exists($data->get("routes")["path"])) {
+            throw new \Exception("Erro! Esse plano de voo já existe.");
         }
 
         $flight_plan = $this->flightPlanModel->create([

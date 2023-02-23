@@ -32,14 +32,14 @@ class FlightPlanLogRepository implements RepositoryInterface
     {
         DB::transaction(function () use ($data) {
 
+            $kml_full_path = $data->get("file_storage")["path"] . $data->get("file_storage")["filename"];
+
             $log = $this->logModel->create([
                 "name" => $data->get("name"),
                 "filename" => $data->get("filename"),
-                "path" => $data->get("file_storage")["path"] . $data->get("filename"),
+                "path" => $kml_full_path,
                 "timestamp" => date("Y-m-d H:i:s", $data->get("timestamp"))
             ]);
-
-            $kml_full_path = $data->get("file_storage")["path"] . $data->get("file_storage")["filename"];
 
             Storage::disk('public')->put($kml_full_path, $data->get("file_storage")["contents"]);
 
