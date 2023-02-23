@@ -105,7 +105,7 @@ const columns = [
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlan(data.row.file)}>
+        <IconButton onClick={handleDownloadFlightPlan(data.row.file)}>
           <FontAwesomeIcon icon={faFileLines} color={"#00713A"} size="sm" />
         </IconButton>
       )
