@@ -100,7 +100,8 @@ const columns = [
                         link.click();
 
                     })
-                    .catch(() => {
+                    .catch((error) => {
+                        console.log(error)
                         enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
                     })
             }
