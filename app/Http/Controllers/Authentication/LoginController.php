@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Exception;
-// Custom
 use App\Models\Users\User;
 use App\Http\Requests\Auth\Login\LoginRequest;
 use App\Events\Auth\FirstSuccessfulLoginEvent;
@@ -28,7 +27,7 @@ class LoginController extends Controller
                 $user = $this->userModel->find(Auth::user()->id);
 
                 if (!$user) {
-                    throw new Exception("Credencias inválidas");
+                    throw new Exception("Invalid");
                 }
 
                 $request->session()->regenerate();
@@ -47,14 +46,10 @@ class LoginController extends Controller
                 throw new Exception("Credencias inválidas");
             }
         } catch (\Exception $e) {
-            if ($e->getMessage() === "Credencias inválidas") {
-                return response()->json([
-                    "message" => $e->getMessage()
-                ], 404);
+            if ($e->getMessage() === "Invalid") {
+                return response(["message" => "Credenciais inválidas"], 404);
             } else {
-                return response()->json([
-                    "message" => $e->getMessage()
-                ], 500);
+                return response(["message" => $e->getMessage()], 500);
             }
         }
     }

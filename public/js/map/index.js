@@ -1575,7 +1575,7 @@ function flightPlanImageConfirmation() {
 			const blobUrl = URL.createObjectURL(blobImg)
 			image.setAttribute("src", blobUrl);
 			image.setAttribute("id", "image");
-			image.style.maxWidth = '100%';
+			image.style.width = '100%';
 			image.style.height = 'auto';
 			image.style.display = 'block';
 			image.style.margin = '0 auto'
@@ -1620,14 +1620,17 @@ function saveFullPath() {
 	// TAKEOFF: 22
 	content += "1\t0\t0\t22\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
 
+	// Corrigindo a altitude relativa: 16
+	content += "2\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+
 	// CHANGE SPEED: 178
-	content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+	content += "3\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
 
 	// WAYPOINT: 16 - ROTA INICIAL DA FASE 01
 	//console.log(initialPath.length);
 	if (document.getElementById('wp-grid').checked) {
 		index = 0;
-		for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
+		for (j = 4; j < (initialPath.length * 2) + 2; j += 2) {
 			content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
 			index++;
 
@@ -1636,7 +1639,7 @@ function saveFullPath() {
 		}
 	} else {
 		index = 0;
-		for (j = 3; j < (initialPath.length) + 2; j++) {
+		for (j = 4; j < (initialPath.length) + 2; j++) {
 			content += j + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + initialPath[index][1].toFixed(6) + "\t" + initialPath[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
 			index++;
 		}
@@ -1655,7 +1658,7 @@ function saveFullPath() {
 		}
 	} else {
 		index = 0;
-		//console.log(finalDestination);
+		console.log(finalDestination);
 		for (i = j; i < (finalDestination.length) + j - 1; i++) {
 			content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
 			index++;
@@ -1693,9 +1696,7 @@ function saveFullPath() {
 	var blob = new Blob([content],
 		{ type: "text/plain;charset=utf-8" });
 
-	const coordinates = coordinatesLongLat[0];
-
-	saveFlightPlanToStorage(coordinates, blob);
+	saveFlightPlanToStorage(coordinatesLongLat[0], blob);
 }
 
 // == CRIAÇÃO DO REGISTRO DO PLANO DE VOO == //
@@ -1789,7 +1790,7 @@ function savePath() {
 	inputSpeed = document.getElementById("speed").value;
 	var speed = (inputSpeed == '') ? 8 : inputSpeed;
 
-	//console.log("quantos breakpoints: " + breakpoints.length);
+	console.log("quantos breakpoints: " + breakpoints.length);
 
 	// São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
 	for (k = 0; k <= breakpoints.length; k++) {
@@ -1803,11 +1804,14 @@ function savePath() {
 		// TAKEOFF: 22
 		content += "1\t0\t0\t22\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
 
+		// Corrigindo a altitude relativa: 16
+		content += "2\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + home[1].toFixed(6) + "\t" + home[0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
+
 		// CHANGE SPEED: 178
-		content += "2\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
+		content += "3\t0\t3\t178\t" + speed + ".000000" + "\t" + speed + ".000000" + "\t0.000000\t0.000000\t0.000000\t0.000000\t0.000000\t1\n";
 
 		// Identificação do waypoint
-		var id = 3;
+		var id = 4;
 
 		// WAYPOINT: 16 - ROTA INICIAL DA FASE 01
 		// É gerada apenas no primeiro arquivo de rota
@@ -1916,7 +1920,7 @@ function savePath() {
 		// Salvando um printscreen para o relatório
 		savePrintScreen();
 
-	} // Fim do 'for'	
+	} // Fim do 'for'		
 }
 
 // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR A POSIÇÃO INICIAL NO MAPA === //
