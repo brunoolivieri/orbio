@@ -2,12 +2,6 @@ import * as React from 'react';
 import { Dialog, DialogContent, DialogActions, Button, Divider, IconButton } from '@mui/material';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 
-const imageStyle = {
-    width: '90%',
-    height: '90%',
-    cursor: 'pointer'
-}
-
 export function ModalImage(props) {
 
     const [open, setOpen] = React.useState(false);
