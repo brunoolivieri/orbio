@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Dialog, DialogContent, DialogActions, Button, Divider } from '@mui/material';
+import { Dialog, DialogContent, DialogActions, Button, Divider, IconButton } from '@mui/material';
+import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 
 const imageStyle = {
     width: '90%',
@@ -11,7 +12,7 @@ export function ModalImage(props) {
 
     const [open, setOpen] = React.useState(false);
 
-    const handleClickOpen = () => {
+    const handleOpen = () => {
         setOpen(true);
     }
 
@@ -21,14 +22,16 @@ export function ModalImage(props) {
 
     return (
         <>
-            <img src={props.image_url} style={imageStyle} onClick={handleClickOpen} />
+            <IconButton onClick={handleOpen}>
+                <InsertPhotoIcon />
+            </IconButton>
             <Dialog
                 open={open}
                 fullWidth
                 fullScreen
             >
-                <DialogContent>
-                    <img src={props.image_url} width={"100%"} height={"100%"} />
+                <DialogContent style={{ display: 'flex', justifyContent: 'center' }}>
+                    <img src={props.image_url} style={{ width: 'auto', height: '100%' }} />
                 </DialogContent>
                 <Divider />
                 <DialogActions>

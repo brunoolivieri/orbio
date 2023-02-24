@@ -96,7 +96,7 @@ const columns = [
 
       return (
         <Tooltip title={"Download"}>
-          <IconButton onClick={handleDownloadReport(data.row)}>
+          <IconButton onClick={() => handleDownloadReport(data.row)}>
             <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
           </IconButton>
         </Tooltip>

@@ -107,7 +107,7 @@ const columns = [
             }
 
             return (
-                <IconButton onClick={handleDownloadLog(data.row.filename)}>
+                <IconButton onClick={() => handleDownloadLog(data.row.filename)}>
                     <FontAwesomeIcon icon={faFile} color={"#00713A"} size="sm" />
                 </IconButton>
             )
