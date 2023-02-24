@@ -28,18 +28,18 @@ export const MenuMobile = React.memo((props) => {
     {
       id: '',
       children: [
-        { id: 'Dashboard', icon: <DashboardIcon />, active: false, access: true, path: "" },
-        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.user_powers["1"].profile_powers.read == 1, path: "administracao" },
-        { id: 'Planos', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "planos" },
-        { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "ordens" },
-        { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "relatorios" },
-        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "equipamentos" }
+        { id: 'Dashboard', icon: <DashboardIcon />, active: false, access: true, path: "/dashboard" },
+        { id: 'Administração', icon: <AdminPanelSettingsIcon />, access: user.user_powers["1"].profile_powers.read == 1, path: "/administracao" },
+        { id: 'Planos', icon: <MapIcon />, access: user.user_powers["2"].profile_powers.read == 1, path: "/planos" },
+        { id: 'Ordens', icon: <AssignmentIcon />, access: user.user_powers["3"].profile_powers.read == 1, path: "/ordens" },
+        { id: 'Relatórios', icon: <AssessmentIcon />, access: user.user_powers["4"].profile_powers.read == 1, path: "/relatorios" },
+        { id: 'Equipamentos', icon: <HomeRepairServiceIcon />, access: user.user_powers["5"].profile_powers.read == 1, path: "/equipamentos" }
       ],
     },
     {
       id: 'Outros',
       children: [
-        { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "conta" }
+        { id: 'Conta', icon: <AccountCircleIcon />, access: true, path: "/conta" }
       ],
     },
   ];
