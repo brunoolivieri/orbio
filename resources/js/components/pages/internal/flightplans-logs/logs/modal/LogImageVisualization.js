@@ -24,7 +24,7 @@ export function LogImageVisualization(props) {
             <Dialog
                 open={open}
                 fullWidth
-                maxWidth="md"
+                fullScreen
             >
                 <DialogContent>
                     <img style={{ borderRadius: 2, width: "100%", height: "100%" }} src={props.actual_log.image.dataURL} />

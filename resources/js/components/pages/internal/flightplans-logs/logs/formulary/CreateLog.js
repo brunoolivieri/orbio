@@ -23,34 +23,35 @@ export const CreateLog = React.memo((props) => {
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [logs, setLogs] = React.useState([]);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+    const [alert, setAlert] = React.useState(initialDisplayAlert);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     function handleSubmit() {
 
-        if (!checkIfAllValidLogsHaveImages()) return '';
+        if (!checkIfAllValidLogsHaveImages()) {
+            return;
+        }
 
         setLoading(true);
 
         const formData = new FormData();
         logs.forEach((log) => {
 
-            if (log.status.to_save) {
+            if (log.verification.to_save) {
 
                 // Create KML file
-                const kml_filename = log.name;
                 const file_content = log.contents;
                 const file_type = "application/xml";
                 const blob = new Blob([file_content], { type: file_type });
-                const logFile = new File([blob], kml_filename, { type: file_type });
+                const logFile = new File([blob], log.filename, { type: file_type });
 
                 formData.append("files[]", logFile);
 
-                if (log.status.is_valid) {
+                if (log.verification.is_valid) {
                     // Create image for valid KML
-                    // formData.append("images[]", log.image.dataURL);
-                    const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/png" });
+                    //formData.append("images[]", log.image.dataURL);
+                    const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/jpeg" });
                     formData.append("images[]", imageFile);
                 }
             }
@@ -68,7 +69,7 @@ export const CreateLog = React.memo((props) => {
             });
             successResponse(response);
         } catch (error) {
-            setDisplayAlert({ display: true, type: "error", message: error.response.data.message });
+            setAlert({ display: true, type: "error", message: error.response.data.message });
         } finally {
             setLoading(false);
         }
@@ -77,18 +78,18 @@ export const CreateLog = React.memo((props) => {
     function checkIfAllValidLogsHaveImages() {
 
         let validation = logs.reduce((acm, log) => {
-            return acm && (Boolean(log.status.is_valid) && Boolean(log.image));
+            return acm && (Boolean(log.verification.is_valid) && Boolean(log.image));
         }, true);
 
         if (!validation) {
-            setDisplayAlert({ display: true, type: "error", message: "Todos os logs válidos devem ter imagens." });
+            setAlert({ display: true, type: "error", message: "Todos os logs válidos devem ter imagens." });
         }
 
         return validation;
     }
 
     function successResponse(response) {
-        setDisplayAlert({ display: true, type: "success", message: response.data.message });
+        setAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
             handleClose();
@@ -100,7 +101,7 @@ export const CreateLog = React.memo((props) => {
     }
 
     function handleClose() {
-        setDisplayAlert(initialDisplayAlert);
+        setAlert(initialDisplayAlert);
         setLogs([]);
         setOpen(false);
     }
@@ -112,10 +113,17 @@ export const CreateLog = React.memo((props) => {
 
         files.forEach((file) => {
             formData.append("files[]", file);
-        })
+        });
 
-        const response = await axios.post("api/process-selected-logs", formData);
-        setLogs(response.data);
+        try {
+
+            const response = await axios.post("api/action/flight-plans-logs/processing-uploads", formData);
+            setLogs(response.data);
+
+        } catch (e) {
+            console.log(e);
+            setAlert({ display: true, type: "error", message: e.response.data.message });
+        }
 
     }
 
@@ -134,7 +142,7 @@ export const CreateLog = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>UPLOAD DE LOG</DialogTitle>
                 <Divider />
@@ -174,20 +182,23 @@ export const CreateLog = React.memo((props) => {
                                         secondaryAction={
                                             <Stack direction="row" spacing={1}>
 
-                                                {log.status.is_valid ?
+                                                {log.verification.is_valid ?
                                                     <>
-                                                        <Tooltip title={log.status.message}>
+                                                        {/* Icon */}
+                                                        <Tooltip title={log.verification.message}>
                                                             <IconButton>
                                                                 <CheckCircleIcon color="success" />
                                                             </IconButton>
                                                         </Tooltip>
-                                                        <LogImageGeneration actual_log={log} index={index} logs={logs} setLogs={setLogs} />
+                                                        {/* Image generation map*/}
+                                                        <LogImageGeneration actual_log={log} logs={logs} setLogs={setLogs} />
+                                                        {/* Image visualization */}
                                                         {log.image &&
                                                             <LogImageVisualization actual_log={log} />
                                                         }
                                                     </>
                                                     :
-                                                    <Tooltip title={log.status.message}>
+                                                    <Tooltip title={log.verification.message}>
                                                         <IconButton>
                                                             <DangerousIcon color="error" />
                                                         </IconButton>
@@ -197,7 +208,7 @@ export const CreateLog = React.memo((props) => {
                                             </Stack>
                                         }
                                     >
-                                        <ListItemText primary={`Nome: ${log.original_name}`} secondary={`Tamanho: ${log.size}`} />
+                                        <ListItemText primary={`Nome: ${log.filename}`} secondary={`Tamanho: ${log.size}`} />
                                     </ListItem>
                                 ))}
                             </ul>
@@ -207,8 +218,8 @@ export const CreateLog = React.memo((props) => {
 
                 </DialogContent>
 
-                {displayAlert.display &&
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                {alert.display &&
+                    <Alert severity={alert.type}>{alert.message}</Alert>
                 }
 
                 {loading && <LinearProgress />}

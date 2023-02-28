@@ -11,7 +11,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { CreateReport } from './formulary/report/CreateReport';
 import { UpdateReport } from './formulary/report/UpdateReport';
@@ -97,7 +97,7 @@ const columns = [
       return (
         <Tooltip title={"Download"}>
           <IconButton onClick={() => handleDownloadReport(data.row)}>
-            <FontAwesomeIcon icon={faFilePdf} size="sm" color={"#007937"} />
+            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color={"#007937"} />
           </IconButton>
         </Tooltip>
       )
@@ -254,7 +254,7 @@ export function Reports() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            placeholder={"Pesquisar um incidente por ID"}
+            placeholder={"Pesquisar um incidente por id"}
             onChange={(e) => setSearch(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{

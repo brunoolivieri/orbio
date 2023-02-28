@@ -5,14 +5,13 @@ import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 // Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faFileLines } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
@@ -77,7 +76,6 @@ const columns = [
     sortable: false,
     editable: false,
     width: 150,
-    align: 'center',
     renderCell: (data) => {
 
       const { enqueueSnackbar } = useSnackbar();
@@ -106,7 +104,7 @@ const columns = [
 
       return (
         <IconButton onClick={() => handleDownloadFlightPlan(data.row.file)}>
-          <FontAwesomeIcon icon={faFileLines} color={"#00713A"} size="sm" />
+          <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )
     }
@@ -117,7 +115,6 @@ const columns = [
     sortable: false,
     editable: false,
     width: 150,
-    align: 'center',
     renderCell: (data) => {
 
       const { enqueueSnackbar } = useSnackbar();
@@ -169,7 +166,7 @@ const columns = [
 
       return (
         <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.file)}>
-          <FontAwesomeIcon icon={faFileCsv} color={"#00713A"} size="sm" />
+          <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )
     }

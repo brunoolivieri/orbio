@@ -7,7 +7,7 @@ import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -171,14 +171,13 @@ const columns = [
     {
         field: 'report',
         headerName: 'Relatório',
-        sortable: true,
+        sortable: false,
         editable: false,
         width: 150,
-        align: 'center',
         renderCell: (data) => {
 
             function iconStyle(is_finished) {
-                return is_finished ? { icon: faFilePdf, color: "#007937", size: "sm" } : { icon: faFilePdf, color: "#E0E0E0", size: "sm" }
+                return is_finished ? { icon: faFileArrowDown, color: "#007937", size: "sm" } : { icon: faFileArrowDown, color: "#E0E0E0", size: "sm" }
             }
 
             const icon_style = iconStyle(data.row.finished);
@@ -347,7 +346,7 @@ export function ServiceOrders() {
                 <Grid item xs={12}>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar ordem por ID, número ou nome dos usuários envolvidos"}
+                        placeholder={"Pesquisar ordem por id, número ou nome dos usuários envolvidos"}
                         onChange={(e) => setSearch(e.currentTarget.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                         InputProps={{
