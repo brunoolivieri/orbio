@@ -59,7 +59,7 @@ export const LogImageGeneration = React.memo((props) => {
                 fullScreen
             >
                 <DialogTitle>
-                    IMAGEM DO LOG
+                    GERAÇÃO DE IMAGEM
                 </DialogTitle>
                 <Divider />
                 <DialogContent>

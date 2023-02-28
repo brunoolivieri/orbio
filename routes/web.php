@@ -25,7 +25,8 @@ use App\Http\Controllers\Modules\Report\{
 };
 use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleController,
-    FlightPlanModuleLogController
+    FlightPlanModuleLogController,
+    Actions\UploadedLogsController
 };
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
@@ -100,12 +101,12 @@ Route::group(["prefix" => "api"], function () {
         Route::get("plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
         Route::get("reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
         Route::get("logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
-        Route::post("process-selected-logs", [FlightPlanModuleLogController::class, "processSelectedLogs"]);
         // Module Actions
         Route::get("action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
         Route::apiResource("action/service-order/incidents", ServiceOrderIncidentController::class);
         Route::get("action/report/service-orders", LoadServiceOrderForReport::class); // To refact
+        Route::post("action/flight-plans-logs/processing-uploads", UploadedLogsController::class);
         Route::get("action/report/weather-data", WeatherDataController::class); // To refact
         Route::get("action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class); // To refact
         // Generic Actions

@@ -63,19 +63,12 @@ class FlightPlanModuleLogController extends Controller
         }
     }
 
-    public function processSelectedLogs(Request $request)
-    {
-        Gate::authorize('flight_plans_write');
-
-        return $this->service->processSelectedLogs((array) $request->file('files'));
-    }
-
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-
+        dd($request->all());
         try {
-            $result = $this->service->createOne([
+            $this->service->createOne([
                 "logs" => $request->file('files'),
                 "images" => $request->file('images')
             ]);
