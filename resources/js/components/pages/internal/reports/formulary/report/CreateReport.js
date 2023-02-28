@@ -153,7 +153,7 @@ export const CreateReport = (props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
       >
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
         <Divider />

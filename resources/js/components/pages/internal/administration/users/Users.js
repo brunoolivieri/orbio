@@ -240,7 +240,7 @@ export function Users() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            placeholder={"Pesquisar um usuário por ID, nome, email ou perfil"}
+            placeholder={"Pesquisar um usuário por id, nome, email ou perfil"}
             onChange={(e) => setSearch(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{

@@ -29,7 +29,9 @@ export const CreateLog = React.memo((props) => {
 
     function handleSubmit() {
 
-        if (!checkIfAllValidLogsHaveImages()) return '';
+        if (!checkIfAllValidLogsHaveImages()) {
+            return;
+        }
 
         setLoading(true);
 
@@ -39,18 +41,17 @@ export const CreateLog = React.memo((props) => {
             if (log.verification.to_save) {
 
                 // Create KML file
-                const kml_filename = log.name;
                 const file_content = log.contents;
                 const file_type = "application/xml";
                 const blob = new Blob([file_content], { type: file_type });
-                const logFile = new File([blob], kml_filename, { type: file_type });
+                const logFile = new File([blob], log.filename, { type: file_type });
 
                 formData.append("files[]", logFile);
 
                 if (log.verification.is_valid) {
                     // Create image for valid KML
-                    // formData.append("images[]", log.image.dataURL);
-                    const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/png" });
+                    //formData.append("images[]", log.image.dataURL);
+                    const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/jpeg" });
                     formData.append("images[]", imageFile);
                 }
             }
@@ -190,7 +191,7 @@ export const CreateLog = React.memo((props) => {
                                                             </IconButton>
                                                         </Tooltip>
                                                         {/* Image generation map*/}
-                                                        <LogImageGeneration actual_log={log} index={index} logs={logs} setLogs={setLogs} />
+                                                        <LogImageGeneration actual_log={log} logs={logs} setLogs={setLogs} />
                                                         {/* Image visualization */}
                                                         {log.image &&
                                                             <LogImageVisualization actual_log={log} />
@@ -207,7 +208,7 @@ export const CreateLog = React.memo((props) => {
                                             </Stack>
                                         }
                                     >
-                                        <ListItemText primary={`Nome: ${log.original_name}`} secondary={`Tamanho: ${log.size}`} />
+                                        <ListItemText primary={`Nome: ${log.filename}`} secondary={`Tamanho: ${log.size}`} />
                                     </ListItem>
                                 ))}
                             </ul>

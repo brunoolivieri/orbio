@@ -11,7 +11,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { faFile } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { CreateLog } from './formulary/CreateLog';
@@ -79,7 +79,6 @@ const columns = [
         sortable: false,
         editable: false,
         width: 150,
-        align: 'center',
         renderCell: (data) => {
 
             const { enqueueSnackbar } = useSnackbar();
@@ -108,7 +107,7 @@ const columns = [
 
             return (
                 <IconButton onClick={() => handleDownloadLog(data.row.filename)}>
-                    <FontAwesomeIcon icon={faFile} color={"#00713A"} size="sm" />
+                    <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
                 </IconButton>
             )
         }
@@ -253,7 +252,7 @@ export function Logs() {
                 <Grid item xs={12}>
                     <TextField
                         fullWidth
-                        placeholder={"Pesquisar plano por ID ou nome"}
+                        placeholder={"Pesquisar plano por id ou nome"}
                         onChange={(e) => setSearch(e.currentTarget.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
                         InputProps={{

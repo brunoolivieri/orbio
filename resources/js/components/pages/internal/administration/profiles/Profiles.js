@@ -271,7 +271,7 @@ export function Profiles() {
         <Grid item xs={12}>
           <TextField
             fullWidth
-            placeholder={"Pesquisar perfil por ID"}
+            placeholder={"Pesquisar perfil por id"}
             onChange={(e) => setSearch(e.currentTarget.value)}
             onKeyDown={(e) => { if (e.key === "Enter") setReload((old) => !old) }}
             InputProps={{

@@ -43,7 +43,7 @@
 
     <div id="map"></div>
 
-	<button id="print-button" class = "btn btn-success">PRINT</button>
+	<button type="button" id="print-button" class = "btn">PRTSCN</button>
 
 	<script>
         // Token gerado para uso no MAPBOX-GL
@@ -95,15 +95,14 @@
         // Event from log creation modal (react interface)
         window.addEventListener("message", (event) => {
 
-			if(event.data.type === 'log-creation-request'){
+			if(event.data.type === 'log-creation-request' && (event.origin === window.location.origin)){
 
-				let contents = event.data.log.contents;
-				const regex = new RegExp(".tlog.kmz");
+                const data = event.data;
 
-				if (regex.test(event.data.log.original_name)) {
-					importKMLPath(contents);
+				if (data.log.original_extension === "tlog.kmz") {
+					importKMLPath(data.log.contents);
 				} else {
-					importKMLPolygon(contents);
+					importKMLPolygon(data.log.contents);
 				}
 
 				document.getElementById("print-button").addEventListener("click", () => {
@@ -126,13 +125,7 @@
 
                     var dataURL = canvas.toDataURL('image/jpeg', 1.0);
 
-                    fileNameImg = event.data.log.original_name.replace(/(.tlog.kmz|.kml)$/, "") + ".jpeg";
-                    
-                    /*
-                    canvas.toBlob(function(blobImg) {
-                        saveAs(blobImg, fileNameImg);
-                    });
-                    */
+                    fileNameImg = event.data.log.filename.replace(/(.kml)$/, "") + ".jpeg";
                     
                     const response = {
                         type: 'iframe-response',
@@ -144,7 +137,7 @@
                     map.addControl(draw);
                     map.addControl(mapBoxNavigationControl);
                     document.getElementById("print-button").style.display = 'block';
-
+                    
                     event.source.postMessage(response, event.origin);
 
 		        });	

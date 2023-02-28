@@ -23,14 +23,14 @@ class UploadedLogsController extends Controller
             foreach ($logs as $index => $log) {
 
                 $original_log_name = $log->getClientOriginalName();
-                $is_tlog_kmz = preg_match("/\.tlog\.kmz$/", $original_log_name);
+                $is_tlog_kmz = (bool) preg_match("/\.tlog\.kmz$/", $original_log_name);
 
                 // The kml filename must be [name].kml - if is different, is certainly a tlog.kmz that need to be converted to .kml
                 $kml_filename = $is_tlog_kmz ? preg_replace("/\.tlog\.kmz$/", ".kml", $original_log_name) : $original_log_name;
                 $kml_filename_without_extension = str_replace(".kml", "", $kml_filename);
 
                 // Now, being an [filename].kml, lets check if already exists
-                $already_exists = Storage::disk('public')->exists("flight_plans/flightlogs/valid/{$kml_filename_without_extension}/" . $kml_filename) || Storage::disk('public')->exists("flight_plans/flightlogs/invalid/{$kml_filename_without_extension}/" . $kml_filename);
+                $already_exists = Storage::disk('public')->exists("flightlogs/valid/{$kml_filename_without_extension}/" . $kml_filename) || Storage::disk('public')->exists("flightlogs/invalid/{$kml_filename_without_extension}/" . $kml_filename);
 
                 if ($already_exists) {
 
@@ -41,7 +41,7 @@ class UploadedLogsController extends Controller
                             "message" => "Já existe"
                         ],
                         "size" => filesize($log),
-                        "original_name" => $original_log_name,
+                        "filename" => $original_log_name,
                         "image" => null,
                         "contents" => null
 
@@ -49,18 +49,17 @@ class UploadedLogsController extends Controller
                 } else {
                     $result[$index] = $this->processingNewLog($log, $is_tlog_kmz, $kml_filename);
                 }
-
-                return response($result, 200);
             }
+
+            return response($result, 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
         }
     }
 
-    private function processingNewLog($log, $is_kmz, $kml_filename)
+    private function processingNewLog($log, $is_tlog_kmz, $kml_filename)
     {
-
-        if ($is_kmz) {
+        if ($is_tlog_kmz) {
 
             $zip = new ZipArchive;
 
@@ -81,24 +80,37 @@ class UploadedLogsController extends Controller
 
                 $result = $this->generateKMLFromTlogContent($log, $tlog_kml_content, $kml_filename);
             } else {
-
                 // If actual tlog cant be open
-
                 $result = [
                     "verification" => [
                         "is_valid" => false,
-                        "message" => "Corrompido",
-                        "to_save" => true
+                        "to_save" => true,
+                        "message" => "Corrompido"
                     ],
                     "size" => filesize($log),
-                    "original_name" => $log->getClientOriginalName(),
+                    "filename" => $kml_filename,
+                    "original_extension" => "tlog.kmz",
                     "image" => null,
                     "contents" => null
                 ];
             }
+        } else {
 
-            return $result;
+            $result = [
+                "verification" => [
+                    "is_valid" => true,
+                    "to_save" => true,
+                    "message" => "Processado"
+                ],
+                "size" => filesize($log),
+                "filename" => $kml_filename,
+                "original_extension" => "kml",
+                "contents" => file_get_contents($log),
+                "image" => null
+            ];
         }
+
+        return $result;
     }
 
     private function generateKMLFromTlogContent($log, $tlog_kml_content, $kml_filename)
@@ -109,7 +121,7 @@ class UploadedLogsController extends Controller
         $tlog_kml_coordinates = (string) $tlog_kml_placemark->LineString->coordinates;
 
         // Creating .kml from .tlog.kml content 
-        $kml = new SimpleXMLElement("<kml />");
+        $kml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><kml/>', LIBXML_NOXMLDECL);
         $document = $kml->addChild('Document');
         $placemark = $document->addChild('Placemark');
         $placemark->addChild('name', $tlog_kml_placemark->name);
@@ -118,7 +130,7 @@ class UploadedLogsController extends Controller
         $line->addChild('coordinates', substr($tlog_kml_coordinates, strpos($tlog_kml_coordinates, "\n") + 1)); // string coordinates without the first "\n"
 
         // kml content as string and filename
-        $kml_string_content = $kml->asXML();
+        $kml_content = $kml->asXML();
 
         // Actual tlog.kml is valid and generated a KML
         $result = [
@@ -128,9 +140,9 @@ class UploadedLogsController extends Controller
                 "message" => "Processado"
             ],
             "size" => filesize($log),
-            "original_name" => $log->getClientOriginalName(),
-            "name" => $kml_filename,
-            "contents" => $kml_string_content,
+            "filename" => $kml_filename,
+            "original_extension" => "tlog.kmz",
+            "contents" => $kml_content,
             "image" => null
         ];
 

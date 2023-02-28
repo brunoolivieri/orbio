@@ -5,7 +5,7 @@ import PhotoSizeSelectActualIcon from '@mui/icons-material/PhotoSizeSelectActual
 export const LogImageGeneration = React.memo((props) => {
 
     const [open, setOpen] = React.useState(false);
-    const [logImg, setLogImg] = React.useState(null);
+    const [image, setImage] = React.useState(null);
 
     const handleOpen = () => {
         setOpen(true);
@@ -13,23 +13,23 @@ export const LogImageGeneration = React.memo((props) => {
 
     const handleClose = () => {
         setOpen(false);
-        setLogImg(null);
+        setImage(null);
     }
 
     function handleSaveIframeImage() {
 
-        props.setLogs((selectedLogs) => {
+        props.setLogs((logs) => {
 
-            return selectedLogs.map((selected_log) => {
+            return logs.map((log) => {
 
-                if (selected_log.original_name == props.actual_log.original_name) {
+                if (String(log.filename) === String(props.actual_log.filename)) {
                     return {
-                        ...selected_log,
-                        image: logImg
+                        ...log,
+                        ["image"]: image
                     }
-                } else {
-                    return selected_log;
                 }
+
+                return log;
             });
 
         });
@@ -39,11 +39,9 @@ export const LogImageGeneration = React.memo((props) => {
 
     // Listen for a response from the iframe
     window.addEventListener("message", (event) => {
-
-        if (event.data.type === 'iframe-response') {
-            setLogImg(event.data.canvas);
+        if (event.data.type === 'iframe-response' && (event.origin === window.location.origin)) {
+            setImage(event.data.canvas);
         }
-
     }, false);
 
     return (
@@ -75,7 +73,7 @@ export const LogImageGeneration = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={handleSaveIframeImage} variant="contained" disabled={logImg == null}>
+                    <Button onClick={handleSaveIframeImage} variant="contained" disabled={image === null}>
                         Salvar
                     </Button>
                 </DialogActions>

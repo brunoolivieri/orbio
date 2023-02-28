@@ -66,12 +66,13 @@ class FlightPlanModuleLogController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-        dd($request->all());
+        
         try {
-            $this->service->createOne([
-                "logs" => $request->file('files'),
-                "images" => $request->file('images')
-            ]);
+
+            $kml_logs = $request->file('files');
+            $kml_logs_images = $request->file('images');
+
+            $this->service->createOne(["logs" => $kml_logs, "images" => $kml_logs_images]);
             return response(["message" => "Log criado com sucesso!"], 201);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
@@ -83,7 +84,7 @@ class FlightPlanModuleLogController extends Controller
         Gate::authorize('flight_plans_write');
 
         try {
-            $result = $this->service->updateOne($request->only(["name", "service_order_id"]), $id);
+            $this->service->updateOne($request->only(["name", "service_order_id"]), $id);
             return response(["message" => "Log atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
@@ -95,7 +96,7 @@ class FlightPlanModuleLogController extends Controller
         Gate::authorize('flight_plans_write');
 
         try {
-            $result = $this->service->delete($request->ids);
+            $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
