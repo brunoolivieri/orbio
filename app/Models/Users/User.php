@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 use Database\Factories\UserFactory;
-// Models
 use App\Models\PersonalDocuments\PersonalDocument;
 use App\Models\Profiles\Profile;
 use App\Models\Modules\Module;
@@ -114,16 +112,6 @@ class User extends Authenticatable
     function sessions()
     {
         return $this->hasMany(Session::class, "user_id");
-    }
-
-    /**
-     * Factory that uses this model for generate random users
-     *
-     * @return \Illuminate\Database\Eloquent\Factories\Factory
-     */
-    protected static function newFactory(): \Illuminate\Database\Eloquent\Factories\Factory
-    {
-        return UserFactory::new();
     }
 
     /**
