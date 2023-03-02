@@ -45,7 +45,7 @@ class ReportService implements ServiceInterface
         }
 
         // Filename is the hash of the content
-        $file_content = file_get_contents($data["file"]);
+        $file_content = file_get_contents($data["file"]->getRealPath());
         $file_content_hash = md5($file_content);
         $filename = $file_content_hash . ".pdf";
         $path = "reports/" . $filename;

@@ -73,81 +73,81 @@ export const ReportDocument = React.memo((props) => {
     return (
         <Document>
             {props.data.flight_plans.map((flight_plan, index) => (
-                <>
-                    <Page size="A4" style={styles.page} key={flight_plan.id}>
 
-                        {index === 0 &&
-                            <View style={styles.section}>
-                                <Image
-                                    src={BirdviewLogo}
-                                    style={styles.logo}
-                                ></Image>
-                                <Text style={styles.top_legends}>{`RELATÓRIO: ${props.data.name}`.toUpperCase()}</Text>
-                                <Text style={styles.top_legends}>{`CLIENTE: ${props.data.client}`.toUpperCase()}</Text>
-                                <Text style={styles.top_legends}>{`REGIÃO: ${props.data.city}, ${props.data.state}`.toUpperCase()}</Text>
-                                <Text style={styles.top_legends}>{`FAZENDA: ${props.data.farm}`.toUpperCase()}</Text>
-                            </View>
-                        }
+                <Page size="A4" style={styles.page} key={flight_plan.id}>
 
-                        <View style={styles.section}>
-                            <Text style={styles.top_legends}>
-                                {`PLANO DE VOO: ${flight_plan.name}`.toUpperCase()}
-                            </Text>
-                        </View>
-                        <View style={styles.table_section}>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_head, flexBasis: '160px', textAlign: 'center' }}>{"ÁREA TOTAL APLICADA (ha)"}</Text>
-                                <Text style={{ ...styles.table_head, flexBasis: '130px', textAlign: 'center' }}>{"DATA DA APLICAÇÃO"}</Text>
-                                <Text style={{ ...styles.table_head, flexBasis: '115px', textAlign: 'center' }}>{"Nº DA APLICAÇÃO"}</Text>
-                                <Text style={{ ...styles.table_head, flexBasis: '100px', textAlign: 'center' }}>{"DOSAGEM/Ha"}</Text>
-                            </View>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_data, flexBasis: '160px', textAlign: 'center' }}>{flight_plan.area}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '130px', textAlign: 'center' }}>{moment(flight_plan.date).format('DD/MM/YYYY')}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '115px', textAlign: 'center' }}>{flight_plan.number}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '100px', textAlign: 'center' }}>{flight_plan.dosage}</Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.table_section}>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_head, flexBasis: '200px', textAlign: 'center' }}>{"CONDIÇÕES CLIMÁTICAS"}</Text>
-                                <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"INICIAL"}</Text>
-                                <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"FINAL"}</Text>
-                            </View>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"TEMPERATURA (Cº)"}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.temperature}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.temperature}</Text>
-                            </View>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"UMIDADE"}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.humidity}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.humidity}</Text>
-                            </View>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"VENTO (Km/h)"}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.wind}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.wind}</Text>
-                            </View>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"FORNECEDOR"}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.provider}</Text>
-                            </View>
-                            <View style={styles.table_row}>
-                                <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"RESPONSÁVEL"}</Text>
-                                <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.responsible}</Text>
-                            </View>
-                        </View>
-
+                    {index === 0 &&
                         <View style={styles.section}>
                             <Image
-                                src={flight_plan.log_image_url}
+                                src={BirdviewLogo}
+                                style={styles.logo}
                             ></Image>
+                            <Text style={styles.top_legends}>{`RELATÓRIO: ${props.data.name}`.toUpperCase()}</Text>
+                            <Text style={styles.top_legends}>{`CLIENTE: ${props.data.client}`.toUpperCase()}</Text>
+                            <Text style={styles.top_legends}>{`REGIÃO: ${props.data.city}, ${props.data.state}`.toUpperCase()}</Text>
+                            <Text style={styles.top_legends}>{`FAZENDA: ${props.data.farm}`.toUpperCase()}</Text>
                         </View>
+                    }
 
-                    </Page>
-                </>
+                    <View style={styles.section}>
+                        <Text style={styles.top_legends}>
+                            {`PLANO DE VOO: ${flight_plan.name}`.toUpperCase()}
+                        </Text>
+                    </View>
+                    <View style={styles.table_section}>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_head, flexBasis: '160px', textAlign: 'center' }}>{"ÁREA TOTAL APLICADA (ha)"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '130px', textAlign: 'center' }}>{"DATA DA APLICAÇÃO"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '115px', textAlign: 'center' }}>{"Nº DA APLICAÇÃO"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '100px', textAlign: 'center' }}>{"DOSAGEM/Ha"}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '160px', textAlign: 'center' }}>{flight_plan.area}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '130px', textAlign: 'center' }}>{moment(flight_plan.date).format('DD/MM/YYYY')}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '115px', textAlign: 'center' }}>{flight_plan.number}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '100px', textAlign: 'center' }}>{flight_plan.dosage}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.table_section}>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_head, flexBasis: '200px', textAlign: 'center' }}>{"CONDIÇÕES CLIMÁTICAS"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"INICIAL"}</Text>
+                            <Text style={{ ...styles.table_head, flexBasis: '155px', textAlign: 'center' }}>{"FINAL"}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"TEMPERATURA (Cº)"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.temperature}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.temperature}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"UMIDADE"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.humidity}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.humidity}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"VENTO (Km/h)"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.wind}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '155px', textAlign: 'center' }}>{flight_plan.wind}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"FORNECEDOR"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.provider}</Text>
+                        </View>
+                        <View style={styles.table_row}>
+                            <Text style={{ ...styles.table_data, flexBasis: '200px', textAlign: 'center' }}>{"RESPONSÁVEL"}</Text>
+                            <Text style={{ ...styles.table_data, flexBasis: '310px', textAlign: 'center' }}>{flight_plan.responsible}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.section}>
+                        <Image
+                            src={flight_plan.log_image_url}
+                        ></Image>
+                    </View>
+
+                </Page>
+
             ))}
         </Document >
     )
@@ -194,7 +194,7 @@ export const ReportVisualization = React.memo((props) => {
     );
 });
 
-export const DownloadReport = React.memo((props) => {
+export const UploadReport = React.memo((props) => {
 
     const handleSaveReport = async () => {
         const blob = await pdf(<ReportDocument data={{ ...props.data, flight_plans: props.flightPlans }} />).toBlob();
@@ -202,17 +202,8 @@ export const DownloadReport = React.memo((props) => {
     }
 
     return (
-        <>
-            {props.canSave ?
-                <Button variant="contained" startIcon={<LockOpenIcon />} onClick={handleSaveReport}>
-                    Salvar
-                </Button >
-                :
-                <Button variant="contained" startIcon={<LockIcon />} disabled>
-                    Salvar
-                </Button >
-            }
-        </>
-
+        <Button variant="contained" startIcon={<LockOpenIcon />} disabled={!props.canSave} onClick={handleSaveReport}>
+            Salvar
+        </Button >
     )
 });

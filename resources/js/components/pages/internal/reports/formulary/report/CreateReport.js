@@ -9,7 +9,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FlightPlanDataForReport } from '../flight-plan/FlightPlanDataForReport';
 import { ServiceOrderForReport } from '../../table-selection/ServiceOrderForReport';
 import { useAuth } from '../../../../../context/Auth';
-import { ReportVisualization, DownloadReport } from "../../modal/ReportBuilder";
+import { ReportVisualization, UploadReport } from "../../modal/ReportBuilder";
 // Lib
 import axios from '../../../../../../services/AxiosApi';
 
@@ -64,29 +64,32 @@ export const CreateReport = (props) => {
 
   async function handleSubmit(report_blob) {
 
-    if (!formSubmissionValidation()) return '';
+    if (!formSubmissionValidation()) {
+      return;
+    }
 
     setLoading(true);
 
-    const report_file = new File([report_blob], `${formData.name}.pdf`, { type: 'application/pdf' });
-
-    const formData_ = new FormData();
-    formData_.append('name', formData.name);
-    formData_.append('file', report_file);
-    formData_.append('blob', report_blob);
-    formData_.append('service_order_id', serviceOrder.id);
-
     try {
+
+      const report_file = new File([report_blob], `${formData.name}.pdf`, { type: 'application/pdf' });
+
+      const formData_ = new FormData();
+      formData_.append('name', formData.name);
+      formData_.append('file', report_file);
+      formData_.append('blob', report_blob);
+      formData_.append('service_order_id', serviceOrder.id);
 
       const response = await axios.post("api/module/reports", formData_, {
         headers: {
-          'Content-Type': 'application/pdf'
+          'Content-Type': 'multipart/form-data'
         }
       });
 
       successResponse(response);
 
     } catch (error) {
+      console.log(error)
       errorResponse(error.response);
     } finally {
       setLoading(false);
@@ -129,7 +132,7 @@ export const CreateReport = (props) => {
       }
       setFormError(response_errors);
     } else {
-      setAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 
@@ -306,7 +309,7 @@ export const CreateReport = (props) => {
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
           {serviceOrder && <ReportVisualization basicData={formData} flightPlans={flightPlans} />}
-          {flightPlans && <DownloadReport data={formData} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleSubmit} />}
+          {flightPlans && <UploadReport data={formData} flightPlans={flightPlans} canSave={canSave} handleRequestServerToSaveReport={handleSubmit} />}
         </DialogActions>
 
       </Dialog >
