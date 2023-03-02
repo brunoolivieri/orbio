@@ -68,7 +68,7 @@ class FlightPlanLogService implements ServiceInterface
             foreach ($images as $image) {
 
                 $image_filename = $image->getClientOriginalName();
-                $image_filename_without_extension = str_replace(".jpeg", "", $image_filename);
+                $image_filename_without_extension = preg_replace("/\.(jpe?g|png)$/", "", $image_filename);
 
                 if ($log_filename_without_extension == $image_filename_without_extension) {
 
