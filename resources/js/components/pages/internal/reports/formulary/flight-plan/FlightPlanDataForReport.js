@@ -201,15 +201,12 @@ export const FlightPlanDataForReport = React.memo((props) => {
 
                         <Grid item xs={6}>
                             <DatePicker
-                                name="date"
-                                label="Data da aplicação"
-                                inputFormat="dd/MM/yyyy hh:mm"
-                                helperText={fieldErrorMessage.date}
-                                error={fieldError.date}
+                                label={"Data da aplicação"}
+                                name={"start_date"}
                                 value={formData.date}
-                                onChange={handleInputChange}
-                                controlledInput={formData}
-                                setControlledInput={setFormData}
+                                setFormData={setFormData}
+                                formData={formData}
+                                errorMessage={""}
                             />
                         </Grid>
 

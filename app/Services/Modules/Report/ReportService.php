@@ -32,7 +32,6 @@ class ReportService implements ServiceInterface
             return response($contents)->withHeaders([
                 "Content-type" => mime_content_type($path)
             ]);
-
         } else {
             return response(["message" => "Nenhum arquivo encontrado."], 404);
         }
@@ -42,7 +41,7 @@ class ReportService implements ServiceInterface
     {
 
         if (is_null($data["file"])) {
-            return response(["message" => "Falha na criação do relatório."], 500);
+            throw new \Exception("Erro! O arquivo não foi enviado.");
         }
 
         // Filename is the hash of the content

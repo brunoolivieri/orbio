@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Exception;
-use App\Http\Requests\Modules\Reports\ReportStoreRequest;
 use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 use App\Services\Modules\Report\ReportService;
 use App\Exports\GenericExport;
@@ -64,7 +63,7 @@ class ReportModuleController extends Controller
         }
     }
 
-    public function store(ReportStoreRequest $request): \Illuminate\Http\Response
+    public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
 
