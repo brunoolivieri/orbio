@@ -46,7 +46,7 @@ class FlightPlanLogService implements ServiceInterface
 
         $logs = $data["logs"];
         $images = $data["images"];
-        
+
         foreach ($logs as $log) {
 
             $log_filename = $log->getClientOriginalName();
@@ -61,7 +61,7 @@ class FlightPlanLogService implements ServiceInterface
                 $kml_date = substr($kml_name_numbers, 0, 7); //yyyymmdd
                 $kml_timestamp = strtotime($kml_date);
             }
-           
+
             $log_image_founded = false;
             $image_data = null;
             // Search for actual log image by name in the set of images
@@ -75,9 +75,8 @@ class FlightPlanLogService implements ServiceInterface
                     $log_image_founded = true;
 
                     $image_data = [
-                        "contents" => file_get_contents($image),
-                        "path" => "images/flightlogs/$image_filename",
-                        "filename" => $image_filename
+                        "contents" => file_get_contents($image->getRealPath()),
+                        "path" => "images/flightlogs/$image_filename"
                     ];
                 }
             }

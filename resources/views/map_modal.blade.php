@@ -3,39 +3,39 @@
  <head>
  	<meta charset="UTF-8">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel='shortcut icon' type='image/x-icon' href="{{ secure_asset('images/map/favicon/favicon.ico') }}">
- 	<link rel="android-chrome" sizes="192x192" href="{{ secure_asset('images/map/favicon/android-chrome-192x192.png') }}">
- 	<link rel="android-chrome" sizes="512x512" href="{{ secure_asset('images/map/favicon/android-chrome-512x512.png') }}">
- 	<link rel="apple-touch-icon" sizes="180x180" href="{{ secure_asset('images/map/favicon/apple-touch-icon.png') }}">
-	<link rel="icon" type="image/png" sizes="32x32" href="{{ secure_asset('images/map/favicon/favicon-32x32.png') }}">
-	<link rel="icon" type="image/png" sizes="16x16" href="{{ secure_asset('images/map/favicon/favicon-16x16.png') }}">
+	<link rel='shortcut icon' type='image/x-icon' href="{{ asset('images/map/favicon/favicon.ico') }}">
+ 	<link rel="android-chrome" sizes="192x192" href="{{ asset('images/map/favicon/android-chrome-192x192.png') }}">
+ 	<link rel="android-chrome" sizes="512x512" href="{{ asset('images/map/favicon/android-chrome-512x512.png') }}">
+ 	<link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/map/favicon/apple-touch-icon.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/map/favicon/favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/map/favicon/favicon-16x16.png') }}">
 	<link rel="manifest" href="/site.webmanifest">
 
 	<!--- STYLES --->
-	<link href="{{ secure_asset('css/map/styles.css') }}" type="text/css" rel="stylesheet">
+	<link href="{{ asset('css/map/styles.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- MAPBOX-GL --> 
-	<script src="{{ secure_asset('js/map/libs/mapbox/mapbox-gl.js') }}"></script>
-	<link href="{{ secure_asset('css/map/mapbox-gl.css') }}" type="text/css" rel='stylesheet' />
+	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl.js') }}"></script>
+	<link href="{{ asset('css/map/mapbox-gl.css') }}" type="text/css" rel='stylesheet' />
 
 	<!-- TURF E MAPBOX-GL-DRAW -->
-	<script src="{{ secure_asset('js/map/libs/mapbox/turf.min.js') }}"></script>
-	<script src="{{ secure_asset('js/map/libs/mapbox/mapbox-gl-draw.js') }}"></script>
-	<link href="{{ secure_asset('css/map/mapbox-gl-draw.css') }}" type="text/css" rel="stylesheet">
+	<script src="{{ asset('js/map/libs/mapbox/turf.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl-draw.js') }}"></script>
+	<link href="{{ asset('css/map/mapbox-gl-draw.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- MAPBOX-GL-GEOCODER -->
-	<script src="{{ secure_asset('js/map/libs/mapbox/mapbox-gl-geocoder.min.js') }}"></script>
-	<link href="{{ secure_asset('css/map/mapbox-gl-geocoder.css') }}" type="text/css" rel="stylesheet">
+	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl-geocoder.min.js') }}"></script>
+	<link href="{{ asset('css/map/mapbox-gl-geocoder.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- Promise polyfill script required to use Mapbox GL Geocoder in IE 11 -->
-	<script src="{{ secure_asset('js/map/libs/mapbox/es6-promise.min.js') }}"></script>
-	<script src="{{ secure_asset('js/map/libs/mapbox/es6-promise.auto.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/es6-promise.min.js') }}"></script>
+	<script src="{{ asset('js/map/libs/mapbox/es6-promise.auto.min.js') }}"></script>
 
 	<!-- HTML2CANVAS -->
 	<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.5/dist/html2canvas.min.js"></script>
 
     <!-- FILESAVER -->
-	<script src="{{ secure_asset('js/map/libs/file_saver/src/FileSaver.js') }}"></script>
+	<script src="{{ asset('js/map/libs/file_saver/src/FileSaver.js') }}"></script>
 
  	<title>{{ env('APP_NAME'); }}</title>
  </head>

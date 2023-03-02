@@ -66,7 +66,7 @@ class FlightPlanModuleLogController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-        
+
         try {
 
             $kml_logs = $request->file('files');

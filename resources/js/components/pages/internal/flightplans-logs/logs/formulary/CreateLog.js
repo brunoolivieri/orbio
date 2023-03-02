@@ -41,18 +41,25 @@ export const CreateLog = React.memo((props) => {
             if (log.verification.to_save) {
 
                 // Create KML file
-                const file_content = log.contents;
-                const file_type = "application/xml";
-                const blob = new Blob([file_content], { type: file_type });
-                const logFile = new File([blob], log.filename, { type: file_type });
+                const log_content = log.contents;
+                const log_type = "application/xml";
+                const blob = new Blob([log_content], { type: log_type });
+                const logFile = new File([blob], log.filename, { type: log_type });
 
                 formData.append("files[]", logFile);
 
                 if (log.verification.is_valid) {
-                    // Create image for valid KML
-                    //formData.append("images[]", log.image.dataURL);
-                    const imageFile = new File([log.image.blobImg], log.image.fileNameImg, { type: "image/jpeg" });
-                    formData.append("images[]", imageFile);
+                    // Creating file through dataURL instead of blob - for test
+                    const arr = log.image.dataURL.split(",");
+                    const mime = arr[0].match(/:(.*?);/)[1];
+                    const bstr = atob(arr[1]);
+                    let n = bstr.length;
+                    const u8arr = new Uint8Array(n);
+                    while (n--) {
+                        u8arr[n] = bstr.charCodeAt(n);
+                    }
+                    const image = new File([u8arr], log.image.fileNameImg, { type: mime });
+                    formData.append("images[]", image);
                 }
             }
         });

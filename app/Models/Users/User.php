@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Database\Factories\UserFactory;
 use App\Models\PersonalDocuments\PersonalDocument;
 use App\Models\Profiles\Profile;
 use App\Models\Modules\Module;
 use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\PasswordResets\PasswordReset;
 use App\Models\Accesses\AnnualTraffic;
-use App\Models\Accesses\AccessedDevice;
 use App\Models\Sessions\Session;
 
 class User extends Authenticatable
@@ -96,14 +94,6 @@ class User extends Authenticatable
     function annual_traffic()
     {
         return $this->hasOne(AnnualTraffic::class, "user_id");
-    }
-
-    /*
-    * Relationship one to one with devices accessed table
-    */
-    function devices_acessed()
-    {
-        return $this->hasOne(AccessedDevice::class, "user_id");
     }
 
     /*

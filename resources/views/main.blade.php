@@ -16,7 +16,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
         <!-- CSS GLOBAL - public/css/global.css -->
-        <link rel="stylesheet" type="text/css" href="{{secure_asset('css/global.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('css/global.css')}}" />
 
     </head>
     <body>
