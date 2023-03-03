@@ -82,7 +82,7 @@ export const DeleteDrone = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="lg"
             >
                 <DialogTitle>DELEÇÃO DE DRONES</DialogTitle>
                 <Divider />
