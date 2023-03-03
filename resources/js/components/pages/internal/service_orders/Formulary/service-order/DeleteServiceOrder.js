@@ -94,7 +94,7 @@ export const DeleteServiceOrder = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            {selectedIds.length > 1 ? `As ${selectedIds.length} ordens de serviço selecionadas serão deletadas` : "A ordem de serviço selecionada será deletada"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+            As ordens de serviço selecionadas serão deletadas. A remoção não é permanente e pode ser desfeita.
           </DialogContentText>
 
         </DialogContent>

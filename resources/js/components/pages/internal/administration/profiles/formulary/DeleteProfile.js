@@ -85,7 +85,7 @@ export const DeleteProfile = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="lg"
       >
         <DialogTitle>DELEÇÃO DE PERFIL</DialogTitle>
         <Divider />
@@ -93,7 +93,7 @@ export const DeleteProfile = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText>
-            Os usuários vinculados a este perfil se tornarão visitantes. {selectedIds.length > 1 ? `A remoção dos ${selectedIds.length} perfis` : "A remoção do perfil"} não é permanente e pode ser desfeita.
+            A remoção dos perfis não é permanente e pode ser desfeita. Além disso, os usuários vinculados se tornarão visitantes.
           </DialogContentText>
 
         </DialogContent>

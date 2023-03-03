@@ -90,7 +90,7 @@ export const DeleteEquipment = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText mb={2}>
-                        {selectedIds.length > 1 ? `As ${selectedIds.length} baterias selecionadas serão deletadas` : "A bateria selecionada será deletada"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+                        As baterias selecionadas serão deletadas. A remoção não é permanente e pode ser desfeita.
                     </DialogContentText>
 
                 </DialogContent>

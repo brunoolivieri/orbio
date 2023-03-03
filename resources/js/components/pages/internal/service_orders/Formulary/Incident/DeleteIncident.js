@@ -93,7 +93,7 @@ export const DeleteIncident = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            {selectedIds.length > 1 ? `Os ${selectedIds.length} incidentes selecionados serão deletados` : "O incidente selecionado será deletado"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+            Os incidentes selecionados serão deletados. A remoção não é permanente e pode ser desfeita.
           </DialogContentText>
 
         </DialogContent>

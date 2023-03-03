@@ -83,7 +83,7 @@ export const DeleteLog = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText mb={2}>
-                        {selectedIds.length > 1 ? `Os ${selectedIds.length} logs selecionados serão deletados` : `O log selecionado será deletado`}. A remoção, no entanto, não é permanente e pode ser desfeita.
+                        Os logs selecionados serão deletados. A remoção não é permanente e pode ser desfeita.
                     </DialogContentText>
 
                 </DialogContent>

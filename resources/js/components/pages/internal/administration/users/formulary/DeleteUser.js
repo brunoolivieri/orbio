@@ -90,7 +90,7 @@ export const DeleteUser = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            {selectedIds.length > 1 ? `Os ${selectedIds.length} usuários selecionados perderão o acesso a suas contas` : "O usuário selecionado perderá o acesso a sua conta"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+            Os usuários selecionados perderão o acesso a suas contas. A remoção não é permanente e pode ser desfeita.
           </DialogContentText>
 
           <DialogContentText mb={2}>

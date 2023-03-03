@@ -96,7 +96,7 @@ export const DeleteReport = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            {selectedIds.length > 1 ? `Os ${selectedIds.length} relatórios selecionados serão deletados` : "O relatório selecionado será deletado"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+            Os relatórios selecionados serão deletados. A remoção não é permanente e pode ser desfeita.
           </DialogContentText>
 
         </DialogContent>

@@ -90,11 +90,7 @@ export const DeleteFlightPlan = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            <Typography>{selectedIds.length > 1 ? `Os ${selectedIds.length} planos de voo selecionados serão deletados` : `O plano de voo selecionado será deletado`}. A remoção, no entanto, não é permanente e pode ser desfeita. </Typography>
-          </DialogContentText>
-
-          <DialogContentText mb={2}>
-            <Typography>Certifique-se de que os planos de voo selecionados não possuem vínculos com ordens de serviço ativas.</Typography>
+            <Typography>Os planos de voo selecionados serão deletados. A remoção não é permanente e pode ser desfeita. </Typography>
           </DialogContentText>
 
         </DialogContent>

@@ -90,7 +90,7 @@ export const DeleteDrone = React.memo((props) => {
                 <DialogContent>
 
                     <DialogContentText mb={2}>
-                        {selectedIds.length > 1 ? `Os ${selectedIds.length} drones selecionados serão deletados` : "O drone selecionado será deletado"}. A remoção, no entanto, não é permanente e pode ser desfeita.
+                        Os drones selecionados serão deletados. A remoção não é permanente e pode ser desfeita.
                     </DialogContentText>
 
                 </DialogContent>
