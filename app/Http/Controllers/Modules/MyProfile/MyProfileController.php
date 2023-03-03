@@ -161,8 +161,12 @@ class MyProfileController extends Controller
         try {
             $user = $this->userModel->findOrFail($identifier);
 
+            if(Hash::check($request->new_password, $user->password)){
+                throw new \Exception("Erro! A nova senha deve ser diferente da atual.");
+            }
+
             $user->update([
-                "password" => Hash::make($request->safe()->only(['new_password']))
+                "password" => Hash::make($request->new_password)
             ]);
 
             $user->notify(new ChangePasswordNotification($user));

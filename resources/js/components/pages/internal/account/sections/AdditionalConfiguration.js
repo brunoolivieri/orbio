@@ -22,6 +22,7 @@ const PaperStyled = styled(Paper)({
     flexGrow: 1
 });
 
+const initialFormData = { actual_password: "", new_password: "", new_password_confirmation: "" }
 const fieldError = { error: false, message: "" }
 const initialFormError = { actual_password: fieldError, new_password: fieldError, new_password_confirmation: fieldError }
 
@@ -31,9 +32,9 @@ export function AdditionalConfiguration() {
 
     const { user } = useAuth();
     const { enqueueSnackbar } = useSnackbar();
-    
-    const [formData, setFormData] = React.useState({});
-    const [loading, setLoading] = React.useState(true);
+
+    const [formData, setFormData] = React.useState(initialFormData);
+    const [loading, setLoading] = React.useState(false);
     const [refresh, setRefresh] = React.useState(false);
     const [formError, setFormError] = React.useState(initialFormError);
     const [openGenericModal, setOpenGenericModal] = React.useState(false);
@@ -54,8 +55,8 @@ export function AdditionalConfiguration() {
 
         let validation = Object.assign({}, initialFormError);
 
-        validation["actual_password"] = FormValidation(formData["actual_password"], 3, 255);
-        validation["new_password"] = FormValidation(formData.new_password, 10, 255);
+        validation["actual_password"] = FormValidation(formData["actual_password"], null, 255);
+        validation["new_password"] = FormValidation(formData.new_password, null, 255);
         validation["new_password_confirmation"] = formData.new_password != formData.new_password_confirmation ? { error: true, message: "As senhas não coincidem" } : { error: false, message: "" };
 
         setFormError(validation);
@@ -68,10 +69,13 @@ export function AdditionalConfiguration() {
 
         try {
 
-            const response = axios.patch(`api/myprofile/change-password/${user.id}`, formData);
+            const response = await axios.patch(`api/myprofile/change-password/${user.id}`, formData);
             enqueueSnackbar(response.data.message, { variant: "success" });
 
+            setFormData(initialFormData);
+
         } catch (error) {
+            console.log(error.response)
             errorResponse(error.response);
         } finally {
             setLoading(false);
@@ -81,17 +85,16 @@ export function AdditionalConfiguration() {
 
     function errorResponse(response) {
         enqueueSnackbar(response.data.message, { variant: "error" });
-
-        let response_errors = {}
-
-        for (let field in response.data.errors) {
-            response_errors[field] = {
-                error: true,
-                message: response.data.errors[field][0]
+        if (response.status === 422) {
+            let response_errors = Object.assign({}, initialFormError);
+            for (let field in response.data.errors) {
+                response_errors[field] = {
+                    error: true,
+                    message: response.data.errors[field][0]
+                }
             }
+            setFormError(response_errors);
         }
-
-        setFormError(response_errors);
     }
 
     async function disableAccount() {

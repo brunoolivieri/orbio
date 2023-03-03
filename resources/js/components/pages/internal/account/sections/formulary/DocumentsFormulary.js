@@ -98,6 +98,7 @@ export function DocumentsFormulary() {
                 enqueueSnackbar(response.data.message, { variant: "success" });
             })
             .catch(function (error) {
+                console.log(error)
                 errorResponse(error.response);
             })
             .finally(() => {
@@ -106,8 +107,7 @@ export function DocumentsFormulary() {
     }
 
     function errorResponse(response) {
-        const message = response.message ? response.message : "Erro do servidor";
-        enqueueSnackbar(message, { variant: "error" });
+        enqueueSnackbar(response.data.message, { variant: "error" });
 
         if (response.status === 422) {
             let response_errors = {}

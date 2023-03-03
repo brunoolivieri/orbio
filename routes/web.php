@@ -105,10 +105,10 @@ Route::group(["prefix" => "api"], function () {
         Route::get("/action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
         Route::apiResource("/action/service-order/incidents", ServiceOrderIncidentController::class);
-        Route::get("/action/report/service-orders", LoadServiceOrderForReport::class); // To refact
+        Route::get("/action/report/service-orders", LoadServiceOrderForReport::class); 
         Route::post("/action/flight-plans-logs/processing-uploads", UploadedLogsController::class);
-        Route::get("/action/report/weather-data", WeatherDataController::class); // To refact
-        Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class); // To refact
+        Route::get("/action/report/weather-data", WeatherDataController::class); 
+        Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class); 
         // Generic Actions
         Route::get('/action/load-drones', LoadDronesController::class);
         Route::get('/action/load-batteries', LoadBatteriesController::class);
