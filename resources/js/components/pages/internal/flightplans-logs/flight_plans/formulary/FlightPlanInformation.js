@@ -35,7 +35,7 @@ export const FlightPlanInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>PLANO DE VOO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 

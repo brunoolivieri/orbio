@@ -72,7 +72,9 @@ export const UpdateProfile = React.memo((props) => {
     }
 
     function handleSubmit() {
-        if (!formSubmissionValidation()) return '';
+        if (!formSubmissionValidation()) {
+            return;
+        }
 
         setLoading(true);
         requestServer();
@@ -149,7 +151,7 @@ export const UpdateProfile = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>ATUALIZAÇÃO DE PERFIL</DialogTitle>
                 <Divider />

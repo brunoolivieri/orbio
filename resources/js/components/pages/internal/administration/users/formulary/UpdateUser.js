@@ -42,11 +42,12 @@ export const UpdateUser = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (!formSubmissionValidation()) return ''
+    if (!formSubmissionValidation()) {
+      return;
+    }
 
     setLoading(true);
     requestServer();
-
   }
 
   function formSubmissionValidation() {
@@ -119,7 +120,7 @@ export const UpdateUser = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
       >
         <DialogTitle>ATUALIZAÇÃO DE USUÁRIO</DialogTitle>
         <Divider />

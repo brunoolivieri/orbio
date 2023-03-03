@@ -86,7 +86,7 @@ export const DeleteServiceOrder = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="sm"
+        maxWidth="lg"
       >
         <DialogTitle>DELEÇÃO DE ORDEM DE SERVIÇO</DialogTitle>
         <Divider />

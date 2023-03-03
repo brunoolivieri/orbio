@@ -151,7 +151,7 @@ export const CreateBattery = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>CADASTRO DE BATERIA</DialogTitle>
                 <Divider />

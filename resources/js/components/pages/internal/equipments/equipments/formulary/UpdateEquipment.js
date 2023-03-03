@@ -166,7 +166,7 @@ export const UpdateEquipment = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>ATUALIZAÇÃO DE EQUIPAMENTO</DialogTitle>
                 <Divider />

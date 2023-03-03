@@ -82,7 +82,7 @@ export const DeleteBattery = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>DELEÇÃO DE BATERIAS</DialogTitle>
                 <Divider />

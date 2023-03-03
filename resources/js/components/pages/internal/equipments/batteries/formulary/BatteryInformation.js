@@ -36,7 +36,7 @@ export const BatteryInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>BATERIA ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 

@@ -12,7 +12,7 @@ import moment from 'moment/moment';
 export const EquipmentInformation = React.memo((props) => {
 
     const { user } = useAuth();
-    
+
     const [open, setOpen] = React.useState(false);
     const htmlImage = React.useRef();
 
@@ -37,7 +37,7 @@ export const EquipmentInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>EQUIPAMENTO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 

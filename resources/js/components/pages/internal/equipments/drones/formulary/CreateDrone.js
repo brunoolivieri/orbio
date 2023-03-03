@@ -150,7 +150,7 @@ export const CreateDrone = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>CADASTRO DE DRONE</DialogTitle>
                 <Divider />

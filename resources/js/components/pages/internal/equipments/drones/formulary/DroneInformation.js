@@ -36,7 +36,7 @@ export const DroneInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>DRONE ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 

@@ -100,7 +100,7 @@ export const ExportTableData = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="sm"
+                maxWidth="lg"
             >
                 <DialogTitle>{props.type} | EXPORTAÇÃO</DialogTitle>
                 <Divider />

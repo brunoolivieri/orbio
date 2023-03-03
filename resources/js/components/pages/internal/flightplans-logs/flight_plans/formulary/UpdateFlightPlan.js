@@ -115,7 +115,7 @@ export const UpdateFlightPlan = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
       >
         <DialogTitle>ATUALIZAÇÃO DE PLANO DE VOO</DialogTitle>
         <Divider />

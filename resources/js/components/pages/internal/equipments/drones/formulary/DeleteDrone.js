@@ -15,7 +15,7 @@ export const DeleteDrone = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    
+
     const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -82,7 +82,7 @@ export const DeleteDrone = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="md"
+                maxWidth="lg"
             >
                 <DialogTitle>DELEÇÃO DE DRONES</DialogTitle>
                 <Divider />

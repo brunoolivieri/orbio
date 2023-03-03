@@ -126,7 +126,7 @@ export const CreateIncident = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="md"
+        maxWidth="lg"
       >
         <DialogTitle>CADASTRO DE INCIDENTE</DialogTitle>
         <Divider />
