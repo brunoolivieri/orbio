@@ -77,7 +77,7 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
             </Tooltip>
             <Dialog
                 fullWidth
-                maxWidth="lg"
+                fullScreen
                 open={open}
                 onClose={handleClose}
             >

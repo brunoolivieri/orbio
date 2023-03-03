@@ -82,7 +82,7 @@ export const DeleteUser = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="lg"
+        fullScreen
       >
         <DialogTitle>DELEÇÃO DE USUÁRIOS</DialogTitle>
         <Divider />

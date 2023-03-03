@@ -40,7 +40,7 @@ export const CreateUser = React.memo((props) => {
   }
 
   function handleSubmit() {
-    if (!formSubmissionValidation()){
+    if (!formSubmissionValidation()) {
       return;
     }
 
@@ -117,7 +117,7 @@ export const CreateUser = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="lg"
+        fullScreen
       >
         <DialogTitle>CADASTRO DE USUÁRIO</DialogTitle>
         <Divider />

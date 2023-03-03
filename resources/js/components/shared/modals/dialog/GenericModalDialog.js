@@ -35,9 +35,8 @@ export const GenericModalDialog = React.memo(({ ...props }) => {
             <Dialog
                 open={props.modal_controller.state}
                 onClose={handleClose}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
                 PaperProps={{ style: { borderRadius: 15 } }}
+                fullScreen
             >
 
                 {props.title.top.required &&

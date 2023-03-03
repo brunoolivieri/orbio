@@ -88,7 +88,7 @@ export const DeleteReport = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="lg"
+        fullScreen
       >
         <DialogTitle>DELEÇÃO DE RELATÓRIOS</DialogTitle>
         <Divider />

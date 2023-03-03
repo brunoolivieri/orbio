@@ -37,7 +37,7 @@ export const EquipmentInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="lg"
+                fullScreen
             >
                 <DialogTitle>EQUIPAMENTO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
 

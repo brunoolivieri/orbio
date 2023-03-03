@@ -35,7 +35,7 @@ export const UserInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="lg"
+                fullScreen
             >
                 <DialogTitle>USUÁRIO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
                 <Divider />

@@ -85,7 +85,7 @@ export const DeleteIncident = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        maxWidth="lg"
+        fullScreen
       >
         <DialogTitle>DELEÇÃO DE INCIDENTES</DialogTitle>
         <Divider />

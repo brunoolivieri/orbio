@@ -39,7 +39,7 @@ export function DeactivateAccountModal() {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="lg"
+                fullScreen
             >
                 <DialogTitle>
                     CONFIRMAR DESATIVAÇÃO

@@ -149,7 +149,7 @@ export const CreateLog = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                maxWidth="lg"
+                fullScreen
             >
                 <DialogTitle>UPLOAD DE LOG</DialogTitle>
                 <Divider />
