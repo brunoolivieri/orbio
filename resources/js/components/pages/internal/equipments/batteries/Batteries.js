@@ -97,7 +97,6 @@ export function Batteries() {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -106,8 +105,9 @@ export function Batteries() {
     const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
-
     const { enqueueSnackbar } = useSnackbar();
+
+    const is_authorized_to_read = !!user.user_powers["5"].profile_powers.read;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -167,7 +167,6 @@ export function Batteries() {
     return (
         <>
             <Grid container spacing={1} alignItems="center" mb={1}>
-
                 <Grid item>
                     {selectedRecords.length > 0 &&
                         <IconButton>
@@ -221,11 +220,11 @@ export function Batteries() {
                 </Grid>
 
                 <Grid item>
-                    {user.user_powers["5"].profile_powers.read == 1 &&
+                    {is_authorized_to_read &&
                         <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
                     }
 
-                    {!user.user_powers["5"].profile_powers.read == 1 &&
+                    {!is_authorized_to_read &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
@@ -259,7 +258,6 @@ export function Batteries() {
                         variant="outlined"
                     />
                 </Grid>
-
             </Grid>
 
             <Box

@@ -5,7 +5,6 @@ namespace App\Notifications\Auth;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Models
 use App\Models\Users\User;
 
 class LoginNotification extends Notification

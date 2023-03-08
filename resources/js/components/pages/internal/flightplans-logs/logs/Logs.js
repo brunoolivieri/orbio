@@ -119,7 +119,6 @@ export function Logs() {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -128,8 +127,9 @@ export function Logs() {
     const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
-
     const { enqueueSnackbar } = useSnackbar();
+
+    const is_authorized_to_read = !!user.user_powers["2"].profile_powers.read;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -156,8 +156,6 @@ export function Logs() {
     }
 
     function handleChangePage(newPage) {
-        // If actual page is bigger than the new one, is a reduction of actual
-        // If actual is smaller, the page is increasing
         setCurrentPage((current) => {
             return current > newPage ? (current - 1) : newPage;
         });
@@ -230,11 +228,11 @@ export function Logs() {
                 </Grid>
 
                 <Grid item>
-                    {user.user_powers["2"].profile_powers.read == 1 &&
+                    {is_authorized_to_read &&
                         <ExportTableData type="LOGS" source={"/api/logs/export"} />
                     }
 
-                    {!user.user_powers["2"].profile_powers.read == 1 &&
+                    {!is_authorized_to_read &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
@@ -268,7 +266,6 @@ export function Logs() {
                         variant="outlined"
                     />
                 </Grid>
-
             </Grid>
 
             <Box

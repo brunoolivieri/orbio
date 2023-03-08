@@ -2,9 +2,6 @@
 
 namespace App\Listeners\Modules\ServiceOrder;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-// Notification
 use App\Notifications\Modules\ServiceOrder\ServiceOrderUpdatedNotification;
 
 class SendEmailAfterUpdated
@@ -21,18 +18,13 @@ class SendEmailAfterUpdated
         $service_order = $event->service_order;
 
         foreach ($service_order->users as $user) {
-
             if ($user->pivot->role === "creator") {
-                $creator = $user;
+                $user->notify(new ServiceOrderUpdatedNotification($service_order));
             } else if ($user->pivot->role === "pilot") {
-                $pilot = $user;
+                $user->notify(new ServiceOrderUpdatedNotification($service_order));
             } else if ($user->pivot->role === "client") {
-                $client = $user;
+                $user->notify(new ServiceOrderUpdatedNotification($service_order));
             }
         }
-
-        $creator->notify(new ServiceOrderUpdatedNotification($creator, $service_order));
-        $pilot->notify(new ServiceOrderUpdatedNotification($pilot, $service_order));
-        $client->notify(new ServiceOrderUpdatedNotification($client, $service_order));
     }
 }

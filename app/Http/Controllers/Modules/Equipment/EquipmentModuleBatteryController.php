@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Exception;
-// Custom
 use App\Http\Requests\Modules\Equipments\Battery\StoreBatteryRequest;
 use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
 use App\Services\Modules\Equipment\BatteryService;
@@ -39,7 +37,7 @@ class EquipmentModuleBatteryController extends Controller
             if ($result->total() > 0) {
                 return response(new BatteriesPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhuma bateria encontrada");
+                throw new \Exception("Nenhuma bateria encontrada");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

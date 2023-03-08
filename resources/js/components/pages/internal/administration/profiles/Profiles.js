@@ -120,7 +120,6 @@ export function Profiles() {
 
   const { user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -129,6 +128,8 @@ export function Profiles() {
   const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [reload, setReload] = React.useState(false);
+
+  const is_authorized_to_read = !!user.user_powers["1"].profile_powers.read;
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -162,8 +163,6 @@ export function Profiles() {
   }
 
   function handleChangePage(newPage) {
-    // If actual page is bigger than the new one, is a reduction of actual
-    // If actual is smaller, the page is increasing
     setCurrentPage((current) => {
       return current > newPage ? (current - 1) : newPage;
     });
@@ -190,12 +189,18 @@ export function Profiles() {
     return Boolean(user.user_powers["1"].profile_powers.write);
   }
 
+  function canDelete() {
+    if (selectedRecords.length > 0) {
+      return selectedRecords.reduce((acm, record) => acm && ![1, 2, 3, 4, 5].includes(record.id), true);
+    }
+    return false;
+  }
+
   // ============================================================================== STRUCTURES ============================================================================== //
 
   return (
     <>
-      <Grid container spacing={1} alignItems="center" mb={1}>
-
+      <Grid container spacing={1} alignItems="center">
         <Grid item>
           {selectedRecords.length > 0 &&
             <IconButton>
@@ -223,7 +228,7 @@ export function Profiles() {
         </Grid>
 
         <Grid item>
-          {(selectedRecords.length === 0) || (selectedRecords.length > 0 && [1, 2, 3, 4, 5].includes(selectedRecords[0].id)) &&
+          {(selectedRecords.length === 0 || (selectedRecords.length > 0 && !canDelete())) &&
             <Tooltip title="Selecione um registro">
               <IconButton>
                 <FontAwesomeIcon icon={faTrashCan} color={"#E0E0E0"} size="sm" />
@@ -231,7 +236,7 @@ export function Profiles() {
             </Tooltip>
           }
 
-          {(!loading && selectedRecords.length > 0) && (![1, 2, 3, 4, 5].includes(selectedRecords[0].id)) &&
+          {(!loading && selectedRecords.length > 0 && canDelete()) &&
             <DeleteProfile records={selectedRecords} reloadTable={setReload} />
           }
         </Grid>
@@ -249,11 +254,11 @@ export function Profiles() {
         </Grid>
 
         <Grid item>
-          {user.user_powers["1"].profile_powers.read == 1 &&
+          {is_authorized_to_read == 1 &&
             <ExportTableData type="PERFIS" source={"/api/profiles/export"} />
           }
 
-          {!user.user_powers["1"].profile_powers.read == 1 &&
+          {!is_authorized_to_read == 1 &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -287,7 +292,6 @@ export function Profiles() {
             variant="outlined"
           />
         </Grid>
-
       </Grid>
 
       <Box

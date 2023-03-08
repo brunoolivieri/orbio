@@ -35,7 +35,7 @@ export const ServiceOrderInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="xl"
             >
                 <DialogTitle>ORDEM DE SERVIÇO ID: {props.record.id} | INFORMAÇÕES</DialogTitle>
                 <Divider />

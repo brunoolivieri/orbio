@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Exception;
-// Custom
 use App\Http\Requests\Modules\Equipments\Equipment\StoreEquipmentRequest;
 use App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest;
 use App\Services\Modules\Equipment\EquipmentService;
@@ -39,7 +37,7 @@ class EquipmentModuleEquipmentController extends Controller
             if ($result->total() > 0) {
                 return response(new EquipmentsPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhum equipamento encontrado");
+                throw new \Exception("Nenhum equipamento encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

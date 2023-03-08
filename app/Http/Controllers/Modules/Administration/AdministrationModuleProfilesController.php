@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Exception;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelStoreRequest;
 use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequest;
 use App\Services\Modules\Administration\ProfilePanelService;
@@ -38,7 +37,7 @@ class AdministrationModuleProfilesController extends Controller
             if ($result->total() > 0) {
                 return response(new ProfilesPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhum perfil encontrado");
+                throw new \Exception("Nenhum perfil encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

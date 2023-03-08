@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Modules\MyProfile;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Exception;
 use App\Models\{
     Users\User,
     PersonalDocuments\PersonalDocument,
@@ -80,7 +79,6 @@ class MyProfileController extends Controller
 
     function loadAddress(): \Illuminate\Http\Response
     {
-
         try {
 
             $user = $this->userModel->findOrFail(Auth::user()->id);

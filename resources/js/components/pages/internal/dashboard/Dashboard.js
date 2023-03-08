@@ -179,7 +179,7 @@ export const Dashboard = React.memo(() => {
                         <Card sx={biggerCardStyle}>
                             <Box sx={{ flexBasis: '30px' }}>
                                 <Typography variant="h6">
-                                    Tráfego anual
+                                    
                                 </Typography>
                             </Box>
                             <Box sx={{ height: 250, width: '100%', mt: 2 }}>

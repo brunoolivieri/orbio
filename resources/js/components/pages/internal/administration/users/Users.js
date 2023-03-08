@@ -89,7 +89,6 @@ export function Users() {
 
   const { user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -99,12 +98,16 @@ export function Users() {
   const [loading, setLoading] = React.useState(true);
   const [reload, setReload] = React.useState(false);
 
+  const is_authorized_to_read = !!user.user_powers["1"].profile_powers.read;
+
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   React.useEffect(() => {
 
     let is_mounted = true;
-    if (!is_mounted) return '';
+    if (!is_mounted) {
+      return;
+    }
 
     setLoading(true);
     setRecords([]);
@@ -132,8 +135,6 @@ export function Users() {
   }
 
   function handleChangePage(newPage) {
-    // If actual page is bigger than the new one, is a reduction of actual
-    // If actual is smaller, the page is increasing
     setCurrentPage((current) => {
       return current > newPage ? (current - 1) : newPage;
     });
@@ -164,7 +165,6 @@ export function Users() {
   return (
     <>
       <Grid container spacing={1} alignItems="center" mb={1}>
-
         <Grid item>
           {selectedRecords.length > 0 &&
             <IconButton>
@@ -218,11 +218,11 @@ export function Users() {
         </Grid>
 
         <Grid item>
-          {user.user_powers["1"].profile_powers.read == 1 &&
+          {is_authorized_to_read &&
             <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
           }
 
-          {!user.user_powers["1"].profile_powers.read == 1 &&
+          {!is_authorized_to_read &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -256,7 +256,6 @@ export function Users() {
             variant="outlined"
           />
         </Grid>
-
       </Grid>
 
       <Box

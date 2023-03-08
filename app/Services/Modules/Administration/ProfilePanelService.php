@@ -34,3 +34,5 @@ class ProfilePanelService implements ServiceInterface
         $profile = $this->repository->delete($ids);
     }
 }
+
+?>

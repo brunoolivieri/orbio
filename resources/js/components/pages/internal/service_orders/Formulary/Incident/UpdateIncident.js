@@ -121,7 +121,7 @@ export const UpdateIncident = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="xl"
       >
         <DialogTitle>ATUALIZAÇÃO DO INCIDENTE</DialogTitle>
         <Divider />

@@ -26,6 +26,8 @@ export const UpdateUser = React.memo((props) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
+  const is_authorized = !!user.user_powers["1"].profile_powers.write;
+
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   function handleClickOpen() {
@@ -110,8 +112,8 @@ export const UpdateUser = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!user.user_powers["1"].profile_powers.write == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={user.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!is_authorized} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={is_authorized ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -120,7 +122,7 @@ export const UpdateUser = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="xl"
       >
         <DialogTitle>ATUALIZAÇÃO DE USUÁRIO</DialogTitle>
         <Divider />

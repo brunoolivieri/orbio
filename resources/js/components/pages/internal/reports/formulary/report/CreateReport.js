@@ -30,7 +30,6 @@ export const CreateReport = (props) => {
   // ============================================================================== STATES  ============================================================================== //
 
   const { user } = useAuth();
-
   const [formError, setFormError] = React.useState(initialFormError);
   const [formData, setFormData] = React.useState(initialFormData);
   const [serviceOrder, setServiceOrder] = React.useState(null);
@@ -39,6 +38,8 @@ export const CreateReport = (props) => {
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [alert, setAlert] = React.useState(initialAlert);
+
+  const is_authorized = !!user.user_powers["4"].profile_powers.write;
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -146,8 +147,8 @@ export const CreateReport = (props) => {
     <>
 
       <Tooltip title="Gerar relatório">
-        <IconButton disabled={!user.user_powers["4"].profile_powers.write == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPlus} size="sm" color={user.user_powers["4"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} />
+        <IconButton disabled={!is_authorized} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPlus} size="sm" color={is_authorized ? "#007937" : "#E0E0E0"} />
         </IconButton>
       </Tooltip>
 
@@ -156,7 +157,7 @@ export const CreateReport = (props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="xl"
       >
         <DialogTitle>GERAÇÃO DE RELATÓRIO</DialogTitle>
         <Divider />
@@ -180,7 +181,6 @@ export const CreateReport = (props) => {
           {serviceOrder &&
             <>
               <Grid container spacing={2} mb={2}>
-
                 <Grid item xs={6}>
                   <TextField
                     name="responsible"

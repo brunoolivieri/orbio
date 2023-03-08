@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Modules\ServiceOrder\Actions;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// Resource
 use App\Http\Resources\Modules\ServiceOrders\LogsForServiceOrderFlightPlanResource;
-// Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanLogRepository;
 
 class LogsForServiceOrderFlightPlanController extends Controller

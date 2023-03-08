@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
-use Exception;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 use App\Services\Modules\FlightPlan\FlightPlanService;
 use App\Exports\GenericExport;
@@ -38,7 +37,7 @@ class FlightPlanModuleController extends Controller
             if ($result->total() > 0) {
                 return response(new FlightPlansPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhum plano de voo encontrado");
+                throw new \Exception("Nenhum plano de voo encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 404);

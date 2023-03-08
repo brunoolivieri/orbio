@@ -12,6 +12,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
@@ -178,7 +179,6 @@ export function FlightPlans() {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-
   const [records, setRecords] = React.useState([]);
   const [perPage, setPerPage] = React.useState(10);
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -187,8 +187,10 @@ export function FlightPlans() {
   const [selectedRecords, setSelectedRecords] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [reload, setReload] = React.useState(false);
-
   const { enqueueSnackbar } = useSnackbar();
+
+  const is_authorized_to_write = !!user.user_powers["2"].profile_powers.write;
+  const is_authorized_to_read = !!user.user_powers["2"].profile_powers.read;
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -224,8 +226,6 @@ export function FlightPlans() {
   }
 
   function handleChangePage(newPage) {
-    // If actual page is bigger than the new one, is a reduction of actual
-    // If actual is smaller, the page is increasing
     setCurrentPage((current) => {
       return current > newPage ? (current - 1) : newPage;
     });
@@ -258,7 +258,6 @@ export function FlightPlans() {
   return (
     <>
       <Grid container spacing={1} alignItems="center" mb={1}>
-
         <Grid item>
           {selectedRecords.length > 0 &&
             <IconButton>
@@ -270,7 +269,7 @@ export function FlightPlans() {
             <Tooltip title="Novo Plano">
               <Link href={`${window.location.origin}/map?userid=${user.id}`} target="_blank">
                 <IconButton>
-                  <FontAwesomeIcon icon={faPlus} color={user.user_powers["2"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                  <FontAwesomeIcon icon={faPlus} color={is_authorized_to_write ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
               </Link>
             </Tooltip>
@@ -318,11 +317,11 @@ export function FlightPlans() {
         </Grid>
 
         <Grid item>
-          {user.user_powers["2"].profile_powers.read == 1 &&
+          {is_authorized_to_read &&
             <ExportTableData type="PLANOS DE VOO" source={"/api/flight-plans/export"} />
           }
 
-          {!user.user_powers["2"].profile_powers.read == 1 &&
+          {!is_authorized_to_read &&
             <IconButton disabled>
               <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
             </IconButton>
@@ -356,7 +355,6 @@ export function FlightPlans() {
             variant="outlined"
           />
         </Grid>
-
       </Grid>
 
       <Box

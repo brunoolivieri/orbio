@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Modules\ServiceOrder\Actions;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-// Resource
 use App\Http\Resources\Modules\ServiceOrders\FlightPlansForServiceOrderResource;
-// Repository
 use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
 
 class FlightPlansForServiceOrderController extends Controller

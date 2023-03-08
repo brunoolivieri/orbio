@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Exception;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelStoreRequest;
 use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;
@@ -38,7 +37,7 @@ class AdministrationModuleUsersController extends Controller
             if ($result->total() > 0) {
                 return response(new UsersPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhum usuário encontrado");
+                throw new \Exception("Nenhum usuário encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

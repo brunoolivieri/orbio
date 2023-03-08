@@ -19,11 +19,12 @@ export const CreateLog = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
     const [logs, setLogs] = React.useState([]);
     const [alert, setAlert] = React.useState(initialDisplayAlert);
+
+    const is_authorized = !!user.user_powers["4"].profile_powers.write;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -139,8 +140,8 @@ export const CreateLog = React.memo((props) => {
     return (
         <>
             <Tooltip title="Novo Log">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["4"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faPlus} color={user.user_powers["4"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!is_authorized}>
+                    <FontAwesomeIcon icon={faPlus} color={is_authorized ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -149,7 +150,7 @@ export const CreateLog = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="xl"
             >
                 <DialogTitle>UPLOAD DE LOG</DialogTitle>
                 <Divider />

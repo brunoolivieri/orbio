@@ -2,9 +2,6 @@
 
 namespace App\Listeners\Modules\ServiceOrder;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-// Notification
 use App\Notifications\Modules\ServiceOrder\ServiceOrderDeletedNotification;
 
 class SendEmailAfterDeleted
@@ -21,18 +18,13 @@ class SendEmailAfterDeleted
         $service_order = $event->service_order;
 
         foreach ($service_order->users as $user) {
-
             if ($user->pivot->role === "creator") {
-                $creator = $user;
+                $user->notify(new ServiceOrderDeletedNotification($service_order));
             } else if ($user->pivot->role === "pilot") {
-                $pilot = $user;
+                $user->notify(new ServiceOrderDeletedNotification($service_order));
             } else if ($user->pivot->role === "client") {
-                $client = $user;
+                $user->notify(new ServiceOrderDeletedNotification($service_order));
             }
         }
-
-        $creator->notify(new ServiceOrderDeletedNotification($creator, $service_order));
-        $pilot->notify(new ServiceOrderDeletedNotification($pilot, $service_order));
-        $client->notify(new ServiceOrderDeletedNotification($client, $service_order));
     }
 }

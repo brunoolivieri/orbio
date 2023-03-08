@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Modules\ServiceOrder\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Exception;
 use App\Http\Resources\Modules\ServiceOrders\ServiceOrderIncidentResource;
 use App\Models\Incidents\Incident;
 use App\Models\Pivot\ServiceOrderFlightPlan;
@@ -45,7 +44,7 @@ class ServiceOrderIncidentController extends Controller
             if ($data->total() > 0) {
                 return response(new ServiceOrderIncidentResource($data), 200);
             } else {
-                throw new Exception("Nenhum incidente encontrado");
+                throw new \Exception("Nenhum incidente encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

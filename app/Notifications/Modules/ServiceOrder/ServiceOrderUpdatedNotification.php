@@ -3,18 +3,14 @@
 namespace App\Notifications\Modules\ServiceOrder;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Custom
-use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
 
 class ServiceOrderUpdatedNotification extends Notification
 {
     use Queueable;
 
-    private $user;
     private $service_order;
 
     /**
@@ -22,9 +18,8 @@ class ServiceOrderUpdatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(User $user, ServiceOrder $service_order)
+    public function __construct(ServiceOrder $service_order)
     {
-        $this->user = $user;
         $this->service_order = $service_order;
     }
 
@@ -49,7 +44,7 @@ class ServiceOrderUpdatedNotification extends Notification
     {
 
         return (new MailMessage)
-            ->subject('ORBIO - Ordem de serviço atualizada')
+            ->subject('ORBIO - Atualização de ordem de serviço')
             ->greeting("Olá " . $notifiable->first_name . "!")
             ->line("Você está sendo notificado porque uma das ordens de serviço a que está vinculado foi atualizada.")
             ->line("Data inicial: " . $this->service_order->start_date)

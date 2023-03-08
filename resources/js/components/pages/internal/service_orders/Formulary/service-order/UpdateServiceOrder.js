@@ -10,7 +10,6 @@ import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
-import { StatusRadio } from '../../../../../shared/radio_group/StatusRadio';
 import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
 import { LogsForServiceOrderFlightPlan } from '../../table-selection/LogsForServiceOrderFlightPlan';
 import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
@@ -38,6 +37,8 @@ export const UpdateServiceOrder = React.memo((props) => {
   const [open, setOpen] = React.useState(false);
   const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
   const [canSave, setCanSave] = React.useState(false);
+
+  const is_authorized = !!user.user_powers["3"].profile_powers.write;
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -193,8 +194,8 @@ export const UpdateServiceOrder = React.memo((props) => {
   return (
     <>
       <Tooltip title="Editar">
-        <IconButton disabled={!user.user_powers["3"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faPen} color={user.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!is_authorized} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faPen} color={is_authorized ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -203,7 +204,7 @@ export const UpdateServiceOrder = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="xl"
       >
         <DialogTitle>ATUALIZAÇÃO DE ORDEM DE SERVIÇO</DialogTitle>
         <Divider />

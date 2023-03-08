@@ -20,6 +20,8 @@ export const DeleteLog = React.memo((props) => {
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
 
+    const is_authorized = !!user.user_powers["2"].profile_powers.write;
+
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     function handleClickOpen() {
@@ -65,8 +67,8 @@ export const DeleteLog = React.memo((props) => {
     return (
         <>
             <Tooltip title="Deletar">
-                <IconButton disabled={!user.user_powers["2"].profile_powers.write == 1} onClick={handleClickOpen}>
-                    <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["2"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+                <IconButton disabled={!is_authorized} onClick={handleClickOpen}>
+                    <FontAwesomeIcon icon={faTrashCan} color={is_authorized ? "#007937" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -81,11 +83,9 @@ export const DeleteLog = React.memo((props) => {
                 <Divider />
 
                 <DialogContent>
-
                     <DialogContentText mb={2}>
                         Os logs selecionados serão deletados. A remoção não é permanente e pode ser desfeita.
                     </DialogContentText>
-
                 </DialogContent>
 
                 {displayAlert.display &&

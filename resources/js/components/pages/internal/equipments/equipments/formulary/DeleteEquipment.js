@@ -15,11 +15,12 @@ export const DeleteEquipment = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
+
+    const is_authorized = !!user.user_powers["5"].profile_powers.write;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -72,8 +73,8 @@ export const DeleteEquipment = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.read == 1}>
-                    <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["5"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!is_authorized}>
+                    <FontAwesomeIcon icon={faTrashCan} color={is_authorized ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -88,11 +89,9 @@ export const DeleteEquipment = React.memo((props) => {
                 <Divider />
 
                 <DialogContent>
-
                     <DialogContentText mb={2}>
                         As baterias selecionadas serão deletadas. A remoção não é permanente e pode ser desfeita.
                     </DialogContentText>
-
                 </DialogContent>
 
                 {displayAlert.display &&

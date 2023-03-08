@@ -28,7 +28,6 @@ export const CreateServiceOrder = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-
   const [formData, setFormData] = React.useState(initialFormData);
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -36,6 +35,8 @@ export const CreateServiceOrder = React.memo((props) => {
   const [open, setOpen] = React.useState(false);
   const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
   const [canSave, setCanSave] = React.useState(false);
+
+  const is_authorized = !!user.user_powers["3"].profile_powers.write;
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -172,8 +173,8 @@ export const CreateServiceOrder = React.memo((props) => {
   return (
     <>
       <Tooltip title="Nova ordem de serviço">
-        <IconButton onClick={handleClickOpen} disabled={!user.user_powers["3"].profile_powers.write == 1}>
-          <FontAwesomeIcon icon={faPlus} color={user.user_powers["3"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!is_authorized}>
+          <FontAwesomeIcon icon={faPlus} color={is_authorized ? "#00713A" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -182,7 +183,7 @@ export const CreateServiceOrder = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="xl"
       >
         <DialogTitle>CADASTRO DE ORDEM DE SERVIÇO</DialogTitle>
         <Divider />
@@ -194,7 +195,6 @@ export const CreateServiceOrder = React.memo((props) => {
           </DialogContentText>
 
           <Grid container spacing={1}>
-
             <Grid item sx={6}>
               <DatePicker
                 label={"Início"}
@@ -315,7 +315,6 @@ export const CreateServiceOrder = React.memo((props) => {
                 </List>
               }
             </Grid>
-
           </Grid>
         </DialogContent>
 

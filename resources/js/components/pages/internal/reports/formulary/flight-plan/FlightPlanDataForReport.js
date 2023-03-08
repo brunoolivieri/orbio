@@ -149,7 +149,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="xl"
             >
                 <DialogTitle>{`PLANO DE VOO | ID: ${formData.id}`}</DialogTitle>
                 <DialogContent>

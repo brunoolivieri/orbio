@@ -3,8 +3,8 @@
 namespace App\Services\Modules\Administration;
 
 use Illuminate\Support\Str;
-use Exception;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
+use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Administration\UserRepository;
 
@@ -28,12 +28,14 @@ class UserPanelService implements ServiceInterface
 
         $user = $this->repository->createOne(collect($data));
 
-        $user->notify(new UserCreatedNotification($user, $random_password));
+        $user->notify(new UserCreatedNotification($random_password));
     }
 
     public function updateOne(array $data, string $identifier)
     {
         $user = $this->repository->updateOne(collect($data), $identifier);
+
+        $user->notify(new UserUpdatedNotification());
     }
 
     public function delete(array $ids)
@@ -63,7 +65,9 @@ class UserPanelService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message);
-        }
+            throw new \Exception($message);
+        } 
     }
 }
+
+?>

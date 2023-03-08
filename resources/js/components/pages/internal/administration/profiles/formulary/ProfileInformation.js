@@ -35,7 +35,7 @@ export const ProfileInformation = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="xl"
             >
                 <DialogTitle>ATUALIZAÇÃO DE PERFIL</DialogTitle>
                 <Divider />

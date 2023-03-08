@@ -3,10 +3,8 @@
 namespace App\Notifications\Modules\Administration\User;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Models
 use App\Models\Users\User;
 
 class UserDisabledNotification extends Notification

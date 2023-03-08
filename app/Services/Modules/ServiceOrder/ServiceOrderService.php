@@ -2,7 +2,6 @@
 
 namespace App\Services\Modules\ServiceOrder;
 
-use Exception;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\ServiceOrders\ServiceOrderRepository;
 use App\Events\Modules\ServiceOrder\{
@@ -38,7 +37,7 @@ class ServiceOrderService implements ServiceInterface
 
         $service_order = $this->repository->createOne(collect($data));
 
-        // ServiceOrderCreatedEvent::dispatch($service_order);
+        ServiceOrderCreatedEvent::dispatch($service_order);
     }
 
     public function updateOne(array $data, string $identifier)
@@ -55,13 +54,13 @@ class ServiceOrderService implements ServiceInterface
 
         $service_order = $this->repository->updateOne(collect($data), $identifier);
 
-        // ServiceOrderUpdatedEvent::dispatch($service_order);
+        ServiceOrderUpdatedEvent::dispatch($service_order);
     }
 
     public function delete(array $ids)
     {
         $service_order = $this->repository->delete($ids);
 
-        //ServiceOrderDeletedEvent::dispatch($service_order);
+        ServiceOrderDeletedEvent::dispatch($service_order);
     }
 }

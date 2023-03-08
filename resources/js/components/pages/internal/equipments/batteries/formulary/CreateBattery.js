@@ -28,7 +28,6 @@ export const CreateBattery = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
@@ -36,6 +35,8 @@ export const CreateBattery = React.memo((props) => {
     const [loading, setLoading] = React.useState(false);
     const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
+
+    const is_authorized = !!user.user_powers["5"].profile_powers.write;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -141,8 +142,8 @@ export const CreateBattery = React.memo((props) => {
     return (
         <>
             <Tooltip title="Nova bateria">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.write == 1}>
-                    <FontAwesomeIcon icon={faPlus} color={user.user_powers["5"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!is_authorized}>
+                    <FontAwesomeIcon icon={faPlus} color={is_authorized ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -151,15 +152,13 @@ export const CreateBattery = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="xl"
             >
                 <DialogTitle>CADASTRO DE BATERIA</DialogTitle>
                 <Divider />
 
                 <DialogContent>
-
                     <Grid container spacing={1}>
-
                         <Grid item xs={12}>
                             <TextField
                                 type="text"
@@ -246,7 +245,6 @@ export const CreateBattery = React.memo((props) => {
                                 errorMessage={formError.last_charge.message}
                             />
                         </Grid>
-
                     </Grid>
 
                     <Stack direction="row" spacing={2} mt={2}>

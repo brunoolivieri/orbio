@@ -18,12 +18,13 @@ export const CreateProfile = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-
   const [formData, setFormData] = React.useState(initialFormData);
   const [formError, setFormError] = React.useState(initialFormError);
   const [open, setOpen] = React.useState(false);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
+
+  const is_authorized = user.user_powers["1"].profile_powers.write;
 
   // Reducer Dispatch
   function accessDataReducer(actual_state, action) {
@@ -127,8 +128,8 @@ export const CreateProfile = React.memo((props) => {
   return (
     <>
       <Tooltip title="Novo Perfil">
-        <IconButton onClick={handleClickOpen} disabled={!user.user_powers["1"].profile_powers.write == 1}>
-          <FontAwesomeIcon icon={faPlus} color={user.user_powers["1"].profile_powers.write == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+        <IconButton onClick={handleClickOpen} disabled={!is_authorized}>
+          <FontAwesomeIcon icon={faPlus} color={is_authorized ? "#00713A" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 
@@ -137,7 +138,7 @@ export const CreateProfile = React.memo((props) => {
         onClose={handleClose}
         PaperProps={{ style: { borderRadius: 15 } }}
         fullWidth
-        fullScreen
+        maxWidth="xl"
       >
         <DialogTitle>CRIAÇÃO DE PERFIL</DialogTitle>
         <Divider />

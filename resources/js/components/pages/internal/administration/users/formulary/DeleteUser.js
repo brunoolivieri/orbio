@@ -20,6 +20,8 @@ export const DeleteUser = React.memo((props) => {
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
+  const is_authorized = !!user.user_powers["1"].profile_powers.write;
+
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   function handleOpen() {
@@ -72,8 +74,8 @@ export const DeleteUser = React.memo((props) => {
   return (
     <>
       <Tooltip title="Desativar">
-        <IconButton disabled={!user.user_powers["1"].profile_powers.write == 1} onClick={handleOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["1"].profile_powers.write == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!is_authorized} onClick={handleOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={is_authorized ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

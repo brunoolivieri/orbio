@@ -20,6 +20,8 @@ export const DeleteServiceOrder = React.memo((props) => {
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
+  const is_authorized = !!user.user_powers["3"].profile_powers.write;
+
   // ============================================================================== FUNCTIONS ============================================================================== //
 
   function handleClickOpen() {
@@ -40,23 +42,18 @@ export const DeleteServiceOrder = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
-
       const response = await axios.delete("api/module/service-orders/delete", {
         data: {
           ids: selectedIds
         }
       });
-
       successResponse(response);
-
     } catch (error) {
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {
@@ -76,8 +73,8 @@ export const DeleteServiceOrder = React.memo((props) => {
   return (
     <>
       <Tooltip title="Deletar">
-        <IconButton disabled={!user.user_powers["3"].profile_powers.read == 1} onClick={handleClickOpen}>
-          <FontAwesomeIcon icon={faTrashCan} color={user.user_powers["3"].profile_powers.read == 1 ? "#007937" : "#E0E0E0"} size="sm" />
+        <IconButton disabled={!is_authorized} onClick={handleClickOpen}>
+          <FontAwesomeIcon icon={faTrashCan} color={is_authorized ? "#007937" : "#E0E0E0"} size="sm" />
         </IconButton>
       </Tooltip>
 

@@ -3,27 +3,12 @@
 namespace App\Notifications\Modules\Administration\User;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Models
-use App\Models\Users\User;
 
 class UserUpdatedNotification extends Notification
 {
     use Queueable;
-
-    private $user;
-
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
 
     /**
      * Get the notification's delivery channels.

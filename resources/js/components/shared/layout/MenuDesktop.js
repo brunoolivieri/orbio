@@ -90,7 +90,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export const MenuDesktop = () => {
+export function MenuDesktop() {
 
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
@@ -141,11 +141,11 @@ export const MenuDesktop = () => {
         }
     }
 
-    const handleDrawerOpen = () => {
+    function handleDrawerOpen() {
         setOpen(true);
     }
 
-    const handleDrawerClose = () => {
+    function handleDrawerClose() {
         setOpen(false);
     }
 

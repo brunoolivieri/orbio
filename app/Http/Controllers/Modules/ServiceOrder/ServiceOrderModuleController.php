@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
-use Exception;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 use App\Services\Modules\ServiceOrder\ServiceOrderService;
@@ -39,7 +38,7 @@ class ServiceOrderModuleController extends Controller
             if ($result->total() > 0) {
                 return response(new ServiceOrdersPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhuma ordem de serviço encontrada");
+                throw new \Exception("Nenhuma ordem de serviço encontrada");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

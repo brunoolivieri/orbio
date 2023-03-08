@@ -99,7 +99,6 @@ export function Drones() {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -108,8 +107,9 @@ export function Drones() {
     const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
-
     const { enqueueSnackbar } = useSnackbar();
+
+    const is_authorized_to_read = !!user.user_powers["5"].profile_powers.read;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -167,7 +167,6 @@ export function Drones() {
     return (
         <>
             <Grid container spacing={1} alignItems="center" mb={1}>
-
                 <Grid item>
                     {selectedRecords.length > 0 &&
                         <IconButton>
@@ -221,11 +220,11 @@ export function Drones() {
                 </Grid>
 
                 <Grid item>
-                    {user.user_powers["5"].profile_powers.read == 1 &&
+                    {is_authorized_to_read &&
                         <ExportTableData type="DRONES" source={"/api/drones/export"} />
                     }
 
-                    {!user.user_powers["5"].profile_powers.read == 1 &&
+                    {!is_authorized_to_read &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
@@ -259,7 +258,6 @@ export function Drones() {
                         variant="outlined"
                     />
                 </Grid>
-
             </Grid>
 
             <Box

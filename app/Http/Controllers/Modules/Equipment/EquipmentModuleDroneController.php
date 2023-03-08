@@ -6,8 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\Request;
-use Exception;
-// Custom
 use App\Http\Requests\Modules\Equipments\Drone\StoreDroneRequest;
 use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 use App\Services\Modules\Equipment\DroneService;
@@ -39,7 +37,7 @@ class EquipmentModuleDroneController extends Controller
             if ($result->total() > 0) {
                 return response(new DronesPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhum drone encontrado");
+                throw new \Exception("Nenhum drone encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

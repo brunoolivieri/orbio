@@ -197,7 +197,6 @@ export function ServiceOrders() {
 
     const { user } = useAuth();
     const { setPageIndex } = usePage();
-
     const [records, setRecords] = React.useState([]);
     const [perPage, setPerPage] = React.useState(10);
     const [currentPage, setCurrentPage] = React.useState(1);
@@ -206,8 +205,10 @@ export function ServiceOrders() {
     const [selectedRecords, setSelectedRecords] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
-
     const { enqueueSnackbar } = useSnackbar();
+
+    const is_authorized_to_read = !!user.user_powers["3"].profile_powers.read;
+    const is_authorized_to_write = !!user.user_powers["3"].profile_powers.write;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -220,7 +221,6 @@ export function ServiceOrders() {
     }, [reload]);
 
     function fetchRecords() {
-
         axios.get(`api/module/service-orders?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
                 setRecords(response.data.records);
@@ -233,12 +233,9 @@ export function ServiceOrders() {
             .finally(() => {
                 setLoading(false);
             });
-
     }
 
     function handleChangePage(newPage) {
-        // If actual page is bigger than the new one, is a reduction of actual
-        // If actual is smaller, the page is increasing
         setCurrentPage((current) => {
             return current > newPage ? (current - 1) : newPage;
         });
@@ -262,7 +259,7 @@ export function ServiceOrders() {
     }
 
     function isRowSelectable() {
-        return Boolean(user.user_powers["3"].profile_powers.write);
+        return Boolean(is_authorized_to_write);
     }
 
     // ============================================================================== STRUCTURES ============================================================================== //
@@ -270,7 +267,6 @@ export function ServiceOrders() {
     return (
         <Box padding={2}>
             <Grid container spacing={1} alignItems="center" mb={1}>
-
                 <Grid item>
                     {selectedRecords.length > 0 &&
                         <IconButton>
@@ -324,11 +320,11 @@ export function ServiceOrders() {
                 </Grid>
 
                 <Grid item>
-                    {user.user_powers["3"].profile_powers.read == 1 &&
+                    {is_authorized_to_read &&
                         <ExportTableData type="ORDENS DE SERVIÇO" source={"/api/service-orders/export"} />
                     }
 
-                    {!user.user_powers["3"].profile_powers.read == 1 &&
+                    {!is_authorized_to_read &&
                         <IconButton disabled>
                             <FontAwesomeIcon icon={faFileCsv} color="#E0E0E0" size="sm" />
                         </IconButton>
@@ -362,7 +358,6 @@ export function ServiceOrders() {
                         variant="outlined"
                     />
                 </Grid>
-
             </Grid>
 
             <Box

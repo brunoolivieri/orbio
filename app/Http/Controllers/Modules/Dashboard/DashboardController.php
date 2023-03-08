@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Modules\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
-use Exception;
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
 use App\Models\FlightPlans\FlightPlan;

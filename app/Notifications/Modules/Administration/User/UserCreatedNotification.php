@@ -3,17 +3,13 @@
 namespace App\Notifications\Modules\Administration\User;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-// Models
-use App\Models\Users\User;
 
 class UserCreatedNotification extends Notification
 {
     use Queueable;
 
-    private $user;
     private $password;
 
     /**
@@ -21,9 +17,8 @@ class UserCreatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(User $user, string $password)
+    public function __construct(string $password)
     {
-        $this->user = $user;
         $this->password = $password;
     }
 

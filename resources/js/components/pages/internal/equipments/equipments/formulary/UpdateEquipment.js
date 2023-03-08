@@ -27,7 +27,6 @@ export const UpdateEquipment = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-
     const [formData, setFormData] = React.useState({
         id: props.record.id,
         name: props.record.name,
@@ -45,6 +44,8 @@ export const UpdateEquipment = React.memo((props) => {
     const [image, setImage] = React.useState(null);
     const [open, setOpen] = React.useState(false);
     const htmlImage = React.useRef();
+
+    const is_authorized = !!user.user_powers["5"].profile_powers.write;
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -156,8 +157,8 @@ export const UpdateEquipment = React.memo((props) => {
     return (
         <>
             <Tooltip title="Editar">
-                <IconButton onClick={handleClickOpen} disabled={!user.user_powers["5"].profile_powers.read == 1}>
-                    <FontAwesomeIcon icon={faPen} color={user.user_powers["5"].profile_powers.read == 1 ? "#00713A" : "#E0E0E0"} size="sm" />
+                <IconButton onClick={handleClickOpen} disabled={!is_authorized}>
+                    <FontAwesomeIcon icon={faPen} color={is_authorized ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
             </Tooltip>
 
@@ -166,7 +167,7 @@ export const UpdateEquipment = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="xl"
             >
                 <DialogTitle>ATUALIZAÇÃO DE EQUIPAMENTO</DialogTitle>
                 <Divider />
@@ -174,7 +175,6 @@ export const UpdateEquipment = React.memo((props) => {
                 <DialogContent>
 
                     <Grid container spacing={1}>
-
                         <Grid item xs={12}>
                             <TextField
                                 type="text"

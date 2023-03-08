@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Maatwebsite\Excel\Facades\Excel;
-use Exception;
 use App\Services\Modules\FlightPlan\FlightPlanLogService;
 use App\Http\Requests\Modules\FlightPlans\Logs\UpdateLogRequest;
 use App\Exports\GenericExport;
@@ -38,7 +37,7 @@ class FlightPlanModuleLogController extends Controller
             if ($result->total() > 0) {
                 return response(new FlightPlansLogPanelResource($result), 200);
             } else {
-                throw new Exception("Nenhum log encontrado");
+                throw new \Exception("Nenhum log encontrado");
             }
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

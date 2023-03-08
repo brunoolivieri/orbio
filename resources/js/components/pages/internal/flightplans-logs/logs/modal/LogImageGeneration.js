@@ -54,6 +54,7 @@ export const LogImageGeneration = React.memo((props) => {
             <Dialog
                 open={open}
                 onClose={handleClose}
+                fullWidth
                 fullScreen
             >
                 <DialogTitle>

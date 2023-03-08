@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Authentication;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Exception;
 use App\Models\Users\User;
 
 class UserAuthenticatedData extends Controller
@@ -45,7 +44,7 @@ class UserAuthenticatedData extends Controller
             }
 
             return response($data, 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
         }
     }

@@ -57,7 +57,6 @@ class UserRepository implements RepositoryInterface
 
     function delete(array $ids)
     {
-
         $undeleteable_ids = [];
         foreach ($ids as $user_id) {
 
@@ -69,6 +68,7 @@ class UserRepository implements RepositoryInterface
                     array_push($undeleteable_ids, $user_id);
                 }
             }
+
         }
 
         // Deletion will occur only if all flight plans can be deleted

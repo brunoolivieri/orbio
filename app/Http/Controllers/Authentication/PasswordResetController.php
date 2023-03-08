@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Exception;
 use Illuminate\Support\Facades\Hash;
 use App\Models\PasswordResets\PasswordReset;
 use App\Notifications\Auth\ChangePasswordNotification;
@@ -27,7 +26,7 @@ class PasswordResetController extends Controller
                 $token = $this->model->where("token", $request->token)->first();
 
                 if (!$token || $token->trashed()) {
-                    throw new Exception("Token inválido");
+                    throw new \Exception("Token inválido");
                 }
 
                 $token->user->update([
@@ -39,7 +38,7 @@ class PasswordResetController extends Controller
             });
 
             return response(["message" => "Senha alterada com sucesso!"], 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
         }
     }
