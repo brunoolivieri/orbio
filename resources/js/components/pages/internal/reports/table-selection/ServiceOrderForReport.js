@@ -271,7 +271,7 @@ export const ServiceOrderForReport = React.memo((props) => {
                 {selectedRecordID ? "Ordem de serviço selecionada" : "Selecionar ordem de serviço"}
             </Button>
             <Dialog
-                maxWidth="xl"
+                fullScreen
                 open={open}
                 onClose={handleClose}
                 TransitionComponent={Transition}

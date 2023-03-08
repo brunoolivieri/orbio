@@ -17,7 +17,7 @@ import moment from 'moment/moment';
 const styles = StyleSheet.create({
     viewer: {
         width: "100%",
-        height: "650px"
+        height: "100%"
     },
     page: {
         display: 'flex',
@@ -174,15 +174,10 @@ export const ReportVisualization = React.memo((props) => {
                 fullWidth
                 fullScreen
             >
-                <DialogTitle id="alert-dialog-title">
-                    {"Visualização do relatório"}
-                </DialogTitle>
                 <DialogContent>
-
                     <PDFViewer style={styles.viewer}>
                         <ReportDocument data={{ ...props.basicData, flight_plans: props.flightPlans }} />
                     </PDFViewer>
-
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} variant="contained">Fechar</Button>
