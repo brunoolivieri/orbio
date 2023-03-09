@@ -111,7 +111,6 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
     }
 
     function handleSelection(newSelectedIds) {
-
         let new_selection_id = [];
         if (newSelectedIds.length === 1) {
             new_selection_id = newSelectedIds;
@@ -120,11 +119,9 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
         }
 
         setSelectionModel(new_selection_id);
-
     }
 
     async function handleSave() {
-
         const execute = async () => {
 
             const selectedFlightPlansUpdated = props.selectedFlightPlans.map((flight_plan) => {
@@ -141,7 +138,6 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
 
         await execute();
         setOpen(false);
-
     }
 
     function logIsAvailable(current_grid_log) {

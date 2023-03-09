@@ -40,7 +40,6 @@ export const CreateServiceOrder = React.memo((props) => {
 
   // Verify if data is completed
   React.useEffect(() => {
-
     setCanSave(() => {
 
       if (selectedFlightPlans.length === 0) {
@@ -64,9 +63,7 @@ export const CreateServiceOrder = React.memo((props) => {
 
       // If the array has 0, exists invalid data
       return !selections_check.includes(0);
-
     });
-
   }, [selectedFlightPlans]);
 
   function handleClickOpen() {
@@ -152,7 +149,6 @@ export const CreateServiceOrder = React.memo((props) => {
   }
 
   function avatarSelectionStyle(selected_flight_plan) {
-
     let is_completed = true;
     for (let prop in selected_flight_plan) {
       if (prop != "name" && prop != "log_id") {
@@ -163,7 +159,6 @@ export const CreateServiceOrder = React.memo((props) => {
     }
 
     return is_completed ? { bgcolor: "#4CAF50" } : { bgcolor: "#E0E0E0" };
-
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //

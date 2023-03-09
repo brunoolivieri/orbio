@@ -155,7 +155,6 @@ export const DronesForFlightPlan = React.memo((props) => {
     }
 
     function handleSelection(newSelectedIds) {
-
         let new_selection_id = 0;
         if (newSelectedIds.length === 1) {
             new_selection_id = newSelectedIds;
@@ -164,7 +163,6 @@ export const DronesForFlightPlan = React.memo((props) => {
         }
 
         setSelectionModel(new_selection_id);
-
     }
 
     async function handleSave() {

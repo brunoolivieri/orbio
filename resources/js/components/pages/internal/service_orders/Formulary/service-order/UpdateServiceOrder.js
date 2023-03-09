@@ -172,7 +172,6 @@ export const UpdateServiceOrder = React.memo((props) => {
   }
 
   function avatarSelectionStyle(selected_flight_plan) {
-
     let is_completed = true;
     for (let prop in selected_flight_plan) {
       if (prop != "name" && prop != "log_id") {
@@ -183,7 +182,6 @@ export const UpdateServiceOrder = React.memo((props) => {
     }
 
     return is_completed ? { bgcolor: "#4CAF50" } : { bgcolor: "#E0E0E0" };
-
   }
 
   // ============================================================================== JSX ============================================================================== //

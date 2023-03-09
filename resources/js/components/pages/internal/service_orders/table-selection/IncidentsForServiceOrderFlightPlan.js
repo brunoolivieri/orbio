@@ -88,7 +88,6 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
     }
 
     function fetchRecords() {
-
         axios.get(`api/action/service-order/incidents?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
                 setRecords(response.data.records);
@@ -101,7 +100,6 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
             .finally(() => {
                 setLoading(false);
             });
-
     }
 
     function handleChangePage(newPage) {
