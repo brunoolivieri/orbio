@@ -1,19 +1,12 @@
 import * as React from 'react';
-// Material UI
 import { Tooltip, Typography, IconButton, Grid, TextField, Button, Paper, Stack, Divider, Box } from '@mui/material';
 import styled from '@emotion/styled';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { DeactivateAccountModal } from './modal/DeactivateAccount';
 import axios from "../../../../../services/AxiosApi";
 import { useAuth } from '../../../../context/Auth';
 import { FormValidation } from '../../../../../utils/FormValidation';
-import { GenericModalDialog } from '../../../../shared/modals/dialog/GenericModalDialog';
-// Assets
-import AlertImage from "../../../../assets/images/Alert/Alert_md.png";
-// Libs
 import { useSnackbar } from 'notistack';
 
 const PaperStyled = styled(Paper)({
@@ -37,7 +30,6 @@ export function AdditionalConfiguration() {
     const [loading, setLoading] = React.useState(false);
     const [refresh, setRefresh] = React.useState(false);
     const [formError, setFormError] = React.useState(initialFormError);
-    const [openGenericModal, setOpenGenericModal] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -97,20 +89,6 @@ export function AdditionalConfiguration() {
         }
     }
 
-    async function disableAccount() {
-
-        try {
-
-            const response = axios.post(`/api/desactivate-account/${user.id}`);
-            setOpenGenericModal(false);
-            enqueueSnackbar(response.data.message, { variant: "success" });
-
-        } catch (error) {
-            console.log(error)
-            enqueueSnackbar(error.response.data.message, { variant: "error" });
-        }
-    }
-
     function handleInputChange(event) {
         setFormData({ ...formData, [event.target.name]: event.currentTarget.value });
     }
@@ -120,38 +98,12 @@ export function AdditionalConfiguration() {
     return (
         <>
             <Grid container spacing={1} alignItems="center">
-
                 <Grid item>
                     <Tooltip title="Carregar">
                         <IconButton onClick={() => setRefresh((prev) => !prev)}>
                             <FontAwesomeIcon icon={faArrowsRotate} size="sm" color={'#007937'} />
                         </IconButton>
                     </Tooltip>
-                </Grid>
-
-                <Grid item>
-                    <GenericModalDialog
-                        modal_controller={{ state: openGenericModal, setModalState: setOpenGenericModal, counter: { required: false } }}
-                        title={{ top: { required: false }, middle: { required: false } }}
-                        image={{ required: true, src: AlertImage }}
-                        lottie={{ required: false }}
-                        content_text={"A desativação é imediata. O login ainda será possível, mas a conta terá acesso mínimo ao sistema."}
-                        actions={{
-                            required: true,
-                            close_button_text: {
-                                required: true,
-                                text: "Cancelar"
-                            },
-                            confirmation_default_button: {
-                                required: true,
-                                text: "Desativar a conta",
-                                event: disableAccount
-                            },
-                            confirmation_button_with_link: {
-                                required: false
-                            }
-                        }}
-                    />
                 </Grid>
             </Grid>
 

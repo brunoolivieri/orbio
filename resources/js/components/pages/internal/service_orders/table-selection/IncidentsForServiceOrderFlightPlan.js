@@ -1,21 +1,16 @@
 import * as React from 'react';
-// Material UI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import ReportIcon from '@mui/icons-material/Report';
 import CloseIcon from '@mui/icons-material/Close';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Axios
 import axios from '../../../../../services/AxiosApi';
-// Moment
 import moment from 'moment';
-// Custom
 import { CreateIncident } from "../formulary/incident/CreateIncident";
 import { UpdateIncident } from '../formulary/incident/UpdateIncident';
 import { DeleteIncident } from '../formulary/incident/DeleteIncident';

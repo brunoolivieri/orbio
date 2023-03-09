@@ -166,7 +166,7 @@ export const EquipmentsForFlightPlan = React.memo((props) => {
 
     function handleSelection(newSelectedIds) {
 
-        let new_selection_id = [];
+        let new_selection_id = 0;
         if (newSelectedIds.length === 1) {
             new_selection_id = newSelectedIds;
         } else if (newSelectedIds.length > 1) {
@@ -199,9 +199,11 @@ export const EquipmentsForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <IconButton onClick={handleOpen}>
-                <HomeRepairServiceIcon />
-            </IconButton>
+            <Tooltip title="Equipamento">
+                <IconButton onClick={handleOpen}>
+                    <HomeRepairServiceIcon />
+                </IconButton>
+            </Tooltip>
             <Dialog
                 fullScreen
                 open={open}

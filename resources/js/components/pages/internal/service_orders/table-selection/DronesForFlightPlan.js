@@ -1,8 +1,8 @@
 import * as React from 'react';
+import DroneIcon from "../../../../assets/images/Icons/drone.png";
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
-import AirplanemodeActiveIcon from '@mui/icons-material/AirplanemodeActive';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -156,7 +156,7 @@ export const DronesForFlightPlan = React.memo((props) => {
 
     function handleSelection(newSelectedIds) {
 
-        let new_selection_id = [];
+        let new_selection_id = 0;
         if (newSelectedIds.length === 1) {
             new_selection_id = newSelectedIds;
         } else if (newSelectedIds.length > 1) {
@@ -189,9 +189,11 @@ export const DronesForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <IconButton onClick={handleOpen}>
-                <AirplanemodeActiveIcon />
-            </IconButton>
+            <Tooltip title="Drone">
+                <IconButton onClick={handleOpen}>
+                    <img src={DroneIcon} width="20px" />
+                </IconButton>
+            </Tooltip>
             <Dialog
                 fullScreen
                 open={open}

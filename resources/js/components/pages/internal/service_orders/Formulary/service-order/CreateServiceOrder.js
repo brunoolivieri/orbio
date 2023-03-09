@@ -12,7 +12,6 @@ import { DronesForFlightPlan } from '../../table-selection/DronesForFlightPlan';
 import { BatteriesForFlightPlan } from '../../table-selection/BatteriesForFlightPlan';
 import { EquipmentsForFlightPlan } from '../../table-selection/EquipmentsForFlightPlan';
 import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
-import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';

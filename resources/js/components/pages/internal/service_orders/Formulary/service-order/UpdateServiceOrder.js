@@ -1,10 +1,8 @@
 import * as React from 'react';
-// Material UI
 import { Button, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-// Custom
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
@@ -16,11 +14,8 @@ import { DronesForFlightPlan } from '../../table-selection/DronesForFlightPlan';
 import { BatteriesForFlightPlan } from '../../table-selection/BatteriesForFlightPlan';
 import { EquipmentsForFlightPlan } from '../../table-selection/EquipmentsForFlightPlan';
 import { IncidentsForServiceOrderFlightPlan } from '../../table-selection/IncidentsForServiceOrderFlightPlan';
-
-// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Libs
 import moment from 'moment';
 
 const fieldError = { error: false, message: "" }
