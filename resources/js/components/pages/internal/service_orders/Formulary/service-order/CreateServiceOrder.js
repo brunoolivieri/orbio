@@ -1,21 +1,20 @@
 import * as React from 'react';
-// Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-// Custom
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
+import { DronesForFlightPlan } from '../../table-selection/DronesForFlightPlan';
+import { BatteriesForFlightPlan } from '../../table-selection/BatteriesForFlightPlan';
+import { EquipmentsForFlightPlan } from '../../table-selection/EquipmentsForFlightPlan';
 import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
 import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
-// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-// Libs
 import moment from 'moment';
 
 const initialFormData = { pilot_id: "0", client_id: "0", observation: "", start_date: moment(), end_date: moment() };
@@ -293,11 +292,23 @@ export const CreateServiceOrder = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <EquipmentsForServiceOrderFlightPlan
-                            selectedFlightPlans={selectedFlightPlans}
-                            setSelectedFlightPlans={setSelectedFlightPlans}
-                            current={flight_plan}
-                          />
+                          <Stack direction="row">
+                            <DronesForFlightPlan
+                              selectedFlightPlans={selectedFlightPlans}
+                              setSelectedFlightPlans={setSelectedFlightPlans}
+                              current={flight_plan}
+                            />
+                            <BatteriesForFlightPlan
+                              selectedFlightPlans={selectedFlightPlans}
+                              setSelectedFlightPlans={setSelectedFlightPlans}
+                              current={flight_plan}
+                            />
+                            <EquipmentsForFlightPlan
+                              selectedFlightPlans={selectedFlightPlans}
+                              setSelectedFlightPlans={setSelectedFlightPlans}
+                              current={flight_plan}
+                            />
+                          </Stack>
                         }
                       >
                         <ListItemAvatar>

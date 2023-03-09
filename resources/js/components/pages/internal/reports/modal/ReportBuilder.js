@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 // Assets
@@ -166,8 +165,9 @@ export const ReportVisualization = React.memo((props) => {
 
     return (
         <>
-            <Button variant="contained" onClick={handleClickOpen} startIcon={<VisibilityIcon />}>Visualizar</Button>
-
+            <Button variant="contained" onClick={handleClickOpen} startIcon={<VisibilityIcon />}>
+                Visualizar
+            </Button>
             <Dialog
                 open={open}
                 onClose={handleClose}

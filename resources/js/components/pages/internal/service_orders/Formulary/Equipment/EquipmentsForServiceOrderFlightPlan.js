@@ -1,8 +1,6 @@
 import * as React from 'react';
-// Material UI
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, IconButton, Divider, DialogContentText, Tooltip } from '@mui/material';
 import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
-// Custom
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 
 const initialFormData = { id: "", array_index: "", drone_id: "", battery_id: "", equipment_id: "" }
@@ -85,7 +83,6 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
                 <Divider />
 
                 <DialogContent>
-
                     <DialogContentText mb={2}>
                         Selecione os equipamentos que serão utilizados na realização deste plano de voo nesta ordem de serviço.
                     </DialogContentText>
@@ -145,7 +142,6 @@ export const EquipmentsForServiceOrderFlightPlan = React.memo((props) => {
                             handleChange={handleInputChange}
                         />
                     </Box>
-
                 </DialogContent>
 
                 <Divider />

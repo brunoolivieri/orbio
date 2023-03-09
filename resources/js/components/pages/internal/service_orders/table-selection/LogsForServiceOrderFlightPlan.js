@@ -102,8 +102,6 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
     }
 
     function handleChangePage(newPage) {
-        // If actual page is bigger than the new one, is a reduction of actual
-        // If actual is smaller, the page is increasing
         setCurrentPage((current) => {
             return current > newPage ? (current - 1) : newPage;
         });
@@ -132,6 +130,7 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
     async function handleSave() {
 
         const execute = async () => {
+
             const selectedFlightPlansUpdated = props.selectedFlightPlans.map((flight_plan) => {
                 if (flight_plan.id != props.current.id) {
                     return flight_plan;
@@ -271,7 +270,6 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
                             }}
                         />
                     </Box>
-
                 </DialogContent>
             </Dialog>
         </>

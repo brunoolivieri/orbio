@@ -1,9 +1,7 @@
 import * as React from 'react';
-// Material UI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +10,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Custom
 import { CreateEquipment } from './formulary/CreateEquipment';
 import { UpdateEquipment } from './formulary/UpdateEquipment';
 import { DeleteEquipment } from './formulary/DeleteEquipment';
@@ -22,7 +19,6 @@ import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { ModalImage } from '../../../../shared/modals/dialog/ModalImage';
 import { useAuth } from '../../../../context/Auth';
 import axios from '../../../../../services/AxiosApi';
-// Moment
 import moment from 'moment';
 
 const columns = [

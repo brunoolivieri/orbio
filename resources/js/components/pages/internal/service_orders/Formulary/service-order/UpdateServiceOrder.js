@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText, Stack } from '@mui/material';
+import { Button, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -12,7 +12,9 @@ import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
 import { LogsForServiceOrderFlightPlan } from '../../table-selection/LogsForServiceOrderFlightPlan';
-import { EquipmentsForServiceOrderFlightPlan } from '../Equipment/EquipmentsForServiceOrderFlightPlan';
+import { DronesForFlightPlan } from '../../table-selection/DronesForFlightPlan';
+import { BatteriesForFlightPlan } from '../../table-selection/BatteriesForFlightPlan';
+import { EquipmentsForFlightPlan } from '../../table-selection/EquipmentsForFlightPlan';
 import { IncidentsForServiceOrderFlightPlan } from '../../table-selection/IncidentsForServiceOrderFlightPlan';
 
 // Fontsawesome
@@ -316,23 +318,37 @@ export const UpdateServiceOrder = React.memo((props) => {
                         key={index}
                         secondaryAction={
                           <Stack direction="row" spacing={2}>
-                            <EquipmentsForServiceOrderFlightPlan
-                              selectedFlightPlans={selectedFlightPlans}
-                              setSelectedFlightPlans={setSelectedFlightPlans}
-                              current={flight_plan}
-                            />
-                            <IncidentsForServiceOrderFlightPlan
-                              serviceOrderId={formData.id}
-                              selectedFlightPlans={selectedFlightPlans}
-                              setSelectedFlightPlans={setSelectedFlightPlans}
-                              current={flight_plan}
-                            />
-                            <LogsForServiceOrderFlightPlan
-                              serviceOrderId={formData.id}
-                              selectedFlightPlans={selectedFlightPlans}
-                              setSelectedFlightPlans={setSelectedFlightPlans}
-                              current={flight_plan}
-                            />
+                            <Stack direction="row">
+                              <DronesForFlightPlan
+                                selectedFlightPlans={selectedFlightPlans}
+                                setSelectedFlightPlans={setSelectedFlightPlans}
+                                current={flight_plan}
+                              />
+                              <BatteriesForFlightPlan
+                                selectedFlightPlans={selectedFlightPlans}
+                                setSelectedFlightPlans={setSelectedFlightPlans}
+                                current={flight_plan}
+                              />
+                              <EquipmentsForFlightPlan
+                                selectedFlightPlans={selectedFlightPlans}
+                                setSelectedFlightPlans={setSelectedFlightPlans}
+                                current={flight_plan}
+                              />
+                            </Stack>
+                            <Stack direction="row">
+                              <IncidentsForServiceOrderFlightPlan
+                                serviceOrderId={formData.id}
+                                selectedFlightPlans={selectedFlightPlans}
+                                setSelectedFlightPlans={setSelectedFlightPlans}
+                                current={flight_plan}
+                              />
+                              <LogsForServiceOrderFlightPlan
+                                serviceOrderId={formData.id}
+                                selectedFlightPlans={selectedFlightPlans}
+                                setSelectedFlightPlans={setSelectedFlightPlans}
+                                current={flight_plan}
+                              />
+                            </Stack>
                           </Stack>
                         }
                       >
