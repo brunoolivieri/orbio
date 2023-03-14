@@ -19,6 +19,7 @@ class UserRepository implements RepositoryInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->userModel->with(["profile:id,name"])
+            ->withTrashed()
             ->search($search) // scope
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }

@@ -41,12 +41,12 @@ class UsersPanelResource extends JsonResource
                 "documents" => null,
                 "address" => null,
                 "service_order" => null,
-                "last_access" => is_null($user->last_access) ? "nunca" : $user->last_access,
+                "last_access" => $user->last_access,
                 "created_at" => $user->created_at,
                 "updated_at" => $user->updated_at
             ];
 
-            //dd($user->created_at);
+            //dd($this->formatedData);
 
             if ($user->status && $user->personal_document) {
 
@@ -84,12 +84,12 @@ class UsersPanelResource extends JsonResource
                 }
             }
 
-            if ((bool) $user->status && empty($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["Ativo", "success"];
-            } else if ((bool) !$user->status && empty($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["Inativo", "error"];
-            } else if (!empty($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["Removido", "error"];
+            if ((bool) $user->status && is_null($user->deleted_at)) {
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Ativo", "color" => "success"];
+            } else if ((bool) !$user->status && is_null($user->deleted_at)) {
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Inativo", "color" => "error"];
+            } else if (!is_null($user->deleted_at)) {
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Deletado", "color" => "error"];
             }
         }
 

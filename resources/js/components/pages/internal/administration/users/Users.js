@@ -1,9 +1,7 @@
 import * as React from 'react';
-// Material UI
 import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +10,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Custom
 import { CreateUser } from './formulary/CreateUser';
 import { UpdateUser } from './formulary/UpdateUser';
 import { DeleteUser } from './formulary/DeleteUser';
@@ -21,7 +18,6 @@ import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableDat
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
 import axios from "../../../../../services/AxiosApi";
-// Moment
 import moment from 'moment';
 
 const columns = [
@@ -50,11 +46,11 @@ const columns = [
     editable: false,
     renderCell: (data) => {
 
-      function chipStyle(status) {
-        return Number(status) === 1 ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
+      function chipStyle(badge) {
+        return { label: badge.label, color: badge.color, variant: "outlined" };
       }
 
-      const chip_style = chipStyle(data.row.status);
+      const chip_style = chipStyle(data.row.status_badge);
 
       return (
         <Chip {...chip_style} />
@@ -78,9 +74,9 @@ const columns = [
     editable: false,
     width: 150,
     valueGetter: (data) => {
-      return data.row.last_access != "nunca" ? moment(data.row.last_access).format("DD/MM/YYYY") : data.row.last_access
+      return data.row.last_access ? moment(data.row.last_access).format("DD/MM/YYYY") : "---"
     }
-  },
+  }
 ];
 
 export function Users() {
@@ -159,8 +155,6 @@ export function Users() {
   function isRowSelectable(data) {
     return (data.row.id != user.id) && Boolean(user.user_powers["1"].profile_powers.write);
   }
-
-  // ============================================================================== JSX ============================================================================== //
 
   return (
     <>

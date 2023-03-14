@@ -30,7 +30,7 @@ class User extends Authenticatable
             if (is_numeric($value_searched)) {
                 $query->where('users.id', $value_searched);
             } else {
-                $query->where('users.name', 'LIKE', '%' . $value_searched . '%')->orWhere('users.email', 'LIKE', '%' . $value_searched . '%');
+                $query->where('users.name', 'LIKE', '%' . $value_searched . '%')->orWhere('users.email', 'LIKE', '%' . $value_searched);
             }
         });
     }
