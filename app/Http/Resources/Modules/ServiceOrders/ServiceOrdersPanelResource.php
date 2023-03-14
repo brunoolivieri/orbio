@@ -40,8 +40,26 @@ class ServiceOrdersPanelResource extends JsonResource
                 "total_logs" => 0,
                 "observation" => $service_order->observation,
                 "created_at" => date("Y-m-d", strtotime($service_order->created_at)),
-                "updated_at" => date("Y-m-d", strtotime($service_order->updated_at))
+                "updated_at" => date("Y-m-d", strtotime($service_order->updated_at)),
+                "deleted_at" => $service_order->deleted_at
             ];
+
+            if ($service_order->trashed()) {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else if (!$service_order->trashed() && !is_null($service_order->report)) {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Finalizado",
+                    "color" => "error"
+                ];
+            } else if (!$service_order->trashed() && is_null($service_order->report)) {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
 
             // ============================== RELATED FLIGHT PLANS WITH INCIDENTS ============================== //
 

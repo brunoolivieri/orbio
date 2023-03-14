@@ -25,6 +25,7 @@ class ServiceOrderRepository implements RepositoryInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->serviceOrderModel::with("flight_plans", "users")
+            ->withTrashed()
             ->search($search) // scope
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
@@ -73,7 +74,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
             // ==== First step: Update service order ==== //
 
-            $service_order = $this->serviceOrderModel->findOrFail($identifier);
+            $service_order = $this->serviceOrderModel->withTrashed()->findOrFail($identifier);
 
             $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
 
@@ -148,7 +149,6 @@ class ServiceOrderRepository implements RepositoryInterface
                             "service_order_flight_plan_id" => $service_order_flight_plan->pivot->id
                         ]);
                     }
-                    
                 } else {
 
                     // Pivot doesnt have log and sent one - log_id not null
@@ -158,6 +158,10 @@ class ServiceOrderRepository implements RepositoryInterface
                         ]);
                     }
                 }
+            }
+
+            if ($service_order->trashed() && $data->get("undelete")) {
+                $service_order->restore();
             }
 
             $service_order->refresh();

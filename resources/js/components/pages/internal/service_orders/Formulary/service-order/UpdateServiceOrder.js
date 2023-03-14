@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText } from '@mui/material';
+import { Button, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText, Checkbox, FormControlLabel } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -78,7 +78,8 @@ export const UpdateServiceOrder = React.memo((props) => {
       pilot_id: props.record.users.pilot.id,
       client_id: props.record.users.client.id,
       observation: props.record.observation,
-      status: props.record.status
+      status: props.record.status,
+      undelete: false
     });
 
     setSelectedFlightPlans(props.record.flight_plans.map((flight_plan) => {
@@ -123,6 +124,7 @@ export const UpdateServiceOrder = React.memo((props) => {
   }
 
   async function requestServer() {
+
     try {
       const response = await axios.patch(`api/module/service-orders/${formData.id}`, {
         start_date: moment(formData.start_date).format('YYYY-MM-DD hh:mm:ss'),
@@ -132,7 +134,8 @@ export const UpdateServiceOrder = React.memo((props) => {
         creator_id: props.record.users.creator.id,
         status: formData.status,
         observation: formData.observation,
-        flight_plans: selectedFlightPlans
+        flight_plans: selectedFlightPlans,
+        undelete: formData.undelete
       });
       successResponse(response);
     } catch (error) {
@@ -277,6 +280,12 @@ export const UpdateServiceOrder = React.memo((props) => {
                 sx={{ mb: 2 }}
               />
             </Grid>
+
+            {props.record.deleted_at &&
+              <Grid item xs={12}>
+                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+              </Grid>
+            }
 
             <Grid item xs={6}>
               <Box>

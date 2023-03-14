@@ -31,7 +31,8 @@ class ServiceOrderUpdateRequest extends FormRequest
             "creator_id" => ['required', 'numeric'],
             "client_id" => ['required', 'numeric'],
             "observation" => ['required', 'string'],
-            "flight_plans" => ['required', 'array']
+            "flight_plans" => ['required', 'array'],
+            "undelete" => ["required", "boolean"]
         ];
     }
 

@@ -69,7 +69,7 @@ class ServiceOrderModuleController extends Controller
         Gate::authorize('service_orders_write');
 
         try {
-            $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "status", "creator_id", "client_id", "observation", "number", "flight_plans"]), $id);
+            $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "status", "creator_id", "client_id", "observation", "number", "flight_plans", "undelete"]), $id);
             return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

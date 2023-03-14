@@ -1,9 +1,7 @@
 import * as React from 'react';
-// MaterialUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +11,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Custom
 import { CreateServiceOrder } from './Formulary/service-order/CreateServiceOrder';
 import { UpdateServiceOrder } from './Formulary/service-order/UpdateServiceOrder';
 import { DeleteServiceOrder } from './Formulary/service-order/DeleteServiceOrder';
@@ -23,7 +20,6 @@ import { TableToolbar } from '../../../shared/table_toolbar/TableToolbar';
 import { useAuth } from '../../../context/Auth';
 import { usePage } from '../../../context/PageContext';
 import axios from '../../../../services/AxiosApi';
-// Moment
 import moment from 'moment';
 
 const columns = [
@@ -36,11 +32,11 @@ const columns = [
         editable: false,
         renderCell: (data) => {
 
-            function chipStyle(status) {
-                return status.toString() === "1" ? { label: "Ativo", color: "success", variant: "outlined" } : { label: "Inativo", color: "error", variant: "outlined" };
+            function chipStyle(badge) {
+                return { label: badge.label, color: badge.color, variant: "outlined" };
             }
 
-            const chip_style = chipStyle(data.row.status);
+            const chip_style = chipStyle(data.row.status_badge);
 
             return (
                 <Chip {...chip_style} />
@@ -126,46 +122,23 @@ const columns = [
         }
     },
     {
-        field: 'progress',
-        headerName: 'Progresso',
+        field: 'start_date',
+        headerName: 'Inicio',
         sortable: true,
         editable: false,
-        minWidth: 150,
-        renderCell: (data) => {
-
-            const actual_moment = moment();
-            const start_moment = moment(data.row.start_date);
-            const end_moment = moment(data.row.end_date);
-
-            if (data.row.finished || actual_moment.diff(end_moment, 'days') > 0) {
-                return <Chip label="Finalizado" color="success" variant="outlined" />;
-            }
-
-            //const start_date = start_moment.format("DD/MM/YYYY");
-            //const final_date = end_moment.format("DD/MM/YYYY");
-            const total_days = end_moment.diff(start_moment, 'days');
-
-            // > 0 = started and < 0 = to start
-            const days_from_start = actual_moment.diff(start_moment, 'days');
-
-            // > 0 = ended and < 0 = to end
-            const days_from_end = actual_moment.diff(end_moment, 'days');
-
-            let progress_percentage = 0;
-            let progress_days = 0;
-
-            if ((days_from_start > 0 || days_from_start === 0) && days_from_end < 0) { // In progress
-                progress_percentage = 100 * days_from_start / total_days;
-                progress_days = days_from_start;
-            } else if (days_from_start < 0) { // To start
-                progress_percentage = 0;
-            } else if (days_from_end > 0) { // Ended
-                progress_percentage = 100;
-                progress_days = total_days;
-            }
-
-            return `${Math.floor(progress_percentage)}% (${Math.floor(progress_days)} de ${Math.floor(total_days)} dias)`;
-
+        width: 150,
+        valueGetter: (data) => {
+            return data.row.start_date ? moment(data.row.start_date).format("DD/MM/YYYY") : "---"
+        }
+    },
+    {
+        field: 'end_date',
+        headerName: 'Fim',
+        sortable: true,
+        editable: false,
+        width: 150,
+        valueGetter: (data) => {
+            return data.row.end_date ? moment(data.row.end_date).format("DD/MM/YYYY") : "---"
         }
     },
     {
@@ -189,6 +162,17 @@ const columns = [
             )
         }
     },
+    {
+        field: 'deleted_at',
+        headerName: 'Deleção',
+        sortable: true,
+        editable: false,
+        hide: true,
+        width: 150,
+        valueGetter: (data) => {
+            return data.row.deleted_at ? moment(data.row.deleted_at).format("DD/MM/YYYY") : null
+        }
+    }
 ];
 
 export function ServiceOrders() {
