@@ -43,7 +43,8 @@ class UsersPanelResource extends JsonResource
                 "service_order" => null,
                 "last_access" => $user->last_access,
                 "created_at" => $user->created_at,
-                "updated_at" => $user->updated_at
+                "updated_at" => $user->updated_at,
+                "deleted_at" => $user->deleted_at
             ];
 
             //dd($this->formatedData);

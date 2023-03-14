@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository implements RepositoryInterface
 {
@@ -36,24 +37,31 @@ class UserRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $user = $this->userModel->findOrFail($identifier);
+        return DB::transaction(function () use ($data, $identifier) {
 
-        $new_profile = $this->profileModel->findOrFail($data->get("profile_id"));
+            $user = $this->userModel->withTrashed()->findOrFail($identifier);
 
-        // Check if user is related to an active service order with different role
-        foreach ($user->service_orders as $service_order) {
-            if ($service_order->status) {
-                if (strtolower($service_order->pivot->role) != strtolower($new_profile->name)) {
-                    throw new \Exception("Possui vínculo como {$service_order->pivot->role} a uma ordem de serviço ativa!");
+            $new_profile = $this->profileModel->findOrFail($data->get("profile_id"));
+
+            // Check if user is related to an active service order with different role
+            foreach ($user->service_orders as $service_order) {
+                if ($service_order->status) {
+                    if (strtolower($service_order->pivot->role) != strtolower($new_profile->name)) {
+                        throw new \Exception("Possui vínculo como {$service_order->pivot->role} a uma ordem de serviço ativa!");
+                    }
                 }
             }
-        }
 
-        $user->update($data->only(["name", "email", "profile_id"])->all());
+            $user->update($data->only(["name", "email", "profile_id"])->all());
 
-        $user->refresh();
+            if ($user->trashed() && $data->get("undelete")) {
+                $user->restore();
+            }
 
-        return $user;
+            $user->refresh();
+
+            return $user;
+        });
     }
 
     function delete(array $ids)
@@ -69,7 +77,6 @@ class UserRepository implements RepositoryInterface
                     array_push($undeleteable_ids, $user_id);
                 }
             }
-
         }
 
         // Deletion will occur only if all flight plans can be deleted

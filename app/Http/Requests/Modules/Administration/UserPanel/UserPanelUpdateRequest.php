@@ -31,7 +31,8 @@ class UserPanelUpdateRequest extends FormRequest
         return [
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email,' . $user_id_parameter,
-            'profile_id' => 'required'
+            'profile_id' => 'required',
+            'undelete' => 'required|boolean'
         ];
     }
 

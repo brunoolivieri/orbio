@@ -76,6 +76,17 @@ const columns = [
     valueGetter: (data) => {
       return data.row.last_access ? moment(data.row.last_access).format("DD/MM/YYYY") : "---"
     }
+  },
+  {
+    field: 'deleted_at',
+    headerName: 'Deleção',
+    sortable: true,
+    editable: false,
+    hide: true,
+    width: 150,
+    valueGetter: (data) => {
+      return data.row.deleted_at ? moment(data.row.deleted_at).format("DD/MM/YYYY") : null
+    }
   }
 ];
 

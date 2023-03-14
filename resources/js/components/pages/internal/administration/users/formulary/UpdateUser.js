@@ -1,16 +1,12 @@
 import * as React from 'react';
-// Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid } from '@mui/material';
-// Custom
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, Checkbox, FormControlLabel } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import axios from '../../../../../../services/AxiosApi';
-// Fonts Awesome
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
 
-const initialFormData = { name: "", email: "", profile_id: "" };
 const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile_id: { error: false, message: "" } };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
@@ -32,11 +28,10 @@ export const UpdateUser = React.memo((props) => {
 
   function handleClickOpen() {
     setOpen(true);
-    setFormData({ id: props.record.id, name: props.record.name, email: props.record.email, profile_id: props.record.profile.id });
+    setFormData({ id: props.record.id, name: props.record.name, email: props.record.email, profile_id: props.record.profile.id, undelete: false });
   }
 
   function handleClose() {
-    setFormData(initialFormData);
     setFormError(initialFormError);
     setDisplayAlert(initialDisplayAlert);
     setLoading(false);
@@ -172,6 +167,12 @@ export const UpdateUser = React.memo((props) => {
                 handleChange={handleInputChange}
               />
             </Grid>
+
+            {props.record.deleted_at &&
+              <Grid item xs={12}>
+                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+              </Grid>
+            }
           </Grid>
 
         </DialogContent>
