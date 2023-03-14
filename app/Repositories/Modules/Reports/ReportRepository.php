@@ -21,6 +21,7 @@ class ReportRepository implements RepositoryInterface
     {
         return $this->reportModel
             ->with("service_order")
+            ->withTrashed()
             ->search($search) // scope
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
@@ -51,9 +52,13 @@ class ReportRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $report = $this->reportModel->findOrFail($identifier);
+        $report = $this->reportModel->withTrashed()->findOrFail($identifier);
 
         $report->update($data->only(["name", "observation"])->all());
+
+        if ($report->trashed() && $data->get("undelete")) {
+            $report->restore();
+        }
 
         $report->refresh();
 

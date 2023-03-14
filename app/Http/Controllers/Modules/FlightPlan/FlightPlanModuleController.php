@@ -79,7 +79,7 @@ class FlightPlanModuleController extends Controller
         Gate::authorize('flight_plans_write');
 
         try {
-            $this->service->updateOne($request->only(["name", "description"]), $id);
+            $this->service->updateOne($request->only(["name", "description", "undelete"]), $id);
             return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

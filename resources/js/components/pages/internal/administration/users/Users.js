@@ -23,22 +23,6 @@ import moment from 'moment';
 const columns = [
   { field: 'id', headerName: 'ID', width: 90, sortable: true, editable: false },
   {
-    field: 'name',
-    headerName: 'Nome',
-    flex: 1,
-    minWidth: 200,
-    sortable: true,
-    editable: false,
-  },
-  {
-    field: 'email',
-    headerName: 'Email',
-    flex: 1,
-    minWidth: 200,
-    sortable: true,
-    editable: false,
-  },
-  {
     field: 'status',
     headerName: 'Status',
     minWidth: 130,
@@ -56,6 +40,22 @@ const columns = [
         <Chip {...chip_style} />
       )
     }
+  },
+  {
+    field: 'name',
+    headerName: 'Nome',
+    flex: 1,
+    minWidth: 200,
+    sortable: true,
+    editable: false,
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    flex: 1,
+    minWidth: 200,
+    sortable: true,
+    editable: false,
   },
   {
     field: 'profile',

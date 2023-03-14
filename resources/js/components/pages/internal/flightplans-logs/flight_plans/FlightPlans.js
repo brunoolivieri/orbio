@@ -1,9 +1,7 @@
 import * as React from 'react';
-// Material UI
-import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
+import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -13,7 +11,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -22,11 +19,29 @@ import { ExportTableData } from '../../../../shared/modals/dialog/ExportTableDat
 import { TableToolbar } from '../../../../shared/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
 import axios from '../../../../../services/AxiosApi';
-// Moment
 import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
+  {
+    field: 'status',
+    headerName: 'Status',
+    minWidth: 130,
+    sortable: true,
+    editable: false,
+    renderCell: (data) => {
+
+      function chipStyle(badge) {
+        return { label: badge.label, color: badge.color, variant: "outlined" };
+      }
+
+      const chip_style = chipStyle(data.row.status_badge);
+
+      return (
+        <Chip {...chip_style} />
+      )
+    }
+  },
   {
     field: 'image',
     headerName: 'Visualização',
@@ -172,6 +187,17 @@ const columns = [
       )
     }
   },
+  {
+    field: 'deleted_at',
+    headerName: 'Deleção',
+    sortable: true,
+    editable: false,
+    hide: true,
+    width: 150,
+    valueGetter: (data) => {
+      return data.row.deleted_at ? moment(data.row.deleted_at).format("DD/MM/YYYY") : null
+    }
+  }
 ];
 
 export function FlightPlans() {

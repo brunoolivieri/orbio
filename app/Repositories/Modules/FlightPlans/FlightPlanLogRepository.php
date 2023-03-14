@@ -24,6 +24,7 @@ class FlightPlanLogRepository implements RepositoryInterface
     {
         return $this->logModel
             ->with("service_order_flight_plan")
+            ->withTrashed()
             ->search($search) // scope
             ->paginate($limit, $columns = ['*'], $pageName = 'page', $page);
     }
@@ -56,11 +57,15 @@ class FlightPlanLogRepository implements RepositoryInterface
 
     function updateOne(Collection $data, string $identifier)
     {
-        $log = $this->logModel->findOrFail($identifier);
+        $log = $this->logModel->withTrashed()->findOrFail($identifier);
 
         $log->update([
             "name" => $data->get("name")
         ]);
+
+        if ($log->trashed() && $data->get("undelete")) {
+            $log->restore();
+        }
 
         $log->refresh();
 

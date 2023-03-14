@@ -47,8 +47,6 @@ class UsersPanelResource extends JsonResource
                 "deleted_at" => $user->deleted_at
             ];
 
-            //dd($this->formatedData);
-
             if ($user->status && $user->personal_document) {
 
                 $this->formatedData["records"][$user_index]["documents"] = [

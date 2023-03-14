@@ -54,8 +54,21 @@ class FlightPlansPanelResource extends JsonResource
                 ],
                 "description" => $flight_plan->description,
                 "created_at" => date("Y-m-d", strtotime($flight_plan->created_at)),
-                "updated_at" => date("Y-m-d", strtotime($flight_plan->updated_at))
+                "updated_at" => date("Y-m-d", strtotime($flight_plan->updated_at)),
+                "deleted_at" => $flight_plan->deleted_at
             ];
+
+            if ($flight_plan->trashed()) {
+                $this->formatedData["records"][$flight_plan_row]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else {
+                $this->formatedData["records"][$flight_plan_row]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
 
             // ==== SERVICE ORDERS AND INCIDENTS RELATED TO THIS FLIGHT PLAN ==== //
 

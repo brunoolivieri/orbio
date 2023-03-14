@@ -1,11 +1,8 @@
 import * as React from 'react';
-// Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid } from '@mui/material';
-// Custom
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Checkbox, FormControlLabel } from '@mui/material';
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
@@ -18,12 +15,12 @@ export const UpdateFlightPlan = React.memo((props) => {
   // ============================================================================== STATES ============================================================================== //
 
   const { user } = useAuth();
-  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description });
+  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, description: props.record.description, undelete: false });
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-
+  
   const is_authorized = !!user.user_powers["2"].profile_powers.write;
 
   // ============================================================================== FUNCTIONS ============================================================================== //
@@ -152,6 +149,12 @@ export const UpdateFlightPlan = React.memo((props) => {
                 error={formError.description.error}
               />
             </Grid>
+
+            {props.record.deleted_at &&
+              <Grid item xs={12}>
+                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+              </Grid>
+            }
           </Grid>
         </DialogContent>
 

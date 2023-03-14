@@ -29,7 +29,8 @@ class FlightPlanUpdateRequest extends FormRequest
 
         return [
             "name" => ["required", "unique:flight_plans,name,$flight_plan_id_parameter"],
-            "description" => ["required"]
+            "description" => ["required"],
+            "undelete" => ["required", "boolean"]
         ];
     }
 

@@ -36,8 +36,21 @@ class ReportsPanelResource extends JsonResource
                     "number" => $report->service_order->number,
                     "flight_plans" => $report->service_order->flight_plans
                 ],
-                "created_at" => date("Y-m-d", strtotime($report->created_at))
+                "created_at" => date("Y-m-d", strtotime($report->created_at)),
+                "deleted_at" => $report->deleted_at
             ];
+
+            if ($report->trashed()) {
+                $this->formatedData["records"][$report]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else {
+                $this->formatedData["records"][$report]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

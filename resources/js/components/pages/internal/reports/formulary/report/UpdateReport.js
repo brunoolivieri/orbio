@@ -1,10 +1,7 @@
 import * as React from 'react';
-// Material UI
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider, DialogContentText } from '@mui/material';
-// Fonts Awesome
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider, DialogContentText, Checkbox, FormControlLabel } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import axios from '../../../../../../services/AxiosApi';
@@ -24,7 +21,7 @@ export const UpdateReport = React.memo((props) => {
 
   const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation });
+  const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation, undelete: false });
   const [formError, setFormError] = React.useState(initialFormError);
   const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
@@ -161,6 +158,12 @@ export const UpdateReport = React.memo((props) => {
                 onChange={handleInputChange}
               />
             </Grid>
+
+            {props.record.deleted_at &&
+              <Grid item xs={12}>
+                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+              </Grid>
+            }
           </Grid>
 
         </DialogContent>

@@ -83,7 +83,7 @@ class FlightPlanModuleLogController extends Controller
         Gate::authorize('flight_plans_write');
 
         try {
-            $this->service->updateOne($request->only(["name", "service_order_id"]), $id);
+            $this->service->updateOne($request->only(["name", "service_order_id", "undelete"]), $id);
             return response(["message" => "Log atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

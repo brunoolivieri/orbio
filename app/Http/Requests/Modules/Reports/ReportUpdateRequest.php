@@ -26,7 +26,8 @@ class ReportUpdateRequest extends FormRequest
     {
         return [
             "observation" => ['required', 'min:3', 'max:9999'],
-            "flight_plan_id" => ['nullable']
+            "flight_plan_id" => ['nullable'],
+            "undeleted" => ["required", "boolean"]
         ];
     }
 

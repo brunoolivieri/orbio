@@ -26,9 +26,9 @@ class FlightPlansLogPanelResource extends JsonResource
     public function toArray($request)
     {
 
-        foreach ($this->data as $row => $log) {
+        foreach ($this->data as $service_order_row => $log) {
 
-            $this->formatedData["records"][$row] = [
+            $this->formatedData["records"][$service_order_row] = [
                 "id" => $log->id,
                 "name" => $log->name,
                 "image_url" => Storage::url($log->image->path),
@@ -42,6 +42,18 @@ class FlightPlansLogPanelResource extends JsonResource
                 "deleted_at" => $log->deleted_at
             ];
 
+            if ($log->trashed()) {
+                $this->formatedData["records"][$service_order_row]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else {
+                $this->formatedData["records"][$service_order_row]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
+
             if (!is_null($log->service_order_flight_plan)) {
 
                 // Get related service order // Table "service_order_flight_plan"
@@ -49,7 +61,7 @@ class FlightPlansLogPanelResource extends JsonResource
                 // Get related flight plan // Table "service_order_flight_plan"
                 $flight_plan = $log->service_order_flight_plan->flight_plan;
 
-                $this->formatedData["records"][$row]["service_order"] = [
+                $this->formatedData["records"][$service_order_row]["service_order"] = [
                     "id" => $service_order->id,
                     "number" => $service_order->number,
                     "status" => $service_order->status,
@@ -57,7 +69,7 @@ class FlightPlansLogPanelResource extends JsonResource
                     "deleted" => is_null($service_order->deleted_at) ? 0 : 1
                 ];
 
-                $this->formatedData["records"][$row]["flight_plan"] = [
+                $this->formatedData["records"][$service_order_row]["flight_plan"] = [
                     "id" =>  $flight_plan->id,
                     "path" => $flight_plan->file,
                     "image_url" => Storage::url($flight_plan->image->path),

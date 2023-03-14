@@ -23,6 +23,7 @@ class FlightPlanRepository implements RepositoryInterface
     {
         return $this->flightPlanModel
             ->with(["service_orders"])
+            ->withTrashed()
             ->search($search) // scope
             ->paginate($limit, $columns = ['*'], $pageName = 'page', $page);
     }
@@ -61,8 +62,13 @@ class FlightPlanRepository implements RepositoryInterface
         return DB::transaction(function () use ($data, $identifier) {
 
             // Update flight plan itself
-            $flight_plan = $this->flightPlanModel->findOrFail($identifier);
+            $flight_plan = $this->flightPlanModel->withTrashed()->findOrFail($identifier);
             $flight_plan->update($data->only(["name", "description"])->all());
+
+            if ($flight_plan->trashed() && $data->get("undelete")) {
+                $flight_plan->restore();
+            }
+
             $flight_plan->refresh();
 
             return $flight_plan;

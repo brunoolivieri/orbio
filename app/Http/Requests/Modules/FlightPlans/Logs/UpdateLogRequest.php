@@ -26,7 +26,8 @@ class UpdateLogRequest extends FormRequest
         $log_id = $this->route("flight_plan_log");
 
         return [
-            "name" => ["required", "min:3", "max:255", "unique:logs,name,$log_id", "min:3"]
+            "name" => ["required", "min:3", "max:255", "unique:logs,name,$log_id", "min:3"],
+            "undelete" => ["required", "boolean"]
         ];
     }
 
