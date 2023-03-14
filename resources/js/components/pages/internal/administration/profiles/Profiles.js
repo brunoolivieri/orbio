@@ -1,9 +1,7 @@
 import * as React from "react";
-// Material UI
-import { Tooltip, IconButton, Grid, TextField, Box, InputAdornment, FormGroup, FormControlLabel, Checkbox } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, Box, InputAdornment, FormGroup, Chip, FormControlLabel, Checkbox } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
-// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -12,7 +10,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Custom
 import { useAuth } from "../../../../context/Auth";
 import axios from "../../../../../services/AxiosApi";
 import { CreateProfile } from "./formulary/CreateProfile";
@@ -21,6 +18,7 @@ import { DeleteProfile } from "./formulary/DeleteProfile";
 import { ProfileInformation } from "./formulary/ProfileInformation";
 import { ExportTableData } from "../../../../shared/modals/dialog/ExportTableData";
 import { TableToolbar } from "../../../../shared/table_toolbar/TableToolbar";
+import moment from 'moment';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -31,6 +29,25 @@ const columns = [
     minWidth: 200,
     sortable: true,
     editable: false,
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    minWidth: 130,
+    sortable: true,
+    editable: false,
+    renderCell: (data) => {
+
+      function chipStyle(badge) {
+        return { label: badge.label, color: badge.color, variant: "outlined" };
+      }
+
+      const chip_style = chipStyle(data.row.status_badge);
+
+      return (
+        <Chip {...chip_style} />
+      )
+    }
   },
   {
     field: 'administration',
@@ -112,6 +129,17 @@ const columns = [
       )
     }
   },
+  {
+    field: 'deleted_at',
+    headerName: 'Deleção',
+    sortable: true,
+    editable: false,
+    hide: true,
+    width: 150,
+    valueGetter: (data) => {
+      return data.row.deleted_at ? moment(data.row.deleted_at).format("DD/MM/YYYY") : null
+    }
+  }
 ];
 
 export function Profiles() {

@@ -31,7 +31,8 @@ class ProfilePanelUpdateRequest extends FormRequest
         return [
             'name' => 'required|unique:profiles,name,' . $profile_id_parameter,
             'privileges' => 'required',
-            'access_data' => 'required'
+            'access_data' => 'required',
+            'undelete' => 'required|boolean'
         ];
     }
 

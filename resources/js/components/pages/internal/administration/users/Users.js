@@ -41,7 +41,7 @@ const columns = [
   {
     field: 'status',
     headerName: 'Status',
-    minWidth: 150,
+    minWidth: 130,
     sortable: true,
     editable: false,
     renderCell: (data) => {

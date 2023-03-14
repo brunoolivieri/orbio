@@ -7,7 +7,7 @@ import { FormValidation } from '../../../../../../utils/FormValidation';
 import { FetchedDataSelection } from '../../../../../shared/input_select/FetchedDataSelection';
 import axios from '../../../../../../services/AxiosApi';
 
-const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile_id: { error: false, message: "" } };
+const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile_id: { error: false, message: "" }, undelete: false };
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateUser = React.memo((props) => {

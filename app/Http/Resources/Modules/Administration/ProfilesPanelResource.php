@@ -4,8 +4,6 @@ namespace App\Http\Resources\Modules\Administration;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Carbon\Carbon;
-use App\Models\Modules\Module;
 
 class ProfilesPanelResource extends JsonResource
 {
@@ -49,8 +47,21 @@ class ProfilesPanelResource extends JsonResource
                     "updated_at" => $profile->updated_at,
                     "total_users" => $profile->users->count(),
                     "modules" => $modules_related,
-                    "access_data" => json_decode($profile->access_data)
+                    "access_data" => json_decode($profile->access_data),
+                    "deleted_at" => $profile->deleted_at
                 ];
+
+            if (is_null($profile->deleted_at)) {
+                $this->formatedData["records"][$profile->id]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            } else {
+                $this->formatedData["records"][$profile->id]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

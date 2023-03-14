@@ -1,11 +1,8 @@
 import * as React from 'react';
-// Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Grid, FormLabel, Checkbox, FormGroup, FormControlLabel, Divider, DialogContentText } from '@mui/material';
-// Custom
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuth } from '../../../../../context/Auth';
 import axios from '../../../../../../services/AxiosApi';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 
@@ -17,7 +14,7 @@ export const UpdateProfile = React.memo((props) => {
     // ============================================================================== STATES ============================================================================== //
 
     const { user } = useAuth();
-    const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name });
+    const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, undelete: false });
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
@@ -98,7 +95,8 @@ export const UpdateProfile = React.memo((props) => {
             const response = await axios.patch(`api/module/administration-profile/${formData.id}`, {
                 name: formData.name,
                 privileges: privileges,
-                access_data: accessData
+                access_data: accessData,
+                undelete: formData.undelete
             });
             successResponse(response);
         } catch (error) {
@@ -161,8 +159,7 @@ export const UpdateProfile = React.memo((props) => {
                 <DialogContent>
 
                     <Grid container spacing={1} mb={2}>
-
-                        <Grid item xs={10}>
+                        <Grid item xs={12}>
                             <TextField
                                 margin="dense"
                                 value={formData.name}
@@ -171,11 +168,16 @@ export const UpdateProfile = React.memo((props) => {
                                 fullWidth
                                 variant="outlined"
                                 onChange={handleInputChange}
-                                helperText={formData.name}
+                                helperText={formError.name.message}
                                 error={formError.name.error}
                             />
                         </Grid>
 
+                        {props.record.deleted_at &&
+                            <Grid item xs={12}>
+                                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+                            </Grid>
+                        }
                     </Grid>
 
                     <DialogContentText>

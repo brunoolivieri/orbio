@@ -17,6 +17,7 @@ class ProfileRepository implements RepositoryInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->profileModel->with("modules")
+            ->withTrashed()
             ->search($search) // scope
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
@@ -45,12 +46,16 @@ class ProfileRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $identifier) {
 
-            $profile = $this->profileModel->findOrFail($identifier);
+            $profile = $this->profileModel->withTrashed()->findOrFail($identifier);
 
             $profile->update([
                 "name" => $data->get("name"),
                 "access_data" => json_encode($data->get("access_data"))
             ]);
+
+            if ($profile->trashed() && $data->get("undelete")) {
+                $profile->restore();
+            }
 
             // *Turn into loop*
             $profile->modules()->sync([
