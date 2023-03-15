@@ -1,11 +1,8 @@
 import * as React from 'react';
-// Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack, Checkbox, FormControlLabel } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuth } from '../../../../../context/Auth';
@@ -32,7 +29,8 @@ export const UpdateDrone = React.memo((props) => {
         record_number: props.record.record_number,
         serial_number: props.record.serial_number,
         weight: props.record.weight,
-        observation: props.record.observation
+        observation: props.record.observation,
+        undelete: false
     });
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -88,6 +86,7 @@ export const UpdateDrone = React.memo((props) => {
         formData_.append("serial_number", formData.serial_number);
         formData_.append("weight", formData.weight);
         formData_.append("observation", formData.observation);
+        formData_.append("undelete", +formData.undelete);
         formData_.append('_method', 'PATCH');
 
         if (image !== null) {
@@ -272,6 +271,12 @@ export const UpdateDrone = React.memo((props) => {
                                 error={formError.observation.error}
                             />
                         </Grid>
+
+                        {props.record.deleted_at &&
+                            <Grid item xs={12}>
+                                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+                            </Grid>
+                        }
                     </Grid>
 
                     <Stack direction="row" spacing={2} mt={2}>

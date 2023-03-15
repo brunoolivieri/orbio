@@ -27,22 +27,23 @@ class UpdateEquipmentRequest extends FormRequest
         $equipment_id_parameter = $this->route("equipment");
 
         return [
-            'name' => 'required|unique:drones,name,'.$equipment_id_parameter,
+            'name' => 'required|unique:drones,name,' . $equipment_id_parameter,
             'manufacturer' => 'required',
             'model' => 'required',
             'record_number' => 'required',
             'serial_number' => 'required',
             'weight' => 'required|numeric',
             'observation' => 'required',
-            'purchase_date' => 'required|date'
-        ]; 
+            'purchase_date' => 'required|date',
+            'undelete' => 'required'
+        ];
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [

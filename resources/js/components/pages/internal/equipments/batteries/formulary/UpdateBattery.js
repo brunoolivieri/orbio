@@ -1,18 +1,14 @@
 import * as React from 'react';
-// Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack, Checkbox, FormControlLabel } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Moment
-import moment from 'moment';
-// Custom
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuth } from '../../../../../context/Auth';
 import { ImageListSelection } from '../../../../../shared/modals/dialog/ImageListSelection';
+import moment from 'moment';
 
 const Input = styled('input')({
     display: 'none',
@@ -28,7 +24,7 @@ export const UpdateBattery = React.memo((props) => {
 
     const { user } = useAuth();
     const [open, setOpen] = React.useState(false);
-    const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge });
+    const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, manufacturer: props.record.manufacturer, model: props.record.model, serial_number: props.record.serial_number, last_charge: props.record.last_charge, undelete: false });
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
@@ -80,6 +76,7 @@ export const UpdateBattery = React.memo((props) => {
         formData_.append("name", formData.name);
         formData_.append("manufacturer", formData.manufacturer);
         formData_.append("model", formData.model);
+        formData_.append("undelete", +formData.undelete);
         formData_.append("serial_number", formData.serial_number);
         formData_.append("last_charge", moment(formData.last_charge).format('YYYY-MM-DD'));
         formData_.append("observation", formData.observation);
@@ -247,6 +244,12 @@ export const UpdateBattery = React.memo((props) => {
                                 errorMessage={formError.last_charge.message}
                             />
                         </Grid>
+
+                        {props.record.deleted_at &&
+                            <Grid item xs={12}>
+                                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+                            </Grid>
+                        }
                     </Grid>
 
                     <Stack direction="row" spacing={2} mt={2}>

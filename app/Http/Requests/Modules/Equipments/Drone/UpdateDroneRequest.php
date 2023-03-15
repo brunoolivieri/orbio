@@ -33,7 +33,8 @@ class UpdateDroneRequest extends FormRequest
             'record_number' => 'required',
             'serial_number' => 'required',
             'weight' => 'required|numeric',
-            'observation' => 'required'
+            'observation' => 'required',
+            'undelete' => 'required'
         ]; 
     }
 

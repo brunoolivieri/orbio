@@ -68,7 +68,7 @@ class EquipmentModuleDroneController extends Controller
         Gate::authorize("equipments_write");
 
         try {
-            $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image"]), $id);
+            $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "image", "undelete"]), $id);
             return response(["message" => "Drone atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

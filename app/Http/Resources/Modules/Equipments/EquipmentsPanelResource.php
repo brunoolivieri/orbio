@@ -42,8 +42,21 @@ class EquipmentsPanelResource extends JsonResource
                 "observation" => $equipment->observation,
                 "purchase_date" => empty($equipment->purchase_date) ? "nunca" : $equipment->purchase_date,
                 "created_at" => $equipment->created_at,
-                "updated_at" => $equipment->updated_at
+                "updated_at" => $equipment->updated_at,
+                "deleted_at" => $equipment->deleted_at
             ];
+
+            if ($equipment->trashed()) {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

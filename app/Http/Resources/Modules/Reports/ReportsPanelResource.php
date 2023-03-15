@@ -41,12 +41,12 @@ class ReportsPanelResource extends JsonResource
             ];
 
             if ($report->trashed()) {
-                $this->formatedData["records"][$report]["status_badge"] = [
+                $this->formatedData["records"][$row]["status_badge"] = [
                     "label" => "Deletado",
                     "color" => "error"
                 ];
             } else {
-                $this->formatedData["records"][$report]["status_badge"] = [
+                $this->formatedData["records"][$row]["status_badge"] = [
                     "label" => "Ativo",
                     "color" => "success"
                 ];

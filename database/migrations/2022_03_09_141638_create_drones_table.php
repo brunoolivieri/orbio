@@ -22,8 +22,8 @@ class CreateDronesTable extends Migration
             $table->string('serial_number');
             $table->double('weight', 8, 2);
             $table->string('observation')->nullable(true);
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

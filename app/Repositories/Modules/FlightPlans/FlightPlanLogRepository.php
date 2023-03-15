@@ -81,11 +81,11 @@ class FlightPlanLogRepository implements RepositoryInterface
 
                 $log = $this->logModel->findOrFail($log_id);
 
-                if ($log->service_order_flight_plan) {
+                if ($log->service_order_flight_plan()->exists()) {
 
                     $log_service_order = $this->serviceOrderModel->where("id", $log->service_order_flight_plan->service_order_id)->where("status", true)->first();
 
-                    if ($log_service_order->status) {
+                    if ((bool) $log_service_order->status) {
                         array_push($undeleteable_ids, $log->id);
                     }
                 }

@@ -31,7 +31,8 @@ class UpdateBatteryRequest extends FormRequest
             'manufacturer' => 'required',
             'model' => 'required',
             'serial_number' => 'required',
-            'last_charge' => 'required|date'
+            'last_charge' => 'required|date',
+            'undelete' => 'required'
         ];
     }
 

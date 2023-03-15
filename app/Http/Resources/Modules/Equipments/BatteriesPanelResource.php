@@ -40,8 +40,21 @@ class BatteriesPanelResource extends JsonResource
                 "last_charge" => empty($battery->last_charge) ? "nunca" : $battery->last_charge,
                 "observation" => $battery->observation,
                 "created_at" => $battery->created_at,
-                "updated_at" => $battery->updated_at
+                "updated_at" => $battery->updated_at,
+                "deleted_at" => $battery->deleted_at
             ];
+
+            if ($battery->trashed()) {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

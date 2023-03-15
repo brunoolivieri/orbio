@@ -43,8 +43,21 @@ class DronesPanelResource extends JsonResource
                 "total_incidents" => "",
                 "observation" => $drone->observation,
                 "created_at" => $drone->created_at,
-                "updated_at" => $drone->updated_at
+                "updated_at" => $drone->updated_at,
+                "deleted_at" => $drone->deleted_at
             ];
+
+            if ($drone->trashed()) {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Deletado",
+                    "color" => "error"
+                ];
+            } else {
+                $this->formatedData["records"][$row]["status_badge"] = [
+                    "label" => "Ativo",
+                    "color" => "success"
+                ];
+            }
         }
 
         $this->formatedData["total_records"] = $this->data->total();

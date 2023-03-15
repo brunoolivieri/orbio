@@ -18,6 +18,7 @@ class BatteryRepository implements RepositoryInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->batteryModel->with('image')
+            ->withTrashed()
             ->search($search) // scope
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
@@ -45,7 +46,7 @@ class BatteryRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $identifier) {
 
-            $battery = $this->batteryModel->findOrFail($identifier);
+            $battery = $this->batteryModel->withTrashed()->findOrFail($identifier);
 
             $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "observation", "last_charge"])->all());
 
@@ -61,6 +62,10 @@ class BatteryRepository implements RepositoryInterface
                 }
             }
 
+            if ($battery->trashed() && (bool) $data->get("undelete")) {
+                $battery->restore();
+            }
+
             return $battery;
         });
     }
@@ -73,9 +78,9 @@ class BatteryRepository implements RepositoryInterface
 
                 $battery = $this->batteryModel->findOrFail($battery_id);
 
-                if ($battery->service_orders) {
+                if ($battery->service_orders()->exists()) {
                     foreach ($battery->service_orders as $service_order) {
-                        if ($service_order->status) {
+                        if ((bool) $service_order->status) {
                             array_push($undeleteable_ids, $battery->id);
                         }
                     }
@@ -83,7 +88,7 @@ class BatteryRepository implements RepositoryInterface
             }
 
             if (count($undeleteable_ids) === 0) {
-                $this->batteryModel->delete("id", $ids);
+                $battery->whereIn("id", $ids)->delete();
             }
 
             return $undeleteable_ids;

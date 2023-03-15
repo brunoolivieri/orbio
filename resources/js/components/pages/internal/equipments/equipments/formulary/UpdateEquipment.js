@@ -1,17 +1,13 @@
 import * as React from 'react';
-// Material UI
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider, Stack } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider, Stack, Checkbox, FormControlLabel } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { DatePicker } from '../../../../../shared/date_picker/DatePicker';
 import axios from '../../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../../utils/FormValidation';
 import { useAuth } from '../../../../../context/Auth';
 import { ImageListSelection } from '../../../../../shared/modals/dialog/ImageListSelection';
-// Moment
 import moment from 'moment';
 
 const Input = styled('input')({
@@ -36,7 +32,8 @@ export const UpdateEquipment = React.memo((props) => {
         serial_number: props.record.serial_number,
         weight: props.record.weight,
         observation: props.record.observation,
-        purchase_date: props.record.purchase_date
+        purchase_date: props.record.purchase_date,
+        undelete: false
     });
     const [formError, setFormError] = React.useState(initialFormError);
     const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
@@ -95,6 +92,7 @@ export const UpdateEquipment = React.memo((props) => {
         formData_.append("weight", formData.weight);
         formData_.append("observation", formData.observation);
         formData_.append("purchase_date", moment(formData.purchase_date).format('YYYY-MM-DD'));
+        formData_.append("undelete", +formData.undelete);
         formData_.append('_method', 'PATCH');
 
         if (image) {
@@ -290,6 +288,12 @@ export const UpdateEquipment = React.memo((props) => {
                                 errorMessage={formError.purchase_date.message}
                             />
                         </Grid>
+
+                        {props.record.deleted_at &&
+                            <Grid item xs={12}>
+                                <FormControlLabel name="undelete" control={<Checkbox />} label="Recuperar" onChange={(e) => setFormData({ ...formData, ["undelete"]: e.target.checked })} />
+                            </Grid>
+                        }
                     </Grid>
 
                     <Stack direction="row" spacing={2} mt={2}>

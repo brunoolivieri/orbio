@@ -18,6 +18,7 @@ class DroneRepository implements RepositoryInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->droneModel->with('image')
+            ->withTrashed()
             ->search($search) // scope
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
@@ -45,9 +46,9 @@ class DroneRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $identifier) {
 
-            $drone = $this->droneModel->findOrFail($identifier);
+            $drone = $this->droneModel->withTrashed()->findOrFail($identifier);
 
-            $drone = $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
+            $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
 
             if ($data->get('change_file') === 1) {
 
@@ -59,6 +60,10 @@ class DroneRepository implements RepositoryInterface
                 if (!Storage::disk('public')->exists($data->get('path'))) {
                     Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
                 }
+            }
+
+            if ($drone->trashed() && (bool) $data->get("undelete")) {
+                $drone->restore();
             }
 
             return $drone;
@@ -73,9 +78,9 @@ class DroneRepository implements RepositoryInterface
 
                 $drone = $this->droneModel->findOrFail($drone_id);
 
-                if ($drone->service_orders) {
+                if ($drone->service_orders()->exists()) {
                     foreach ($drone->service_orders as $service_order) {
-                        if ($service_order->status) {
+                        if ((bool) $service_order->status) {
                             array_push($undeleteable_ids, $drone->id);
                         }
                     }
@@ -83,7 +88,7 @@ class DroneRepository implements RepositoryInterface
             }
 
             if (count($undeleteable_ids) === 0) {
-                $this->droneModel->delete("id", $ids);
+                $drone->whereIn("id", $ids)->delete();
             }
 
             return $undeleteable_ids;

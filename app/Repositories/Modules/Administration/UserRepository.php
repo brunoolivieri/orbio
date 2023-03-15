@@ -72,14 +72,15 @@ class UserRepository implements RepositoryInterface
             $user = $this->userModel->findOrFail($user_id);
 
             // Check if user is related to a active service order 
-            foreach ($user->service_orders as $service_order) {
-                if ($service_order->status) {
-                    array_push($undeleteable_ids, $user_id);
+            if ($user->service_orders()->exists()) {
+                foreach ($user->service_orders as $service_order) {
+                    if ((bool) $service_order->status) {
+                        array_push($undeleteable_ids, $user_id);
+                    }
                 }
             }
         }
 
-        // Deletion will occur only if all flight plans can be deleted
         if (count($undeleteable_ids) === 0) {
             $user->whereIn("id", $ids)->delete();
         }

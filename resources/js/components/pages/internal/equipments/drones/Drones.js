@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box } from "@mui/material";
+import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -22,6 +22,25 @@ import axios from "../../../../../services/AxiosApi";
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
+    {
+        field: 'status',
+        headerName: 'Status',
+        minWidth: 130,
+        sortable: true,
+        editable: false,
+        renderCell: (data) => {
+
+            function chipStyle(badge) {
+                return { label: badge.label, color: badge.color, variant: "outlined" };
+            }
+
+            const chip_style = chipStyle(data.row.status_badge);
+
+            return (
+                <Chip {...chip_style} />
+            )
+        }
+    },
     {
         field: 'image',
         headerName: 'Image',

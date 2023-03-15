@@ -68,7 +68,7 @@ class EquipmentModuleEquipmentController extends Controller
         Gate::authorize("equipments_write");
 
         try {
-            $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]), $id);
+            $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image", "undelete"]), $id);
             return response(["message" => "Bateria atualizada com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

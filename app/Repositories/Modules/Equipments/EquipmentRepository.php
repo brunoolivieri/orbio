@@ -18,6 +18,7 @@ class EquipmentRepository implements RepositoryInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->equipmentModel->with('image')
+            ->withTrashed()
             ->search($search) // scope
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
@@ -37,6 +38,10 @@ class EquipmentRepository implements RepositoryInterface
                 Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
             }
 
+            if ($equipment->trashed() && $data->get("undelete")) {
+                $equipment->restore();
+            }
+
             return $equipment;
         });
     }
@@ -45,7 +50,7 @@ class EquipmentRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $identifier) {
 
-            $equipment = $this->equipmentModel->findOrFail($identifier);
+            $equipment = $this->equipmentModel->withTrashed()->findOrFail($identifier);
 
             $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"])->all());
 
@@ -61,6 +66,10 @@ class EquipmentRepository implements RepositoryInterface
                 }
             }
 
+            if ($equipment->trashed() && (bool) $data->get("undelete")) {
+                $equipment->restore();
+            }
+
             return $equipment;
         });
     }
@@ -73,9 +82,9 @@ class EquipmentRepository implements RepositoryInterface
 
                 $equipment = $this->equipmentModel->findOrFail($battery_id);
 
-                if ($equipment->service_orders) {
+                if ($equipment->service_orders()->exists()) {
                     foreach ($equipment->service_orders as $service_order) {
-                        if ($service_order->status) {
+                        if ((bool) $service_order->status) {
                             array_push($undeleteable_ids, $equipment->id);
                         }
                     }
@@ -83,7 +92,7 @@ class EquipmentRepository implements RepositoryInterface
             }
 
             if (count($undeleteable_ids) === 0) {
-                $this->equipmentModel->delete("id", $ids);
+                $equipment->whereIn("id", $ids)->delete();
             }
 
             return $undeleteable_ids;

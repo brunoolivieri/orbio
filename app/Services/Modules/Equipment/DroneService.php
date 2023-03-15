@@ -52,7 +52,7 @@ class DroneService implements ServiceInterface
         $drone = $this->repository->updateOne(collect($data), $identifier);
     }
 
-    public function delete(array $ids): \Illuminate\Http\Response
+    public function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
 
