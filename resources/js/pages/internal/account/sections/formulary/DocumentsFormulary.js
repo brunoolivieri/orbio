@@ -132,7 +132,7 @@ export function DocumentsFormulary() {
 
     return (
         <>
-            <Grid container spacing={1} alignItems="center">
+            <Grid container spacing={1} alignItems="center" mt={2}>
                 <Grid item>
                     <Tooltip title="Carregar">
                         <IconButton onClick={() => setRefresh((old) => !old)}>

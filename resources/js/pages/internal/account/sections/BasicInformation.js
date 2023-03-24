@@ -10,6 +10,8 @@ import moment from 'moment';
 // Custom
 import axios from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
+import { DocumentsFormulary } from './formulary/DocumentsFormulary';
+import { AddressFormulary } from './formulary/AddressFormulary';
 
 const initialFormData = { name: "Carregando", email: "Carregando", profile: "Carregando", last_access: "Carregando", last_update: "Carregando" };
 const initialFormError = { name: { error: false, message: "" }, email: { error: false, message: "" }, profile: { error: false, message: "" }, last_access: { error: false, message: "" }, last_update: { error: false, message: "" } };
@@ -211,6 +213,10 @@ export function BasicInformation() {
                     </Button>
                 </Paper>
             </Box>
+            <div>
+                <DocumentsFormulary />
+                <AddressFormulary />
+            </div>
         </>
     );
 

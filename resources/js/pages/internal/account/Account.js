@@ -4,7 +4,6 @@ import { Grid } from "@mui/material";
 import { Box } from "@mui/system";
 // Custom
 import { BasicInformation } from './sections/BasicInformation';
-import { ComplementaryInformation } from './sections/ComplementaryInformation';
 import { AdditionalConfiguration } from './sections/AdditionalConfiguration';
 import { Switcher } from '../../../components/switcher/Switcher';
 import { usePage } from '../../../context/PageContext';
@@ -16,7 +15,7 @@ export const Account = () => {
   const [actualPanel, setActualPanel] = React.useState("basic");
   const { setPageIndex } = usePage();
 
-  const options = [{ page: "basic", title: "básico", icon: "" }, { page: "complementary", title: "complementar", icon: "" }, { page: "account_configuration", title: "configurações" }];
+  const options = [{ page: "basic", title: "Informações", icon: "" }, { page: "account_configuration", title: "configurações" }];
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -36,7 +35,6 @@ export const Account = () => {
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
 
         {(actualPanel === "basic") && <BasicInformation />}
-        {(actualPanel === "complementary") && <ComplementaryInformation />}
         {(actualPanel === "account_configuration") && <AdditionalConfiguration />}
 
       </Box>
