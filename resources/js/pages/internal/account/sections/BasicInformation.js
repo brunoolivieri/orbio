@@ -133,7 +133,7 @@ export function BasicInformation() {
             </Grid>
 
             < Box sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+                <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '8px' }}>
                     <Grid container spacing={3}>
 
                         <Grid item xs={12} sm={6}>

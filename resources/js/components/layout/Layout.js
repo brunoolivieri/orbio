@@ -51,7 +51,7 @@ export const Layout = ({ children }) => {
 
     return (
       <>
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#FCFCFC' }}>
+        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#fff' }}>
           <MenuDesktop />
           <Box
             component="nav"
@@ -66,11 +66,9 @@ export const Layout = ({ children }) => {
           </Box>
           <Box sx={{ flexGrow: 1 }}>
             <Header onDrawerToggle={handleDrawerToggle} />
-            <Box component="main" sx={{ flexGrow: 1, py: 6, px: 4 }}>
+            <Box component="main" sx={{ flexGrow: 1, maxWidth: "100%", margin: 'auto', overflow: 'hidden', bgcolor: '#fff' }}>
 
-              <Paper sx={{ maxWidth: "100%", margin: 'auto', overflow: 'hidden' }}>
-                {children}
-              </Paper>
+              {children}
 
             </Box>
             <Box component="footer">

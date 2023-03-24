@@ -34,7 +34,7 @@ export const Account = () => {
         </Grid>
       </Grid>
       <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
-        
+
         {(actualPanel === "basic") && <BasicInformation />}
         {(actualPanel === "complementary") && <ComplementaryInformation />}
         {(actualPanel === "account_configuration") && <AdditionalConfiguration />}

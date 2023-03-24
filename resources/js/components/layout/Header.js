@@ -25,7 +25,7 @@ const headerStyle = {
 
 const subHeaderStyle = {
   boxShadow: 1,
-  bgcolor: '#FCFCFC',
+  bgcolor: '#fff',
   color: '#007937'
 }
 

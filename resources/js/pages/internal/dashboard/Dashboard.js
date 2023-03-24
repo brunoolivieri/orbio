@@ -1,6 +1,6 @@
 import React from 'react';
 // Material UI
-import { Paper, Grid, Card, Typography, LinearProgress, Box } from '@mui/material';
+import { Grid, Card, Typography, LinearProgress, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import GroupIcon from '@mui/icons-material/Group';
 import MapIcon from '@mui/icons-material/Map';
@@ -12,7 +12,7 @@ import axios from '../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext';
 import { VerticalLinesChart } from '../../../components/charts/VerticalLinesChart';
 
-const miniCardStyle = {
+const MiniCardProps = {
     bgcolor: '#fff',
     minWidth: 150,
     minHeight: 110,
@@ -21,27 +21,32 @@ const miniCardStyle = {
     borderRadius: 0
 }
 
-const miniCardTopStyle = {
+const MiniCardTopProps = {
     flexBasis: '30px',
     display: 'flex',
     justifyContent: 'space-between',
     width: '100%',
     padding: 1
-};
-
-const biggerCardStyle = {
-    bgcolor: '#fff',
-    padding: 2,
-    minHeight: 280,
-    display: 'flex',
-    flexDirection: 'column'
 }
 
-const paperStyle = {
-    width: "100%",
-    mb: 1,
-    backgroundColor: 'transparent',
-    boxShadow: 0
+const GridContainerProps = {
+    sx: {
+        bgcolor: '#333',
+        padding: 5
+    },
+    columns: {
+        xs: 10,
+        sm: 10,
+        md: 12,
+        lg: 10,
+        xl: 10
+    },
+    columnSpacing: {
+        xs: 0,
+        sm: 1,
+        md: 1
+    },
+    rowSpacing: 1
 }
 
 export const Dashboard = React.memo(() => {
@@ -88,11 +93,11 @@ export const Dashboard = React.memo(() => {
 
     return (
         <>
-            <Paper sx={paperStyle}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 0, sm: 1, md: 1 }} columns={{ xs: 10, sm: 10, md: 12, lg: 10, xl: 10 }}>
-                    <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card sx={miniCardStyle}>
-                            <Box sx={miniCardTopStyle}>
+            <div>
+                <Grid container {...GridContainerProps}>
+                    <Grid item xs={10} sm={5} md={4} lg={2} >
+                        <Card {...MiniCardProps}>
+                            <Box {...MiniCardTopProps}>
                                 <Typography variant="h6">
                                     Usuários
                                 </Typography>
@@ -107,8 +112,8 @@ export const Dashboard = React.memo(() => {
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card sx={miniCardStyle}>
-                            <Box sx={miniCardTopStyle}>
+                        <Card {...MiniCardProps}>
+                            <Box {...MiniCardTopProps}>
                                 <Typography variant="h6">
                                     Perfis
                                 </Typography>
@@ -123,8 +128,8 @@ export const Dashboard = React.memo(() => {
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card sx={miniCardStyle}>
-                            <Box sx={miniCardTopStyle}>
+                        <Card {...MiniCardProps}>
+                            <Box {...MiniCardTopProps}>
                                 <Typography variant="h6">
                                     Planos de voo
                                 </Typography>
@@ -139,8 +144,8 @@ export const Dashboard = React.memo(() => {
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card sx={miniCardStyle}>
-                            <Box sx={miniCardTopStyle}>
+                        <Card {...MiniCardProps}>
+                            <Box {...MiniCardTopProps}>
                                 <Typography variant="h6">
                                     Ordens de serviço
                                 </Typography>
@@ -155,8 +160,8 @@ export const Dashboard = React.memo(() => {
                         </Card>
                     </Grid>
                     <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card sx={miniCardStyle}>
-                            <Box sx={miniCardTopStyle}>
+                        <Card {...MiniCardProps}>
+                            <Box {...MiniCardTopProps}>
                                 <Typography variant="h6">
                                     Relatórios
                                 </Typography>
@@ -171,24 +176,7 @@ export const Dashboard = React.memo(() => {
                         </Card>
                     </Grid>
                 </Grid >
-            </Paper >
-
-            <Paper sx={paperStyle}>
-                <Grid container rowSpacing={1} columnSpacing={1} columns={12}>
-                    <Grid item xs={12}>
-                        <Card sx={biggerCardStyle}>
-                            <Box sx={{ flexBasis: '30px' }}>
-                                <Typography variant="h6">
-
-                                </Typography>
-                            </Box>
-                            <Box sx={{ height: 250, width: '100%', mt: 2 }}>
-                                Chart
-                            </Box>
-                        </Card>
-                    </Grid>
-                </Grid >
-            </Paper>
+            </div >
         </>
     )
 });

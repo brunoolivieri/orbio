@@ -127,7 +127,7 @@ export function AddressFormulary() {
             </Grid>
 
             <Box sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '0px 15px 15px 15px' }}>
+                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '8px' }}>
                     <Typography variant="h5" mb={2}>Endereço</Typography>
                     <Grid container spacing={3} columns={10}>
                         <Grid item xs={5} lg={2} xl={2}>

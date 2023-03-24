@@ -29,10 +29,11 @@ export function Switcher({ ...props }) {
       exclusive
       onChange={handleChange}
       fullWidth
+      sx={{ border: '1px solid #f0f0f0', borderRadius: 'none'}}
     >
       {props.options.map((item, index) => (
         <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} key={index}>
-          <Typography sx={{ marginRight: 2, fontWeight: 600 }}>{item.title.toUpperCase()}</Typography> {item.icon}
+          <Typography sx={{ marginRight: 2, fontWeight: 600 }}>{item.title.toUpperCase()}</Typography>
         </ToggleButton>
       ))}
     </ToggleButtonGroup>
