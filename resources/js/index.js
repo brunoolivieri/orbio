@@ -5,13 +5,13 @@ import ReactDOM from 'react-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 // Custom
-import { AuthProvider } from './components/context/Auth';
-import { PageProvider } from './components/context/PageContext';
+import { AuthProvider } from './context/Auth';
+import { PageProvider } from './context/PageContext';
 // Libs
 import { MainRoutes } from "./routes/index";
 import { SnackbarProvider } from 'notistack';
 // Theme
-import { theme } from "../../resources/js/components/shared/layout/theme";
+import { theme } from "./components/layout/theme";
 
 export default function Index() {
 

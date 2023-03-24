@@ -3,18 +3,18 @@ import React from "react";
 // React Router
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 // Internal Layout
-import { Layout } from "../components/shared/layout/Layout";
+import { Layout } from "../components/layout/Layout";
 // All Pages
-import { NotFound } from "../components/pages/notfound/NotFound";
-import { Login } from "../components/pages/external/login/Login";
-import { ForgotPassword } from "../components/pages/external/forgotpassword/ForgotPassword";
-import { Dashboard } from "../components/pages/internal/Dashboard/Dashboard";
-import { FlightPlansAndLogs } from "../components/pages/internal/flightplans-logs/FlightPlansAndLogs";
-import { Reports } from "../components/pages/internal/reports/Reports";
-import { Account } from "../components/pages/internal/account/Account";
-import { Administration } from "../components/pages/internal/administration/Administration";
-import { ServiceOrders } from "../components/pages/internal/service_orders/ServiceOrders";
-import { DronesBatteriesAndEquipments } from "../components/pages/internal/equipments/DronesBatteriesAndEquipments";
+import { NotFound } from "../pages/notfound/NotFound";
+import { Login } from "../pages/external/login/Login";
+import { ForgotPassword } from "../pages/external/forgotpassword/ForgotPassword";
+import { Dashboard } from "../pages/internal/Dashboard/Dashboard";
+import { FlightPlansAndLogs } from "../pages/internal/flightplans-logs/FlightPlansAndLogs";
+import { Reports } from "../pages/internal/reports/Reports";
+import { Account } from "../pages/internal/account/Account";
+import { Administration } from "../pages/internal/administration/Administration";
+import { ServiceOrders } from "../pages/internal/service_orders/ServiceOrders";
+import { DronesBatteriesAndEquipments } from "../pages/internal/equipments/DronesBatteriesAndEquipments";
 
 export function MainRoutes() {
     return (
