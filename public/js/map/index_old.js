@@ -109,46 +109,6 @@ var longestEdge = function (area_coordinates) {
 		}
 	}
 
-	// Se já existe um layer e um source com este ID, eles são removidos
-	/*var mapLayer = map.getLayer('route');
-
-	if(typeof mapLayer !== 'undefined') {
-		map.removeLayer('route').removeSource('route');
-	}
-	
-	// Criando um Objeto GeoJSON para 
-	// desenhar uma linha sobre a maior aresta
-	var objLongestEdge = {
-		'type': 'geojson',
-		'data': {
-			'type': 'Feature',
-			'properties': {},
-			'geometry' : {
-				'type' : 'LineString',
-				'coordinates': [
-					longestEdge[0],
-					longestEdge[1]
-				]	
-			}
-		}
-	}
-
-	map.addSource('route', objLongestEdge);
-
-	map.addLayer({
-		'id': 'route',
-		'type': 'line',
-		'source': 'route',
-		'layout': {
-			'line-join': 'round',
-			'line-cap': 'round'
-		},
-		'paint': {
-			'line-color': '#0f0',
-			'line-width': 1
-		}
-	});*/
-
 	return longestEdge;
 }
 
@@ -168,30 +128,6 @@ var farthestVertex = function (area_coordinates, longestEdge) {
 			farthestVertex = area_coordinates[i];
 		}
 	}
-
-	// Criando um objeto Ponto no formado GeoJSON
-	// com as coordenadas do vértice mais distante
-	/*map.addSource('vertex', {
-		'type': 'geojson',
-		'data': {
-			'type': 'Feature',
-			'properties': {},
-			'geometry' : {
-				'type' : 'Point',
-				'coordinates': farthestVertex
-			}
-		}
-	});
-
-	// Adicionando o objeto Ponto no mapa
-	map.addLayer({
-		'id': 'vertex',
-		'type': 'circle',
-		'source': 'vertex',
-		'paint':{
-			'circle-color' : '#f00'	
-		}
-	});*/
 
 	return farthestVertex;
 }
@@ -259,31 +195,6 @@ function drawReducedPolygon(areaPolygon, selectedPosition) {
 			flag = true;
 		}
 	}
-
-	// Criando um objeto GeoJSON para desenhar no mapa
-	/*var objPt = {
-		'type': 'geojson',
-		'data': {
-			'type': 'MultiLineString',
-			'coordinates': 
-				reducedPolygon
-		}
-	}
-
-	// Se já existe um layer e um source com este ID, eles são removidos
-	cleanLayerById('pt');
-
-	// Novos sources e layers são adicionados apenas se ainda não existem no mapa
-	map.addSource('pt', objPt);
-
-	map.addLayer({
-		'id': 'pt',
-		'type': 'circle',
-		'source': 'pt',
-		'paint': {
-			'circle-color': '#f00'
-		}
-	});*/
 
 	return selectedPosition;
 }
@@ -730,18 +641,6 @@ function drawNewRoutePoints(destination, initialFinalPath, finalDestination) {
 				destination
 		}
 	}
-
-	// Novos sources e layers são adicionados apenas se ainda não existem no mapa
-	/*map.addSource('routePoints01', objPoints01);*/
-
-	/*map.addLayer({
-		'id': 'routePoints01',
-		'type': 'circle',
-		'source': 'routePoints01',
-		'paint': {
-			'circle-color': '#ccc'
-		}
-	});*/
 
 	// Invocação da função para desenho da rota inicial
 	drawInititalRoute(initialFinalPath, destination, finalDestination);
@@ -1331,108 +1230,6 @@ btnMarker.onclick = function () {
 		marcador = new mapboxgl.Marker({ color: 'black' })
 			.setLngLat(home)
 			.addTo(map);
-	}
-}
-
-// ========= OPÇÕES DE AJUDA ========= //
-
-var video = document.getElementById('video').addEventListener('click', helpOptions);
-var novo = document.getElementById('novo').addEventListener('click', helpOptions);
-var abrir = document.getElementById('abrir').addEventListener('click', helpOptions);
-var salvar = document.getElementById('salvar').addEventListener('click', helpOptions);
-var importar = document.getElementById('importar').addEventListener('click', helpOptions);
-var configurar = document.getElementById('configurar').addEventListener('click', helpOptions);
-
-function helpOptions() {
-
-	// Trocando as classes dos botões selecionados
-	var options = ['video', 'novo', 'abrir', 'salvar', 'importar', 'configurar'];
-	for (i = 0; i < options.length; i++) {
-		document.getElementById(options[i]).setAttribute('class', 'btn btn-light');
-	}
-	this.setAttribute('class', 'btn btn-secondary');
-
-	// Alterando o conteúdo a ser exibido de acordo com a opção selecionada
-	var div = document.getElementById("modal-body");
-	switch (this.id) {
-		case 'video':
-			div.innerHTML = "<p>Assista ao vídeo demonstrativo da ferramenta:</p>" +
-				'<iframe width="496" height="280" src="https://www.youtube.com/embed/DWsPhE_rRSk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-			break;
-
-		case 'novo':
-			div.innerHTML = "<ul>" +
-				"<li>Como utilizar?" +
-				"<ul>" +
-				"<li>Esta opção permite limpar o mapa para a criação de um novo polígono.</li>" +
-				"<li>Clique no mapa para formar um polígono.</li>" +
-				"<li>A cada clique, um novo vértice é adicionado ao polígono.</li>" +
-				"<li>Dê um duplo clique no último vértice para concluir o polígono.</li>" +
-				"<li>Clique em um dos vértices do polígono para gerar a rota de cobertura.</li>" +
-				"<li>Clique nos vértices para alterar o local de partida da rota.</li>" +
-				"</ul>" +
-				"</li>" +
-				"</ul>";
-			break;
-		case 'abrir':
-			div.innerHTML = "<ul>" +
-				"<li>Como utilizar?" +
-				"<ul>" +
-				"<li>Esta opção permite abrir uma rota criada anteriormente.</li>" +
-				"<li>Selecione a opção 'Missão' e depois clique em 'Abrir'.</li>" +
-				"<li>Procure em seu 'Computador' um arquivo de rota no formato TXT.</li>" +
-				"<li>Dê um duplo clique com o botão direito do mouse para editar o polígono.</li>" +
-				"<li>Clique em um dos vértices e arraste para modificar o polígono.</li>" +
-				"<li>Selecione novamente um dos vértices para gerar a nova rota.</li>" +
-				"</ul>" +
-				"</li>" +
-				"</ul>";
-			break;
-
-		case 'salvar':
-			div.innerHTML = "<ul>" +
-				"<li>Como utilizar?" +
-				"<ul>" +
-				"<li>Esta opção permite salvar uma rota de cobertura em formato TXT.</li>" +
-				"<li>Após a geração da rota, selecione a opção 'Missão' e depois clique em 'Salvar'.</li>" +
-				"<li>Um arquivo no formato TXT será salvo em seu 'Computador'.</li>" +
-				"<li>O arquivo TXT pode ser utilizado como 'Plano de Voo' em uma estação de controle.</li>" +
-				"</ul>" +
-				"</li>" +
-				"</ul>";
-			break;
-
-		case 'importar':
-			div.innerHTML = "<ul>" +
-				"<li>Como utilizar?" +
-				"<ul>" +
-				"<li>Esta opção permite importar um arquivo no formato KML.</li>" +
-				"<li>Selecione a opção 'Missão' e depois clique em 'Importar Ponto' ou 'Importar Poly'.</li>" +
-				"<li>Procure em seu 'Computador' um arquivo KML.</li>" +
-				"<li>Se o arquivo conter um PONTO, você será redirecionado até a localidade.</li>" +
-				"<li>Se o arquivo conter um POLÍGONO, você será redirecionado até a localidade e o polígono será desenhado no mapa.</li>" +
-				"<li>Dê um duplo clique com o botão direito do mouse para editar o polígono.</li>" +
-				"<li>Clique em um dos vértices e arraste para modificar o polígono.</li>" +
-				"<li>Selecione novamente um dos vértices para gerar a nova rota.</li>" +
-				"</ul>" +
-				"</li>" +
-				"</ul>";
-			break;
-
-		case 'configurar':
-			div.innerHTML = "<ul>" +
-				"<li>Como utilizar?" +
-				"<ul>" +
-				"<li>Esta opção permite configurar os parâmetros para a geração da rota.</li>" +
-				"<li>Selecione a opção 'Configuração' e ajuste os parâmetros de altitude, velocidade e distância.</li>" +
-				"<li>A altitude inicial está configurada em 10m, mas pode ser alterada para até 50m.</li>" +
-				"<li>A velocidade inicial está configurada em 8m/s, mas pode ser alterada entre 1m/s e 15m/s.</li>" +
-				"<li>A distância entre as linhas paralelas da rota está inicialmente configurada em 50m, mas pode ser alterada entre 1m e 100m.</li>" +
-				"<li>Também é possível selecionar um tipo específico de plantação para configurar automaticamente os parâmetros.</li>" +
-				"</ul>" +
-				"</li>" +
-				"</ul>";
-			break;
 	}
 }
 

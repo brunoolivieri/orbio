@@ -1,3 +1,5 @@
+// ============================================================================================= PART 1: BOOSTRAP  ============================================================================================= //
+
 // Token gerado para uso no MAPBOX-GL
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
 
@@ -43,20 +45,6 @@ map.addControl(
 // Adicionando controles de zoom e rotação no mapa
 map.addControl(new mapboxgl.NavigationControl());
 
-// ========== ADICIONANDO AS OPÇÕES DE MAPA ============= //
-/*
-var layerList = document.getElementById("menu");
-var inputs = layerList.getElementsByTagName("input");
-
-function switchLayer(layer){
-    var layerId = layer.target.id;
-    map.setStyle('mapbox://styles/mapbox/' + layerId);
-}
-
-for(var i = 0; i < inputs.length; i++){
-    inputs[i].onclick = switchLayer;
-}*/
-
 // ========== DESENHANDO POLÍGONO ============= //
 
 // Criando um objeto para desenho do polígono
@@ -79,6 +67,8 @@ map.on('draw.update', updateArea);
 // Pode-se selecionar a posição inicial da rota ao clicar em um dos vértices da área
 map.on('click', selectInitialPosition);
 map.on('touchstart', selectInitialPosition);
+
+// ============================================================================================= PART 2: DRAWING ROUTE  ============================================================================================= //
 
 // == FUNÇÃO QUE ATUALIZA A METRAGEM DA ÁREA APÓS O DESENHO DO POLÍGONO == //
 function updateArea(e) {
@@ -124,46 +114,6 @@ var longestEdge = function (area_coordinates) {
         }
     }
 
-    // Se já existe um layer e um source com este ID, eles são removidos
-    /*var mapLayer = map.getLayer('route');
-
-    if(typeof mapLayer !== 'undefined') {
-        map.removeLayer('route').removeSource('route');
-    }
-	
-    // Criando um Objeto GeoJSON para 
-    // desenhar uma linha sobre a maior aresta
-    var objLongestEdge = {
-        'type': 'geojson',
-        'data': {
-            'type': 'Feature',
-            'properties': {},
-            'geometry' : {
-                'type' : 'LineString',
-                'coordinates': [
-                    longestEdge[0],
-                    longestEdge[1]
-                ]	
-            }
-        }
-    }
-
-    map.addSource('route', objLongestEdge);
-
-    map.addLayer({
-        'id': 'route',
-        'type': 'line',
-        'source': 'route',
-        'layout': {
-            'line-join': 'round',
-            'line-cap': 'round'
-        },
-        'paint': {
-            'line-color': '#0f0',
-            'line-width': 1
-        }
-    });*/
-
     return longestEdge;
 }
 
@@ -183,30 +133,6 @@ var farthestVertex = function (area_coordinates, longestEdge) {
             farthestVertex = area_coordinates[i];
         }
     }
-
-    // Criando um objeto Ponto no formado GeoJSON
-    // com as coordenadas do vértice mais distante
-    /*map.addSource('vertex', {
-        'type': 'geojson',
-        'data': {
-            'type': 'Feature',
-            'properties': {},
-            'geometry' : {
-                'type' : 'Point',
-                'coordinates': farthestVertex
-            }
-        }
-    });
-
-    // Adicionando o objeto Ponto no mapa
-    map.addLayer({
-        'id': 'vertex',
-        'type': 'circle',
-        'source': 'vertex',
-        'paint':{
-            'circle-color' : '#f00'	
-        }
-    });*/
 
     return farthestVertex;
 }
@@ -257,7 +183,7 @@ function drawReducedPolygon(areaPolygon, selectedPosition) {
         distanceBetweenLines = (inputDistance == '') ? 0.05 : inputDistance / 1000;
 
         // O fator de escala é a distância que o novo ponto deve ser deslocado
-        var scaleFactor = distanceBetweenLines / 2;;
+        var scaleFactor = distanceBetweenLines / 2;
 
         // Novo ponto gerado a partir do deslocamento do vértice
         var destination = turf.rhumbDestination(point1, scaleFactor, bearing);
@@ -274,31 +200,6 @@ function drawReducedPolygon(areaPolygon, selectedPosition) {
             flag = true;
         }
     }
-
-    // Criando um objeto GeoJSON para desenhar no mapa
-    /*var objPt = {
-        'type': 'geojson',
-        'data': {
-            'type': 'MultiLineString',
-            'coordinates': 
-                reducedPolygon
-        }
-    }
-
-    // Se já existe um layer e um source com este ID, eles são removidos
-    cleanLayerById('pt');
-
-    // Novos sources e layers são adicionados apenas se ainda não existem no mapa
-    map.addSource('pt', objPt);
-
-    map.addLayer({
-        'id': 'pt',
-        'type': 'circle',
-        'source': 'pt',
-        'paint': {
-            'circle-color': '#f00'
-        }
-    });*/
 
     return selectedPosition;
 }
@@ -317,12 +218,6 @@ function drawBBox(selectedPosition) {
 
     // Aumentando o tamanho do retângulo em 200%
     rectangle = turf.transformScale(rectangle, 2);
-
-    // Criando um objeto GeoJSON para desenhar o retângulo no mapa
-    /*var objRectangle = {
-        'type': 'geojson',
-        'data': rectangle
-    }*/
 
     // Invocando função das linhas paralelas
     drawParallelLines(rectangle, selectedPosition);
@@ -746,18 +641,6 @@ function drawNewRoutePoints(destination, initialFinalPath, finalDestination) {
         }
     }
 
-    // Novos sources e layers são adicionados apenas se ainda não existem no mapa
-    /*map.addSource('routePoints01', objPoints01);*/
-
-    /*map.addLayer({
-        'id': 'routePoints01',
-        'type': 'circle',
-        'source': 'routePoints01',
-        'paint': {
-            'circle-color': '#ccc'
-        }
-    });*/
-
     // Invocação da função para desenho da rota inicial
     drawInititalRoute(initialFinalPath, destination, finalDestination);
 
@@ -1103,51 +986,103 @@ function drawAllWaypoints() {
 
 }
 
-// == ATUALIZANDO INFORMAÇÕES A PARTIR DAS ALTERAÇÕES DE CONFIGURAÇÃO == //
+// ============================================================================================= PART 3: OPTIONS  ============================================================================================= //
 
-// Distância
-var configDistance = document.getElementById("distance");
-var labelDistance = document.getElementById("label-distance");
-var wpGrid = document.getElementById('wp-grid');
+// CLEAN OPTION
+const btnClean = document.getElementById("btn-clean");
+btnClean.addEventListener("click", cleanLayers);
+btnClean.addEventListener("click", cleanFields);
+btnClean.addEventListener("click", cleanPolygon);
 
+// SAVE SINGLE PATH
+const btnFullSave = document.getElementById("btn-full-save");
+btnFullSave.addEventListener("click", saveFullPath);
+
+// SAVE MULTI PATH
+const btnMultiSave = document.getElementById("btn-multi-save");
+btnMultiSave.addEventListener("click", saveMultiPath);
+
+// SAVE CSV
+const btnSaveCSV = document.getElementById("btn-save-csv");
+btnSaveCSV.addEventListener("click", savePathCSV);
+
+// IMPORT TXT
+const txtInput = document.getElementById('file-input');
+txtInput.addEventListener('change', importTxtFile, false);
+
+// IMPORT KML
+const btnImport = document.getElementById("file-import");
+btnImport.addEventListener('change', importKMLPoint, false);
+
+// IMPORT POLY KML
+const btnImportPoly = document.getElementById("file-import-poly");
+btnImportPoly.addEventListener('change', importKMLPolygon, false);
+
+// IMPORT KML PATH
+const btnImportPath = document.getElementById("file-import-path");
+btnImportPath.addEventListener('change', importKMLPath, false);
+
+// IMPORT KML POLY MISSION PLANNER
+const btnImportMP = document.getElementById("file-import-mp");
+btnImportMP.addEventListener('change', importMPPolygon, false);
+
+// MARKER AND HELP MODAL
+
+const helpModal = document.getElementById("help-modal");
+const btnMarker = document.getElementById('marker');
+
+btnMarker.onclick = function () {
+    if (this.style.backgroundImage == 'url("img/mapmarker.png")') {
+        this.style.backgroundImage = 'url("img/mapmarkeroff.png")';
+        marcador.remove();
+    } else {
+        this.style.backgroundImage = 'url("img/mapmarker.png")';
+        marcador = new mapboxgl.Marker({ color: 'black' })
+            .setLngLat(home)
+            .addTo(map);
+    }
+}
+
+// FLIGHT PARAMETERS
+
+// Distance
+const configDistance = document.getElementById("distance");
+const labelDistance = document.getElementById("label-distance");
+const wpGrid = document.getElementById('wp-grid');
 wpGrid.onchange = function () {
     cleanLayers();
     selectInitialPosition();
 }
-
 configDistance.onchange = function () {
     selectInitialPosition();
     labelDistance.innerHTML = "Distância: " + configDistance.value + "m";
 }
 
-// Velocidade
-var configSpeed = document.getElementById("speed");
-var labelSpeed = document.getElementById("label-speed");
-
+// Speed
+const configSpeed = document.getElementById("speed");
+const labelSpeed = document.getElementById("label-speed");
 configSpeed.onchange = function () {
     if (typeof totalDistance !== 'undefined') calculateFlightTime(totalDistance);
     labelSpeed.innerHTML = "Velocidade: " + configSpeed.value + "m/s";
 }
 
 // Altitude
-var configAltitude = document.getElementById("altitude");
-var labelAltitude = document.getElementById("label-altitude");
-
+const configAltitude = document.getElementById("altitude");
+const labelAltitude = document.getElementById("label-altitude");
 configAltitude.onchange = function () {
     labelAltitude.innerHTML = "Altitude: " + configAltitude.value + "m";
 }
 
-// Tempo de voo
-var configTempo = document.getElementById("max-flight-time");
-var labelTempo = document.getElementById("label-max-flight-time");
+// Time
+const configTempo = document.getElementById("max-flight-time");
+const labelTempo = document.getElementById("label-max-flight-time");
 configTempo.onchange = function () {
     selectInitialPosition();
     labelTempo.innerHTML = "Tempo: " + configTempo.value + "min";
 }
 
-// Otimização da Rota (ampliar/reduzir distância entre linhas)
-var opt = document.getElementById("opt");
-
+// Optimization
+const opt = document.getElementById("opt");
 opt.onchange = function () {
     // Pegando a distância da primeira linha paralela próxima à extremidade da área
     // e dividindo entre todas as demais linhas para recalcular a distância entre linhas
@@ -1158,10 +1093,6 @@ function recomputeDistanceBetweenLines() {
 
     var numberOfTests = 10;
     var firstLinePhase02 = turf.lineString([finalDestination[0], finalDestination[1]]);
-    /*var lastLinePhase02 = turf.lineString([
-                                finalDestination[2],
-                                finalDestination[3]
-                          ]);*/
 
     // Computando o ângulo da primeira linha pararela da fase 02
     var point1 = turf.point(finalDestination[1]);
@@ -1200,138 +1131,8 @@ function recomputeDistanceBetweenLines() {
     }
 }
 
-// ========= ACESSANDO O MENU DE OPÇÕES DA MISSÃO: NOVO, ABRIR, SALVAR, IMPORTAR ========= //
+// ============================================================================================= PART 4: TO SAVE  ============================================================================================= //
 
-// ==== ALERT ==== //
-var menuAlert = document.getElementById("menu-alert");
-var alertMessage = document.getElementById("menu-message");
-
-// Acessando o elemento <nav> com o menu de opções
-var menuOptions = document.getElementById("menu-options");
-
-// ==== MENU: NOVO ==== //
-var btnClean = document.getElementById("btn-clean");
-btnClean.addEventListener("click", cleanLayers);
-btnClean.addEventListener("click", cleanFields);
-btnClean.addEventListener("click", cleanPolygon);
-
-// ==== MENU: ABRIR ==== //
-// A função de leitura do arquivo é chamada sempre que o input file é modificado
-//document.getElementById('file-input').addEventListener('change', openTxtFile, false);
-document.getElementById('file-input').addEventListener('change', getTextAndSaveCSV, false);
-
-// ==== MENU: SALVAR ==== //
-// Esta opção permite salvar vários arquivos de waypoints para múltiplos voos
-// Acessando botão que dispara a função para criar um arquivo .txt
-var btnMultiSave = document.getElementById("btn-multi-save");
-// Atrelando a função ao evento onclick do botão
-btnMultiSave.addEventListener("click", saveMultiPath);
-
-// ==== MENU: SALVAR ROTA ÚNICA ==== //
-// Salva a rota completa em um único arquivo, mesmo que a rota possua
-// vários breakpoints com múltiplos voos. É necessário ter esta opção para
-// 'abrir' a rota novamente.
-
-// Acessando botão que dispara a função para criar um arquivo .txt
-var btnFullSave = document.getElementById("btn-full-save");
-// Atrelando a função ao evento onclick do botão
-btnFullSave.addEventListener("click", saveFullPath);
-
-// ==== MENU: SALVAR ROTA CSV ==== //
-// Salva as coordenadas de latitude, longitude e altitude em um arquivo no formato .csv.
-
-// Acessando botão que dispara a função para criar um arquivo .csv
-var btnSaveCSV = document.getElementById("btn-save-csv");
-// Atrelando a função ao evento onclick do botão
-btnSaveCSV.addEventListener("click", savePathCSV);
-
-// ==== MENU: IMPORTAR PONTO KML ==== //
-var btnImport = document.getElementById("file-import");
-btnImport.addEventListener('change', importKMLPoint, false);
-
-// ==== MENU: IMPORTAR POLÍGONO KML ==== //
-var btnImportPoly = document.getElementById("file-import-poly");
-btnImportPoly.addEventListener('change', importKMLPolygon, false);
-
-// ==== MENU: IMPORTAR RORA KML ==== //
-var btnImportPath = document.getElementById("file-import-path");
-btnImportPath.addEventListener('change', importKMLPath, false);
-
-// ==== MENU: IMPORTAR POLÍGONO Mission Planner ==== //
-var btnImportMP = document.getElementById("file-import-mp");
-btnImportMP.addEventListener('change', importMPPolygon, false);
-
-// ==== MENU: CONFIGURAÇÂO  ==== //
-// Acessando o elemento "modal"
-var modal = document.getElementById("modal");
-
-// Acessando o botão do marcador
-var btnMarker = document.getElementById('marker');
-
-btnMarker.onclick = function () {
-
-    if (this.style.backgroundImage == 'url("img/mapmarker.png")') {
-        this.style.backgroundImage = 'url("img/mapmarkeroff.png")';
-        marcador.remove();
-
-    } else {
-        this.style.backgroundImage = 'url("img/mapmarker.png")';
-
-        // Adicionando um marcador no ponto KML importados
-        marcador = new mapboxgl.Marker({ color: 'black' })
-            .setLngLat(home)
-            .addTo(map);
-    }
-}
-
-// ==== ALERTS ==== //
-
-function cleanAlerts() {
-    menuAlert.classList.remove("error-alert-activation");
-    menuAlert.classList.remove("success-alert-activation");
-}
-
-function displayErrorAlert(message) {
-    menuAlert.classList.add("error-alert-activation");
-    alertMessage.innerHTML = '';
-    alertMessage.innerHTML = message;
-
-    setTimeout(() => {
-        cleanAlerts();
-    }, 4000);
-}
-
-function displaySuccessAlert(message) {
-    console.log('ok')
-    menuAlert.classList.add("success-alert-activation");
-    alertMessage.innerHTML = '';
-    alertMessage.innerHTML = message;
-
-    setTimeout(() => {
-        cleanAlerts();
-    }, 4000);
-}
-
-// ======================================== //
-
-// ========= TIRAR UM PRINTSCREEN PARA USAR NO RELATÓRIO ======= //
-function savePrintScreen() {
-
-    html2canvas(document.body).then(canvas => {
-        //document.body.appendChild(canvas);
-        var blobImg = new Blob([canvas], { type: "image/png" });
-
-        // Nome do arquivo com data em milissegundos decorridos
-        fileNameImg = new Date().getTime() + ".png";
-
-        canvas.toBlob(function (blobImg) {
-            saveAs(blobImg, fileNameImg);
-        });
-    });
-
-}
-
-// ========= SALVANDO A ROTA GERADA EM ARQUIVO .CSV ========= //
 function savePathCSV() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
@@ -1386,52 +1187,6 @@ function savePathCSV() {
     displaySuccessAlert("Sucesso! O arquivo csv da rota foi gerado.");
 }
 
-function getTextAndSaveCSV(e) {
-
-    var file = e.target.files[0];
-    var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-    if (!file || extension !== 'txt') {
-        displayErrorAlert("Erro! A extensão do arquivo deve ser: txt");
-    }
-
-    var reader = new FileReader();
-
-    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-    content = "latitude;longitude;altitude(m)\n";
-
-    reader.onload = function (e) {
-        // Conteúdo completo do arquivo
-        var contents = e.target.result;
-
-        // Quebrando as linhas do arquivo em um array
-        var lines = contents.split("\n");
-
-        console.log(lines.length);
-        // Quebrando todas as linhas nos espaços \t
-        for (i = 4; i < lines.length - 2; i++) {
-            line = lines[i].split("\t");
-            // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
-            // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
-            // adicionados ao desenho da rota
-            if (Number(line[3]) == 16) {
-                // As posições de latitude, longitude e altitude estão nos índices 8, 9 e 10 de cada linha
-                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
-            }
-        }
-        console.log(content);
-        var blob = new Blob([content],
-            { type: "text/plain;charset=utf-8" });
-
-        // Nome do arquivo com data em milissegundos decorridos
-        fileName = new Date().getTime() + ".csv";
-        saveAs(blob, fileName);
-    };
-    reader.readAsText(file);
-
-    displaySuccessAlert("Sucesso! O arquivo csv da rota foi gerado.");
-}
-
-// ========= SALVANDO A ROTA GERADA EM ARQUIVO .TXT ========= //
 function saveFullPath() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
@@ -1542,7 +1297,6 @@ function saveFullPath() {
     displaySuccessAlert("Sucesso! A rota única foi salva no sistema.");
 }
 
-// ========= SALVANDO AS ROTAS GERADAS EM ARQUIVO .TXT ========= //
 function saveMultiPath() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
@@ -1691,6 +1445,69 @@ function saveMultiPath() {
         displaySuccessAlert("Sucesso! A rota multi foi salva no sistema.");
 
     } // Fim do 'for'	
+}
+
+function savePrintScreen() {
+
+    html2canvas(document.body).then(canvas => {
+        //document.body.appendChild(canvas);
+        var blobImg = new Blob([canvas], { type: "image/png" });
+
+        // Nome do arquivo com data em milissegundos decorridos
+        fileNameImg = new Date().getTime() + ".png";
+
+        canvas.toBlob(function (blobImg) {
+            saveAs(blobImg, fileNameImg);
+        });
+    });
+
+}
+
+// ============================================================================================= PART 5: TO IMPORT  ============================================================================================= //
+
+function importTxtFile(e) {
+
+    var file = e.target.files[0];
+    var extension = e.target.files[0].name.split('.').pop().toLowerCase();
+    if (!file || extension !== 'txt') {
+        displayErrorAlert("Erro! A extensão do arquivo deve ser: txt");
+    }
+
+    var reader = new FileReader();
+
+    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
+    content = "latitude;longitude;altitude(m)\n";
+
+    reader.onload = function (e) {
+        // Conteúdo completo do arquivo
+        var contents = e.target.result;
+
+        // Quebrando as linhas do arquivo em um array
+        var lines = contents.split("\n");
+
+        console.log(lines.length);
+        // Quebrando todas as linhas nos espaços \t
+        for (i = 4; i < lines.length - 2; i++) {
+            line = lines[i].split("\t");
+            // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
+            // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
+            // adicionados ao desenho da rota
+            if (Number(line[3]) == 16) {
+                // As posições de latitude, longitude e altitude estão nos índices 8, 9 e 10 de cada linha
+                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
+            }
+        }
+        console.log(content);
+        var blob = new Blob([content],
+            { type: "text/plain;charset=utf-8" });
+
+        // Nome do arquivo com data em milissegundos decorridos
+        fileName = new Date().getTime() + ".csv";
+        saveAs(blob, fileName);
+    };
+    reader.readAsText(file);
+
+    displaySuccessAlert("Sucesso! O arquivo txt da rota foi importado.");
 }
 
 // === OPÇÃO DE "ABRIR" UM ARQUIVO .KML E CARREGAR A POSIÇÃO INICIAL NO MAPA === //
@@ -1917,12 +1734,6 @@ function importMPPolygon(e) {
         // Conteúdo completo do arquivo
         var contents = e.target.result;
 
-        // Localizando as tags <coordinates> dentro do arquivo
-        /*var coordinates  = contents.substring(
-        contents.search("<coordinates>") + 13, 
-        contents.search("</coordinates>")
-    );*/
-
         //console.log(contents);
 
         // Quebrando todas as coordenadas do polígono
@@ -1944,8 +1755,6 @@ function importMPPolygon(e) {
         coordinatesLongLat = kmlArea;
         home = kmlArea[0];
 
-        console.log(coordinatesLongLat);
-
         // Acessando o centroide da área para posicionar no mapa
         var polygon = turf.polygon([kmlArea]);
         var centroid = turf.coordAll(turf.centroid(polygon));
@@ -1965,100 +1774,6 @@ function importMPPolygon(e) {
         // Chamando novamente as funções que calculam a maior aresta e o vértice mais distante
         longestEdgeLongLat = longestEdge(kmlArea);
         farthestVertexLongLat = farthestVertex(kmlArea, longestEdgeLongLat);
-    };
-    reader.readAsText(file);
-}
-
-// === OPÇÃO DE "ABRIR" UM ARQUIVO .TXT E CARREGAR A ROTA === //
-function openTxtFile(e) {
-
-    // Limpando layers, campos e polígono
-    cleanLayers();
-    cleanPolygon();
-
-    var file = e.target.files[0];
-    var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-    if (!file || extension !== 'txt') {
-        displayErrorAlert("Erro! A extensão do arquivo deve ser: txt");
-    }
-
-    var reader = new FileReader();
-
-    reader.onload = function (e) {
-        // Conteúdo completo do arquivo
-        var contents = e.target.result;
-
-        // Quebrando as linhas do arquivo em um array
-        var lines = contents.split("\n");
-
-        // Acessando a posição inicial (home) contida no arquivo
-        var txtHome = lines[1].split("\t");
-        home = [Number(txtHome[9]), Number(txtHome[8])];
-
-        // Acessando a velocidade contida no arquivo e preenchendo o campo no form
-        var txtSpeed = lines[3].split("\t");
-        document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
-        document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
-
-        // Acessando a altitude contida no arquivo e preenchendo o campo no form
-        var txtAltitude = lines[2].split("\t");
-        document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
-        document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
-
-        // Array que armazenará todos os waypoints da rota do arquivo
-        txtPath = [];
-        index = 0;
-
-        // Quebrando todas as linhas nos espaços \t
-        for (i = 4; i < lines.length - 2; i++) {
-            line = lines[i].split("\t");
-
-            // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
-            // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
-            // adicionados ao desenho da rota
-            if (Number(line[3]) == 16) {
-                // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
-                txtPath[index] = [Number(line[9]), Number(line[8])];
-                index++
-            }
-            console.log(Number(line[3]));
-
-        }
-
-        // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
-        txtArea = [];
-        index = 0;
-
-        // Quebrando a última linha para acessar as coordenadas do polígono
-        txtPolygon = lines[lines.length - 1].split("\t");
-
-        // Acessando todas as coordenadas
-        for (i = 1; i < txtPolygon.length - 1; i++) {
-            txtLatLong = txtPolygon[i].split(",");
-            txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
-            index++;
-        }
-
-        // Acessando o centroide da área para posicionar no mapa
-        var polygon = turf.polygon([txtArea]);
-        var centroid = turf.coordAll(turf.centroid(polygon));
-
-        // Direcionando o mapa
-        map.flyTo({
-            center: [
-                centroid[0][0], centroid[0][1]
-            ],
-            essential: true
-        });
-
-        // Desenhando a rota e calculando sua distância
-        drawTxtPath(txtPath);
-        calculateTxtDistance(txtPath);
-
-        // Desenhando o polígono e calculando sua área
-        drawTxtArea(txtArea);
-        calculateTxtArea();
-
     };
     reader.readAsText(file);
 }
@@ -2204,3 +1919,40 @@ function cleanPolygon() {
     // Limpando o polígono
     draw.deleteAll();
 }
+
+
+// ============================================================================================= PART 6: TO DISPLAY ELEMENTS  ============================================================================================= //
+
+// Navbar Alert
+var menuAlert = document.getElementById("menu-alert");
+var alertMessage = document.getElementById("menu-message");
+
+function cleanAlerts() {
+    menuAlert.classList.remove("error-alert-activation");
+    menuAlert.classList.remove("success-alert-activation");
+}
+
+function displayErrorAlert(message) {
+    menuAlert.classList.add("error-alert-activation");
+    alertMessage.innerHTML = '';
+    alertMessage.innerHTML = message;
+
+    setTimeout(() => {
+        cleanAlerts();
+    }, 4000);
+}
+
+function displaySuccessAlert(message) {
+    menuAlert.classList.add("success-alert-activation");
+    alertMessage.innerHTML = '';
+    alertMessage.innerHTML = message;
+
+    setTimeout(() => {
+        cleanAlerts();
+    }, 4000);
+}
+
+// Flight visualization before save
+
+
+// Help Modal

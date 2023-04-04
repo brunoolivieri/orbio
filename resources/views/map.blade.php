@@ -51,8 +51,8 @@
 	 <div class="mapboxgl-ctrl-group mapboxgl-ctrl side-menu">
 		<button class="mapbox-gl-draw_ctrl-draw-btn marker" id="marker"
 			style="background-image: url(https://cdn-icons-png.flaticon.com/512/447/447031.png);"></button>
-		<button type="button" class="mapbox-gl-draw_ctrl-draw-btn" id="question-mark" data-bs-toggle="modal"
-			data-bs-target="#myModal">?</button>
+		<button type="button" class="mapbox-gl-draw_ctrl-draw-btn" id="question-mark" data-bs-toggle="help-modal"
+			data-bs-target="#help-modal">?</button>
 	</div>
 
 	<!-- ALERT -->
