@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LineChart, XAxis, Line, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function VerticalLinesChart(props) {
 

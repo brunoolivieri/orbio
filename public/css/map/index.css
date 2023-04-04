@@ -1,0 +1,138 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+/* BOTTOM MENU */
+#menu-upload,
+#menu-save,
+#menu-configuration {
+    display: none;
+}
+
+#btn-clean:hover #btn-clean-icon {
+    color: #0971CE;
+}
+
+#btn-save:hover #btn-save-icon {
+    color: #0971CE;
+}
+
+#btn-upload:hover #btn-upload-icon {
+    color: #0971CE;
+}
+
+#btn-save:hover #btn-save-icon {
+    color: #0971CE;
+}
+
+#btn-exit:hover #btn-exit-icon {
+    color: #0971CE;
+}
+
+#btn-configuration:hover #btn-configuration-icon {
+    color: #0971CE;
+}
+
+#btn-upload:hover #menu-upload {
+    display: block;
+}
+
+#btn-save:hover #menu-save {
+    display: block;
+}
+
+#btn-configuration:hover #menu-configuration {
+    display: block;
+}
+
+#menu-alert {
+    opacity: 0;
+    bottom: '0px';
+}
+
+/* */
+
+.side-menu {
+    width: 30px;
+    position: absolute;
+    right: 10px;
+    top: 220px;
+}
+
+.marker {
+    background-size: 18px 18px;
+}
+
+#question-mark {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.help-options {
+    padding: 10px;
+    text-align: center;
+}
+
+label.form-label {
+    margin-bottom: 5px;
+}
+
+h4 {
+    font-size: 16px;
+}
+
+.mb-3:last-child {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 767px) {
+
+    #btn-top {
+        top: 72px;
+        left: 10px;
+    }
+
+}
+
+@media screen and (max-width: 600px) {
+    #btn-top {
+        top: 10px;
+    }
+
+    .calculation-box {
+        left: 0;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .mapboxgl-ctrl-top-right {
+        top: 66px;
+        width: 100%;
+    }
+
+    div.mapboxgl-ctrl-geocoder.mapboxgl-ctrl {
+        margin: 10px 10px 0 10px;
+    }
+}
+
+@media screen and (max-width: 560px) {
+
+    #btn,
+    #btn-mission {
+        bottom: 70px;
+    }
+
+    nav,
+    .modal-config {
+        bottom: 124px;
+        z-index: 99;
+    }
+}

@@ -12,18 +12,13 @@
         <!-- FONTSAWESOME KIT -->
         <script src="https://kit.fontawesome.com/49b7b83709.js" crossorigin="anonymous"></script>
 
-        <!-- ÍCONES - MATERIAL UI -->
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-
         <!-- CSS GLOBAL - public/css/global.css -->
-        <link rel="stylesheet" type="text/css" href="{{asset('css/global.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{asset('css/root/index.css')}}" />
 
     </head>
     <body>
-
         <div id = "root" >
         </div>
-        
     </body>
     <script src = "js/app.js"></script>
 </html>

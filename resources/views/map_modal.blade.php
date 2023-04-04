@@ -12,7 +12,7 @@
 	<link rel="manifest" href="/site.webmanifest">
 
 	<!--- STYLES --->
-	<link href="{{ asset('css/map/styles.css') }}" type="text/css" rel="stylesheet">
+	<link href="{{ asset('css/map/index.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- MAPBOX-GL --> 
 	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl.js') }}"></script>

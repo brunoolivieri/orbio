@@ -11,7 +11,6 @@ export function AuthProvider({ children }) {
     async function verifyAuthentication() {
         try {
             const response = await axios.get("api/user-data");
-            console.log(response.data)
             setUser(response.data);
         } catch (error) {
             console.log(error);
