@@ -2091,6 +2091,7 @@ function savePathConfirmation(files) {
 
             const box = document.createElement("div");
             box.replaceChildren([]);
+
             box.className = "grid grid-cols-2 hover:bg-gray-50 p-2 border";
 
             const fieldID = document.createElement("p");
@@ -2109,6 +2110,7 @@ function savePathConfirmation(files) {
         });
 
         const filesList = document.getElementById("files-list");
+        filesList.replaceChildren([]);
 
         // Set flight plans list into modal
         filesListElement.forEach((element) => {

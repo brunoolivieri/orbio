@@ -270,7 +270,7 @@
 					</div>
 					<!-- Modal body -->
 					<div class="px-6 py-3">
-						<form class="grid grid-rows-auto gap-y-5">
+						<div class="grid grid-rows-auto gap-y-5">
 							<!-- files list container -->
 							<div class="form-row">
 								<p class="text-sm font-medium text-gray-900">Arquivos txt</p>
@@ -307,8 +307,7 @@
 										placeholder="">
 								</div>
 							</div>
-
-						</form>
+						</div>
 					</div>
 					<!-- Modal footer -->
 					<div
