@@ -250,7 +250,77 @@
 				</div>
 			</div>
 		</div>
+	</div>
 
+	<!-- VERIFY BEFORE SAVE -->
+	<div id="flight-plan-confirmation-modal" class="relative z-10 transition-all hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+		<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+		<!-- Main modal -->
+		<div tabindex="-1" aria-hidden="true"
+			class="flex justify-center items-center fixed top-0 left-0 right-0 z-50 w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] md:h-full">
+			<div class="relative w-full lg:w-1/2 h-full md:h-auto">
+				<!-- Modal content -->
+				<div class="relative rounded-lg shadow bg-white">
+					<!-- Modal header -->
+					<div class="flex items-start justify-between p-4 rounded-t border-gray-100 border-b">
+						<h3 class="text-xl font-semibold text-gray-900">
+							Confirmação dos dados
+						</h3>
+					</div>
+					<!-- Modal body -->
+					<div class="px-6 py-3">
+						<form class="grid grid-rows-auto gap-y-5">
+							<!-- files list container -->
+							<div class="form-row">
+								<p class="text-sm font-medium text-gray-900">Arquivos txt</p>
+								<div id="files-list" class="w-full bg-white mt-2">
+									<!-- list dynamically generated 
+										<div>
+											<div class="grid grid-cols-2 hover:bg-gray-50 p-2 border">
+												<p class="text-gray-600">
+													X
+												</p>
+												<p>
+													0X_timestamp.txt
+												</p>
+											</div>
+										</div>
+									-->
+								</div>
+							</div>
+							<!-- image -->
+							<div class="form-row">
+								<label for="name" class="block text-sm font-medium leading-6 text-gray-900">Imagem da
+									rota</label>
+								<div class="grid grid-cols-[min-content_1fr] mt-2">
+									<div
+										class="flex mr-2 hover:bg-gray-100 ring-1 ring-inset ring-gray-300 rounded cursor-pointer select-none items-center px-5 text-gray-500">
+										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+											stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+											<path stroke-linecap="round" stroke-linejoin="round"
+												d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+										</svg>
+									</div>
+									<input type="text" name="flight-image" id="flight-image" disabled
+										class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400"
+										placeholder="">
+								</div>
+							</div>
+
+						</form>
+					</div>
+					<!-- Modal footer -->
+					<div
+						class="flex justify-end p-6 space-x-2 border-t border-gray-200 rounded-b dborder-gray-100 border-b">
+						<button type="button" id="btn-close-confirmation-modal"
+							class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-[#1976d2] hover:bg-sky-100 sm:ml-3 sm:w-auto">Cancelar</button>
+						<button type="submit" form="confirmation-modal"
+							class="inline-flex w-full justify-center rounded-md bg-[#1976d2] px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#1e88e5] sm:ml-3 sm:w-auto">Salvar</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 	
 	<script src="{{ asset('js/map/index.js') }}"></script>

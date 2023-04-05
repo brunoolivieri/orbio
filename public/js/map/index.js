@@ -68,6 +68,114 @@ map.on('draw.update', updateArea);
 map.on('click', selectInitialPosition);
 map.on('touchstart', selectInitialPosition);
 
+// Abrir plano por query string
+window.onload = () => {
+
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+
+    if (!params.file) {
+        return '';
+    }
+
+    axios.get(`${window.location.origin}/api/plans-module-download/${params.file}`)
+        .then((response) => {
+
+            // Limpando layers, campos e polígono
+            cleanLayers();
+            cleanPolygon();
+
+            var file = e.target.files[0];
+            var extension = e.target.files[0].name.split('.').pop().toLowerCase();
+            if (!file || extension !== 'txt') { return; }
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                // Conteúdo completo do arquivo
+                var contents = e.target.result;
+
+                // Quebrando as linhas do arquivo em um array
+                var lines = contents.split("\n");
+
+                // Acessando a posição inicial (home) contida no arquivo
+                var txtHome = lines[1].split("\t");
+                home = [Number(txtHome[9]), Number(txtHome[8])];
+
+                // Acessando a velocidade contida no arquivo e preenchendo o campo no form
+                var txtSpeed = lines[3].split("\t");
+                document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
+                document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
+
+                // Acessando a altitude contida no arquivo e preenchendo o campo no form
+                var txtAltitude = lines[2].split("\t");
+                document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
+                document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
+
+                // Array que armazenará todos os waypoints da rota do arquivo
+                txtPath = [];
+                index = 0;
+
+                // Quebrando todas as linhas nos espaços \t
+                for (i = 4; i < lines.length - 2; i++) {
+                    line = lines[i].split("\t");
+
+                    // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
+                    // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
+                    // adicionados ao desenho da rota
+                    if (Number(line[3]) == 16) {
+                        // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+                        txtPath[index] = [Number(line[9]), Number(line[8])];
+                        index++
+                    }
+                }
+
+                // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
+                txtArea = [];
+                index = 0;
+
+                // Quebrando a última linha para acessar as coordenadas do polígono
+                txtPolygon = lines[lines.length - 1].split("\t");
+
+                // Acessando todas as coordenadas
+                for (i = 1; i < txtPolygon.length - 1; i++) {
+                    txtLatLong = txtPolygon[i].split(",");
+                    txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
+                    index++;
+                }
+
+                // Acessando o centroide da área para posicionar no mapa
+                var polygon = turf.polygon([txtArea]);
+                var centroid = turf.coordAll(turf.centroid(polygon));
+
+                // Direcionando o mapa
+                map.flyTo({
+                    center: [
+                        centroid[0][0], centroid[0][1]
+                    ],
+                    essential: true
+                });
+
+                // Desenhando a rota e calculando sua distância
+                drawTxtPath(txtPath);
+                calculateTxtDistance(txtPath);
+
+                // Desenhando o polígono e calculando sua área
+                drawTxtArea(txtArea);
+                calculateTxtArea();
+            };
+
+            reader.readAsText(file);
+
+        })
+        .catch((error) => {
+            console.log(error.response);
+        })
+}
+
+
 // ============================================================================================= PART 2: DRAWING ROUTE  ============================================================================================= //
 
 // == FUNÇÃO QUE ATUALIZA A METRAGEM DA ÁREA APÓS O DESENHO DO POLÍGONO == //
@@ -777,7 +885,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
 
             // Verificando o tempo de voo baseado na distância parcial atual percorrida
             calculateFlightTime(partialDistance);
-            console.log(time);
+            //console.log(time);
 
             // Acessando o limite máximo de tempo definido pelo usuário
             maxFlightTime = Number.parseInt(document.getElementById('max-flight-time').value) * 60;
@@ -795,7 +903,7 @@ function routeTotalDistance(initialFinalPath, finalDestination) {
         }
     }
 
-    console.log(breakpoints);
+    //console.log(breakpoints);
 
     // Distância percorrida na fase 03 da rota
     for (j = 0; j < initialFinalPath[1].length - 1; j++) {
@@ -1184,7 +1292,7 @@ function savePathCSV() {
     fileName = new Date().getTime() + ".csv";
     saveAs(blob, fileName);
 
-    displaySuccessAlert("Sucesso! O arquivo csv da rota foi gerado.");
+    displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
 }
 
 function saveFullPath() {
@@ -1249,7 +1357,7 @@ function saveFullPath() {
         }
     } else {
         index = 0;
-        console.log(finalDestination);
+        //console.log(finalDestination);
         for (i = j; i < (finalDestination.length) + j - 1; i++) {
             content += i + "\t0\t3\t16\t0.000000\t0.000000\t0.000000\t0.000000\t" + finalDestination[index][1].toFixed(6) + "\t" + finalDestination[index][0].toFixed(6) + "\t" + altitude + ".000000" + "\t1\n";
             index++;
@@ -1289,12 +1397,16 @@ function saveFullPath() {
 
     // Nome do arquivo com data em milissegundos decorridos
     fileName = new Date().getTime() + ".txt";
-    saveAs(blob, fileName);
+    //saveAs(blob, fileName);
 
     // Salvando um printscreen para o relatório
-    savePrintScreen();
+    //savePrintScreen();
 
-    displaySuccessAlert("Sucesso! A rota única foi salva no sistema.");
+    savePathConfirmation([{
+        blob: blob,
+        filename: fileName,
+        coordinates: coordinatesLongLat[0]
+    }]);
 }
 
 function saveMultiPath() {
@@ -1312,7 +1424,9 @@ function saveMultiPath() {
     inputSpeed = document.getElementById("speed").value;
     var speed = (inputSpeed == '') ? 8 : inputSpeed;
 
-    console.log("quantos breakpoints: " + breakpoints.length);
+    //console.log("quantos breakpoints: " + breakpoints.length);
+
+    const files = [];
 
     // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
     for (k = 0; k <= breakpoints.length; k++) {
@@ -1437,29 +1551,23 @@ function saveMultiPath() {
 
         // Nome do arquivo com data em milissegundos decorridos
         fileName = "0" + k + "_" + new Date().getTime() + ".txt";
-        saveAs(blob, fileName);
+        //saveAs(blob, fileName);
 
         // Salvando um printscreen para o relatório
-        savePrintScreen();
+        //savePrintScreen();
 
-        displaySuccessAlert("Sucesso! A rota multi foi salva no sistema.");
+        files.push({
+            blob: blob,
+            filename: fileName,
+            coordinates: coordinatesLongLat[0]
+        });
 
     } // Fim do 'for'	
+
+    savePathConfirmation(files);
 }
 
-function savePrintScreen() {
-
-    html2canvas(document.body).then(canvas => {
-        //document.body.appendChild(canvas);
-        var blobImg = new Blob([canvas], { type: "image/png" });
-
-        // Nome do arquivo com data em milissegundos decorridos
-        fileNameImg = new Date().getTime() + ".png";
-
-        canvas.toBlob(function (blobImg) {
-            saveAs(blobImg, fileNameImg);
-        });
-    });
+function savePathAfterConfirmation(data) {
 
 }
 
@@ -1485,7 +1593,7 @@ function importTxtFile(e) {
         // Quebrando as linhas do arquivo em um array
         var lines = contents.split("\n");
 
-        console.log(lines.length);
+        //console.log(lines.length);
         // Quebrando todas as linhas nos espaços \t
         for (i = 4; i < lines.length - 2; i++) {
             line = lines[i].split("\t");
@@ -1497,7 +1605,7 @@ function importTxtFile(e) {
                 content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
             }
         }
-        console.log(content);
+        //console.log(content);
         var blob = new Blob([content],
             { type: "text/plain;charset=utf-8" });
 
@@ -1517,7 +1625,7 @@ function importKMLPoint(e) {
     cleanLayers();
     cleanPolygon();
 
-    console.log(marcador);
+    //console.log(marcador);
     // Apagando o marcador anterior
     marcador.remove();
 
@@ -1594,7 +1702,7 @@ function importKMLPolygon(e) {
 
         // Percorrendo todas as coordenadas e quebrando as informações de lat e long
         for (i = 0; i < coordinates.length - 1; i++) {
-            console.log(coordinates[i]);
+            //console.log(coordinates[i]);
 
             latLong = coordinates[i].split(",");
             kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -1602,14 +1710,14 @@ function importKMLPolygon(e) {
 
         // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
         if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
-            console.log("São IGUAIS!");
+            //console.log("São IGUAIS!");
         } else {
-            console.log("NÃO SÃO IGUAIS!");
+            //console.log("NÃO SÃO IGUAIS!");
             kmlArea[i] = kmlArea[0];
         }
 
-        console.log(kmlArea[0]);
-        console.log(kmlArea[kmlArea.length - 1]);
+        //console.log(kmlArea[0]);
+        //console.log(kmlArea[kmlArea.length - 1]);
 
         home = kmlArea[0];
 
@@ -1669,7 +1777,7 @@ function importKMLPath(e) {
 
         // Percorrendo todas as coordenadas e quebrando as informações de lat e long
         for (i = 0; i < coordinates.length - 1; i++) {
-            console.log(coordinates[i]);
+            //console.log(coordinates[i]);
 
             latLong = coordinates[i].split(",");
             kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
@@ -1677,14 +1785,14 @@ function importKMLPath(e) {
 
         // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
         if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
-            console.log("São IGUAIS!");
+            //console.log("São IGUAIS!");
         } else {
-            console.log("NÃO SÃO IGUAIS!");
+            //console.log("NÃO SÃO IGUAIS!");
             kmlArea[i] = kmlArea[0];
         }
 
-        console.log(kmlArea[0]);
-        console.log(kmlArea[kmlArea.length - 1]);
+        //console.log(kmlArea[0]);
+        //console.log(kmlArea[kmlArea.length - 1]);
 
         home = kmlArea[0];
 
@@ -1953,6 +2061,130 @@ function displaySuccessAlert(message) {
 }
 
 // Flight visualization before save
+const btnCloseConfirmationModal = document.getElementById("btn-close-confirmation-modal");
+btnCloseConfirmationModal.addEventListener("click", function () {
+    const modal = document.getElementById("flight-plan-confirmation-modal");
+    modal.classList.add("hidden");
+});
 
+function savePathConfirmation(files) {
+
+    const modal = document.getElementById("flight-plan-confirmation-modal");
+
+    html2canvas(document.body).then(canvas => {
+
+        var blobImg = new Blob([canvas], { type: "image/jpeg" });
+        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
+
+        filenameImg = new Date().getTime() + ".jpeg";
+
+        return { blobImg, filenameImg, dataURL, canvas };
+
+    }).then(({ blobImg, filenameImg, dataURL, canvas }) => {
+
+        modal.classList.remove("hidden");
+
+        const filesListElement = files.map((file, index) => {
+
+            const container = document.createElement("div");
+            container.replaceChildren([]);
+
+            const box = document.createElement("div");
+            box.replaceChildren([]);
+            box.className = "grid grid-cols-2 hover:bg-gray-50 p-2 border";
+
+            const fieldID = document.createElement("p");
+            fieldID.className = "text-gray-600";
+            fieldID.innerText = index + 1;
+
+            const fieldFilename = document.createElement("p");
+            fieldFilename.innerText = file.filename;
+
+            box.appendChild(fieldID);
+            box.appendChild(fieldFilename);
+            container.appendChild(box);
+
+            return container;
+
+        });
+
+        const filesList = document.getElementById("files-list");
+
+        // Set flight plans list into modal
+        filesListElement.forEach((element) => {
+            filesList.appendChild(element);
+        });
+
+        // Set flight plan image into modal
+        const pathImageName = document.getElementById("flight-image");
+        pathImageName.placeholder = filenameImg;
+
+        // Save path definitely
+        const btnSavePath = document.getElementById("btn-save-confirmation-modal");
+        btnSavePath.addEventListener("click", function () {
+
+            //console.log(files);
+            //console.log({ blobImg, filenameImg, dataURL });
+
+            const filesToSend = files.map((file) => {
+                return new File([file.blob], file.filename);
+            });
+
+            const coordinatesOfEachFile = files.map((file) => {
+                return file.coordinates[1] + "," + file.coordinates[0];
+            });
+
+            let formData = new FormData();
+            formData.append("description", "none");
+            formData.append("route_files", filesToSend);
+            formData.append("image_file", dataURL);
+            formData.append("coordinates", coordinatesOfEachFile);
+
+            axios.post(`${window.location.origin}/api/module/flight-plans`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then((response) => {
+
+                console.log(response);
+
+            }).catch((error) => {
+
+                console.log(error);
+
+            }).finally(() => {
+                this.setAttribute("disabled", true);
+            });
+
+        });
+
+    });
+
+}
 
 // Help Modal
+function displayHelpModal() {
+    //
+}
+
+// Remove elements from screen
+function screenForPrintScreen(type) {
+
+    if (type === 'before') {
+        document.getElementById("bottom-bar").style.display = 'none';
+        map.removeControl(mapBoxGeocoder);
+        map.removeControl(draw);
+        map.removeControl(mapBoxNavigationControl);
+        marcador.remove();
+    } else if (type === 'after') {
+        document.getElementById("bottom-bar").style.display = 'block';
+        map.addControl(mapBoxGeocoder);
+        map.addControl(draw);
+        map.addControl(mapBoxNavigationControl);
+        marcador = new mapboxgl.Marker({ color: 'black' })
+            .setLngLat(home)
+            .addTo(map);
+    }
+
+}
+
