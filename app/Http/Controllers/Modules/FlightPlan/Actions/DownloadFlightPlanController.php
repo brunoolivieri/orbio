@@ -39,7 +39,6 @@ class DownloadFlightPlanController extends Controller
             return response($json_contents)->withHeaders([
                 "Content-type" => "application/json"
             ]);
-
         } catch (\Exception $e) {
             if ($e->getMessage() === "Erro! O arquivo não foi encontrado.") {
                 return response(["message" => $e->getMessage()], 404);

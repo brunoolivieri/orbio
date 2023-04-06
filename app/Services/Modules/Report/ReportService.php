@@ -5,12 +5,9 @@ namespace App\Services\Modules\Report;
 use Illuminate\Support\Facades\Storage;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Reports\ReportRepository;
-use App\Traits\DownloadResource;
 
 class ReportService implements ServiceInterface
 {
-
-    use DownloadResource;
 
     public function __construct(ReportRepository $repository)
     {
@@ -20,21 +17,6 @@ class ReportService implements ServiceInterface
     public function getPaginate(string $limit, string $page, string $search)
     {
         return $this->repository->getPaginate($limit, $page, $search);
-    }
-
-    function download(string $filename, $identifier = null)
-    {
-        if (Storage::disk("public")->exists("reports/$filename")) {
-
-            $path = Storage::disk("public")->path("reports/$filename");
-            $contents = file_get_contents($path);
-
-            return response($contents)->withHeaders([
-                "Content-type" => mime_content_type($path)
-            ]);
-        } else {
-            return response(["message" => "Nenhum arquivo encontrado."], 404);
-        }
     }
 
     public function createOne(array $data)

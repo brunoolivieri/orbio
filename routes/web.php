@@ -21,7 +21,8 @@ use App\Http\Controllers\Modules\Administration\{
 };
 use App\Http\Controllers\Modules\Report\{
     ReportModuleController,
-    Actions\WeatherDataController
+    Actions\WeatherDataController,
+    Actions\DownloadReportController
 };
 use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleController,
@@ -105,11 +106,12 @@ Route::group(["prefix" => "api"], function () {
         Route::get("/action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
         Route::apiResource("/action/service-order/incidents", ServiceOrderIncidentController::class);
-        Route::get("/action/report/service-orders", LoadServiceOrderForReport::class); 
+        Route::get("/action/report/service-orders", LoadServiceOrderForReport::class);
         Route::post("/action/flight-plans-logs/processing-uploads", UploadedLogsController::class);
-        Route::get("/action/report/weather-data", WeatherDataController::class); 
+        Route::get("/action/report/weather-data", WeatherDataController::class);
         Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
-        Route::get("/action/flight-plans/download", DownloadFlightPlanController::class); 
+        Route::get("/action/flight-plans/download", DownloadFlightPlanController::class);
+        Route::get("/action/reports/download/{filename}", DownloadReportController::class);
         // Generic Actions
         Route::get('/action/load-drones', LoadDronesController::class);
         Route::get('/action/load-batteries', LoadBatteriesController::class);

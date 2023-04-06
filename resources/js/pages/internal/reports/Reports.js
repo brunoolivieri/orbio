@@ -89,7 +89,7 @@ const columns = [
 
       function handleDownloadReport(report) {
 
-        axios.get(`/api/reports-module-download/${report.file}?report_id=${report.id}`,
+        axios.get(`/action/reports/download/${report.file}`,
           {
             headers: {
               'Content-type': 'application/json'
@@ -97,7 +97,7 @@ const columns = [
             responseType: 'blob'
           })
           .then(function (response) {
-            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${report.file}`, { variant: "success" });
+            enqueueSnackbar(`Sucesso! O download do relatório foi bem sucedido! Arquivo: ${report.file}`, { variant: "success" });
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
@@ -109,7 +109,7 @@ const columns = [
           })
           .catch(function (error) {
             console.log(error)
-            enqueueSnackbar(`O download não foi realizado! Arquivo: ${report.file}`, { variant: "error" });
+            enqueueSnackbar(`Erro! O download do relatório falhou! Arquivo: ${report.file}`, { variant: "error" });
           });
       }
 
