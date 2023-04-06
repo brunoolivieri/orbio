@@ -2,18 +2,12 @@
 
 namespace App\Services\Modules\FlightPlan;
 
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
-use Exception;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
-use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
-use App\Traits\DownloadResource;
 
 class FlightPlanService implements ServiceInterface
 {
-
-    use DownloadResource;
 
     function __construct(FlightPlanRepository $flightPlanRepository)
     {
@@ -23,22 +17,6 @@ class FlightPlanService implements ServiceInterface
     function getPaginate(string $limit, string $page, string $search)
     {
         return $this->repository->getPaginate($limit, $page, $search);
-    }
-
-    function download(string $filename, $identifier = null)
-    {
-        if (Storage::disk("public")->exists("flight_plans/$filename")) {
-
-            $path = Storage::disk("public")->path("flight_plans/$filename");
-            $contents = file_get_contents($path);
-
-            return response($contents)->withHeaders([
-                "Content-type" => mime_content_type($path)
-            ]);
-        } else {
-
-            return response(["message" => "Nenhum arquivo encontrado."], 404);
-        }
     }
 
     function createOne(array $data)
@@ -113,7 +91,7 @@ class FlightPlanService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message);
+            throw new \Exception($message);
         }
     }
 }

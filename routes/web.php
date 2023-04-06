@@ -26,7 +26,8 @@ use App\Http\Controllers\Modules\Report\{
 use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleController,
     FlightPlanModuleLogController,
-    Actions\UploadedLogsController
+    Actions\UploadedLogsController,
+    Actions\DownloadFlightPlanController
 };
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
@@ -98,9 +99,8 @@ Route::group(["prefix" => "api"], function () {
         Route::post("/drones/export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
         Route::post("/batteries/export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
         Route::post("/equipments/export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
-        Route::get("/plans-module-download/{filename}", [FlightPlanModuleController::class, "downloadFlightPlan"]);
-        Route::get("/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]);
-        Route::get("/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]);
+        Route::get("/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]); // download
+        Route::get("/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]); // download
         // Module Actions
         Route::get("/action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
@@ -108,7 +108,8 @@ Route::group(["prefix" => "api"], function () {
         Route::get("/action/report/service-orders", LoadServiceOrderForReport::class); 
         Route::post("/action/flight-plans-logs/processing-uploads", UploadedLogsController::class);
         Route::get("/action/report/weather-data", WeatherDataController::class); 
-        Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class); 
+        Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
+        Route::get("/action/flight-plans/download", DownloadFlightPlanController::class); 
         // Generic Actions
         Route::get('/action/load-drones', LoadDronesController::class);
         Route::get('/action/load-batteries', LoadBatteriesController::class);

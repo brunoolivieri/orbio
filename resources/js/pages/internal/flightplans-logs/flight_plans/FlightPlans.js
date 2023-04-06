@@ -100,29 +100,29 @@ const columns = [
 
       function handleDownloadFlightPlan(filenames) {
 
-        console.log(filenames)
-
-        /*
-        axios.get(`/api/plans-module-download/${filename}`, null, {
-          responseType: 'blob'
+        axios.get(`/api/action/flight-plans/download?files=${filenames.toString()}`, {
+          responseType: 'application/json'
         })
           .then(function (response) {
-            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+            enqueueSnackbar(`Sucesso! O download do plano foi bem sucedido!`, { variant: "success" });
 
-            // Download forçado do arquivo com o conteúdo retornado do servidor
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${filename}`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
+            const files = response.data;
+
+            for (let filename in files) {
+              // Download forçado do arquivo com o conteúdo retornado do servidor
+              const url = window.URL.createObjectURL(new Blob([files[filename]]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', `${filename}`); //or any other extension
+              document.body.appendChild(link);
+              link.click();
+            }
 
           })
           .catch((error) => {
             console.log(error)
-            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+            enqueueSnackbar("Erro! O download do plano falhou!", { variant: "error" });
           });
-          */
 
       }
 
@@ -147,12 +147,11 @@ const columns = [
 
         console.log(filenames)
 
-        /*
-        axios.get(`/api/plans-module-download/${filename}`, null, {
+        axios.get(`/api/action/flight-plans/download?files=${filenames.toString()}`, {
           responseType: 'blob'
         })
           .then(function (response) {
-            enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+            enqueueSnackbar(`Sucesso! O download do plano csv foi bem sucedido!`, { variant: "success" });
 
             let content = "latitude;longitude;altitude(m)\n";
 
@@ -187,10 +186,10 @@ const columns = [
             link.click();
 
           })
-          .catch(() => {
-            enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+          .catch((error) => {
+            console.log(error)
+            enqueueSnackbar("Erro! O download do plano csv falhou!", { variant: "error" });
           });
-          */
 
       }
 

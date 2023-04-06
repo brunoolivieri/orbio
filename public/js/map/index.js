@@ -1578,7 +1578,7 @@ function saveMultiPath() {
 }
 
 function savePathAfterConfirmation(data) {
-
+    // 
 }
 
 // ============================================================================================= PART 5: TO IMPORT  ============================================================================================= //
@@ -2163,7 +2163,7 @@ function savePathConfirmation(files) {
 
                 displaySuccessAlert(response.data.message);
                 modal.classList.add("hidden");
-                
+
                 initialPath.length = 0;
                 cleanLayers();
                 cleanFields();
