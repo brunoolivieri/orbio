@@ -65,9 +65,8 @@ class FlightPlanModuleController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
-
         try {
-            $this->service->createOne($request->only(["name", "routes_file", "image_file", "image_filename", "description", "coordinates"]));
+            $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "coordinates"]));
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);

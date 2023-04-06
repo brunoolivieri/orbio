@@ -17,7 +17,7 @@ class CreateIncidentsTable extends Migration
             $table->id();
             $table->foreignId('service_order_flight_plan_id')->nullable(true)->constrained('service_order_flight_plan');
             $table->string("type");
-            $table->text("description");
+            $table->text("description")->nullable();
             $table->dateTime("date")->useCurrent();
             $table->timestamps();
             $table->softDeletes();

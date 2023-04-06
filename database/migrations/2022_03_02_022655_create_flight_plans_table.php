@@ -17,11 +17,11 @@ class CreateFlightPlansTable extends Migration
             $table->id();
             $table->string("creator_id")->constrained('users');
             $table->string("name")->unique();
-            $table->string("file");
+            $table->string("files");
             $table->string("coordinates");
             $table->string("state");
             $table->string("city");
-            $table->text("description");
+            $table->text("description")->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

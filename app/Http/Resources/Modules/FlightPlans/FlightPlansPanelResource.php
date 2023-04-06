@@ -46,7 +46,7 @@ class FlightPlansPanelResource extends JsonResource
                 "logs" => [],
                 "total_incidents" => 0,
                 "total_logs" => 0,
-                "file" => $flight_plan->file,
+                "files" => json_decode($flight_plan->files),
                 "localization" => [
                     "coordinates" => $flight_plan->coordinates,
                     "state" => $flight_plan->state,

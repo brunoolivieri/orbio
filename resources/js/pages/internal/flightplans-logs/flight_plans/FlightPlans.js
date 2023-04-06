@@ -98,7 +98,11 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlan(filename) {
+      function handleDownloadFlightPlan(filenames) {
+
+        console.log(filenames)
+
+        /*
         axios.get(`/api/plans-module-download/${filename}`, null, {
           responseType: 'blob'
         })
@@ -117,11 +121,13 @@ const columns = [
           .catch((error) => {
             console.log(error)
             enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
-          })
+          });
+          */
+
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlan(data.row.file)}>
+        <IconButton onClick={() => handleDownloadFlightPlan(data.row.files)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )
@@ -137,7 +143,11 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlanAsCSV(filename) {
+      function handleDownloadFlightPlanAsCSV(filenames) {
+
+        console.log(filenames)
+
+        /*
         axios.get(`/api/plans-module-download/${filename}`, null, {
           responseType: 'blob'
         })
@@ -179,11 +189,13 @@ const columns = [
           })
           .catch(() => {
             enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
-          })
+          });
+          */
+
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.file)}>
+        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.files)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )

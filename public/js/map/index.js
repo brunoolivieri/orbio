@@ -1098,6 +1098,7 @@ function drawAllWaypoints() {
 
 // CLEAN OPTION
 const btnClean = document.getElementById("btn-clean");
+btnClean.addEventListener("click", function () { initialPath.length = 0 })
 btnClean.addEventListener("click", cleanLayers);
 btnClean.addEventListener("click", cleanFields);
 btnClean.addEventListener("click", cleanPolygon);
@@ -1244,7 +1245,10 @@ function recomputeDistanceBetweenLines() {
 function savePathCSV() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (typeof initialPath === 'undefined') { return false; }
+    if (initialPath.length === 0) {
+        displayErrorAlert("Erro! Nenhuma rota foi definida.");
+        return;
+    }
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1298,7 +1302,10 @@ function savePathCSV() {
 function saveFullPath() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (typeof initialPath === 'undefined') { return false; }
+    if (initialPath.length === 0) {
+        displayErrorAlert("Erro! Nenhuma rota foi definida.");
+        return;
+    }
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1412,7 +1419,10 @@ function saveFullPath() {
 function saveMultiPath() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (typeof initialPath === 'undefined') { return false; }
+    if (initialPath.length === 0) {
+        displayErrorAlert("Erro! Nenhuma rota foi definida.");
+        return;
+    }
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1579,6 +1589,7 @@ function importTxtFile(e) {
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
     if (!file || extension !== 'txt') {
         displayErrorAlert("Erro! A extensão do arquivo deve ser: txt");
+        return;
     }
 
     var reader = new FileReader();
@@ -1633,6 +1644,7 @@ function importKMLPoint(e) {
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
     if (!file || extension !== 'kml') {
         displayErrorAlert("Erro! A extensão do arquivo deve ser: kml");
+        return;
     }
 
     var reader = new FileReader();
@@ -1680,6 +1692,7 @@ function importKMLPolygon(e) {
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
     if (!file || extension !== 'kml') {
         displayErrorAlert("Erro! A extensão do arquivo deve ser: kml");
+        return;
     }
 
     var reader = new FileReader();
@@ -1755,6 +1768,7 @@ function importKMLPath(e) {
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
     if (!file || extension !== 'kml') {
         displayErrorAlert("Erro! A extensão do arquivo deve ser: kml");
+        return;
     }
 
     var reader = new FileReader();
@@ -1834,6 +1848,7 @@ function importMPPolygon(e) {
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
     if (!file || extension !== 'poly') {
         displayErrorAlert("Erro! A extensão do arquivo deve ser: poly");
+        return;
     }
 
     var reader = new FileReader();
@@ -2073,10 +2088,9 @@ function savePathConfirmation(files) {
 
     html2canvas(document.body).then(canvas => {
 
-        var blobImg = new Blob([canvas], { type: "image/jpeg" });
-        var dataURL = canvas.toDataURL('image/jpeg', 1.0);
-
-        filenameImg = new Date().getTime() + ".jpeg";
+        const blobImg = new Blob([canvas], { type: "image/jpeg" });
+        const dataURL = canvas.toDataURL('image/jpeg', 1.0);
+        const filenameImg = new Date().getTime() + ".jpeg";
 
         return { blobImg, filenameImg, dataURL, canvas };
 
@@ -2091,7 +2105,6 @@ function savePathConfirmation(files) {
 
             const box = document.createElement("div");
             box.replaceChildren([]);
-
             box.className = "grid grid-cols-2 hover:bg-gray-50 p-2 border";
 
             const fieldID = document.createElement("p");
@@ -2119,6 +2132,7 @@ function savePathConfirmation(files) {
 
         // Set flight plan image into modal
         const pathImageName = document.getElementById("flight-image");
+        pathImageName.placeholder = '';
         pathImageName.placeholder = filenameImg;
 
         // Save path definitely
@@ -2128,38 +2142,39 @@ function savePathConfirmation(files) {
             //console.log(files);
             //console.log({ blobImg, filenameImg, dataURL });
 
-            const filesToSend = files.map((file) => {
-                return new File([file.blob], file.filename);
-            });
-
-            const coordinatesOfEachFile = files.map((file) => {
-                return file.coordinates[1] + "," + file.coordinates[0];
-            });
-
             let formData = new FormData();
-            formData.append("description", "none");
-            formData.append("route_files", filesToSend);
-            formData.append("image_file", dataURL);
-            formData.append("coordinates", coordinatesOfEachFile);
+
+            files.map((file) => {
+                formData.append("route_files[]", new File([file.blob], file.filename));
+                formData.append("coordinates[]", file.coordinates[1] + "," + file.coordinates[0]);
+            });
+
+            const image = new Image(canvas.width, canvas.heigth);
+
+            formData.append("imageDataURL", dataURL);
+            formData.append("imageFilename", filenameImg);
 
             axios.post(`${window.location.origin}/api/module/flight-plans`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
-                }
+                },
+                responseType: 'json'
             }).then((response) => {
 
-                console.log(response);
+                displaySuccessAlert(response.data.message);
+                modal.classList.add("hidden");
+                
+                initialPath.length = 0;
+                cleanLayers();
+                cleanFields();
+                cleanPolygon();
 
             }).catch((error) => {
-
-                console.log(error);
-
-            }).finally(() => {
-                this.setAttribute("disabled", true);
+                console.log(error)
+                displayErrorAlert(error.message);
             });
 
         });
-
     });
 
 }

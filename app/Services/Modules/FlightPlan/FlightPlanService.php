@@ -43,32 +43,42 @@ class FlightPlanService implements ServiceInterface
 
     function createOne(array $data)
     {
-        if (is_null($data["routes_file"]) || is_null($data["image_file"])) {
+        if (is_null($data["route_files"]) || is_null($data["imageDataURL"])) {
             return response(["message" => "Erro! O plano de voo não pode ser criado."], 500);
         }
 
-        // Routes file data
-        $routes_file_content = file_get_contents($data["routes_file"]);
-        $routes_filename = md5($routes_file_content) . ".txt";
-        $data["routes"] = [
-            "content" => $routes_file_content,
-            "filename" => $routes_filename,
-            "path" => "flight_plans/" . $routes_filename
+        foreach ($data["route_files"] as $index => $route_file) {
+
+            $filename = $route_file->getClientOriginalName();
+            $contents = file_get_contents($route_file);
+            $path = "flight_plans/" . $filename;
+
+            $data_to_save["routes_filename"][$index] = $filename;
+
+            $data_to_save["route_files"][$index] = [
+                "contents" => $contents,
+                "filename" => $filename,
+                "path" => $path
+            ];
+        }
+
+        $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);
+        $img = str_replace(' ', '+', $img);
+
+        $data_to_save["image"] = [
+            "path" => "images/flight_plans/" . $data["imageFilename"],
+            "contents" => base64_decode($img)
         ];
 
-        $img = str_replace('data:image/jpeg;base64,', '', $data["image_file"]);
-        $img = str_replace(' ', '+', $img);
-        $data["image_file"] = base64_decode($img);
-
-        $data["description"] = $data["description"] === "none" ? "nenhuma" : $data["description"];
+        $data_to_save["coordinates"] = $data["coordinates"][0];
 
         // Fetch google API to get city and state of flight plan location
-        $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data["coordinates"] . "&key=" . env("GOOGLE_GEOCODING_API_KEY"))["results"][0]["address_components"];
+        $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data_to_save["coordinates"] . "&key=" . env("GOOGLE_GEOCODING_API_KEY"))["results"][0]["address_components"];
 
-        $data["city"] = $address_components[2]["long_name"];
-        $data["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
+        $data_to_save["city"] = $address_components[2]["long_name"];
+        $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
 
-        $flight_plan = $this->repository->createOne(collect($data));
+        $this->repository->createOne(collect($data_to_save));
     }
 
     function updateOne(array $data, string $identifier)
