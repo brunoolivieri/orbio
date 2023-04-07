@@ -41,6 +41,10 @@ body {
     color: #0971CE;
 }
 
+#btn-help-icon:hover {
+    color: #0971CE;
+}
+
 #btn-upload:hover #menu-upload {
     display: block;
 }
@@ -158,7 +162,6 @@ h4 {
     animation-duration: 4s;
     animation-timing-function: ease-in-out;
 }
-
 
 
 /* MEDIA QUERY */

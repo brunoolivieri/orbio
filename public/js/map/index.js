@@ -35,15 +35,15 @@ marcador = new mapboxgl.Marker({ color: 'black' })
 // ========= FERRAMENTA DE BUSCA POR LOCALIDADES =========== //
 
 // Adicionando o controle de busca ao mapa.
-map.addControl(
-    new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken,
-        mapboxgl: mapboxgl
-    })
-);
+var mapBoxGeocoder = new MapboxGeocoder({
+    accessToken: mapboxgl.accessToken,
+    mapboxgl: mapboxgl
+});
+map.addControl(mapBoxGeocoder);
 
 // Adicionando controles de zoom e rotação no mapa
-map.addControl(new mapboxgl.NavigationControl());
+var mapBoxNavigationControl = new mapboxgl.NavigationControl();
+map.addControl(mapBoxNavigationControl);
 
 // ========== DESENHANDO POLÍGONO ============= //
 
@@ -1141,11 +1141,10 @@ const helpModal = document.getElementById("help-modal");
 const btnMarker = document.getElementById('marker');
 
 btnMarker.onclick = function () {
-    if (this.style.backgroundImage == 'url("img/mapmarker.png")') {
-        this.style.backgroundImage = 'url("img/mapmarkeroff.png")';
+    this.classList.toggle("show-marker");
+    if (this.classList.contains("show-marker")) {
         marcador.remove();
     } else {
-        this.style.backgroundImage = 'url("img/mapmarker.png")';
         marcador = new mapboxgl.Marker({ color: 'black' })
             .setLngLat(home)
             .addTo(map);
@@ -2085,8 +2084,11 @@ btnCloseConfirmationModal.addEventListener("click", function () {
 function savePathConfirmation(files) {
 
     const modal = document.getElementById("flight-plan-confirmation-modal");
+    screenForPrintScreen("before");
 
     html2canvas(document.body).then(canvas => {
+
+        screenForPrintScreen("after");
 
         const blobImg = new Blob([canvas], { type: "image/jpeg" });
         const dataURL = canvas.toDataURL('image/jpeg', 1.0);
@@ -2142,6 +2144,9 @@ function savePathConfirmation(files) {
             //console.log(files);
             //console.log({ blobImg, filenameImg, dataURL });
 
+            const spin_icon = document.getElementById("spin-icon");
+            spin_icon.classList.remove("hidden");
+
             let formData = new FormData();
 
             files.map((file) => {
@@ -2172,36 +2177,41 @@ function savePathConfirmation(files) {
             }).catch((error) => {
                 console.log(error)
                 displayErrorAlert(error.message);
-            });
+            })
+                .finally(() => {
+                    spin_icon.classList.add("hidden");
+                });
 
         });
     });
 
 }
 
-// Help Modal
-function displayHelpModal() {
-    //
-}
-
 // Remove elements from screen
 function screenForPrintScreen(type) {
-
-    if (type === 'before') {
-        document.getElementById("bottom-bar").style.display = 'none';
+    const bottomBar = document.getElementById("bottom-bar");
+    const sideMenu = document.getElementById("side-menu");
+    if (type === "before") {
+        bottomBar.classList.add("hidden");
+        sideMenu.classList.add("hidden");
         map.removeControl(mapBoxGeocoder);
         map.removeControl(draw);
         map.removeControl(mapBoxNavigationControl);
         marcador.remove();
-    } else if (type === 'after') {
-        document.getElementById("bottom-bar").style.display = 'block';
-        map.addControl(mapBoxGeocoder);
-        map.addControl(draw);
-        map.addControl(mapBoxNavigationControl);
+    } else if (type === "after") {
+        bottomBar.classList.remove("hidden");
+        sideMenu.classList.remove("hidden");
         marcador = new mapboxgl.Marker({ color: 'black' })
             .setLngLat(home)
             .addTo(map);
+        map.addControl(mapBoxGeocoder);
+        map.addControl(draw);
+        map.addControl(mapBoxNavigationControl);
     }
+}
 
+// Help Modal
+function displayHelpModal() {
+    //
 }
 

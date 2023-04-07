@@ -51,17 +51,6 @@ class FlightPlanModuleController extends Controller
         return Excel::download(new GenericExport(new FlightPlan(), $request->limit), 'planos_de_voo.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
-    public function downloadFlightPlan(string $filename): \Illuminate\Http\Response
-    {
-        Gate::authorize('flight_plans_read');
-
-        try {
-            return $this->service->download($filename);
-        } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
-        }
-    }
-
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');

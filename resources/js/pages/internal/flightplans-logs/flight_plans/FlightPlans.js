@@ -22,6 +22,7 @@ import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar'
 import { useAuth } from '../../../../context/Auth';
 import axios from '../../../../services/AxiosApi';
 import moment from 'moment';
+import JSZip from 'jszip';
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -107,16 +108,22 @@ const columns = [
             enqueueSnackbar(`Sucesso! O download do plano foi bem sucedido!`, { variant: "success" });
 
             const files = response.data;
+            const zip = new JSZip();
 
             for (let filename in files) {
-              // Download forçado do arquivo com o conteúdo retornado do servidor
-              const url = window.URL.createObjectURL(new Blob([files[filename]]));
+              // Adiciona o conteúdo do arquivo ao zip
+              zip.file(filename, files[filename]);
+            }
+
+            // Cria o arquivo zip e baixa-o
+            zip.generateAsync({ type: "blob" }).then(function (content) {
+              const url = window.URL.createObjectURL(content);
               const link = document.createElement('a');
               link.href = url;
-              link.setAttribute('download', `${filename}`); //or any other extension
+              link.setAttribute('download', `plano_${data.row.name.toLowerCase()}.zip`);
               document.body.appendChild(link);
               link.click();
-            }
+            });
 
           })
           .catch((error) => {

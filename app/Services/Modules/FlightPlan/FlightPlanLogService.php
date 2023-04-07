@@ -29,11 +29,10 @@ class FlightPlanLogService implements ServiceInterface
 
         if (Storage::disk("public")->exists($log->path)) {
 
-            $path = Storage::disk("public")->path($log->path);
-            $contents = file_get_contents($path);
+            $file_contents = Storage::disk("public")->get($log->path);
 
-            return response($contents)->withHeaders([
-                "Content-type" => mime_content_type($path)
+            return response($file_contents)->withHeaders([
+                "Content-type" => "plain/text"
             ]);
         } else {
 

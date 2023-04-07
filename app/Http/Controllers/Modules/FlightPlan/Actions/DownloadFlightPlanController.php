@@ -29,7 +29,7 @@ class DownloadFlightPlanController extends Controller
                 }
             }
 
-            foreach ($array_filenames as $index => $filename) {
+            foreach ($array_filenames as $filename) {
                 $file_contents = Storage::disk("public")->get("flight_plans/$filename");
                 $contents[$filename] = $file_contents;
             }
