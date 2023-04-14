@@ -58,6 +58,14 @@ const columns = [
     }
   },
   {
+    field: 'type',
+    headerName: 'Tipo',
+    width: 150,
+    minWidth: 130,
+    sortable: true,
+    editable: false
+  },
+  {
     field: 'name',
     headerName: 'Nome',
     flex: 1,

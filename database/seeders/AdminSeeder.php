@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users\User;
-use App\Models\Accesses\AnnualTraffic;
 
 class AdminSeeder extends Seeder
 {
@@ -22,22 +21,6 @@ class AdminSeeder extends Seeder
             "password" => Hash::make(env("ADMIN_PASS")),
             "status" => false,
             "profile_id" => 1
-        ]);
-
-        AnnualTraffic::create([
-            "user_id" => $user->id,
-            "january" => 0,
-            "february" => 0,
-            "march" => 0,
-            "april" => 0,
-            "may" => 0,
-            "june" => 0,
-            "july" => 0,
-            "august" => 0,
-            "september" => 0,
-            "october" => 0,
-            "november" => 0,
-            "december" => 0
         ]);
     }
 }

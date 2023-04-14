@@ -33,7 +33,7 @@ use App\Http\Controllers\Modules\FlightPlan\{
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
     Actions\FlightPlansForServiceOrderController,
-    Actions\EquipmentsForServiceOrderFlightPlanController,
+    Actions\EquipmentsForServiceOrderFlightPlanController, // For equipments table
     Actions\LogsForServiceOrderFlightPlanController,
     Actions\ServiceOrderIncidentController
 };

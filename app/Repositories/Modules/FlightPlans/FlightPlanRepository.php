@@ -46,7 +46,8 @@ class FlightPlanRepository implements RepositoryInterface
                 "coordinates" => $data->get("coordinates"),
                 "state" => $data->get("state"),
                 "city" => $data->get("city"),
-                "description" => null
+                "description" => null,
+                "type" => $data->get("type")
             ]);
 
             $flight_plan->image()->create([

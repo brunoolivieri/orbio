@@ -2158,6 +2158,7 @@ function savePathConfirmation(files) {
 
             formData.append("imageDataURL", dataURL);
             formData.append("imageFilename", filenameImg);
+            formData.append("type", files.length > 1 ? "multi" : "única");
 
             axios.post(`${window.location.origin}/api/module/flight-plans`, formData, {
                 headers: {

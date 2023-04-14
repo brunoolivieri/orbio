@@ -4,8 +4,6 @@ namespace App\Observers;
 
 // Model
 use App\Models\Users\User;
-use App\Models\Accesses\AnnualTraffic;
-// Notification
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
 use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 
@@ -19,21 +17,7 @@ class UserObserver
      */
     public function created(User $user)
     {
-        AnnualTraffic::create([
-            "user_id" => $user->id,
-            "january" => 0,
-            "february" => 0,
-            "march" => 0,
-            "april" => 0,
-            "may" => 0,
-            "june" => 0,
-            "july" => 0,
-            "august" => 0,
-            "september" => 0,
-            "october" => 0,
-            "november" => 0,
-            "december" => 0
-        ]);
+        //
     }
 
     /**

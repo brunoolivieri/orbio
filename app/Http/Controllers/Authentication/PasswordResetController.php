@@ -23,18 +23,18 @@ class PasswordResetController extends Controller
 
             DB::transaction(function () use ($request) {
 
-                $token = $this->model->where("token", $request->token)->first();
+                $code = $this->model->where("token", $request->code)->first();
 
-                if (!$token || $token->trashed()) {
+                if (!$code || $code->trashed()) {
                     throw new \Exception("Código inválido", 404);
                 }
 
-                $token->user->update([
+                $code->user->update([
                     "password" => Hash::make($request->password)
                 ]);
 
-                $token->delete();
-                $token->user->notify(new ChangePasswordNotification($token->user));
+                $code->delete();
+                $code->user->notify(new ChangePasswordNotification($code->user));
             });
 
             return response(["message" => "Senha alterada com sucesso!"], 200);

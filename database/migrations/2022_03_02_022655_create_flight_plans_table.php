@@ -22,6 +22,7 @@ class CreateFlightPlansTable extends Migration
             $table->string("state");
             $table->string("city");
             $table->text("description")->nullable();
+            $table->string("type");
             $table->timestamps();
             $table->softDeletes();
         });

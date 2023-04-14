@@ -10,7 +10,12 @@ import axios from '../../../services/AxiosApi';
 import { FormValidation } from '../../../utils/FormValidation';
 
 const initialFormData = { email: "", code: "", password: "", password_confirmation: "" };
-const initialFormError = { email: { error: false, message: "" }, code: { error: false, message: "" }, password: { error: false, message: "" }, password_confirmation: { error: false, message: "" } };
+const initialFormError = {
+    email: { error: false, message: "", test: (value) => FormValidation(value, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email") },
+    code: { error: false, message: "" },
+    password: { error: false, message: "" },
+    password_confirmation: { error: false, message: "" }
+};
 
 export function ForgotPassword() {
 
@@ -47,7 +52,9 @@ export function ForgotPassword() {
     function codeSubmissionValidation() {
         let validation = Object.assign({}, initialFormError);
 
-        validation["email"] = FormValidation(formData["email"], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "email");
+        const test = validation["email"].test(formData["email"]);
+        validation.email.error = test.error;
+        validation.email.message = test.message;
 
         setFormError(validation);
         return !validation.email.error;
@@ -83,7 +90,7 @@ export function ForgotPassword() {
     async function changePasswordServerRequest() {
         try {
             const response = await axios.post("api/change-password", {
-                token: formData.code,
+                code: formData.code,
                 password: formData.password,
                 password_confirmation: formData.password_confirmation
             });
@@ -92,6 +99,7 @@ export function ForgotPassword() {
                 window.location.replace("/login");
             }, 2000);
         } catch (error) {
+            console.log(error.response);
             errorResponse(error.response);
         } finally {
             setLoading({ send_code: false, change_password: false });
@@ -99,7 +107,6 @@ export function ForgotPassword() {
     }
 
     function errorResponse(response) {
-        enqueueSnackbar(response.data.message, { variant: "error" });
         if (response.status === 422) {
             let response_errors = Object.assign({}, initialFormError);
             for (let field in response.data.errors) {
@@ -115,12 +122,14 @@ export function ForgotPassword() {
     React.useEffect(() => {
 
         let is_mounted = true;
-        if (!is_mounted || timer === 0) {
+        if (timer === 0) {
             return;
         }
 
         setTimeout(() => {
-            setTimer((previously) => previously - 1);
+            if (is_mounted) {
+                setTimer((previously) => previously - 1);
+            }
         }, 1000);
 
         return () => {
@@ -156,7 +165,6 @@ export function ForgotPassword() {
                     <Grid item xs={12}>
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             label="Informe o seu endereço de email"
                             name="email"
@@ -202,7 +210,6 @@ export function ForgotPassword() {
                     <Grid item xs={12}>
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             name="code"
                             label="Código"
@@ -217,7 +224,6 @@ export function ForgotPassword() {
                     <Grid item xs={12}>
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             label="Nova senha"
                             name="password"
@@ -233,7 +239,6 @@ export function ForgotPassword() {
                     <Grid item xs={12}>
                         <TextField
                             margin="normal"
-                            required
                             fullWidth
                             label="Confirmação da senha"
                             name="password_confirmation"

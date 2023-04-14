@@ -21,30 +21,23 @@ class LoginController extends Controller
     {
         try {
 
-            if (Auth::attempt(["email" => $request->email, "password" => $request->password, "deleted_at" => null])) {
-
-                $user = $this->model->find(Auth::user()->id);
-
-                if (!$user) {
-                    throw new \Exception("Usuário não encontrado", 404);
-                }
-
-                $request->session()->regenerate();
-
-                if (!$user->status && is_null($user->last_access)) {
-                    FirstSuccessfulLoginEvent::dispatch($user);
-                }
-
-                LoginSuccessfulEvent::dispatch($user);
-
-                return response()->json([
-                    "message" => "Acesso autorizado!"
-                ], 200);
-            } else {
+            if (!Auth::attempt(["email" => $request->email, "password" => $request->password, "deleted_at" => null])) {
                 throw new \Exception("Credencias inválidas", 401);
             }
+
+            $user = $this->model->find(Auth::user()->id);
+
+            $request->session()->regenerate();
+
+            if (!$user->status && is_null($user->last_access)) {
+                FirstSuccessfulLoginEvent::dispatch($user);
+            }
+
+            LoginSuccessfulEvent::dispatch($user);
+
+            return response()->json(["message" => "Acesso autorizado!"])->setStatusCode(200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], $e->getCode());
+            return response()->json(["message" => $e->getMessage()])->setStatusCode($e->getCode());
         }
     }
 }

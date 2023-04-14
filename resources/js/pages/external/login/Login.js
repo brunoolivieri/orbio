@@ -23,7 +23,10 @@ function Copyright(props) {
 }
 
 const initialFormData = { email: "", password: "" };
-const initialFormError = { email: { error: false, message: "" }, password: { error: false, message: "" } };
+const initialFormError = {
+    email: { error: false, message: "", test: (value) => FormValidation(value, null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email") },
+    password: { error: false, message: "", test: (value) => FormValidation(value, 3, 255, null, "Senha") }
+};
 
 export function Login() {
 
@@ -51,16 +54,20 @@ export function Login() {
     function formSubmissionValidation() {
 
         let validation = Object.assign({}, initialFormError);
+        let is_valid = true;
         for (let field in formData) {
-            if (field === "email") {
-                validation[field] = FormValidation(formData[field], null, null, /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, "Email");
-            } else if (field === "password") {
-                validation[field] = FormValidation(formData[field], 3, 255, null, "Senha");
+
+            const test = validation[field].test(formData[field]);
+            validation[field].error = test.error;
+            validation[field].message = test.message;
+
+            if(test.error){
+                is_valid = false;
             }
         }
 
         setFormError(validation);
-        return !(validation.email.error || validation.password.error);
+        return is_valid;
 
     }
 
@@ -69,7 +76,7 @@ export function Login() {
             await login(formData);
             navigate("/dashboard", { replace: true });
         } catch (error) {
-            console.log(error);
+            console.log(error.response);
             enqueueSnackbar(error.response.data.message, { variant: "error" });
             setLoading(false);
         }

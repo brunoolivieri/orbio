@@ -25,23 +25,23 @@ class UpdatePasswordRequest extends FormRequest
     {
 
         return [
-            "password" => "required|confirmed",
-            "token" => "required"
+            "password" => ["required", "confirmed"],
+            "code" => ["required", "exists:password_resets,token"]
         ];
-
     }
 
     /**
-    * Get the error messages for the defined validation rules.
-    *
-    * @return array
-    */
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
     public function messages()
     {
         return [
             "password.required" => "A nova senha precisa ser informada",
             "password.confirmed" => "As senhas são incompátiveis",
-            "token.required" => "O código precisa ser informado"
+            "code.required" => "O código precisa ser informado",
+            "code.exists" => "Esse código não existe"
         ];
     }
 }
