@@ -34,13 +34,13 @@ class ReportModuleController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new ReportsPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhum relatório encontrado");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhum relatório encontrado", 404);
             }
+
+            return response(new ReportsPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -54,7 +54,7 @@ class ReportModuleController extends Controller
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-        
+
         try {
 
             $data = [
@@ -67,19 +67,19 @@ class ReportModuleController extends Controller
             $this->service->createOne($data);
             return response(["message" => "Relatório criado com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
     public function update(ReportUpdateRequest $request, $id): \Illuminate\Http\Response
     {
         Gate::authorize('reports_write');
-        
+
         try {
             $this->service->updateOne($request->validated(), $id);
             return response(["message" => "Relatório atualizado com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -91,7 +91,7 @@ class ReportModuleController extends Controller
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

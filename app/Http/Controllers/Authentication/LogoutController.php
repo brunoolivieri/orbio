@@ -19,7 +19,7 @@ class LogoutController extends Controller
 
             return response(["message" => ""], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

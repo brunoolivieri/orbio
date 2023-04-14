@@ -34,13 +34,13 @@ class FlightPlanModuleLogController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new FlightPlansLogPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhum log encontrado");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhum log encontrado", 404);
             }
+
+            return response(new FlightPlansLogPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -58,7 +58,7 @@ class FlightPlanModuleLogController extends Controller
         try {
             return $this->service->download($filename);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -74,7 +74,7 @@ class FlightPlanModuleLogController extends Controller
             $this->service->createOne(["logs" => $kml_logs, "images" => $kml_logs_images]);
             return response(["message" => "Log criado com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -86,7 +86,7 @@ class FlightPlanModuleLogController extends Controller
             $this->service->updateOne($request->only(["name", "service_order_id", "undelete"]), $id);
             return response(["message" => "Log atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -98,7 +98,7 @@ class FlightPlanModuleLogController extends Controller
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

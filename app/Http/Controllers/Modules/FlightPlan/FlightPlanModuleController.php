@@ -34,13 +34,13 @@ class FlightPlanModuleController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new FlightPlansPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhum plano de voo encontrado");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhum plano de voo encontrado", 404);
             }
+
+            return response(new FlightPlansPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 404);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -58,7 +58,7 @@ class FlightPlanModuleController extends Controller
             $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "coordinates"]));
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -70,7 +70,7 @@ class FlightPlanModuleController extends Controller
             $this->service->updateOne($request->only(["name", "description", "undelete"]), $id);
             return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -82,7 +82,7 @@ class FlightPlanModuleController extends Controller
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

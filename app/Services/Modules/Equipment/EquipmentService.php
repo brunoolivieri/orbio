@@ -52,12 +52,6 @@ class EquipmentService implements ServiceInterface
         $equipment = $this->repository->updateOne(collect($data), $identifier);
     }
 
-    /**
-     * Soft delete equipment.
-     *
-     * @param $equipment_id
-     * @return \Illuminate\Http\Response
-     */
     public function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
@@ -85,7 +79,7 @@ class EquipmentService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message);
+            throw new Exception($message, 409);
         }
     }
 }

@@ -26,7 +26,7 @@ class LoginController extends Controller
                 $user = $this->model->find(Auth::user()->id);
 
                 if (!$user) {
-                    throw new \Exception("Invalid");
+                    throw new \Exception("Usuário não encontrado", 404);
                 }
 
                 $request->session()->regenerate();
@@ -41,14 +41,10 @@ class LoginController extends Controller
                     "message" => "Acesso autorizado!"
                 ], 200);
             } else {
-                throw new \Exception("Credencias inválidas");
+                throw new \Exception("Credencias inválidas", 401);
             }
         } catch (\Exception $e) {
-            if ($e->getMessage() === "Invalid") {
-                return response(["message" => "Credenciais inválidas"], 404);
-            } else {
-                return response(["message" => $e->getMessage()], 500);
-            }
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

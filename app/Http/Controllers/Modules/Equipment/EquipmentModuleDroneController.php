@@ -34,13 +34,13 @@ class EquipmentModuleDroneController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new DronesPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhum drone encontrado");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhum drone encontrado", 404);
             }
+
+            return response(new DronesPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 

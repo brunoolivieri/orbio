@@ -73,7 +73,7 @@ class MyProfileController extends Controller
 
             return response($data, 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -104,7 +104,7 @@ class MyProfileController extends Controller
 
             return response($data, 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -119,7 +119,7 @@ class MyProfileController extends Controller
 
             return response(["message" => "Dados básicos atualizados com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -134,7 +134,7 @@ class MyProfileController extends Controller
 
             return response(["message" => "Dados documentais atualizados com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -150,7 +150,7 @@ class MyProfileController extends Controller
 
             return response(["message" => "Dados de endereço atualizados com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -160,7 +160,7 @@ class MyProfileController extends Controller
             $user = $this->userModel->findOrFail($identifier);
 
             if(Hash::check($request->new_password, $user->password)){
-                throw new \Exception("Erro! A nova senha deve ser diferente da atual.");
+                throw new \Exception("Erro! A nova senha deve ser diferente da atual.", 409);
             }
 
             $user->update([
@@ -171,7 +171,7 @@ class MyProfileController extends Controller
 
             return response(["message" => "Senha atualizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -186,7 +186,7 @@ class MyProfileController extends Controller
 
             return response(["message" => "Conta desativada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

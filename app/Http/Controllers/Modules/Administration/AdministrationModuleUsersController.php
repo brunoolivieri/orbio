@@ -34,13 +34,13 @@ class AdministrationModuleUsersController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new UsersPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhum usuário encontrado");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhum usuário encontrado", 404);
             }
+
+            return response(new UsersPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -59,7 +59,7 @@ class AdministrationModuleUsersController extends Controller
             $this->service->createOne($request->validated());
             return response(["message" => "Usuário criado com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -71,7 +71,7 @@ class AdministrationModuleUsersController extends Controller
             $this->service->updateOne($request->validated(), $id);
             return response(["message" => "Usuário atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -83,7 +83,7 @@ class AdministrationModuleUsersController extends Controller
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

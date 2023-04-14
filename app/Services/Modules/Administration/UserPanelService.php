@@ -65,7 +65,7 @@ class UserPanelService implements ServiceInterface
                 }
             }
 
-            throw new \Exception($message);
+            throw new \Exception($message, 409);
         } 
     }
 }

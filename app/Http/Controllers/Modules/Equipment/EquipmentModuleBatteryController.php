@@ -34,13 +34,13 @@ class EquipmentModuleBatteryController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new BatteriesPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhuma bateria encontrada");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhuma bateria encontrada", 404);
             }
+
+            return response(new BatteriesPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -59,7 +59,7 @@ class EquipmentModuleBatteryController extends Controller
             $this->service->createOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "observation", "image"]));
             return response(["message" => "Bateria criada com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -71,7 +71,7 @@ class EquipmentModuleBatteryController extends Controller
             $this->service->updateOne($request->only(["name", "manufacturer", "model", "serial_number", "last_charge", "observation", "image", "undelete"]), $id);
             return response(["message" => "Bateria atualizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -83,7 +83,7 @@ class EquipmentModuleBatteryController extends Controller
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

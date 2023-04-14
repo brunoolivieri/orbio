@@ -35,13 +35,13 @@ class ServiceOrderModuleController extends Controller
                 is_null(request()->search) ? "0" : request()->search
             );
 
-            if ($result->total() > 0) {
-                return response(new ServiceOrdersPanelResource($result), 200);
-            } else {
-                throw new \Exception("Nenhuma ordem de serviço encontrada");
+            if ($result->total() == 0) {
+                throw new \Exception("Nenhuma ordem de serviço encontrada", 404);
             }
+
+            return response(new ServiceOrdersPanelResource($result), 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -60,7 +60,7 @@ class ServiceOrderModuleController extends Controller
             $this->service->createOne($request->only(["start_date", "end_date", "pilot_id", "client_id", "observation", "number", "flight_plans"]));
             return response(["message" => "Ordem de serviço criada com sucesso!"], 201);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -72,7 +72,7 @@ class ServiceOrderModuleController extends Controller
             $this->service->updateOne($request->only(["start_date", "end_date", "pilot_id", "status", "creator_id", "client_id", "observation", "number", "flight_plans", "undelete"]), $id);
             return response(["message" => "Ordem de serviço atualizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 
@@ -84,7 +84,7 @@ class ServiceOrderModuleController extends Controller
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

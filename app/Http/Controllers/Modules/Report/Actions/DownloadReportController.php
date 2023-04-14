@@ -24,7 +24,7 @@ class DownloadReportController extends Controller
             $filename = $request->query("filename");
 
             if (!Storage::disk("public")->exists("reports/$filename")) {
-                throw new \Exception("Erro! O relatório não foi encontrado.");
+                throw new \Exception("Erro! O relatório não foi encontrado", 404);
             }
 
             $file_contents = Storage::disk("public")->get("reports/$filename");
@@ -33,11 +33,7 @@ class DownloadReportController extends Controller
                 "Content-type" => "application/json"
             ]);
         } catch (\Exception $e) {
-            if ($e->getMessage() === "Erro! O relatório não foi encontrado.") {
-                return response(["message" => $e->getMessage()], 404);
-            } else {
-                return response(["message" => $e->getMessage()], 500);
-            }
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

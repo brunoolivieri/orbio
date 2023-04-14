@@ -26,7 +26,7 @@ class PasswordResetController extends Controller
                 $token = $this->model->where("token", $request->token)->first();
 
                 if (!$token || $token->trashed()) {
-                    throw new \Exception("Token inválido");
+                    throw new \Exception("Código inválido", 404);
                 }
 
                 $token->user->update([
@@ -38,8 +38,9 @@ class PasswordResetController extends Controller
             });
 
             return response(["message" => "Senha alterada com sucesso!"], 200);
+            
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

@@ -90,7 +90,7 @@ class DashboardController extends Controller
 
             return response($data, 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

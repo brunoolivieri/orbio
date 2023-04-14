@@ -25,11 +25,11 @@ class PasswordTokenController extends Controller
             $user = $this->userModel->where("email", $request->email)->with("password_reset")->first();
 
             if (!$user) {
-                throw new \Exception("Erro! O email não foi encontrado.");
+                throw new \Exception("Erro! O email não foi encontrado.", 404);
             }
 
             if ($user->trashed()) {
-                throw new \Exception("Erro! A conta está inativa.");
+                throw new \Exception("Erro! A conta está inativa.", 409);
             }
 
             // Turn invalid all active tokens
@@ -47,7 +47,7 @@ class PasswordTokenController extends Controller
 
             return response(["message" => "Sucesso! Confira o seu e-mail!"], 200);
         } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], 500);
+            return response(["message" => $e->getMessage()], $e->getCode());
         }
     }
 }

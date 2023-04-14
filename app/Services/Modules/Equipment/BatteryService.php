@@ -52,12 +52,6 @@ class BatteryService implements ServiceInterface
         $battery = $this->repository->updateOne(collect($data), $identifier);
     }
 
-    /**
-     * Soft delete battery.
-     *
-     * @param $battery_id
-     * @return \Illuminate\Http\Response
-     */
     public function delete(array $ids)
     {
         $undeleteable_ids = $this->repository->delete($ids);
@@ -85,7 +79,7 @@ class BatteryService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message);
+            throw new Exception($message, 409);
         }
     }
 }
