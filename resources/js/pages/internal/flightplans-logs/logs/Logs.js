@@ -11,6 +11,7 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 // Custom
 import { CreateLog } from './formulary/CreateLog';
 import { UpdateLog } from './formulary/UpdateLog';
@@ -255,6 +256,14 @@ export function Logs() {
                     {(!loading && selectedRecords.length > 0) &&
                         <DeleteLog records={selectedRecords} reloadTable={setReload} />
                     }
+                </Grid>
+
+                <Grid item>
+                    <Tooltip title="Informações adicionais">
+                        <IconButton>
+                            <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
+                        </IconButton>
+                    </Tooltip>
                 </Grid>
 
                 <Grid item>

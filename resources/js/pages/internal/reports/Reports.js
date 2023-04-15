@@ -6,6 +6,7 @@ import { DataGrid, ptBR } from '@mui/x-data-grid';
 // Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -245,6 +246,14 @@ export function Reports() {
           {(!loading && selectedRecords.length > 0) &&
             <DeleteReport records={selectedRecords} reloadTable={setReload} />
           }
+        </Grid>
+
+        <Grid item>
+          <Tooltip title="Informações adicionais">
+            <IconButton>
+              <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
+            </IconButton>
+          </Tooltip>
         </Grid>
 
         <Grid item>

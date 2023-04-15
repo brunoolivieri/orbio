@@ -295,15 +295,11 @@ export function ServiceOrders() {
                 </Grid>
 
                 <Grid item>
-                    {(selectedRecords.length === 0 || selectedRecords.length > 1) &&
+                    <Tooltip title="Informações adicionais">
                         <IconButton>
                             <FontAwesomeIcon icon={faCircleInfo} color="#E0E0E0" size="sm" />
                         </IconButton>
-                    }
-
-                    {(selectedRecords.length === 1) &&
-                        <ServiceOrderInformation record={selectedRecords[0]} />
-                    }
+                    </Tooltip>
                 </Grid>
 
                 <Grid item>

@@ -44,6 +44,11 @@
 
     <div id="map"></div>
 
+    <!-- ALERT -->
+	<div id="menu-alert" class="flex text-white text-sm font-bold px-4 py-3 w-screen fixed left-0" role="alert">
+		<p id="menu-message"><!-- Alert message --></p>
+	</div>
+
     <!-- BOTTOM BAR -->
 	<div id="bottom-bar" class="flex backdrop-blur-xl bg-white/30 h-18 w-screen fixed left-0 bottom-0 z-[100]">
 		<div class="flex grow h-full">
@@ -126,7 +131,8 @@
 
             screenForPrintScreen("before");
 
-			html2canvas(document.body).then(canvas => {
+			html2canvas(document.body)
+            .then(canvas => {
                 
                 canvas.toBlob(function (blobImg) {
 
@@ -145,29 +151,24 @@
                     
                     event.source.postMessage(response, event.origin);
 
+                    displaySuccessAlert("Sucesso! A imagem foi gerada.");
+
 		        });	
 
-			});  
+			}).catch((e) => {
+                displayErrorAlert("Erro! A imagem não foi gerada.");
+            });
 		}
 
         // Remove elements from screen
         function screenForPrintScreen(type) {
             const bottomBar = document.getElementById("bottom-bar");
-            const sideMenu = document.getElementById("side-menu");
             if (type === "before") {
                 bottomBar.classList.add("hidden");
-                sideMenu.classList.add("hidden");
-                map.removeControl(mapBoxGeocoder);
                 map.removeControl(draw);
                 map.removeControl(mapBoxNavigationControl);
-                marcador.remove();
             } else if (type === "after") {
                 bottomBar.classList.remove("hidden");
-                sideMenu.classList.remove("hidden");
-                marcador = new mapboxgl.Marker({ color: 'black' })
-                    .setLngLat(home)
-                    .addTo(map);
-                map.addControl(mapBoxGeocoder);
                 map.addControl(draw);
                 map.addControl(mapBoxNavigationControl);
             }
@@ -363,6 +364,31 @@
         function cleanPolygon() {
             // Limpando o polígono
             draw.deleteAll();
+        }
+
+        function cleanAlerts() {
+            document.getElementById("menu-alert").classList.remove("error-alert-activation");
+            document.getElementById("menu-alert").classList.remove("success-alert-activation");
+        }
+
+        function displayErrorAlert(message) {
+            document.getElementById("menu-alert").classList.add("error-alert-activation");
+            document.getElementById("menu-message").innerHTML = '';
+            document.getElementById("menu-message").innerHTML = message;
+
+            setTimeout(() => {
+                cleanAlerts();
+            }, 4000);
+        }
+
+        function displaySuccessAlert(message) {
+            document.getElementById("menu-alert").classList.add("success-alert-activation");
+            document.getElementById("menu-message").innerHTML = '';
+            document.getElementById("menu-message").innerHTML = message;
+
+            setTimeout(() => {
+                cleanAlerts();
+            }, 4000);
         }
     </script>
  </body>

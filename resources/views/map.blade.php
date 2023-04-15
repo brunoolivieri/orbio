@@ -57,7 +57,7 @@
 
 	<!-- ALERT -->
 	<div id="menu-alert" class="flex text-white text-sm font-bold px-4 py-3 w-screen fixed left-0" role="alert">
-		<p id="menu-message">Mensagem do alerta!</p>
+		<p id="menu-message"><!-- Alert message --></p>
 	</div>
 
 	<!-- BOTTOM BAR -->
