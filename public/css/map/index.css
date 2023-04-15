@@ -17,6 +17,10 @@ body {
     display: none;
 }
 
+#btn-print:hover #btn-print-icon {
+    color: #0971CE;
+}
+
 #btn-clean:hover #btn-clean-icon {
     color: #0971CE;
 }

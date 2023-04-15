@@ -2,7 +2,7 @@ import * as React from 'react';
 // React router dom
 import { Link, useNavigate } from 'react-router-dom';
 // Material UI
-import { Button, TextField, Box, Grid, Typography, Container, Avatar, FormControlLabel, Checkbox } from '@mui/material';
+import { Button, TextField, Box, Grid, Typography, Container, Avatar } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import LockIcon from '@mui/icons-material/Lock';
 // Custom
@@ -61,7 +61,7 @@ export function Login() {
             validation[field].error = test.error;
             validation[field].message = test.message;
 
-            if(test.error){
+            if (test.error) {
                 is_valid = false;
             }
         }
@@ -132,11 +132,6 @@ export function Login() {
                             onChange={handleInputChange}
                             helperText={formError.password.message}
                             error={formError.password.error}
-                        />
-
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Lembrar"
                         />
 
                         <Button

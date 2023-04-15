@@ -13,6 +13,7 @@
 
 	<!--- STYLES --->
 	<link href="{{ asset('css/map/index.css') }}" type="text/css" rel="stylesheet">
+    <link href="{{ asset('css/tailwind/index.css') }}" type="text/css" rel="stylesheet">
 
 	<!-- MAPBOX-GL --> 
 	<script src="{{ asset('js/map/libs/mapbox/mapbox-gl.js') }}"></script>
@@ -43,7 +44,15 @@
 
     <div id="map"></div>
 
-	<button type="button" id="print-button" class = "btn">PRTSCN</button>
+    <!-- BOTTOM BAR -->
+	<div id="bottom-bar" class="flex backdrop-blur-xl bg-white/30 h-18 w-screen fixed left-0 bottom-0 z-[100]">
+		<div class="flex grow h-full">
+			<div class="p-5" id="btn-print">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 cursor-pointer text-white" id="btn-print-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  </svg>
+			</div>
+        </div>
 
 	<script>
         // Token gerado para uso no MAPBOX-GL
@@ -105,7 +114,7 @@
 					importKMLPolygon(data.log.contents);
 				}
 
-				document.getElementById("print-button").addEventListener("click", () => {
+				document.getElementById("btn-print").addEventListener("click", () => {
 					print(event);
 				});
 
@@ -115,9 +124,7 @@
 
 		function print(event){
 
-            map.removeControl(draw);
-	        map.removeControl(mapBoxNavigationControl);
-            document.getElementById("print-button").style.display = 'none';
+            screenForPrintScreen("before");
 
 			html2canvas(document.body).then(canvas => {
                 
@@ -134,9 +141,7 @@
                         }
                     }
 
-                    map.addControl(draw);
-                    map.addControl(mapBoxNavigationControl);
-                    document.getElementById("print-button").style.display = 'block';
+                    screenForPrintScreen("after");
                     
                     event.source.postMessage(response, event.origin);
 
@@ -144,6 +149,29 @@
 
 			});  
 		}
+
+        // Remove elements from screen
+        function screenForPrintScreen(type) {
+            const bottomBar = document.getElementById("bottom-bar");
+            const sideMenu = document.getElementById("side-menu");
+            if (type === "before") {
+                bottomBar.classList.add("hidden");
+                sideMenu.classList.add("hidden");
+                map.removeControl(mapBoxGeocoder);
+                map.removeControl(draw);
+                map.removeControl(mapBoxNavigationControl);
+                marcador.remove();
+            } else if (type === "after") {
+                bottomBar.classList.remove("hidden");
+                sideMenu.classList.remove("hidden");
+                marcador = new mapboxgl.Marker({ color: 'black' })
+                    .setLngLat(home)
+                    .addTo(map);
+                map.addControl(mapBoxGeocoder);
+                map.addControl(draw);
+                map.addControl(mapBoxNavigationControl);
+            }
+        }
 
         // ========================= //
 
