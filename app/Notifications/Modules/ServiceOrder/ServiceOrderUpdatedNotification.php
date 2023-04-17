@@ -42,11 +42,10 @@ class ServiceOrderUpdatedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-
         return (new MailMessage)
             ->subject('ORBIO - Atualização de ordem de serviço')
             ->greeting("Olá " . $notifiable->first_name . "!")
-            ->line("Você está sendo notificado porque uma das ordens de serviço a que está vinculado foi atualizada.")
+            ->line("Você está sendo notificado porque a ordem de serviço de id {$this->service_order->id} foi atualizada.")
             ->line("Data inicial: " . $this->service_order->start_date)
             ->line("Data final: " . $this->service_order->end_date)
             ->line("Número: " . $this->service_order->number)
@@ -54,8 +53,7 @@ class ServiceOrderUpdatedNotification extends Notification
             ->line("Criador: " . $this->service_order->users[0]->name)
             ->line("Piloto: " . $this->service_order->users[1]->name)
             ->line("Cliente: " . $this->service_order->users[2]->name)
-            ->action("Página de acesso", url(env("APP_URL")))
-            ->line('Se desconhece a origem desse e-mail, ignore.');
+            ->action("Página de acesso", url(env("APP_URL")));
     }
 
     /**

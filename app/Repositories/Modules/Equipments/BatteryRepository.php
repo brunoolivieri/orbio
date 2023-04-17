@@ -5,7 +5,6 @@ namespace App\Repositories\Modules\Equipments;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Collection;
 use App\Models\Batteries\Battery;
 
 class BatteryRepository implements RepositoryInterface
@@ -23,46 +22,60 @@ class BatteryRepository implements RepositoryInterface
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
-            $battery = $this->batteryModel->create($data->only(["name", "manufacturer", "model", "serial_number", "observation", "last_charge"])->all());
+            $battery = $this->batteryModel->create([
+                "name" => $data["name"],
+                "manufacturer" => $data["manufacturer"],
+                "model" => $data["model"],
+                "serial_number" => $data["serial_number"],
+                "observation" => $data["observation"],
+                "last_charge" => $data["last_charge"]
+            ]);
 
             $battery->image()->create([
-                "path" => $data->get('path')
+                "path" => $data['path']
             ]);
 
             // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($data->get('path'))) {
-                Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+            if (!Storage::disk('public')->exists($data['path'])) {
+                Storage::disk('public')->put($data['path'], $data['file_content']);
             }
 
             return $battery;
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
-            $battery = $this->batteryModel->withTrashed()->findOrFail($identifier);
+            $battery = $this->batteryModel->withTrashed()->findOrFail($id);
+            
+            $battery->update([
+                "name" => $data["name"],
+                "manufacturer" => $data["manufacturer"],
+                "model" => $data["model"],
+                "serial_number" => $data["serial_number"],
+                "observation" => $data["observation"],
+                "last_charge" => $data["last_charge"]
+            ]);
 
-            $battery->update($data->only(["name", "manufacturer", "model", "serial_number", "observation", "last_charge"])->all());
-
-            if ($data->get('change_file') === 1) {
+            if ($data['change_file'] === 1) {
 
                 $battery->image()->update([
-                    "path" => $data->get('path')
+                    "path" => $data['path']
                 ]);
 
                 // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($data->get('path'))) {
-                    Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+                if (!Storage::disk('public')->exists($data['path'])) {
+                    Storage::disk('public')->put($data['path'], $data['file_content']);
                 }
             }
 
-            if ($battery->trashed() && (bool) $data->get("undelete")) {
+            if ($battery->trashed() && (bool) $data["undelete"]) {
                 $battery->restore();
             }
 

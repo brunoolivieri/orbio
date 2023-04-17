@@ -5,8 +5,6 @@ namespace App\Repositories\Modules\ServiceOrders;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Collection;
-use Exception;
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
 use App\Models\Incidents\Incident;
@@ -30,25 +28,25 @@ class ServiceOrderRepository implements RepositoryInterface
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
             // ==== Create service order ==== //
 
             $service_order = $this->serviceOrderModel->create([
-                "start_date" => date("Y-m-d", strtotime($data->get("start_date"))),
-                "end_date" => date("Y-m-d", strtotime($data->get("end_date"))),
-                "number" => $data->get("number"),
-                "observation" => $data->get("observation"),
+                "start_date" => date("Y-m-d", strtotime($data["start_date"])),
+                "end_date" => date("Y-m-d", strtotime($data["end_date"])),
+                "number" => $data["number"],
+                "observation" => $data["observation"],
                 "report_id" => null
             ]);
 
             // ==== Attach service order to the correspondent users ==== //
 
             $creator = $this->userModel->findOrFail(Auth::user()->id);
-            $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
-            $client = $this->userModel->findOrFail($data->get('client_id'));
+            $pilot = $this->userModel->findOrFail($data['pilot_id']);
+            $client = $this->userModel->findOrFail($data['client_id']);
 
             $service_order->users()->attach($creator->id, ['role' => "creator"]);
             $service_order->users()->attach($pilot->id, ['role' => "pilot"]);
@@ -56,7 +54,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
             // ==== Attach service order the selected flight plans with equipments ==== //
 
-            foreach ($data->get('flight_plans') as $flight_plan) {
+            foreach ($data['flight_plans'] as $flight_plan) {
 
                 $flight_plan_id = $flight_plan["id"];
                 $equipments_by_id = ["drone_id" => $flight_plan["drone_id"], "battery_id" => $flight_plan["battery_id"], "equipment_id" => $flight_plan["equipment_id"]];
@@ -68,21 +66,26 @@ class ServiceOrderRepository implements RepositoryInterface
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
             // ==== First step: Update service order ==== //
 
-            $service_order = $this->serviceOrderModel->withTrashed()->findOrFail($identifier);
-
-            $service_order->update($data->only(["start_date", "end_date", "observation", "status"])->all());
+            $service_order = $this->serviceOrderModel->withTrashed()->findOrFail($id);
+        
+            $service_order->update([
+                "start_date" => $data["start_date"],
+                "end_date" => $data["end_date"],
+                "observation" => $data["observation"],
+                "status" => $data["status"]
+            ]);
 
             // ==== Second step: Update service order users relationship ==== //
 
-            $creator = $this->userModel->findOrFail($data->get('creator_id'));
-            $pilot = $this->userModel->findOrFail($data->get('pilot_id'));
-            $client = $this->userModel->findOrFail($data->get('client_id'));
+            $creator = $this->userModel->findOrFail($data['creator_id']);
+            $pilot = $this->userModel->findOrFail($data['pilot_id']);
+            $client = $this->userModel->findOrFail($data['client_id']);
 
             $service_order->users()->sync([
                 $creator->id, ['role' => "creator"],
@@ -94,7 +97,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
             // Get only ids from new selected flight plans - they will be necessary later
             $new_flight_plans_ids = [];
-            foreach ($data->get('flight_plans') as $index => $flight_plan) {
+            foreach ($data['flight_plans'] as $index => $flight_plan) {
                 $new_flight_plans_ids[$index] = $flight_plan["id"];
             }
 
@@ -116,7 +119,7 @@ class ServiceOrderRepository implements RepositoryInterface
 
             // ==== Fourth step: Create or Update Pivot ==== //
 
-            foreach ($data->get('flight_plans') as $selected_flight_plan) {
+            foreach ($data['flight_plans'] as $selected_flight_plan) {
 
                 $equipments_by_id = ["drone_id" => $selected_flight_plan["drone_id"], "battery_id" => $selected_flight_plan["battery_id"], "equipment_id" => $selected_flight_plan["equipment_id"]];
 
@@ -160,7 +163,7 @@ class ServiceOrderRepository implements RepositoryInterface
                 }
             }
 
-            if ($service_order->trashed() && $data->get("undelete")) {
+            if ($service_order->trashed() && $data["undelete"]) {
                 $service_order->restore();
             }
 
@@ -173,9 +176,7 @@ class ServiceOrderRepository implements RepositoryInterface
     function delete(array $ids)
     {
         foreach ($ids as $service_order_id) {
-
             $service_order = $this->serviceOrderModel->findOrFail($service_order_id);
-
             $service_order->delete();
         }
 

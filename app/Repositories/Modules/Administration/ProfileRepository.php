@@ -3,7 +3,6 @@
 namespace App\Repositories\Modules\Administration;;
 
 use App\Repositories\Contracts\RepositoryInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\Profiles\Profile;
 
@@ -22,13 +21,13 @@ class ProfileRepository implements RepositoryInterface
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
             $profile = $this->profileModel->create([
-                "name" => $data->get("name"),
-                "access_data" => json_encode($data->get("access_data"))
+                "name" => $data["name"],
+                "access_data" => json_encode($data["access_data"])
             ]);
 
             // *Turn into loop*
@@ -42,42 +41,42 @@ class ProfileRepository implements RepositoryInterface
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
-            $profile = $this->profileModel->withTrashed()->findOrFail($identifier);
+            $profile = $this->profileModel->withTrashed()->findOrFail($id);
 
             $profile->update([
-                "name" => $data->get("name"),
-                "access_data" => json_encode($data->get("access_data"))
+                "name" => $data["name"],
+                "access_data" => json_encode($data["access_data"])
             ]);
 
-            if ($profile->trashed() && $data->get("undelete")) {
+            if ($profile->trashed() && $data["undelete"]) {
                 $profile->restore();
             }
 
             // *Turn into loop*
             $profile->modules()->sync([
                 1 => [
-                    'read' => $data->get("privileges")[1]["read"],
-                    'write' => $data->get("privileges")[1]["write"]
+                    'read' => $data["privileges"][1]["read"],
+                    'write' => $data["privileges"][1]["write"]
                 ],
                 2 => [
-                    'read' => $data->get("privileges")[2]["read"],
-                    'write' => $data->get("privileges")[2]["write"]
+                    'read' => $data["privileges"][2]["read"],
+                    'write' => $data["privileges"][2]["write"]
                 ],
                 3 => [
-                    'read' => $data->get("privileges")[3]["read"],
-                    'write' => $data->get("privileges")[3]["write"]
+                    'read' => $data["privileges"][3]["read"],
+                    'write' => $data["privileges"][3]["write"]
                 ],
                 4 => [
-                    'read' => $data->get("privileges")[4]["read"],
-                    'write' => $data->get("privileges")[4]["write"]
+                    'read' => $data["privileges"][4]["read"],
+                    'write' => $data["privileges"][4]["write"]
                 ],
                 5 => [
-                    'read' => $data->get("privileges")[5]["read"],
-                    'write' => $data->get("privileges")[5]["write"]
+                    'read' => $data["privileges"][5]["read"],
+                    'write' => $data["privileges"][5]["write"]
                 ]
             ]);
 

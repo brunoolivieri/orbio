@@ -5,7 +5,6 @@ namespace App\Repositories\Modules\FlightPlans;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Logs\Log;
 use App\Models\FlightPlans\FlightPlan;
@@ -28,10 +27,10 @@ class FlightPlanRepository implements RepositoryInterface
             ->paginate($limit, $columns = ['*'], $pageName = 'page', $page);
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
 
-        foreach ($data->get("route_files") as $flight_file) {
+        foreach ($data["route_files"] as $flight_file) {
             if (Storage::disk('public')->exists($flight_file["path"])) {
                 throw new \Exception("Erro! Esse plano de voo já existe");
             }
@@ -42,37 +41,40 @@ class FlightPlanRepository implements RepositoryInterface
             $flight_plan = $this->flightPlanModel->create([
                 "creator_id" => Auth::user()->id,
                 "name" => Str::random(10),
-                "files" => json_encode($data->get("routes_filename")),
-                "coordinates" => $data->get("coordinates"),
-                "state" => $data->get("state"),
-                "city" => $data->get("city"),
+                "files" => json_encode($data["routes_filename"]),
+                "coordinates" => $data["coordinates"],
+                "state" => $data["state"],
+                "city" => $data["city"],
                 "description" => null,
-                "type" => $data->get("type")
+                "type" => $data["type"]
             ]);
 
             $flight_plan->image()->create([
-                "path" => $data->get("image")["path"]
+                "path" => $data["image"]["path"]
             ]);
 
-            foreach ($data->get("route_files") as $route_file) {
+            foreach ($data["route_files"] as $route_file) {
                 Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
             }
 
-            Storage::disk('public')->put($data->get("image")["path"], $data->get("image")["contents"]);
+            Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
 
             return $flight_plan;
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
             // Update flight plan itself
-            $flight_plan = $this->flightPlanModel->withTrashed()->findOrFail($identifier);
-            $flight_plan->update($data->only(["name", "description"])->all());
+            $flight_plan = $this->flightPlanModel->withTrashed()->findOrFail($id);
+            $flight_plan->update([
+                "name" => $data["name"],
+                "description" => $data["description"]
+            ]);
 
-            if ($flight_plan->trashed() && $data->get("undelete")) {
+            if ($flight_plan->trashed() && $data["undelete"]) {
                 $flight_plan->restore();
             }
 

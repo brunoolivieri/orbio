@@ -2,7 +2,6 @@
 
 namespace App\Services\Modules\Equipment;
 
-use Exception;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Equipments\BatteryRepository;
 
@@ -29,7 +28,7 @@ class BatteryService implements ServiceInterface
         $data["file_content"] = $file_content;
         $data["path"] = $path;
 
-        $battery = $this->repository->createOne(collect($data));
+        $battery = $this->repository->createOne($data);
     }
 
     public function updateOne(array $data, string $identifier)
@@ -49,7 +48,7 @@ class BatteryService implements ServiceInterface
             $data["change_file"] = 0;
         }
 
-        $battery = $this->repository->updateOne(collect($data), $identifier);
+        $battery = $this->repository->updateOne($data, $identifier);
     }
 
     public function delete(array $ids)
@@ -79,7 +78,7 @@ class BatteryService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message, 409);
+            throw new \Exception($message, 409);
         }
     }
 }

@@ -3,19 +3,15 @@
 namespace App\Repositories\Modules\ServiceOrders;
 
 use App\Repositories\Contracts\RepositoryInterface;
-use Illuminate\Support\Collection;
 use App\Models\Incidents\Incident;
-use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class ServiceOrderIncidentRepository implements RepositoryInterface
 {
     private Incident $incidentModel;
-    private ServiceOrderFlightPlan $flightPlanServiceOrderModel;
 
-    public function __construct(Incident $incidentModel, ServiceOrderFlightPlan $flightPlanServiceOrderModel)
+    public function __construct(Incident $incidentModel)
     {
         $this->incidentModel = $incidentModel;
-        $this->flightPlanServiceOrderModel = $flightPlanServiceOrderModel;
     }
 
     function getPaginate(string $limit, string $page, string $search)
@@ -25,25 +21,25 @@ class ServiceOrderIncidentRepository implements RepositoryInterface
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         $incident = $this->incidentModel->create([
-            "type" => $data->get("type"),
-            "date" => $data->get("date"),
-            "description" => $data->get("description")
+            "type" => $data["type"],
+            "date" => $data["date"],
+            "description" => $data["description"]
         ]);
 
         return $incident;
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        $incident = $this->incidentModel->findOrFail($identifier);
+        $incident = $this->incidentModel->findOrFail($id);
 
         $incident->update([
-            "type" => $data->get("type"),
-            "date" => $data->get("date"),
-            "description" => $data->get("description")
+            "type" => $data["type"],
+            "date" => $data["date"],
+            "description" => $data["description"]
         ]);
 
         $incident->refresh();
@@ -54,9 +50,7 @@ class ServiceOrderIncidentRepository implements RepositoryInterface
     function delete(array $ids)
     {
         foreach ($ids as $incident_id) {
-
             $incident = $this->incidentModel->findOrFail($incident_id);
-
             $incident->delete();
         }
 

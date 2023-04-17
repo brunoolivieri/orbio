@@ -11,7 +11,7 @@ class ServiceOrderCreatedNotification extends Notification
 {
     use Queueable;
 
-    private $service_order;
+    private ServiceOrder $service_order;
 
     /**
      * Create a new notification instance.
@@ -53,8 +53,7 @@ class ServiceOrderCreatedNotification extends Notification
             ->line("Criador: " . $this->service_order->users[0]->name)
             ->line("Piloto: " . $this->service_order->users[1]->name)
             ->line("Cliente: " . $this->service_order->users[2]->name)
-            ->action("Página de acesso", url(env("APP_URL")))
-            ->line('Se não foi você quem requisitou o procedimento, ignore.');
+            ->action("Página de acesso", url(env("APP_URL")));
     }
 
     /**

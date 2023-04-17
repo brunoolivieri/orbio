@@ -4,7 +4,6 @@ namespace App\Services\Modules\ServiceOrder;
 
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\ServiceOrders\ServiceOrderIncidentRepository;
-use App\Http\Resources\Modules\ServiceOrders\ServiceOrderIncidentResource;
 
 class ServiceOrderIncidentService implements ServiceInterface
 {
@@ -24,14 +23,14 @@ class ServiceOrderIncidentService implements ServiceInterface
     {
         $data["date"] = date("Y-m-d", strtotime($data["date"]));
 
-        $incident = $this->repository->createOne(collect($data));
+        $incident = $this->repository->createOne($data);
 
         return response(["message" => "Incidente criado com sucesso!"], 201);
     }
 
     public function updateOne(array $data, string $identifier)
     {
-        $incident = $this->repository->updateOne(collect($data), $identifier);
+        $incident = $this->repository->updateOne($data, $identifier);
 
         return response(["message" => "Incidente atualizado com sucesso!"], 200);
     }

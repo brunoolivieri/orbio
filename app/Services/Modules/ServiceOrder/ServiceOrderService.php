@@ -4,10 +4,10 @@ namespace App\Services\Modules\ServiceOrder;
 
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\ServiceOrders\ServiceOrderRepository;
-use App\Events\Modules\ServiceOrder\{
-    ServiceOrderCreatedEvent,
-    ServiceOrderUpdatedEvent,
-    ServiceOrderDeletedEvent
+use App\Notifications\Modules\ServiceOrder\{
+    ServiceOrderCreatedNotification,
+    ServiceOrderUpdatedNotification,
+    ServiceOrderDeletedNotification
 };
 
 class ServiceOrderService implements ServiceInterface
@@ -35,9 +35,18 @@ class ServiceOrderService implements ServiceInterface
             }
         }
 
-        $service_order = $this->repository->createOne(collect($data));
+        $service_order = $this->repository->createOne($data);
 
-        ServiceOrderCreatedEvent::dispatch($service_order);
+        // Send notification to users
+        foreach ($service_order->users as $user) {
+            if ($user->pivot->role === "creator") {
+                $user->notify(new ServiceOrderCreatedNotification($service_order));
+            } else if ($user->pivot->role === "pilot") {
+                $user->notify(new ServiceOrderCreatedNotification($service_order));
+            } else if ($user->pivot->role === "client") {
+                $user->notify(new ServiceOrderCreatedNotification($service_order));
+            }
+        }
     }
 
     public function updateOne(array $data, string $identifier)
@@ -52,15 +61,33 @@ class ServiceOrderService implements ServiceInterface
             }
         }
 
-        $service_order = $this->repository->updateOne(collect($data), $identifier);
+        $service_order = $this->repository->updateOne($data, $identifier);
 
-        ServiceOrderUpdatedEvent::dispatch($service_order);
+        // Send notification to users
+        foreach ($service_order->users as $user) {
+            if ($user->pivot->role === "creator") {
+                $user->notify(new ServiceOrderUpdatedNotification($service_order));
+            } else if ($user->pivot->role === "pilot") {
+                $user->notify(new ServiceOrderUpdatedNotification($service_order));
+            } else if ($user->pivot->role === "client") {
+                $user->notify(new ServiceOrderUpdatedNotification($service_order));
+            }
+        }
     }
 
     public function delete(array $ids)
     {
         $service_order = $this->repository->delete($ids);
 
-        ServiceOrderDeletedEvent::dispatch($service_order);
+        // Send notification to users
+        foreach ($service_order->users as $user) {
+            if ($user->pivot->role === "creator") {
+                $user->notify(new ServiceOrderDeletedNotification($service_order));
+            } else if ($user->pivot->role === "pilot") {
+                $user->notify(new ServiceOrderDeletedNotification($service_order));
+            } else if ($user->pivot->role === "client") {
+                $user->notify(new ServiceOrderDeletedNotification($service_order));
+            }
+        }
     }
 }

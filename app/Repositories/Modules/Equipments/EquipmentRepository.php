@@ -5,7 +5,6 @@ namespace App\Repositories\Modules\Equipments;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Collection;
 use App\Models\Equipments\Equipment;
 
 class EquipmentRepository implements RepositoryInterface
@@ -23,22 +22,31 @@ class EquipmentRepository implements RepositoryInterface
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
-            $equipment = $this->equipmentModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"])->all());
+            $equipment = $this->equipmentModel->create([
+                "name" => $data["name"],
+                "manufacturer" => $data["manufacturer"],
+                "model" => $data["model"],
+                "record_number" => $data["record_number"],
+                "serial_number" => $data["serial_number"],
+                "weight" => $data["weight"],
+                "observation" => $data["observation"],
+                "purchase_date" => $data["purchase_date"]
+            ]);
 
             $equipment->image()->create([
-                "path" => $data->get('path')
+                "path" => $data['path']
             ]);
 
             // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($data->get('path'))) {
-                Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+            if (!Storage::disk('public')->exists($data['path'])) {
+                Storage::disk('public')->put($data['path'], $data['file_content']);
             }
 
-            if ($equipment->trashed() && $data->get("undelete")) {
+            if ($equipment->trashed() && $data["undelete"]) {
                 $equipment->restore();
             }
 
@@ -46,27 +54,36 @@ class EquipmentRepository implements RepositoryInterface
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
-            $equipment = $this->equipmentModel->withTrashed()->findOrFail($identifier);
+            $equipment = $this->equipmentModel->withTrashed()->findOrFail($id);
 
-            $equipment->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date"])->all());
+            $equipment->update([
+                "name" => $data["name"],
+                "manufacturer" => $data["manufacturer"],
+                "model" => $data["model"],
+                "record_number" => $data["record_number"],
+                "serial_number" => $data["serial_number"],
+                "weight" => $data["weight"],
+                "observation" => $data["observation"],
+                "purchase_date" => $data["purchase_date"]
+            ]);
 
-            if ($data->get('change_file') === 1) {
+            if ($data['change_file'] === 1) {
 
                 $equipment->image()->update([
-                    "path" => $data->get('path')
+                    "path" => $data['path']
                 ]);
 
                 // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($data->get('path'))) {
-                    Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+                if (!Storage::disk('public')->exists($data['path'])) {
+                    Storage::disk('public')->put($data['path'], $data['file_content']);
                 }
             }
 
-            if ($equipment->trashed() && (bool) $data->get("undelete")) {
+            if ($equipment->trashed() && (bool) $data["undelete"]) {
                 $equipment->restore();
             }
 

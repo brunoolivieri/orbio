@@ -4,7 +4,6 @@ namespace App\Repositories\Modules\Equipments;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Collection;
 use App\Repositories\Contracts\RepositoryInterface;
 use App\Models\Drones\Drone;
 
@@ -23,11 +22,19 @@ class DroneRepository implements RepositoryInterface
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
-            $drone = $this->droneModel->create($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
+            $drone = $this->droneModel->create([
+                "name" => $data["name"],
+                "manufacturer" => $data["manufacturer"],
+                "model" => $data["model"],
+                "record_number" => $data["record_number"],
+                "serial_number" => $data["serial_number"],
+                "weight" => $data["weight"],
+                "observation" => $data["observation"]
+            ]);
 
             $drone->image()->create([
                 "path" => $data->get('path')
@@ -42,13 +49,21 @@ class DroneRepository implements RepositoryInterface
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
-            $drone = $this->droneModel->withTrashed()->findOrFail($identifier);
-
-            $drone->update($data->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation"])->all());
+            $drone = $this->droneModel->withTrashed()->findOrFail($id);
+           
+            $drone->update([
+                "name" => $data["name"],
+                "manufacturer" => $data["manufacturer"],
+                "model" => $data["model"],
+                "record_number" => $data["record_number"],
+                "serial_number" => $data["serial_number"],
+                "weight" => $data["weight"],
+                "observation" => $data["observation"]
+            ]);
 
             if ($data->get('change_file') === 1) {
 

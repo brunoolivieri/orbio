@@ -3,7 +3,6 @@
 namespace App\Repositories\Modules\Reports;
 
 use App\Repositories\Contracts\RepositoryInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Reports\Report;
@@ -26,37 +25,40 @@ class ReportRepository implements RepositoryInterface
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
             $report = $this->reportModel->create([
-                "name" => $data->get("name"),
-                "file" => $data->get("filename"),
-                "blob" => $data->get("blob"),
+                "name" => $data["name"],
+                "file" => $data["filename"],
+                "blob" => $data["blob"],
                 "observation" => null
             ]);
 
             // Relate the created report to the service order
-            $this->serviceOrderModel->where("id", $data->get("service_order_id"))->update([
+            $this->serviceOrderModel->where("id", $data["service_order_id"])->update([
                 "report_id" => $report->id,
                 "status" => false
             ]);
 
             // Save the report PDF in the storage
-            Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+            Storage::disk('public')->put($data['storage_path'], $data['file_content']);
 
             return $report;
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        $report = $this->reportModel->withTrashed()->findOrFail($identifier);
+        $report = $this->reportModel->withTrashed()->findOrFail($id);
+       
+        $report->update([
+            "name" => $data["name"],
+            "observation" => $data["observation"]
+        ]);
 
-        $report->update($data->only(["name", "observation"])->all());
-
-        if ($report->trashed() && $data->get("undelete")) {
+        if ($report->trashed() && $data["undelete"]) {
             $report->restore();
         }
 
@@ -69,7 +71,6 @@ class ReportRepository implements RepositoryInterface
     {
         foreach ($ids as $report_id) {
             $report = $this->reportModel->findOrFail($report_id);
-
             $report->delete();
         }
 

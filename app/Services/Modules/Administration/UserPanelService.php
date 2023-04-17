@@ -23,17 +23,16 @@ class UserPanelService implements ServiceInterface
 
     public function createOne(array $data)
     {
-        $random_password = Str::random(10);
-        $data["password"] = $random_password;
+        $data["password"] = Str::random(10);
 
-        $user = $this->repository->createOne(collect($data));
+        $user = $this->repository->createOne($data);
 
-        $user->notify(new UserCreatedNotification($random_password));
+        $user->notify(new UserCreatedNotification($data["password"]));
     }
 
     public function updateOne(array $data, string $identifier)
     {
-        $user = $this->repository->updateOne(collect($data), $identifier);
+        $user = $this->repository->updateOne($data, $identifier);
 
         $user->notify(new UserUpdatedNotification());
     }

@@ -3,7 +3,6 @@
 namespace App\Repositories\Modules\Administration;;
 
 use App\Repositories\Contracts\RepositoryInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Users\User;
 use App\Models\Profiles\Profile;
@@ -25,23 +24,23 @@ class UserRepository implements RepositoryInterface
             ->paginate((int) $limit, $columns = ['*'], $pageName = 'page', (int) $page);
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return $this->userModel->create([
-            "name" => $data->get("name"),
-            "email" => $data->get("email"),
-            "profile_id" => $data->get("profile_id"),
-            "password" => Hash::make($data->get("password"))
+            "name" => $data["name"],
+            "email" => $data["email"],
+            "profile_id" => $data["profile_id"],
+            "password" => Hash::make($data["password"])
         ]);
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        return DB::transaction(function () use ($data, $identifier) {
+        return DB::transaction(function () use ($data, $id) {
 
-            $user = $this->userModel->withTrashed()->findOrFail($identifier);
+            $user = $this->userModel->withTrashed()->findOrFail($id);
 
-            $new_profile = $this->profileModel->findOrFail($data->get("profile_id"));
+            $new_profile = $this->profileModel->findOrFail($data["profile_id"]);
 
             // Check if user is related to an active service order with different role
             foreach ($user->service_orders as $service_order) {
@@ -51,10 +50,14 @@ class UserRepository implements RepositoryInterface
                     }
                 }
             }
+           
+            $user->update([
+                "name" => $data["name"],
+                "email" => $data["email"],
+                "profile_id" => $data["profile_id"]
+            ]);
 
-            $user->update($data->only(["name", "email", "profile_id"])->all());
-
-            if ($user->trashed() && $data->get("undelete")) {
+            if ($user->trashed() && $data["undelete"]) {
                 $user->restore();
             }
 

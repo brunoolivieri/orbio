@@ -2,13 +2,12 @@
 
 namespace App\Services\Modules\Report;
 
-use Illuminate\Support\Facades\Storage;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Reports\ReportRepository;
+use App\Notifications\Modules\Report\ReportCreatedNotification;
 
 class ReportService implements ServiceInterface
 {
-
     public function __construct(ReportRepository $repository)
     {
         $this->repository = $repository;
@@ -26,22 +25,33 @@ class ReportService implements ServiceInterface
             throw new \Exception("Erro! O arquivo não foi enviado.");
         }
 
-        // Filename is the hash of the content
-        $file_content = file_get_contents($data["file"]->getRealPath());
-        $file_content_hash = md5($file_content);
-        $filename = $file_content_hash . ".pdf";
+        $file_content = file_get_contents($data["file"]);
+        $filename = time() . ".pdf";
         $path = "reports/" . $filename;
 
         $data["file_content"] = $file_content;
         $data["filename"] = $filename;
-        $data["path"] = $path;
+        $data["storage_path"] = $path;
 
-        $report = $this->repository->createOne(collect($data));
+        $report = $this->repository->createOne($data);
+
+        $service_order = $report->service_order;
+
+        // Send notification to users
+        foreach ($service_order->users as $user) {
+            if ($user->pivot->role === "creator") {
+                $user->notify(new ReportCreatedNotification($service_order));
+            } else if ($user->pivot->role === "pilot") {
+                $user->notify(new ReportCreatedNotification($service_order));
+            } else if ($user->pivot->role === "client") {
+                $user->notify(new ReportCreatedNotification($service_order));
+            }
+        }
     }
 
     public function updateOne(array $data, string $identifier)
     {
-        $report = $this->repository->updateOne(collect($data), $identifier);
+        $report = $this->repository->updateOne($data, $identifier);
     }
 
     public function delete(array $ids)

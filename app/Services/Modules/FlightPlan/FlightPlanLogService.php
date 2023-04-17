@@ -4,7 +4,6 @@ namespace App\Services\Modules\FlightPlan;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Exception;
 use App\Models\Logs\Log;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\FlightPlans\FlightPlanLogRepository;
@@ -80,7 +79,7 @@ class FlightPlanLogService implements ServiceInterface
                 }
             }
 
-            $log = $this->repository->createOne(collect([
+            $log = $this->repository->createOne([
                 "name" => Str::random(10),
                 "is_valid" => $log_image_founded,
                 "filename" => $log_filename,
@@ -90,13 +89,13 @@ class FlightPlanLogService implements ServiceInterface
                     "path" => "flightlogs/valid/$log_filename"
                 ],
                 "image_storage" => $image_data
-            ]));
+            ]);
         }
     }
 
     function updateOne(array $data, string $identifier)
     {
-        $log = $this->repository->updateOne(collect($data), $identifier);
+        $log = $this->repository->updateOne($data, $identifier);
     }
 
     function delete(array $ids)
@@ -126,7 +125,7 @@ class FlightPlanLogService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message, 409);
+            throw new \Exception($message, 409);
         }
     }
 }

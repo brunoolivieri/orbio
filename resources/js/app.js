@@ -1,16 +1,34 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes React and other helpers. It's a great starting point while
- * building robust, powerful web applications using React + Laravel.
- */
+// React
+import * as React from 'react';
+import ReactDOM from 'react-dom';
+// Material UI
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+// Custom
+import { AuthProvider } from './context/Auth';
+import { PageProvider } from './context/PageContext';
+// Libs
+import { MainRoutes } from "./routes/index";
+import { SnackbarProvider } from 'notistack';
+// Theme
+import { theme } from "./components/layout/theme";
 
-require('./bootstrap');
+export default function Index() {
 
-/*
+  return (
+    <PageProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <SnackbarProvider maxSnack={3}>
+            <MainRoutes />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </AuthProvider>
+    </PageProvider>
+  );
+}
 
-- Require do Componente que será inserido no React Root
-- O React Root é o arquivo que contém o container que recebe o conteúdo React montado
-
-*/
-
-require('./index');
+if (document.getElementById('root')) {
+  ReactDOM.render(<Index />, document.getElementById('root'));
+}

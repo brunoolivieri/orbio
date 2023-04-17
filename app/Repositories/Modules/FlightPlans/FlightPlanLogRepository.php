@@ -5,8 +5,6 @@ namespace App\Repositories\Modules\FlightPlans;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Collection;
-use Exception;
 use App\Models\Logs\Log;
 use App\Models\Pivot\ServiceOrderFlightPlan;
 use App\Models\ServiceOrders\ServiceOrder;
@@ -29,41 +27,41 @@ class FlightPlanLogRepository implements RepositoryInterface
             ->paginate($limit, $columns = ['*'], $pageName = 'page', $page);
     }
 
-    function createOne(Collection $data)
+    function createOne(array $data)
     {
         return DB::transaction(function () use ($data) {
 
             $log = $this->logModel->create([
-                "name" => $data->get("name"),
-                "filename" => $data->get("filename"),
-                "path" => $data->get("log_storage")["path"],
-                "timestamp" => date("Y-m-d H:i:s", $data->get("timestamp"))
+                "name" => $data["name"],
+                "filename" => $data["filename"],
+                "path" => $data["log_storage"]["path"],
+                "timestamp" => date("Y-m-d H:i:s", $data["timestamp"])
             ]);
 
-            Storage::disk('public')->put($data->get("log_storage")["path"], $data->get("log_storage")["contents"]);
+            Storage::disk('public')->put($data["log_storage"]["path"], $data["log_storage"]["contents"]);
 
-            if ($data->get("is_valid") && !is_null($data->get("image_storage"))) {
+            if ($data["is_valid"] && !is_null($data["image_storage"])) {
 
                 $log->image()->create([
-                    "path" => $data->get("image_storage")["path"]
+                    "path" => $data["image_storage"]["path"]
                 ]);
 
-                Storage::disk('public')->put($data->get("image_storage")["path"], $data->get("image_storage")["contents"]);
+                Storage::disk('public')->put($data["image_storage"]["path"], $data["image_storage"]["contents"]);
             }
 
             return $log;
         });
     }
 
-    function updateOne(Collection $data, string $identifier)
+    function updateOne(array $data, string $id)
     {
-        $log = $this->logModel->withTrashed()->findOrFail($identifier);
+        $log = $this->logModel->withTrashed()->findOrFail($id);
 
         $log->update([
-            "name" => $data->get("name")
+            "name" => $data["name"]
         ]);
 
-        if ($log->trashed() && $data->get("undelete")) {
+        if ($log->trashed() && $data["undelete"]) {
             $log->restore();
         }
 

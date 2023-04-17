@@ -2,7 +2,6 @@
 
 namespace App\Services\Modules\Equipment;
 
-use Exception;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Equipments\EquipmentRepository;
 
@@ -29,7 +28,7 @@ class EquipmentService implements ServiceInterface
         $data["file_content"] = $file_content;
         $data["path"] = $path;
 
-        $equipment = $this->repository->createOne(collect($data));
+        $equipment = $this->repository->createOne($data);
     }
 
     public function updateOne(array $data, string $identifier)
@@ -49,7 +48,7 @@ class EquipmentService implements ServiceInterface
             $data["change_file"] = 0;
         }
 
-        $equipment = $this->repository->updateOne(collect($data), $identifier);
+        $equipment = $this->repository->updateOne($data, $identifier);
     }
 
     public function delete(array $ids)
@@ -79,7 +78,7 @@ class EquipmentService implements ServiceInterface
                 }
             }
 
-            throw new Exception($message, 409);
+            throw new \Exception($message, 409);
         }
     }
 }
