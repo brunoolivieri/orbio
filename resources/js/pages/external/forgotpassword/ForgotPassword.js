@@ -5,7 +5,6 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from '@mui/icons-material/Save';
 import { useSnackbar } from 'notistack';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-// Custom
 import axios from '../../../services/AxiosApi';
 import { FormValidation } from '../../../utils/FormValidation';
 
@@ -120,7 +119,6 @@ export function ForgotPassword() {
     }
 
     React.useEffect(() => {
-
         let is_mounted = true;
         if (timer === 0) {
             return;
@@ -135,7 +133,6 @@ export function ForgotPassword() {
         return () => {
             is_mounted = false;
         }
-
     }, [timer]);
 
     function handleInputChange(event) {

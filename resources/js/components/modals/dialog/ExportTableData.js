@@ -99,14 +99,14 @@ export const ExportTableData = React.memo((props) => {
                 onClose={handleClose}
                 PaperProps={{ style: { borderRadius: 15 } }}
                 fullWidth
-                fullScreen
+                maxWidth="md"
             >
                 <DialogTitle>{props.type} | EXPORTAÇÃO</DialogTitle>
                 <Divider />
 
                 <DialogContent>
                     <Grid container spacing={2}>
-                        <Grid item xs={6}>
+                        <Grid item xs={12}>
                             <FormControl fullWidth>
                                 <InputLabel>Quantidade de registros</InputLabel>
                                 <Select

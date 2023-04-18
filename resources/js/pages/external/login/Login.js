@@ -1,11 +1,8 @@
 import * as React from 'react';
-// React router dom
 import { Link, useNavigate } from 'react-router-dom';
-// Material UI
 import { Button, TextField, Box, Grid, Typography, Container, Avatar } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import LockIcon from '@mui/icons-material/Lock';
-// Custom
 import { useAuth } from '../../../context/Auth';
 import { FormValidation } from '../../../utils/FormValidation';
 

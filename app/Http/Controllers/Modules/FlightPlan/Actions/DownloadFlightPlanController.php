@@ -9,28 +9,24 @@ use Illuminate\Support\Facades\Storage;
 
 class DownloadFlightPlanController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function __invoke(Request $request)
     {
-        Gate::authorize('flight_plans_read');
-
         try {
 
+            Gate::authorize('flight_plans_read');
+
             $array_filenames = explode(",", $request->query("files"));
+            $pathFolder = $request->get("folder");
 
             foreach ($array_filenames as $filename) {
-                if (!Storage::disk("public")->exists("flight_plans/$filename")) {
-                    throw new \Exception("Erro! O arquivo não foi encontrado.");
+                if (!Storage::disk("public")->exists("flight_plans/$pathFolder/$filename")) {
+                    throw new \Exception("Erro! O arquivo não foi encontrado.", 404);
                 }
             }
 
             foreach ($array_filenames as $filename) {
-                $file_contents = Storage::disk("public")->get("flight_plans/$filename");
+                $file_contents = Storage::disk("public")->get("flight_plans/$pathFolder/$filename");
                 $contents[$filename] = $file_contents;
             }
 
@@ -40,11 +36,7 @@ class DownloadFlightPlanController extends Controller
                 "Content-type" => "application/json"
             ]);
         } catch (\Exception $e) {
-            if ($e->getMessage() === "Erro! O arquivo não foi encontrado.") {
-                return response(["message" => $e->getMessage()], 404);
-            } else {
-                return response(["message" => $e->getMessage()], 500);
-            }
+            return response(["message" => $e->getMessage()], $e->getMessage());
         }
     }
 }

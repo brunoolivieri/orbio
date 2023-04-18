@@ -1241,7 +1241,7 @@ function recomputeDistanceBetweenLines() {
 
 // ============================================================================================= PART 4: TO SAVE  ============================================================================================= //
 
-function savePathCSV() {
+function savePathCSV(storage = false, storage_filename = null) {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
     if (initialPath.length === 0) {
@@ -1292,10 +1292,17 @@ function savePathCSV() {
         { type: "text/plain;charset=utf-8" });
 
     // Nome do arquivo com data em milissegundos decorridos
-    fileName = new Date().getTime() + ".csv";
-    saveAs(blob, fileName);
+    fileName = (storage ? storage_filename : new Date().getTime()) + ".csv";
 
-    displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
+    // O CSV é baixado
+    if (!storage) {
+        saveAs(blob, fileName);
+        displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
+        return;
+    }
+
+    // O CSV é salvo no sistema
+    return { blob, fileName };
 }
 
 function saveFullPath() {
@@ -1305,6 +1312,8 @@ function saveFullPath() {
         displayErrorAlert("Erro! Nenhuma rota foi definida.");
         return;
     }
+
+    const pathTimestamp = new Date().getTime();
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1402,17 +1411,13 @@ function saveFullPath() {
         { type: "text/plain;charset=utf-8" });
 
     // Nome do arquivo com data em milissegundos decorridos
-    fileName = new Date().getTime() + ".txt";
-    //saveAs(blob, fileName);
-
-    // Salvando um printscreen para o relatório
-    //savePrintScreen();
+    fileName = pathTimestamp + ".txt";
 
     savePathConfirmation([{
         blob: blob,
         filename: fileName,
         coordinates: coordinatesLongLat[0]
-    }]);
+    }], pathTimestamp);
 }
 
 function saveMultiPath() {
@@ -1422,6 +1427,8 @@ function saveMultiPath() {
         displayErrorAlert("Erro! Nenhuma rota foi definida.");
         return;
     }
+
+    const pathTimestamp = new Date().getTime();
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1559,7 +1566,7 @@ function saveMultiPath() {
             { type: "text/plain;charset=utf-8" });
 
         // Nome do arquivo com data em milissegundos decorridos
-        fileName = "0" + k + "_" + new Date().getTime() + ".txt";
+        fileName = "0" + k + "_" + pathTimestamp + ".txt";
         //saveAs(blob, fileName);
 
         // Salvando um printscreen para o relatório
@@ -1573,7 +1580,7 @@ function saveMultiPath() {
 
     } // Fim do 'for'	
 
-    savePathConfirmation(files);
+    savePathConfirmation(files, pathTimestamp);
 }
 
 function savePathAfterConfirmation(data) {
@@ -2081,7 +2088,7 @@ btnCloseConfirmationModal.addEventListener("click", function () {
     modal.classList.add("hidden");
 });
 
-function savePathConfirmation(files) {
+function savePathConfirmation(files, pathTimestamp) {
 
     const modal = document.getElementById("flight-plan-confirmation-modal");
     screenForPrintScreen("before");
@@ -2092,7 +2099,7 @@ function savePathConfirmation(files) {
 
         const blobImg = new Blob([canvas], { type: "image/jpeg" });
         const dataURL = canvas.toDataURL('image/jpeg', 1.0);
-        const filenameImg = new Date().getTime() + ".jpeg";
+        const filenameImg = pathTimestamp + ".jpeg";
 
         return { blobImg, filenameImg, dataURL, canvas };
 
@@ -2124,6 +2131,12 @@ function savePathConfirmation(files) {
 
         });
 
+        const flightCSV = savePathCSV(true, pathTimestamp);
+        // Set flight plan csv into modal
+        const pathCSVName = document.getElementById("flight-csv");
+        pathCSVName.placeholder = '';
+        pathCSVName.placeholder = pathTimestamp + ".csv";
+
         const filesList = document.getElementById("files-list");
         filesList.replaceChildren([]);
 
@@ -2150,7 +2163,7 @@ function savePathConfirmation(files) {
             let formData = new FormData();
 
             files.map((file) => {
-                formData.append("route_files[]", new File([file.blob], file.filename));
+                formData.append("route_files[]", new File([file.blob], file.filename, { type: "text/plain" }));
                 formData.append("coordinates[]", file.coordinates[1] + "," + file.coordinates[0]);
             });
 
@@ -2158,6 +2171,8 @@ function savePathConfirmation(files) {
 
             formData.append("imageDataURL", dataURL);
             formData.append("imageFilename", filenameImg);
+            formData.append("csvFile", new File([flightCSV.blob], flightCSV.fileName, { type: "text/csv" }));
+            formData.append("timestamp", pathTimestamp);
             formData.append("type", files.length > 1 ? "multi" : "única");
 
             axios.post(`${window.location.origin}/api/module/flight-plans`, formData, {

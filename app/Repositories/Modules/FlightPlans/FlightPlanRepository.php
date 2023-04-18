@@ -5,10 +5,10 @@ namespace App\Repositories\Modules\FlightPlans;
 use App\Repositories\Contracts\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Logs\Log;
 use App\Models\FlightPlans\FlightPlan;
-use Illuminate\Support\Str;
 
 class FlightPlanRepository implements RepositoryInterface
 {
@@ -41,6 +41,7 @@ class FlightPlanRepository implements RepositoryInterface
             $flight_plan = $this->flightPlanModel->create([
                 "creator_id" => Auth::user()->id,
                 "name" => Str::random(10),
+                "folder" => $data["folder"],
                 "files" => json_encode($data["routes_filename"]),
                 "coordinates" => $data["coordinates"],
                 "state" => $data["state"],
@@ -49,15 +50,12 @@ class FlightPlanRepository implements RepositoryInterface
                 "type" => $data["type"]
             ]);
 
-            $flight_plan->image()->create([
-                "path" => $data["image"]["path"]
-            ]);
-
             foreach ($data["route_files"] as $route_file) {
                 Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
             }
 
             Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
+            Storage::disk('public')->put($data["csv"]["path"], $data["csv"]["contents"]);
 
             return $flight_plan;
         });

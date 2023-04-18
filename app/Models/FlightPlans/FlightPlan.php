@@ -61,14 +61,6 @@ class FlightPlan extends Model
         return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan")->withPivot(["id", "drone_id", "battery_id", "equipment_id"]);
     }
 
-    /*
-    * Polymorphic relationship with table "images"
-    */
-    function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     /**
      * The attributes that should be cast.
      *

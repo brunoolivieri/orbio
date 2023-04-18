@@ -107,13 +107,12 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlan(filenames) {
+      function handleDownloadFlightPlan(filenames, folder) {
 
-        axios.get(`/api/action/flight-plans/download?files=${filenames.toString()}`, {
+        axios.get(`/api/action/flight-plans/download?folder=${folder}&files=${filenames.toString()}`, {
           responseType: 'application/json'
         })
           .then(function (response) {
-            enqueueSnackbar(`Sucesso! O download do plano foi bem sucedido!`, { variant: "success" });
 
             const files = response.data;
             const zip = new JSZip();
@@ -142,7 +141,7 @@ const columns = [
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlan(data.row.files)}>
+        <IconButton onClick={() => handleDownloadFlightPlan(data.row.files, data.row.folder)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )
@@ -158,58 +157,24 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlanAsCSV(filenames) {
+      function handleDownloadFlightPlanAsCSV(folder) {
 
-        console.log(filenames)
-
-        axios.get(`/api/action/flight-plans/download?files=${filenames.toString()}`, {
+        axios.get(`/api/action/flight-plans/download-csv?folder=${folder}`, {
           responseType: 'blob'
         })
           .then(function (response) {
-            enqueueSnackbar(`Sucesso! O download do plano csv foi bem sucedido!`, { variant: "success" });
 
-            let content = "latitude;longitude;altitude(m)\n";
-
-            // Create array from file lines
-            var lines = response.data.split("\n");
-
-            // Breaking lines where exists spaces (\t)
-            for (let i = 4; i < lines.length - 2; i++) {
-              let line = lines[i].split("\t");
-
-              // Only waypoints with latitude and longitude are considered - code 16
-              // Code 183 waypoints (dispenser trigger) have lat/long reset and cannot be added to route drawing
-              if (Number(line[3]) == 16) {
-
-                // Latitude, longitude, and altitude positions are at indices 8, 9, and 10 of each row
-                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
-              }
-            }
-
-            let blob = new Blob([content],
-              { type: "text/plain;charset=utf-8" });
-
-            // Nome do arquivo com data em milissegundos decorridos
-            let filename = new Date().getTime() + ".csv";
-
-            // Download forçado
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${filename}`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
+            console.log(response.data)
 
           })
           .catch((error) => {
             console.log(error)
             enqueueSnackbar("Erro! O download do plano csv falhou!", { variant: "error" });
           });
-
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.files)}>
+        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.folder)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )

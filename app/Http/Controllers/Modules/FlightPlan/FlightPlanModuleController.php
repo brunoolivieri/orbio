@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Modules\FlightPlan;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use App\Exports\GenericExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 use App\Services\Modules\FlightPlan\FlightPlanService;
-use App\Exports\GenericExport;
-use App\Models\FlightPlans\FlightPlan;
 use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
+use App\Models\FlightPlans\FlightPlan;
 
 class FlightPlanModuleController extends Controller
 {
@@ -48,14 +48,15 @@ class FlightPlanModuleController extends Controller
     {
         ob_end_clean();
         ob_start();
-        return Excel::download(new GenericExport(new FlightPlan(), $request->limit), 'planos_de_voo.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+        return Excel::download(new GenericExport(new FlightPlan(), $request->limit), 'planos.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
     public function store(Request $request): \Illuminate\Http\Response
     {
         Gate::authorize('flight_plans_write');
+
         try {
-            $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "coordinates", "type"]));
+            $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "csvFile", "coordinates", "timestamp", "type"]));
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());

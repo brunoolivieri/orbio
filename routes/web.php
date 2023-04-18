@@ -28,7 +28,8 @@ use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleController,
     FlightPlanModuleLogController,
     Actions\UploadedLogsController,
-    Actions\DownloadFlightPlanController
+    Actions\DownloadFlightPlanController,
+    Actions\DownloadFlightPlanCSVController
 };
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
@@ -111,6 +112,7 @@ Route::group(["prefix" => "api"], function () {
         Route::get("/action/report/weather-data", WeatherDataController::class);
         Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
         Route::get("/action/flight-plans/download", DownloadFlightPlanController::class);
+        Route::get("/action/flight-plans/download-csv", DownloadFlightPlanCSVController::class);
         Route::get("/action/reports/download/{filename}", DownloadReportController::class);
         // Generic Actions
         Route::get('/action/load-drones', LoadDronesController::class);

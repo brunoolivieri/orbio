@@ -25,11 +25,16 @@ class FlightPlanService implements ServiceInterface
             return response(["message" => "Erro! O plano de voo não pode ser criado."], 500);
         }
 
+        // Path foldername as timestamp
+        $pathFolder =  $data["timestamp"];
+        $data_to_save["folder"] =  $pathFolder;
+
+        // Txt files
         foreach ($data["route_files"] as $index => $route_file) {
 
             $filename = $route_file->getClientOriginalName();
             $contents = file_get_contents($route_file);
-            $path = "flight_plans/" . $filename;
+            $path = "flight_plans/$pathFolder/$filename";
 
             $data_to_save["routes_filename"][$index] = $filename;
 
@@ -40,14 +45,26 @@ class FlightPlanService implements ServiceInterface
             ];
         }
 
+        // Csv file
+        $csv_filename = $data["csvFile"]->getClientOriginalName();
+        $csv_contents = file_get_contents($data["csvFile"]);
+
+        $data_to_save["csv"] = [
+            "path" => "flight_plans/$pathFolder/csv/" . $csv_filename,
+            "filename" => $csv_filename,
+            "contents" => $csv_contents
+        ];
+
+        // Img file
         $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);
         $img = str_replace(' ', '+', $img);
 
         $data_to_save["image"] = [
-            "path" => "images/flight_plans/" . $data["imageFilename"],
+            "path" => "flight_plans/$pathFolder/image/" . $data["imageFilename"],
             "contents" => base64_decode($img)
         ];
 
+        // Get location
         $data_to_save["coordinates"] = $data["coordinates"][0];
 
         // Fetch google API to get city and state of flight plan location
