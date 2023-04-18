@@ -1113,7 +1113,7 @@ btnMultiSave.addEventListener("click", saveMultiPath);
 
 // SAVE CSV
 const btnSaveCSV = document.getElementById("btn-save-csv");
-btnSaveCSV.addEventListener("click", savePathCSV);
+btnSaveCSV.addEventListener("click", () => savePathCSV());
 
 // IMPORT TXT
 const txtInput = document.getElementById('file-input');
@@ -1292,17 +1292,15 @@ function savePathCSV(storage = false, storage_filename = null) {
         { type: "text/plain;charset=utf-8" });
 
     // Nome do arquivo com data em milissegundos decorridos
-    fileName = (storage ? storage_filename : new Date().getTime()) + ".csv";
+    const fileName = (storage ? storage_filename : new Date().getTime()) + ".csv";
 
-    // O CSV é baixado
+    // O CSV é baixado ou salvo no sistema
     if (!storage) {
         saveAs(blob, fileName);
         displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
-        return;
+    } else {
+        return { blob, fileName };
     }
-
-    // O CSV é salvo no sistema
-    return { blob, fileName };
 }
 
 function saveFullPath() {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DownloadFlightPlanCSVController extends Controller
 {
@@ -25,10 +26,7 @@ class DownloadFlightPlanCSVController extends Controller
             $file_contents = Storage::disk("public")->get("flight_plans/$pathFolder/csv/$filename");
             $json_contents = json_encode($file_contents);
 
-            return response($json_contents)->withHeaders([
-                "Content-type" => "application/json"
-            ]);
-
+            return response($json_contents, 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getMessage());
         }
