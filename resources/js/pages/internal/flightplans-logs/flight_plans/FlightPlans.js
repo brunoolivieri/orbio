@@ -162,22 +162,13 @@ const columns = [
         axios.get(`/api/action/flight-plans/download-csv?folder=${folder}`)
           .then(function (response) {
 
-            const rows = response.data.split('\n');
-            let csv = '';
-
-            for (let i = 0; i < rows.length; i++) {
-              const columns = rows[i].split(';');
-              csv += columns.join(';') + '\n';
-            }
-
-            // Cria o arquivo CSV
-            const file = new Blob([csv], { type: 'text/csv' });
+            const file = new Blob([response.data], { type: 'text/csv' });
             const csvURL = URL.createObjectURL(file);
 
-            // Download do arquivo
+            // Download
             const link = document.createElement('a');
             link.href = csvURL;
-            link.download = 'dados.csv';
+            link.download = `${folder}.csv`;
             document.body.appendChild(link);
             link.click();
 
