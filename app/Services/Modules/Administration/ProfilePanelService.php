@@ -2,7 +2,6 @@
 
 namespace App\Services\Modules\Administration;
 
-use Exception;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Administration\ProfileRepository;
 
@@ -21,12 +20,12 @@ class ProfilePanelService implements ServiceInterface
 
     function createOne(array $data)
     {
-        $profile = $this->repository->createOne(collect($data));
+        $profile = $this->repository->createOne($data);
     }
 
     function updateOne(array $data, string $identifier)
     {
-        $profile = $this->repository->updateOne(collect($data), $identifier);
+        $profile = $this->repository->updateOne($data, $identifier);
     }
 
     function delete(array $ids)

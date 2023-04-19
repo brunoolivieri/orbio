@@ -1,5 +1,4 @@
 import * as React from 'react';
-// Mui
 import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
@@ -12,7 +11,6 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -294,7 +292,7 @@ export function FlightPlans() {
 
           {selectedRecords.length === 0 &&
             <Tooltip title="Novo Plano">
-              <Link href={`${window.location.origin}/map?userid=${user.id}`} target="_blank">
+              <Link href={`${window.location.origin}/map`} target="_blank">
                 <IconButton>
                   <FontAwesomeIcon icon={faPlus} color={is_authorized_to_write ? "#00713A" : "#E0E0E0"} size="sm" />
                 </IconButton>
