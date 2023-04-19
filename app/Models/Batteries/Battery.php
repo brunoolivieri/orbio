@@ -15,9 +15,6 @@ class Battery extends Model
     protected $guarded = [];
     public $table = "batteries";
 
-    /*
-    * Scope for search
-    */
     function scopeSearch($query, $value_searched)
     {
         return $query->when($value_searched, function ($query, $value_searched) {
@@ -35,9 +32,6 @@ class Battery extends Model
         });
     }
 
-    /*
-    * Scope for filter
-    */
     function scopeFilter($query, $filters)
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
@@ -58,11 +52,6 @@ class Battery extends Model
         return $this->belongsToMany(FlightPlan::class, "service_order_flight_plan", "battery_id")->withPivot(["id", "drone_id", "battery_id"]);
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'created_at' => 'date:Y-m-d',
         'updated_at' => 'date:Y-m-d',

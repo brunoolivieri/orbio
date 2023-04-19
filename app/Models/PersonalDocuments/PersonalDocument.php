@@ -16,17 +16,11 @@ class PersonalDocument extends Model
     protected $guarded = [];
     public $timestamps = false;
 
-    /*
-    * Relationship one to one with users table
-    */
     function user()
     {
         return $this->belongsTo(User::class, "user_id");
     }
 
-    /*
-    * Relationship one to one with address table
-    */
     function address()
     {
         return $this->belongsTo(Address::class, "address_id");

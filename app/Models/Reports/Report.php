@@ -13,9 +13,6 @@ class Report extends Model
 
     protected $guarded = [];
 
-    /*
-    * Scope for search
-    */
     function scopeSearch($query, $value_searched)
     {
         return $query->when((bool) $value_searched, function ($query) use ($value_searched) {
@@ -28,9 +25,6 @@ class Report extends Model
         });
     }
 
-    /*
-    * Scope for filter
-    */
     function scopeFilter($query, $filters)
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
@@ -41,9 +35,6 @@ class Report extends Model
         });
     }
 
-    /*
-    * Relationship one to one with service order table
-    */
     function service_order()
     {
         return $this->hasOne(ServiceOrder::class, 'report_id')->withTrashed();

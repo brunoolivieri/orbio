@@ -20,9 +20,6 @@ class User extends Authenticatable
 
     protected $guarded = [];
 
-    /*
-    * Scope for search
-    */
     function scopeSearch($query, $value_searched)
     {
         return $query->when((bool) $value_searched, function ($query) use ($value_searched) {
@@ -35,9 +32,6 @@ class User extends Authenticatable
         });
     }
 
-    /*
-    * Scope for filter
-    */
     function scopeFilter($query, $filters)
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
@@ -48,89 +42,51 @@ class User extends Authenticatable
         });
     }
 
-    /*
-    * Relationship one to one with personal documents table
-    */
     function personal_document()
     {
         return $this->hasOne(PersonalDocument::class, "user_id");
     }
 
-    /*
-    * Relationship with profile table
-    */
     function profile()
     {
         return $this->belongsTo(Profile::class, "profile_id");
     }
 
-    /**
-     * Distant relationship with modules table through profile table
-     */
     function modules()
     {
         return $this->hasManyThrough(Module::class, Profile::class);
     }
 
-    /*
-    * Relationship many to many with service orders table 
-    */
     function service_orders()
     {
         return $this->belongsToMany(ServiceOrder::class, "service_order_user", "user_id")->withPivot("role")->withTrashed();
     }
 
-    /*
-    * Relationship one to one with password resets table
-    */
     function password_reset()
     {
         return $this->hasMany(PasswordReset::class, "user_id");
     }
 
-    /*
-    * Relationship one to one with annual traffic table
-    */
     function annual_traffic()
     {
         return $this->hasOne(AnnualTraffic::class, "user_id");
     }
 
-    /*
-    * Relationship with sessions table
-    */
     function sessions()
     {
         return $this->hasMany(Session::class, "user_id");
     }
 
-    /**
-     * Route notifications for the mail channel.
-     *
-     * @param  \Illuminate\Notifications\Notification  $notification
-     * @return string
-     */
     public function routeNotificationForMail($notification)
     {
         return $this->email;
     }
 
-    /**
-     * First name acessor.
-     *
-     * @param  \Illuminate\Notifications\Notification  $notification
-     * @return string
-     */
     public function getFirstNameAttribute()
     {
         return explode(" ", $this->name)[0];
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'created_at' => 'date:Y-m-d',
         'updated_at' => 'date:Y-m-d',

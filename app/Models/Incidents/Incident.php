@@ -15,9 +15,6 @@ class Incident extends Model
 
     protected $guarded = [];
 
-    /*
-    * Scope for search
-    */
     function scopeSearch($query, $value_searched)
     {
         return $query->when((bool) $value_searched, function ($query) use ($value_searched) {
@@ -28,9 +25,6 @@ class Incident extends Model
         });
     }
 
-    /*
-    * Scope for filter
-    */
     function scopeFilter($query, $filters)
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
@@ -41,9 +35,6 @@ class Incident extends Model
         });
     }
 
-    /*
-    * Relationship with flight plan
-    */
     function service_order_flight_plan()
     {
         return $this->belongsTo(ServiceOrderFlightPlan::class, "service_order_flight_plan_id", "id");

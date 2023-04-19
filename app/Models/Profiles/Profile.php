@@ -15,9 +15,6 @@ class Profile extends Model
 
     protected $guarded = [];
 
-    /*
-    * Scope for search
-    */
     function scopeSearch($query, $value_searched)
     {
         return $query->when((bool) $value_searched, function ($query) use ($value_searched) {
@@ -30,9 +27,6 @@ class Profile extends Model
         });
     }
 
-    /*
-    * Scope for filter
-    */
     function scopeFilter($query, $filters)
     {
         return $query->when((bool) $filters, function ($query) use ($filters) {
@@ -43,27 +37,16 @@ class Profile extends Model
         });
     }
 
-    /*
-    * Relationship with user table
-    */
     function users()
     {
         return $this->hasMany(User::class, "profile_id")->withTrashed();
     }
 
-    /*
-    * Relationship many to many with modules table
-    */
     function modules()
     {
         return $this->belongsToMany(Module::class, "profile_module")->withPivot('read', 'write');
     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'created_at' => 'date:Y-m-d',
         'updated_at' => 'date:Y-m-d'
