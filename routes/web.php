@@ -92,7 +92,7 @@ Route::group(["prefix" => "api"], function () {
         Route::apiResource("/module/equipments-drone", EquipmentModuleDroneController::class);
         Route::apiResource("/module/equipments-battery", EquipmentModuleBatteryController::class);
         Route::apiResource("/module/equipments", EquipmentModuleEquipmentController::class);
-        // Module export CSV and download files if exists
+        // Module export CSV 
         Route::post("/users/export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
         Route::post("/profiles/export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
         Route::post("/flight-plans/export", [FlightPlanModuleController::class, "exportTableAsCsv"]);
@@ -102,7 +102,6 @@ Route::group(["prefix" => "api"], function () {
         Route::post("/drones/export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
         Route::post("/batteries/export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
         Route::post("/equipments/export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
-        Route::get("/report/download/{filename}", DownloadReportController::class);
         Route::get("/log/download/{filename}", DownloadLogController::class);
         // Module Actions
         Route::get("/action/service-order/flight-plans", FlightPlansForServiceOrderController::class);

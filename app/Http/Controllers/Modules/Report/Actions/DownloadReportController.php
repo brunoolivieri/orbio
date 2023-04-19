@@ -9,19 +9,14 @@ use Illuminate\Support\Facades\Storage;
 
 class DownloadReportController extends Controller
 {
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    
     public function __invoke(Request $request)
     {
         try {
 
-            Gate::authorize('reports_write');
+            Gate::authorize('reports_read');
 
-            $filename = $request->query("filename");
+            $filename = request()->filename;
 
             if (!Storage::disk("public")->exists("reports/$filename")) {
                 throw new \Exception("Erro! O relatório não foi encontrado", 404);

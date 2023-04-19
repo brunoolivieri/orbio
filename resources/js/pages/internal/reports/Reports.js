@@ -1,9 +1,7 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -16,7 +14,6 @@ import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { CreateReport } from './formulary/report/CreateReport';
 import { UpdateReport } from './formulary/report/UpdateReport';
 import { DeleteReport } from './formulary/report/DeleteReport';
-// Custom
 import { ExportTableData } from '../../../components/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../components/table_toolbar/TableToolbar';
 import { useAuth } from '../../../context/Auth';
@@ -90,7 +87,7 @@ const columns = [
 
       function handleDownloadReport(report) {
 
-        axios.get(`/action/reports/download/${report.file}`,
+        axios.get(`api/action/reports/download/${report.file}`,
           {
             headers: {
               'Content-type': 'application/json'
@@ -112,6 +109,7 @@ const columns = [
             console.log(error)
             enqueueSnackbar(`Erro! O download do relatório falhou! Arquivo: ${report.file}`, { variant: "error" });
           });
+
       }
 
       return (
