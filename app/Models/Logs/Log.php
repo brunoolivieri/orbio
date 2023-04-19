@@ -44,14 +44,6 @@ class Log extends Model
     }
 
     /*
-    * Polymorphic relationship with table "images"
-    */
-    function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
-    /*
     * Relationship with flight plan
     */
     function service_order_flight_plan()

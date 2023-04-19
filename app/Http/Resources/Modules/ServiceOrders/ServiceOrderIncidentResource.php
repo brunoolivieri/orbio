@@ -23,7 +23,6 @@ class ServiceOrderIncidentResource extends JsonResource
      */
     public function toArray($request)
     {
-
         foreach ($this->data as $row => $incident) {
 
             $this->formatedData["records"][$row] = [

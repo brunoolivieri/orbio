@@ -28,7 +28,7 @@ class FlightPlansForServiceOrderResource extends JsonResource
 
             $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
-                "image_url" => Storage::url($flight_plan->image->path),
+                "image_url" => Storage::url($flight_plan->image_path),
                 "created_at" => date("Y-m-d", strtotime($flight_plan->created_at)),
                 "name" => $flight_plan->name,
                 "file" => $flight_plan->file,

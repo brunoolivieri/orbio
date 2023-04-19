@@ -52,14 +52,6 @@ class Equipment extends Model
         });
     }
 
-    /*
-    * Polymorphic relationship with table "images"
-    */
-    function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     function service_orders()
     {
         return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan", "equipment_id")->withPivot(["id", "battery_id", "equipment_id"]);

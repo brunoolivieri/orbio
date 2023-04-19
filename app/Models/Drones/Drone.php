@@ -51,14 +51,6 @@ class Drone extends Model
         });
     }
 
-    /*
-    * Polymorphic relationship with table "images"
-    */
-    function image()
-    {
-        return $this->morphOne(Image::class, 'imageable');
-    }
-
     function service_orders()
     {
         return $this->belongsToMany(ServiceOrder::class, "service_order_flight_plan", "drone_id")->withPivot(["id", "battery_id", "equipment_id"]);

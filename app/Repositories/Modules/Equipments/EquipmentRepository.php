@@ -16,7 +16,7 @@ class EquipmentRepository implements RepositoryInterface
 
     function getPaginate(string $limit, string $page, string $search)
     {
-        return $this->equipmentModel->with('image')
+        return $this->equipmentModel
             ->withTrashed()
             ->search($search) // scope
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
@@ -34,16 +34,12 @@ class EquipmentRepository implements RepositoryInterface
                 "serial_number" => $data["serial_number"],
                 "weight" => $data["weight"],
                 "observation" => $data["observation"],
-                "purchase_date" => $data["purchase_date"]
+                "purchase_date" => $data["purchase_date"],
+                "image_path" => $data["image_path"]
             ]);
 
-            $equipment->image()->create([
-                "path" => $data['path']
-            ]);
-
-            // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($data['path'])) {
-                Storage::disk('public')->put($data['path'], $data['file_content']);
+            if (!Storage::disk('public')->exists($data['image_path'])) {
+                Storage::disk('public')->put($data['image_path'], $data['image_content']);
             }
 
             if ($equipment->trashed() && $data["undelete"]) {
@@ -71,15 +67,12 @@ class EquipmentRepository implements RepositoryInterface
                 "purchase_date" => $data["purchase_date"]
             ]);
 
-            if ($data['change_file'] === 1) {
-
-                $equipment->image()->update([
-                    "path" => $data['path']
+            if ($data['change_image'] === 1) {
+                $equipment->update([
+                    "image_path" => $data['image_path']
                 ]);
-
-                // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($data['path'])) {
-                    Storage::disk('public')->put($data['path'], $data['file_content']);
+                if (!Storage::disk('public')->exists($data['image_path'])) {
+                    Storage::disk('public')->put($data['image_path'], $data['image_content']);
                 }
             }
 

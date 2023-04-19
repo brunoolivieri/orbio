@@ -24,9 +24,9 @@ class AdministrationModuleUsersController extends Controller
 
     public function index(): \Illuminate\Http\Response
     {
-        Gate::authorize('administration_read');
-
         try {
+
+            Gate::authorize('administration_read');
 
             $result = $this->service->getPaginate(
                 request()->limit,
@@ -53,9 +53,9 @@ class AdministrationModuleUsersController extends Controller
 
     public function store(UserPanelStoreRequest $request): \Illuminate\Http\Response
     {
-        Gate::authorize('administration_write');
-
         try {
+            Gate::authorize('administration_write');
+
             $this->service->createOne($request->validated());
             return response(["message" => "Usuário criado com sucesso!"], 201);
         } catch (\Exception $e) {
@@ -65,9 +65,9 @@ class AdministrationModuleUsersController extends Controller
 
     public function update(UserPanelUpdateRequest $request, $id): \Illuminate\Http\Response
     {
-        Gate::authorize('administration_write');
-
         try {
+            Gate::authorize('administration_write');
+
             $this->service->updateOne($request->validated(), $id);
             return response(["message" => "Usuário atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
@@ -77,9 +77,9 @@ class AdministrationModuleUsersController extends Controller
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
-        Gate::authorize('administration_write');
-
         try {
+            Gate::authorize('administration_write');
+
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {

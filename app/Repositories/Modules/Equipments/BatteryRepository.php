@@ -16,7 +16,7 @@ class BatteryRepository implements RepositoryInterface
 
     function getPaginate(string $limit, string $page, string $search)
     {
-        return $this->batteryModel->with('image')
+        return $this->batteryModel
             ->withTrashed()
             ->search($search) // scope
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
@@ -32,16 +32,12 @@ class BatteryRepository implements RepositoryInterface
                 "model" => $data["model"],
                 "serial_number" => $data["serial_number"],
                 "observation" => $data["observation"],
-                "last_charge" => $data["last_charge"]
+                "last_charge" => $data["last_charge"],
+                "image_path" => $data["image_path"]
             ]);
 
-            $battery->image()->create([
-                "path" => $data['path']
-            ]);
-
-            // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($data['path'])) {
-                Storage::disk('public')->put($data['path'], $data['file_content']);
+            if (!Storage::disk('public')->exists($data['image_path'])) {
+                Storage::disk('public')->put($data['image_path'], $data['image_content']);
             }
 
             return $battery;
@@ -53,7 +49,7 @@ class BatteryRepository implements RepositoryInterface
         return DB::transaction(function () use ($data, $id) {
 
             $battery = $this->batteryModel->withTrashed()->findOrFail($id);
-            
+
             $battery->update([
                 "name" => $data["name"],
                 "manufacturer" => $data["manufacturer"],
@@ -63,15 +59,12 @@ class BatteryRepository implements RepositoryInterface
                 "last_charge" => $data["last_charge"]
             ]);
 
-            if ($data['change_file'] === 1) {
-
-                $battery->image()->update([
-                    "path" => $data['path']
+            if ($data['change_image'] === 1) {
+                $battery->update([
+                    "image_path" => $data['image_path']
                 ]);
-
-                // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($data['path'])) {
-                    Storage::disk('public')->put($data['path'], $data['file_content']);
+                if (!Storage::disk('public')->exists($data['image_path'])) {
+                    Storage::disk('public')->put($data['image_path'], $data['image_content']);
                 }
             }
 

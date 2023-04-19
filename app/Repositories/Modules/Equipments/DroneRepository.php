@@ -16,7 +16,7 @@ class DroneRepository implements RepositoryInterface
 
     function getPaginate(string $limit, string $page, string $search)
     {
-        return $this->droneModel->with('image')
+        return $this->droneModel
             ->withTrashed()
             ->search($search) // scope
             ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
@@ -33,16 +33,12 @@ class DroneRepository implements RepositoryInterface
                 "record_number" => $data["record_number"],
                 "serial_number" => $data["serial_number"],
                 "weight" => $data["weight"],
-                "observation" => $data["observation"]
+                "observation" => $data["observation"],
+                "image_path" => $data["image_path"]
             ]);
 
-            $drone->image()->create([
-                "path" => $data->get('path')
-            ]);
-
-            // Image is stored just if does not already exists
-            if (!Storage::disk('public')->exists($data->get('path'))) {
-                Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+            if (!Storage::disk('public')->exists($data['image_path'])) {
+                Storage::disk('public')->put($data['image_path'], $data['image_content']);
             }
 
             return $drone;
@@ -54,7 +50,7 @@ class DroneRepository implements RepositoryInterface
         return DB::transaction(function () use ($data, $id) {
 
             $drone = $this->droneModel->withTrashed()->findOrFail($id);
-           
+
             $drone->update([
                 "name" => $data["name"],
                 "manufacturer" => $data["manufacturer"],
@@ -65,15 +61,12 @@ class DroneRepository implements RepositoryInterface
                 "observation" => $data["observation"]
             ]);
 
-            if ($data->get('change_file') === 1) {
-
-                $drone->image()->update([
-                    "path" => $data->get('path')
+            if ($data['change_image'] === 1) {
+                $drone->update([
+                    "image_path" => $data['image_path']
                 ]);
-
-                // Image is stored just if does not already exists
-                if (!Storage::disk('public')->exists($data->get('path'))) {
-                    Storage::disk('public')->put($data->get('path'), $data->get('file_content'));
+                if (!Storage::disk('public')->exists($data['image_path'])) {
+                    Storage::disk('public')->put($data['image_path'], $data['image_content']);
                 }
             }
 

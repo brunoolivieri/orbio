@@ -26,17 +26,16 @@ class FlightPlanService implements ServiceInterface
         }
 
         // Path foldername as timestamp
-        $pathFolder =  $data["timestamp"];
-        $data_to_save["folder"] =  $pathFolder;
+        $pathTimestamp =  $data["timestamp"];
 
         // Txt files
         foreach ($data["route_files"] as $index => $route_file) {
 
             $filename = $route_file->getClientOriginalName();
             $contents = file_get_contents($route_file);
-            $path = "flight_plans/$pathFolder/$filename";
+            $path = "flight_plans/$pathTimestamp/$filename";
 
-            $data_to_save["routes_filename"][$index] = $filename;
+            $data_to_save["routes_path"][$index] = $path;
 
             $data_to_save["route_files"][$index] = [
                 "contents" => $contents,
@@ -50,7 +49,7 @@ class FlightPlanService implements ServiceInterface
         $csv_contents = file_get_contents($data["csvFile"]);
 
         $data_to_save["csv"] = [
-            "path" => "flight_plans/$pathFolder/csv/" . $csv_filename,
+            "path" => "flight_plans/$pathTimestamp/csv/" . $csv_filename,
             "filename" => $csv_filename,
             "contents" => $csv_contents
         ];
@@ -60,7 +59,7 @@ class FlightPlanService implements ServiceInterface
         $img = str_replace(' ', '+', $img);
 
         $data_to_save["image"] = [
-            "path" => "flight_plans/$pathFolder/image/" . $data["imageFilename"],
+            "path" => "flight_plans/$pathTimestamp/image/" . $data["imageFilename"],
             "contents" => base64_decode($img)
         ];
 

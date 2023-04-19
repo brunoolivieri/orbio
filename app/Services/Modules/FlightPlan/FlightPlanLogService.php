@@ -64,7 +64,7 @@ class FlightPlanLogService implements ServiceInterface
             $image_data = null;
             // Search for actual log image by name in the set of images
             foreach ($images as $image) {
-
+                
                 $image_filename = $image->getClientOriginalName();
                 $image_filename_without_extension = preg_replace("/\.(jpe?g|png)$/", "", $image_filename);
 
@@ -80,15 +80,18 @@ class FlightPlanLogService implements ServiceInterface
             }
 
             $log = $this->repository->createOne([
-                "name" => Str::random(10),
-                "is_valid" => $log_image_founded,
-                "filename" => $log_filename,
-                "timestamp" => $kml_timestamp,
-                "log_storage" => [
-                    "contents" => $log_content,
-                    "path" => "flightlogs/valid/$log_filename"
+                "log" => [
+                    "name" => Str::random(10),
+                    "filename" => $log_filename,
+                    "path" => "flightlogs/valid/$log_filename",
+                    "timestamp" => date("Y-m-d H:i:s", $kml_timestamp),
+                    "image_path" => $log_image_founded ? $image_data["path"] : null
                 ],
-                "image_storage" => $image_data
+                "contents" => [
+                    "log" => $log_content,
+                    "image" => $image_data["contents"]
+                ]
+
             ]);
         }
     }

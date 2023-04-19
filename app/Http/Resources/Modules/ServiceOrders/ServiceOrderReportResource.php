@@ -64,7 +64,7 @@ class ServiceOrderReportResource extends JsonResource
                 // Initial flight plan data 
                 $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index] = [
                     "id" => $flight_plan->id,
-                    "image_url" => Storage::url($flight_plan->image->path),
+                    "image_url" => Storage::url($flight_plan->image_path),
                     "file" => $flight_plan->file,
                     "name" => $flight_plan->name,
                     "log" => null,
@@ -94,7 +94,7 @@ class ServiceOrderReportResource extends JsonResource
 
                     $this->formatedData["records"][$service_order_index]["flight_plans"][$flight_plan_index]["log"] = [
                         "id" => $log->id,
-                        "image_url" => Storage::url($log->image->path),
+                        "image_url" => Storage::url($log->image_path),
                         "timestamp" => $log->timestamp,
                         "filename" => $log->filename
                     ];

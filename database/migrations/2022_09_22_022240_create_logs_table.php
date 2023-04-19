@@ -20,6 +20,7 @@ class CreateLogsTable extends Migration
             $table->string('filename');
             $table->string("path");
             $table->timestamp("timestamp");
+            $table->string("image_path")->nullable(true)->unique();
             $table->timestamps();
             $table->softDeletes();
         });

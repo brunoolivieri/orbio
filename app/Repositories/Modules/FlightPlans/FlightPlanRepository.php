@@ -41,13 +41,14 @@ class FlightPlanRepository implements RepositoryInterface
             $flight_plan = $this->flightPlanModel->create([
                 "creator_id" => Auth::user()->id,
                 "name" => Str::random(10),
-                "folder" => $data["folder"],
-                "files" => json_encode($data["routes_filename"]),
+                "files" => json_encode($data["routes_path"]),
                 "coordinates" => $data["coordinates"],
                 "state" => $data["state"],
                 "city" => $data["city"],
                 "description" => null,
-                "type" => $data["type"]
+                "type" => $data["type"],
+                "image_path" => $data["image"]["path"],
+                "csv_path" => $data["csv"]["path"]
             ]);
 
             foreach ($data["route_files"] as $route_file) {

@@ -104,7 +104,7 @@ const columns = [
             const { enqueueSnackbar } = useSnackbar();
 
             function handleDownloadLog(filename) {
-                axios.get(`api/logs-module-download/${filename}`, null, {
+                axios.get(`api/log/download/${filename}`, null, {
                     responseType: 'blob'
                 })
                     .then(function (response) {

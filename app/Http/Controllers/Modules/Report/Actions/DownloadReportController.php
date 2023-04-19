@@ -17,9 +17,9 @@ class DownloadReportController extends Controller
      */
     public function __invoke(Request $request)
     {
-        Gate::authorize('reports_write');
-
         try {
+
+            Gate::authorize('reports_write');
 
             $filename = $request->query("filename");
 

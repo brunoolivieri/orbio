@@ -57,7 +57,7 @@ class LogsForServiceOrderFlightPlanResource extends JsonResource
                 $this->formatedData["records"][$index_counter] = [
                     "id" => $log->id,
                     "name" => $log->name,
-                    "image_url" => Storage::url($log->image->path),
+                    "image_url" => Storage::url($log->image_path),
                     "filename" => $log->filename,
                     "path" => $log->path,
                     "timestamp" => date('d-m-Y h:i', strtotime($log->timestamp)),

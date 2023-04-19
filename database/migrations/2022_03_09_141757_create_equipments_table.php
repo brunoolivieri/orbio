@@ -23,6 +23,7 @@ class CreateEquipmentsTable extends Migration
             $table->double('weight', 8, 2);
             $table->string('observation')->nullable(true);
             $table->datetime('purchase_date');
+            $table->string("image_path");
             $table->timestamps();
             $table->softDeletes();
         });

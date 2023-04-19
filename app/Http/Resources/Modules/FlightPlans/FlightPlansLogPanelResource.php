@@ -17,21 +17,14 @@ class FlightPlansLogPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
-
         foreach ($this->data as $service_order_row => $log) {
 
             $this->formatedData["records"][$service_order_row] = [
                 "id" => $log->id,
                 "name" => $log->name,
-                "image_url" => Storage::url($log->image->path),
+                "image_url" => Storage::url($log->image_path),
                 "service_order" => null,
                 "flight_plan" => null,
                 "filename" => $log->filename,
@@ -72,7 +65,7 @@ class FlightPlansLogPanelResource extends JsonResource
                 $this->formatedData["records"][$service_order_row]["flight_plan"] = [
                     "id" =>  $flight_plan->id,
                     "path" => $flight_plan->file,
-                    "image_url" => Storage::url($flight_plan->image->path),
+                    "image_url" => Storage::url($flight_plan->image_path),
                     "deleted" => is_null($flight_plan->deleted_at) ? 0 : 1
                 ];
             }

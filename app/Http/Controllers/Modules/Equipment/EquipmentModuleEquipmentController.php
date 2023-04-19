@@ -24,9 +24,9 @@ class EquipmentModuleEquipmentController extends Controller
 
     public function index(): \Illuminate\Http\Response
     {
-        Gate::authorize("equipments_read");
-
         try {
+
+            Gate::authorize("equipments_read");
 
             $result = $this->service->getPaginate(
                 request()->limit,
@@ -53,9 +53,9 @@ class EquipmentModuleEquipmentController extends Controller
 
     public function store(StoreEquipmentRequest $request): \Illuminate\Http\Response
     {
-        Gate::authorize("equipments_write");
-
         try {
+            Gate::authorize("equipments_write");
+
             $this->service->createOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image"]));
             return response(["message" => "Bateria criada com sucesso!"], 201);
         } catch (\Exception $e) {
@@ -65,9 +65,9 @@ class EquipmentModuleEquipmentController extends Controller
 
     public function update(UpdateEquipmentRequest $request, $id): \Illuminate\Http\Response
     {
-        Gate::authorize("equipments_write");
-
         try {
+            Gate::authorize("equipments_write");
+
             $this->service->updateOne($request->only(["name", "manufacturer", "model", "record_number", "serial_number", "weight", "observation", "purchase_date", "image", "undelete"]), $id);
             return response(["message" => "Bateria atualizada com sucesso!"], 200);
         } catch (\Exception $e) {
@@ -77,9 +77,9 @@ class EquipmentModuleEquipmentController extends Controller
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
-        Gate::authorize("equipments_write");
-
         try {
+            Gate::authorize("equipments_write");
+
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {

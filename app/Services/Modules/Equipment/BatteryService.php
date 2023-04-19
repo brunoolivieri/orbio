@@ -19,33 +19,30 @@ class BatteryService implements ServiceInterface
 
     public function createOne(array $data)
     {
-        // Filename is the hash of the content
-        $file_content = file_get_contents($data['image']);
-        $content_hash = md5($file_content);
-        $filename = "$content_hash.jpg";
-        $path = "images/equipments/" . $filename;
+        $image_content = file_get_contents($data['image']);
+        $image_content_hash = md5($image_content);
+        $filename = "$image_content_hash.jpeg";
+        $path = "equipments/images/batteries/" . $filename;
 
-        $data["file_content"] = $file_content;
-        $data["path"] = $path;
+        $data["image_content"] = $image_content;
+        $data["image_path"] = $path;
 
         $battery = $this->repository->createOne($data);
     }
 
     public function updateOne(array $data, string $identifier)
     {
+        $data["change_image"] = 0;
+
         if (isset($data['image'])) {
+            $image_content = file_get_contents($data['image']);
+            $image_content_hash = md5($image_content);
+            $filename = "$image_content_hash.jpeg";
+            $path = "equipments/images/batteries/" . $filename;
 
-            // Filename is the hash of the content
-            $file_content = file_get_contents($data['image']);
-            $content_hash = md5($file_content);
-            $filename = "$content_hash.jpg";
-            $path = "images/equipments/" . $filename;
-
-            $data["change_file"] = 1;
-            $data["file_content"] = $file_content;
-            $data["path"] = $path;
-        } else {
-            $data["change_file"] = 0;
+            $data["change_image"] = 1;
+            $data["image_content"] = $image_content;
+            $data["image_path"] = $path;
         }
 
         $battery = $this->repository->updateOne($data, $identifier);

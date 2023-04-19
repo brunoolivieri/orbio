@@ -30,7 +30,7 @@ class EquipmentsPanelResource extends JsonResource
 
             $this->formatedData["records"][$row] = [
                 "id" => $equipment->id,
-                "image_url" => Storage::url($equipment->image->path),
+                "image_url" => Storage::url($equipment->image_path),
                 "name" => $equipment->name,
                 "manufacturer" => $equipment->manufacturer,
                 "model" => $equipment->model,

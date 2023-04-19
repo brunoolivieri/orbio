@@ -13,20 +13,19 @@ class DownloadFlightPlanController extends Controller
     public function __invoke(Request $request)
     {
         try {
-
             Gate::authorize('flight_plans_read');
 
-            $array_filenames = explode(",", $request->query("files"));
-            $pathFolder = $request->get("folder");
+            $filesPath = explode(",", $request->query("files"));
 
-            foreach ($array_filenames as $filename) {
-                if (!Storage::disk("public")->exists("flight_plans/$pathFolder/$filename")) {
+            foreach ($filesPath as $file_path) {
+                if (!Storage::disk("public")->exists($file_path)) {
                     throw new \Exception("Erro! O arquivo não foi encontrado.", 404);
                 }
             }
 
-            foreach ($array_filenames as $filename) {
-                $file_contents = Storage::disk("public")->get("flight_plans/$pathFolder/$filename");
+            foreach ($filesPath as $file_path) {
+                $file_contents = Storage::disk("public")->get($file_path);
+                $filename = explode(".", explode("/", $file_path)[2])[0];
                 $contents[$filename] = $file_contents;
             }
 

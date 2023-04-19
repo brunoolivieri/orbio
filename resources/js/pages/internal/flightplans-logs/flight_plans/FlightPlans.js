@@ -107,9 +107,9 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlan(filenames, folder) {
+      function handleDownloadFlightPlan(files_path) {
 
-        axios.get(`/api/action/flight-plans/download?folder=${folder}&files=${filenames.toString()}`, {
+        axios.get(`/api/action/flight-plans/download?files=${files_path.toString()}`, {
           responseType: 'application/json'
         })
           .then(function (response) {
@@ -141,7 +141,7 @@ const columns = [
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlan(data.row.files, data.row.folder)}>
+        <IconButton onClick={() => handleDownloadFlightPlan(data.row.files)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )
@@ -157,9 +157,11 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlanAsCSV(folder) {
+      const flight_plan_folder = data.row.files[0].split("/")[1];
+      const flight_plan_csv_path = `flight_plans/${flight_plan_folder}/csv/${flight_plan_folder}.csv`;
 
-        axios.get(`/api/action/flight-plans/download-csv?folder=${folder}`)
+      function handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_folder) {
+        axios.get(`/api/action/flight-plans/download-csv?path=${flight_plan_csv_path}`)
           .then(function (response) {
 
             const file = new Blob([response.data], { type: 'text/csv' });
@@ -168,7 +170,7 @@ const columns = [
             // Download
             const link = document.createElement('a');
             link.href = csvURL;
-            link.download = `${folder}.csv`;
+            link.download = `${flight_plan_folder}.csv`;
             document.body.appendChild(link);
             link.click();
 
@@ -180,7 +182,7 @@ const columns = [
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.folder)}>
+        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_folder)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )

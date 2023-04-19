@@ -31,8 +31,8 @@ class FlightPlansPanelResource extends JsonResource
 
             $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
-                "image_url" => Storage::url("flight_plans/$flight_plan->folder/image/$flight_plan->folder.jpeg"),
-                "folder" => $flight_plan->folder,
+                "image_url" => Storage::url($flight_plan->image_path),
+                "csv_path" => Storage::url($flight_plan->csv_path),
                 "type" => $flight_plan->type,
                 "creator" => [
                     "name" => $flight_plan->user->name,

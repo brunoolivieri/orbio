@@ -31,22 +31,12 @@ class FlightPlanLogRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data) {
 
-            $log = $this->logModel->create([
-                "name" => $data["name"],
-                "filename" => $data["filename"],
-                "path" => $data["log_storage"]["path"],
-                "timestamp" => date("Y-m-d H:i:s", $data["timestamp"])
-            ]);
+            $log = $this->logModel->create($data["log"]);
 
-            Storage::disk('public')->put($data["log_storage"]["path"], $data["log_storage"]["contents"]);
+            Storage::disk('public')->put($data["log"]["path"], $data["contents"]["log"]);
 
-            if ($data["is_valid"] && !is_null($data["image_storage"])) {
-
-                $log->image()->create([
-                    "path" => $data["image_storage"]["path"]
-                ]);
-
-                Storage::disk('public')->put($data["image_storage"]["path"], $data["image_storage"]["contents"]);
+            if (!is_null($log->image_path)) {
+                Storage::disk('public')->put($log->image_path, $data["contents"]["image"]);
             }
 
             return $log;

@@ -22,6 +22,7 @@ class CreateDronesTable extends Migration
             $table->string('serial_number');
             $table->double('weight', 8, 2);
             $table->string('observation')->nullable(true);
+            $table->string("image_path");
             $table->timestamps();
             $table->softDeletes();
         });

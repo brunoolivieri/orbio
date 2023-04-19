@@ -24,9 +24,9 @@ class FlightPlanModuleController extends Controller
 
     public function index(): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_read');
-
         try {
+
+            Gate::authorize('flight_plans_read');
 
             $result = $this->service->getPaginate(
                 request()->limit,
@@ -53,9 +53,9 @@ class FlightPlanModuleController extends Controller
 
     public function store(Request $request): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_write');
-
         try {
+            Gate::authorize('flight_plans_write');
+
             $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "csvFile", "coordinates", "timestamp", "type"]));
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
@@ -65,9 +65,9 @@ class FlightPlanModuleController extends Controller
 
     public function update(FlightPlanUpdateRequest $request, $id): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_write');
-
         try {
+            Gate::authorize('flight_plans_write');
+
             $this->service->updateOne($request->only(["name", "description", "undelete"]), $id);
             return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
@@ -77,9 +77,9 @@ class FlightPlanModuleController extends Controller
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_write');
-
         try {
+            Gate::authorize('flight_plans_write');
+
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {

@@ -24,9 +24,9 @@ class FlightPlanModuleLogController extends Controller
 
     public function index(): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_read');
-
         try {
+
+            Gate::authorize('flight_plans_read');
 
             $result = $this->service->getPaginate(
                 request()->limit,
@@ -51,22 +51,10 @@ class FlightPlanModuleLogController extends Controller
         return Excel::download(new GenericExport(new Log(), $request->limit), 'logs.xlsx', \Maatwebsite\Excel\Excel::XLSX);
     }
 
-    public function downloadLog(string $filename): \Illuminate\Http\Response
-    {
-        Gate::authorize('flight_plans_read');
-
-        try {
-            return $this->service->download($filename);
-        } catch (\Exception $e) {
-            return response(["message" => $e->getMessage()], $e->getCode());
-        }
-    }
-
     public function store(Request $request): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_write');
-
         try {
+            Gate::authorize('flight_plans_write');
 
             $kml_logs = $request->file('files');
             $kml_logs_images = $request->file('images');
@@ -80,9 +68,9 @@ class FlightPlanModuleLogController extends Controller
 
     public function update(UpdateLogRequest $request, $id): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_write');
-
         try {
+            Gate::authorize('flight_plans_write');
+
             $this->service->updateOne($request->only(["name", "service_order_id", "undelete"]), $id);
             return response(["message" => "Log atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
@@ -92,9 +80,9 @@ class FlightPlanModuleLogController extends Controller
 
     public function destroy(Request $request): \Illuminate\Http\Response
     {
-        Gate::authorize('flight_plans_write');
-
         try {
+            Gate::authorize('flight_plans_write');
+
             $this->service->delete($request->ids);
             return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {

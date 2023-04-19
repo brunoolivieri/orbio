@@ -29,7 +29,8 @@ use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleLogController,
     Actions\UploadedLogsController,
     Actions\DownloadFlightPlanController,
-    Actions\DownloadFlightPlanCSVController
+    Actions\DownloadFlightPlanCSVController,
+    Actions\DownloadLogController
 };
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
@@ -101,8 +102,8 @@ Route::group(["prefix" => "api"], function () {
         Route::post("/drones/export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
         Route::post("/batteries/export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
         Route::post("/equipments/export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
-        Route::get("/reports-module-download/{filename}", [ReportModuleController::class, "downloadReport"]); // download
-        Route::get("/logs-module-download/{filename}", [FlightPlanModuleLogController::class, "downloadLog"]); // download
+        Route::get("/report/download/{filename}", DownloadReportController::class);
+        Route::get("/log/download/{filename}", DownloadLogController::class);
         // Module Actions
         Route::get("/action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
         Route::get("/action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
