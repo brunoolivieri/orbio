@@ -5,10 +5,8 @@ namespace App\Models\FlightPlans;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Model
 use App\Models\Users\User;
 use App\Models\ServiceOrders\ServiceOrder;
-use App\Models\Images\Image;
 
 class FlightPlan extends Model
 {

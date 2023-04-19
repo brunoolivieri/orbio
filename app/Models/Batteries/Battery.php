@@ -5,8 +5,6 @@ namespace App\Models\Batteries;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Custom
-use App\Models\Images\Image;
 use App\Models\FlightPlans\FlightPlan;
 use App\Models\ServiceOrders\ServiceOrder;
 

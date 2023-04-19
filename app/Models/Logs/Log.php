@@ -5,8 +5,6 @@ namespace App\Models\Logs;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-// Models
-use App\Models\Images\Image;
 use App\Models\Pivot\ServiceOrderFlightPlan;
 
 class Log extends Model
