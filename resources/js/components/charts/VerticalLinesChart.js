@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LineChart, Line, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
 
 export function VerticalLinesChart(props) {
 
@@ -68,15 +68,15 @@ export function VerticalLinesChart(props) {
 
     return (
         <ResponsiveContainer width="100%" height="100%">
-            <LineChart
+            <AreaChart
                 width={'100%'}
                 height={'100%'}
                 data={data}
             >
                 <Tooltip offset={0} labelFormatter={(index) => data[index]['name']} />
-                <Line type="monotone" dataKey="ativos" stroke="#82ca9d" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="deletados" stroke="#FF7C74" />
-            </LineChart>
+                <Area type="monotone" dataKey="ativos" stroke="#82ca9d" fill="#82ca9d" activeDot={{ r: 8 }} />
+                <Area type="monotone" dataKey="deletados" stroke="#FF7C74" fill="#FF7C74" />
+            </AreaChart>
         </ResponsiveContainer>
     )
 }
