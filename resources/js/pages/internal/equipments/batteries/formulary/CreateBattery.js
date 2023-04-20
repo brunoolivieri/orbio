@@ -1,13 +1,9 @@
 import * as React from 'react';
-// Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Divider, Grid, Stack } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-// Moment
 import moment from 'moment';
-// Custom
 import { DatePicker } from '../../../../../components/date_picker/DatePicker';
 import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -30,8 +26,9 @@ export const CreateBattery = React.memo((props) => {
     const [open, setOpen] = React.useState(false);
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+    const [alert, setAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
+    const [canSave, setCanSave] = React.useState(true);
     const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
 
@@ -44,16 +41,19 @@ export const CreateBattery = React.memo((props) => {
     }
 
     function handleClose() {
-        setOpen(false);
         setLoading(false);
         setFormData(initialFormData);
         setFormError(initialFormError);
+        setCanSave(true);
+        setOpen(false);
     }
 
     function handleSubmit() {
-        if (!formSubmissionValidation()) return '';
-
+        if (!formSubmissionValidation()){
+            return;
+        }
         setLoading(true);
+        setCanSave(false);
         requestServer();
     }
 
@@ -90,6 +90,8 @@ export const CreateBattery = React.memo((props) => {
             const response = await axios.post("api/module/equipments-battery", formData_);
             successResponse(response);
         } catch (error) {
+            console.log(error);
+            setCanSave(true);
             errorResponse(error.response);
         } finally {
             setLoading(false);
@@ -98,7 +100,7 @@ export const CreateBattery = React.memo((props) => {
     }
 
     const successResponse = (response) => {
-        setDisplayAlert({ display: true, type: "success", message: response.data.message });
+        setAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
             handleClose();
@@ -107,7 +109,7 @@ export const CreateBattery = React.memo((props) => {
 
     function errorResponse(response) {
         if (response.status === 422) {
-            setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+            setAlert({ display: true, type: "error", message: "Dados inválidos!" });
             let response_errors = Object.assign({}, initialFormError);
             for (let field in response.data.errors) {
                 response_errors[field] = {
@@ -117,18 +119,18 @@ export const CreateBattery = React.memo((props) => {
             }
             setFormError(response_errors);
         } else {
-            setDisplayAlert({ display: true, type: "error", message: response.data.message });
+            setAlert({ display: true, type: "error", message: response.data.message });
         }
     }
 
     function handleUploadedImage(event) {
         const uploaded_file = event.currentTarget.files[0];
         if (uploaded_file && uploaded_file.type.startsWith('image/')) {
-            setDisplayAlert(initialDisplayAlert);
+            setAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(uploaded_file);
             setImage(uploaded_file);
         } else {
-            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
+            setAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
     }
 
@@ -261,8 +263,8 @@ export const CreateBattery = React.memo((props) => {
 
                 </DialogContent>
 
-                {(!loading && displayAlert.display) &&
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                {(!loading && alert.display) &&
+                    <Alert severity={alert.type}>{alert.message}</Alert>
                 }
 
                 {loading && <LinearProgress />}
@@ -270,7 +272,7 @@ export const CreateBattery = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                    <Button disabled={!canSave} variant="contained" onClick={handleSubmit}>Confirmar</Button>
                 </DialogActions>
 
             </Dialog>

@@ -1,11 +1,8 @@
 import * as React from 'react';
-// Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Box, Alert, IconButton, Tooltip, Grid, TextField, LinearProgress, List, ListItem, ListItemText, ListSubheader, ListItemAvatar, Avatar, Divider, DialogContentText } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { FlightPlanDataForReport } from '../flight-plan/FlightPlanDataForReport';
 import { ServiceOrderForReport } from '../../table-selection/ServiceOrderForReport';
 import { useAuth } from '../../../../../context/Auth';

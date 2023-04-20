@@ -1,13 +1,9 @@
 import * as React from 'react';
-// Material UI
 import { Tooltip, IconButton, Grid, TextField, Box, Paper, Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Libs
 import moment from 'moment';
-// Custom
 import axios from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { DocumentsFormulary } from './formulary/DocumentsFormulary';
@@ -36,7 +32,7 @@ export function BasicInformation() {
         setFormData(initialFormData);
         setLoading(true);
 
-        axios.get("api/myprofile/basic-data")
+        axios.get("api/module/my-profile/basic-data")
             .then((response) => {
                 setFormData({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
             })
@@ -80,7 +76,7 @@ export function BasicInformation() {
 
         try {
 
-            const response = await axios.patch("api/myprofile/basic-data", {
+            const response = await axios.patch("api/module/my-profile/basic-data", {
                 name: formData.name,
                 email: formData.email
             });

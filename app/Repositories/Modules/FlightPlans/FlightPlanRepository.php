@@ -32,7 +32,7 @@ class FlightPlanRepository implements RepositoryInterface
 
         foreach ($data["route_files"] as $flight_file) {
             if (Storage::disk('public')->exists($flight_file["path"])) {
-                throw new \Exception("Erro! Esse plano de voo já existe");
+                throw new \Exception("Erro! Esse plano de voo já existe.", 409);
             }
         }
 

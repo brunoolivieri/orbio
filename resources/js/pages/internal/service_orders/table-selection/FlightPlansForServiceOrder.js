@@ -1,13 +1,10 @@
 import * as React from 'react';
-// Material UI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { ModalImage } from '../../../../components/modals/dialog/ModalImage';
 import axios from '../../../../services/AxiosApi';
 
@@ -92,7 +89,7 @@ export const FlightPlansForServiceOrder = React.memo((props) => {
 
     async function fetchRecords() {
 
-        let url = `api/action/service-order/flight-plans?`;
+        let url = `api/module/action/service-orders/flight-plans?`;
         if (props.serviceOrderId != null) {
             url += `service_order_id=${props.serviceOrderId}&`;
         }

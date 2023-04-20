@@ -1,9 +1,7 @@
 import * as React from 'react';
-// MUI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, Checkbox, FormControlLabel } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { FetchedDataSelection } from '../../../../../components/input_select/FetchedDataSelection';
@@ -20,8 +18,9 @@ export const UpdateUser = React.memo((props) => {
 
   const [formData, setFormData] = React.useState({});
   const [formError, setFormError] = React.useState(initialFormError);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [alert, setAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
+  const [canSave, setCanSave] = React.useState(true);
   const [open, setOpen] = React.useState(false);
 
   const is_authorized = !!user.user_powers["1"].profile_powers.write;
@@ -35,8 +34,9 @@ export const UpdateUser = React.memo((props) => {
 
   function handleClose() {
     setFormError(initialFormError);
-    setDisplayAlert(initialDisplayAlert);
+    setAlert(initialDisplayAlert);
     setLoading(false);
+    setCanSave(true);
     setOpen(false);
   }
 
@@ -44,8 +44,8 @@ export const UpdateUser = React.memo((props) => {
     if (!formSubmissionValidation()) {
       return;
     }
-
     setLoading(true);
+    setCanSave(false);
     requestServer();
   }
 
@@ -67,7 +67,8 @@ export const UpdateUser = React.memo((props) => {
       const response = await axios.patch(`api/module/administration-user/${formData.id}`, formData);
       successResponse(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      setCanSave(true);
       errorResponse(error.response);
     } finally {
       setLoading(false);
@@ -75,7 +76,7 @@ export const UpdateUser = React.memo((props) => {
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
 
     setTimeout(() => {
       props.reloadTable((old) => !old);
@@ -86,7 +87,7 @@ export const UpdateUser = React.memo((props) => {
 
   function errorResponse(response) {
     if (response.status === 422) {
-      setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+      setAlert({ display: true, type: "error", message: "Dados inválidos!" });
       let response_errors = Object.assign({}, initialFormError);
       for (let field in response.data.errors) {
         response_errors[field] = {
@@ -96,7 +97,7 @@ export const UpdateUser = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: response.data.message });
+      setAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 
@@ -179,8 +180,8 @@ export const UpdateUser = React.memo((props) => {
 
         </DialogContent>
 
-        {displayAlert.display &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {alert.display &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}
@@ -188,7 +189,7 @@ export const UpdateUser = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+          <Button type="submit" disabled={!canSave} variant="contained" onClick={handleSubmit}>Confirmar</Button>
         </DialogActions>
 
       </Dialog>

@@ -11,6 +11,8 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+import moment from 'moment';
+import JSZip from 'jszip';
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -19,8 +21,7 @@ import { ExportTableData } from '../../../../components/modals/dialog/ExportTabl
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
 import axios from '../../../../services/AxiosApi';
-import moment from 'moment';
-import JSZip from 'jszip';
+
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -107,7 +108,7 @@ const columns = [
 
       function handleDownloadFlightPlan(files_path) {
 
-        axios.get(`/api/action/flight-plans/download?files=${files_path.toString()}`, {
+        axios.get(`/api/module/action/flight-plans/download?files=${files_path.toString()}`, {
           responseType: 'application/json'
         })
           .then(function (response) {
@@ -133,7 +134,7 @@ const columns = [
           })
           .catch((error) => {
             console.log(error)
-            enqueueSnackbar("Erro! O download do plano falhou!", { variant: "error" });
+            enqueueSnackbar("A exportação do plano de voo falhou!", { variant: "error" });
           });
 
       }
@@ -159,7 +160,7 @@ const columns = [
       const flight_plan_csv_path = `flight_plans/${flight_plan_folder}/csv/${flight_plan_folder}.csv`;
 
       function handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_folder) {
-        axios.get(`/api/action/flight-plans/download-csv?path=${flight_plan_csv_path}`)
+        axios.get(`/api/module/action/flight-plans/download-csv?path=${flight_plan_csv_path}`)
           .then(function (response) {
 
             const file = new Blob([response.data], { type: 'text/csv' });
@@ -175,7 +176,7 @@ const columns = [
           })
           .catch((error) => {
             console.log(error)
-            enqueueSnackbar("Erro! O download do plano csv falhou!", { variant: "error" });
+            enqueueSnackbar("A exportação do plano de voo falhou!", { variant: "error" });
           });
       }
 
@@ -339,7 +340,7 @@ export function FlightPlans() {
 
         <Grid item>
           {is_authorized_to_read &&
-            <ExportTableData type="PLANOS DE VOO" source={"/api/flight-plans/export"} />
+            <ExportTableData type="PLANOS DE VOO" source={"/api/module/flight-plans/table-export"} />
           }
 
           {!is_authorized_to_read &&

@@ -16,12 +16,6 @@ class LogsForServiceOrderFlightPlanResource extends JsonResource
         $this->formatedData = [];
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         $index_counter = 0;

@@ -1,12 +1,9 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, Typography, IconButton, Grid, TextField, Button, Paper, Stack, Divider, Box } from '@mui/material';
 import styled from '@emotion/styled';
 import { useSnackbar } from 'notistack';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { DeactivateAccountModal } from './modal/DeactivateAccount';
 import { useAuth } from '../../../../context/Auth';
 import axios from '../../../../services/AxiosApi';
@@ -64,7 +61,7 @@ export function AdditionalConfiguration() {
 
         try {
 
-            const response = await axios.patch(`api/myprofile/change-password/${user.id}`, formData);
+            const response = await axios.patch(`api/module/my-profile/change-password/${user.id}`, formData);
             enqueueSnackbar(response.data.message, { variant: "success" });
 
             setFormData(initialFormData);

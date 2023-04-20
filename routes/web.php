@@ -27,7 +27,7 @@ use App\Http\Controllers\Modules\Report\{
 use App\Http\Controllers\Modules\FlightPlan\{
     FlightPlanModuleController,
     FlightPlanModuleLogController,
-    Actions\UploadedLogsController,
+    Actions\UploadedLogsProcessingController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
     Actions\DownloadLogController
@@ -35,7 +35,9 @@ use App\Http\Controllers\Modules\FlightPlan\{
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
     Actions\FlightPlansForServiceOrderController,
-    Actions\EquipmentsForServiceOrderFlightPlanController, // For equipments table
+    Actions\DronesForServiceOrderFlightPlanController,
+    Actions\BatteriesForServiceOrderFlightPlanController,
+    Actions\EquipmentsForServiceOrderFlightPlanController,
     Actions\LogsForServiceOrderFlightPlanController,
     Actions\ServiceOrderIncidentController
 };
@@ -82,57 +84,69 @@ Route::group(["prefix" => "api"], function () {
         Route::get('/user-data', UserAuthenticatedData::class);
         Route::post('/logout', LogoutController::class);
         // Module core operations
-        Route::get('/dashboard-data', DashboardController::class);
-        Route::apiResource("/module/administration-user", AdministrationModuleUsersController::class);
-        Route::apiResource("/module/administration-profile", AdministrationModuleProfilesController::class);
-        Route::apiResource("/module/reports", ReportModuleController::class);
-        Route::apiResource("/module/flight-plans", FlightPlanModuleController::class);
-        Route::apiResource("/module/flight-plans-logs", FlightPlanModuleLogController::class);
-        Route::apiResource("/module/service-orders", ServiceOrderModuleController::class);
-        Route::apiResource("/module/equipments-drone", EquipmentModuleDroneController::class);
-        Route::apiResource("/module/equipments-battery", EquipmentModuleBatteryController::class);
-        Route::apiResource("/module/equipments", EquipmentModuleEquipmentController::class);
-        // Module export CSV 
-        Route::post("/users/export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
-        Route::post("/profiles/export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
-        Route::post("/flight-plans/export", [FlightPlanModuleController::class, "exportTableAsCsv"]);
-        Route::post("/logs/export", [FlightPlanModuleLogController::class, "exportTableAsCsv"]);
-        Route::post("/service-orders/export", [ServiceOrderModuleController::class, "exportTableAsCsv"]);
-        Route::post("/reports/export", [ReportModuleController::class, "exportTableAsCsv"]);
-        Route::post("/drones/export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
-        Route::post("/batteries/export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
-        Route::post("/equipments/export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
-        Route::get("/log/download/{filename}", DownloadLogController::class);
-        // Module Actions
-        Route::get("/action/service-order/flight-plans", FlightPlansForServiceOrderController::class);
-        Route::get("/action/service-order/logs", LogsForServiceOrderFlightPlanController::class);
-        Route::apiResource("/action/service-order/incidents", ServiceOrderIncidentController::class);
-        Route::get("/action/report/service-orders", LoadServiceOrderForReport::class);
-        Route::post("/action/flight-plans-logs/processing-uploads", UploadedLogsController::class);
-        Route::get("/action/report/weather-data", WeatherDataController::class);
-        Route::get("/action/service-orders/{flight_plan_id}", LoadServiceOrderByFlightPlanController::class);
-        Route::get("/action/flight-plans/download", DownloadFlightPlanController::class);
-        Route::get("/action/flight-plans/download-csv", DownloadFlightPlanCSVController::class);
-        Route::get("/action/reports/download/{filename}", DownloadReportController::class);
-        // Generic Actions
-        Route::get('/action/load-drones', LoadDronesController::class);
-        Route::get('/action/load-batteries', LoadBatteriesController::class);
-        Route::get('/action/load-equipments', LoadEquipmentsController::class);
-        Route::get("/action/load-users", LoadUsersController::class);
-        Route::get("/action/load-profiles", LoadProfilesController::class);
-        Route::get("/action/load-flight-plans", LoadFlightPlansController::class);
-        Route::get("/action/load-service-orders", LoadServiceOrdersController::class);
-        Route::get("/action/load-incidents", LoadIncidentsController::class);
-        Route::get("/action/load-reports", LoadReportsController::class);
-        Route::get("/action/load-logs", LoadLogsController::class);
-        // Module "MyProfile" operations
-        Route::get("/myprofile/basic-data", [MyProfileController::class, "loadBasicData"]);
-        Route::patch("/myprofile/basic-data", [MyProfileController::class, "basicDataUpdate"]);
-        Route::get("/myprofile/documents", [MyProfileController::class, "loadDocuments"]);
-        Route::patch("/myprofile/documents", [MyProfileController::class, "documentsUpdate"]);
-        Route::get("/myprofile/address", [MyProfileController::class, "loadAddress"]);
-        Route::patch("/myprofile/address", [MyProfileController::class, "addressUpdate"]);
-        Route::delete("/myprofile/deactivation/{user_id}", [MyProfileController::class, "accountDeactivation"]);
-        Route::patch("/myprofile/change-password/{user_id}", [MyProfileController::class, "passwordUpdate"]);
+        Route::group(["prefix" => "/module"], function () {
+            Route::get("/dashboard", DashboardController::class);
+            Route::apiResource("/administration-user", AdministrationModuleUsersController::class);
+            Route::apiResource("/administration-profile", AdministrationModuleProfilesController::class);
+            Route::apiResource("/reports", ReportModuleController::class);
+            Route::apiResource("/flight-plans", FlightPlanModuleController::class);
+            Route::apiResource("/flight-plans-logs", FlightPlanModuleLogController::class);
+            Route::apiResource("/service-orders", ServiceOrderModuleController::class);
+            Route::apiResource("/equipments-drone", EquipmentModuleDroneController::class);
+            Route::apiResource("/equipments-battery", EquipmentModuleBatteryController::class);
+            Route::apiResource("/equipments", EquipmentModuleEquipmentController::class);
+            // Module "MyProfile" - refact to resource controller
+            Route::get("/my-profile/basic-data", [MyProfileController::class, "loadBasicData"]);
+            Route::patch("/my-profile/basic-data", [MyProfileController::class, "basicDataUpdate"]);
+            Route::get("/my-profile/documents", [MyProfileController::class, "loadDocuments"]);
+            Route::patch("/my-profile/documents", [MyProfileController::class, "documentsUpdate"]);
+            Route::get("/my-profile/address", [MyProfileController::class, "loadAddress"]);
+            Route::patch("/my-profile/address", [MyProfileController::class, "addressUpdate"]);
+            Route::delete("/my-profile/deactivation/{user_id}", [MyProfileController::class, "accountDeactivation"]);
+            Route::patch("/my-profile/change-password/{user_id}", [MyProfileController::class, "passwordUpdate"]);
+            // Export tables as xlsx
+            Route::post("/administration-user/table-export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
+            Route::post("/administration-profile/table-export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
+            Route::post("/flight-plans/table-export", [FlightPlanModuleController::class, "exportTableAsCsv"]);
+            Route::post("/flight-plans-logs/table-export", [FlightPlanModuleLogController::class, "exportTableAsCsv"]);
+            Route::post("/service-orders/table-export", [ServiceOrderModuleController::class, "exportTableAsCsv"]);
+            Route::post("/reports/table-export", [ReportModuleController::class, "exportTableAsCsv"]);
+            Route::post("/equipments-drone/table-export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
+            Route::post("/equipments-battery/table-export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
+            Route::post("/equipments/table-export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
+            // Modules actions
+            Route::group(["prefix" => "/action"], function () {
+                // Flight plans actions
+                Route::get("/flight-plans/download", DownloadFlightPlanController::class);
+                Route::get("/flight-plans/download-csv", DownloadFlightPlanCSVController::class);
+                // Logs actions
+                Route::post("/flight-plans-logs/upload-processing", UploadedLogsProcessingController::class);
+                Route::get("/flight-plans-logs/download/{filename}", DownloadLogController::class);
+                // Service order actions
+                Route::get("/service-orders/flight-plans", FlightPlansForServiceOrderController::class);
+                Route::get("/service-orders/logs", LogsForServiceOrderFlightPlanController::class);
+                Route::apiResource("/service-orders/incidents", ServiceOrderIncidentController::class);
+                Route::get("/service-orders/drones", DronesForServiceOrderFlightPlanController::class);
+                Route::get("/service-orders/batteries", BatteriesForServiceOrderFlightPlanController::class);
+                Route::get("/service-orders/equipments", EquipmentsForServiceOrderFlightPlanController::class);
+                // Reports actions
+                Route::get("/report/service-orders", LoadServiceOrderForReport::class);
+                Route::get("/report/weather-data", WeatherDataController::class);
+                Route::get("/reports/download/{filename}", DownloadReportController::class);
+            });
+        });
+        // Generic actions
+        Route::group(["prefix" => "/action"], function () {
+            Route::get('/load-drones', LoadDronesController::class);
+            Route::get('/load-batteries', LoadBatteriesController::class);
+            Route::get('/load-equipments', LoadEquipmentsController::class);
+            Route::get("/load-users", LoadUsersController::class);
+            Route::get("/load-profiles", LoadProfilesController::class);
+            Route::get("/load-flight-plans", LoadFlightPlansController::class);
+            Route::get("/load-service-orders", LoadServiceOrdersController::class);
+            Route::get("/load-incidents", LoadIncidentsController::class);
+            Route::get("/load-reports", LoadReportsController::class);
+            Route::get("/load-logs", LoadLogsController::class);
+        });
     });
 });

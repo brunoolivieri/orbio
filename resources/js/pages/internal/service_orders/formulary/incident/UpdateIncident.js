@@ -1,12 +1,8 @@
 import * as React from 'react';
-// MUI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider } from '@mui/material';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Others
 import moment from 'moment';
-// Custom
 import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import { DatePicker } from '../../../../../components/date_picker/DatePicker';
@@ -21,8 +17,9 @@ export const UpdateIncident = React.memo((props) => {
 
   const [formData, setFormData] = React.useState({ id: props.record.id, type: props.record.type, description: props.record.description, date: props.record.date });
   const [formError, setFormError] = React.useState(initialFormError);
-  const [displayAlert, setDisplayAlert] = React.useState(initialAlert);
+  const [alert, setAlert] = React.useState(initialAlert);
   const [loading, setLoading] = React.useState(false);
+  const [canSave, setCanSave] = React.useState(true);
   const [open, setOpen] = React.useState(false);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
@@ -32,15 +29,19 @@ export const UpdateIncident = React.memo((props) => {
   }
 
   function handleClose() {
-    setOpen(false);
     setLoading(false);
     setFormError(initialFormError);
-    setDisplayAlert(initialAlert);
+    setAlert(initialAlert);
+    setCanSave(true);
+    setOpen(false);
   }
 
   function handleSubmit() {
-    if (!formSubmissionValidation()) return ''
+    if (!formSubmissionValidation()) {
+      return;
+    }
     setLoading(true);
+    setCanSave(false);
     requestServer();
 
   }
@@ -59,7 +60,6 @@ export const UpdateIncident = React.memo((props) => {
   }
 
   async function requestServer() {
-
     try {
 
       const response = await axios.patch(`api/action/service-order/incidents/${formData.id}`, {
@@ -71,15 +71,16 @@ export const UpdateIncident = React.memo((props) => {
       successResponse(response);
 
     } catch (error) {
+      console.log(error);
+      setCanSave(true);
       errorResponse(error.response);
     } finally {
       setLoading(false);
     }
-
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
       handleClose();
@@ -88,7 +89,7 @@ export const UpdateIncident = React.memo((props) => {
 
   function errorResponse(response) {
     if (response.status === 422) {
-      setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+      setAlert({ display: true, type: "error", message: "Dados inválidos!" });
       let response_errors = Object.assign({}, initialFormError);
       for (let field in response.data.errors) {
         response_errors[field] = {
@@ -98,7 +99,7 @@ export const UpdateIncident = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: response.data.message });
+      setAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 
@@ -176,8 +177,8 @@ export const UpdateIncident = React.memo((props) => {
 
         </DialogContent>
 
-        {(!loading && displayAlert.display) &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {(!loading && alert.display) &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}
@@ -185,7 +186,7 @@ export const UpdateIncident = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+          <Button disabled={!canSave} variant="contained" onClick={handleSubmit}>Confirmar</Button>
         </DialogActions>
       </Dialog >
     </>

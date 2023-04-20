@@ -1,5 +1,4 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
@@ -12,7 +11,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-// Custom
+import moment from 'moment';
 import { CreateLog } from './formulary/CreateLog';
 import { UpdateLog } from './formulary/UpdateLog';
 import { DeleteLog } from './formulary/DeleteLog';
@@ -21,7 +20,6 @@ import { useAuth } from '../../../../context/Auth';
 import { ExportTableData } from '../../../../components/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
 import axios from '../../../../services/AxiosApi';
-import moment from 'moment';
 
 const columns = [
     { field: 'id', headerName: 'ID', width: 90 },
@@ -104,11 +102,11 @@ const columns = [
             const { enqueueSnackbar } = useSnackbar();
 
             function handleDownloadLog(filename) {
-                axios.get(`api/log/download/${filename}`, null, {
+                axios.get(`api/module/action/flight-plans-logs/download/${filename}`, null, {
                     responseType: 'blob'
                 })
                     .then(function (response) {
-                        enqueueSnackbar(`Download realizado com sucesso! Arquivo: ${filename}`, { variant: "success" });
+                        enqueueSnackbar("O log foi exportado com sucesso!", { variant: "success" });
 
                         // Download forçado do arquivo com o conteúdo retornado do servidor
                         const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -121,7 +119,7 @@ const columns = [
                     })
                     .catch((error) => {
                         console.log(error)
-                        enqueueSnackbar(`O download não foi realizado! Arquivo: ${filename}`, { variant: "error" });
+                        enqueueSnackbar("A exportação do log falhou!", { variant: "error" });
                     })
             }
 
@@ -268,7 +266,7 @@ export function Logs() {
 
                 <Grid item>
                     {is_authorized_to_read &&
-                        <ExportTableData type="LOGS" source={"/api/logs/export"} />
+                        <ExportTableData type="LOGS" source={"/api/module/flight-plans-logs/table-export"} />
                     }
 
                     {!is_authorized_to_read &&

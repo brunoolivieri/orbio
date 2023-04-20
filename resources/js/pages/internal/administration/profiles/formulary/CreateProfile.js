@@ -1,11 +1,8 @@
 import *  as React from 'react';
-// Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
-// Custom
 import { useAuth } from '../../../../../context/Auth';
 import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 
@@ -21,8 +18,9 @@ export const CreateProfile = React.memo((props) => {
   const [formData, setFormData] = React.useState(initialFormData);
   const [formError, setFormError] = React.useState(initialFormError);
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [alert, setAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
+  const [canSave, setCanSave] = React.useState(true);
 
   const is_authorized = user.user_powers["1"].profile_powers.write;
 
@@ -54,8 +52,9 @@ export const CreateProfile = React.memo((props) => {
   function handleClose() {
     setFormData(initialFormData);
     setFormError(initialFormError);
-    setDisplayAlert(initialDisplayAlert);
+    setAlert(initialDisplayAlert);
     setLoading(false);
+    setCanSave(true);
     setOpen(false);
   }
 
@@ -63,8 +62,8 @@ export const CreateProfile = React.memo((props) => {
     if (!formSubmissionValidation()) {
       return;
     }
-
     setLoading(true);
+    setCanSave(false);
     requestServer();
   }
 
@@ -87,7 +86,8 @@ export const CreateProfile = React.memo((props) => {
       });
       successResponse(response);
     } catch (error) {
-      console.log(error)
+      console.log(error);
+      setCanSave(true);
       errorResponse(error.response);
     } finally {
       setLoading(false);
@@ -95,7 +95,7 @@ export const CreateProfile = React.memo((props) => {
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
       setLoading(false);
@@ -105,7 +105,7 @@ export const CreateProfile = React.memo((props) => {
 
   function errorResponse(response) {
     if (response.status === 422) {
-      setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+      setAlert({ display: true, type: "error", message: "Dados inválidos!" });
       let response_errors = Object.assign({}, initialFormError);
       for (let field in response.data.errors) {
         response_errors[field] = {
@@ -115,7 +115,7 @@ export const CreateProfile = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: response.data.message });
+      setAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 
@@ -219,8 +219,8 @@ export const CreateProfile = React.memo((props) => {
 
         </DialogContent>
 
-        {(!loading && displayAlert.display) &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {(!loading && alert.display) &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}
@@ -228,7 +228,7 @@ export const CreateProfile = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button type="submit" disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+          <Button type="submit" disabled={!canSave} variant="contained" onClick={handleSubmit}>Confirmar</Button>
         </DialogActions>
 
       </Dialog>

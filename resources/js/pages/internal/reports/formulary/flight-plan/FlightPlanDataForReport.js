@@ -1,5 +1,4 @@
 import * as React from 'react';
-// Mui
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -12,9 +11,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import SearchIcon from '@mui/icons-material/Search';
 import SettingsIcon from '@mui/icons-material/Settings';
-// Lib
 import moment from 'moment';
-// Custom
 import { DatePicker } from '../../../../../components/date_picker/DatePicker';
 import axios from '../../../../../services/AxiosApi';
 
@@ -50,7 +47,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
     const [formData, setFormData] = React.useState(props.current.data);
     const [fieldError, setFieldError] = React.useState(initialFieldError);
     const [fieldErrorMessage, setFieldErrorMessage] = React.useState(initialFieldErrorMessage);
-    const [displayAlert, setDisplayAlert] = React.useState({ display: false, type: "", message: "" });
+    const [alert, setAlert] = React.useState({ display: false, type: "", message: "" });
     const [weatherLoading, setWeatherLoading] = React.useState(false);
 
     // ============================================================================== FUNCTIONS ============================================================================== //
@@ -60,7 +57,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
     }
 
     const handleClose = () => {
-        setDisplayAlert({ display: false, type: "", message: "" });
+        setAlert({ display: false, type: "", message: "" });
         setOpen(false);
     }
 
@@ -117,7 +114,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
         setWeatherLoading(true);
         const state = formData.state;
         const city = formData.city;
-        axios.get(`api/action/report/weather-data?state=${state}&city=${city}`)
+        axios.get(`api/module/action/report/weather-data?state=${state}&city=${city}`)
             .then((response) => {
                 setWeatherLoading(false);
                 const temperature = response.data.temperature;
@@ -321,8 +318,8 @@ export const FlightPlanDataForReport = React.memo((props) => {
 
                 </DialogContent>
 
-                {displayAlert.display &&
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                {alert.display &&
+                    <Alert severity={alert.type}>{alert.message}</Alert>
                 }
 
                 <DialogActions>

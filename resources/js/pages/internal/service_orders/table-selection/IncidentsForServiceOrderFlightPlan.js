@@ -1,19 +1,15 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import ReportIcon from '@mui/icons-material/Report';
 import CloseIcon from '@mui/icons-material/Close';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Other
 import moment from 'moment';
-// Custom
 import { CreateIncident } from "../formulary/incident/CreateIncident";
 import { UpdateIncident } from '../formulary/incident/UpdateIncident';
 import { DeleteIncident } from '../formulary/incident/DeleteIncident';
@@ -92,7 +88,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
     }
 
     function fetchRecords() {
-        axios.get(`api/action/service-order/incidents?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/module/action/service-orders/incidents?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);

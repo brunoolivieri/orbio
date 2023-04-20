@@ -1,10 +1,7 @@
 import * as React from 'react';
-// MUI
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
-// Custom
 import axios from '../../../../../services/AxiosApi';
 
 const initialDisplayAlert = { display: false, type: "", message: "" };
@@ -15,8 +12,9 @@ export const DeleteIncident = React.memo((props) => {
 
   const [selectedIds, setSelectedIds] = React.useState([]);
   const [open, setOpen] = React.useState(false);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [alert, setAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
+  const [canSave, setCanSave] = React.useState(true);
 
   // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -27,18 +25,19 @@ export const DeleteIncident = React.memo((props) => {
   }
 
   function handleClose() {
-    setDisplayAlert(initialDisplayAlert);
+    setAlert(initialDisplayAlert);
     setLoading(false);
+    setCanSave(true);
     setOpen(false);
   }
 
   function handleSubmit() {
-    setLoading(false);
+    setLoading(true);
+    setCanSave(false);
     requestServer();
   }
 
   async function requestServer() {
-
     try {
 
       const response = await axios.delete("api/action/service-order/incidents/delete", {
@@ -50,6 +49,8 @@ export const DeleteIncident = React.memo((props) => {
       successResponse(response);
 
     } catch (error) {
+      console.log(error);
+      setCanSave(true);
       errorResponse(error.response);
     } finally {
       setLoading(false);
@@ -58,7 +59,7 @@ export const DeleteIncident = React.memo((props) => {
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
       setLoading(false);
@@ -67,7 +68,7 @@ export const DeleteIncident = React.memo((props) => {
   }
 
   function errorResponse(response) {
-    setDisplayAlert({ display: true, type: "error", message: response.data.message });
+    setAlert({ display: true, type: "error", message: response.data.message });
   }
 
   // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -98,8 +99,8 @@ export const DeleteIncident = React.memo((props) => {
 
         </DialogContent>
 
-        {displayAlert.display &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {alert.display &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}
@@ -107,7 +108,7 @@ export const DeleteIncident = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+          <Button disabled={!canSave} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
         </DialogActions>
 
       </Dialog>

@@ -18,12 +18,6 @@ class ServiceOrdersPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         foreach ($this->data as $row => $service_order) {
@@ -35,6 +29,7 @@ class ServiceOrdersPanelResource extends JsonResource
                 "end_date" => date("Y-m-d", strtotime($service_order->end_date)),
                 "status" => $service_order->status,
                 "finished" => !is_null($service_order->report),
+                "report_filename" => $service_order->report->file ?? null,
                 "flight_plans" => [],
                 "total_incidents" => 0,
                 "total_logs" => 0,

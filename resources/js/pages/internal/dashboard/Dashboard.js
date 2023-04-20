@@ -1,5 +1,4 @@
 import React from 'react';
-// Material UI
 import { Grid, Card, Typography, LinearProgress, Box } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import GroupIcon from '@mui/icons-material/Group';
@@ -7,7 +6,6 @@ import MapIcon from '@mui/icons-material/Map';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-// Custom
 import axios from '../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext';
 import { VerticalLinesChart } from '../../../components/charts/VerticalLinesChart';
@@ -71,7 +69,7 @@ export const Dashboard = React.memo(() => {
     }, []);
 
     function fetchData() {
-        axios.get("/api/dashboard-data")
+        axios.get("/api/module/dashboard")
             .then((response) => {
                 setUsers(response.data.users);
                 setProfiles(response.data.profiles);

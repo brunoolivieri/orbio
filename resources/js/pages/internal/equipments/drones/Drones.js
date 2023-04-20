@@ -235,7 +235,7 @@ export function Drones() {
 
                 <Grid item>
                     {is_authorized_to_read &&
-                        <ExportTableData type="DRONES" source={"/api/drones/export"} />
+                        <ExportTableData type="DRONES" source={"/api/module/equipments-drone/table-export"} />
                     }
 
                     {!is_authorized_to_read &&

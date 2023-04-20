@@ -1,16 +1,12 @@
 import * as React from 'react';
-// Mui
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 import BatteryChargingFullIcon from '@mui/icons-material/BatteryChargingFull';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Other
 import moment from 'moment';
-// Custom
 import axios from '../../../../services/AxiosApi';
 import { ModalImage } from '../../../../components/modals/dialog/ModalImage';
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
@@ -119,7 +115,7 @@ export const BatteriesForFlightPlan = React.memo((props) => {
     async function fetchRecords() {
         try {
 
-            const response = await axios.get(`api/module/equipments-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
+            const response = await axios.get(`api/module/action/equipments-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);

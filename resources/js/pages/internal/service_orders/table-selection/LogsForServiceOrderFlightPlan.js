@@ -1,14 +1,11 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { ModalImage } from '../../../../components/modals/dialog/ModalImage';
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
 import axios from '../../../../services/AxiosApi';
@@ -78,7 +75,7 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
     }
 
     function fetchRecords() {
-        axios.get(`api/action/service-order/logs?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/module/action/service-orders/logs?service_order_id=${props.serviceOrderId}&flight_plan_id=${props.current.id}&limit=${perPage}&search=${search}&page=${currentPage}`)
             .then((response) => {
                 setRecords(response.data.records);
                 setTotalRecords(response.data.total_records);

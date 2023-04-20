@@ -23,8 +23,8 @@ class CreateFlightPlansTable extends Migration
             $table->string("city");
             $table->text("description")->nullable();
             $table->string("type");
-            $table->string("image_path")->unique();
-            $table->string("csv_path")->unique();
+            $table->string("image_path");
+            $table->string("csv_path");
             $table->timestamps();
             $table->softDeletes();
         });

@@ -1,15 +1,12 @@
 import * as React from 'react';
-// Mui
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
-// Libs
 import { Page, Text, View, Document, StyleSheet, PDFViewer, Image, pdf } from '@react-pdf/renderer';
 import moment from 'moment/moment';
-// Assets
 import BirdviewLogo from "../../../../assets/images/Logos/Birdview.png";
 
 // Create styles

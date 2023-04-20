@@ -1,5 +1,4 @@
 import * as React from 'react';
-// Material UI
 import InputAdornment from '@mui/material/InputAdornment';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -11,10 +10,8 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import axios from '../../../../../services/AxiosApi'
 
 const initialFormData = {}
@@ -42,7 +39,7 @@ export function DocumentsFormulary() {
 
     React.useEffect(() => {
 
-        axios.get("api/myprofile/documents")
+        axios.get("api/module/my-profile/documents")
             .then(function (response) {
                 setFormData(response.data);
                 setFormError(() => {
@@ -94,7 +91,7 @@ export function DocumentsFormulary() {
     }
 
     function requestServer() {
-        axios.patch("api/myprofile/documents", formData)
+        axios.patch("api/module/my-profile/documents", formData)
             .then(function (response) {
                 enqueueSnackbar(response.data.message, { variant: "success" });
             })

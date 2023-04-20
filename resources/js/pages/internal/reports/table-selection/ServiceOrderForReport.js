@@ -1,5 +1,4 @@
 import * as React from 'react';
-// Mui
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
@@ -11,11 +10,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import DialogContent from '@mui/material/DialogContent';
 import { useSnackbar } from 'notistack';
-// Fontsawesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import axios from '../../../../services/AxiosApi';
 
 const columns = [
@@ -148,7 +145,7 @@ export const ServiceOrderForReport = React.memo((props) => {
 
     function fetchRecords() {
 
-        axios.get(`api/action/report/service-orders?limit=${perPage}&search=${search}&page=${currentPage}`)
+        axios.get(`api/module/action/reports/service-orders?limit=${perPage}&search=${search}&page=${currentPage}`)
             .then(function (response) {
 
                 setRecords(response.data.records);
@@ -267,8 +264,8 @@ export const ServiceOrderForReport = React.memo((props) => {
 
     return (
         <>
-            <Button variant="contained" onClick={handleOpen} color={selectedRecordID.length > 0 ? "success" : "primary"}>
-                {selectedRecordID ? "Ordem de serviço selecionada" : "Selecionar ordem de serviço"}
+            <Button variant="contained" onClick={handleOpen} color="primary">
+                Selecionar ordem de serviço
             </Button>
             <Dialog
                 fullScreen

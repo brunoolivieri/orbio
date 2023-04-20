@@ -1,5 +1,4 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
@@ -11,9 +10,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Others
 import moment from 'moment';
-// Custom
 import { CreateUser } from './formulary/CreateUser';
 import { UpdateUser } from './formulary/UpdateUser';
 import { DeleteUser } from './formulary/DeleteUser';
@@ -223,7 +220,7 @@ export function Users() {
 
         <Grid item>
           {is_authorized_to_read &&
-            <ExportTableData type="USUÁRIOS" source={"/api/users/export"} />
+            <ExportTableData type="USUÁRIOS" source={"/api/module/administration-user/table-export"} />
           }
 
           {!is_authorized_to_read &&

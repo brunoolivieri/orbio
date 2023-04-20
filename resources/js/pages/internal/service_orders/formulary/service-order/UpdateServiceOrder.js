@@ -1,15 +1,9 @@
 import * as React from 'react';
-// MUI
 import { Button, Stack, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, TextField, List, ListItem, ListItemText, ListSubheader, Avatar, ListItemAvatar, Grid, Divider, DialogContentText, Checkbox, FormControlLabel } from '@mui/material';
 import MapIcon from '@mui/icons-material/Map';
-import LockIcon from '@mui/icons-material/Lock';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Others
 import moment from 'moment';
-// Custom
 import { FlightPlansForServiceOrder } from '../../table-selection/FlightPlansForServiceOrder';
 import { LogsForServiceOrderFlightPlan } from '../../table-selection/LogsForServiceOrderFlightPlan';
 import { DronesForFlightPlan } from '../../table-selection/DronesForFlightPlan';
@@ -33,7 +27,7 @@ export const UpdateServiceOrder = React.memo((props) => {
   const { user } = useAuth();
   const [formData, setFormData] = React.useState({});
   const [formError, setFormError] = React.useState(initialFormError);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [alert, setAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectedFlightPlans, setSelectedFlightPlans] = React.useState([]);
@@ -100,7 +94,7 @@ export const UpdateServiceOrder = React.memo((props) => {
 
   function handleClose() {
     setFormError(initialFormError);
-    setDisplayAlert(initialDisplayAlert);
+    setAlert(initialDisplayAlert);
     setLoading(false);
     setOpen(false);
   }
@@ -130,6 +124,8 @@ export const UpdateServiceOrder = React.memo((props) => {
   async function requestServer() {
 
     try {
+      setCanSave(false);
+
       const response = await axios.patch(`api/module/service-orders/${formData.id}`, {
         start_date: moment(formData.start_date).format('YYYY-MM-DD hh:mm:ss'),
         end_date: moment(formData.end_date).format('YYYY-MM-DD hh:mm:ss'),
@@ -143,6 +139,8 @@ export const UpdateServiceOrder = React.memo((props) => {
       });
       successResponse(response);
     } catch (error) {
+      console.log(error);
+      setCanSave(true);
       errorResponse(error.response);
     } finally {
       setLoading(false);
@@ -150,7 +148,7 @@ export const UpdateServiceOrder = React.memo((props) => {
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
       setLoading(false);
@@ -160,7 +158,7 @@ export const UpdateServiceOrder = React.memo((props) => {
 
   function errorResponse(response) {
     if (response.status === 422) {
-      setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+      setAlert({ display: true, type: "error", message: "Dados inválidos!" });
       let response_errors = Object.assign({}, initialFormError);
       for (let field in response.data.errors) {
         response_errors[field] = {
@@ -170,7 +168,7 @@ export const UpdateServiceOrder = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: response.data.message });
+      setAlert({ display: true, type: "error", message: response.data.message });
     }
   }
 
@@ -374,21 +372,11 @@ export const UpdateServiceOrder = React.memo((props) => {
               }
             </Grid>
 
-            {/*
-            <Grid item xs={6}>
-              <StatusRadio
-                default={formData.status.toString()}
-                setFormData={setFormData}
-                formData={formData}
-              />
-            </Grid>
-            */}
-
           </Grid>
         </DialogContent>
 
-        {(!loading && displayAlert.display) &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {(!loading && alert.display) &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}
@@ -396,17 +384,9 @@ export const UpdateServiceOrder = React.memo((props) => {
         <Divider />
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          {canSave &&
-            <Button variant="contained" startIcon={<LockOpenIcon />} onClick={handleSubmit} disabled={loading}>
-              Confirmar
-            </Button >
-          }
-
-          {!canSave &&
-            <Button variant="contained" startIcon={<LockIcon />} disabled>
-              Salvar
-            </Button >
-          }
+          <Button variant="contained" onClick={handleSubmit} disabled={!canSave}>
+            Confirmar
+          </Button >
         </DialogActions>
       </Dialog>
     </>

@@ -1,10 +1,7 @@
 import * as React from 'react';
-// Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider } from '@mui/material';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
-// Custom
 import axios from '../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
 
@@ -17,8 +14,9 @@ export const DeleteDrone = React.memo((props) => {
     const { user } = useAuth();
     const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+    const [alert, setAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
+    const [canSave, setCanSave] = React.useState(true);
 
     const is_authorized = !!user.user_powers["5"].profile_powers.write;
 
@@ -31,13 +29,15 @@ export const DeleteDrone = React.memo((props) => {
     }
 
     function handleClose() {
-        setDisplayAlert(initialDisplayAlert);
+        setAlert(initialDisplayAlert);
         setLoading(false);
+        setCanSave(true);
         setOpen(false);
     }
 
     function handleSubmit() {
         setLoading(true);
+        setCanSave(false);
         requestServer();
     }
 
@@ -50,6 +50,8 @@ export const DeleteDrone = React.memo((props) => {
             });
             successResponse(response);
         } catch (error) {
+            console.log(error);
+            setCanSave(true);
             errorResponse(error.response);
         } finally {
             setLoading(false);
@@ -57,7 +59,7 @@ export const DeleteDrone = React.memo((props) => {
     }
 
     function successResponse(response) {
-        setDisplayAlert({ display: true, type: "success", message: response.data.message });
+        setAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
             handleClose();
@@ -65,7 +67,7 @@ export const DeleteDrone = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        setDisplayAlert({ display: true, type: "error", message: response.data.message });
+        setAlert({ display: true, type: "error", message: response.data.message });
     }
 
     // ============================================================================== STRUCTURES - MUI ============================================================================== //
@@ -94,8 +96,8 @@ export const DeleteDrone = React.memo((props) => {
                     </DialogContentText>
                 </DialogContent>
 
-                {displayAlert.display &&
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                {alert.display &&
+                    <Alert severity={alert.type}>{alert.message}</Alert>
                 }
 
                 {loading && <LinearProgress />}
@@ -103,7 +105,7 @@ export const DeleteDrone = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+                    <Button disabled={!canSave} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
                 </DialogActions>
             </Dialog>
         </>

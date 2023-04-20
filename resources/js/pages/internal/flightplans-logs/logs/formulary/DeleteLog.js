@@ -1,10 +1,7 @@
 import * as React from 'react';
-// Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, DialogContentText } from '@mui/material';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
-// Custom
 import { useAuth } from '../../../../../context/Auth';
 import axios from '../../../../../services/AxiosApi';
 
@@ -17,8 +14,9 @@ export const DeleteLog = React.memo((props) => {
     const { user } = useAuth();
     const [selectedIds, setSelectedIds] = React.useState([]);
     const [open, setOpen] = React.useState(false);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplatAlert);
+    const [alert, setAlert] = React.useState(initialDisplatAlert);
     const [loading, setLoading] = React.useState(false);
+    const [canSave, setCanSave] = React.useState(true);
 
     const is_authorized = !!user.user_powers["2"].profile_powers.write;
 
@@ -31,12 +29,14 @@ export const DeleteLog = React.memo((props) => {
     }
 
     function handleClose() {
-        setDisplayAlert({ display: false, type: "", message: "" });
+        setAlert({ display: false, type: "", message: "" });
+        setCanSave(true);
         setOpen(false);
     }
 
     async function handleSubmit() {
         try {
+            setCanSave(false);
             const response = await axios.delete("api/module/flight-plans-logs/delete", {
                 data: {
                     ids: selectedIds
@@ -44,6 +44,8 @@ export const DeleteLog = React.memo((props) => {
             });
             successResponse(response);
         } catch (error) {
+            console.log(error);
+            setCanSave(true);
             errorResponse(error.response);
         } finally {
             setLoading(false);
@@ -51,7 +53,7 @@ export const DeleteLog = React.memo((props) => {
     }
 
     function successResponse(response) {
-        setDisplayAlert({ display: true, type: "success", message: response.data.message });
+        setAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
             handleClose();
@@ -59,7 +61,7 @@ export const DeleteLog = React.memo((props) => {
     }
 
     function errorResponse(response) {
-        setDisplayAlert({ display: true, type: "error", message: response.data.message });
+        setAlert({ display: true, type: "error", message: response.data.message });
     }
 
     // ============================================================================== JSX ============================================================================== //
@@ -88,8 +90,8 @@ export const DeleteLog = React.memo((props) => {
                     </DialogContentText>
                 </DialogContent>
 
-                {displayAlert.display &&
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                {alert.display &&
+                    <Alert severity={alert.type}>{alert.message}</Alert>
                 }
 
                 {loading && <LinearProgress />}
@@ -97,7 +99,7 @@ export const DeleteLog = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button type="submit" disabled={loading} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
+                    <Button type="submit" disabled={!canSave} variant="contained" color="error" onClick={handleSubmit}>Confirmar</Button>
                 </DialogActions>
             </Dialog>
         </>

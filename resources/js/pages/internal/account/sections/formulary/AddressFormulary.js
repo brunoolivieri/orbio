@@ -1,13 +1,10 @@
 import * as React from 'react';
-// Material UI
 import InputAdornment from '@mui/material/InputAdornment';
 import { Tooltip, IconButton, Grid, TextField, Box, Typography, Paper, Button } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { FormValidation } from '../../../../../utils/FormValidation';
 import axios from '../../../../../services/AxiosApi'
 import { FetchedStatesSelection } from '../input/FetchedStatesSelection';
@@ -42,7 +39,7 @@ export function AddressFormulary() {
 
     React.useEffect(() => {
 
-        axios.get("api/myprofile/address")
+        axios.get("api/module/my-profile/address")
             .then(function (response) {
                 console.log(response)
                 setFormData(response.data);
@@ -82,7 +79,7 @@ export function AddressFormulary() {
     }
 
     function requestServer() {
-        axios.patch("api/myprofile/address", formData)
+        axios.patch("api/module/my-profile/address", formData)
             .then(function (response) {
                 enqueueSnackbar(response.data.message, { variant: "success" });
             })

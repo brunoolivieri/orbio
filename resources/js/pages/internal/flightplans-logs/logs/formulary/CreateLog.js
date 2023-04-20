@@ -1,12 +1,9 @@
 import * as React from 'react';
-// Material UI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, DialogContentText, Alert, Stack, LinearProgress, List, ListItem, ListItemText, ListSubheader, Divider } from '@mui/material';
 import DangerousIcon from '@mui/icons-material/Dangerous';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { LogImageGeneration } from '../modal/LogImageGeneration';
 import { LogImageVisualization } from '../modal/LogImageVisualization';
 import { useAuth } from '../../../../../context/Auth';
@@ -125,7 +122,7 @@ export const CreateLog = React.memo((props) => {
 
         try {
 
-            const response = await axios.post("api/action/flight-plans-logs/processing-uploads", formData);
+            const response = await axios.post("api/module/action/flight-plans-logs/upload-processing", formData);
             setLogs(response.data);
 
         } catch (e) {

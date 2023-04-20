@@ -1,10 +1,7 @@
 import * as React from 'react';
-// MUI
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Grid, Divider, DialogContentText, Checkbox, FormControlLabel } from '@mui/material';
-// Fonts awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { useAuth } from '../../../../../context/Auth';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import axios from '../../../../../services/AxiosApi';
@@ -26,7 +23,7 @@ export const UpdateReport = React.memo((props) => {
   const [open, setOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({ id: props.record.id, name: props.record.name, observation: props.record.observation, undelete: false });
   const [formError, setFormError] = React.useState(initialFormError);
-  const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+  const [alert, setAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
 
   const is_authorized = !!user.user_powers["4"].profile_powers.write;
@@ -39,7 +36,7 @@ export const UpdateReport = React.memo((props) => {
 
   function handleClose() {
     setFormError(initialFormError);
-    setDisplayAlert({ display: false, type: "", message: "" });
+    setAlert({ display: false, type: "", message: "" });
     setOpen(false);
     setLoading(false);
   }
@@ -79,7 +76,7 @@ export const UpdateReport = React.memo((props) => {
   }
 
   function successResponse(response) {
-    setDisplayAlert({ display: true, type: "success", message: response.data.message });
+    setAlert({ display: true, type: "success", message: response.data.message });
     setTimeout(() => {
       props.reloadTable((old) => !old);
       handleClose();
@@ -88,7 +85,7 @@ export const UpdateReport = React.memo((props) => {
 
   function errorResponse(response) {
     if (response.status === 422) {
-      setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+      setAlert({ display: true, type: "error", message: "Dados inválidos!" });
       let response_errors = Object.assign({}, initialFormError);
       for (let field in response.data.errors) {
         response_errors[field] = {
@@ -98,7 +95,7 @@ export const UpdateReport = React.memo((props) => {
       }
       setFormError(response_errors);
     } else {
-      setDisplayAlert({ display: true, type: "error", message: "Erro do servidor!" });
+      setAlert({ display: true, type: "error", message: "Erro do servidor!" });
     }
   }
 
@@ -171,8 +168,8 @@ export const UpdateReport = React.memo((props) => {
 
         </DialogContent>
 
-        {displayAlert.display &&
-          <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+        {alert.display &&
+          <Alert severity={alert.type}>{alert.message}</Alert>
         }
 
         {loading && <LinearProgress />}

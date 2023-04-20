@@ -1,5 +1,4 @@
 import * as React from 'react';
-// Mui
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
@@ -12,9 +11,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Other
 import moment from 'moment';
-// Custom
 import { CreateServiceOrder } from './Formulary/service-order/CreateServiceOrder';
 import { UpdateServiceOrder } from './Formulary/service-order/UpdateServiceOrder';
 import { DeleteServiceOrder } from './Formulary/service-order/DeleteServiceOrder';
@@ -34,7 +31,6 @@ const columns = [
         sortable: true,
         editable: false,
         renderCell: (data) => {
-
             function chipStyle(badge) {
                 return { label: badge.label, color: badge.color, variant: "outlined" };
             }
@@ -44,7 +40,6 @@ const columns = [
             return (
                 <Chip {...chip_style} />
             )
-
         }
     },
     {
@@ -62,7 +57,6 @@ const columns = [
         flex: 1,
         minWidth: 200,
         renderCell: (data) => {
-
             function chipStyle(is_deleted, status) {
                 const label = data.row.users.creator.name;
                 if (is_deleted === 1) {
@@ -77,7 +71,6 @@ const columns = [
             return (
                 <Chip {...chip_style} />
             )
-
         }
     },
     {
@@ -88,7 +81,6 @@ const columns = [
         flex: 1,
         minWidth: 200,
         renderCell: (data) => {
-
             function chipStyle(status) {
                 const label = data.row.users.pilot.name;
                 return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" };
@@ -99,7 +91,6 @@ const columns = [
             return (
                 <Chip {...chip_style} />
             )
-
         }
     },
     {
@@ -110,7 +101,6 @@ const columns = [
         flex: 1,
         minWidth: 200,
         renderCell: (data) => {
-
             function chipStyle(status) {
                 const label = data.row.users.client.name;
                 return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" };
@@ -121,7 +111,6 @@ const columns = [
             return (
                 <Chip {...chip_style} />
             )
-
         }
     },
     {
@@ -151,18 +140,45 @@ const columns = [
         editable: false,
         width: 150,
         renderCell: (data) => {
-
-            function iconStyle(is_finished) {
-                return is_finished ? { icon: faFileArrowDown, color: "#007937", size: "sm" } : { icon: faFileArrowDown, color: "#E0E0E0", size: "sm" }
+            const { enqueueSnackbar } = useSnackbar();
+            function handleDownloadReport(report_filename) {
+                axios.get("api/action/reports/download/" + report_filename,
+                    {
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        responseType: 'blob'
+                    })
+                    .then(function (response) {
+                        enqueueSnackbar("O relatório foi exportado com sucesso!", { variant: "success" });
+                        const url = window.URL.createObjectURL(new Blob([response.data]));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', `${report_filename}`);
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                        enqueueSnackbar("A exportação do relatório falhou!", { variant: "error" });
+                    });
             }
 
-            const icon_style = iconStyle(data.row.finished);
-
-            return (
-                <IconButton>
-                    <FontAwesomeIcon {...icon_style} />
-                </IconButton>
-            )
+            if (data.row.finished) {
+                return (
+                    <Tooltip title="Download">
+                        <IconButton onClick={() => handleDownloadReport(data.row.report_filename)}>
+                            <FontAwesomeIcon icon={faFileArrowDown} size="sm" color="#007937" />
+                        </IconButton>
+                    </Tooltip>
+                )
+            } else {
+                return (
+                    <IconButton>
+                        <FontAwesomeIcon icon={faFileArrowDown} size="sm" color="#E0E0E0" />
+                    </IconButton>
+                )
+            }
         }
     },
     {
@@ -304,7 +320,7 @@ export function ServiceOrders() {
 
                 <Grid item>
                     {is_authorized_to_read &&
-                        <ExportTableData type="ORDENS DE SERVIÇO" source={"/api/service-orders/export"} />
+                        <ExportTableData type="ORDENS DE SERVIÇO" source={"/api/module/service-orders/table-export"} />
                     }
 
                     {!is_authorized_to_read &&

@@ -82,12 +82,10 @@ const columns = [
     editable: false,
     minWidth: 150,
     renderCell: (data) => {
-
       const { enqueueSnackbar } = useSnackbar();
 
       function handleDownloadReport(report) {
-
-        axios.get(`api/action/reports/download/${report.file}`,
+        axios.get("api/module/action/reports/download/" + report.file,
           {
             headers: {
               'Content-type': 'application/json'
@@ -95,21 +93,18 @@ const columns = [
             responseType: 'blob'
           })
           .then(function (response) {
-            enqueueSnackbar(`Sucesso! O download do relatório foi bem sucedido! Arquivo: ${report.file}`, { variant: "success" });
-
+            enqueueSnackbar("O relatório foi exportado com sucesso!", { variant: "success" });
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', `${report.file}`); //or any other extension
             document.body.appendChild(link);
             link.click();
-
           })
           .catch(function (error) {
             console.log(error)
-            enqueueSnackbar(`Erro! O download do relatório falhou! Arquivo: ${report.file}`, { variant: "error" });
+            enqueueSnackbar("A exportação do relatório falhou!", { variant: "error" });
           });
-
       }
 
       return (
@@ -256,7 +251,7 @@ export function Reports() {
 
         <Grid item>
           {user.user_powers["4"].profile_powers.read == 1 &&
-            <ExportTableData type="RELATÓRIOS" source={"/api/reports/export"} />
+            <ExportTableData type="RELATÓRIOS" source={"/api/module/reports/table-export"} />
           }
 
           {!user.user_powers["4"].profile_powers.read == 1 &&

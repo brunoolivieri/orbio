@@ -1,5 +1,4 @@
 import * as React from 'react';
-// MUI
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
@@ -11,7 +10,6 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Custom
 import { CreateBattery } from './formulary/CreateBattery';
 import { UpdateBattery } from './formulary/UpdateBattery';
 import { DeleteBattery } from './formulary/DeleteBattery';
@@ -234,7 +232,7 @@ export function Batteries() {
 
                 <Grid item>
                     {is_authorized_to_read &&
-                        <ExportTableData type="BATERIAS" source={"/api/batteries/export"} />
+                        <ExportTableData type="BATERIAS" source={"/api/module/equipments-battery/table-export"} />
                     }
 
                     {!is_authorized_to_read &&

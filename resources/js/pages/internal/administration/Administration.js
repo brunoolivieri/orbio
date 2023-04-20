@@ -1,8 +1,5 @@
-// React
 import * as React from 'react';
-// Material UI
 import { Box } from "@mui/system";
-// Custom
 import { Users } from './users/Users';
 import { Profiles } from './profiles/Profiles';
 import { Switcher } from "../../../components/switcher/Switcher";

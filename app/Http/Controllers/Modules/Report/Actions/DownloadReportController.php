@@ -19,7 +19,7 @@ class DownloadReportController extends Controller
             $filename = request()->filename;
 
             if (!Storage::disk("public")->exists("reports/$filename")) {
-                throw new \Exception("Erro! O relatório não foi encontrado", 404);
+                throw new \Exception("Erro! O relatório não foi encontrado.", 404);
             }
 
             $file_contents = Storage::disk("public")->get("reports/$filename");

@@ -1,5 +1,4 @@
 import * as React from "react";
-// MUI
 import { Tooltip, IconButton, Grid, TextField, Box, InputAdornment, FormGroup, Chip, FormControlLabel, Checkbox } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
@@ -11,9 +10,7 @@ import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-// Others
 import moment from 'moment';
-// Custom
 import { CreateProfile } from "./formulary/CreateProfile";
 import { UpdateProfile } from "./formulary/UpdateProfile";
 import { DeleteProfile } from "./formulary/DeleteProfile";
@@ -282,7 +279,7 @@ export function Profiles() {
 
         <Grid item>
           {is_authorized_to_read == 1 &&
-            <ExportTableData type="PERFIS" source={"/api/profiles/export"} />
+            <ExportTableData type="PERFIS" source={"/api/module/administration-profile/table-export"} />
           }
 
           {!is_authorized_to_read == 1 &&

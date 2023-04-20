@@ -22,7 +22,7 @@ class FlightPlanService implements ServiceInterface
     function createOne(array $data)
     {
         if (is_null($data["route_files"]) || is_null($data["imageDataURL"])) {
-            return response(["message" => "Erro! O plano de voo não pode ser criado."], 500);
+            throw new \Exception("Erro! O plano de voo não pode ser criado.", 400);
         }
 
         // Path foldername as timestamp

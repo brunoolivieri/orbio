@@ -1,16 +1,12 @@
 import * as React from 'react';
-// Material UI
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Box, Alert, LinearProgress, styled, Grid, Divider, Stack } from '@mui/material';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-// Fonts Awesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-// Custom
 import { DatePicker } from '../../../../../components/date_picker/DatePicker';
 import { FormValidation } from '../../../../../utils/FormValidation';
 import axios from '../../../../../services/AxiosApi';
 import { useAuth } from '../../../../../context/Auth';
-// Moment
 import moment from 'moment';
 
 const Input = styled('input')({
@@ -29,8 +25,9 @@ export const CreateEquipment = React.memo((props) => {
     const { user } = useAuth();
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
-    const [displayAlert, setDisplayAlert] = React.useState(initialDisplayAlert);
+    const [alert, setAlert] = React.useState(initialDisplayAlert);
     const [loading, setLoading] = React.useState(false);
+    const [canSave, setCanSave] = React.useState(true);
     const [open, setOpen] = React.useState(false);
     const [image, setImage] = React.useState(null);
     const htmlImage = React.useRef();
@@ -45,15 +42,18 @@ export const CreateEquipment = React.memo((props) => {
 
     function handleClose() {
         setFormError(initialFormError);
-        setDisplayAlert(initialDisplayAlert);
-        setOpen(false);
+        setAlert(initialDisplayAlert);
         setLoading(false);
+        setCanSave(true);
+        setOpen(false);
     }
 
     function handleSubmit() {
-        if (!formSubmissionValidation()) return '';
-
+        if (!formSubmissionValidation()) {
+            return;
+        }
         setLoading(true);
+        setCanSave(false);
         requestServer();
     }
 
@@ -93,6 +93,8 @@ export const CreateEquipment = React.memo((props) => {
             const response = await axios.post("api/module/equipments", formData_);
             successResponse(response);
         } catch (error) {
+            console.log(error);
+            setCanSave(true);
             errorResponse(error.response);
         } finally {
             setLoading(false);
@@ -101,7 +103,7 @@ export const CreateEquipment = React.memo((props) => {
     }
 
     function successResponse(response) {
-        setDisplayAlert({ display: true, type: "success", message: response.data.message });
+        setAlert({ display: true, type: "success", message: response.data.message });
         setTimeout(() => {
             props.reloadTable((old) => !old);
             handleClose();
@@ -110,7 +112,7 @@ export const CreateEquipment = React.memo((props) => {
 
     function errorResponse(response) {
         if (response.status === 422) {
-            setDisplayAlert({ display: true, type: "error", message: "Dados inválidos!" });
+            setAlert({ display: true, type: "error", message: "Dados inválidos!" });
             let response_errors = Object.assign({}, initialFormError);
             for (let field in response.data.errors) {
                 response_errors[field] = {
@@ -120,18 +122,18 @@ export const CreateEquipment = React.memo((props) => {
             }
             setFormError(response_errors);
         } else {
-            setDisplayAlert({ display: true, type: "error", message: response.data.message });
+            setAlert({ display: true, type: "error", message: response.data.message });
         }
     }
 
     function handleUploadedImage(event) {
         const file = event.currentTarget.files[0];
         if (file && file.type.startsWith('image/')) {
-            setDisplayAlert(initialDisplayAlert);
+            setAlert(initialDisplayAlert);
             htmlImage.current.src = URL.createObjectURL(file);
             setImage(event.target.files[0]);
         } else {
-            setDisplayAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
+            setAlert({ display: true, type: "error", message: "Formato de arquivo inválido." });
         }
     }
 
@@ -294,8 +296,8 @@ export const CreateEquipment = React.memo((props) => {
 
                 </DialogContent>
 
-                {(!loading && displayAlert.display) &&
-                    <Alert severity={displayAlert.type}>{displayAlert.message}</Alert>
+                {(!loading && alert.display) &&
+                    <Alert severity={alert.type}>{alert.message}</Alert>
                 }
 
                 {loading && <LinearProgress />}
@@ -303,7 +305,7 @@ export const CreateEquipment = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
-                    <Button disabled={loading} variant="contained" onClick={handleSubmit}>Confirmar</Button>
+                    <Button disabled={!canSave} variant="contained" onClick={handleSubmit}>Confirmar</Button>
                 </DialogActions>
 
             </Dialog>
