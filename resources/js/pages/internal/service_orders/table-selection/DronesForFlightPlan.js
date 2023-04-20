@@ -119,7 +119,7 @@ export const DronesForFlightPlan = React.memo((props) => {
     async function fetchRecords() {
         try {
 
-            const response = await axios.get(`api/module/action/equipments-drone?limit=${perPage}&search=${search}&page=${currentPage}`);
+            const response = await axios.get(`api/module/action/service-orders/drones?limit=${perPage}&search=${search}&page=${currentPage}`);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);

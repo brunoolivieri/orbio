@@ -114,7 +114,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
         setWeatherLoading(true);
         const state = formData.state;
         const city = formData.city;
-        axios.get(`api/module/action/report/weather-data?state=${state}&city=${city}`)
+        axios.get(`api/module/action/reports/weather-data?state=${state}&city=${city}`)
             .then((response) => {
                 setWeatherLoading(false);
                 const temperature = response.data.temperature;

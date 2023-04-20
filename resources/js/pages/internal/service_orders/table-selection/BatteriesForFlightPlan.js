@@ -115,7 +115,7 @@ export const BatteriesForFlightPlan = React.memo((props) => {
     async function fetchRecords() {
         try {
 
-            const response = await axios.get(`api/module/action/equipments-battery?limit=${perPage}&search=${search}&page=${currentPage}`);
+            const response = await axios.get(`api/module/action/service-orders/batteries?limit=${perPage}&search=${search}&page=${currentPage}`);
 
             setRecords(response.data.records);
             setTotalRecords(response.data.total_records);

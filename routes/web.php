@@ -130,8 +130,8 @@ Route::group(["prefix" => "api"], function () {
                 Route::get("/service-orders/batteries", BatteriesForServiceOrderFlightPlanController::class);
                 Route::get("/service-orders/equipments", EquipmentsForServiceOrderFlightPlanController::class);
                 // Reports actions
-                Route::get("/report/service-orders", LoadServiceOrderForReport::class);
-                Route::get("/report/weather-data", WeatherDataController::class);
+                Route::get("/reports/service-orders", LoadServiceOrderForReport::class);
+                Route::get("/reports/weather-data", WeatherDataController::class);
                 Route::get("/reports/download/{filename}", DownloadReportController::class);
             });
         });
