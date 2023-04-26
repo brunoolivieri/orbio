@@ -86,7 +86,7 @@ export const CreateReport = (props) => {
       successResponse(response);
 
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
       errorResponse(error.response);
     } finally {
       setLoading(false);

@@ -43,13 +43,11 @@ export function Login() {
         if (!formSubmissionValidation()) {
             return;
         }
-
         setLoading(true);
         requestServer();
     }
 
     function formSubmissionValidation() {
-
         let validation = Object.assign({}, initialFormError);
         let is_valid = true;
         for (let field in formData) {
@@ -62,10 +60,8 @@ export function Login() {
                 is_valid = false;
             }
         }
-
         setFormError(validation);
         return is_valid;
-
     }
 
     async function requestServer() {
@@ -73,7 +69,7 @@ export function Login() {
             await login(formData);
             navigate("/dashboard", { replace: true });
         } catch (error) {
-            console.log(error.response);
+            console.log(error.message);
             enqueueSnackbar(error.response.data.message, { variant: "error" });
             setLoading(false);
         }

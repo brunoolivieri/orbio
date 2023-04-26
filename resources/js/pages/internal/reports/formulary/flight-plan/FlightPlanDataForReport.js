@@ -123,7 +123,7 @@ export const FlightPlanDataForReport = React.memo((props) => {
                 setFormData({ ...formData, ['temperature']: temperature, ['humidity']: humidity, ['wind']: wind });
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error.message);
                 setWeatherLoading(false);
             });
     }

@@ -96,7 +96,7 @@ export function DocumentsFormulary() {
                 enqueueSnackbar(response.data.message, { variant: "success" });
             })
             .catch(function (error) {
-                console.log(error)
+                console.log(error.message)
                 errorResponse(error.response);
             })
             .finally(() => {

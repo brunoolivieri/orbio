@@ -118,7 +118,7 @@ const columns = [
 
                     })
                     .catch((error) => {
-                        console.log(error)
+                        console.log(error.message)
                         enqueueSnackbar("A exportação do log falhou!", { variant: "error" });
                     })
             }

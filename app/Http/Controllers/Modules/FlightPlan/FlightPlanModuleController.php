@@ -55,7 +55,7 @@ class FlightPlanModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-            
+
             $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "csvFile", "coordinates", "timestamp", "type"]));
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
@@ -67,8 +67,8 @@ class FlightPlanModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-
-            $this->service->updateOne($request->only(["name", "description", "undelete"]), $id);
+            
+            $this->service->updateOne($request->all(), $id);
             return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());

@@ -106,7 +106,7 @@ export const UpdateEquipment = React.memo((props) => {
             const response = await axios.post(`api/module/equipments/${formData.id}`, formData_);
             successResponse(response);
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
             setCanSave(true);
             errorResponse(error.response);
         } finally {

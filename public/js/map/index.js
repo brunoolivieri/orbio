@@ -68,113 +68,116 @@ map.on('draw.update', updateArea);
 map.on('click', selectInitialPosition);
 map.on('touchstart', selectInitialPosition);
 
-// Abrir plano por query string
+// === "ABRIR" UM ARQUIVO .KML NA INICIALIZAÇÃO E CARREGAR A SUA POSIÇÃO NO MAPA === //
 window.onload = () => {
 
     const params = new Proxy(new URLSearchParams(window.location.search), {
         get: (searchParams, prop) => searchParams.get(prop),
     });
 
-    if (!params.file) {
-        return '';
+    if (params.modify && params.op && params.flightplan) {
+
+        axios.get(`${window.location.origin}/api/module/action/flight-plans/download-to-map/${params.flightplan}`)
+            .then((response) => {
+
+                cleanLayers();
+                cleanPolygon();
+
+                const flight_plan_type = response.data.type;
+                const flight_plan_files = response.data.files;
+
+                //console.log(response.data)
+
+                for (let filename in flight_plan_files) {
+
+                    // Conteúdo completo do arquivo
+                    var contents = flight_plan_files[filename];
+
+                    // Quebrando as linhas do arquivo em um array
+                    var lines = contents.split("\n");
+
+                    // Acessando a posição inicial (home) contida no arquivo
+                    var txtHome = lines[1].split("\t");
+                    home = [Number(txtHome[9]), Number(txtHome[8])];
+
+                    // Acessando a velocidade contida no arquivo e preenchendo o campo no form
+                    var txtSpeed = lines[3].split("\t");
+                    document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
+                    document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
+
+                    // Acessando a altitude contida no arquivo e preenchendo o campo no form
+                    var txtAltitude = lines[2].split("\t");
+                    document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
+                    document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
+
+                    // Array que armazenará todos os waypoints da rota do arquivo
+                    txtPath = [];
+                    index = 0;
+
+                    // Quebrando todas as linhas nos espaços \t
+                    for (i = 4; i < lines.length - 2; i++) {
+                        line = lines[i].split("\t");
+
+                        // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
+                        // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
+                        // adicionados ao desenho da rota
+                        if (Number(line[3]) == 16) {
+                            // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+                            txtPath[index] = [Number(line[9]), Number(line[8])];
+                            index++
+                        }
+                    }
+
+                    // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
+                    txtArea = [];
+                    index = 0;
+
+                    // Quebrando a última linha para acessar as coordenadas do polígono
+                    txtPolygon = lines[lines.length - 1].split("\t");
+
+                    // Acessando todas as coordenadas
+                    for (i = 1; i < txtPolygon.length - 1; i++) {
+                        txtLatLong = txtPolygon[i].split(",");
+                        txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
+                        index++;
+                    }
+
+                    // Acessando o centroide da área para posicionar no mapa
+                    var polygon = turf.polygon([txtArea]);
+                    var centroid = turf.coordAll(turf.centroid(polygon));
+
+                    // Direcionando o mapa
+                    map.flyTo({
+                        center: [
+                            centroid[0][0], centroid[0][1]
+                        ],
+                        essential: true
+                    });
+
+                    // Desenhando a rota e calculando sua distância
+                    drawTxtPath(txtPath);
+                    calculateTxtDistance(txtPath);
+
+                    // Desenhando o polígono e calculando sua área
+                    drawTxtArea(txtArea);
+                    calculateTxtArea();
+
+                }
+
+                /*
+                reader.onload = function (e) {
+                };
+                reader.readAsText(file);
+                */
+
+            })
+            .catch((error) => {
+                console.log(error.message);
+                displayErrorAlert(error.message);
+            });
     }
 
-    axios.get(`${window.location.origin}/api/plans-module-download/${params.file}`)
-        .then((response) => {
-
-            // Limpando layers, campos e polígono
-            cleanLayers();
-            cleanPolygon();
-
-            var file = e.target.files[0];
-            var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-            if (!file || extension !== 'txt') { return; }
-
-            var reader = new FileReader();
-
-            reader.onload = function (e) {
-
-                // Conteúdo completo do arquivo
-                var contents = e.target.result;
-
-                // Quebrando as linhas do arquivo em um array
-                var lines = contents.split("\n");
-
-                // Acessando a posição inicial (home) contida no arquivo
-                var txtHome = lines[1].split("\t");
-                home = [Number(txtHome[9]), Number(txtHome[8])];
-
-                // Acessando a velocidade contida no arquivo e preenchendo o campo no form
-                var txtSpeed = lines[3].split("\t");
-                document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
-                document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
-
-                // Acessando a altitude contida no arquivo e preenchendo o campo no form
-                var txtAltitude = lines[2].split("\t");
-                document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
-                document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
-
-                // Array que armazenará todos os waypoints da rota do arquivo
-                txtPath = [];
-                index = 0;
-
-                // Quebrando todas as linhas nos espaços \t
-                for (i = 4; i < lines.length - 2; i++) {
-                    line = lines[i].split("\t");
-
-                    // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
-                    // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
-                    // adicionados ao desenho da rota
-                    if (Number(line[3]) == 16) {
-                        // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
-                        txtPath[index] = [Number(line[9]), Number(line[8])];
-                        index++
-                    }
-                }
-
-                // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
-                txtArea = [];
-                index = 0;
-
-                // Quebrando a última linha para acessar as coordenadas do polígono
-                txtPolygon = lines[lines.length - 1].split("\t");
-
-                // Acessando todas as coordenadas
-                for (i = 1; i < txtPolygon.length - 1; i++) {
-                    txtLatLong = txtPolygon[i].split(",");
-                    txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
-                    index++;
-                }
-
-                // Acessando o centroide da área para posicionar no mapa
-                var polygon = turf.polygon([txtArea]);
-                var centroid = turf.coordAll(turf.centroid(polygon));
-
-                // Direcionando o mapa
-                map.flyTo({
-                    center: [
-                        centroid[0][0], centroid[0][1]
-                    ],
-                    essential: true
-                });
-
-                // Desenhando a rota e calculando sua distância
-                drawTxtPath(txtPath);
-                calculateTxtDistance(txtPath);
-
-                // Desenhando o polígono e calculando sua área
-                drawTxtArea(txtArea);
-                calculateTxtArea();
-            };
-
-            reader.readAsText(file);
-
-        })
-        .catch((error) => {
-            console.log(error.response);
-        })
 }
-
 
 // ============================================================================================= PART 2: DRAWING ROUTE  ============================================================================================= //
 
@@ -2086,6 +2089,7 @@ btnCloseConfirmationModal.addEventListener("click", function () {
     modal.classList.add("hidden");
 });
 
+// ==== CONFIRMATION AND SAVE PATH REQUEST ==== //
 function savePathConfirmation(files, pathTimestamp) {
 
     const modal = document.getElementById("flight-plan-confirmation-modal");
@@ -2173,7 +2177,20 @@ function savePathConfirmation(files, pathTimestamp) {
             formData.append("timestamp", pathTimestamp);
             formData.append("type", files.length > 1 ? "multi" : "única");
 
-            axios.post(`${window.location.origin}/api/module/flight-plans`, formData, {
+            const params = new Proxy(new URLSearchParams(window.location.search), {
+                get: (searchParams, prop) => searchParams.get(prop),
+            });
+
+            let method = "POST";
+            let url = window.location.origin + "/api/module/flight-plans";
+
+            if (params.modify) {
+                method = "PATCH";
+                url += "/" + params.flightplan;
+                formData.append('_method', 'PATCH');
+            }
+
+            axios.post(url, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

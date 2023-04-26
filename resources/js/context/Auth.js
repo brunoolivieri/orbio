@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
             const response = await axios.get("api/user-data");
             setUser(response.data);
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
             throw error;
         }
     }
@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
         try {
             await axios.post("api/login", formData);
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
             throw error;
         }
     }
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
         try {
             await axios.post("api/logout");
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
             throw error;
         }
     }

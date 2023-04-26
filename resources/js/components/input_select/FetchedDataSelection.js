@@ -16,7 +16,7 @@ export const FetchedDataSelection = React.memo((props) => {
                 setOptions(response.data);
             })
             .catch(function (error) {
-                console.log(error)
+                console.log(error.message)
                 setOptions([]);
             })
             .finally(() => {

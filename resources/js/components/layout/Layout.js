@@ -29,7 +29,7 @@ export const Layout = ({ children }) => {
         await verifyAuthentication();
         setLoading(false);
       } catch (error) {
-        console.log(error)
+        console.log(error.message)
         await logout();
         enqueueSnackbar(error.response.data.message, { variant: "error" });
       }

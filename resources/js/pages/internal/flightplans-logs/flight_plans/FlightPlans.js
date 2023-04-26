@@ -118,7 +118,7 @@ const columns = [
 
             for (let filename in files) {
               // Adiciona o conteúdo do arquivo ao zip
-              zip.file(filename, files[filename]);
+              zip.file(`${filename}.txt`, files[filename]);
             }
 
             // Cria o arquivo zip e baixa-o
@@ -133,7 +133,7 @@ const columns = [
 
           })
           .catch((error) => {
-            console.log(error)
+            console.log(error.message)
             enqueueSnackbar("A exportação do plano de voo falhou!", { variant: "error" });
           });
 
@@ -175,7 +175,7 @@ const columns = [
 
           })
           .catch((error) => {
-            console.log(error)
+            console.log(error.message)
             enqueueSnackbar("A exportação do plano de voo falhou!", { variant: "error" });
           });
       }

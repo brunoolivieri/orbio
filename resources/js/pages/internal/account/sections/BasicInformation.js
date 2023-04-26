@@ -37,7 +37,7 @@ export function BasicInformation() {
                 setFormData({ name: response.data.name, email: response.data.email, profile: response.data.profile, last_access: moment(response.data.last_access).format('DD/MM/YYYY hh:mm'), last_update: moment(response.data.last_update).format('DD/MM/YYYY hh:mm') });
             })
             .catch((error) => {
-                console.log(error);
+                console.log(error.message);
                 enqueueSnackbar(error.response.data.message, { variant: "error" });
             })
             .finally(() => {

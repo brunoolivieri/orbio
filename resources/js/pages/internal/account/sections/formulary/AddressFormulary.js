@@ -45,7 +45,7 @@ export function AddressFormulary() {
                 setFormData(response.data);
             })
             .catch(function (error) {
-                console.log(error)
+                console.log(error.message)
                 errorResponse(error.response);
             })
             .finally(() => {
@@ -84,7 +84,7 @@ export function AddressFormulary() {
                 enqueueSnackbar(response.data.message, { variant: "success" });
             })
             .catch(function (error) {
-                console.log(error)
+                console.log(error.message)
                 errorResponse(error.response);
             })
             .finally(() => {

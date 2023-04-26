@@ -79,7 +79,7 @@ export const Dashboard = React.memo(() => {
                 enqueueSnackbar("Métricas carregadas", { variant: "success" });
             })
             .catch((error) => {
-                console.log(error)
+                console.log(error.message)
                 enqueueSnackbar(error.response.data.message, { variant: "error" });
             })
             .finally(() => {
@@ -90,91 +90,87 @@ export const Dashboard = React.memo(() => {
     // =============================================================== JSX  =============================================================== //
 
     return (
-        <>
-            <div>
-                <Grid container {...GridContainerProps}>
-                    <Grid item xs={10} sm={5} md={4} lg={2} >
-                        <Card {...MiniCardProps}>
-                            <Box {...MiniCardTopProps}>
-                                <Typography variant="h6">
-                                    Usuários
-                                </Typography>
-                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <GroupIcon sx={{ mr: 1 }} /> {users ? users.total : 0}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && !users && <LinearProgress />}
-                                {!loading && users && <VerticalLinesChart data={users} />}
-                            </Box>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card {...MiniCardProps}>
-                            <Box {...MiniCardTopProps}>
-                                <Typography variant="h6">
-                                    Perfis
-                                </Typography>
-                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <AssignmentIndIcon sx={{ mr: 1 }} /> {profiles ? profiles.total : 0}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && !profiles && <LinearProgress />}
-                                {!loading && profiles && <VerticalLinesChart data={profiles} />}
-                            </Box>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card {...MiniCardProps}>
-                            <Box {...MiniCardTopProps}>
-                                <Typography variant="h6">
-                                    Planos de voo
-                                </Typography>
-                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <MapIcon sx={{ mr: 1 }} /> {flightPlans ? flightPlans.total : 0}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && !flightPlans && <LinearProgress />}
-                                {!loading && flightPlans && <VerticalLinesChart data={flightPlans} />}
-                            </Box>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card {...MiniCardProps}>
-                            <Box {...MiniCardTopProps}>
-                                <Typography variant="h6">
-                                    Ordens de serviço
-                                </Typography>
-                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <AssignmentIcon sx={{ mr: 1 }} /> {serviceOrders ? serviceOrders.total : 0}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && !serviceOrders && <LinearProgress />}
-                                {!loading && serviceOrders && <VerticalLinesChart data={serviceOrders} />}
-                            </Box>
-                        </Card>
-                    </Grid>
-                    <Grid item xs={10} sm={5} md={4} lg={2}>
-                        <Card {...MiniCardProps}>
-                            <Box {...MiniCardTopProps}>
-                                <Typography variant="h6">
-                                    Relatórios
-                                </Typography>
-                                <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
-                                    <AssessmentIcon sx={{ mr: 1 }} /> {reports ? reports.total : 0}
-                                </Typography>
-                            </Box>
-                            <Box sx={{ height: 110, width: '100%' }}>
-                                {loading && !reports && <LinearProgress />}
-                                {!loading && reports && <VerticalLinesChart data={reports} />}
-                            </Box>
-                        </Card>
-                    </Grid>
-                </Grid >
-            </div >
-        </>
+        <Grid container {...GridContainerProps}>
+            <Grid item xs={10} sm={5} md={4} lg={2} >
+                <Card {...MiniCardProps}>
+                    <Box {...MiniCardTopProps}>
+                        <Typography variant="h6">
+                            Usuários
+                        </Typography>
+                        <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                            <GroupIcon sx={{ mr: 1 }} /> {users ? users.total : 0}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ height: 110, width: '100%' }}>
+                        {loading && !users && <LinearProgress />}
+                        {!loading && users && <VerticalLinesChart data={users} />}
+                    </Box>
+                </Card>
+            </Grid>
+            <Grid item xs={10} sm={5} md={4} lg={2}>
+                <Card {...MiniCardProps}>
+                    <Box {...MiniCardTopProps}>
+                        <Typography variant="h6">
+                            Perfis
+                        </Typography>
+                        <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                            <AssignmentIndIcon sx={{ mr: 1 }} /> {profiles ? profiles.total : 0}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ height: 110, width: '100%' }}>
+                        {loading && !profiles && <LinearProgress />}
+                        {!loading && profiles && <VerticalLinesChart data={profiles} />}
+                    </Box>
+                </Card>
+            </Grid>
+            <Grid item xs={10} sm={5} md={4} lg={2}>
+                <Card {...MiniCardProps}>
+                    <Box {...MiniCardTopProps}>
+                        <Typography variant="h6">
+                            Planos de voo
+                        </Typography>
+                        <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                            <MapIcon sx={{ mr: 1 }} /> {flightPlans ? flightPlans.total : 0}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ height: 110, width: '100%' }}>
+                        {loading && !flightPlans && <LinearProgress />}
+                        {!loading && flightPlans && <VerticalLinesChart data={flightPlans} />}
+                    </Box>
+                </Card>
+            </Grid>
+            <Grid item xs={10} sm={5} md={4} lg={2}>
+                <Card {...MiniCardProps}>
+                    <Box {...MiniCardTopProps}>
+                        <Typography variant="h6">
+                            Ordens de serviço
+                        </Typography>
+                        <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                            <AssignmentIcon sx={{ mr: 1 }} /> {serviceOrders ? serviceOrders.total : 0}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ height: 110, width: '100%' }}>
+                        {loading && !serviceOrders && <LinearProgress />}
+                        {!loading && serviceOrders && <VerticalLinesChart data={serviceOrders} />}
+                    </Box>
+                </Card>
+            </Grid>
+            <Grid item xs={10} sm={5} md={4} lg={2}>
+                <Card {...MiniCardProps}>
+                    <Box {...MiniCardTopProps}>
+                        <Typography variant="h6">
+                            Relatórios
+                        </Typography>
+                        <Typography variant="p" color="green" sx={{ display: "flex", alignItems: 'center' }}>
+                            <AssessmentIcon sx={{ mr: 1 }} /> {reports ? reports.total : 0}
+                        </Typography>
+                    </Box>
+                    <Box sx={{ height: 110, width: '100%' }}>
+                        {loading && !reports && <LinearProgress />}
+                        {!loading && reports && <VerticalLinesChart data={reports} />}
+                    </Box>
+                </Card>
+            </Grid>
+        </Grid >
     )
 });

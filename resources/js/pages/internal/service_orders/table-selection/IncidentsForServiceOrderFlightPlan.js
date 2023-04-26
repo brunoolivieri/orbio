@@ -94,7 +94,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
                 setTotalRecords(response.data.total_records);
             })
             .catch(function (error) {
-                console.log(error)
+                console.log(error.message)
                 setRecords([]);
             })
             .finally(() => {

@@ -134,7 +134,7 @@ export function Users() {
       setTotalRecords(response.data.total_records);
       enqueueSnackbar(`Usuários encontrados: ${response.data.total_records}`, { variant: "success" });
     } catch (error) {
-      console.log(error)
+      console.log(error.message)
       enqueueSnackbar(error.response.data.message, { variant: "error" });
     } finally {
       setLoading(false);

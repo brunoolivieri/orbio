@@ -26,16 +26,16 @@ export function ForgotPassword() {
     const [formError, setFormError] = React.useState(initialFormError);
     const [codeSent, setCodeSent] = React.useState(false);
     const [timer, setTimer] = React.useState(0);
-    const [loading, setLoading] = React.useState({ send_code: false, change_password: false });
+    const [loading, setLoading] = React.useState({ sending_code: false, changing_password: false });
 
     // ============================================================================== ROUTINES ============================================================================== //
 
     function handleCodeSubmit() {
-        if (!codeSubmissionValidation()) {
+        if (!codeSubmissionValidation() && timer > 0) {
             return;
         }
 
-        setLoading({ send_code: true, change_password: false });
+        setLoading({ sending_code: true, changing_password: false });
         sendCodeServerRequest();
     }
 
@@ -44,7 +44,7 @@ export function ForgotPassword() {
             return;
         }
 
-        setLoading({ send_code: false, change_password: true });
+        setLoading({ sending_code: false, changing_password: true });
         changePasswordServerRequest();
     }
 
@@ -79,10 +79,10 @@ export function ForgotPassword() {
             setTimer(30);
             setCodeSent(true);
         } catch (error) {
-            console.log(error.response)
+            console.log(error.message)
             errorResponse(error.response);
         } finally {
-            setLoading({ send_code: false, change_password: false });
+            setLoading({ sending_code: false, changing_password: false });
         }
     }
 
@@ -98,10 +98,10 @@ export function ForgotPassword() {
                 window.location.replace("/login");
             }, 2000);
         } catch (error) {
-            console.log(error.response);
+            console.log(error.message)
             errorResponse(error.response);
         } finally {
-            setLoading({ send_code: false, change_password: false });
+            setLoading({ sending_code: false, changing_password: false });
         }
     }
 
@@ -123,13 +123,11 @@ export function ForgotPassword() {
         if (timer === 0) {
             return;
         }
-
         setTimeout(() => {
             if (is_mounted) {
                 setTimer((previously) => previously - 1);
             }
         }, 1000);
-
         return () => {
             is_mounted = false;
         }
@@ -174,7 +172,7 @@ export function ForgotPassword() {
                     </Grid>
 
                     <Grid item xs={12}>
-                        {!loading.send_code &&
+                        {!loading.sending_code &&
                             <Button
                                 type="submit"
                                 fullWidth
@@ -186,7 +184,7 @@ export function ForgotPassword() {
                                 {timer === 0 ? "Enviar código" : timer}
                             </Button>
                         }
-                        {loading.send_code &&
+                        {loading.sending_code &&
                             <LoadingButton
                                 loading
                                 loadingPosition="start"
@@ -255,10 +253,10 @@ export function ForgotPassword() {
                             fullWidth
                             variant="contained"
                             sx={{ borderRadius: 1 }}
-                            disabled={!codeSent || loading.change_password}
+                            disabled={!codeSent || loading.changing_password}
                             onClick={handleChangePasswordSubmit}
                         >
-                            {loading.change_password ? "Enviando..." : "Alterar a senha"}
+                            {loading.changing_password ? "Enviando..." : "Alterar a senha"}
                         </Button>
                     </Grid>
 

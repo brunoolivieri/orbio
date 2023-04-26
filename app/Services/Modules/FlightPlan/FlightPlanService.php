@@ -78,7 +78,70 @@ class FlightPlanService implements ServiceInterface
 
     function updateOne(array $data, string $identifier)
     {
-        $flight_plan = $this->repository->updateOne($data, $identifier);
+        $data_to_save = [];
+        
+        if (isset($data["route_files"]) && isset($data["imageDataURL"])) {
+
+            if (is_null($data["route_files"]) || is_null($data["imageDataURL"])) {
+                throw new \Exception("Erro! O plano não foi atualizado.", 409);
+            }
+
+            $data_to_save["is_file"] = true;
+
+            // Path foldername as timestamp
+            $pathTimestamp =  $data["timestamp"];
+
+            // Txt files
+            foreach ($data["route_files"] as $index => $route_file) {
+
+                $filename = $route_file->getClientOriginalName();
+                $contents = file_get_contents($route_file);
+                $path = "flight_plans/$pathTimestamp/$filename";
+
+                $data_to_save["routes_path"][$index] = $path;
+
+                $data_to_save["route_files"][$index] = [
+                    "contents" => $contents,
+                    "filename" => $filename,
+                    "path" => $path
+                ];
+            }
+
+            // Csv file
+            $csv_filename = $data["csvFile"]->getClientOriginalName();
+            $csv_contents = file_get_contents($data["csvFile"]);
+
+            $data_to_save["csv"] = [
+                "path" => "flight_plans/$pathTimestamp/csv/" . $csv_filename,
+                "filename" => $csv_filename,
+                "contents" => $csv_contents
+            ];
+
+            // Img file
+            $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);
+            $img = str_replace(' ', '+', $img);
+
+            $data_to_save["image"] = [
+                "path" => "flight_plans/$pathTimestamp/image/" . $data["imageFilename"],
+                "contents" => base64_decode($img)
+            ];
+
+            // Get location
+            $data_to_save["coordinates"] = $data["coordinates"][0];
+
+            // Fetch google API to get city and state of flight plan location
+            $address_components = Http::get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" . $data_to_save["coordinates"] . "&key=" . env("GOOGLE_GEOCODING_API_KEY"))["results"][0]["address_components"];
+
+            $data_to_save["city"] = $address_components[2]["long_name"];
+            $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
+            $data_to_save["type"] = $data["type"];
+
+        } else {
+            $data_to_save = $data;
+            $data_to_save["is_file"] = false;
+        }
+
+        $flight_plan = $this->repository->updateOne($data_to_save, $identifier);
     }
 
     function delete(array $ids)

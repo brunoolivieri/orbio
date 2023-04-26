@@ -66,15 +66,43 @@ class FlightPlanRepository implements RepositoryInterface
     {
         return DB::transaction(function () use ($data, $id) {
 
-            // Update flight plan itself
             $flight_plan = $this->flightPlanModel->withTrashed()->findOrFail($id);
-            $flight_plan->update([
-                "name" => $data["name"],
-                "description" => $data["description"]
-            ]);
 
-            if ($flight_plan->trashed() && $data["undelete"]) {
-                $flight_plan->restore();
+            if ($data["is_file"]) {
+
+                $actual_files = json_decode($flight_plan->files);
+                $folderPath = "flight_plans/" . explode("/", $actual_files[0])[1];
+
+                // Delete actual folder with all files
+                Storage::disk('public')->deleteDirectory($folderPath);
+
+                // Update record    
+                $flight_plan->update([
+                    "files" => json_encode($data["routes_path"]),
+                    "coordinates" => $data["coordinates"],
+                    "state" => $data["state"],
+                    "city" => $data["city"],
+                    "type" => $data["type"],
+                    "image_path" => $data["image"]["path"],
+                    "csv_path" => $data["csv"]["path"]
+                ]);
+
+                // Save new files
+                foreach ($data["route_files"] as $route_file) {
+                    Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
+                }
+                Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
+                Storage::disk('public')->put($data["csv"]["path"], $data["csv"]["contents"]);
+            } else {
+
+                $flight_plan->update([
+                    "name" => $data["name"],
+                    "description" => $data["description"]
+                ]);
+
+                if ($flight_plan->trashed() && $data["undelete"]) {
+                    $flight_plan->restore();
+                }
             }
 
             $flight_plan->refresh();

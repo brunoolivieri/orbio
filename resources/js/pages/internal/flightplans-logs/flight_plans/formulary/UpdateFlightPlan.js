@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Checkbox, FormControlLabel } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, TextField, Divider, Grid, Checkbox, FormControlLabel, Link } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../../../../../context/Auth';
@@ -11,6 +11,8 @@ const initialFormError = { name: fieldError, description: fieldError, service_or
 const initialDisplayAlert = { display: false, type: "", message: "" };
 
 export const UpdateFlightPlan = React.memo((props) => {
+
+  console.log(props.record)
 
   // ============================================================================== STATES ============================================================================== //
 
@@ -68,7 +70,7 @@ export const UpdateFlightPlan = React.memo((props) => {
       const response = await axios.patch(`api/module/flight-plans/${formData.id}`, formData);
       successResponse(response);
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       setCanSave(true);
       errorResponse(error.response);
     } finally {
@@ -155,6 +157,16 @@ export const UpdateFlightPlan = React.memo((props) => {
                 helperText={formError.description.message}
                 error={formError.description.error}
               />
+            </Grid>
+
+            <Grid item xs={12}>
+              {props.record.service_orders.active > 0 ?
+                <Button variant="contained" disabled>Alterar rota</Button>
+                :
+                <Link href={`${window.location.origin}/map?modify=true&op=update&flightplan=${formData.id}`} target="_blank">
+                  <Button variant="contained" disabled={props.record.service_orders.active > 0}>Alterar rota</Button>
+                </Link>
+              }
             </Grid>
 
             {props.record.deleted_at &&

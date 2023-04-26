@@ -30,7 +30,8 @@ use App\Http\Controllers\Modules\FlightPlan\{
     Actions\UploadedLogsProcessingController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
-    Actions\DownloadLogController
+    Actions\DownloadLogController,
+    Actions\DownloadFlightPlanFilesByID
 };
 use App\Http\Controllers\Modules\ServiceOrder\{
     ServiceOrderModuleController,
@@ -53,7 +54,6 @@ use App\Http\Controllers\Actions\{
     LoadReportsController,
     LoadUsersController,
     LoadServiceOrdersController,
-    LoadServiceOrderByFlightPlanController,
     LoadDronesController,
     LoadBatteriesController,
     LoadEquipmentsController,
@@ -119,6 +119,7 @@ Route::group(["prefix" => "api"], function () {
                 // Flight plans actions
                 Route::get("/flight-plans/download", DownloadFlightPlanController::class);
                 Route::get("/flight-plans/download-csv", DownloadFlightPlanCSVController::class);
+                Route::get("/flight-plans/download-to-map/{id}", DownloadFlightPlanFilesByID::class);
                 // Logs actions
                 Route::post("/flight-plans-logs/upload-processing", UploadedLogsProcessingController::class);
                 Route::get("/flight-plans-logs/download/{filename}", DownloadLogController::class);

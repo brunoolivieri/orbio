@@ -28,9 +28,9 @@ class FlightPlanUpdateRequest extends FormRequest
         $flight_plan_id_parameter = $this->route("flight_plan");
 
         return [
-            "name" => ["required", "unique:flight_plans,name,$flight_plan_id_parameter"],
-            "description" => ["required"],
-            "undelete" => ["required", "boolean"]
+            "name" => ["sometimes", "unique:flight_plans,name,$flight_plan_id_parameter"],
+            "description" => ["sometimes"],
+            "undelete" => ["sometimes", "boolean"]
         ];
     }
 
@@ -42,9 +42,7 @@ class FlightPlanUpdateRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => "O nome do plano de voo deve ser informado",
-            'name.unique' => "Já existe um plano de voo com esse nome",
-            'description.required' => "A descrição deve ser informada"
+            'name.unique' => "Já existe um plano de voo com esse nome"
         ];
     }
 }

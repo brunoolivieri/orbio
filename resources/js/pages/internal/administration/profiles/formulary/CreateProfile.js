@@ -86,7 +86,7 @@ export const CreateProfile = React.memo((props) => {
       });
       successResponse(response);
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       setCanSave(true);
       errorResponse(error.response);
     } finally {

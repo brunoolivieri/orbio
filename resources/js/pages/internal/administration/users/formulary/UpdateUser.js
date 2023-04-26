@@ -67,7 +67,7 @@ export const UpdateUser = React.memo((props) => {
       const response = await axios.patch(`api/module/administration-user/${formData.id}`, formData);
       successResponse(response);
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
       setCanSave(true);
       errorResponse(error.response);
     } finally {
