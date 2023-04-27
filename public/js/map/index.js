@@ -1119,11 +1119,11 @@ const btnSaveCSV = document.getElementById("btn-save-csv");
 btnSaveCSV.addEventListener("click", () => savePathCSV());
 
 // IMPORT TXT
-const txtInput = document.getElementById('file-input');
+const txtInput = document.getElementById("file-import-txt");
 txtInput.addEventListener('change', importTxtFile, false);
 
 // IMPORT KML
-const btnImport = document.getElementById("file-import");
+const btnImport = document.getElementById("file-import-kml");
 btnImport.addEventListener('change', importKMLPoint, false);
 
 // IMPORT POLY KML
@@ -1592,17 +1592,15 @@ function savePathAfterConfirmation(data) {
 
 function importTxtFile(e) {
 
+    // Limpando layers, campos e polígono
+    cleanLayers();
+    cleanPolygon();
+
     var file = e.target.files[0];
     var extension = e.target.files[0].name.split('.').pop().toLowerCase();
-    if (!file || extension !== 'txt') {
-        displayErrorAlert("Erro! A extensão do arquivo deve ser: txt");
-        return;
-    }
+    if (!file || extension !== 'txt') { return; }
 
     var reader = new FileReader();
-
-    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-    content = "latitude;longitude;altitude(m)\n";
 
     reader.onload = function (e) {
         // Conteúdo completo do arquivo
@@ -1611,25 +1609,74 @@ function importTxtFile(e) {
         // Quebrando as linhas do arquivo em um array
         var lines = contents.split("\n");
 
-        //console.log(lines.length);
+        // Acessando a posição inicial (home) contida no arquivo
+        var txtHome = lines[1].split("\t");
+        home = [Number(txtHome[9]), Number(txtHome[8])];
+
+        // Acessando a velocidade contida no arquivo e preenchendo o campo no form
+        var txtSpeed = lines[3].split("\t");
+        document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
+        document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
+
+        // Acessando a altitude contida no arquivo e preenchendo o campo no form
+        var txtAltitude = lines[2].split("\t");
+        document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
+        document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
+
+        // Array que armazenará todos os waypoints da rota do arquivo
+        txtPath = [];
+        index = 0;
+
         // Quebrando todas as linhas nos espaços \t
         for (i = 4; i < lines.length - 2; i++) {
             line = lines[i].split("\t");
+
             // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
             // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
             // adicionados ao desenho da rota
             if (Number(line[3]) == 16) {
-                // As posições de latitude, longitude e altitude estão nos índices 8, 9 e 10 de cada linha
-                content += line[8] + ";" + line[9] + ";" + line[10] + "\n";
+                // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+                txtPath[index] = [Number(line[9]), Number(line[8])];
+                index++
             }
-        }
-        //console.log(content);
-        var blob = new Blob([content],
-            { type: "text/plain;charset=utf-8" });
+            console.log(Number(line[3]));
 
-        // Nome do arquivo com data em milissegundos decorridos
-        fileName = new Date().getTime() + ".csv";
-        saveAs(blob, fileName);
+        }
+
+        // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
+        txtArea = [];
+        index = 0;
+
+        // Quebrando a última linha para acessar as coordenadas do polígono
+        txtPolygon = lines[lines.length - 1].split("\t");
+
+        // Acessando todas as coordenadas
+        for (i = 1; i < txtPolygon.length - 1; i++) {
+            txtLatLong = txtPolygon[i].split(",");
+            txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
+            index++;
+        }
+
+        // Acessando o centroide da área para posicionar no mapa
+        var polygon = turf.polygon([txtArea]);
+        var centroid = turf.coordAll(turf.centroid(polygon));
+
+        // Direcionando o mapa
+        map.flyTo({
+            center: [
+                centroid[0][0], centroid[0][1]
+            ],
+            essential: true
+        });
+
+        // Desenhando a rota e calculando sua distância
+        drawTxtPath(txtPath);
+        calculateTxtDistance(txtPath);
+
+        // Desenhando o polígono e calculando sua área
+        drawTxtArea(txtArea);
+        calculateTxtArea();
+
     };
     reader.readAsText(file);
 

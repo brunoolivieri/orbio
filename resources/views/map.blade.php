@@ -91,30 +91,30 @@
 						<label
 							class="text-gray-700 block px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer"
 							role="menuitem" tabindex="-1" id="menu-item-0">
-							<input type="file" id="file-input" hidden>
+							<input type="file" id="file-import-txt" hidden>
 							Abrir
 						</label>
 						<label
 							class="text-gray-700 block px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer"
-							role="menuitem" tabindex="-1" id="menu-item-0">
-							<input type="file" id="file-import" hidden>
+							role="menuitem" tabindex="-1" id="menu-item-1">
+							<input type="file" id="file-import-kml" hidden>
 							Importar Ponto
 						</label>
 						<label
 							class="text-gray-700 block px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer"
-							role="menuitem" tabindex="-1" id="menu-item-1">
+							role="menuitem" tabindex="-1" id="menu-item-2">
 							<input type="file" id="file-import-poly" hidden>
 							Importar Poly
 						</label>
 						<label
 							class="text-gray-700 block px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer"
-							role="menuitem" tabindex="-1" id="menu-item-2">
+							role="menuitem" tabindex="-1" id="menu-item-3">
 							<input type="file" id="file-import-path" hidden>
 							Importar Rota
 						</label>
 						<label
 							class="text-gray-700 block px-4 py-2 text-sm text-center hover:bg-gray-100 cursor-pointer"
-							role="menuitem" tabindex="-1" id="menu-item-2">
+							role="menuitem" tabindex="-1" id="menu-item-4">
 							<input type="file" id="file-import-mp" hidden>
 							Importar MP
 						</label>
