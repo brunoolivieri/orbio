@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Pages;
+namespace App\Http\Controllers\Modules\Equipments\Actions;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class MapIframeController extends Controller
+class BatteryImagesForBattery extends Controller
 {
     /**
      * Handle the incoming request.
@@ -15,6 +15,6 @@ class MapIframeController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return view("map_for_iframe");
+        //
     }
 }

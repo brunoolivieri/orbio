@@ -14,15 +14,13 @@ class LoadEquipmentsController extends Controller
         $this->model = $equipmentModel;
     }
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function __invoke(Request $request)
     {
-        $data = $this->model->all();
-        return response($data, 200);
+        try {
+            $data = $this->model->all();
+            return response()->json($data)->setStatusCode(200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage()])->setStatusCode($e->getCode());
+        }
     }
 }

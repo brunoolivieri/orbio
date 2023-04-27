@@ -15,10 +15,13 @@ class LoadProfilesController extends Controller
         $this->model = $profileModel;
     }
 
-    public function __invoke(): \Illuminate\Http\Response
+    public function __invoke()
     {
-        $data = $this->model->all();
-
-        return response($data, 200);
+        try {
+            $data = $this->model->all();
+            return response()->json($data)->setStatusCode(200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage()])->setStatusCode($e->getCode());
+        }
     }
 }

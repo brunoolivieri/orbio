@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Actions;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-// Custom
 use App\Models\Reports\Report;
 
 class LoadReportsController extends Controller
@@ -15,10 +14,13 @@ class LoadReportsController extends Controller
         $this->model = $reportModel;
     }
 
-    public function __invoke(): \Illuminate\Http\Response
+    public function __invoke()
     {
-        $data = $this->model->all();
-
-        return response($data, 200);
+        try {
+            $data = $this->model->all();
+            return response()->json($data)->setStatusCode(200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage()])->setStatusCode($e->getCode());
+        }
     }
 }

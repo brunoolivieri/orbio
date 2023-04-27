@@ -14,15 +14,13 @@ class LoadLogsController extends Controller
         $this->model = $model;
     }
 
-    /**
-     * Handle the incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function __invoke(Request $request)
     {
-        $logs = $this->model->all();
-        return response($logs, 200);
+        try {
+            $data = $this->model->all();
+            return response()->json($data)->setStatusCode(200);
+        } catch (\Exception $e) {
+            return response()->json(["message" => $e->getMessage()])->setStatusCode($e->getCode());
+        }
     }
 }

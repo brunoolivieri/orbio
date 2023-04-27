@@ -16,25 +16,28 @@ use App\Http\Controllers\Authentication\{
 use App\Http\Controllers\Modules\Dashboard\DashboardController;
 use App\Http\Controllers\Modules\MyProfile\MyProfileController;
 use App\Http\Controllers\Modules\Administration\{
-    AdministrationModuleUsersController,
-    AdministrationModuleProfilesController
+    Users\AdministrationModuleUsersController,
+    Profiles\AdministrationModuleProfilesController
 };
-use App\Http\Controllers\Modules\Report\{
-    ReportModuleController,
+use App\Http\Controllers\Modules\Reports\{
+    ReportsModuleController,
     Actions\WeatherDataController,
-    Actions\DownloadReportController
+    Actions\DownloadReportController,
+    Actions\ServiceOrdersForReport
 };
-use App\Http\Controllers\Modules\FlightPlan\{
-    FlightPlanModuleController,
-    FlightPlanModuleLogController,
-    Actions\UploadedLogsProcessingController,
+use App\Http\Controllers\Modules\FlightPlans\{
+    FlightPlansModuleController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
-    Actions\DownloadLogController,
     Actions\DownloadFlightPlanFilesByID
 };
-use App\Http\Controllers\Modules\ServiceOrder\{
-    ServiceOrderModuleController,
+use App\Http\Controllers\Modules\Logs\{
+    LogsModuleController,
+    Actions\DownloadLogController,
+    Actions\UploadedLogsProcessingController
+};
+use App\Http\Controllers\Modules\ServiceOrders\{
+    ServiceOrdersModuleController,
     Actions\FlightPlansForServiceOrderController,
     Actions\DronesForServiceOrderFlightPlanController,
     Actions\BatteriesForServiceOrderFlightPlanController,
@@ -42,10 +45,10 @@ use App\Http\Controllers\Modules\ServiceOrder\{
     Actions\LogsForServiceOrderFlightPlanController,
     Actions\ServiceOrderIncidentController
 };
-use App\Http\Controllers\Modules\Equipment\{
-    EquipmentModuleBatteryController,
-    EquipmentModuleDroneController,
-    EquipmentModuleEquipmentController
+use App\Http\Controllers\Modules\Equipments\{
+    Batteries\EquipmentModuleBatteryController,
+    Drones\EquipmentModuleDroneController,
+    OtherEquipments\EquipmentModuleEquipmentController
 };
 use App\Http\Controllers\Actions\{
     LoadFlightPlansController,
@@ -57,7 +60,6 @@ use App\Http\Controllers\Actions\{
     LoadDronesController,
     LoadBatteriesController,
     LoadEquipmentsController,
-    LoadServiceOrderForReport,
     LoadLogsController
 };
 
@@ -88,10 +90,10 @@ Route::group(["prefix" => "api"], function () {
             Route::get("/dashboard", DashboardController::class);
             Route::apiResource("/administration-user", AdministrationModuleUsersController::class);
             Route::apiResource("/administration-profile", AdministrationModuleProfilesController::class);
-            Route::apiResource("/reports", ReportModuleController::class);
-            Route::apiResource("/flight-plans", FlightPlanModuleController::class);
-            Route::apiResource("/flight-plans-logs", FlightPlanModuleLogController::class);
-            Route::apiResource("/service-orders", ServiceOrderModuleController::class);
+            Route::apiResource("/reports", ReportsModuleController::class);
+            Route::apiResource("/flight-plans", FlightPlansModuleController::class);
+            Route::apiResource("/flight-plans-logs", LogsModuleController::class);
+            Route::apiResource("/service-orders", ServiceOrdersModuleController::class);
             Route::apiResource("/equipments-drone", EquipmentModuleDroneController::class);
             Route::apiResource("/equipments-battery", EquipmentModuleBatteryController::class);
             Route::apiResource("/equipments", EquipmentModuleEquipmentController::class);
@@ -107,10 +109,10 @@ Route::group(["prefix" => "api"], function () {
             // Export tables as xlsx
             Route::post("/administration-user/table-export", [AdministrationModuleUsersController::class, "exportTableAsCsv"]);
             Route::post("/administration-profile/table-export", [AdministrationModuleProfilesController::class, "exportTableAsCsv"]);
-            Route::post("/flight-plans/table-export", [FlightPlanModuleController::class, "exportTableAsCsv"]);
-            Route::post("/flight-plans-logs/table-export", [FlightPlanModuleLogController::class, "exportTableAsCsv"]);
-            Route::post("/service-orders/table-export", [ServiceOrderModuleController::class, "exportTableAsCsv"]);
-            Route::post("/reports/table-export", [ReportModuleController::class, "exportTableAsCsv"]);
+            Route::post("/flight-plans/table-export", [FlightPlansModuleController::class, "exportTableAsCsv"]);
+            Route::post("/flight-plans-logs/table-export", [LogsModuleController::class, "exportTableAsCsv"]);
+            Route::post("/service-orders/table-export", [ServiceOrdersModuleController::class, "exportTableAsCsv"]);
+            Route::post("/reports/table-export", [ReportsModuleController::class, "exportTableAsCsv"]);
             Route::post("/equipments-drone/table-export", [EquipmentModuleDroneController::class, "exportTableAsCsv"]);
             Route::post("/equipments-battery/table-export", [EquipmentModuleBatteryController::class, "exportTableAsCsv"]);
             Route::post("/equipments/table-export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
@@ -131,7 +133,7 @@ Route::group(["prefix" => "api"], function () {
                 Route::get("/service-orders/batteries", BatteriesForServiceOrderFlightPlanController::class);
                 Route::get("/service-orders/equipments", EquipmentsForServiceOrderFlightPlanController::class);
                 // Reports actions
-                Route::get("/reports/service-orders", LoadServiceOrderForReport::class);
+                Route::get("/reports/service-orders", ServiceOrdersForReport::class);
                 Route::get("/reports/weather-data", WeatherDataController::class);
                 Route::get("/reports/download/{filename}", DownloadReportController::class);
             });
