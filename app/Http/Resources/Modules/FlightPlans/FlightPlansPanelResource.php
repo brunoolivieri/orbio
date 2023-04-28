@@ -41,7 +41,8 @@ class FlightPlansPanelResource extends JsonResource
                 "description" => $flight_plan->description,
                 "created_at" => date("Y-m-d", strtotime($flight_plan->created_at)),
                 "updated_at" => date("Y-m-d", strtotime($flight_plan->updated_at)),
-                "deleted_at" => $flight_plan->deleted_at
+                "deleted_at" => $flight_plan->deleted_at,
+                "is_route_editable" => true
             ];
 
             if ($flight_plan->trashed()) {
@@ -54,6 +55,14 @@ class FlightPlansPanelResource extends JsonResource
                     "label" => "Ativo",
                     "color" => "success"
                 ];
+            }
+
+            if ($flight_plan->service_orders) {
+                foreach ($flight_plan->service_orders as $service_order) {
+                    if ($service_order->status) {
+                        $this->formatedData["records"][$flight_plan_row]["is_route_editable"] = false;
+                    }
+                }
             }
         }
 

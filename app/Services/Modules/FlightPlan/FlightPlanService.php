@@ -28,12 +28,16 @@ class FlightPlanService implements ServiceInterface
         // Path foldername as timestamp
         $pathTimestamp =  $data["timestamp"];
 
+        // Can be multi or single 
+        $flightPlanType = $data["type"];
+
+        $storagePath = "flight_plans/$pathTimestamp";
+
         // Txt files
         foreach ($data["route_files"] as $index => $route_file) {
-
             $filename = $route_file->getClientOriginalName();
             $contents = file_get_contents($route_file);
-            $path = "flight_plans/$pathTimestamp/$filename";
+            $path = "$storagePath/$flightPlanType/$filename";
 
             $data_to_save["routes_path"][$index] = $path;
 
@@ -41,6 +45,17 @@ class FlightPlanService implements ServiceInterface
                 "contents" => $contents,
                 "filename" => $filename,
                 "path" => $path
+            ];
+        }
+
+        // If is multi, get auxiliary single file data
+        if ($flightPlanType === "multi") {
+            $singleFileName = $data["auxiliary_single_file"]->getClientOriginalName();
+            $contents = file_get_contents($data["auxiliary_single_file"]);
+            $data_to_save["auxiliary_single_file"] = [
+                "contents" => $contents,
+                "filename" => $singleFileName,
+                "path" => "$storagePath/single/$singleFileName"
             ];
         }
 
@@ -71,15 +86,15 @@ class FlightPlanService implements ServiceInterface
 
         $data_to_save["city"] = $address_components[2]["long_name"];
         $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
-        $data_to_save["type"] = $data["type"];
-
+        $data_to_save["type"] = $flightPlanType;
+        
         $this->repository->createOne($data_to_save);
     }
 
     function updateOne(array $data, string $identifier)
     {
         $data_to_save = [];
-        
+
         if (isset($data["route_files"]) && isset($data["imageDataURL"])) {
 
             if (is_null($data["route_files"]) || is_null($data["imageDataURL"])) {
@@ -91,12 +106,16 @@ class FlightPlanService implements ServiceInterface
             // Path foldername as timestamp
             $pathTimestamp =  $data["timestamp"];
 
+            // Can be multi or single 
+            $flightPlanType = $data["type"];
+
+            $storagePath = "flight_plans/$pathTimestamp";
+
             // Txt files
             foreach ($data["route_files"] as $index => $route_file) {
-
                 $filename = $route_file->getClientOriginalName();
                 $contents = file_get_contents($route_file);
-                $path = "flight_plans/$pathTimestamp/$filename";
+                $path = "$storagePath/$flightPlanType/$filename";
 
                 $data_to_save["routes_path"][$index] = $path;
 
@@ -104,6 +123,17 @@ class FlightPlanService implements ServiceInterface
                     "contents" => $contents,
                     "filename" => $filename,
                     "path" => $path
+                ];
+            }
+
+            // If is multi, get auxiliary single file data
+            if ($flightPlanType === "multi") {
+                $singleFileName = $data["auxiliary_single_file"]->getClientOriginalName();
+                $contents = file_get_contents($data["auxiliary_single_file"]);
+                $data_to_save["auxiliary_single_file"] = [
+                    "contents" => $contents,
+                    "filename" => $singleFileName,
+                    "path" => "$storagePath/single/$singleFileName"
                 ];
             }
 
@@ -134,8 +164,7 @@ class FlightPlanService implements ServiceInterface
 
             $data_to_save["city"] = $address_components[2]["long_name"];
             $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
-            $data_to_save["type"] = $data["type"];
-
+            $data_to_save["type"] = $flightPlanType;
         } else {
             $data_to_save = $data;
             $data_to_save["is_file"] = false;

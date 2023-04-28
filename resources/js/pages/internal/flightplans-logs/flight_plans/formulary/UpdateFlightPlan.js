@@ -160,13 +160,14 @@ export const UpdateFlightPlan = React.memo((props) => {
             </Grid>
 
             <Grid item xs={12}>
-              {props.record.service_orders.active > 0 ?
-                <Button variant="contained" disabled>Alterar rota</Button>
-                :
+              {props.record.is_route_editable ?
                 <Link href={`${window.location.origin}/map?modify=true&op=update&flightplan=${formData.id}`} target="_blank">
-                  <Button variant="contained" disabled={props.record.service_orders.active > 0}>Alterar rota</Button>
+                  <Button variant="contained">Alterar rota</Button>
                 </Link>
+                :
+                <Button variant="contained" disabled>Alterar rota</Button>
               }
+
             </Grid>
 
             {props.record.deleted_at &&

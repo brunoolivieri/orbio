@@ -32,7 +32,7 @@ use App\Http\Controllers\Modules\FlightPlans\{
     FlightPlansModuleController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
-    Actions\DownloadFlightPlanFilesByID,
+    Actions\DownloadFlightPlanFilesToOpenOnMap,
     Actions\FlightPlanAdditionalDataController
 };
 use App\Http\Controllers\Modules\Logs\{
@@ -134,7 +134,7 @@ Route::group(["prefix" => "api"], function () {
                 // Flight plans actions
                 Route::get("/flight-plans/download", DownloadFlightPlanController::class);
                 Route::get("/flight-plans/download-csv", DownloadFlightPlanCSVController::class);
-                Route::get("/flight-plans/download-to-map/{id}", DownloadFlightPlanFilesByID::class);
+                Route::get("/flight-plans/download-to-map/{id}", DownloadFlightPlanFilesToOpenOnMap::class);
                 Route::get("/flight-plans/additional-data", FlightPlanAdditionalDataController::class);
                 // Logs actions
                 Route::post("/flight-plans-logs/upload-processing", UploadedLogsProcessingController::class);

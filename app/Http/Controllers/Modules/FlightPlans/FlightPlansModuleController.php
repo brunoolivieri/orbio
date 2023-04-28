@@ -55,8 +55,8 @@ class FlightPlansModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-
-            $this->service->createOne($request->only(["route_files", "imageDataURL", "imageFilename", "csvFile", "coordinates", "timestamp", "type"]));
+            
+            $this->service->createOne($request->all());
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());

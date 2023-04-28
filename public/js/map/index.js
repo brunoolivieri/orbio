@@ -83,92 +83,77 @@ window.onload = () => {
                 cleanLayers();
                 cleanPolygon();
 
-                const flight_plan_type = response.data.type;
-                const flight_plan_files = response.data.files;
+                // Conteúdo completo do arquivo
+                var contents = response.data.contents;
 
-                //console.log(response.data)
+                // Quebrando as linhas do arquivo em um array
+                var lines = contents.split("\n");
 
-                for (let filename in flight_plan_files) {
+                // Acessando a posição inicial (home) contida no arquivo
+                var txtHome = lines[1].split("\t");
+                home = [Number(txtHome[9]), Number(txtHome[8])];
 
-                    // Conteúdo completo do arquivo
-                    var contents = flight_plan_files[filename];
+                // Acessando a velocidade contida no arquivo e preenchendo o campo no form
+                var txtSpeed = lines[3].split("\t");
+                document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
+                document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
 
-                    // Quebrando as linhas do arquivo em um array
-                    var lines = contents.split("\n");
+                // Acessando a altitude contida no arquivo e preenchendo o campo no form
+                var txtAltitude = lines[2].split("\t");
+                document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
+                document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
 
-                    // Acessando a posição inicial (home) contida no arquivo
-                    var txtHome = lines[1].split("\t");
-                    home = [Number(txtHome[9]), Number(txtHome[8])];
+                // Array que armazenará todos os waypoints da rota do arquivo
+                txtPath = [];
+                index = 0;
 
-                    // Acessando a velocidade contida no arquivo e preenchendo o campo no form
-                    var txtSpeed = lines[3].split("\t");
-                    document.getElementById("speed").value = Number(txtSpeed[4]).toFixed(0);
-                    document.getElementById("label-speed").innerHTML = "Velocidade: " + Number(txtSpeed[4]).toFixed(0) + "m/s";
+                // Quebrando todas as linhas nos espaços \t
+                for (i = 4; i < lines.length - 2; i++) {
+                    line = lines[i].split("\t");
 
-                    // Acessando a altitude contida no arquivo e preenchendo o campo no form
-                    var txtAltitude = lines[2].split("\t");
-                    document.getElementById("altitude").value = Number(txtAltitude[10]).toFixed(0);
-                    document.getElementById("label-altitude").innerHTML = "Altitude: " + Number(txtAltitude[10]).toFixed(0) + "m";
-
-                    // Array que armazenará todos os waypoints da rota do arquivo
-                    txtPath = [];
-                    index = 0;
-
-                    // Quebrando todas as linhas nos espaços \t
-                    for (i = 4; i < lines.length - 2; i++) {
-                        line = lines[i].split("\t");
-
-                        // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
-                        // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
-                        // adicionados ao desenho da rota
-                        if (Number(line[3]) == 16) {
-                            // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
-                            txtPath[index] = [Number(line[9]), Number(line[8])];
-                            index++
-                        }
+                    // Somente os waypoints com latitude e longitude são considerados, ou seja, código 16
+                    // Os waypoints de código 183 (gatilho do dispenser) tem lat/long zerados e não podem ser
+                    // adicionados ao desenho da rota
+                    if (Number(line[3]) == 16) {
+                        // As posições de latitude e longitude estão nos índices 9 e 8 de cada linha
+                        txtPath[index] = [Number(line[9]), Number(line[8])];
+                        index++
                     }
-
-                    // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
-                    txtArea = [];
-                    index = 0;
-
-                    // Quebrando a última linha para acessar as coordenadas do polígono
-                    txtPolygon = lines[lines.length - 1].split("\t");
-
-                    // Acessando todas as coordenadas
-                    for (i = 1; i < txtPolygon.length - 1; i++) {
-                        txtLatLong = txtPolygon[i].split(",");
-                        txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
-                        index++;
-                    }
-
-                    // Acessando o centroide da área para posicionar no mapa
-                    var polygon = turf.polygon([txtArea]);
-                    var centroid = turf.coordAll(turf.centroid(polygon));
-
-                    // Direcionando o mapa
-                    map.flyTo({
-                        center: [
-                            centroid[0][0], centroid[0][1]
-                        ],
-                        essential: true
-                    });
-
-                    // Desenhando a rota e calculando sua distância
-                    drawTxtPath(txtPath);
-                    calculateTxtDistance(txtPath);
-
-                    // Desenhando o polígono e calculando sua área
-                    drawTxtArea(txtArea);
-                    calculateTxtArea();
-
                 }
 
-                /*
-                reader.onload = function (e) {
-                };
-                reader.readAsText(file);
-                */
+                // Array que armazenará todas as coordenadas do polígono extraídas a partir do arquivo
+                txtArea = [];
+                index = 0;
+
+                // Quebrando a última linha para acessar as coordenadas do polígono
+                txtPolygon = lines[lines.length - 1].split("\t");
+
+                // Acessando todas as coordenadas
+                for (i = 1; i < txtPolygon.length - 1; i++) {
+                    txtLatLong = txtPolygon[i].split(",");
+                    txtArea[index] = [Number(txtLatLong[0]), Number(txtLatLong[1])];
+                    index++;
+                }
+
+                // Acessando o centroide da área para posicionar no mapa
+                var polygon = turf.polygon([txtArea]);
+                var centroid = turf.coordAll(turf.centroid(polygon));
+
+                // Direcionando o mapa
+                map.flyTo({
+                    center: [
+                        centroid[0][0], centroid[0][1]
+                    ],
+                    essential: true
+                });
+
+                // Desenhando a rota e calculando sua distância
+                drawTxtPath(txtPath);
+                calculateTxtDistance(txtPath);
+
+                // Desenhando o polígono e calculando sua área
+                drawTxtArea(txtArea);
+                calculateTxtArea();
 
             })
             .catch((error) => {
@@ -1108,11 +1093,11 @@ btnClean.addEventListener("click", cleanPolygon);
 
 // SAVE SINGLE PATH
 const btnFullSave = document.getElementById("btn-full-save");
-btnFullSave.addEventListener("click", saveFullPath);
+btnFullSave.addEventListener("click", savePathAsSingleFile);
 
 // SAVE MULTI PATH
 const btnMultiSave = document.getElementById("btn-multi-save");
-btnMultiSave.addEventListener("click", saveMultiPath);
+btnMultiSave.addEventListener("click", savePathAsMultiAndSingleFile);
 
 // SAVE CSV
 const btnSaveCSV = document.getElementById("btn-save-csv");
@@ -1244,69 +1229,7 @@ function recomputeDistanceBetweenLines() {
 
 // ============================================================================================= PART 4: TO SAVE  ============================================================================================= //
 
-function savePathCSV(storage = false, storage_filename = null) {
-
-    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (initialPath.length === 0) {
-        displayErrorAlert("Erro! Nenhuma rota foi definida.");
-        return;
-    }
-
-    // Definição da altitude de voo a partir da entrada do usuário no modal
-    // Se a altitude não for preenchida, define-se um valor padrão
-    inputAltitude = document.getElementById("altitude").value;
-    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
-
-    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-    var content = "latitude;longitude;altitude(m)\n";
-
-    // Quando o usuário carrega um arquivo TXT de rota do PC e tentar salvá-lo em CSV, 
-    // as informações da rota não estão armazenadas em variáveis como 'inicialFinalPath', 
-    // mas na variável txtPath	
-    if (initialFinalPath.length === 0) {
-        for (i = 0; i < txtPath.length; i++) {
-            content += txtPath[i][1] + ";" + txtPath[i][0] + ";" + altitude + "\n";
-        }
-
-    } else {
-        // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
-        index = 0;
-        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
-            content += initialPath[index][1].toFixed(6) + ";" + initialPath[index][0].toFixed(6) + ";" + altitude + "\n";
-            index++;
-        }
-
-        // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
-        index = 0;
-        for (i = j; i < (finalDestination.length) + j - 1; i++) {
-            content += finalDestination[index][1].toFixed(6) + ";" + finalDestination[index][0].toFixed(6) + ";" + altitude + "\n";
-            index++;
-        }
-
-        // WAYPOINT: 16 - ROTA FINAL DA FASE 03
-        index = 0;
-        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
-            content += initialFinalPath[1][index][1].toFixed(6) + ";" + initialFinalPath[1][index][0].toFixed(6) + ";" + altitude + "\n";
-            index++;
-        }
-    }
-
-    var blob = new Blob([content],
-        { type: "text/plain;charset=utf-8" });
-
-    // Nome do arquivo com data em milissegundos decorridos
-    const fileName = (storage ? storage_filename : new Date().getTime()) + ".csv";
-
-    // O CSV é baixado ou salvo no sistema
-    if (!storage) {
-        saveAs(blob, fileName);
-        displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
-    } else {
-        return { blob, fileName };
-    }
-}
-
-function saveFullPath() {
+function savePathAsSingleFile(saveAfterCreation = true) {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
     if (initialPath.length === 0) {
@@ -1414,14 +1337,23 @@ function saveFullPath() {
     // Nome do arquivo com data em milissegundos decorridos
     fileName = pathTimestamp + ".txt";
 
-    savePathConfirmation([{
+    const fullPathData = {
         blob: blob,
         filename: fileName,
-        coordinates: coordinatesLongLat[0]
-    }], pathTimestamp);
+        coordinates: coordinatesLongLat[0],
+        timestamp: pathTimestamp
+    };
+
+    if (saveAfterCreation) {
+        savePathConfirmation(fullPathData);
+    } else {
+        return fullPathData;
+    }
+
+
 }
 
-function saveMultiPath() {
+function savePathAsMultiAndSingleFile() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
     if (initialPath.length === 0) {
@@ -1429,7 +1361,7 @@ function saveMultiPath() {
         return;
     }
 
-    const pathTimestamp = new Date().getTime();
+    const fullPathData = savePathAsSingleFile(false);
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1443,7 +1375,7 @@ function saveMultiPath() {
 
     //console.log("quantos breakpoints: " + breakpoints.length);
 
-    const files = [];
+    const multiPathData = [];
 
     // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
     for (k = 0; k <= breakpoints.length; k++) {
@@ -1566,14 +1498,10 @@ function saveMultiPath() {
         var blob = new Blob([content],
             { type: "text/plain;charset=utf-8" });
 
-        // Nome do arquivo com data em milissegundos decorridos
-        fileName = "0" + k + "_" + pathTimestamp + ".txt";
-        //saveAs(blob, fileName);
+        // Nome do arquivo será o contador de arquivo concatenado com o timestamp gerado no processo savePathAsSingleFile
+        fileName = "0" + k + "_" + fullPathData.filename;
 
-        // Salvando um printscreen para o relatório
-        //savePrintScreen();
-
-        files.push({
+        multiPathData.push({
             blob: blob,
             filename: fileName,
             coordinates: coordinatesLongLat[0]
@@ -1581,11 +1509,69 @@ function saveMultiPath() {
 
     } // Fim do 'for'	
 
-    savePathConfirmation(files, pathTimestamp);
+    savePathConfirmation(fullPathData, multiPathData);
 }
 
-function savePathAfterConfirmation(data) {
-    // 
+function savePathCSV(storage = false, storage_filename = null) {
+
+    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
+    if (initialPath.length === 0) {
+        displayErrorAlert("Erro! Nenhuma rota foi definida.");
+        return;
+    }
+
+    // Definição da altitude de voo a partir da entrada do usuário no modal
+    // Se a altitude não for preenchida, define-se um valor padrão
+    inputAltitude = document.getElementById("altitude").value;
+    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
+
+    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
+    var content = "latitude;longitude;altitude(m)\n";
+
+    // Quando o usuário carrega um arquivo TXT de rota do PC e tentar salvá-lo em CSV, 
+    // as informações da rota não estão armazenadas em variáveis como 'inicialFinalPath', 
+    // mas na variável txtPath	
+    if (initialFinalPath.length === 0) {
+        for (i = 0; i < txtPath.length; i++) {
+            content += txtPath[i][1] + ";" + txtPath[i][0] + ";" + altitude + "\n";
+        }
+
+    } else {
+        // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
+        index = 0;
+        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
+            content += initialPath[index][1].toFixed(6) + ";" + initialPath[index][0].toFixed(6) + ";" + altitude + "\n";
+            index++;
+        }
+
+        // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
+        index = 0;
+        for (i = j; i < (finalDestination.length) + j - 1; i++) {
+            content += finalDestination[index][1].toFixed(6) + ";" + finalDestination[index][0].toFixed(6) + ";" + altitude + "\n";
+            index++;
+        }
+
+        // WAYPOINT: 16 - ROTA FINAL DA FASE 03
+        index = 0;
+        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
+            content += initialFinalPath[1][index][1].toFixed(6) + ";" + initialFinalPath[1][index][0].toFixed(6) + ";" + altitude + "\n";
+            index++;
+        }
+    }
+
+    var blob = new Blob([content],
+        { type: "text/plain;charset=utf-8" });
+
+    // Nome do arquivo com data em milissegundos decorridos
+    const fileName = (storage ? storage_filename : new Date().getTime()) + ".csv";
+
+    // O CSV é baixado ou salvo no sistema
+    if (!storage) {
+        saveAs(blob, fileName);
+        displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
+    } else {
+        return { blob, fileName };
+    }
 }
 
 // ============================================================================================= PART 5: TO IMPORT  ============================================================================================= //
@@ -2137,7 +2123,7 @@ btnCloseConfirmationModal.addEventListener("click", function () {
 });
 
 // ==== CONFIRMATION AND SAVE PATH REQUEST ==== //
-function savePathConfirmation(files, pathTimestamp) {
+function savePathConfirmation(fullPathData, multiPathData = null) {
 
     const modal = document.getElementById("flight-plan-confirmation-modal");
     screenForPrintScreen("before");
@@ -2148,7 +2134,7 @@ function savePathConfirmation(files, pathTimestamp) {
 
         const blobImg = new Blob([canvas], { type: "image/jpeg" });
         const dataURL = canvas.toDataURL('image/jpeg', 1.0);
-        const filenameImg = pathTimestamp + ".jpeg";
+        const filenameImg = fullPathData.timestamp + ".jpeg";
 
         return { blobImg, filenameImg, dataURL, canvas };
 
@@ -2156,7 +2142,7 @@ function savePathConfirmation(files, pathTimestamp) {
 
         modal.classList.remove("hidden");
 
-        const filesListElement = files.map((file, index) => {
+        const filesListElement = (multiPathData != null ? multiPathData : fullPathData).map((fileData, index) => {
 
             const container = document.createElement("div");
             container.replaceChildren([]);
@@ -2170,7 +2156,7 @@ function savePathConfirmation(files, pathTimestamp) {
             fieldID.innerText = index + 1;
 
             const fieldFilename = document.createElement("p");
-            fieldFilename.innerText = file.filename;
+            fieldFilename.innerText = fileData.filename;
 
             box.appendChild(fieldID);
             box.appendChild(fieldFilename);
@@ -2180,11 +2166,11 @@ function savePathConfirmation(files, pathTimestamp) {
 
         });
 
-        const flightCSV = savePathCSV(true, pathTimestamp);
+        const flightCSV = savePathCSV(true, fullPathData.timestamp);
         // Set flight plan csv into modal
         const pathCSVName = document.getElementById("flight-csv");
         pathCSVName.placeholder = '';
-        pathCSVName.placeholder = pathTimestamp + ".csv";
+        pathCSVName.placeholder = fullPathData.timestamp + ".csv";
 
         const filesList = document.getElementById("files-list");
         filesList.replaceChildren([]);
@@ -2211,21 +2197,26 @@ function savePathConfirmation(files, pathTimestamp) {
 
             let formData = new FormData();
 
-            files.map((file) => {
-                formData.append("route_files[]", new File([file.blob], file.filename, { type: "text/plain" }));
-                formData.append("coordinates[]", file.coordinates[1] + "," + file.coordinates[0]);
+            (multiPathData != null ? multiPathData : fullPathData).map((fileData) => {
+                formData.append("route_files[]", new File([fileData.blob], fileData.filename, { type: "text/plain" }));
+                formData.append("coordinates[]", fileData.coordinates[1] + "," + fileData.coordinates[0]);
             });
+
+            // Multi needs an auxiliary single file to be opened in the map when necessary
+            if (multiPathData != null) {
+                formData.append("auxiliary_single_file", new File([fullPathData.blob], fullPathData.filename, { type: "text/plain" }));
+            }
 
             const image = new Image(canvas.width, canvas.heigth);
 
             formData.append("imageDataURL", dataURL);
             formData.append("imageFilename", filenameImg);
             formData.append("csvFile", new File([flightCSV.blob], flightCSV.fileName, { type: "text/csv" }));
-            formData.append("timestamp", pathTimestamp);
-            formData.append("type", files.length > 1 ? "multi" : "única");
+            formData.append("timestamp", fullPathData.timestamp);
+            formData.append("type", (multiPathData != null ? multiPathData : fullPathData).length > 1 ? "multi" : "single");
 
             const params = new Proxy(new URLSearchParams(window.location.search), {
-                get: (searchParams, prop) => searchParams.get(prop),
+                get: (searchParams, prop) => searchParams.get(prop)
             });
 
             let method = "POST";
@@ -2261,6 +2252,9 @@ function savePathConfirmation(files, pathTimestamp) {
                 });
 
         });
+
+
+
     });
 
 }

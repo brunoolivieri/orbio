@@ -40,7 +40,7 @@ class FlightPlanRepository implements RepositoryInterface
 
             $flight_plan = $this->flightPlanModel->create([
                 "creator_id" => Auth::user()->id,
-                "name" => Str::random(10),
+                "name" => Str::random(15),
                 "files" => json_encode($data["routes_path"]),
                 "coordinates" => $data["coordinates"],
                 "state" => $data["state"],
@@ -53,6 +53,10 @@ class FlightPlanRepository implements RepositoryInterface
 
             foreach ($data["route_files"] as $route_file) {
                 Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
+            }
+
+            if ($data["type"] === "multi") {
+                Storage::disk('public')->put($data["auxiliary_single_file"]["path"], $data["auxiliary_single_file"]["contents"]);
             }
 
             Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
@@ -90,6 +94,9 @@ class FlightPlanRepository implements RepositoryInterface
                 // Save new files
                 foreach ($data["route_files"] as $route_file) {
                     Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
+                }
+                if ($data["type"] === "multi") {
+                    Storage::disk('public')->put($data["auxiliary_single_file"]["path"], $data["auxiliary_single_file"]["contents"]);
                 }
                 Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
                 Storage::disk('public')->put($data["csv"]["path"], $data["csv"]["contents"]);
