@@ -17,24 +17,29 @@ use App\Http\Controllers\Modules\Dashboard\DashboardController;
 use App\Http\Controllers\Modules\MyProfile\MyProfileController;
 use App\Http\Controllers\Modules\Administration\{
     Users\AdministrationModuleUsersController,
-    Profiles\AdministrationModuleProfilesController
+    Users\Actions\UserAdditionalDataController,
+    Profiles\AdministrationModuleProfilesController,
+    Profiles\Actions\ProfileAdditionalDataController
 };
 use App\Http\Controllers\Modules\Reports\{
     ReportsModuleController,
     Actions\WeatherDataController,
     Actions\DownloadReportController,
-    Actions\ServiceOrdersForReport
+    Actions\ServiceOrdersForReport,
+    Actions\ReportAdditionalDataController
 };
 use App\Http\Controllers\Modules\FlightPlans\{
     FlightPlansModuleController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
-    Actions\DownloadFlightPlanFilesByID
+    Actions\DownloadFlightPlanFilesByID,
+    Actions\FlightPlanAdditionalDataController
 };
 use App\Http\Controllers\Modules\Logs\{
     LogsModuleController,
     Actions\DownloadLogController,
-    Actions\UploadedLogsProcessingController
+    Actions\UploadedLogsProcessingController,
+    Actions\LogAdditionalDataController
 };
 use App\Http\Controllers\Modules\ServiceOrders\{
     ServiceOrdersModuleController,
@@ -43,12 +48,16 @@ use App\Http\Controllers\Modules\ServiceOrders\{
     Actions\BatteriesForServiceOrderFlightPlanController,
     Actions\EquipmentsForServiceOrderFlightPlanController,
     Actions\LogsForServiceOrderFlightPlanController,
-    Actions\ServiceOrderIncidentController
+    Actions\ServiceOrderIncidentController,
+    Actions\ServiceOrderAdditionalDataController
 };
 use App\Http\Controllers\Modules\Equipments\{
     Batteries\EquipmentModuleBatteryController,
+    Batteries\Actions\BatteryAdditionalDataController,
     Drones\EquipmentModuleDroneController,
-    OtherEquipments\EquipmentModuleEquipmentController
+    Drones\Actions\DroneAdditionalDataController,
+    OtherEquipments\EquipmentModuleEquipmentController,
+    OtherEquipments\Actions\EquipmentAdditionalDataController
 };
 use App\Http\Controllers\Actions\{
     LoadFlightPlansController,
@@ -118,13 +127,19 @@ Route::group(["prefix" => "api"], function () {
             Route::post("/equipments/table-export", [EquipmentModuleEquipmentController::class, "exportTableAsCsv"]);
             // Modules actions
             Route::group(["prefix" => "/action"], function () {
+                // Admin users actions
+                Route::get("/users/additional-data", UserAdditionalDataController::class);
+                // Admin profiles actions
+                Route::get("/profiles/additional-data", ProfileAdditionalDataController::class);
                 // Flight plans actions
                 Route::get("/flight-plans/download", DownloadFlightPlanController::class);
                 Route::get("/flight-plans/download-csv", DownloadFlightPlanCSVController::class);
                 Route::get("/flight-plans/download-to-map/{id}", DownloadFlightPlanFilesByID::class);
+                Route::get("/flight-plans/additional-data", FlightPlanAdditionalDataController::class);
                 // Logs actions
                 Route::post("/flight-plans-logs/upload-processing", UploadedLogsProcessingController::class);
                 Route::get("/flight-plans-logs/download/{filename}", DownloadLogController::class);
+                Route::get("/flight-plans-logs/additional-data", LogAdditionalDataController::class);
                 // Service order actions
                 Route::get("/service-orders/flight-plans", FlightPlansForServiceOrderController::class);
                 Route::get("/service-orders/logs", LogsForServiceOrderFlightPlanController::class);
@@ -132,10 +147,16 @@ Route::group(["prefix" => "api"], function () {
                 Route::get("/service-orders/drones", DronesForServiceOrderFlightPlanController::class);
                 Route::get("/service-orders/batteries", BatteriesForServiceOrderFlightPlanController::class);
                 Route::get("/service-orders/equipments", EquipmentsForServiceOrderFlightPlanController::class);
+                Route::get("/service-orders/additional-data", ServiceOrderAdditionalDataController::class);
                 // Reports actions
                 Route::get("/reports/service-orders", ServiceOrdersForReport::class);
                 Route::get("/reports/weather-data", WeatherDataController::class);
                 Route::get("/reports/download/{filename}", DownloadReportController::class);
+                Route::get("/reports/additional-data", ReportAdditionalDataController::class);
+                // Equipments actions
+                Route::get("/equipments-drone/additional-data", DroneAdditionalDataController::class);
+                Route::get("/equipments-battery/additional-data", BatteryAdditionalDataController::class);
+                Route::get("/equipments/additional-data", EquipmentAdditionalDataController::class);
             });
         });
         // Generic actions
