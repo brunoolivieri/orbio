@@ -13,8 +13,11 @@ use App\Models\Reports\Report;
 class DashboardController extends Controller
 {
 
+    private array $data = [];
+
     function __construct(User $userModel, Profile $profileModel, FlightPlan $flightPlanModel, ServiceOrder $serviceOrderModel, Report $reportModel)
     {
+        $this->data = [];
         $this->userModel = $userModel;
         $this->profileModel = $profileModel;
         $this->flightPlanModel = $flightPlanModel;
@@ -35,56 +38,22 @@ class DashboardController extends Controller
                 "reports" => $this->reportModel->withTrashed()->get()
             ];
 
-            $counter = [
-                "trashed" => 0,
-                "active" => 0
-            ];
-
-            $initial_months_data = [
-                'january' => $counter,
-                'february' => $counter,
-                'march' => $counter,
-                'april' => $counter,
-                'may' => $counter,
-                'june' => $counter,
-                'july' => $counter,
-                'august' => $counter,
-                'september' => $counter,
-                'october' => $counter,
-                'november' => $counter,
-                'december' => $counter,
-            ];
-
-            $data = [];
-
             foreach ($collections as $key => $collection) {
 
-                // Initial values for actual collection
-                $data[$key]["total"] = $collection->count();
-                $data[$key]["months"] = $initial_months_data;
+                $this->data[$key]["total"] = $collection->count();
+                $this->data[$key]["active"] = 0;
+                $this->data[$key]["trashed"] = 0;
 
-                // Loop each item of actual collection
                 foreach ($collection as $item) {
-
-                    $month = strtolower(Carbon::parse($item->created_at)->format('F'));
-                    $year = Carbon::parse($item->created_at)->format('y');
-                    $actual_year = Carbon::now()->format('y');
-
-                    if ($actual_year === $year) {
-
-                        // Actual item was created in $month of actual year
-                        // Add 1 to $month in "trashed" or "active" based in "deleted_at" column
-
-                        if ($item->trashed()) {
-                            $data[$key]["months"][$month]["trashed"]++;
-                        } else {
-                            $data[$key]["months"][$month]["active"]++;
-                        }
+                    if ($item->trashed()) {
+                        $this->data[$key]["trashed"]++;
+                    } else {
+                        $this->data[$key]["active"]++;
                     }
                 }
             }
 
-            return response($data, 200);
+            return response($this->data, 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

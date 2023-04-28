@@ -93,7 +93,7 @@ export const DeleteUser = React.memo((props) => {
         <DialogContent>
 
           <DialogContentText mb={2}>
-            Os usuários selecionados perderão o acesso a suas contas. A remoção não é permanente e pode ser desfeita.
+            Os usuários selecionados perderão o acesso a suas contas. A remoção não é permanente e pode ser desfeita. A deleção só pode ser realizada se o usuário já não tiver sido deletado, ou se estiver vinculado a uma ordem de serviço ativa.
           </DialogContentText>
 
         </DialogContent>

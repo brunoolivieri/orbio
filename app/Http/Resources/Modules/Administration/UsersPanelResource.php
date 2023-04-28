@@ -4,7 +4,6 @@ namespace App\Http\Resources\Modules\Administration;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Carbon\Carbon;
 
 class UsersPanelResource extends JsonResource
 {
@@ -17,12 +16,6 @@ class UsersPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         $formated_data["records"] = array();
@@ -40,15 +33,21 @@ class UsersPanelResource extends JsonResource
                 "status" => $user->status,
                 "documents" => null,
                 "address" => null,
-                "service_order" => null,
                 "last_access" => $user->last_access,
                 "created_at" => $user->created_at,
                 "updated_at" => $user->updated_at,
                 "deleted_at" => $user->deleted_at
             ];
 
-            if ($user->status && $user->personal_document) {
+            if ((bool) $user->status && is_null($user->deleted_at)) {
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Ativo", "color" => "success"];
+            } else if ((bool) !$user->status && is_null($user->deleted_at)) {
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Inativo", "color" => "error"];
+            } else if (!is_null($user->deleted_at)) {
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Deletado", "color" => "error"];
+            }
 
+            if ($user->status && $user->personal_document) {
                 $this->formatedData["records"][$user_index]["documents"] = [
                     'anac_license' => $user->personal_document->anac_license,
                     'cpf' => $user->personal_document->cpf,
@@ -67,28 +66,6 @@ class UsersPanelResource extends JsonResource
                     'state' => isset($user->personal_document->address->state) ? $user->personal_document->address->state : "N/A",
                     'complement' => $user->personal_document->address->complement
                 ];
-
-                if ($user->service_orders) {
-
-                    foreach ($user->service_orders as $so_index => $service_order) {
-                        $this->formatedData["records"][$user_index]["service_order"][$so_index] = [
-                            "id" => $service_order->id,
-                            "number" => $service_order->number,
-                            "created_at" => $service_order->created_at,
-                            "role" => $service_order->pivot->role,
-                            "status" => $service_order->status,
-                            "finished" => !is_null($service_order->report)
-                        ];
-                    }
-                }
-            }
-
-            if ((bool) $user->status && is_null($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Ativo", "color" => "success"];
-            } else if ((bool) !$user->status && is_null($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Inativo", "color" => "error"];
-            } else if (!is_null($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Deletado", "color" => "error"];
             }
         }
 

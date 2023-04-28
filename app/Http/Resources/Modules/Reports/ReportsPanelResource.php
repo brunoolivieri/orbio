@@ -16,12 +16,6 @@ class ReportsPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         foreach ($this->data as $row => $report) {
@@ -32,9 +26,7 @@ class ReportsPanelResource extends JsonResource
                 "file" => $report->file,
                 "observation" => empty($report->observation) ? "nenhuma" : $report->observation,
                 "service_order" => [
-                    "id" => $report->service_order->id,
-                    "number" => $report->service_order->number,
-                    "flight_plans" => $report->service_order->flight_plans
+                    "number" => $report->service_order->number
                 ],
                 "created_at" => date("Y-m-d", strtotime($report->created_at)),
                 "deleted_at" => $report->deleted_at

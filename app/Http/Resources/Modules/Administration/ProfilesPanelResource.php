@@ -16,20 +16,12 @@ class ProfilesPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         // Get each profile
         foreach ($this->data as $row => $profile) {
-
             // Get actual profile relationship with each module
             foreach ($profile->modules as $row => $module) {
-
                 $modules_related[$row] = [
                     "module_id" => $module->id,
                     "module_name" => $module->name,

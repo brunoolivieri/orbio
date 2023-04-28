@@ -71,25 +71,13 @@ const columns = [
     {
         field: 'service_order',
         headerName: 'Ordem de serviço',
+        flex: 1,
+        minWidth: 150,
         sortable: true,
         editable: false,
-        minWidth: 250,
-        renderCell: (data) => {
-
-            function chipStyle(related_service_order) {
-                if (related_service_order === null) {
-                    return { label: "Nenhuma", disabled: true, variant: "outlined" };
-                } else if (related_service_order != null) {
-                    return { label: related_service_order.number, color: related_service_order.deleted == 1 ? "error" : "success", variant: related_service_order.deleted == 1 ? "contained" : "outlined" };
-                }
-            }
-
-            const chip_style = chipStyle(data.row.service_order);
-
-            return (
-                <Chip {...chip_style} />
-            )
-        },
+        valueGetter: (data) => {
+            return data.row.service_order.number
+        }
     },
     {
         field: 'export_txt',
@@ -98,7 +86,6 @@ const columns = [
         editable: false,
         width: 150,
         renderCell: (data) => {
-
             const { enqueueSnackbar } = useSnackbar();
 
             function handleDownloadLog(filename) {

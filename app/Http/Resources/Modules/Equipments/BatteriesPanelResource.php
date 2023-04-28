@@ -5,11 +5,9 @@ namespace App\Http\Resources\Modules\Equipments;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 
 class BatteriesPanelResource extends JsonResource
 {
-
     private LengthAwarePaginator $data;
     private array $formatedData = [];
 
@@ -18,12 +16,6 @@ class BatteriesPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         foreach ($this->data as $row => $battery) {
@@ -34,8 +26,6 @@ class BatteriesPanelResource extends JsonResource
                 "name" => $battery->name,
                 "manufacturer" => $battery->manufacturer,
                 "model" => $battery->model,
-                "total_service_orders" => $battery->service_orders()->distinct('service_order_id')->count(),
-                "total_flight_plans" => $battery->flight_plans()->distinct('service_order_id')->count(),
                 "serial_number" => $battery->serial_number,
                 "last_charge" => empty($battery->last_charge) ? "nunca" : $battery->last_charge,
                 "observation" => $battery->observation,

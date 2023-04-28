@@ -10,7 +10,7 @@ use App\Services\Modules\FlightPlan\FlightPlanLogService;
 use App\Http\Requests\Modules\FlightPlans\Logs\UpdateLogRequest;
 use App\Exports\GenericExport;
 use App\Models\Logs\Log;
-use App\Http\Resources\Modules\FlightPlans\FlightPlansLogPanelResource;
+use App\Http\Resources\Modules\Logs\LogsPanelResource;
 
 class LogsModuleController extends Controller
 {
@@ -38,7 +38,7 @@ class LogsModuleController extends Controller
                 throw new \Exception("Nenhum log encontrado", 404);
             }
 
-            return response(new FlightPlansLogPanelResource($result), 200);
+            return response(new LogsPanelResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

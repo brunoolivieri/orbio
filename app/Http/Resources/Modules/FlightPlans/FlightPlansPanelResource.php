@@ -5,8 +5,6 @@ namespace App\Http\Resources\Modules\FlightPlans;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
-use App\Models\Incidents\Incident;
-use App\Models\Logs\Log;
 
 class FlightPlansPanelResource extends JsonResource
 {
@@ -19,12 +17,6 @@ class FlightPlansPanelResource extends JsonResource
         $this->data = $data;
     }
 
-    /**
-     * Transform the resource into an array.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
     public function toArray($request)
     {
         foreach ($this->data as $flight_plan_row => $flight_plan) {
@@ -40,14 +32,6 @@ class FlightPlansPanelResource extends JsonResource
                     "deleted_at" => $flight_plan->user->deleted_at
                 ],
                 "name" => $flight_plan->name,
-                "service_orders" => [
-                    "active" => 0,
-                    "inactive" => 0,
-                    "data" => []
-                ],
-                "logs" => [],
-                "total_incidents" => 0,
-                "total_logs" => 0,
                 "files" => json_decode($flight_plan->files),
                 "localization" => [
                     "coordinates" => $flight_plan->coordinates,
@@ -70,37 +54,6 @@ class FlightPlansPanelResource extends JsonResource
                     "label" => "Ativo",
                     "color" => "success"
                 ];
-            }
-
-            // ==== SERVICE ORDERS AND INCIDENTS RELATED TO THIS FLIGHT PLAN ==== //
-
-            // If flight plan is beign used in a service order
-            if (!empty($flight_plan->service_orders)) {
-
-                foreach ($flight_plan->service_orders as $service_order_row => $service_order) {
-
-                    // Incidents of flight plan IN service orders
-                    $incidents = Incident::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
-                    $logs = Log::where("service_order_flight_plan_id", $service_order->pivot->id)->get();
-
-                    $this->formatedData["records"][$flight_plan_row]["service_orders"]["data"][$service_order_row] = [
-                        "id" => $service_order->id,
-                        "number" => $service_order->number,
-                        "status" => $service_order->status,
-                        "created_at" => strtotime($service_order->created_at),
-                        "incidents" => $incidents, // incidents of flight plan in this service order
-                        "logs" => $logs // logs of flight plan in this service order
-                    ];
-
-                    if ($service_order->status) {
-                        $this->formatedData["records"][$flight_plan_row]["service_orders"]["active"]++;
-                    } else {
-                        $this->formatedData["records"][$flight_plan_row]["service_orders"]["inactive"]++;
-                    }
-
-                    $this->formatedData["records"][$flight_plan_row]["total_incidents"] += $incidents->count();
-                    $this->formatedData["records"][$flight_plan_row]["total_logs"] += $logs->count();
-                }
             }
         }
 
