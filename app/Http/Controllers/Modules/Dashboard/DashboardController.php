@@ -42,13 +42,20 @@ class DashboardController extends Controller
 
                 $this->data[$key]["total"] = $collection->count();
                 $this->data[$key]["active"] = 0;
-                $this->data[$key]["trashed"] = 0;
+                if ($key === "users") {
+                    $this->data[$key]["inative"] = 0;
+                }
+                $this->data[$key]["deleted"] = 0;
 
                 foreach ($collection as $item) {
                     if ($item->trashed()) {
-                        $this->data[$key]["trashed"]++;
+                        $this->data[$key]["deleted"]++;
                     } else {
-                        $this->data[$key]["active"]++;
+                        if ($key === "users" && is_null($item->last_access)) {
+                            $this->data[$key]["inative"]++;
+                        } else {
+                            $this->data[$key]["active"]++;
+                        }
                     }
                 }
             }

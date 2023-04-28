@@ -89,7 +89,7 @@ export const Dashboard = React.memo(() => {
     // =============================================================== JSX  =============================================================== //
 
     return (
-        <Grid container columns={{ xs: 10, sm: 10, md: 10, lg: 6, xl: 10 }} spacing={2} paddingY={5} paddingX={10} bgcolor={"#333"}>
+        <Grid container columns={{ xs: 10, sm: 10, md: 10, lg: 6, xl: 10 }} spacing={2} paddingY={5} paddingX={5} bgcolor={"#333"}>
             <Grid item xs={10} sm={5} lg={2} >
                 <Card sx={MiniCardProps}>
                     <Box sx={MiniCardTopProps}>
@@ -103,7 +103,7 @@ export const Dashboard = React.memo(() => {
                         </Typography>
                     </Box>
                     <Box sx={MiniCardBottomProps}>
-                        Ativos: {loading ? 0 : users.active} | Inativos: {loading ? 0 : users.trashed}
+                        Ativos: {loading ? 0 : users.active} | Inativos: {loading ? 0 : users.inative} | Deletados: {loading ? 0 : users.deleted}
                     </Box>
                 </Card>
             </Grid>
@@ -120,7 +120,7 @@ export const Dashboard = React.memo(() => {
                         </Typography>
                     </Box>
                     <Box sx={MiniCardBottomProps}>
-                        Ativos: {loading ? 0 : profiles.active} | Inativos: {loading ? 0 : profiles.trashed}
+                        Ativos: {loading ? 0 : profiles.active} | Inativos: {loading ? 0 : profiles.deleted}
                     </Box>
                 </Card>
             </Grid>
@@ -137,7 +137,7 @@ export const Dashboard = React.memo(() => {
                         </Typography>
                     </Box>
                     <Box sx={MiniCardBottomProps}>
-                        Ativos: {loading ? 0 : flightPlans.active} | Inativos: {loading ? 0 : flightPlans.trashed}
+                        Ativos: {loading ? 0 : flightPlans.active} | Inativos: {loading ? 0 : flightPlans.deleted}
                     </Box>
                 </Card>
             </Grid>
@@ -154,7 +154,7 @@ export const Dashboard = React.memo(() => {
                         </Typography>
                     </Box>
                     <Box sx={MiniCardBottomProps}>
-                        Ativos: {loading ? 0 : serviceOrders.active} | Inativos: {loading ? 0 : serviceOrders.trashed}
+                        Ativos: {loading ? 0 : serviceOrders.active} | Inativos: {loading ? 0 : serviceOrders.deleted}
                     </Box>
                 </Card>
             </Grid>
@@ -171,7 +171,7 @@ export const Dashboard = React.memo(() => {
                         </Typography>
                     </Box>
                     <Box sx={MiniCardBottomProps}>
-                        Ativos: {loading ? 0 : reports.active} | Inativos: {loading ? 0 : reports.trashed}
+                        Ativos: {loading ? 0 : reports.active} | Inativos: {loading ? 0 : reports.deleted}
                     </Box>
                 </Card>
             </Grid>

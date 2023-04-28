@@ -59,16 +59,6 @@ class FlightPlanService implements ServiceInterface
             ];
         }
 
-        // Csv file
-        $csv_filename = $data["csvFile"]->getClientOriginalName();
-        $csv_contents = file_get_contents($data["csvFile"]);
-
-        $data_to_save["csv"] = [
-            "path" => "flight_plans/$pathTimestamp/csv/" . $csv_filename,
-            "filename" => $csv_filename,
-            "contents" => $csv_contents
-        ];
-
         // Img file
         $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);
         $img = str_replace(' ', '+', $img);
@@ -136,16 +126,6 @@ class FlightPlanService implements ServiceInterface
                     "path" => "$storagePath/single/$singleFileName"
                 ];
             }
-
-            // Csv file
-            $csv_filename = $data["csvFile"]->getClientOriginalName();
-            $csv_contents = file_get_contents($data["csvFile"]);
-
-            $data_to_save["csv"] = [
-                "path" => "flight_plans/$pathTimestamp/csv/" . $csv_filename,
-                "filename" => $csv_filename,
-                "contents" => $csv_contents
-            ];
 
             // Img file
             $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);

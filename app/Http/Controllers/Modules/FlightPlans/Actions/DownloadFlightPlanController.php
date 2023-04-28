@@ -18,14 +18,12 @@ class DownloadFlightPlanController extends Controller
             $filesPath = explode(",", $request->query("files"));
 
             foreach ($filesPath as $file_path) {
-                if (!Storage::disk("public")->exists($file_path)) {
+
+                if (!$file_contents = Storage::disk("public")->get($file_path)) {
                     throw new \Exception("Erro! O arquivo não foi encontrado.", 404);
                 }
-            }
 
-            foreach ($filesPath as $file_path) {
-                $file_contents = Storage::disk("public")->get($file_path);
-                $filename = explode(".", explode("/", $file_path)[2])[0];
+                $filename = explode(".", explode("/", $file_path)[3])[0];
                 $contents[$filename] = $file_contents;
             }
 

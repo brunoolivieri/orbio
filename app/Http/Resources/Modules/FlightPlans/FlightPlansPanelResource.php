@@ -21,10 +21,12 @@ class FlightPlansPanelResource extends JsonResource
     {
         foreach ($this->data as $flight_plan_row => $flight_plan) {
 
+            $flight_plan_files = json_decode($flight_plan->files);
+
             $this->formatedData["records"][$flight_plan_row] = [
                 "id" => $flight_plan->id,
                 "image_url" => Storage::url($flight_plan->image_path),
-                "csv_path" => Storage::url($flight_plan->csv_path),
+                "csv_path" => null,
                 "type" => $flight_plan->type,
                 "creator" => [
                     "name" => $flight_plan->user->name,
@@ -32,7 +34,7 @@ class FlightPlansPanelResource extends JsonResource
                     "deleted_at" => $flight_plan->user->deleted_at
                 ],
                 "name" => $flight_plan->name,
-                "files" => json_decode($flight_plan->files),
+                "files" => $flight_plan_files,
                 "localization" => [
                     "coordinates" => $flight_plan->coordinates,
                     "state" => $flight_plan->state,
@@ -44,6 +46,9 @@ class FlightPlansPanelResource extends JsonResource
                 "deleted_at" => $flight_plan->deleted_at,
                 "is_route_editable" => true
             ];
+
+            $flight_plan_timestamp = explode("/", $flight_plan_files[0])[1];
+            $this->formatedData["records"][$flight_plan_row]["csv_path"] = "flight_plans/$flight_plan_timestamp/single/$flight_plan_timestamp.txt";
 
             if ($flight_plan->trashed()) {
                 $this->formatedData["records"][$flight_plan_row]["status_badge"] = [

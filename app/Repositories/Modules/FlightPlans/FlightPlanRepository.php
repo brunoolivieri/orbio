@@ -47,8 +47,7 @@ class FlightPlanRepository implements RepositoryInterface
                 "city" => $data["city"],
                 "description" => null,
                 "type" => $data["type"],
-                "image_path" => $data["image"]["path"],
-                "csv_path" => $data["csv"]["path"]
+                "image_path" => $data["image"]["path"]
             ]);
 
             foreach ($data["route_files"] as $route_file) {
@@ -60,7 +59,6 @@ class FlightPlanRepository implements RepositoryInterface
             }
 
             Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
-            Storage::disk('public')->put($data["csv"]["path"], $data["csv"]["contents"]);
 
             return $flight_plan;
         });
@@ -99,7 +97,6 @@ class FlightPlanRepository implements RepositoryInterface
                     Storage::disk('public')->put($data["auxiliary_single_file"]["path"], $data["auxiliary_single_file"]["contents"]);
                 }
                 Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
-                Storage::disk('public')->put($data["csv"]["path"], $data["csv"]["contents"]);
             } else {
 
                 $flight_plan->update([

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
 
 class DownloadFlightPlanCSVController extends Controller
 {
@@ -15,13 +14,12 @@ class DownloadFlightPlanCSVController extends Controller
         try {
             Gate::authorize('flight_plans_read');
 
-            $flight_plan_csv_path = $request->get("path");
+            $flight_plan_single_file_path = $request->get("path");
 
-            if (!Storage::disk("public")->exists($flight_plan_csv_path)) {
+            if(!$file_contents = Storage::disk("public")->get($flight_plan_single_file_path)){
                 throw new \Exception("Erro! O arquivo não foi encontrado.", 404);
             }
 
-            $file_contents = Storage::disk("public")->get($flight_plan_csv_path);
             $json_contents = json_encode($file_contents);
 
             return response($json_contents, 200);

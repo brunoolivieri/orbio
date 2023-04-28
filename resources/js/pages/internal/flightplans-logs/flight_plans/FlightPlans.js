@@ -1,7 +1,9 @@
 import * as React from 'react';
+// Mui
 import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
+// Fontsawesome icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -11,8 +13,10 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
+// Other external libs
 import moment from 'moment';
 import JSZip from 'jszip';
+// Custom
 import { UpdateFlightPlan } from './formulary/UpdateFlightPlan';
 import { DeleteFlightPlan } from './formulary/DeleteFlightPlan';
 import { FlightPlanInformation } from './formulary/FlightPlanInformation';
@@ -20,8 +24,8 @@ import { ModalImage } from '../../../../components/modals/dialog/ModalImage';
 import { ExportTableData } from '../../../../components/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
+import { generateFlightPlanPathCSV } from '../../../../utils/GenerateFlightPlanPathCSV';
 import axios from '../../../../services/AxiosApi';
-
 
 const columns = [
   { field: 'id', headerName: 'ID', width: 90 },
@@ -156,20 +160,19 @@ const columns = [
 
       const { enqueueSnackbar } = useSnackbar();
 
-      const flight_plan_folder = data.row.files[0].split("/")[1];
-      const flight_plan_csv_path = `flight_plans/${flight_plan_folder}/csv/${flight_plan_folder}.csv`;
+      const flight_plan_timestamp = data.row.files[0].split("/")[1];
 
-      function handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_folder) {
+      function handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_timestamp) {
         axios.get(`/api/module/action/flight-plans/download-csv?path=${flight_plan_csv_path}`)
           .then(function (response) {
 
-            const file = new Blob([response.data], { type: 'text/csv' });
-            const csvURL = URL.createObjectURL(file);
+            const file_path_csv = generateFlightPlanPathCSV(response.data, flight_plan_timestamp);
+            const csvURL = URL.createObjectURL(file_path_csv.blob);
 
             // Download
             const link = document.createElement('a');
             link.href = csvURL;
-            link.download = `${flight_plan_folder}.csv`;
+            link.download = `${flight_plan_timestamp}.csv`;
             document.body.appendChild(link);
             link.click();
 
@@ -181,7 +184,7 @@ const columns = [
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_folder)}>
+        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.csv_path, flight_plan_timestamp)}>
           <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
         </IconButton>
       )

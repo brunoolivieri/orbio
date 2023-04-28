@@ -2060,8 +2060,7 @@ function cleanLayerById(id) {
 
 function cleanFields() {
     // Limpando o input file e os boxes de distância e tamanho da área
-    document.getElementById('file-input').value = "";
-    document.getElementById('file-import').value = "";
+    document.getElementById('file-import-txt').value = "";
     document.getElementById('file-import-poly').value = "";
     document.getElementById('file-import-path').value = "";
 
@@ -2142,7 +2141,11 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 
         modal.classList.remove("hidden");
 
-        const filesListElement = (multiPathData != null ? multiPathData : fullPathData).map((fileData, index) => {
+        // Set flight plan type and files
+        const flight_plan_type = multiPathData != null ? "multi" : "single";
+        const flight_plan_files = multiPathData != null ? multiPathData : [fullPathData];
+
+        const filesListElement = flight_plan_files.map((fileData, index) => {
 
             const container = document.createElement("div");
             container.replaceChildren([]);
@@ -2166,12 +2169,6 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 
         });
 
-        const flightCSV = savePathCSV(true, fullPathData.timestamp);
-        // Set flight plan csv into modal
-        const pathCSVName = document.getElementById("flight-csv");
-        pathCSVName.placeholder = '';
-        pathCSVName.placeholder = fullPathData.timestamp + ".csv";
-
         const filesList = document.getElementById("files-list");
         filesList.replaceChildren([]);
 
@@ -2189,21 +2186,18 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
         const btnSavePath = document.getElementById("btn-save-confirmation-modal");
         btnSavePath.addEventListener("click", function () {
 
-            //console.log(files);
-            //console.log({ blobImg, filenameImg, dataURL });
-
             const spin_icon = document.getElementById("spin-icon");
             spin_icon.classList.remove("hidden");
 
             let formData = new FormData();
 
-            (multiPathData != null ? multiPathData : fullPathData).map((fileData) => {
+            flight_plan_files.map((fileData) => {
                 formData.append("route_files[]", new File([fileData.blob], fileData.filename, { type: "text/plain" }));
                 formData.append("coordinates[]", fileData.coordinates[1] + "," + fileData.coordinates[0]);
             });
 
             // Multi needs an auxiliary single file to be opened in the map when necessary
-            if (multiPathData != null) {
+            if (flight_plan_type === "multi") {
                 formData.append("auxiliary_single_file", new File([fullPathData.blob], fullPathData.filename, { type: "text/plain" }));
             }
 
@@ -2211,9 +2205,8 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 
             formData.append("imageDataURL", dataURL);
             formData.append("imageFilename", filenameImg);
-            formData.append("csvFile", new File([flightCSV.blob], flightCSV.fileName, { type: "text/csv" }));
             formData.append("timestamp", fullPathData.timestamp);
-            formData.append("type", (multiPathData != null ? multiPathData : fullPathData).length > 1 ? "multi" : "single");
+            formData.append("type", flight_plan_type);
 
             const params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop)
