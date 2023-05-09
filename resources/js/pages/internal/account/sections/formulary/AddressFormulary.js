@@ -1,6 +1,6 @@
 import * as React from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
-import { Tooltip, IconButton, Grid, TextField, Box, Typography, Paper, Button } from '@mui/material';
+import { Tooltip, IconButton, Grid, TextField, Typography, Paper, Button } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -123,122 +123,120 @@ export function AddressFormulary() {
                 </Grid>
             </Grid>
 
-            <Box sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '8px' }}>
-                    <Typography variant="h5" mb={2}>Endereço</Typography>
-                    <Grid container gap={2} columns={10}>
-                        <Grid item xs={10} lg={2}>
-                            {formData.state ?
-                                <FetchedStatesSelection
-                                    fetch_from={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
-                                    error={formError.state.error}
-                                    errorMessage={formError.state.message}
-                                    selected={formData.state}
-                                    handleChange={handleInputChange}
-                                />
-                                :
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    value={"Escolha"}
-                                    disabled
-                                />
-                            }
-                        </Grid>
-
-                        <Grid item xs={10} lg={2}>
-                            {formData.state && formData.state != "0" ?
-                                <FetchedCitiesSelection
-                                    fetch_from={`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${formData.state}/municipios`}
-                                    error={formError.city.error}
-                                    errorMessage={formError.city.message}
-                                    selected={formData.city}
-                                    refresh={formData.state}
-                                    handleChange={handleInputChange}
-                                />
-                                :
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    value={"Selecione um estado"}
-                                    disabled
-                                />
-                            }
-                        </Grid>
-
-                        <Grid item xs={10} lg={3}>
+            <Paper className='mt-2 p-[18px] rounded-[8px] dark:bg-[#1F2937]'>
+                <Typography className='text-black dark:text-white' variant="h5" mb={2}>Endereço</Typography>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} lg={3}>
+                        {formData.state ?
+                            <FetchedStatesSelection
+                                fetch_from={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
+                                error={formError.state.error}
+                                errorMessage={formError.state.message}
+                                selected={formData.state}
+                                handleChange={handleInputChange}
+                            />
+                            :
                             <TextField
-                                id="cep"
-                                name="cep"
-                                label="CEP"
                                 fullWidth
                                 variant="outlined"
-                                value={formData.cep}
-                                disabled={loading}
-                                error={formError.cep.error}
-                                helperText={formError.cep.message}
-                                onChange={handleInputChange}
-                                InputProps={{
-                                    endAdornment:
-                                        <InputAdornment position="end">
-                                            <Tooltip title={"XXXXX-XXX"}>
-                                                <IconButton>
-                                                    <HelpIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </InputAdornment>
-                                }}
+                                value={"Escolha"}
+                                disabled
                             />
-                        </Grid>
-
-                        <Grid item xs={10} lg={3}>
-                            <TextField
-                                name="number"
-                                label="Numero"
-                                fullWidth
-                                variant="outlined"
-                                value={formData.number}
-                                disabled={loading}
-                                error={formError.number.error}
-                                helperText={formError.number.message}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={10} sm={6} lg={5}>
-                            <TextField
-                                name="address"
-                                label="Logradouro"
-                                fullWidth
-                                variant="outlined"
-                                value={formData.address}
-                                disabled={loading}
-                                error={formError.address.error}
-                                helperText={formError.address.message}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={10} sm={4} lg={5}>
-                            <TextField
-                                name="complement"
-                                label="Complemento"
-                                fullWidth
-                                variant="outlined"
-                                value={formData.complement}
-                                disabled={loading}
-                                error={formError.complement.error}
-                                helperText={formError.complement.message}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
+                        }
                     </Grid>
-                    <Button variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
-                        Atualizar
-                    </Button>
-                </Paper>
-            </Box>
+
+                    <Grid item xs={10} lg={3}>
+                        {formData.state && formData.state != "0" ?
+                            <FetchedCitiesSelection
+                                fetch_from={`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${formData.state}/municipios`}
+                                error={formError.city.error}
+                                errorMessage={formError.city.message}
+                                selected={formData.city}
+                                refresh={formData.state}
+                                handleChange={handleInputChange}
+                            />
+                            :
+                            <TextField
+                                fullWidth
+                                variant="outlined"
+                                value={"Selecione um estado"}
+                                disabled
+                            />
+                        }
+                    </Grid>
+
+                    <Grid item xs={10} lg={3}>
+                        <TextField
+                            id="cep"
+                            name="cep"
+                            label="CEP"
+                            fullWidth
+                            variant="outlined"
+                            value={formData.cep}
+                            disabled={loading}
+                            error={formError.cep.error}
+                            helperText={formError.cep.message}
+                            onChange={handleInputChange}
+                            InputProps={{
+                                endAdornment:
+                                    <InputAdornment position="end">
+                                        <Tooltip title={"XXXXX-XXX"}>
+                                            <IconButton>
+                                                <HelpIcon />
+                                            </IconButton>
+                                        </Tooltip>
+                                    </InputAdornment>
+                            }}
+                        />
+                    </Grid>
+
+                    <Grid item xs={10} lg={1}>
+                        <TextField
+                            name="number"
+                            label="Numero"
+                            fullWidth
+                            variant="outlined"
+                            value={formData.number}
+                            disabled={loading}
+                            error={formError.number.error}
+                            helperText={formError.number.message}
+                            onChange={handleInputChange}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            name="address"
+                            label="Logradouro"
+                            fullWidth
+                            variant="outlined"
+                            value={formData.address}
+                            disabled={loading}
+                            error={formError.address.error}
+                            helperText={formError.address.message}
+                            onChange={handleInputChange}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            name="complement"
+                            label="Complemento"
+                            fullWidth
+                            variant="outlined"
+                            value={formData.complement}
+                            disabled={loading}
+                            error={formError.complement.error}
+                            helperText={formError.complement.message}
+                            onChange={handleInputChange}
+                        />
+                    </Grid>
+
+                </Grid>
+                <Button variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
+                    Atualizar
+                </Button>
+            </Paper>
         </>
     )
 

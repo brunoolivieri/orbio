@@ -26,7 +26,7 @@ export function FlightPlansAndLogs() {
           { page: "logs", title: "Logs", icon: '' }
         ]}
       />
-      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+      <Box className="my-3 mx-2 h-full">
         {actualPanel === "flight_plans" ? <FlightPlans /> : <Logs />}
       </Box>
     </>

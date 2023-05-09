@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // MUI
 import { Box, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, styled } from '@mui/material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -150,32 +151,45 @@ export function MenuDesktop() {
         setOpen(false);
     }
 
+    function handleToggleTheme() {
+        document.body.classList.toggle("dark");
+    }
+
     return (
         <Box sx={{ display: { xs: 'none', md: 'none', lg: 'flex', xl: 'flex' } }}>
             <CssBaseline />
-            <AppBar position="fixed" open={open} sx={{ bgcolor: '#004795' }}>
-                <Toolbar >
+
+            <AppBar position="fixed" open={open}>
+                <Toolbar className='flex justify-between items-center'>
+                    <Box className="flex items-center">
+                        <IconButton
+                            color="inherit"
+                            aria-label="open drawer"
+                            onClick={handleDrawerOpen}
+                            edge="start"
+                            sx={{
+                                marginRight: 5,
+                                ...(open && { display: 'none' }),
+                            }}
+                        >
+                            <MenuIcon className='text-white' />
+                        </IconButton>
+                        <Typography variant="h6" noWrap component="div">
+                            ORBIO
+                        </Typography>
+                    </Box>
                     <IconButton
-                        color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
-                        sx={{
-                            marginRight: 5,
-                            ...(open && { display: 'none' }),
-                        }}
+                        onClick={handleToggleTheme}
                     >
-                        <MenuIcon />
+                        <Brightness4Icon className='text-white' />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
-                        ORBIO
-                    </Typography>
                 </Toolbar>
             </AppBar>
+
             <Drawer variant="permanent" open={open} sx={drawerStyle}>
-                <DrawerHeader sx={{ bgcolor: '#004795' }}>
+                <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
-                        <ChevronLeftIcon style={{ color: '#fff' }} />
+                        <ChevronLeftIcon className='text-green-600' />
                     </IconButton>
                 </DrawerHeader>
                 <Divider />
@@ -184,8 +198,8 @@ export function MenuDesktop() {
                         children.map(({ id: childId, icon, active, access, path }) => (
                             access &&
 
-                            < ListItem key={childId} disablePadding sx={{ display: 'block' }}>
-                                <Link to={path} style={{ width: '100%', display: 'block' }}>
+                            <ListItem key={childId} disablePadding className='block'>
+                                <Link to={path} className='w-full block'>
                                     <ListItemButton
                                         sx={{
                                             minHeight: 48,

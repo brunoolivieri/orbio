@@ -32,7 +32,7 @@ export const Account = () => {
           <Switcher panelStateSetter={setActualPanel} options={options} />
         </Grid>
       </Grid>
-      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+      <Box className="my-3 mx-2 h-full">
 
         {(actualPanel === "basic") && <BasicInformation />}
         {(actualPanel === "account_configuration") && <AdditionalConfiguration />}

@@ -20,7 +20,7 @@ export function DronesBatteriesAndEquipments() {
   return (
     <>
       <Switcher panelStateSetter={setActualPanel} options={[{ page: "drones", title: "Drones", icon: '' }, { page: "batteries", title: "Baterias", icon: '' }, { page: "equipments", title: "Equipamentos", icon: '' }]} />
-      <Box sx={{ my: 3, mx: 2 }} color="text.secondary">
+      <Box className="my-3 mx-2 h-full">
         {actualPanel == "drones" ? <Drones /> : (actualPanel == "batteries" ? <Batteries /> : <Equipments />)}
       </Box>
     </>

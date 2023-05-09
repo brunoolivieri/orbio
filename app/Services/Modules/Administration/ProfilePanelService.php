@@ -19,7 +19,7 @@ class ProfilePanelService implements ServiceInterface
     }
 
     function createOne(array $data)
-    {
+    {   
         $profile = $this->repository->createOne($data);
     }
 

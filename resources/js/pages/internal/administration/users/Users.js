@@ -1,7 +1,11 @@
 import * as React from 'react';
+// Mui
 import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -169,11 +173,11 @@ export function Users() {
 
   return (
     <>
-      <Grid container spacing={1} alignItems="center" mb={1}>
+      <Grid container gap={1} alignItems="center" mb={1}>
         <Grid item>
           {selectedRecords.length > 0 &&
             <IconButton>
-              <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
+              <FontAwesomeIcon icon={faPlus} className='text-gray-200 dark:text-[#374151]' size="sm" />
             </IconButton>
           }
 
@@ -260,7 +264,7 @@ export function Users() {
       </Grid>
 
       <Box
-        sx={{ height: 500, width: '100%' }}
+        className="h-[500px] w-full"
       >
         <DataGrid
           rows={records}
@@ -282,15 +286,10 @@ export function Users() {
           components={{
             Toolbar: TableToolbar,
           }}
+          className='shadow-sm outline-none dark:text-white dark:border-[#374151]'
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",
-            },
-            '& .super-app-theme--header': {
-              color: '#222'
-            },
-            '& .MuiDataGrid-columnHeaders': {
-              boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
             }
           }}
         />

@@ -9,7 +9,6 @@ const ToggleButton = styled(MuiToggleButton)({
   border: 'none',
   "&.Mui-selected, &.Mui-selected:hover": {
     boxShadow: '0 0 5px 2px rgba(0,0,0,0.2)',
-    color: "#007937",
     backgroundColor: 'transparent'
   }
 });
@@ -29,7 +28,7 @@ export function Switcher({ ...props }) {
       exclusive
       onChange={handleChange}
       fullWidth
-      sx={{ border: '1px solid #f0f0f0', borderRadius: 'none'}}
+      className='bg-white rounded-none border border-gray-200 dark:bg-[#374151] dark:border-none'
     >
       {props.options.map((item, index) => (
         <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} key={index}>

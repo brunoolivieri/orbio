@@ -1,5 +1,5 @@
 import *  as React from 'react';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
+import { Button, TextField, Dialog, DialogActions, DialogContent, FormLabel, DialogContentText, DialogTitle, Tooltip, IconButton, Alert, LinearProgress, Divider, Grid, FormGroup, FormControlLabel, Checkbox } from '@mui/material';
 import { useAuth } from '../../../../../context/Auth';
 import axios from '../../../../../services/AxiosApi';
 import { FormValidation } from '../../../../../utils/FormValidation';
@@ -21,8 +21,23 @@ export const CreateProfile = React.memo((props) => {
   const [alert, setAlert] = React.useState(initialDisplayAlert);
   const [loading, setLoading] = React.useState(false);
   const [canSave, setCanSave] = React.useState(true);
-
   const is_authorized = user.user_powers["1"].profile_powers.write;
+
+  // Privileges selection function reducer
+  function privilegesReducer(actual_state, action) {
+    let cloneState = Object.assign({}, actual_state);
+    cloneState[action.module][action.privilege] = action.new_value;
+    return cloneState;
+  }
+
+  // Privileges reducer
+  const [privileges, dispatchPrivileges] = React.useReducer(privilegesReducer, {
+    "1": { read: false, write: false },
+    "2": { read: false, write: false },
+    "3": { read: false, write: false },
+    "4": { read: false, write: false },
+    "5": { read: false, write: false }
+  });
 
   // Reducer Dispatch
   function accessDataReducer(actual_state, action) {
@@ -68,13 +83,9 @@ export const CreateProfile = React.memo((props) => {
   }
 
   function formSubmissionValidation() {
-
     let validation = Object.assign({}, initialFormError);
-
     validation["name"] = FormValidation(formData["name"], 3, 255);
-
     setFormError(validation);
-
     return !(validation.name.error);
   }
 
@@ -82,6 +93,7 @@ export const CreateProfile = React.memo((props) => {
     try {
       const response = await axios.post("api/module/administration-profile", {
         name: formData.name,
+        privileges: privileges,
         access_data: accessData
       });
       successResponse(response);
@@ -146,7 +158,6 @@ export const CreateProfile = React.memo((props) => {
         <DialogContent>
 
           <Grid container mb={2}>
-
             <Grid item xs={12}>
               <TextField
                 margin="dense"
@@ -159,7 +170,52 @@ export const CreateProfile = React.memo((props) => {
                 error={formError.name.error}
               />
             </Grid>
+          </Grid>
 
+          <DialogContentText>
+            Selecione abaixo o poder de acesso do perfil aos módulos existentes.
+          </DialogContentText>
+
+          <Grid container sx={{ mt: 2, mb: 2 }} spacing={1} alignItems="left">
+            <Grid item>
+              <FormLabel component="legend">Admin</FormLabel>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={privileges["1"].read} onChange={(event) => { dispatchPrivileges({ module: "1", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                <FormControlLabel control={<Checkbox checked={privileges["1"].write} onChange={(event) => { dispatchPrivileges({ module: "1", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item>
+              <FormLabel component="legend">Planos</FormLabel>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={privileges["2"].read} onChange={(event) => { dispatchPrivileges({ module: "2", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                <FormControlLabel control={<Checkbox checked={privileges["2"].write} onChange={(event) => { dispatchPrivileges({ module: "2", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item>
+              <FormLabel component="legend">Ordens</FormLabel>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={privileges["3"].read} onChange={(event) => { dispatchPrivileges({ module: "3", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                <FormControlLabel control={<Checkbox checked={privileges["3"].write} onChange={(event) => { dispatchPrivileges({ module: "3", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item>
+              <FormLabel component="legend">Relatórios</FormLabel>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={privileges["4"].read} onChange={(event) => { dispatchPrivileges({ module: "4", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                <FormControlLabel control={<Checkbox checked={privileges["4"].write} onChange={(event) => { dispatchPrivileges({ module: "4", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+              </FormGroup>
+            </Grid>
+
+            <Grid item>
+              <FormLabel component="legend">Equipamentos</FormLabel>
+              <FormGroup>
+                <FormControlLabel control={<Checkbox checked={privileges["5"].read} onChange={(event) => { dispatchPrivileges({ module: "5", privilege: "read", new_value: event.currentTarget.checked }) }} />} label="Ler" />
+                <FormControlLabel control={<Checkbox checked={privileges["5"].write} onChange={(event) => { dispatchPrivileges({ module: "5", privilege: "write", new_value: event.currentTarget.checked }) }} />} label="Escrever" />
+              </FormGroup>
+            </Grid>
           </Grid>
 
           <DialogContentText>
@@ -215,7 +271,7 @@ export const CreateProfile = React.memo((props) => {
                 <FormControlLabel control={<Checkbox checked={Boolean(accessData["trading_name"])} onChange={(event) => { dispatch({ field: "trading_name", new_value: event.currentTarget.checked }) }} />} label="Nome fantasia" />
               </FormGroup>
             </Grid>
-            
+
           </Grid>
 
         </DialogContent>

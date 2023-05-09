@@ -1,9 +1,11 @@
 import * as React from 'react';
-import { Tooltip, IconButton, Grid, TextField, Box, Paper, Button } from '@mui/material';
+// Mui
+import { Tooltip, IconButton, Grid, TextField, Typography, Paper, Button } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 import moment from 'moment';
+// Custom
 import axios from '../../../../services/AxiosApi';
 import { FormValidation } from '../../../../utils/FormValidation';
 import { DocumentsFormulary } from './formulary/DocumentsFormulary';
@@ -130,85 +132,85 @@ export function BasicInformation() {
                 </Grid>
             </Grid>
 
-            < Box sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '8px' }}>
-                    <Grid container spacing={3}>
+            <Paper className='mt-2 p-[18px] rounded-[8px] dark:bg-[#1F2937]'>
+                <Typography className='text-black dark:text-white' variant="h5" mb={2}>Dados básicos</Typography>
+                <Grid container spacing={2}>
 
-                        <Grid item xs={12} lg={6}>
-                            <TextField
-                                id="name"
-                                name="name"
-                                label="Nome completo"
-                                fullWidth
-                                value={formData.name}
-                                disabled={loading}
-                                variant="outlined"
-                                helperText={formError.name.message}
-                                error={formError.name.error}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} lg={6}>
-                            <TextField
-                                id="email"
-                                name="email"
-                                label="Email"
-                                value={formData.email}
-                                disabled={loading}
-                                fullWidth
-                                variant="outlined"
-                                helperText={formError.email.message}
-                                error={formError.email.error}
-                                onChange={handleInputChange}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} lg={6}>
-                            <TextField
-                                label="Perfil de usuário"
-                                fullWidth
-                                variant="outlined"
-                                value={formData.profile}
-                                disabled={true}
-                                inputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} lg={6}>
-                            <TextField
-                                label="Último acesso"
-                                fullWidth
-                                variant="outlined"
-                                value={formData.last_access}
-                                disabled={true}
-                                inputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
-
-                        <Grid item xs={12} lg={6}>
-                            <TextField
-                                label="Última atualização"
-                                fullWidth
-                                value={formData.last_update}
-                                disabled={true}
-                                variant="outlined"
-                                inputProps={{
-                                    readOnly: true
-                                }}
-                            />
-                        </Grid>
+                    <Grid item xs={12} lg={6}>
+                        <TextField
+                            id="name"
+                            name="name"
+                            label="Nome completo"
+                            fullWidth
+                            value={formData.name}
+                            disabled={loading}
+                            variant="outlined"
+                            helperText={formError.name.message}
+                            error={formError.name.error}
+                            onChange={handleInputChange}
+                        />
                     </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
-                        Atualizar
-                    </Button>
-                </Paper>
-            </Box>
+                    <Grid item xs={12} lg={6}>
+                        <TextField
+                            id="email"
+                            name="email"
+                            label="Email"
+                            value={formData.email}
+                            disabled={loading}
+                            fullWidth
+                            variant="outlined"
+                            helperText={formError.email.message}
+                            error={formError.email.error}
+                            onChange={handleInputChange}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} lg={6}>
+                        <TextField
+                            label="Perfil de usuário"
+                            fullWidth
+                            variant="outlined"
+                            value={formData.profile}
+                            disabled={true}
+                            inputProps={{
+                                readOnly: true
+                            }}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} lg={6}>
+                        <TextField
+                            label="Último acesso"
+                            fullWidth
+                            variant="outlined"
+                            value={formData.last_access}
+                            disabled={true}
+                            inputProps={{
+                                readOnly: true
+                            }}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} lg={6}>
+                        <TextField
+                            label="Última atualização"
+                            fullWidth
+                            value={formData.last_update}
+                            disabled={true}
+                            variant="outlined"
+                            inputProps={{
+                                readOnly: true
+                            }}
+                        />
+                    </Grid>
+                </Grid>
+
+                <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
+                    Atualizar
+                </Button>
+            </Paper>
+
             <div>
                 <DocumentsFormulary />
                 <AddressFormulary />

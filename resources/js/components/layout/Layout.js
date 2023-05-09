@@ -1,13 +1,14 @@
 import * as React from 'react';
 // MUI
-import { Box, Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { MenuMobile } from './MenuMobile';
 import { MenuDesktop } from './MenuDesktop';
-import { Header } from './Header';
+import { MobileHeader } from './MobileHeader';
 import { BackdropLoading } from "../../components/backdrop/BackdropLoading";
+import { SubHeader } from './SubHeader';
 
 const drawerWidth = 265;
 
@@ -41,7 +42,7 @@ export const Layout = ({ children }) => {
     setMenuOpen(!menuOpen);
   }
 
-  // ================ JSX  ============= //
+  // ================ STRUCTURES  ============= //
 
   if (loading) {
     return <BackdropLoading />;
@@ -51,7 +52,7 @@ export const Layout = ({ children }) => {
 
     return (
       <>
-        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#fff' }}>
+        <Box className='flex min-h-screen'>
           <MenuDesktop />
           <Box
             component="nav"
@@ -64,15 +65,13 @@ export const Layout = ({ children }) => {
               onClose={handleDrawerToggle}
             />
           </Box>
-          <Box sx={{ flexGrow: 1 }}>
-            <Header onDrawerToggle={handleDrawerToggle} />
-            <Box component="main" sx={{ flexGrow: 1, maxWidth: "100%", margin: 'auto', overflow: 'hidden', bgcolor: '#fff' }}>
+          <Box className="grow bg-white dark:bg-[#1F2937]">
+            <MobileHeader onDrawerToggle={handleDrawerToggle} />
+            <SubHeader />
+            <Box component="main" className='grow max-w-full m-auto overflow-hidden'>
 
               {children}
 
-            </Box>
-            <Box component="footer">
-              {/* <Copyright /> */}
             </Box>
           </Box>
         </Box>

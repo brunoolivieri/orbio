@@ -5,6 +5,7 @@ namespace App\Services\Modules\Administration;
 use Illuminate\Support\Str;
 use App\Notifications\Modules\Administration\User\UserCreatedNotification;
 use App\Notifications\Modules\Administration\User\UserUpdatedNotification;
+use App\Notifications\Modules\Administration\User\UserDisabledNotification;
 use App\Services\Contracts\ServiceInterface;
 use App\Repositories\Modules\Administration\UserRepository;
 
@@ -66,7 +67,6 @@ class UserPanelService implements ServiceInterface
 
             throw new \Exception($message, 409);
         } 
+
     }
 }
-
-?>

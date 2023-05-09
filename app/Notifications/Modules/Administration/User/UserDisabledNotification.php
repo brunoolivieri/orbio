@@ -5,7 +5,6 @@ namespace App\Notifications\Modules\Administration\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Users\User;
 
 class UserDisabledNotification extends Notification
 {
@@ -13,36 +12,13 @@ class UserDisabledNotification extends Notification
 
     private $user;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
     public function via($notifiable)
     {
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
     public function toMail($notifiable)
     {
-
         return (new MailMessage)
             ->subject('ORBIO - Desabilitação da conta')
             ->greeting("Olá " . $notifiable->first_name . "!")
@@ -51,16 +27,4 @@ class UserDisabledNotification extends Notification
             ->line('Se não foi você quem requisitou ou realizou o procedimento, contate o suporte.');
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
-    }
 }

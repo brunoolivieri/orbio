@@ -23,7 +23,7 @@ export function Administration() {
           { page: "profiles", title: "Perfis", icon: "" }
         ]}
       />
-      <Box sx={{ my: 3, mx: 2, height: '100%' }} color="text.secondary">
+      <Box className="my-3 mx-2 h-full">
         {actualPanel == "users" ? <Users /> : <Profiles />}
       </Box>
     </>

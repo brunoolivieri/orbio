@@ -7,9 +7,9 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap" rel="stylesheet">
         <script src="https://kit.fontawesome.com/49b7b83709.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" type="text/css" href="{{asset('css/root/index.css')}}" />
+        <link href="{{ asset('css/tailwind/index.css') }}" type="text/css" rel="stylesheet">
     </head>
-    <body>
+    <body class="dark">
         <div id = "root" >
         </div>
     </body>

@@ -63,8 +63,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'modules.common.authorization' => \App\Http\Middleware\Custom\Modules\ModulesCommonMiddleware::class,
-        'session.auth' => \App\Http\Middleware\Custom\Auth\SessionAuthMiddleware::class // Middleware para validar a sessão do usuário
+        'session.auth' => \App\Http\Middleware\AuthenticationMiddleware::class,
        
     ];
 }

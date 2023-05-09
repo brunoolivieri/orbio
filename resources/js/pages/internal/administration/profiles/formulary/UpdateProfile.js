@@ -82,13 +82,9 @@ export const UpdateProfile = React.memo((props) => {
     }
 
     function formSubmissionValidation() {
-
         let validation = Object.assign({}, initialFormError);
-
         validation["name"] = FormValidation(formData["name"], 3, 255);
-
         setFormError(validation);
-
         return !(validation.name.error);
     }
 

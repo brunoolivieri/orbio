@@ -139,48 +139,44 @@ export function DocumentsFormulary() {
                 </Grid>
             </Grid>
 
-            <Box sx={{ mt: 2 }} >
-                <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '8px' }}>
-                    <Typography variant="h5" marginBottom={2}>Documentos</Typography>
-                    <Grid container gap={2}>
+            <Paper className='mt-2 p-[18px] rounded-[8px] dark:bg-[#1F2937]'>
+                <Typography className='text-black dark:text-white' variant="h5" marginBottom={2}>Documentos</Typography>
+                <Grid container spacing={2}>
 
-                        {checkIfCanRenderDocuments() && Object.keys(formData).map((key) => {
-                            return (
-                                <Grid item xs={12} lg={6} key={key}>
-                                    <TextField
-                                        id={key}
-                                        name={key}
-                                        label={formConfig[key].label}
-                                        fullWidth
-                                        variant="outlined"
-                                        value={formData[key]}
-                                        disabled={loading}
-                                        error={formError[key].error}
-                                        helperText={formError[key].message}
-                                        onChange={handleInputChange}
-                                        InputProps={formConfig[key].help && {
-                                            endAdornment:
-                                                <InputAdornment position="end">
-                                                    <Tooltip title={formConfig[key].help}>
-                                                        <IconButton>
-                                                            <HelpIcon />
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                </InputAdornment>,
-                                        }}
-                                    />
-                                </Grid>
-                            )
-                        })}
-                    </Grid>
+                    {checkIfCanRenderDocuments() && Object.keys(formData).map((key) => {
+                        return (
+                            <Grid item xs={12} lg={6} key={key}>
+                                <TextField
+                                    id={key}
+                                    name={key}
+                                    label={formConfig[key].label}
+                                    fullWidth
+                                    variant="outlined"
+                                    value={formData[key]}
+                                    disabled={loading}
+                                    error={formError[key].error}
+                                    helperText={formError[key].message}
+                                    onChange={handleInputChange}
+                                    InputProps={formConfig[key].help && {
+                                        endAdornment:
+                                            <InputAdornment position="end">
+                                                <Tooltip title={formConfig[key].help}>
+                                                    <IconButton>
+                                                        <HelpIcon />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </InputAdornment>,
+                                    }}
+                                />
+                            </Grid>
+                        )
+                    })}
+                </Grid>
 
-                    <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
-                        Atualizar
-                    </Button>
-                </Paper>
-            </Box>
-
+                <Button type="submit" variant="contained" color="primary" disabled={loading} sx={{ mt: 2 }} onClick={handleSubmit}>
+                    Atualizar
+                </Button>
+            </Paper>
         </>
     )
-
 }

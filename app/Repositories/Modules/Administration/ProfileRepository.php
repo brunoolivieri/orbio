@@ -31,11 +31,28 @@ class ProfileRepository implements RepositoryInterface
             ]);
 
             // *Turn into loop*
-            $profile->modules()->attach(1, ["read" => false, "write" => false]);
-            $profile->modules()->attach(2, ["read" => false, "write" => false]);
-            $profile->modules()->attach(3, ["read" => false, "write" => false]);
-            $profile->modules()->attach(4, ["read" => false, "write" => false]);
-            $profile->modules()->attach(5, ["read" => false, "write" => false]);
+            $profile->modules()->attach([
+                1 => [
+                    'read' => $data["privileges"][1]["read"],
+                    'write' => $data["privileges"][1]["write"]
+                ],
+                2 => [
+                    'read' => $data["privileges"][2]["read"],
+                    'write' => $data["privileges"][2]["write"]
+                ],
+                3 => [
+                    'read' => $data["privileges"][3]["read"],
+                    'write' => $data["privileges"][3]["write"]
+                ],
+                4 => [
+                    'read' => $data["privileges"][4]["read"],
+                    'write' => $data["privileges"][4]["write"]
+                ],
+                5 => [
+                    'read' => $data["privileges"][5]["read"],
+                    'write' => $data["privileges"][5]["write"]
+                ]
+            ]);
 
             return $profile;
         });

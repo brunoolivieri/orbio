@@ -12,33 +12,16 @@ class UserCreatedNotification extends Notification
 
     private $password;
 
-    /**
-     * Create a new notification instance.
-     *
-     * @return void
-     */
     public function __construct(string $password)
     {
         $this->password = $password;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
     public function via($notifiable)
     {
         return ['mail'];
     }
 
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
     public function toMail($notifiable)
     {
         return (new MailMessage)
@@ -50,18 +33,5 @@ class UserCreatedNotification extends Notification
             ->line("Data de acesso: " . date("d-m-Y h:i:s"))
             ->action("Página de acesso", url(env("APP_URL")))
             ->line('Se não foi você quem requisitou o procedimento, ignore.');
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
     }
 }

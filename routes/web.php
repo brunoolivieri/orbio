@@ -1,47 +1,46 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Pages\{
+use App\Http\Controllers\Pages\v1\{
     ReactController,
     MapController,
     MapIframeController
 };
-use App\Http\Controllers\Authentication\{
+use App\Http\Controllers\Authentication\v1\{
     LoginController,
     LogoutController,
-    PasswordResetController,
-    PasswordTokenController,
-    UserAuthenticatedData
+    GetUserAuthenticatedDataController,
+    ForgotPasswordController
 };
-use App\Http\Controllers\Modules\Dashboard\DashboardController;
-use App\Http\Controllers\Modules\MyProfile\MyProfileController;
-use App\Http\Controllers\Modules\Administration\{
+use App\Http\Controllers\Modules\v1\Dashboard\DashboardController;
+use App\Http\Controllers\Modules\v1\MyProfile\MyProfileController;
+use App\Http\Controllers\Modules\v1\Administration\{
     Users\AdministrationModuleUsersController,
     Users\Actions\UserAdditionalDataController,
     Profiles\AdministrationModuleProfilesController,
     Profiles\Actions\ProfileAdditionalDataController
 };
-use App\Http\Controllers\Modules\Reports\{
+use App\Http\Controllers\Modules\v1\Reports\{
     ReportsModuleController,
     Actions\WeatherDataController,
     Actions\DownloadReportController,
     Actions\ServiceOrdersForReport,
     Actions\ReportAdditionalDataController
 };
-use App\Http\Controllers\Modules\FlightPlans\{
+use App\Http\Controllers\Modules\v1\FlightPlans\{
     FlightPlansModuleController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
     Actions\DownloadFlightPlanFilesToOpenOnMap,
     Actions\FlightPlanAdditionalDataController
 };
-use App\Http\Controllers\Modules\Logs\{
+use App\Http\Controllers\Modules\v1\Logs\{
     LogsModuleController,
     Actions\DownloadLogController,
     Actions\UploadedLogsProcessingController,
     Actions\LogAdditionalDataController
 };
-use App\Http\Controllers\Modules\ServiceOrders\{
+use App\Http\Controllers\Modules\v1\ServiceOrders\{
     ServiceOrdersModuleController,
     Actions\FlightPlansForServiceOrderController,
     Actions\DronesForServiceOrderFlightPlanController,
@@ -51,15 +50,14 @@ use App\Http\Controllers\Modules\ServiceOrders\{
     Actions\ServiceOrderIncidentController,
     Actions\ServiceOrderAdditionalDataController
 };
-use App\Http\Controllers\Modules\Equipments\{
+use App\Http\Controllers\Modules\v1\Equipments\{
     Batteries\EquipmentModuleBatteryController,
     Batteries\Actions\BatteryAdditionalDataController,
     Drones\EquipmentModuleDroneController,
     Drones\Actions\DroneAdditionalDataController,
-    OtherEquipments\EquipmentModuleEquipmentController,
-    OtherEquipments\Actions\EquipmentAdditionalDataController
+    OtherEquipments\EquipmentModuleEquipmentController
 };
-use App\Http\Controllers\Actions\{
+use App\Http\Controllers\Actions\v1\{
     LoadFlightPlansController,
     LoadIncidentsController,
     LoadProfilesController,
@@ -89,10 +87,10 @@ Route::middleware(["session.auth"])->group(function () {
 // Api routes
 Route::group(["prefix" => "api"], function () {
     Route::post('/login', LoginController::class);
-    Route::post('/get-password-token', PasswordTokenController::class);
-    Route::post('/change-password', PasswordResetController::class);
+    Route::post('/get-password-token', [ForgotPasswordController::class, "getToken"]);
+    Route::post('/change-password', [ForgotPasswordController::class, "changePassword"]);
     Route::middleware(["session.auth"])->group(function () {
-        Route::get('/user-data', UserAuthenticatedData::class);
+        Route::get('/user-data', GetUserAuthenticatedDataController::class);
         Route::post('/logout', LogoutController::class);
         // Module core operations
         Route::group(["prefix" => "/module"], function () {
@@ -156,7 +154,7 @@ Route::group(["prefix" => "api"], function () {
                 // Equipments actions
                 Route::get("/equipments-drone/additional-data", DroneAdditionalDataController::class);
                 Route::get("/equipments-battery/additional-data", BatteryAdditionalDataController::class);
-                Route::get("/equipments/additional-data", EquipmentAdditionalDataController::class);
+                //Route::get("/equipments/additional-data", EquipmentAdditionalDataController::class);
             });
         });
         // Generic actions

@@ -27,7 +27,8 @@ class ProfilePanelStoreRequest extends FormRequest
 
         return [
             'name' => 'required|unique:profiles,name',
-            'access_data' => 'required'
+            'access_data' => 'required',
+            'privileges' => 'required'
         ];
     }
 
