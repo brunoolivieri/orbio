@@ -141,14 +141,12 @@ export function DocumentsFormulary() {
 
             <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '8px' }}>
-
                     <Typography variant="h5" marginBottom={2}>Documentos</Typography>
-
-                    <Grid container spacing={3}>
+                    <Grid container gap={2}>
 
                         {checkIfCanRenderDocuments() && Object.keys(formData).map((key) => {
                             return (
-                                <Grid item xs={12} sm={6} key={key}>
+                                <Grid item xs={12} lg={6} key={key}>
                                     <TextField
                                         id={key}
                                         name={key}

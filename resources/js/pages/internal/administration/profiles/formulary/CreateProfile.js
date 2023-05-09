@@ -215,6 +215,7 @@ export const CreateProfile = React.memo((props) => {
                 <FormControlLabel control={<Checkbox checked={Boolean(accessData["trading_name"])} onChange={(event) => { dispatch({ field: "trading_name", new_value: event.currentTarget.checked }) }} />} label="Nome fantasia" />
               </FormGroup>
             </Grid>
+            
           </Grid>
 
         </DialogContent>

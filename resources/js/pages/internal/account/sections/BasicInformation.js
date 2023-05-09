@@ -134,7 +134,7 @@ export function BasicInformation() {
                 <Paper sx={{ marginTop: 4, padding: '0px 18px 18px 18px', borderRadius: '8px' }}>
                     <Grid container spacing={3}>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} lg={6}>
                             <TextField
                                 id="name"
                                 name="name"
@@ -149,7 +149,7 @@ export function BasicInformation() {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} lg={6}>
                             <TextField
                                 id="email"
                                 name="email"
@@ -164,7 +164,7 @@ export function BasicInformation() {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} lg={6}>
                             <TextField
                                 label="Perfil de usuário"
                                 fullWidth
@@ -177,7 +177,7 @@ export function BasicInformation() {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} lg={6}>
                             <TextField
                                 label="Último acesso"
                                 fullWidth
@@ -190,7 +190,7 @@ export function BasicInformation() {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6}>
+                        <Grid item xs={12} lg={6}>
                             <TextField
                                 label="Última atualização"
                                 fullWidth

@@ -161,7 +161,7 @@ export const CreateUser = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <FetchedDataSelection
                 label_text={"Perfil"}
                 fetch_from={"/api/action/load-profiles"}

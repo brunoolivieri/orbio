@@ -184,12 +184,13 @@ export const CreateServiceOrder = React.memo((props) => {
 
         <DialogContent>
 
-          <DialogContentText mb={3}>
+          <DialogContentText mb={2}>
             Preencha todos os dados requisitados no formulário para a criação da ordem de serviço.
           </DialogContentText>
 
-          <Grid container spacing={1}>
-            <Grid item sx={6}>
+          <Grid container gap={2}>
+            
+            <Grid item xs={12} lg={6}>
               <DatePicker
                 label={"Início"}
                 name={"start_date"}
@@ -200,7 +201,7 @@ export const CreateServiceOrder = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <DatePicker
                 label={"Término"}
                 name={"end_date"}
@@ -211,7 +212,7 @@ export const CreateServiceOrder = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <FetchedDataSelection
                 label_text="Piloto"
                 fetch_from={"/api/action/load-users?where=profile_id.3"}
@@ -225,7 +226,7 @@ export const CreateServiceOrder = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <FetchedDataSelection
                 label_text="Cliente"
                 fetch_from={"/api/action/load-users?where=profile_id.4"}
@@ -255,7 +256,7 @@ export const CreateServiceOrder = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={12} lg={6}>
               <Box>
                 <FlightPlansForServiceOrder
                   setSelectedFlightPlans={setSelectedFlightPlans}

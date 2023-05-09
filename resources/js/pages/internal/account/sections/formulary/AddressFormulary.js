@@ -126,8 +126,8 @@ export function AddressFormulary() {
             <Box sx={{ mt: 2 }} >
                 <Paper sx={{ marginTop: 2, padding: '18px 18px 18px 18px', borderRadius: '8px' }}>
                     <Typography variant="h5" mb={2}>Endereço</Typography>
-                    <Grid container spacing={3} columns={10}>
-                        <Grid item xs={5} lg={2} xl={2}>
+                    <Grid container gap={2} columns={10}>
+                        <Grid item xs={10} lg={2}>
                             {formData.state ?
                                 <FetchedStatesSelection
                                     fetch_from={"https://servicodados.ibge.gov.br/api/v1/localidades/estados"}
@@ -146,7 +146,7 @@ export function AddressFormulary() {
                             }
                         </Grid>
 
-                        <Grid item xs={5} lg={2} xl={2}>
+                        <Grid item xs={10} lg={2}>
                             {formData.state && formData.state != "0" ?
                                 <FetchedCitiesSelection
                                     fetch_from={`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${formData.state}/municipios`}
@@ -166,7 +166,7 @@ export function AddressFormulary() {
                             }
                         </Grid>
 
-                        <Grid item xs={7} lg={3} xl={3}>
+                        <Grid item xs={10} lg={3}>
                             <TextField
                                 id="cep"
                                 name="cep"
@@ -191,7 +191,7 @@ export function AddressFormulary() {
                             />
                         </Grid>
 
-                        <Grid item xs={3} lg={3} xl={3}>
+                        <Grid item xs={10} lg={3}>
                             <TextField
                                 name="number"
                                 label="Numero"
@@ -205,7 +205,7 @@ export function AddressFormulary() {
                             />
                         </Grid>
 
-                        <Grid item xs={10} sm={6} lg={5} xl={5}>
+                        <Grid item xs={10} sm={6} lg={5}>
                             <TextField
                                 name="address"
                                 label="Logradouro"
@@ -219,7 +219,7 @@ export function AddressFormulary() {
                             />
                         </Grid>
 
-                        <Grid item xs={10} sm={4} lg={5} xl={5}>
+                        <Grid item xs={10} sm={4} lg={5}>
                             <TextField
                                 name="complement"
                                 label="Complemento"
