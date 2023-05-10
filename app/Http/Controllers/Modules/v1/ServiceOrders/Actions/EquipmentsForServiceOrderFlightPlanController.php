@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Modules\v1\ServiceOrders\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Equipments\Equipment;
-use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
+use App\Http\Resources\v1\Modules\Equipments\EquipmentsPaginationResource;
 
 class EquipmentsForServiceOrderFlightPlanController extends Controller
 {
@@ -30,7 +30,7 @@ class EquipmentsForServiceOrderFlightPlanController extends Controller
                 throw new \Exception("Nenhum equipamento encontrada.", 404);
             }
 
-            return response(new EquipmentsPanelResource($equipments), 200);
+            return response(new EquipmentsPaginationResource($equipments), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

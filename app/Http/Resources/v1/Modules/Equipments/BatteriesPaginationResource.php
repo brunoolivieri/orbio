@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Modules\Equipments;
+namespace App\Http\Resources\v1\Modules\Equipments;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
-class BatteriesPanelResource extends JsonResource
+class BatteriesPaginationResource extends JsonResource
 {
     private LengthAwarePaginator $data;
     private array $formatedData = [];

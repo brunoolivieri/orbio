@@ -11,7 +11,7 @@ use App\Http\Requests\Modules\Administration\ProfilePanel\ProfilePanelUpdateRequ
 use App\Services\Modules\Administration\ProfilePanelService;
 use App\Models\Profiles\Profile;
 use App\Exports\GenericExport;
-use App\Http\Resources\Modules\Administration\ProfilesPanelResource;
+use App\Http\Resources\v1\Modules\Administration\ProfilesPaginationResource;
 
 class AdministrationModuleProfilesController extends Controller
 {
@@ -38,7 +38,7 @@ class AdministrationModuleProfilesController extends Controller
                 throw new \Exception("Nenhum perfil encontrado", 404);
             }
 
-            return response(new ProfilesPanelResource($result), 200);
+            return response(new ProfilesPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

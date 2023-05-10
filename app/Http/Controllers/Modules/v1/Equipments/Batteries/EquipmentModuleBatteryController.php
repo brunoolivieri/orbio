@@ -11,7 +11,7 @@ use App\Http\Requests\Modules\Equipments\Battery\UpdateBatteryRequest;
 use App\Services\Modules\Equipment\BatteryService;
 use App\Models\Batteries\Battery;
 use App\Exports\GenericExport;
-use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
+use App\Http\Resources\v1\Modules\Equipments\BatteriesPaginationResource;
 
 class EquipmentModuleBatteryController extends Controller
 {
@@ -38,7 +38,7 @@ class EquipmentModuleBatteryController extends Controller
                 throw new \Exception("Nenhuma bateria encontrada", 404);
             }
 
-            return response(new BatteriesPanelResource($result), 200);
+            return response(new BatteriesPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

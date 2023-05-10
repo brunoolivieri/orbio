@@ -1,4 +1,5 @@
 import * as React from 'react';
+// Mui
 import InputAdornment from '@mui/material/InputAdornment';
 import { Tooltip } from '@mui/material';
 import { IconButton } from '@mui/material';
@@ -12,6 +13,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+// Custom
 import axios from '../../../../../services/AxiosApi'
 
 const initialFormData = {}
@@ -139,8 +141,8 @@ export function DocumentsFormulary() {
                 </Grid>
             </Grid>
 
-            <Paper className='mt-2 p-[18px] rounded-[8px] dark:bg-[#1F2937]'>
-                <Typography className='text-black dark:text-white' variant="h5" marginBottom={2}>Documentos</Typography>
+            <Paper className='mt-2 p-[18px] rounded-[8px]'>
+                <Typography className='text-black' variant="h5" marginBottom={2}>Documentos</Typography>
                 <Grid container spacing={2}>
 
                     {checkIfCanRenderDocuments() && Object.keys(formData).map((key) => {

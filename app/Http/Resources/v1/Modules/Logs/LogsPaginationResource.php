@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Modules\Logs;
+namespace App\Http\Resources\v1\Modules\Logs;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
-class LogsPanelResource extends JsonResource
+class LogsPaginationResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;

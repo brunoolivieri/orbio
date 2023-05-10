@@ -15,24 +15,23 @@ const ToggleButton = styled(MuiToggleButton)({
 
 export function Switcher({ ...props }) {
 
-  const [alignment, setAlignment] = React.useState(0);
+  const [option, setOption] = React.useState(0);
 
-  const handleChange = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
+  function handleChange(event, newAlignment) {
+    setOption(newAlignment);
+  }
 
   return (
     <ToggleButtonGroup
-      color="primary"
-      value={alignment}
+      value={option}
       exclusive
       onChange={handleChange}
       fullWidth
-      className='bg-white rounded-none border border-gray-200 dark:bg-[#374151] dark:border-none'
+      className='bg-white rounded-none border border-gray-200'
     >
       {props.options.map((item, index) => (
         <ToggleButton value={index} onClick={() => props.panelStateSetter(item.page)} key={index}>
-          <Typography sx={{ marginRight: 2, fontWeight: 600 }}>{item.title.toUpperCase()}</Typography>
+          <Typography sx={{ fontSize: 15, fontWeight: index === option && 600 }} className='font-sans'>{item.title.toUpperCase()}</Typography>
         </ToggleButton>
       ))}
     </ToggleButtonGroup>

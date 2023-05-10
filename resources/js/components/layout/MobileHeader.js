@@ -40,7 +40,7 @@ export const MobileHeader = React.memo((props) => {
 
   return (
     <>
-      <AppBar position="static" className='shadow-sm z-1'>
+      <AppBar position="static" className='shadow-sm z-1' sx={{ bgcolor: "#00458C" }}>
         <Toolbar className='flex justify-between items-center'>
           <IconButton
             size="large"

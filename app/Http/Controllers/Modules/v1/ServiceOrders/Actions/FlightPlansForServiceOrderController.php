@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Modules\v1\ServiceOrders\Actions;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Modules\ServiceOrders\FlightPlansForServiceOrderResource;
 use App\Repositories\Modules\FlightPlans\FlightPlanRepository;
+use App\Http\Resources\v1\Modules\ServiceOrders\FlightPlansForServiceOrderPaginationResource;
 
 class FlightPlansForServiceOrderController extends Controller
 {
@@ -24,7 +24,7 @@ class FlightPlansForServiceOrderController extends Controller
         $data = $this->repository->getPaginate($limit, $page, $search, []);
 
         if ($data->total() > 0) {
-            return response(new FlightPlansForServiceOrderResource($data, $service_order_id), 200);
+            return response(new FlightPlansForServiceOrderPaginationResource($data, $service_order_id), 200);
         } else {
             return response(["message" => "Nenhum plano de voo encontrado."], 404);
         }

@@ -11,7 +11,7 @@ use App\Http\Requests\Modules\Equipments\Equipment\UpdateEquipmentRequest;
 use App\Services\Modules\Equipment\EquipmentService;
 use App\Models\Equipments\Equipment;
 use App\Exports\GenericExport;
-use App\Http\Resources\Modules\Equipments\EquipmentsPanelResource;
+use App\Http\Resources\v1\Modules\Equipments\EquipmentsPaginationResource;
 
 class EquipmentModuleEquipmentController extends Controller
 {
@@ -38,7 +38,7 @@ class EquipmentModuleEquipmentController extends Controller
                 throw new \Exception("Nenhum equipamento encontrado", 404);
             }
 
-            return response(new EquipmentsPanelResource($result), 200);
+            return response(new EquipmentsPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

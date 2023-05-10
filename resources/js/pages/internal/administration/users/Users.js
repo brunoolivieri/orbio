@@ -3,9 +3,6 @@ import * as React from 'react';
 import { Tooltip, IconButton, Grid, TextField, Chip, InputAdornment, Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileCsv } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
@@ -177,7 +174,7 @@ export function Users() {
         <Grid item>
           {selectedRecords.length > 0 &&
             <IconButton>
-              <FontAwesomeIcon icon={faPlus} className='text-gray-200 dark:text-[#374151]' size="sm" />
+              <FontAwesomeIcon icon={faPlus} color={"#E0E0E0"} size="sm" />
             </IconButton>
           }
 
@@ -286,7 +283,7 @@ export function Users() {
           components={{
             Toolbar: TableToolbar,
           }}
-          className='shadow-sm outline-none dark:text-white dark:border-[#374151]'
+          className='shadow-sm outline-none'
           sx={{
             "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
               outline: "none !important",

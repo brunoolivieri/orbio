@@ -18,6 +18,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { useSnackbar } from 'notistack';
 // Custom
 import { useAuth } from '../../context/Auth';
+import { DesktopHeader } from './DesktopHeader';
 
 const drawerWidth = 210;
 
@@ -157,35 +158,7 @@ export function MenuDesktop() {
 
     return (
         <Box sx={{ display: { xs: 'none', md: 'none', lg: 'flex', xl: 'flex' } }}>
-            <CssBaseline />
-
-            <AppBar position="fixed" open={open}>
-                <Toolbar className='flex justify-between items-center'>
-                    <Box className="flex items-center">
-                        <IconButton
-                            color="inherit"
-                            aria-label="open drawer"
-                            onClick={handleDrawerOpen}
-                            edge="start"
-                            sx={{
-                                marginRight: 5,
-                                ...(open && { display: 'none' }),
-                            }}
-                        >
-                            <MenuIcon className='text-white' />
-                        </IconButton>
-                        <Typography variant="h6" noWrap component="div">
-                            ORBIO
-                        </Typography>
-                    </Box>
-                    <IconButton
-                        onClick={handleToggleTheme}
-                    >
-                        <Brightness4Icon className='text-white' />
-                    </IconButton>
-                </Toolbar>
-            </AppBar>
-
+            <DesktopHeader open={open} handleDrawerOpen={handleDrawerOpen} />
             <Drawer variant="permanent" open={open} sx={drawerStyle}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>

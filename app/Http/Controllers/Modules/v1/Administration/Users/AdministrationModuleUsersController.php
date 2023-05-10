@@ -11,7 +11,7 @@ use App\Http\Requests\Modules\Administration\UserPanel\UserPanelUpdateRequest;
 use App\Services\Modules\Administration\UserPanelService;
 use App\Models\Users\User;
 use App\Exports\GenericExport;
-use App\Http\Resources\Modules\Administration\UsersPanelResource;
+use App\Http\Resources\v1\Modules\Administration\UsersPaginationResource;
 
 class AdministrationModuleUsersController extends Controller
 {
@@ -38,7 +38,7 @@ class AdministrationModuleUsersController extends Controller
                 throw new \Exception("Nenhum usuário encontrado", 404);
             }
 
-            return response(new UsersPanelResource($result), 200);
+            return response(new UsersPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

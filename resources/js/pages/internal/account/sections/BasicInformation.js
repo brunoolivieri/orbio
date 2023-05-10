@@ -132,8 +132,8 @@ export function BasicInformation() {
                 </Grid>
             </Grid>
 
-            <Paper className='mt-2 p-[18px] rounded-[8px] dark:bg-[#1F2937]'>
-                <Typography className='text-black dark:text-white' variant="h5" mb={2}>Dados básicos</Typography>
+            <Paper className='mt-2 p-[18px] rounded-[8px]'>
+                <Typography className='text-stone-900' variant="h5" mb={2}>Dados básicos</Typography>
                 <Grid container spacing={2}>
 
                     <Grid item xs={12} lg={6}>

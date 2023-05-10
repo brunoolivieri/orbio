@@ -10,7 +10,7 @@ use App\Http\Requests\Modules\Reports\ReportUpdateRequest;
 use App\Services\Modules\Report\ReportService;
 use App\Exports\GenericExport;
 use App\Models\Reports\Report;
-use App\Http\Resources\Modules\Reports\ReportsPanelResource;
+use App\Http\Resources\v1\Modules\Reports\ReportsPaginationResource;
 
 class ReportsModuleController extends Controller
 {
@@ -38,7 +38,7 @@ class ReportsModuleController extends Controller
                 throw new \Exception("Nenhum relatório encontrado", 404);
             }
 
-            return response(new ReportsPanelResource($result), 200);
+            return response(new ReportsPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

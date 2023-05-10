@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Modules\Equipments;
+namespace App\Http\Resources\v1\Modules\Equipments;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
-class DronesPanelResource extends JsonResource
+class EquipmentsPaginationResource extends JsonResource
 {
     private LengthAwarePaginator $data;
     private array $formatedData = [];
@@ -18,24 +18,25 @@ class DronesPanelResource extends JsonResource
 
     public function toArray($request)
     {
-        foreach ($this->data as $row => $drone) {
+        foreach ($this->data as $row => $equipment) {
 
             $this->formatedData["records"][$row] = [
-                "id" => $drone->id,
-                "image_url" => Storage::url($drone->image_path),
-                "name" => $drone->name,
-                "manufacturer" => $drone->manufacturer,
-                "model" => $drone->model,
-                "record_number" => $drone->record_number,
-                "serial_number" => $drone->serial_number,
-                "weight" => $drone->weight,
-                "observation" => $drone->observation,
-                "created_at" => $drone->created_at,
-                "updated_at" => $drone->updated_at,
-                "deleted_at" => $drone->deleted_at
+                "id" => $equipment->id,
+                "image_url" => Storage::url($equipment->image_path),
+                "name" => $equipment->name,
+                "manufacturer" => $equipment->manufacturer,
+                "model" => $equipment->model,
+                "record_number" => $equipment->record_number,
+                "serial_number" => $equipment->serial_number,
+                "weight" => $equipment->weight,
+                "observation" => $equipment->observation,
+                "purchase_date" => empty($equipment->purchase_date) ? "nunca" : $equipment->purchase_date,
+                "created_at" => $equipment->created_at,
+                "updated_at" => $equipment->updated_at,
+                "deleted_at" => $equipment->deleted_at
             ];
 
-            if ($drone->trashed()) {
+            if ($equipment->trashed()) {
                 $this->formatedData["records"][$row]["status_badge"] = [
                     "label" => "Deletado",
                     "color" => "error"

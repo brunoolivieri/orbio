@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Modules\FlightPlans;
+namespace App\Http\Resources\v1\Modules\FlightPlans;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
-class FlightPlansPanelResource extends JsonResource
+class FlightPlansPaginationResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Modules\v1\ServiceOrders\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use App\Http\Resources\Modules\ServiceOrders\ServiceOrderIncidentResource;
 use App\Models\Incidents\Incident;
 use App\Models\Pivot\ServiceOrderFlightPlan;
+use App\Http\Resources\v1\Modules\ServiceOrders\ServiceOrderIncidentPaginationResource;
 
 class ServiceOrderIncidentController extends Controller
 {
@@ -37,7 +37,7 @@ class ServiceOrderIncidentController extends Controller
                 ->paginate(intval($limit), $columns = ['*'], $pageName = 'page', intval($page));
 
             if ($data->total() > 0) {
-                return response(new ServiceOrderIncidentResource($data), 200);
+                return response(new ServiceOrderIncidentPaginationResource($data), 200);
             } else {
                 throw new \Exception("Nenhum incidente encontrado");
             }

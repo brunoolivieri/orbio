@@ -1,10 +1,12 @@
 import * as React from 'react';
+// Mui
 import InputAdornment from '@mui/material/InputAdornment';
 import { Tooltip, IconButton, Grid, TextField, Typography, Paper, Button } from '@mui/material';
 import HelpIcon from '@mui/icons-material/Help';
 import { useSnackbar } from 'notistack';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+// Custom
 import { FormValidation } from '../../../../../utils/FormValidation';
 import axios from '../../../../../services/AxiosApi'
 import { FetchedStatesSelection } from '../input/FetchedStatesSelection';
@@ -123,8 +125,8 @@ export function AddressFormulary() {
                 </Grid>
             </Grid>
 
-            <Paper className='mt-2 p-[18px] rounded-[8px] dark:bg-[#1F2937]'>
-                <Typography className='text-black dark:text-white' variant="h5" mb={2}>Endereço</Typography>
+            <Paper className='mt-2 p-[18px] rounded-[8px]'>
+                <Typography className='text-black' variant="h5" mb={2}>Endereço</Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={12} lg={3}>
                         {formData.state ?

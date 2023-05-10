@@ -1,6 +1,6 @@
 <?php
 
-namespace AApp\Http\Controllers\Modules\v1\Logs;
+namespace App\Http\Controllers\Modules\v1\Logs;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,7 +10,7 @@ use App\Services\Modules\FlightPlan\FlightPlanLogService;
 use App\Http\Requests\Modules\FlightPlans\Logs\UpdateLogRequest;
 use App\Exports\GenericExport;
 use App\Models\Logs\Log;
-use App\Http\Resources\Modules\Logs\LogsPanelResource;
+use App\Http\Resources\v1\Modules\Logs\LogsPaginationResource;
 
 class LogsModuleController extends Controller
 {
@@ -38,7 +38,7 @@ class LogsModuleController extends Controller
                 throw new \Exception("Nenhum log encontrado", 404);
             }
 
-            return response(new LogsPanelResource($result), 200);
+            return response(new LogsPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

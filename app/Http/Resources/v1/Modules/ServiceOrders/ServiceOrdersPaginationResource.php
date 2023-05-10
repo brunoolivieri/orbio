@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Modules\ServiceOrders;
+namespace App\Http\Resources\v1\Modules\ServiceOrders;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Incidents\Incident;
 use App\Models\Logs\Log;
 
-class ServiceOrdersPanelResource extends JsonResource
+class ServiceOrdersPaginationResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;

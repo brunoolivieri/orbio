@@ -125,8 +125,8 @@ export function AdditionalConfiguration() {
                 spacing={2}
                 divider={<Divider orientation="horizontal" flexItem />}
             >
-                <PaperStyled className='mt-2 max-w-[800px] dark:bg-[#1F2937]'>
-                    <Typography className='text-black dark:text-white' variant="h5" mb={2}>Alteração da senha</Typography>
+                <PaperStyled className='mt-2 max-w-[800px]'>
+                    <Typography className='text-stone-900' variant="h5" mb={2}>Alteração da senha</Typography>
                     <TextField
                         label="Informe a senha atual"
                         name="actual_password"
@@ -168,11 +168,11 @@ export function AdditionalConfiguration() {
                     </Button>
                 </PaperStyled>
 
-                <PaperStyled className='dark:bg-[#1F2937]'>
-                    <Typography className='text-black dark:text-white' variant="h5">Desativar a conta</Typography>
+                <PaperStyled>
+                    <Typography className='text-stone-900' variant="h5">Desativar a conta</Typography>
                     <Stack spacing={2} mt={2}>
                         <Box>
-                            <Typography className='text-black dark:text-white'>A conta será desativada, o perfil será alterado para visitante, e todos os dados cadastrados serão preservados. Para que seja novamente reativada, o usuário deve entrar em contato com o suporte.</Typography>
+                            <Typography className='text-stone-900'>A conta será desativada, o perfil será alterado para visitante, e todos os dados cadastrados serão preservados. Para que seja novamente reativada, o usuário deve entrar em contato com o suporte.</Typography>
                         </Box>
                         <Box>
                             <Button sx={{ mr: 2 }} variant="outlined" color="error" onClick={() => setDeactivateButton((prev) => !prev)}>

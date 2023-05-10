@@ -9,8 +9,8 @@ use App\Exports\GenericExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\Modules\FlightPlans\FlightPlanUpdateRequest;
 use App\Services\Modules\FlightPlan\FlightPlanService;
-use App\Http\Resources\Modules\FlightPlans\FlightPlansPanelResource;
 use App\Models\FlightPlans\FlightPlan;
+use App\Http\Resources\v1\Modules\FlightPlans\FlightPlansPaginationResource;
 
 class FlightPlansModuleController extends Controller
 {
@@ -38,7 +38,7 @@ class FlightPlansModuleController extends Controller
                 throw new \Exception("Nenhum plano de voo encontrado", 404);
             }
 
-            return response(new FlightPlansPanelResource($result), 200);
+            return response(new FlightPlansPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }
@@ -55,7 +55,7 @@ class FlightPlansModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-            
+
             $this->service->createOne($request->all());
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
@@ -67,7 +67,7 @@ class FlightPlansModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-            
+
             $this->service->updateOne($request->all(), $id);
             return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
         } catch (\Exception $e) {

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Modules\Reports;
+namespace App\Http\Resources\v1\Modules\Reports;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ReportsPanelResource extends JsonResource
+class ReportsPaginationResource extends JsonResource
 {
 
     private LengthAwarePaginator $data;

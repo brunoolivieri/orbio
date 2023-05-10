@@ -275,7 +275,7 @@ export function Drones() {
             </Grid>
 
             <Box
-                sx={{ height: 500, width: '100%' }}
+                className="h-[500px] w-full"
             >
                 <DataGrid
                     rows={records}
@@ -298,15 +298,10 @@ export function Drones() {
                     components={{
                         Toolbar: TableToolbar,
                     }}
+                    className='shadow-sm outline-none'
                     sx={{
                         "&.MuiDataGrid-root .MuiDataGrid-cell, .MuiDataGrid-columnHeader:focus-within": {
                             outline: "none !important",
-                        },
-                        '& .super-app-theme--header': {
-                            color: '#222'
-                        },
-                        '& .MuiDataGrid-columnHeaders': {
-                            boxShadow: 'rgba(0, 0, 0, 0.16) 0px 1px 4px'
                         }
                     }}
                 />

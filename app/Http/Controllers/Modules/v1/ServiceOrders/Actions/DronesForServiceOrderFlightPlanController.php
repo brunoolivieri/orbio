@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Modules\v1\ServiceOrders\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Drones\Drone;
-use App\Http\Resources\Modules\Equipments\DronesPanelResource;
+use App\Http\Resources\v1\Modules\Equipments\DronesPaginationResource;
 
 class DronesForServiceOrderFlightPlanController extends Controller
 {
@@ -30,7 +30,7 @@ class DronesForServiceOrderFlightPlanController extends Controller
                 throw new \Exception("Nenhum drone encontrado.", 404);
             }
 
-            return response(new DronesPanelResource($drones), 200);
+            return response(new DronesPaginationResource($drones), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

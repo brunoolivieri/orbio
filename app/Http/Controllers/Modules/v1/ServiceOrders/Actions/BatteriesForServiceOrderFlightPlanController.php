@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Modules\v1\ServiceOrders\Actions;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Batteries\Battery;
-use App\Http\Resources\Modules\Equipments\BatteriesPanelResource;
+use App\Http\Resources\v1\Modules\Equipments\BatteriesPaginationResource;
 
 class BatteriesForServiceOrderFlightPlanController extends Controller
 {
@@ -30,7 +30,7 @@ class BatteriesForServiceOrderFlightPlanController extends Controller
                 throw new \Exception("Nenhuma bateria encontrada.", 404);
             }
 
-            return response(new BatteriesPanelResource($batteries), 200);
+            return response(new BatteriesPaginationResource($batteries), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

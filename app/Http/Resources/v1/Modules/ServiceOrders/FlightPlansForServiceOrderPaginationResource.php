@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Modules\ServiceOrders;
+namespace App\Http\Resources\v1\Modules\ServiceOrders;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 
-class FlightPlansForServiceOrderResource extends JsonResource
+class FlightPlansForServiceOrderPaginationResource extends JsonResource
 {
 
     function __construct(LengthAwarePaginator $data, string|null $service_order_id)

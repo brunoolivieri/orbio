@@ -27,8 +27,8 @@ export function SubHeader() {
 
     return (
         <AppBar position="static" className='shadow-sm'>
-            <Toolbar className="bg-white dark:bg-[#1F2937]">
-                <Typography variant="h7" fontWeight={600} className='text-green-700 dark:text-white'>{pages[pageIndex].title}</Typography>
+            <Toolbar className="bg-white">
+                <Typography variant="h1" fontSize={18} fontWeight={400} className='text-green-800 font-sans'>{pages[pageIndex].title}</Typography>
             </Toolbar>
         </AppBar>
     )

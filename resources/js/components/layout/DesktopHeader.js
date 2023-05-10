@@ -32,7 +32,7 @@ export function DesktopHeader(props) {
     }
 
     return (
-        <AppBar position="fixed" open={open}>
+        <AppBar position="fixed" open={props.open} sx={{ bgcolor: "#00458C" }}>
             <Toolbar className='flex justify-between items-center'>
                 <Box className="flex items-center">
                     <IconButton
@@ -42,12 +42,12 @@ export function DesktopHeader(props) {
                         edge="start"
                         sx={{
                             marginRight: 5,
-                            ...(open && { display: 'none' }),
+                            ...(props.open && { display: 'none' }),
                         }}
                     >
                         <MenuIcon className='text-white' />
                     </IconButton>
-                    <Typography variant="h6" noWrap component="div">
+                    <Typography variant="h6" noWrap component="div" className='font-sans'>
                         ORBIO
                     </Typography>
                 </Box>

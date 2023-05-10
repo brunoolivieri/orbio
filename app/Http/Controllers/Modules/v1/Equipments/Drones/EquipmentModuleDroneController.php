@@ -11,7 +11,7 @@ use App\Http\Requests\Modules\Equipments\Drone\UpdateDroneRequest;
 use App\Services\Modules\Equipment\DroneService;
 use App\Models\Drones\Drone;
 use App\Exports\GenericExport;
-use App\Http\Resources\Modules\Equipments\DronesPanelResource;
+use App\Http\Resources\v1\Modules\Equipments\DronesPaginationResource;
 
 class EquipmentModuleDroneController extends Controller
 {
@@ -38,7 +38,7 @@ class EquipmentModuleDroneController extends Controller
                 throw new \Exception("Nenhum drone encontrado", 404);
             }
 
-            return response(new DronesPanelResource($result), 200);
+            return response(new DronesPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }

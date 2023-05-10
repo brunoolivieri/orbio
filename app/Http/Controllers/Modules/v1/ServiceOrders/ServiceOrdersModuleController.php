@@ -9,9 +9,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderStoreRequest;
 use App\Http\Requests\Modules\ServiceOrders\ServiceOrderUpdateRequest;
 use App\Services\Modules\ServiceOrder\ServiceOrderService;
-use App\Http\Resources\Modules\ServiceOrders\ServiceOrdersPanelResource;
 use App\Exports\GenericExport;
 use App\Models\ServiceOrders\ServiceOrder;
+use App\Http\Resources\v1\Modules\ServiceOrders\ServiceOrdersPaginationResource;
 
 class ServiceOrdersModuleController extends Controller
 {
@@ -39,7 +39,7 @@ class ServiceOrdersModuleController extends Controller
                 throw new \Exception("Nenhuma ordem de serviço encontrada", 404);
             }
 
-            return response(new ServiceOrdersPanelResource($result), 200);
+            return response(new ServiceOrdersPaginationResource($result), 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], $e->getCode());
         }
