@@ -1,46 +1,46 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Pages\v1\{
+use App\Http\Controllers\v1\Pages\{
     ReactController,
     MapController,
     MapIframeController
 };
-use App\Http\Controllers\Authentication\v1\{
+use App\Http\Controllers\v1\Authentication\{
     LoginController,
     LogoutController,
     GetUserAuthenticatedDataController,
     ForgotPasswordController
 };
-use App\Http\Controllers\Modules\v1\Dashboard\DashboardController;
-use App\Http\Controllers\Modules\v1\MyProfile\MyProfileController;
-use App\Http\Controllers\Modules\v1\Administration\{
+use App\Http\Controllers\v1\Modules\Dashboard\DashboardController;
+use App\Http\Controllers\v1\Modules\MyProfile\MyProfileController;
+use App\Http\Controllers\v1\Modules\Administration\{
     Users\AdministrationModuleUsersController,
     Users\Actions\UserAdditionalDataController,
     Profiles\AdministrationModuleProfilesController,
     Profiles\Actions\ProfileAdditionalDataController
 };
-use App\Http\Controllers\Modules\v1\Reports\{
+use App\Http\Controllers\v1\Modules\Reports\{
     ReportsModuleController,
     Actions\WeatherDataController,
     Actions\DownloadReportController,
     Actions\ServiceOrdersForReport,
     Actions\ReportAdditionalDataController
 };
-use App\Http\Controllers\Modules\v1\FlightPlans\{
+use App\Http\Controllers\v1\Modules\FlightPlans\{
     FlightPlansModuleController,
     Actions\DownloadFlightPlanController,
     Actions\DownloadFlightPlanCSVController,
     Actions\DownloadFlightPlanFilesToOpenOnMap,
     Actions\FlightPlanAdditionalDataController
 };
-use App\Http\Controllers\Modules\v1\Logs\{
+use App\Http\Controllers\v1\Modules\Logs\{
     LogsModuleController,
     Actions\DownloadLogController,
     Actions\UploadedLogsProcessingController,
     Actions\LogAdditionalDataController
 };
-use App\Http\Controllers\Modules\v1\ServiceOrders\{
+use App\Http\Controllers\v1\Modules\ServiceOrders\{
     ServiceOrdersModuleController,
     Actions\FlightPlansForServiceOrderController,
     Actions\DronesForServiceOrderFlightPlanController,
@@ -50,14 +50,14 @@ use App\Http\Controllers\Modules\v1\ServiceOrders\{
     Actions\ServiceOrderIncidentController,
     Actions\ServiceOrderAdditionalDataController
 };
-use App\Http\Controllers\Modules\v1\Equipments\{
+use App\Http\Controllers\v1\Modules\Equipments\{
     Batteries\EquipmentModuleBatteryController,
     Batteries\Actions\BatteryAdditionalDataController,
     Drones\EquipmentModuleDroneController,
     Drones\Actions\DroneAdditionalDataController,
     OtherEquipments\EquipmentModuleEquipmentController
 };
-use App\Http\Controllers\Actions\v1\{
+use App\Http\Controllers\v1\Actions\{
     LoadFlightPlansController,
     LoadIncidentsController,
     LoadProfilesController,
