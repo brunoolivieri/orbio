@@ -68,7 +68,7 @@ export const Layout = ({ children }) => {
           <Box className="grow bg-white">
             <MobileHeader onDrawerToggle={handleDrawerToggle} />
             <SubHeader />
-            <Box component="main" className='grow max-w-full m-auto overflow-hidden'>
+            <Box component="main" className='grow w-full m-auto overflow-hidden'>
 
               {children}
 

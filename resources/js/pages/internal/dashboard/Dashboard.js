@@ -8,13 +8,15 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import axios from '../../../services/AxiosApi';
 import { usePage } from '../../../context/PageContext';
 import { DashboardCard } from '../../../components/card/DashboardCard';
+import { useAuth } from '../../../context/Auth';
 
-const initialItem = { total: 0, data: {} }
+const initialItem = { total: 0, data: null }
 
 export const Dashboard = React.memo(() => {
 
     // ============================================================================== STATES ============================================================================== //
 
+    const { user } = useAuth();
     const [loading, setLoading] = React.useState(true);
     const [users, setUsers] = React.useState(initialItem);
     const [profiles, setProfiles] = React.useState(initialItem);
@@ -24,10 +26,17 @@ export const Dashboard = React.memo(() => {
     const { enqueueSnackbar } = useSnackbar();
     const { setPageIndex } = usePage();
 
+    const authorization = {
+        users: !!user.user_powers["1"].profile_powers.read,
+        profiles: !!user.user_powers["1"].profile_powers.read,
+        flight_plans: !!user.user_powers["2"].profile_powers.read,
+        service_orders: !!user.user_powers["3"].profile_powers.read,
+        reports: !!user.user_powers["4"].profile_powers.read
+    }
+
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
-        console.log('valor do MIX: ' + process.env.MIX_APP_URL);
         setPageIndex(0);
         fetchData();
     }, []);
@@ -45,8 +54,6 @@ export const Dashboard = React.memo(() => {
                 setServiceOrders(response.data.service_orders);
                 setReports(response.data.reports);
 
-                console.log(response.data)
-
                 enqueueSnackbar("Métricas carregadas", { variant: "success" });
             })
             .catch((error) => {
@@ -62,11 +69,11 @@ export const Dashboard = React.memo(() => {
 
     return (
         <div className='flex justify-center items-start flex-wrap gap-2 p-10'>
-            <DashboardCard title={"Ordens de serviço"} total={serviceOrders.total} loading={loading} data={serviceOrders.data} icon={<AssignmentIcon className='text-green-600' />} />
-            <DashboardCard title={"Usuários"} total={users.total} loading={loading} data={users.data} icon={<GroupIcon className='text-green-600' />} />
-            <DashboardCard title={"Perfis"} total={profiles.total} loading={loading} data={profiles.data} icon={<AssignmentIndIcon className='text-green-600' />} />
-            <DashboardCard title={"Planos de voo"} total={flightPlans.total} loading={loading} data={flightPlans.data} icon={<MapIcon className='text-green-600' />} />
-            <DashboardCard title={"Relatórios"} total={reports.total} loading={loading} data={reports.data} icon={<AssessmentIcon className='text-green-600' />} />
+            {authorization.service_orders && <DashboardCard title={"Ordens de serviço"} total={serviceOrders.total} loading={loading} data={serviceOrders.data} icon={<AssignmentIcon className='text-green-600' />} />}
+            {authorization.users && <DashboardCard title={"Usuários"} total={users.total} loading={loading} data={users.data} icon={<GroupIcon className='text-green-600' />} />}
+            {authorization.profiles && <DashboardCard title={"Perfis"} total={profiles.total} loading={loading} data={profiles.data} icon={<AssignmentIndIcon className='text-green-600' />} />}
+            {authorization.flight_plans && <DashboardCard title={"Planos de voo"} total={flightPlans.total} loading={loading} data={flightPlans.data} icon={<MapIcon className='text-green-600' />} />}
+            {authorization.reports && <DashboardCard title={"Relatórios"} total={reports.total} loading={loading} data={reports.data} icon={<AssessmentIcon className='text-green-600' />} />}
         </div>
     )
 });
