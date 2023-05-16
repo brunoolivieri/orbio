@@ -10,57 +10,6 @@ body {
     width: 100%;
 }
 
-/* BOTTOM MENU */
-#menu-upload,
-#menu-save,
-#menu-configuration {
-    display: none;
-}
-
-#btn-print:hover #btn-print-icon {
-    color: #0971CE;
-}
-
-#btn-clean:hover #btn-clean-icon {
-    color: #0971CE;
-}
-
-#btn-save:hover #btn-save-icon {
-    color: #0971CE;
-}
-
-#btn-upload:hover #btn-upload-icon {
-    color: #0971CE;
-}
-
-#btn-save:hover #btn-save-icon {
-    color: #0971CE;
-}
-
-#btn-exit:hover #btn-exit-icon {
-    color: #0971CE;
-}
-
-#btn-configuration:hover #btn-configuration-icon {
-    color: #0971CE;
-}
-
-#btn-help-icon:hover {
-    color: #0971CE;
-}
-
-#btn-upload:hover #menu-upload {
-    display: block;
-}
-
-#btn-save:hover #menu-save {
-    display: block;
-}
-
-#btn-configuration:hover #menu-configuration {
-    display: block;
-}
-
 #menu-alert {
     opacity: 0;
     bottom: '0px';
@@ -68,7 +17,7 @@ body {
 
 /* */
 
-.side-menu {
+.right-menu {
     width: 30px;
     position: absolute;
     right: 10px;

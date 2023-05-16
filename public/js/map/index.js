@@ -1091,6 +1091,18 @@ btnClean.addEventListener("click", cleanLayers);
 btnClean.addEventListener("click", cleanFields);
 btnClean.addEventListener("click", cleanPolygon);
 
+// OPEN SAVE MENU
+const btnSaveMenu = document.getElementById("btn-save");
+btnSaveMenu.addEventListener("click", function () {
+    document.getElementById("menu-save").classList.toggle("hidden");
+});
+
+// OPEN UPLOAD MENU
+const btnUploadMenu = document.getElementById("btn-upload");
+btnUploadMenu.addEventListener("click", function () {
+    document.getElementById("menu-upload").classList.toggle("hidden");
+});
+
 // SAVE SINGLE PATH
 const btnFullSave = document.getElementById("btn-full-save");
 btnFullSave.addEventListener("click", savePathAsSingleFile);
@@ -1122,6 +1134,17 @@ btnImportPath.addEventListener('change', importKMLPath, false);
 // IMPORT KML POLY MISSION PLANNER
 const btnImportMP = document.getElementById("file-import-mp");
 btnImportMP.addEventListener('change', importMPPolygon, false);
+
+// BTN OPEN CONFIGURATION MODAL
+const btnConfiguration = document.getElementById("btn-configuration");
+btnConfiguration.addEventListener('click', function () {
+
+    var modal = document.getElementById("flight-plan-configuration-modal");
+    modal.classList.remove("hidden");
+    document.getElementById("btn-save-configuration-modal").addEventListener("click", function () {
+        modal.classList.add("hidden");
+    });
+});
 
 // MARKER AND HELP MODAL
 
@@ -2086,16 +2109,16 @@ function cleanPolygon() {
 // ============================================================================================= PART 6: TO DISPLAY ELEMENTS  ============================================================================================= //
 
 // Navbar Alert
-var menuAlert = document.getElementById("menu-alert");
+var topAlert = document.getElementById("top-bar");
 var alertMessage = document.getElementById("menu-message");
 
 function cleanAlerts() {
-    menuAlert.classList.remove("error-alert-activation");
-    menuAlert.classList.remove("success-alert-activation");
+    topAlert.classList.remove("error-alert-activation");
+    topAlert.classList.remove("success-alert-activation");
 }
 
 function displayErrorAlert(message) {
-    menuAlert.classList.add("error-alert-activation");
+    topAlert.classList.add("error-alert-activation");
     alertMessage.innerHTML = '';
     alertMessage.innerHTML = message;
 
@@ -2105,7 +2128,7 @@ function displayErrorAlert(message) {
 }
 
 function displaySuccessAlert(message) {
-    menuAlert.classList.add("success-alert-activation");
+    topAlert.classList.add("success-alert-activation");
     alertMessage.innerHTML = '';
     alertMessage.innerHTML = message;
 
@@ -2246,26 +2269,27 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 
         });
 
-
-
     });
 
 }
 
 // Remove elements from screen
 function screenForPrintScreen(type) {
-    const bottomBar = document.getElementById("bottom-bar");
-    const sideMenu = document.getElementById("side-menu");
+    const topBar = document.getElementById("top-bar");
+    const rightSideMenu = document.getElementById("right-menu");
+    const leftSideMenu = document.getElementById("left-menu");
     if (type === "before") {
-        bottomBar.classList.add("hidden");
-        sideMenu.classList.add("hidden");
+        topBar.classList.add("hidden");
+        rightSideMenu.classList.add("hidden");
+        leftSideMenu.classList.add("hidden");
         map.removeControl(mapBoxGeocoder);
         map.removeControl(draw);
         map.removeControl(mapBoxNavigationControl);
         marcador.remove();
     } else if (type === "after") {
-        bottomBar.classList.remove("hidden");
-        sideMenu.classList.remove("hidden");
+        topBar.classList.remove("hidden");
+        rightSideMenu.classList.remove("hidden");
+        leftSideMenu.classList.remove("hidden");
         marcador = new mapboxgl.Marker({ color: 'black' })
             .setLngLat(home)
             .addTo(map);

@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // MUI
-import { Box, Toolbar, List, Typography, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, CssBaseline, styled } from '@mui/material';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
+import { Box, List, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
-import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AssessmentIcon from '@mui/icons-material/Assessment';

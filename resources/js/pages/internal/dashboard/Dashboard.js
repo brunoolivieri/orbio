@@ -68,7 +68,7 @@ export const Dashboard = React.memo(() => {
     // =============================================================== JSX  =============================================================== //
 
     return (
-        <div className='flex justify-center items-start flex-wrap gap-2 p-10'>
+        <div className='flex justify-center items-start flex-wrap gap-2 p-5'>
             {authorization.service_orders && <DashboardCard title={"Ordens de serviço"} total={serviceOrders.total} loading={loading} data={serviceOrders.data} icon={<AssignmentIcon className='text-green-600' />} />}
             {authorization.users && <DashboardCard title={"Usuários"} total={users.total} loading={loading} data={users.data} icon={<GroupIcon className='text-green-600' />} />}
             {authorization.profiles && <DashboardCard title={"Perfis"} total={profiles.total} loading={loading} data={profiles.data} icon={<AssignmentIndIcon className='text-green-600' />} />}

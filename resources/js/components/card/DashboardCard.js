@@ -5,7 +5,7 @@ export const DashboardCard = React.memo((props) => {
 
     return (
 
-        <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow">
+        <div className="w-full h-[450px] max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow">
             <div className="flex items-center justify-between mb-4">
                 <h5 className="text-xl font-bold leading-none text-gray-900 flex items-center"><span className="mr-2">{props.icon}</span>{props.title}</h5>
                 <p className="text-base font-semibold text-green-600">
@@ -17,7 +17,7 @@ export const DashboardCard = React.memo((props) => {
                     <LinearProgress />
                     :
                     <ul role="list" className="divide-y divide-gray-200">
-                        {props.data.map((item, index) =>
+                        {props.data.map((item) =>
                             <li className='py-3 sm:py-4' key={item.label}>
                                 <div className='flex items-center space-x-4'>
                                     <div className='flex-1 min-w-0'>
