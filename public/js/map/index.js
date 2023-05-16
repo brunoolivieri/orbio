@@ -1146,9 +1146,12 @@ btnConfiguration.addEventListener('click', function () {
     });
 });
 
-// MARKER AND HELP MODAL
+// BTN HELP + MODAL
+const btnHelp = document.getElementById("btn-help");
+btnHelp.addEventListener("click", function(){
+    document.getElementById("help-modal").classList.toggle("hidden");
+});
 
-const helpModal = document.getElementById("help-modal");
 const btnMarker = document.getElementById('marker');
 
 btnMarker.onclick = function () {
@@ -2109,16 +2112,18 @@ function cleanPolygon() {
 // ============================================================================================= PART 6: TO DISPLAY ELEMENTS  ============================================================================================= //
 
 // Navbar Alert
-var topAlert = document.getElementById("top-bar");
-var alertMessage = document.getElementById("menu-message");
+var topBar = document.getElementById("top-bar");
+var topAlert = document.getElementById("alert");
+var alertMessage = document.getElementById("alert-message");
 
 function cleanAlerts() {
-    topAlert.classList.remove("error-alert-activation");
-    topAlert.classList.remove("success-alert-activation");
+    topBar.classList.remove("show-alert");
+    topAlert.classList.remove("bg-red-400", "bg-green-400")
 }
 
-function displayErrorAlert(message) {
-    topAlert.classList.add("error-alert-activation");
+function displaySuccessAlert(message) {
+    topBar.classList.add("show-alert");
+    topAlert.classList.add("bg-green-400");
     alertMessage.innerHTML = '';
     alertMessage.innerHTML = message;
 
@@ -2127,8 +2132,9 @@ function displayErrorAlert(message) {
     }, 4000);
 }
 
-function displaySuccessAlert(message) {
-    topAlert.classList.add("success-alert-activation");
+function displayErrorAlert(message) {
+    topBar.classList.add("show-alert");
+    topAlert.classList.add("bg-red-400");
     alertMessage.innerHTML = '';
     alertMessage.innerHTML = message;
 

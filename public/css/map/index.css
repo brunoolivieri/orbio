@@ -10,7 +10,7 @@ body {
     width: 100%;
 }
 
-#menu-alert {
+#top-bar {
     opacity: 0;
     bottom: '0px';
 }
@@ -52,66 +52,27 @@ h4 {
 
 /* ANIMATIONS */
 
-@keyframes error-alert-activation {
+@keyframes show-alert {
     0% {
-        bottom: 5px;
-        background-color: #ef4444;
         opacity: 0;
     }
 
     25% {
-        bottom: 60px;
         opacity: 1;
-        background-color: #ef4444;
     }
 
     90% {
-        bottom: 60px;
         opacity: 1;
-        background-color: #ef4444;
     }
 
     100% {
-        bottom: 5px;
         opacity: 0;
         display: none;
     }
 }
 
-@keyframes success-alert-activation {
-    0% {
-        bottom: 5px;
-        background-color: #22c55e;
-        opacity: 0;
-    }
-
-    25% {
-        bottom: 60px;
-        opacity: 1;
-        background-color: #22c55e;
-    }
-
-    90% {
-        bottom: 60px;
-        opacity: 1;
-        background-color: #22c55e;
-    }
-
-    100% {
-        bottom: 5px;
-        opacity: 0;
-        display: none;
-    }
-}
-
-.error-alert-activation {
-    animation-name: error-alert-activation;
-    animation-duration: 4s;
-    animation-timing-function: ease-in-out;
-}
-
-.success-alert-activation {
-    animation-name: success-alert-activation;
+.show-alert {
+    animation-name: show-alert;
     animation-duration: 4s;
     animation-timing-function: ease-in-out;
 }
@@ -120,12 +81,10 @@ h4 {
 /* MEDIA QUERY */
 
 @media screen and (max-width: 767px) {
-
     #btn-top {
         top: 72px;
         left: 10px;
     }
-
 }
 
 @media screen and (max-width: 600px) {
