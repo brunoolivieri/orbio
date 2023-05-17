@@ -11,6 +11,7 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/map/favicon/favicon-32x32.png') }}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/map/favicon/favicon-16x16.png') }}">
 	<link rel="manifest" href="/site.webmanifest">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.css" rel="stylesheet" />
 
 	<!--- STYLES --->
 	<link href="{{ asset('css/map/index.css') }}" type="text/css" rel="stylesheet">
@@ -50,16 +51,25 @@
 
 	<!-- SIDENAV -->
 	<aside id="left-menu" class="w-24 h-screen fixed top-0 left-0 bg-white z-[100]">
-		<!--- BTN NEW --->
-		<div id="btn-clean" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100">
+
+		<!--- BTN NEW + TOOLTIP --->
+		<div id="btn-clean-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+			Novo plano
+			<div class="tooltip-arrow" data-popper-arrow></div>
+		</div>
+		<div id="btn-clean" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" data-tooltip-placement="right" data-tooltip-target="btn-clean-tooltip">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 				class="h-6 w-6 text-stone-800" id="btn-clean-icon" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round"
 					d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
 			</svg>
 		</div>
-		<!--- BTN UPLOAD + MENU --->
-		<div id="btn-upload" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100">
+		<!--- BTN UPLOAD + TOOLTIP + MENU --->
+		<div id="btn-upload-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+			Abrir
+			<div class="tooltip-arrow" data-popper-arrow></div>
+		</div>
+		<div id="btn-upload" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" data-tooltip-placement="right" data-tooltip-target="btn-upload-tooltip">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 				class="h-6 w-6 text-stone-800" id="btn-upload-icon" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round"
@@ -71,7 +81,7 @@
 				class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100"
 				role="menuitem" tabindex="-1" id="menu-item-0">
 				<input type="file" id="file-import-txt" hidden>
-				Abrir
+				Txt
 			</label>
 			<label
 				class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100"
@@ -99,7 +109,11 @@
 			</label>
 		</div>
 		<!--- BTN SAVE + MENU --->
-		<div id="btn-save" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100">
+		<div id="btn-save-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+			Salvar
+			<div class="tooltip-arrow" data-popper-arrow></div>
+		</div>
+		<div id="btn-save" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" data-tooltip-placement="right" data-tooltip-target="btn-save-tooltip">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 				id="btn-save-icon" class="h-6 w-6 text-stone-700" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round"
@@ -118,8 +132,12 @@
 			</div>
 		</div>
 		<!--- BTN CONFIGURATION + MODAL --->
-		<div class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" id="btn-configuration">
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" id="btn-configuration-icon"
+		<div id="btn-configuration-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+			Configurações
+			<div class="tooltip-arrow" data-popper-arrow></div>
+		</div>
+		<div id="btn-configuration" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" data-tooltip-placement="right" data-tooltip-target="btn-configuration-tooltip">
+			<svg id="btn-configuration-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
 				class="h-6 w-6 text-stone-800" stroke-width="1.5" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round"
 						d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
@@ -127,12 +145,21 @@
 				</svg>
 		</div>
 		<!--- BTN HELP --->
-		<div class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" id="btn-help">
+		<div id="btn-help-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+			Ajuda
+			<div class="tooltip-arrow" data-popper-arrow></div>
+		</div>
+		<div class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" id="btn-help" data-tooltip-placement="right" data-tooltip-target="btn-help-tooltip">
 			<svg id="btn-help-icon" class="h-6 w-6 text-stone-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
 			  </svg>
 		</div>
-		<div id="btn-exit" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" onclick="window.close()">
+		<!-- BTN EXIT -->
+		<div id="btn-exit-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+			Sair
+			<div class="tooltip-arrow" data-popper-arrow></div>
+		</div>
+		<div id="btn-exit" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100" onclick="window.close()" data-tooltip-placement="right" data-tooltip-target="btn-exit-tooltip">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 			class="h-6 w-6 cursor-pointer text-stone-800" id="btn-exit-icon" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round"
@@ -165,7 +192,9 @@
 	<!-- COMPONENTS -->
 	<x-map.modals.configuration />
 	<x-map.modals.confirmation />
+	<x-map.modals.instructions />
 	
 	<script src="{{ asset('js/map/index.js') }}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
  </body>
  </html>

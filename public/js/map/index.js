@@ -1148,8 +1148,12 @@ btnConfiguration.addEventListener('click', function () {
 
 // BTN HELP + MODAL
 const btnHelp = document.getElementById("btn-help");
-btnHelp.addEventListener("click", function(){
-    document.getElementById("help-modal").classList.toggle("hidden");
+btnHelp.addEventListener("click", function () {
+    var modal = document.getElementById("help-modal");
+    modal.classList.toggle("hidden");
+    document.getElementById("btn-close-help-modal").addEventListener("click", function () {
+        modal.classList.add("hidden");
+    });
 });
 
 const btnMarker = document.getElementById('marker');

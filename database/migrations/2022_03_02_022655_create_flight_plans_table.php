@@ -17,7 +17,7 @@ class CreateFlightPlansTable extends Migration
             $table->id();
             $table->string("creator_id")->constrained('users');
             $table->string("name")->unique();
-            $table->string("files");
+            $table->text("files");
             $table->string("coordinates");
             $table->string("state");
             $table->string("city");

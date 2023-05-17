@@ -75,9 +75,6 @@ class FlightPlanRepository implements RepositoryInterface
                 $actual_files = json_decode($flight_plan->files);
                 $folderPath = "flight_plans/" . explode("/", $actual_files[0])[1];
 
-                // Delete actual folder with all files
-                Storage::disk('public')->deleteDirectory($folderPath);
-
                 // Update record    
                 $flight_plan->update([
                     "files" => json_encode($data["routes_path"]),
@@ -85,9 +82,11 @@ class FlightPlanRepository implements RepositoryInterface
                     "state" => $data["state"],
                     "city" => $data["city"],
                     "type" => $data["type"],
-                    "image_path" => $data["image"]["path"],
-                    "csv_path" => $data["csv"]["path"]
+                    "image_path" => $data["image"]["path"]
                 ]);
+
+                // Delete actual folder with all files
+                Storage::disk('public')->deleteDirectory($folderPath);
 
                 // Save new files
                 foreach ($data["route_files"] as $route_file) {
