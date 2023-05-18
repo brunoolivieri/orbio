@@ -21,6 +21,7 @@ class CreateFlightPlansTable extends Migration
             $table->string("coordinates");
             $table->string("state");
             $table->string("city");
+            $table->string("configuration");
             $table->text("description")->nullable();
             $table->string("type");
             $table->string("image_path");
