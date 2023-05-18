@@ -190,8 +190,8 @@ export const DronesForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title={buttonProps.text} startIcon={buttonProps.icon}>
-                <Button variant="contained" onClick={handleOpen}>Drone</Button>
+            <Tooltip title={buttonProps.text}>
+                <Button variant="outlined" startIcon={buttonProps.icon} onClick={handleOpen}>Drone</Button>
             </Tooltip>
             <Dialog
                 fullScreen

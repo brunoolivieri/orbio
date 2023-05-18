@@ -188,7 +188,7 @@ export const CreateServiceOrder = React.memo((props) => {
             Preencha todos os dados requisitados no formulário para a criação da ordem de serviço.
           </DialogContentText>
 
-          <Grid container gap={2}>
+          <Grid container gap={1}>
             
             <Grid item xs={12} lg={6}>
               <DatePicker
@@ -212,7 +212,7 @@ export const CreateServiceOrder = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12} md={6}>
               <FetchedDataSelection
                 label_text="Piloto"
                 fetch_from={"/api/action/load-users?where=profile_id.3"}
@@ -226,7 +226,7 @@ export const CreateServiceOrder = React.memo((props) => {
               />
             </Grid>
 
-            <Grid item xs={12} lg={6}>
+            <Grid item xs={12} md={6}>
               <FetchedDataSelection
                 label_text="Cliente"
                 fetch_from={"/api/action/load-users?where=profile_id.4"}

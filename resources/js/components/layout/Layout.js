@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 import { useSnackbar } from 'notistack';
 // Custom
 import { useAuth } from '../../context/Auth';
-import { MenuDesktop } from './MenuDesktop';
+import { Menu } from './Menu';
 import { BackdropLoading } from "../../components/backdrop/BackdropLoading";
 import { SubHeader } from './SubHeader';
 
@@ -13,8 +13,6 @@ export const Layout = ({ children }) => {
   // ================== STATES =================== //
 
   const [loading, setLoading] = React.useState(true);
-  const [menuOpen, setMenuOpen] = React.useState(false);
-
   const { enqueueSnackbar } = useSnackbar();
   const { isAuthenticated, verifyAuthentication, logout } = useAuth();
 
@@ -43,19 +41,15 @@ export const Layout = ({ children }) => {
   if (!loading && isAuthenticated) {
 
     return (
-      <>
-        <Box className='flex min-h-screen'>
-          <MenuDesktop />
-          <Box className="grow bg-white">
-            <SubHeader />
-            <Box component="main" className='grow w-full m-auto overflow-hidden'>
-
-              {children}
-
-            </Box>
+      <Box className='flex min-h-screen'>
+        <Menu />
+        <Box className="grow bg-white">
+          <SubHeader />
+          <Box component="main" className='grow w-full m-auto overflow-hidden'>
+            {children}
           </Box>
         </Box>
-      </>
+      </Box>
     )
   }
 }

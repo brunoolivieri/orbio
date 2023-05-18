@@ -322,7 +322,7 @@ export const UpdateServiceOrder = React.memo((props) => {
                         key={index}
                         secondaryAction={
                           <Stack direction="row" spacing={2}>
-                            <Stack direction="row">
+                            <Stack direction="row" gap={1}>
                               <DronesForFlightPlan
                                 selectedFlightPlans={selectedFlightPlans}
                                 setSelectedFlightPlans={setSelectedFlightPlans}
@@ -338,15 +338,13 @@ export const UpdateServiceOrder = React.memo((props) => {
                                 setSelectedFlightPlans={setSelectedFlightPlans}
                                 current={flight_plan}
                               />
-                            </Stack>
-                            <Stack direction="row">
-                              <IncidentsForServiceOrderFlightPlan
+                              <LogsForServiceOrderFlightPlan
                                 serviceOrderId={formData.id}
                                 selectedFlightPlans={selectedFlightPlans}
                                 setSelectedFlightPlans={setSelectedFlightPlans}
                                 current={flight_plan}
                               />
-                              <LogsForServiceOrderFlightPlan
+                              <IncidentsForServiceOrderFlightPlan
                                 serviceOrderId={formData.id}
                                 selectedFlightPlans={selectedFlightPlans}
                                 setSelectedFlightPlans={setSelectedFlightPlans}

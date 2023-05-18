@@ -186,8 +186,8 @@ export const BatteriesForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title={buttonProps.text} startIcon={buttonProps.icon}>
-                <Button variant="contained" onClick={handleOpen}>Bateria</Button>
+            <Tooltip title={buttonProps.text}>
+                <Button variant="outlined" startIcon={buttonProps.icon} onClick={handleOpen}>Bateria</Button>
             </Tooltip>
             <Dialog
                 fullScreen

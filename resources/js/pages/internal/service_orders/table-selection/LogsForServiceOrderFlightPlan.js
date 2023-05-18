@@ -2,7 +2,8 @@ import * as React from 'react';
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
-import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -57,6 +58,8 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
     const [loading, setLoading] = React.useState(true);
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
+
+    const buttonProps = props.current.log_id === 0 ? { icon: <AddIcon />, text: "Selecionar log" } : { icon: <EditIcon />, text: "Editar log" };
 
     // ============================================================================== FUNCTIONS ============================================================================== //
 
@@ -164,10 +167,8 @@ export const LogsForServiceOrderFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title="Log">
-                <IconButton onClick={handleOpen}>
-                    <InsertDriveFileIcon />
-                </IconButton>
+            <Tooltip title={buttonProps.text} >
+                <Button variant="outlined" startIcon={buttonProps.icon} onClick={handleOpen}>Log</Button>
             </Tooltip>
             <Dialog
                 fullScreen

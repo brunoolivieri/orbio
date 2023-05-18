@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
-import ReportIcon from '@mui/icons-material/Report';
 import CloseIcon from '@mui/icons-material/Close';
+import ErrorIcon from '@mui/icons-material/Error';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -127,11 +127,7 @@ export const IncidentsForServiceOrderFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title="Incidentes">
-                <IconButton onClick={handleOpen}>
-                    <ReportIcon />
-                </IconButton>
-            </Tooltip>
+            <Button variant="outlined" startIcon={<ErrorIcon />} onClick={handleOpen}>Incidentes</Button>
             <Dialog
                 fullScreen
                 open={open}

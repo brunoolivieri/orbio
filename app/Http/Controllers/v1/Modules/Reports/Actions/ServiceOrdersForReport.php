@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Services\Modules\ServiceOrder\ServiceOrderService;
-use App\Http\Resources\v1\Modules\ServiceOrders\ServiceOrdersPaginationResource;
+use App\Http\Resources\v1\Modules\ServiceOrders\ServiceOrderReportPaginationResource;
 
 class ServiceOrdersForReport extends Controller
 {
@@ -26,7 +26,7 @@ class ServiceOrdersForReport extends Controller
         );
 
         if ($data->total() > 0) {
-            return response(new ServiceOrdersPaginationResource($data), 200);
+            return response(new ServiceOrderReportPaginationResource($data), 200);
         } else {
             return response(["message" => "Nenhuma ordem de serviço encontrada."], 404);
         }
