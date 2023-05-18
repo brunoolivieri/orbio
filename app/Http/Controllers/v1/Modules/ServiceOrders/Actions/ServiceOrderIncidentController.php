@@ -46,12 +46,6 @@ class ServiceOrderIncidentController extends Controller
         }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         Gate::authorize('service_orders_write');
@@ -73,13 +67,6 @@ class ServiceOrderIncidentController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $incident_id)
     {
         Gate::authorize('service_orders_write');
@@ -99,22 +86,18 @@ class ServiceOrderIncidentController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($incident_id)
+    public function destroy(Request $request)
     {
         Gate::authorize('service_orders_write');
 
         try {
-            $incident = $this->model->findOrFail($incident_id);
 
-            $incident->delete();
+            foreach ($request->ids as $incident_id) {
+                $incident = $this->model->findOrFail($incident_id);
+                $incident->delete();
+            }
 
-            return response(["message" => "Incidente deletado com sucesso!"], 200);
+            return response(["message" => "Deleção realizada com sucesso!"], 200);
         } catch (\Exception $e) {
             return response(["message" => $e->getMessage()], 500);
         }

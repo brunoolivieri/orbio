@@ -64,7 +64,7 @@ export const CreateIncident = React.memo((props) => {
 
     try {
 
-      const response = await axios.post("api/action/service-order/incidents", {
+      const response = await axios.post("api/module/action/service-orders/incidents", {
         date: moment(formData.date).format('YYYY-MM-DD'),
         type: formData.type,
         description: formData.description,

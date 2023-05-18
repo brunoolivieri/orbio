@@ -40,7 +40,7 @@ export const DeleteIncident = React.memo((props) => {
   async function requestServer() {
     try {
 
-      const response = await axios.delete("api/action/service-order/incidents/delete", {
+      const response = await axios.delete("api/module/action/service-orders/incidents/delete", {
         data: {
           ids: selectedIds
         }
