@@ -53,7 +53,7 @@
 	<aside id="left-menu" class="w-24 h-screen fixed top-0 left-0 bg-white z-[100]">
 
 		<!--- BTN NEW + TOOLTIP --->
-		<div id="btn-clean-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+		<div id="btn-clean-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Novo plano
 			<div class="tooltip-arrow" data-popper-arrow></div>
 		</div>
@@ -65,7 +65,7 @@
 			</svg>
 		</div>
 		<!--- BTN UPLOAD + TOOLTIP + MENU --->
-		<div id="btn-upload-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+		<div id="btn-upload-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Abrir
 			<div class="tooltip-arrow" data-popper-arrow></div>
 		</div>
@@ -109,7 +109,7 @@
 			</label>
 		</div>
 		<!--- BTN SAVE + MENU --->
-		<div id="btn-save-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+		<div id="btn-save-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Salvar
 			<div class="tooltip-arrow" data-popper-arrow></div>
 		</div>
@@ -132,7 +132,7 @@
 			</div>
 		</div>
 		<!--- BTN CONFIGURATION + MODAL --->
-		<div id="btn-configuration-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+		<div id="btn-configuration-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Configurações
 			<div class="tooltip-arrow" data-popper-arrow></div>
 		</div>
@@ -145,7 +145,7 @@
 				</svg>
 		</div>
 		<!--- BTN HELP --->
-		<div id="btn-help-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+		<div id="btn-help-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Ajuda
 			<div class="tooltip-arrow" data-popper-arrow></div>
 		</div>
@@ -155,7 +155,7 @@
 			  </svg>
 		</div>
 		<!-- BTN EXIT -->
-		<div id="btn-exit-tooltip" class="absolute z-10 invisible inline-block px-1 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
+		<div id="btn-exit-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Sair
 			<div class="tooltip-arrow" data-popper-arrow></div>
 		</div>

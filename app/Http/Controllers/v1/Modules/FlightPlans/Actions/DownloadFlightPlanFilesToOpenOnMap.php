@@ -25,6 +25,7 @@ class DownloadFlightPlanFilesToOpenOnMap extends Controller
             }
 
             $filesPath = json_decode($flight_plan->files);
+            $flightConfiguration = json_decode($flight_plan->configuration);
 
             foreach ($filesPath as $file_path) {
                 if (!Storage::disk("public")->exists($file_path)) {
@@ -40,7 +41,7 @@ class DownloadFlightPlanFilesToOpenOnMap extends Controller
             $file_path = "$flightPlanStorageFolder/single/$flightPlanTimestamp.txt";
             $file_contents = Storage::disk("public")->get($file_path);
 
-            return response(["contents" => $file_contents])->withHeaders([
+            return response(["contents" => $file_contents, "configuration" => $flightConfiguration])->withHeaders([
                 "Content-type" => "application/json"
             ], 200);
         } catch (\Exception $e) {

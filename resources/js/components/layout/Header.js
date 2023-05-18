@@ -11,7 +11,7 @@ import { useAuth } from '../../context/Auth';
 
 const drawerWidth = 210;
 
-const AppBar = styled(MuiAppBar, {
+const HeaderBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open'
 })(({ theme, open }) => ({
     zIndex: theme.zIndex.drawer + 1,
@@ -49,7 +49,7 @@ export function Header(props) {
     }
 
     return (
-        <AppBar position="fixed" open={props.open} sx={{ bgcolor: "#00458C", boxShadow: 0 }} className='border-b border-gray-200'>
+        <HeaderBar position="fixed" open={props.open} sx={{ bgcolor: "#00458C", boxShadow: 0 }} className='border-b border-gray-200'>
             <Toolbar className='flex justify-between items-center'>
                 <Box className="flex items-center">
                     <IconButton
@@ -74,6 +74,6 @@ export function Header(props) {
                     </Tooltip>
                 </Box>
             </Toolbar>
-        </AppBar>
+        </HeaderBar>
     )
 }

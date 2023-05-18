@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 // MUI
 import { Box, List, Divider, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
-import { makeStyles } from '@mui/styles';
 import MuiDrawer from '@mui/material/Drawer';
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
@@ -16,6 +15,7 @@ import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { Header } from './Header';
+import {useMenuStyles } from './styles';
 
 const drawerWidth = 210;
 
@@ -66,36 +66,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-const useStyles = makeStyles(() => ({
-    drawer: {
-        "& .MuiDrawer-paper": { borderWidth: 1, borderTop: 0 },
-        zIndex: 1
-    },
-    listItem: {
-        display: 'block',
-    },
-    listItemButton: {
-        minHeight: 48,
-        justifyContent: ({ open }) => (open ? 'initial' : 'center'),
-        padding: '0 20px'
-    },
-    listItemIcon: {
-        minWidth: 0,
-        marginRight: ({ open }) => (open ? '24px' : 'auto'),
-        justifyContent: 'center',
-        color: '#037B3A',
-    },
-    listItemText: {
-        opacity: ({ open }) => (open ? 1 : 0),
-        color: '#000',
-    },
-}));
-
 export function Menu() {
 
     const [open, setOpen] = React.useState(true);
     const { user } = useAuth();
-    const classes = useStyles({ open });
+    const classes = useMenuStyles({ open });
 
     const categories = [
         {
@@ -143,7 +118,7 @@ export function Menu() {
                 }}
             >
                 <DrawerHeader>
-                    <Chip avatar={<Avatar style={{ color: '#fff' }}><AccountCircleIcon /></Avatar>} label={`${user.name} - ${user.profile}`} />
+                    <Chip sx={{ bgcolor: '#fff' }} avatar={<Avatar sx={{ bgcolor: '#fff'}}><AccountCircleIcon style={{ color: '#037B3A' }} /></Avatar>} label={`${user.name} - ${user.profile}`} />
                 </DrawerHeader>
                 <Divider />
                 <List>

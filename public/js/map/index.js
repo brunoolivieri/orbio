@@ -4,7 +4,6 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
 
 // === POSIÇÃO INICIAL NO MAPA === //
-//home = [-47.926063, -15.841060];
 home = [-48.543123, -22.758396];
 
 var coordinatesLongLat;
@@ -154,6 +153,20 @@ window.onload = () => {
                 // Desenhando o polígono e calculando sua área
                 drawTxtArea(txtArea);
                 calculateTxtArea();
+
+                const configuration = response.data.configuration;
+
+                // Set configuration modal
+                document.getElementById("speed").value = Number(configuration.speed);
+                document.getElementById("label-speed").innerHTML = "Velocidade: " + configSpeed.value + "m/s";
+                document.getElementById("distance").value = Number(configuration.distance);
+                document.getElementById("label-distance").innerHTML = "Distância: " + configuration.distance;
+                document.getElementById("altitude").value = Number(configuration.altitude);
+                document.getElementById("label-altitude").innerHTML = "Altitude: " + configuration.altitude + "m";
+                document.getElementById("max-flight-time").value = Number(configuration.time);
+                document.getElementById("label-max-flight-time").innerHTML = "Tempo: " + configuration.time + "min"
+                document.getElementById("wp-grid").checked = configuration.wp_grid;
+                document.getElementById("optimize").checked = configuration.optimize;
 
             })
             .catch((error) => {
@@ -1208,8 +1221,8 @@ configTempo.onchange = function () {
 }
 
 // Optimization
-const opt = document.getElementById("opt");
-opt.onchange = function () {
+const optimize = document.getElementById("optimize");
+optimize.onchange = function () {
     // Pegando a distância da primeira linha paralela próxima à extremidade da área
     // e dividindo entre todas as demais linhas para recalcular a distância entre linhas
     recomputeDistanceBetweenLines();
@@ -2240,6 +2253,14 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
             formData.append("imageFilename", filenameImg);
             formData.append("timestamp", fullPathData.timestamp);
             formData.append("type", flight_plan_type);
+            formData.append("configuration", JSON.stringify({
+                speed: document.getElementById("speed").value,
+                distance: document.getElementById("distance").value,
+                altitude: document.getElementById("altitude").value,
+                time: document.getElementById("max-flight-time").value,
+                wp_grid: +document.getElementById("wp-grid").checked,
+                optimize: +document.getElementById("optimize").checked
+            }));
 
             const params = new Proxy(new URLSearchParams(window.location.search), {
                 get: (searchParams, prop) => searchParams.get(prop)

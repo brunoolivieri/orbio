@@ -47,7 +47,8 @@ class FlightPlanRepository implements RepositoryInterface
                 "city" => $data["city"],
                 "description" => null,
                 "type" => $data["type"],
-                "image_path" => $data["image"]["path"]
+                "image_path" => $data["image"]["path"],
+                "configuration" => $data["configuration"]
             ]);
 
             foreach ($data["route_files"] as $route_file) {
@@ -82,7 +83,8 @@ class FlightPlanRepository implements RepositoryInterface
                     "state" => $data["state"],
                     "city" => $data["city"],
                     "type" => $data["type"],
-                    "image_path" => $data["image"]["path"]
+                    "image_path" => $data["image"]["path"],
+                    "configuration" => $data["configuration"]
                 ]);
 
                 // Delete actual folder with all files

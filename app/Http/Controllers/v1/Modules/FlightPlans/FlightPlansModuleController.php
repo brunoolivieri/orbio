@@ -55,7 +55,7 @@ class FlightPlansModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-            
+
             $this->service->createOne($request->all());
             return response(["message" => "Plano de voo criado com sucesso!"], 201);
         } catch (\Exception $e) {
@@ -67,7 +67,7 @@ class FlightPlansModuleController extends Controller
     {
         try {
             Gate::authorize('flight_plans_write');
-            
+           
             $this->service->updateOne($request->all(), $id);
             return response(["message" => "Plano de voo atualizado com sucesso!"], 200);
         } catch (\Exception $e) {

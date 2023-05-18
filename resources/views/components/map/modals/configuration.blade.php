@@ -33,10 +33,10 @@
                             <label for="wp-grid" id="label-grid" class="text-gray-900">WP Grid</label>
                         </div>
                         <div class="px-2 py-2">
-                            <input type="checkbox" name="opt" id="opt"
+                            <input type="checkbox" name="optimize" id="optimize"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded accent-blue-500 cursor-pointer">
                             <input type="hidden" name="extra-distance" id="extra-distance" value="0">
-                            <label for="opt" id="label-opt" class="text-gray-900">Otimizar</label>
+                            <label for="optimize" id="label-optimize" class="text-gray-900">Otimizar</label>
                         </div>
                     </div>
         

@@ -77,6 +77,8 @@ class FlightPlanService implements ServiceInterface
         $data_to_save["city"] = $address_components[2]["long_name"];
         $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
         $data_to_save["type"] = $flightPlanType;
+
+        $data_to_save["configuration"] = $data["configuration"];
         
         $this->repository->createOne($data_to_save);
     }
@@ -145,6 +147,8 @@ class FlightPlanService implements ServiceInterface
             $data_to_save["city"] = $address_components[2]["long_name"];
             $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
             $data_to_save["type"] = $flightPlanType;
+
+            $data_to_save["configuration"] = $data["configuration"];
         } else {
             $data_to_save = $data;
             $data_to_save["is_file"] = false;
