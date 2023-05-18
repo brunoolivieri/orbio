@@ -39,7 +39,7 @@ class LogsPaginationResource extends JsonResource
 
             if ($log->trashed()) {
                 $this->formatedData["records"][$service_order_row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else {

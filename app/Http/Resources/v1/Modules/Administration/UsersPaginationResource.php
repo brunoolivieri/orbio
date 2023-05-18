@@ -44,7 +44,7 @@ class UsersPaginationResource extends JsonResource
             } else if ((bool) !$user->status && is_null($user->deleted_at)) {
                 $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Inativo", "color" => "error"];
             } else if (!is_null($user->deleted_at)) {
-                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Deletado", "color" => "error"];
+                $this->formatedData["records"][$user_index]["status_badge"] = ["label" => "Desabilitado", "color" => "error"];
             }
         }
 

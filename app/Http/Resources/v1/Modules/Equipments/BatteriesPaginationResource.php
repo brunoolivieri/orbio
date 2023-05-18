@@ -36,7 +36,7 @@ class BatteriesPaginationResource extends JsonResource
 
             if ($battery->trashed()) {
                 $this->formatedData["records"][$row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else {

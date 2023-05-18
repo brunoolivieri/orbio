@@ -41,7 +41,7 @@ class ServiceOrdersPaginationResource extends JsonResource
 
             if ($service_order->trashed()) {
                 $this->formatedData["records"][$row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else if (!$service_order->trashed() && !is_null($service_order->report)) {

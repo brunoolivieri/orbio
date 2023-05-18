@@ -34,7 +34,7 @@ class ReportsPaginationResource extends JsonResource
 
             if ($report->trashed()) {
                 $this->formatedData["records"][$row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else {

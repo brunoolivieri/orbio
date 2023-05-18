@@ -2286,10 +2286,12 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 // Remove elements from screen
 function screenForPrintScreen(type) {
     const topBar = document.getElementById("top-bar");
+    const bottomBar = document.getElementById("bottom-bar");
     const rightSideMenu = document.getElementById("right-menu");
     const leftSideMenu = document.getElementById("left-menu");
     if (type === "before") {
         topBar.classList.add("hidden");
+        bottomBar.classList.add("hidden");
         rightSideMenu.classList.add("hidden");
         leftSideMenu.classList.add("hidden");
         map.removeControl(mapBoxGeocoder);
@@ -2298,6 +2300,7 @@ function screenForPrintScreen(type) {
         marcador.remove();
     } else if (type === "after") {
         topBar.classList.remove("hidden");
+        bottomBar.classList.remove("hidden");
         rightSideMenu.classList.remove("hidden");
         leftSideMenu.classList.remove("hidden");
         marcador = new mapboxgl.Marker({ color: 'black' })

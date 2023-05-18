@@ -37,7 +37,7 @@ class DronesPaginationResource extends JsonResource
 
             if ($drone->trashed()) {
                 $this->formatedData["records"][$row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Mui
-import { AppBar, Toolbar, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import MapIcon from '@mui/icons-material/Map';
@@ -26,10 +26,8 @@ export function SubHeader() {
     ];
 
     return (
-        <AppBar position="static" className='shadow-sm'>
-            <Toolbar className="bg-white">
-                <Typography variant="h1" fontSize={18} fontWeight={400} className='text-green-800 font-sans'>{pages[pageIndex].title}</Typography>
-            </Toolbar>
-        </AppBar>
+        <div className='mt-16 w-full p-5 border-b border-gray-200 bg-white'>
+            <Typography variant="h1" fontSize={18} fontWeight={400} className='text-green-800 font-sans'>{pages[pageIndex].title}</Typography>
+        </div>
     )
 }

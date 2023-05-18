@@ -57,19 +57,24 @@ const columns = [
         flex: 1,
         minWidth: 200,
         renderCell: (data) => {
-            function chipStyle(is_deleted, status) {
+
+            function getProps() {
+                const is_deleted = !!data.row.users.creator.deleted;
                 const label = data.row.users.creator.name;
-                if (is_deleted === 1) {
-                    return { label: label, color: "error", variant: "contained" };
-                } else if (is_deleted === 0) {
-                    return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" }
+
+                if (is_deleted) {
+                    return { tooltip: "Usuário desabilitado", chip: { label: label, color: "error", variant: "outlined" } }
+                } else {
+                    return { tooltip: "Usuário ativo", chip: { label: label, color: "success", variant: "outlined" } }
                 }
             }
 
-            const chip_style = chipStyle(data.row.users.creator.deleted, data.row.users.creator.status);
+            const props = getProps();
 
             return (
-                <Chip {...chip_style} />
+                <Tooltip title={props.tooltip}>
+                    <Chip {...props.chip} />
+                </Tooltip>
             )
         }
     },
@@ -81,15 +86,19 @@ const columns = [
         flex: 1,
         minWidth: 200,
         renderCell: (data) => {
-            function chipStyle(status) {
+
+            function getProps() {
                 const label = data.row.users.pilot.name;
-                return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" };
+                const status = data.row.users.pilot.status;
+                return status ? { tooltip: "Usuário ativo", chip: { label: label, color: "success", variant: "outlined" } } : { tooltip: "Usuário inativo", chip: { label: label, color: "error", variant: "outlined" } };
             }
 
-            const chip_style = chipStyle(data.row.users.pilot.status);
+            const props = getProps();
 
             return (
-                <Chip {...chip_style} />
+                <Tooltip title={props.tooltip}>
+                    <Chip {...props.chip} />
+                </Tooltip>
             )
         }
     },
@@ -101,15 +110,18 @@ const columns = [
         flex: 1,
         minWidth: 200,
         renderCell: (data) => {
-            function chipStyle(status) {
+
+            function getProps(status) {
                 const label = data.row.users.client.name;
-                return status ? { label: label, color: "success", variant: "outlined" } : { label: label, color: "error", variant: "outlined" };
+                return status ? { tooltip: "Usuário ativo", chip: { label: label, color: "success", variant: "outlined" } } : { tooltip: "Usuário inativo", chip: { label: label, color: "error", variant: "outlined" } };
             }
 
-            const chip_style = chipStyle(data.row.users.client.status);
+            const props = getProps(data.row.users.client.status);
 
             return (
-                <Chip {...chip_style} />
+                <Tooltip title={props.tooltip}>
+                    <Chip {...props.chip} />
+                </Tooltip>
             )
         }
     },

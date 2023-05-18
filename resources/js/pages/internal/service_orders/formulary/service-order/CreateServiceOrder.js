@@ -149,7 +149,7 @@ export const CreateServiceOrder = React.memo((props) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   }
 
-  function avatarSelectionStyle(selected_flight_plan) {
+  function flightPlanCheckList(selected_flight_plan) {
     let is_completed = true;
     for (let prop in selected_flight_plan) {
       if (prop != "name" && prop != "log_id") {
@@ -288,7 +288,7 @@ export const CreateServiceOrder = React.memo((props) => {
                       <ListItem
                         key={index}
                         secondaryAction={
-                          <Stack direction="row">
+                          <Stack direction="row" gap={1}>
                             <DronesForFlightPlan
                               selectedFlightPlans={selectedFlightPlans}
                               setSelectedFlightPlans={setSelectedFlightPlans}
@@ -308,7 +308,7 @@ export const CreateServiceOrder = React.memo((props) => {
                         }
                       >
                         <ListItemAvatar>
-                          <Avatar sx={avatarSelectionStyle(flight_plan)}>
+                          <Avatar sx={flightPlanCheckList(flight_plan)}>
                             <MapIcon />
                           </Avatar>
                         </ListItemAvatar>

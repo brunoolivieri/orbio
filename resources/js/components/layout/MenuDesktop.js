@@ -2,8 +2,8 @@ import * as React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 // MUI
 import { Box, List, Divider, IconButton, ListItem, ListItemButton, ListItemIcon, ListItemText, styled } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AssessmentIcon from '@mui/icons-material/Assessment';
@@ -19,12 +19,6 @@ import { useAuth } from '../../context/Auth';
 import { DesktopHeader } from './DesktopHeader';
 
 const drawerWidth = 210;
-
-const drawerStyle = {
-    "& .MuiDrawer-paper": { borderWidth: 0 },
-    boxShadow: 2,
-    zIndex: 1
-}
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -56,24 +50,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     ...theme.mixins.toolbar,
 }));
 
-const AppBar = styled(MuiAppBar, {
-    shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-    zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
-        easing: theme.transitions.easing.sharp,
-        duration: theme.transitions.duration.leavingScreen,
-    }),
-    ...(open && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
-}));
-
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
         width: drawerWidth,
@@ -91,12 +67,39 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
+const useStyles = makeStyles((theme) => ({
+    drawer: {
+        "& .MuiDrawer-paper": { borderWidth: 0 },
+        boxShadow: 1,
+        zIndex: 1
+    },
+    listItem: {
+        display: 'block',
+    },
+    listItemButton: {
+        minHeight: 48,
+        justifyContent: ({ open }) => (open ? 'initial' : 'center'),
+        padding: '0 20px',
+    },
+    listItemIcon: {
+        minWidth: 0,
+        marginRight: ({ open }) => (open ? '24px' : 'auto'),
+        justifyContent: 'center',
+        color: '#A8A8A8',
+    },
+    listItemText: {
+        opacity: ({ open }) => (open ? 1 : 0),
+        color: '#000',
+    },
+}));
+
 export function MenuDesktop() {
 
+    const [open, setOpen] = React.useState(false);
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const { user, logout } = useAuth();
-    const [open, setOpen] = React.useState(false);
+    const classes = useStyles({ open });
 
     const categories = [
         {
@@ -150,14 +153,10 @@ export function MenuDesktop() {
         setOpen(false);
     }
 
-    function handleToggleTheme() {
-        document.body.classList.toggle("dark");
-    }
-
     return (
-        <Box sx={{ display: { xs: 'none', md: 'none', lg: 'flex', xl: 'flex' } }}>
+        <Box flex>
             <DesktopHeader open={open} handleDrawerOpen={handleDrawerOpen} />
-            <Drawer variant="permanent" open={open} sx={drawerStyle}>
+            <Drawer variant="permanent" open={open} className={classes.drawer}>
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
                         <ChevronLeftIcon className='text-green-600' />
@@ -165,59 +164,43 @@ export function MenuDesktop() {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {categories.map(({ id, children }) => (
-                        children.map(({ id: childId, icon, active, access, path }) => (
-                            access &&
-
-                            <ListItem key={childId} disablePadding className='block'>
-                                <Link to={path} className='w-full block'>
-                                    <ListItemButton
-                                        sx={{
-                                            minHeight: 48,
-                                            justifyContent: open ? 'initial' : 'center',
-                                            px: 2.5,
-                                        }}
-                                        selected={active}
-                                    >
-                                        <ListItemIcon
-                                            sx={{
-                                                minWidth: 0,
-                                                mr: open ? 3 : 'auto',
-                                                justifyContent: 'center',
-                                                color: '#007937'
-                                            }}
+                    {categories.map(({ id, children }) =>
+                        children.map(({ id: childId, icon, active, access, path }) =>
+                            access && (
+                                <ListItem key={childId} disablePadding className={classes.listItem}>
+                                    <Link to={path} className="w-full block">
+                                        <ListItemButton
+                                            className={classes.listItemButton}
+                                            selected={active}
                                         >
-                                            {icon}
-                                        </ListItemIcon>
-                                        <ListItemText primary={childId} sx={{ opacity: open ? 1 : 0, color: '#000' }} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
-                        ))
-                    ))}
+                                            <ListItemIcon className={classes.listItemIcon}>
+                                                {icon}
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={childId}
+                                                className={classes.listItemText}
+                                            />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                            )
+                        )
+                    )}
                 </List>
                 <Divider />
                 <List>
-                    <ListItem disablePadding sx={{ display: 'block' }}>
+                    <ListItem disablePadding className={classes.listItem}>
                         <ListItemButton
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: open ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
+                            className={classes.listItemButton}
                             onClick={handleLogout}
                         >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: open ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                    color: '#007937'
-                                }}
-                            >
+                            <ListItemIcon className={classes.listItemIcon}>
                                 <LogoutIcon />
                             </ListItemIcon>
-                            <ListItemText primary={"Sair"} sx={{ opacity: open ? 1 : 0, color: '#000' }} />
+                            <ListItemText
+                                primary="Sair"
+                                className={classes.listItemText}
+                            />
                         </ListItemButton>
                     </ListItem>
                 </List>

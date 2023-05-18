@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Box, Toolbar, Typography, IconButton, styled } from '@mui/material';
 import MuiAppBar from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
-import Brightness4Icon from '@mui/icons-material/Brightness4';
 
 const drawerWidth = 210;
 
@@ -27,17 +26,12 @@ const AppBar = styled(MuiAppBar, {
 
 export function DesktopHeader(props) {
 
-    function handleToggleTheme() {
-        document.body.classList.toggle("dark");
-    }
-
     return (
         <AppBar position="fixed" open={props.open} sx={{ bgcolor: "#00458C" }}>
             <Toolbar className='flex justify-between items-center'>
                 <Box className="flex items-center">
                     <IconButton
                         color="inherit"
-                        aria-label="open drawer"
                         onClick={() => props.handleDrawerOpen()}
                         edge="start"
                         sx={{
@@ -51,11 +45,6 @@ export function DesktopHeader(props) {
                         ORBIO
                     </Typography>
                 </Box>
-                <IconButton
-                    onClick={handleToggleTheme}
-                >
-                    <Brightness4Icon className='text-white' />
-                </IconButton>
             </Toolbar>
         </AppBar>
     )

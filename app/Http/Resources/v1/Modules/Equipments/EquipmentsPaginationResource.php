@@ -38,7 +38,7 @@ class EquipmentsPaginationResource extends JsonResource
 
             if ($equipment->trashed()) {
                 $this->formatedData["records"][$row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else {

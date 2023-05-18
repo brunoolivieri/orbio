@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
+import { Tooltip, IconButton, Button, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
-import HomeRepairServiceIcon from '@mui/icons-material/HomeRepairService';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -110,6 +111,8 @@ export const EquipmentsForFlightPlan = React.memo((props) => {
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
 
+    const buttonProps = props.current.equipment_id === 0 ? { icon: <AddIcon />, text: "Selecionar equipamento" } : { icon: <EditIcon />, text: "Editar equipamento" };
+
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
@@ -197,10 +200,8 @@ export const EquipmentsForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title="Equipamento">
-                <IconButton onClick={handleOpen}>
-                    <HomeRepairServiceIcon />
-                </IconButton>
+            <Tooltip title={buttonProps.text} startIcon={buttonProps.icon}>
+                <Button variant="contained" onClick={handleOpen}>Equipamento</Button>
             </Tooltip>
             <Dialog
                 fullScreen

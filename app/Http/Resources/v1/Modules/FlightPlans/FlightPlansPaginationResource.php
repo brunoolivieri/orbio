@@ -52,7 +52,7 @@ class FlightPlansPaginationResource extends JsonResource
 
             if ($flight_plan->trashed()) {
                 $this->formatedData["records"][$flight_plan_row]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             } else {

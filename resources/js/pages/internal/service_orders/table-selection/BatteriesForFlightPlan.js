@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
+import { Tooltip, IconButton, Button, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
-import BatteryChargingFullIcon from '@mui/icons-material/BatteryChargingFull';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -96,6 +97,8 @@ export const BatteriesForFlightPlan = React.memo((props) => {
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
 
+    const buttonProps = props.current.battery_id === 0 ? { icon: <AddIcon />, text: "Selecionar bateria" } : { icon: <EditIcon />, text: "Editar bateria" };
+
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
@@ -183,10 +186,8 @@ export const BatteriesForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title="Bateria">
-                <IconButton onClick={handleOpen}>
-                    <BatteryChargingFullIcon />
-                </IconButton>
+            <Tooltip title={buttonProps.text} startIcon={buttonProps.icon}>
+                <Button variant="contained" onClick={handleOpen}>Bateria</Button>
             </Tooltip>
             <Dialog
                 fullScreen

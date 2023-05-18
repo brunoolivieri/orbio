@@ -50,7 +50,7 @@ class ProfilesPaginationResource extends JsonResource
                 ];
             } else {
                 $this->formatedData["records"][$profile->id]["status_badge"] = [
-                    "label" => "Deletado",
+                    "label" => "Desabilitado",
                     "color" => "error"
                 ];
             }

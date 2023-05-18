@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, Button, AppBar, Toolbar, Slide } from "@mui/material";
+import { Tooltip, IconButton, Button, Grid, TextField, InputAdornment, Box, Dialog, DialogContent, AppBar, Toolbar, Slide } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import CloseIcon from '@mui/icons-material/Close';
+import AddIcon from '@mui/icons-material/Add';
+import EditIcon from '@mui/icons-material/Edit';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
-import DroneIcon from "../../../../assets/images/Icons/drone.png";
 import { ModalImage } from '../../../../components/modals/dialog/ModalImage';
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
 import axios from '../../../../services/AxiosApi';
@@ -99,6 +100,8 @@ export const DronesForFlightPlan = React.memo((props) => {
     const [reload, setReload] = React.useState(false);
     const [open, setOpen] = React.useState(false);
 
+    const buttonProps = props.current.drone_id === 0 ? { icon: <AddIcon />, text: "Selecionar drone" } : { icon: <EditIcon />, text: "Editar drone" };
+
     // ============================================================================== FUNCTIONS ============================================================================== //
 
     React.useEffect(() => {
@@ -187,10 +190,8 @@ export const DronesForFlightPlan = React.memo((props) => {
 
     return (
         <>
-            <Tooltip title="Drone">
-                <IconButton onClick={handleOpen}>
-                    <img src={DroneIcon} width="20px" />
-                </IconButton>
+            <Tooltip title={buttonProps.text} startIcon={buttonProps.icon}>
+                <Button variant="contained" onClick={handleOpen}>Drone</Button>
             </Tooltip>
             <Dialog
                 fullScreen
