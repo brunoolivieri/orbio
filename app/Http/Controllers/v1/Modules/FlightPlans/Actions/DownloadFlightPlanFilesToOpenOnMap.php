@@ -24,22 +24,15 @@ class DownloadFlightPlanFilesToOpenOnMap extends Controller
                 throw new \Exception("Erro! O plano de voo não foi encontrado.", 404);
             }
 
-            $filesPath = json_decode($flight_plan->files);
             $flightConfiguration = json_decode($flight_plan->configuration);
 
-            foreach ($filesPath as $file_path) {
-                if (!Storage::disk("public")->exists($file_path)) {
-                    throw new \Exception("Erro! O arquivo não foi encontrado.", 404);
-                }
+            if (!Storage::disk("public")->exists($flight_plan->folder . "/single")) {
+                throw new \Exception("Erro! O arquivo não foi encontrado.", 404);
             }
 
-            // Get flight plan timestamp and write the folder path
-            $flightPlanTimestamp = explode("/", $filesPath[0])[1];
-            $flightPlanStorageFolder = "flight_plans/$flightPlanTimestamp";
+            $folderFile = Storage::disk("public")->files($flight_plan->folder . "/single");
 
-            // Get file contents
-            $file_path = "$flightPlanStorageFolder/single/$flightPlanTimestamp.txt";
-            $file_contents = Storage::disk("public")->get($file_path);
+            $file_contents = Storage::disk("public")->get($folderFile[0]);
 
             return response(["contents" => $file_contents, "configuration" => $flightConfiguration])->withHeaders([
                 "Content-type" => "application/json"
