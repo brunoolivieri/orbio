@@ -22,43 +22,37 @@ class FlightPlanService implements ServiceInterface
     function createOne(array $data)
     {
         if (is_null($data["route_files"]) || is_null($data["imageDataURL"])) {
-            throw new \Exception("Erro! O plano de voo não pode ser criado.", 400);
+            throw new \Exception("Erro na criação do plano de voo.", 400);
         }
 
         // Path foldername as timestamp
         $pathTimestamp =  $data["timestamp"];
 
-        // Can be multi or single 
-        $flightPlanType = $data["type"];
-
         $storagePath = "flight_plans/$pathTimestamp";
+        $data_to_save["folder"] = $storagePath; 
 
-        // Txt files
+        // Single file
+        $singleFileName = $data["single_file"]->getClientOriginalName();
+        $contents = file_get_contents($data["single_file"]);
+        $data_to_save["single_file"] = [
+            "contents" => $contents,
+            "filename" => $singleFileName,
+            "path" => "$storagePath/single/$singleFileName"
+        ];
+       
+        // Multi files
         foreach ($data["route_files"] as $index => $route_file) {
             $filename = $route_file->getClientOriginalName();
             $contents = file_get_contents($route_file);
-            $path = "$storagePath/$flightPlanType/$filename";
-
-            $data_to_save["routes_path"][$index] = $path;
+            $path = "$storagePath/multi/$filename";
 
             $data_to_save["route_files"][$index] = [
                 "contents" => $contents,
                 "filename" => $filename,
                 "path" => $path
             ];
-        }
-
-        // If is multi, get auxiliary single file data
-        if ($flightPlanType === "multi") {
-            $singleFileName = $data["auxiliary_single_file"]->getClientOriginalName();
-            $contents = file_get_contents($data["auxiliary_single_file"]);
-            $data_to_save["auxiliary_single_file"] = [
-                "contents" => $contents,
-                "filename" => $singleFileName,
-                "path" => "$storagePath/single/$singleFileName"
-            ];
-        }
-
+        }   
+        
         // Img file
         $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);
         $img = str_replace(' ', '+', $img);
@@ -67,7 +61,7 @@ class FlightPlanService implements ServiceInterface
             "path" => "flight_plans/$pathTimestamp/image/" . $data["imageFilename"],
             "contents" => base64_decode($img)
         ];
-
+       
         // Get location
         $data_to_save["coordinates"] = $data["coordinates"][0];
 
@@ -76,10 +70,9 @@ class FlightPlanService implements ServiceInterface
 
         $data_to_save["city"] = $address_components[2]["long_name"];
         $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
-        $data_to_save["type"] = $flightPlanType;
-
-        $data_to_save["configuration"] = $data["configuration"];
         
+        $data_to_save["configuration"] = $data["configuration"];
+       
         $this->repository->createOne($data_to_save);
     }
 
@@ -98,16 +91,14 @@ class FlightPlanService implements ServiceInterface
             // Path foldername as timestamp
             $pathTimestamp =  $data["timestamp"];
 
-            // Can be multi or single 
-            $flightPlanType = $data["type"];
-
             $storagePath = "flight_plans/$pathTimestamp";
+            $data_to_save["folder"] = $storagePath; 
 
             // Txt files
             foreach ($data["route_files"] as $index => $route_file) {
                 $filename = $route_file->getClientOriginalName();
                 $contents = file_get_contents($route_file);
-                $path = "$storagePath/$flightPlanType/$filename";
+                $path = "$storagePath/multi/$filename";
 
                 $data_to_save["routes_path"][$index] = $path;
 
@@ -118,16 +109,13 @@ class FlightPlanService implements ServiceInterface
                 ];
             }
 
-            // If is multi, get auxiliary single file data
-            if ($flightPlanType === "multi") {
-                $singleFileName = $data["auxiliary_single_file"]->getClientOriginalName();
-                $contents = file_get_contents($data["auxiliary_single_file"]);
-                $data_to_save["auxiliary_single_file"] = [
-                    "contents" => $contents,
-                    "filename" => $singleFileName,
-                    "path" => "$storagePath/single/$singleFileName"
-                ];
-            }
+            $singleFileName = $data["single_file"]->getClientOriginalName();
+            $contents = file_get_contents($data["single_file"]);
+            $data_to_save["single_file"] = [
+                "contents" => $contents,
+                "filename" => $singleFileName,
+                "path" => "$storagePath/single/$singleFileName"
+            ];
 
             // Img file
             $img = str_replace('data:image/jpeg;base64,', '', $data["imageDataURL"]);
@@ -146,12 +134,12 @@ class FlightPlanService implements ServiceInterface
 
             $data_to_save["city"] = $address_components[2]["long_name"];
             $data_to_save["state"] = strlen($address_components[3]["short_name"]) === 2 ? $address_components[3]["short_name"] : $address_components[4]["short_name"];
-            $data_to_save["type"] = $flightPlanType;
-
             $data_to_save["configuration"] = $data["configuration"];
+
         } else {
             $data_to_save = $data;
             $data_to_save["is_file"] = false;
+            $data_to_save["configuration"] = $data["configuration"];
         }
 
         $flight_plan = $this->repository->updateOne($data_to_save, $identifier);

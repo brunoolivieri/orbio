@@ -1104,29 +1104,15 @@ btnClean.addEventListener("click", cleanLayers);
 btnClean.addEventListener("click", cleanFields);
 btnClean.addEventListener("click", cleanPolygon);
 
-// OPEN SAVE MENU
+// SAVE MENU
 const btnSaveMenu = document.getElementById("btn-save");
-btnSaveMenu.addEventListener("click", function () {
-    document.getElementById("menu-save").classList.toggle("hidden");
-});
+btnSaveMenu.addEventListener("click", savePath); // aqui
 
 // OPEN UPLOAD MENU
 const btnUploadMenu = document.getElementById("btn-upload");
 btnUploadMenu.addEventListener("click", function () {
     document.getElementById("menu-upload").classList.toggle("hidden");
 });
-
-// SAVE SINGLE PATH
-const btnFullSave = document.getElementById("btn-full-save");
-btnFullSave.addEventListener("click", savePathAsSingleFile);
-
-// SAVE MULTI PATH
-const btnMultiSave = document.getElementById("btn-multi-save");
-btnMultiSave.addEventListener("click", savePathAsMultiAndSingleFile);
-
-// SAVE CSV
-const btnSaveCSV = document.getElementById("btn-save-csv");
-btnSaveCSV.addEventListener("click", () => savePathCSV());
 
 // IMPORT TXT
 const txtInput = document.getElementById("file-import-txt");
@@ -1272,7 +1258,7 @@ function recomputeDistanceBetweenLines() {
 
 // ============================================================================================= PART 4: TO SAVE  ============================================================================================= //
 
-function savePathAsSingleFile(saveAfterCreation = true) {
+function generatePathSingleFile() {
 
     // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
     if (initialPath.length === 0) {
@@ -1380,31 +1366,20 @@ function savePathAsSingleFile(saveAfterCreation = true) {
     // Nome do arquivo com data em milissegundos decorridos
     fileName = pathTimestamp + ".txt";
 
-    const fullPathData = {
+    const singlePathData = {
         blob: blob,
         filename: fileName,
         coordinates: coordinatesLongLat[0],
         timestamp: pathTimestamp
     };
 
-    if (saveAfterCreation) {
-        savePathConfirmation(fullPathData);
-    } else {
-        return fullPathData;
-    }
-
+    return singlePathData;
 
 }
 
-function savePathAsMultiAndSingleFile() {
+function generatePathMultiFile(singlePathData) {
 
-    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
-    if (initialPath.length === 0) {
-        displayErrorAlert("Erro! Nenhuma rota foi definida.");
-        return;
-    }
-
-    const fullPathData = savePathAsSingleFile(false);
+    const multiPathData = [];
 
     // Definição da altitude de voo a partir da entrada do usuário no modal
     // Se a altitude não for preenchida, define-se um valor padrão
@@ -1415,10 +1390,6 @@ function savePathAsMultiAndSingleFile() {
     // Se a velocidade não for preenchida, define-se um valor padrão
     inputSpeed = document.getElementById("speed").value;
     var speed = (inputSpeed == '') ? 8 : inputSpeed;
-
-    //console.log("quantos breakpoints: " + breakpoints.length);
-
-    const multiPathData = [];
 
     // São gerados vários arquivos de rota, de acordo com a quantidade de breakpoints
     for (k = 0; k <= breakpoints.length; k++) {
@@ -1542,7 +1513,7 @@ function savePathAsMultiAndSingleFile() {
             { type: "text/plain;charset=utf-8" });
 
         // Nome do arquivo será o contador de arquivo concatenado com o timestamp gerado no processo savePathAsSingleFile
-        fileName = "0" + k + "_" + fullPathData.filename;
+        fileName = "0" + k + "_" + singlePathData.filename;
 
         multiPathData.push({
             blob: blob,
@@ -1552,69 +1523,33 @@ function savePathAsMultiAndSingleFile() {
 
     } // Fim do 'for'	
 
-    savePathConfirmation(fullPathData, multiPathData);
+    return multiPathData;
+
 }
 
-function savePathCSV(storage = false, storage_filename = null) {
+function savePath() {
 
-    // Validação: encerra a função se o botão de 'salvar' for clicado sem nenhuma rota definida
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop)
+    });
+
     if (initialPath.length === 0) {
+        if (params.modify) {
+            // Is configuration update only
+            savePathConfirmation(null);
+        }
+
+        // Is creation, and it needs initialPath
         displayErrorAlert("Erro! Nenhuma rota foi definida.");
         return;
     }
 
-    // Definição da altitude de voo a partir da entrada do usuário no modal
-    // Se a altitude não for preenchida, define-se um valor padrão
-    inputAltitude = document.getElementById("altitude").value;
-    var altitude = (inputAltitude == '') ? 10 : inputAltitude;
+    // Can be an creation or update of full flight plan (config + path per se)
+    // In this case, what changes is the request method
+    const singlePathData = generatePathSingleFile();
+    const multiPathData = generatePathMultiFile(singlePathData);
 
-    // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
-    var content = "latitude;longitude;altitude(m)\n";
-
-    // Quando o usuário carrega um arquivo TXT de rota do PC e tentar salvá-lo em CSV, 
-    // as informações da rota não estão armazenadas em variáveis como 'inicialFinalPath', 
-    // mas na variável txtPath	
-    if (initialFinalPath.length === 0) {
-        for (i = 0; i < txtPath.length; i++) {
-            content += txtPath[i][1] + ";" + txtPath[i][0] + ";" + altitude + "\n";
-        }
-
-    } else {
-        // WAYPOINT: 16 - ROTA INICIAL DA FASE 01
-        index = 0;
-        for (j = 3; j < (initialPath.length * 2) + 2; j += 2) {
-            content += initialPath[index][1].toFixed(6) + ";" + initialPath[index][0].toFixed(6) + ";" + altitude + "\n";
-            index++;
-        }
-
-        // WAYPOINT: 16 - ROTA DE VAI-E-VOLTA DA FASE 02
-        index = 0;
-        for (i = j; i < (finalDestination.length) + j - 1; i++) {
-            content += finalDestination[index][1].toFixed(6) + ";" + finalDestination[index][0].toFixed(6) + ";" + altitude + "\n";
-            index++;
-        }
-
-        // WAYPOINT: 16 - ROTA FINAL DA FASE 03
-        index = 0;
-        for (j = i; j < (initialFinalPath[1].length) + i; j++) {
-            content += initialFinalPath[1][index][1].toFixed(6) + ";" + initialFinalPath[1][index][0].toFixed(6) + ";" + altitude + "\n";
-            index++;
-        }
-    }
-
-    var blob = new Blob([content],
-        { type: "text/plain;charset=utf-8" });
-
-    // Nome do arquivo com data em milissegundos decorridos
-    const fileName = (storage ? storage_filename : new Date().getTime()) + ".csv";
-
-    // O CSV é baixado ou salvo no sistema
-    if (!storage) {
-        saveAs(blob, fileName);
-        displaySuccessAlert("Sucesso! A rota foi gerada no formato csv.");
-    } else {
-        return { blob, fileName };
-    }
+    savePathConfirmation({ singlePathData, multiPathData });
 }
 
 // ============================================================================================= PART 5: TO IMPORT  ============================================================================================= //
@@ -2168,7 +2103,17 @@ btnCloseConfirmationModal.addEventListener("click", function () {
 });
 
 // ==== CONFIRMATION AND SAVE PATH REQUEST ==== //
-function savePathConfirmation(fullPathData, multiPathData = null) {
+function savePathConfirmation(pathData) {
+
+    if (pathData != null) {
+        createOrUpdateFullFlightPlan(pathData);
+    } else {
+        updateOnlyFlightPlanConfig();
+    }
+
+}
+
+function createOrUpdateFullFlightPlan({ singlePathData, multiPathData }) {
 
     const modal = document.getElementById("flight-plan-confirmation-modal");
     screenForPrintScreen("before");
@@ -2179,7 +2124,7 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 
         const blobImg = new Blob([canvas], { type: "image/jpeg" });
         const dataURL = canvas.toDataURL('image/jpeg', 1.0);
-        const filenameImg = fullPathData.timestamp + ".jpeg";
+        const filenameImg = singlePathData.timestamp + ".jpeg";
 
         return { blobImg, filenameImg, dataURL, canvas };
 
@@ -2187,46 +2132,9 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
 
         modal.classList.remove("hidden");
 
-        // Set flight plan type and files
-        const flight_plan_type = multiPathData != null ? "multi" : "single";
-        const flight_plan_files = multiPathData != null ? multiPathData : [fullPathData];
-
-        const filesListElement = flight_plan_files.map((fileData, index) => {
-
-            const container = document.createElement("div");
-            container.replaceChildren([]);
-
-            const box = document.createElement("div");
-            box.replaceChildren([]);
-            box.className = "grid grid-cols-2 hover:bg-gray-50 p-2 border";
-
-            const fieldID = document.createElement("p");
-            fieldID.className = "text-gray-600";
-            fieldID.innerText = index + 1;
-
-            const fieldFilename = document.createElement("p");
-            fieldFilename.innerText = fileData.filename;
-
-            box.appendChild(fieldID);
-            box.appendChild(fieldFilename);
-            container.appendChild(box);
-
-            return container;
-
-        });
-
-        const filesList = document.getElementById("files-list");
-        filesList.replaceChildren([]);
-
-        // Set flight plans list into modal
-        filesListElement.forEach((element) => {
-            filesList.appendChild(element);
-        });
-
-        // Set flight plan image into modal
-        const pathImageName = document.getElementById("flight-image");
-        pathImageName.placeholder = '';
-        pathImageName.placeholder = filenameImg;
+        // Set flightplan confirmation modal
+        cleanConfirmationModal();
+        setConfirmationModal(dataURL);
 
         // Save path definitely
         const btnSavePath = document.getElementById("btn-save-confirmation-modal");
@@ -2235,24 +2143,19 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
             const spin_icon = document.getElementById("spin-icon");
             spin_icon.classList.remove("hidden");
 
+            // const image = new Image(canvas.width, canvas.heigth);
             let formData = new FormData();
 
-            flight_plan_files.map((fileData) => {
+            formData.append("single_file", new File([singlePathData.blob], singlePathData.filename, { type: "text/plain" }));
+
+            multiPathData.map((fileData) => {
                 formData.append("route_files[]", new File([fileData.blob], fileData.filename, { type: "text/plain" }));
                 formData.append("coordinates[]", fileData.coordinates[1] + "," + fileData.coordinates[0]);
             });
 
-            // Multi needs an auxiliary single file to be opened in the map when necessary
-            if (flight_plan_type === "multi") {
-                formData.append("auxiliary_single_file", new File([fullPathData.blob], fullPathData.filename, { type: "text/plain" }));
-            }
-
-            const image = new Image(canvas.width, canvas.heigth);
-
             formData.append("imageDataURL", dataURL);
             formData.append("imageFilename", filenameImg);
-            formData.append("timestamp", fullPathData.timestamp);
-            formData.append("type", flight_plan_type);
+            formData.append("timestamp", singlePathData.timestamp);
             formData.append("configuration", JSON.stringify({
                 speed: document.getElementById("speed").value,
                 distance: document.getElementById("distance").value,
@@ -2297,11 +2200,17 @@ function savePathConfirmation(fullPathData, multiPathData = null) {
                 .finally(() => {
                     spin_icon.classList.add("hidden");
                 });
-
         });
-
     });
+}
 
+function updateOnlyFlightPlanConfig() {
+
+    // Set flightplan confirmation modal
+    cleanConfirmationModal();
+    setConfirmationModal();
+
+    console.log('update config only');
 }
 
 // Remove elements from screen
@@ -2333,8 +2242,23 @@ function screenForPrintScreen(type) {
     }
 }
 
-// Help Modal
-function displayHelpModal() {
-    //
+function cleanConfirmationModal() {
+    document.getElementById("flight-plan-image").src = '';
+    document.getElementById("flight-speed").value = '';
+    document.getElementById("flight-distance").value = '';
+    document.getElementById("flight-altitude").value = '';
+    document.getElementById("flight-time").value = '';
+}
+
+function setConfirmationModal(imageDataURL = null) {
+
+    if (imageDataURL != null) {
+        document.getElementById("flight-plan-image").src = imageDataURL;
+    }
+
+    document.getElementById("flight-speed").value = document.getElementById("speed").value;
+    document.getElementById("flight-distance").value = document.getElementById("distance").value;
+    document.getElementById("flight-altitude").value = document.getElementById("altitude").value;
+    document.getElementById("flight-time").value = document.getElementById("max-flight-time").value;
 }
 

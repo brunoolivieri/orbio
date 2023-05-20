@@ -29,36 +29,30 @@ class FlightPlanRepository implements RepositoryInterface
 
     function createOne(array $data)
     {
-
         foreach ($data["route_files"] as $flight_file) {
             if (Storage::disk('public')->exists($flight_file["path"])) {
                 throw new \Exception("Erro! Esse plano de voo já existe.", 409);
             }
         }
-
+       
         return DB::transaction(function () use ($data) {
-
+            
             $flight_plan = $this->flightPlanModel->create([
                 "creator_id" => Auth::user()->id,
                 "name" => Str::random(15),
-                "files" => json_encode($data["routes_path"]),
+                "folder" => $data["folder"],
                 "coordinates" => $data["coordinates"],
                 "state" => $data["state"],
                 "city" => $data["city"],
                 "description" => null,
-                "type" => $data["type"],
                 "image_path" => $data["image"]["path"],
                 "configuration" => $data["configuration"]
             ]);
-
+         
             foreach ($data["route_files"] as $route_file) {
                 Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
             }
-
-            if ($data["type"] === "multi") {
-                Storage::disk('public')->put($data["auxiliary_single_file"]["path"], $data["auxiliary_single_file"]["contents"]);
-            }
-
+            Storage::disk('public')->put($data["single_file"]["path"], $data["single_file"]["contents"]);
             Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
 
             return $flight_plan;
@@ -78,11 +72,10 @@ class FlightPlanRepository implements RepositoryInterface
 
                 // Update record    
                 $flight_plan->update([
-                    "files" => json_encode($data["routes_path"]),
+                    "folder" => $data["folder"],
                     "coordinates" => $data["coordinates"],
                     "state" => $data["state"],
                     "city" => $data["city"],
-                    "type" => $data["type"],
                     "image_path" => $data["image"]["path"],
                     "configuration" => $data["configuration"]
                 ]);
@@ -94,15 +87,13 @@ class FlightPlanRepository implements RepositoryInterface
                 foreach ($data["route_files"] as $route_file) {
                     Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
                 }
-                if ($data["type"] === "multi") {
-                    Storage::disk('public')->put($data["auxiliary_single_file"]["path"], $data["auxiliary_single_file"]["contents"]);
-                }
+                Storage::disk('public')->put($data["single_file"]["path"], $data["single_file"]["contents"]);
                 Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
             } else {
-
                 $flight_plan->update([
                     "name" => $data["name"],
-                    "description" => $data["description"]
+                    "description" => $data["description"],
+                    "configuration" => $data["configuration"]
                 ]);
 
                 if ($flight_plan->trashed() && $data["undelete"]) {

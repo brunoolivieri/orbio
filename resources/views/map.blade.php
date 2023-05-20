@@ -120,17 +120,6 @@
 				d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
 			</svg>
 		</div>
-		<div id="menu-save" class="w-full h-48 bg-gray-100 hidden">
-			<div id="btn-full-save" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100">
-				Única
-			</div>
-			<div id="btn-multi-save" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100">
-				Multi
-			</div>
-			<div id="btn-save-csv" class="w-full h-16 p-5 flex justify-center cursor-pointer hover:bg-gray-100">
-				CSV
-			</div>
-		</div>
 		<!--- BTN CONFIGURATION + MODAL --->
 		<div id="btn-configuration-tooltip" class="absolute z-10 invisible inline-block px-2 py-1 text-sm font-medium text-stone-800 transition-opacity duration-300 bg-white rounded-lg shadow-sm opacity-0 tooltip">
 			Configurações

@@ -3,9 +3,9 @@ import * as React from 'react';
 import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
+import DownloadIcon from '@mui/icons-material/Download';
 // Fontsawesome icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
@@ -61,14 +61,6 @@ const columns = [
     }
   },
   {
-    field: 'type',
-    headerName: 'Tipo',
-    width: 150,
-    minWidth: 130,
-    sortable: true,
-    editable: false
-  },
-  {
     field: 'name',
     headerName: 'Nome',
     flex: 1,
@@ -102,12 +94,13 @@ const columns = [
   },
   {
     field: 'export_txt',
-    headerName: 'Exportar TXT',
+    headerName: 'Exportar',
     sortable: false,
     editable: false,
     width: 150,
     renderCell: (data) => {
 
+      /*
       const { enqueueSnackbar } = useSnackbar();
 
       function handleDownloadFlightPlan(files_path) {
@@ -142,14 +135,16 @@ const columns = [
           });
 
       }
+      */
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlan(data.row.files)}>
-          <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
+        <IconButton>
+          <DownloadIcon />
         </IconButton>
       )
     }
   },
+  /*
   {
     field: 'export_csv',
     headerName: 'Exportar CSV',
@@ -184,12 +179,13 @@ const columns = [
       }
 
       return (
-        <IconButton onClick={() => handleDownloadFlightPlanAsCSV(data.row.csv_path, flight_plan_timestamp)}>
-          <FontAwesomeIcon icon={faFileArrowDown} color={"#00713A"} size="sm" />
+        <IconButton>
+          <DownloadIcon />
         </IconButton>
       )
     }
   },
+  */
   {
     field: 'deleted_at',
     headerName: 'Deleção',

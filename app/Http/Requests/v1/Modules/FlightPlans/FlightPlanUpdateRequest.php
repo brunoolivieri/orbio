@@ -30,7 +30,9 @@ class FlightPlanUpdateRequest extends FormRequest
         return [
             "name" => ["sometimes", "unique:flight_plans,name,$flight_plan_id_parameter"],
             "description" => ["sometimes"],
-            "undelete" => ["sometimes", "boolean"]
+            "undelete" => ["sometimes", "boolean"],
+            "configuration" => ["sometimes"],
+            
         ];
     }
 

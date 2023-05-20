@@ -15,6 +15,8 @@ class DownloadFlightPlanController extends Controller
         try {
             Gate::authorize('flight_plans_read');
 
+            dd(request()->export_type);
+
             $filesPath = explode(",", $request->query("files"));
 
             foreach ($filesPath as $file_path) {
