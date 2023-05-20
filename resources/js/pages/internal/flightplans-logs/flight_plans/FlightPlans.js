@@ -133,7 +133,9 @@ const columns = [
 
             } else if (type === "csv") {
 
-              const blob = generateFlightPlanPathCsvBlob(response.data);
+              const keyContent = Object.keys(response.data)[0];
+
+              const blob = generateFlightPlanPathCsvBlob(response.data[keyContent]);
               const csvURL = URL.createObjectURL(blob);
 
               // Download
