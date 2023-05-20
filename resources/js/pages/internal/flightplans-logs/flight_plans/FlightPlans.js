@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Mui
-import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip } from "@mui/material";
+import { Link, Tooltip, IconButton, Grid, TextField, InputAdornment, Box, Chip, MenuItem, Menu } from "@mui/material";
 import { DataGrid, ptBR } from '@mui/x-data-grid';
 import { useSnackbar } from 'notistack';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -24,7 +24,7 @@ import { ModalImage } from '../../../../components/modals/dialog/ModalImage';
 import { ExportTableData } from '../../../../components/modals/dialog/ExportTableData';
 import { TableToolbar } from '../../../../components/table_toolbar/TableToolbar';
 import { useAuth } from '../../../../context/Auth';
-import { generateFlightPlanPathCSV } from '../../../../utils/GenerateFlightPlanPathCSV';
+import { generateFlightPlanPathCsvBlob } from '../../../../utils/GenerateFlightPlanPathCsvBlob';
 import axios from '../../../../services/AxiosApi';
 
 const columns = [
@@ -100,33 +100,50 @@ const columns = [
     width: 150,
     renderCell: (data) => {
 
-      /*
+      const [anchorEl, setAnchorEl] = React.useState(null);
+      const open = Boolean(anchorEl);
       const { enqueueSnackbar } = useSnackbar();
 
-      function handleDownloadFlightPlan(files_path) {
+      function exportPath(type) {
 
-        axios.get(`/api/module/action/flight-plans/download?files=${files_path.toString()}`, {
+        axios.get(`/api/module/action/flight-plans/download?id=${data.row.id}&type=${type}`, {
           responseType: 'application/json'
         })
           .then(function (response) {
 
-            const files = response.data;
-            const zip = new JSZip();
+            if (type === "single" || type === "multi") {
 
-            for (let filename in files) {
-              // Adiciona o conteúdo do arquivo ao zip
-              zip.file(`${filename}.txt`, files[filename]);
-            }
+              const files = response.data;
+              const zip = new JSZip();
 
-            // Cria o arquivo zip e baixa-o
-            zip.generateAsync({ type: "blob" }).then(function (content) {
-              const url = window.URL.createObjectURL(content);
+              for (let filename in files) {
+                // Adiciona o conteúdo do arquivo ao zip
+                zip.file(`${filename}.txt`, files[filename]);
+              }
+
+              // Cria o arquivo zip e baixa-o
+              zip.generateAsync({ type: "blob" }).then(function (content) {
+                const url = window.URL.createObjectURL(content);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', `plano_${data.row.name.toLowerCase()}.zip`);
+                document.body.appendChild(link);
+                link.click();
+              });
+
+            } else if (type === "csv") {
+
+              const blob = generateFlightPlanPathCsvBlob(response.data);
+              const csvURL = URL.createObjectURL(blob);
+
+              // Download
               const link = document.createElement('a');
-              link.href = url;
-              link.setAttribute('download', `plano_${data.row.name.toLowerCase()}.zip`);
+              link.href = csvURL;
+              link.download = `${data.row.name.toLowerCase()}.csv`;
               document.body.appendChild(link);
               link.click();
-            });
+
+            }
 
           })
           .catch((error) => {
@@ -135,57 +152,25 @@ const columns = [
           });
 
       }
-      */
 
       return (
-        <IconButton>
-          <DownloadIcon />
-        </IconButton>
+        <>
+          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+            <DownloadIcon />
+          </IconButton>
+          <Menu
+            anchorEl={anchorEl}
+            open={open}
+            onClose={() => setAnchorEl(null)}
+          >
+            <MenuItem onClick={() => exportPath("single")}>Rota Única</MenuItem>
+            <MenuItem onClick={() => exportPath("multi")}>Rota Multi</MenuItem>
+            <MenuItem onClick={() => exportPath("csv")}>Rota CSV</MenuItem>
+          </Menu>
+        </>
       )
     }
   },
-  /*
-  {
-    field: 'export_csv',
-    headerName: 'Exportar CSV',
-    sortable: false,
-    editable: false,
-    width: 150,
-    renderCell: (data) => {
-
-      const { enqueueSnackbar } = useSnackbar();
-
-      const flight_plan_timestamp = data.row.files[0].split("/")[1];
-
-      function handleDownloadFlightPlanAsCSV(flight_plan_csv_path, flight_plan_timestamp) {
-        axios.get(`/api/module/action/flight-plans/download-csv?path=${flight_plan_csv_path}`)
-          .then(function (response) {
-
-            const file_path_csv = generateFlightPlanPathCSV(response.data, flight_plan_timestamp);
-            const csvURL = URL.createObjectURL(file_path_csv.blob);
-
-            // Download
-            const link = document.createElement('a');
-            link.href = csvURL;
-            link.download = `${flight_plan_timestamp}.csv`;
-            document.body.appendChild(link);
-            link.click();
-
-          })
-          .catch((error) => {
-            console.log(error.message)
-            enqueueSnackbar("A exportação do plano de voo falhou!", { variant: "error" });
-          });
-      }
-
-      return (
-        <IconButton>
-          <DownloadIcon />
-        </IconButton>
-      )
-    }
-  },
-  */
   {
     field: 'deleted_at',
     headerName: 'Deleção',

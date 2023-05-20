@@ -90,10 +90,10 @@ class FlightPlanRepository implements RepositoryInterface
                 Storage::disk('public')->put($data["single_file"]["path"], $data["single_file"]["contents"]);
                 Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
             } else {
+                
                 $flight_plan->update([
                     "name" => $data["name"],
-                    "description" => $data["description"],
-                    "configuration" => $data["configuration"]
+                    "description" => $data["description"]
                 ]);
 
                 if ($flight_plan->trashed() && $data["undelete"]) {

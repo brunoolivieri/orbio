@@ -6,20 +6,34 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use App\Models\FlightPlans\FlightPlan;
 
 class DownloadFlightPlanController extends Controller
 {
+
+    function __construct(FlightPlan $flightPlanModel)
+    {
+        $this->model = $flightPlanModel;
+    }
 
     public function __invoke(Request $request)
     {
         try {
             Gate::authorize('flight_plans_read');
 
-            dd(request()->export_type);
+            $flight_plan = $this->model->find(request()->id);
 
-            $filesPath = explode(",", $request->query("files"));
+            $folderFiles = [];
 
-            foreach ($filesPath as $file_path) {
+            if (request()->type === "single" || request()->type === "csv") {
+                $folderFiles = Storage::disk("public")->files($flight_plan->folder . "/single");
+            } else {
+                $folderFiles = Storage::disk("public")->files($flight_plan->folder . "/multi");
+            }
+
+            $contents = [];
+
+            foreach ($folderFiles as $file_path) {
 
                 if (!$file_contents = Storage::disk("public")->get($file_path)) {
                     throw new \Exception("Erro! O arquivo não foi encontrado.", 404);

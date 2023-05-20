@@ -139,7 +139,6 @@ class FlightPlanService implements ServiceInterface
         } else {
             $data_to_save = $data;
             $data_to_save["is_file"] = false;
-            $data_to_save["configuration"] = $data["configuration"];
         }
 
         $flight_plan = $this->repository->updateOne($data_to_save, $identifier);

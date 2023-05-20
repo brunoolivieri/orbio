@@ -1,10 +1,7 @@
-export function generateFlightPlanPathCSV(flight_plan_single_file_contents, flight_plan_timestamp) {
+export function generateFlightPlanPathCsvBlob(contents) {
 
     // ==== CONTEÚDO DO ARQUIVO DE ROTA ==== //
     let content = "latitude;longitude;altitude(m)\n";
-
-    // Conteúdo completo do arquivo
-    let contents = flight_plan_single_file_contents;
 
     // Quebrando as linhas do arquivo em um array
     let lines = contents.split("\n");
@@ -22,12 +19,6 @@ export function generateFlightPlanPathCSV(flight_plan_single_file_contents, flig
     var blob = new Blob([content],
         { type: "text/plain;charset=utf-8" });
 
-    // Nome do arquivo com data em milissegundos decorridos
-    let filename = flight_plan_timestamp + ".csv";
-
-    return {
-        blob,
-        filename
-    }
+    return blob;
 
 }

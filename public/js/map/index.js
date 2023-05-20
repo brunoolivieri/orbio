@@ -1534,18 +1534,10 @@ function savePath() {
     });
 
     if (initialPath.length === 0) {
-        if (params.modify) {
-            // Is configuration update only
-            savePathConfirmation(null);
-        }
-
-        // Is creation, and it needs initialPath
         displayErrorAlert("Erro! Nenhuma rota foi definida.");
-        return;
+        return;   
     }
 
-    // Can be an creation or update of full flight plan (config + path per se)
-    // In this case, what changes is the request method
     const singlePathData = generatePathSingleFile();
     const multiPathData = generatePathMultiFile(singlePathData);
 
@@ -2103,17 +2095,7 @@ btnCloseConfirmationModal.addEventListener("click", function () {
 });
 
 // ==== CONFIRMATION AND SAVE PATH REQUEST ==== //
-function savePathConfirmation(pathData) {
-
-    if (pathData != null) {
-        createOrUpdateFullFlightPlan(pathData);
-    } else {
-        updateOnlyFlightPlanConfig();
-    }
-
-}
-
-function createOrUpdateFullFlightPlan({ singlePathData, multiPathData }) {
+function savePathConfirmation({ singlePathData, multiPathData }) {
 
     const modal = document.getElementById("flight-plan-confirmation-modal");
     screenForPrintScreen("before");
@@ -2202,15 +2184,7 @@ function createOrUpdateFullFlightPlan({ singlePathData, multiPathData }) {
                 });
         });
     });
-}
 
-function updateOnlyFlightPlanConfig() {
-
-    // Set flightplan confirmation modal
-    cleanConfirmationModal();
-    setConfirmationModal();
-
-    console.log('update config only');
 }
 
 // Remove elements from screen
