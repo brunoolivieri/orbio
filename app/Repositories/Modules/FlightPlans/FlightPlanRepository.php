@@ -34,9 +34,9 @@ class FlightPlanRepository implements RepositoryInterface
                 throw new \Exception("Erro! Esse plano de voo já existe.", 409);
             }
         }
-       
+
         return DB::transaction(function () use ($data) {
-            
+
             $flight_plan = $this->flightPlanModel->create([
                 "creator_id" => Auth::user()->id,
                 "name" => Str::random(15),
@@ -48,7 +48,7 @@ class FlightPlanRepository implements RepositoryInterface
                 "image_path" => $data["image"]["path"],
                 "configuration" => $data["configuration"]
             ]);
-         
+
             foreach ($data["route_files"] as $route_file) {
                 Storage::disk('public')->put($route_file["path"], $route_file["contents"]);
             }
@@ -67,8 +67,7 @@ class FlightPlanRepository implements RepositoryInterface
 
             if ($data["is_file"]) {
 
-                $actual_files = json_decode($flight_plan->files);
-                $folderPath = "flight_plans/" . explode("/", $actual_files[0])[1];
+                $previously_folder = $flight_plan->folder;
 
                 // Update record    
                 $flight_plan->update([
@@ -80,8 +79,8 @@ class FlightPlanRepository implements RepositoryInterface
                     "configuration" => $data["configuration"]
                 ]);
 
-                // Delete actual folder with all files
-                Storage::disk('public')->deleteDirectory($folderPath);
+                // Delete old folder with all files
+                Storage::disk('public')->deleteDirectory($previously_folder);
 
                 // Save new files
                 foreach ($data["route_files"] as $route_file) {
@@ -89,8 +88,9 @@ class FlightPlanRepository implements RepositoryInterface
                 }
                 Storage::disk('public')->put($data["single_file"]["path"], $data["single_file"]["contents"]);
                 Storage::disk('public')->put($data["image"]["path"], $data["image"]["contents"]);
-            } else {
                 
+            } else {
+
                 $flight_plan->update([
                     "name" => $data["name"],
                     "description" => $data["description"]

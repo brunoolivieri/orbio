@@ -49,16 +49,6 @@
 		<p id="menu-message"><!-- Alert message --></p>
 	</div>
 
-    <!-- BOTTOM BAR -->
-	<div id="bottom-bar" class="flex backdrop-blur-xl bg-white/30 h-18 w-screen fixed left-0 bottom-0 z-[100]">
-		<div class="flex grow h-full">
-			<div class="p-5" id="btn-print">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6 cursor-pointer text-white" id="btn-print-icon">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                  </svg>
-			</div>
-        </div>
-
 	<script>
         // Token gerado para uso no MAPBOX-GL
         mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
@@ -109,21 +99,22 @@
         // Event from log creation modal (react interface)
         window.addEventListener("message", (event) => {
 
-			if(event.data.type === 'log-creation-request' && (event.origin === window.location.origin)){
+            if(event.origin === window.location.origin){
 
-                const data = event.data;
+                if(event.data.type === 'path-visualization-request'){
 
-				if (data.log.original_extension === "tlog.kmz") {
-					importKMLPath(data.log.contents);
-				} else {
-					importKMLPolygon(data.log.contents);
-				}
+                    const data = event.data;
 
-				document.getElementById("btn-print").addEventListener("click", () => {
-					print(event);
-				});
+                    if (data.log.original_extension === "tlog.kmz") {
+                        importKMLPath(data.log.contents);
+                    } else {
+                        importKMLPolygon(data.log.contents);
+                    }
 
-			}
+                } else if(event.data.type === 'log-print-request'){
+                    print(event);
+                }
+            }
 
         }, false);
 
@@ -141,16 +132,14 @@
                     fileNameImg = event.data.log.filename.replace(/(.kml)$/, "") + ".jpeg";
                     
                     const response = {
-                        type: 'iframe-response',
+                        type: 'log-print-response',
                         canvas: {
                             blobImg, fileNameImg, dataURL
                         }
                     }
 
                     screenForPrintScreen("after");
-                    
                     event.source.postMessage(response, event.origin);
-
                     displaySuccessAlert("Sucesso! A imagem foi gerada.");
 
 		        });	
@@ -162,13 +151,10 @@
 
         // Remove elements from screen
         function screenForPrintScreen(type) {
-            const bottomBar = document.getElementById("bottom-bar");
             if (type === "before") {
-                bottomBar.classList.add("hidden");
                 map.removeControl(draw);
                 map.removeControl(mapBoxNavigationControl);
             } else if (type === "after") {
-                bottomBar.classList.remove("hidden");
                 map.addControl(draw);
                 map.addControl(mapBoxNavigationControl);
             }
@@ -190,28 +176,17 @@
             // Array que irá armazenar as coordenadas da área
             kmlArea = [];
 
-            //console.log(coordinates)
-
             // Percorrendo todas as coordenadas e quebrando as informações de lat e long
             for (i = 0; i < coordinates.length - 1; i++) {
-                //console.log(coordinates[i]);
-
                 latLong = coordinates[i].split(",");
                 kmlArea[i] = [Number(latLong[0]), Number(latLong[1])];
-
-                //console.log(kmlArea[i])
             }
 
             // Certificando-se de que a primeira e a última posição de kmlArea são idênticas
             if (kmlArea[0][0] == kmlArea[kmlArea.length - 1][0] && kmlArea[0][1] == kmlArea[kmlArea.length - 1][1]) {
-                //console.log("São IGUAIS!");
             } else {
-                //console.log("NÃO SÃO IGUAIS!");
                 kmlArea[i] = kmlArea[0];
             }
-
-            // console.log(kmlArea[0]);
-            // console.log(kmlArea[kmlArea.length - 1]);
 
             home = kmlArea[0];
 

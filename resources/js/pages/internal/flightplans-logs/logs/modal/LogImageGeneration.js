@@ -16,6 +16,10 @@ export const LogImageGeneration = React.memo((props) => {
         setImage(null);
     }
 
+    function handleGeneratePrint() {
+        document.querySelector("iframe").contentWindow.postMessage({ type: 'log-print-request', log: props.actual_log }, `${window.location.origin}`)
+    }
+
     function handleSaveIframeImage() {
 
         props.setLogs((logs) => {
@@ -39,14 +43,14 @@ export const LogImageGeneration = React.memo((props) => {
 
     // Listen for a response from the iframe
     window.addEventListener("message", (event) => {
-        if (event.data.type === 'iframe-response' && (event.origin === window.location.origin)) {
+        if (event.data.type === 'log-print-response' && (event.origin === window.location.origin)) {
             setImage(event.data.canvas);
         }
     }, false);
 
     return (
         <>
-            <Tooltip title="Gerar imagem">
+            <Tooltip title="Geração da imagem">
                 <IconButton onClick={handleOpen}>
                     <PhotoSizeSelectActualIcon color={props.actual_log.image ? "success" : "disabled"} fontSize="medium" />
                 </IconButton>
@@ -64,8 +68,8 @@ export const LogImageGeneration = React.memo((props) => {
                 <DialogContent>
                     <div id="modal-content" style={{ height: "100%" }}>
                         <iframe
-                            id="iframe-content"
-                            onLoad={(e) => e.target.contentWindow.postMessage({ type: 'log-creation-request', log: props.actual_log }, `${window.location.origin}`)}
+                            id="iframe"
+                            onLoad={(e) => e.target.contentWindow.postMessage({ type: 'path-visualization-request', log: props.actual_log }, `${window.location.origin}`)}
                             src={`${window.location.origin}/map-modal`}
                             style={{ width: "100%", height: "100%" }}
                         ></iframe>
@@ -74,6 +78,9 @@ export const LogImageGeneration = React.memo((props) => {
                 <Divider />
                 <DialogActions>
                     <Button onClick={handleClose}>Cancelar</Button>
+                    <Button onClick={handleGeneratePrint} variant="contained" disabled={!image === null}>
+                        Print
+                    </Button>
                     <Button onClick={handleSaveIframeImage} variant="contained" disabled={image === null}>
                         Salvar
                     </Button>
