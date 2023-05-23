@@ -44,11 +44,6 @@
 
     <div id="map"></div>
 
-    <!-- ALERT -->
-	<div id="menu-alert" class="flex text-white text-sm font-bold px-4 py-3 w-screen fixed left-0" role="alert">
-		<p id="menu-message"><!-- Alert message --></p>
-	</div>
-
 	<script>
         // Token gerado para uso no MAPBOX-GL
         mapboxgl.accessToken = 'pk.eyJ1IjoidGF1YWNhYnJlaXJhIiwiYSI6ImNrcHgxcG9jeTFneWgydnM0cjE3OHQ2MDIifQ.saPpiLcsBQnqVlRrQrcCIQ';
@@ -140,12 +135,11 @@
 
                     screenForPrintScreen("after");
                     event.source.postMessage(response, event.origin);
-                    displaySuccessAlert("Sucesso! A imagem foi gerada.");
 
 		        });	
 
 			}).catch((e) => {
-                displayErrorAlert("Erro! A imagem não foi gerada.");
+                console.log(e);
             });
 		}
 
@@ -339,31 +333,6 @@
         function cleanPolygon() {
             // Limpando o polígono
             draw.deleteAll();
-        }
-
-        function cleanAlerts() {
-            document.getElementById("menu-alert").classList.remove("error-alert-activation");
-            document.getElementById("menu-alert").classList.remove("success-alert-activation");
-        }
-
-        function displayErrorAlert(message) {
-            document.getElementById("menu-alert").classList.add("error-alert-activation");
-            document.getElementById("menu-message").innerHTML = '';
-            document.getElementById("menu-message").innerHTML = message;
-
-            setTimeout(() => {
-                cleanAlerts();
-            }, 4000);
-        }
-
-        function displaySuccessAlert(message) {
-            document.getElementById("menu-alert").classList.add("success-alert-activation");
-            document.getElementById("menu-message").innerHTML = '';
-            document.getElementById("menu-message").innerHTML = message;
-
-            setTimeout(() => {
-                cleanAlerts();
-            }, 4000);
         }
     </script>
  </body>

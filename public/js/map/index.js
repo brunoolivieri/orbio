@@ -1137,21 +1137,24 @@ btnImportMP.addEventListener('change', importMPPolygon, false);
 // BTN OPEN CONFIGURATION MODAL
 const btnConfiguration = document.getElementById("btn-configuration");
 btnConfiguration.addEventListener('click', function () {
-
+    document.getElementById('bottom-bar').classList.add("hidden");
     var modal = document.getElementById("flight-plan-configuration-modal");
     modal.classList.remove("hidden");
     document.getElementById("btn-save-configuration-modal").addEventListener("click", function () {
         modal.classList.add("hidden");
+        document.getElementById('bottom-bar').classList.remove("hidden");
     });
 });
 
 // BTN HELP + MODAL
 const btnHelp = document.getElementById("btn-help");
 btnHelp.addEventListener("click", function () {
+    document.getElementById('bottom-bar').classList.add("hidden");
     var modal = document.getElementById("help-modal");
     modal.classList.toggle("hidden");
     document.getElementById("btn-close-help-modal").addEventListener("click", function () {
         modal.classList.add("hidden");
+        document.getElementById('bottom-bar').classList.remove("hidden");
     });
 });
 
@@ -2090,8 +2093,8 @@ function displayErrorAlert(message) {
 // Flight visualization before save
 const btnCloseConfirmationModal = document.getElementById("btn-close-confirmation-modal");
 btnCloseConfirmationModal.addEventListener("click", function () {
-    const modal = document.getElementById("flight-plan-confirmation-modal");
-    modal.classList.add("hidden");
+    document.getElementById('bottom-bar').classList.remove("hidden");
+    document.getElementById("flight-plan-confirmation-modal").classList.add("hidden");
 });
 
 // ==== CONFIRMATION AND SAVE PATH REQUEST ==== //
@@ -2103,6 +2106,7 @@ function savePathConfirmation({ singlePathData, multiPathData }) {
     html2canvas(document.body).then(canvas => {
 
         screenForPrintScreen("after");
+        document.getElementById('bottom-bar').classList.add("hidden");
 
         const blobImg = new Blob([canvas], { type: "image/jpeg" });
         const dataURL = canvas.toDataURL('image/jpeg', 1.0);
